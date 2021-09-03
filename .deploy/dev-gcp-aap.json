@@ -1,4 +1,4 @@
 {
-  "ingresses": ["https://aap..dev.nav.no","https://aap.dev.intern.nav.no"],
+  "ingresses": ["https://hello-aap.dev.nav.no","https://hello-aap.dev.intern.nav.no"],
 }
 
