@@ -13,14 +13,14 @@ spec:
       max: 2
       cpuThresholdPercentage: 50
   liveness:
-      path: /internal/actuator/health/liveness
+      path: /actuator/health/liveness
       initialDelay: 60
   readiness:
-      path: /internal/actuator/health/readiness
+      path: /actuator/health/readiness
       initialDelay: 60
   prometheus:
       enabled: true
-      path: /internal/actuator/prometheus
+      path: /actuator/prometheus
   replicas:
       min: 2
       max: 2
