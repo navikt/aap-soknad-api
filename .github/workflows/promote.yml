@@ -3,7 +3,7 @@ on:
   issue_comment:
     types: [created]
 env:
-  NAMESPACE: teamforeldrepenger
+  NAMESPACE: aap
   IMAGE_BASE: ghcr.io/${{ github.repository }}
 
 jobs:
