@@ -1,4 +1,4 @@
-FROM navikt/java:16-appdynamics
+FROM openjdk:17
 ENV APP_NAME=aap-hello-world
 ENV APPD_ENABLED=true
 ENV APPDYNAMICS_CONTROLLER_HOST_NAME=appdynamics.adeo.no

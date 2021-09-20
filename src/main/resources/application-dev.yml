@@ -1,0 +1,21 @@
+management :
+  endpoints:
+    web:
+      exposure:
+        include:  '*'
+  endpoint:
+    health:
+      show-details : always
+no.nav:
+  security:
+    jwt:
+      client:
+        registration:
+          pdl-api:
+            token-exchange:
+              audience: dev-fss:pdl:pdl-api
+      issuer:
+        selvbetjening:
+          proxy-url: http://webproxy.nais:8088
+  mvc:
+    log-request-details : true
