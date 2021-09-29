@@ -9,7 +9,6 @@ metadata:
   labels:
     team: aap
 spec:
-
   idporten:
     enabled: true
     sidecar:
