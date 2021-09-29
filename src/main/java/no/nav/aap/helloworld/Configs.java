@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import java.net.URI;
 import java.util.regex.Pattern;
 
-@Configuration
+//@Configuration
 public class Configs {
 
     private static final Logger LOG = LoggerFactory.getLogger(Configs.class);

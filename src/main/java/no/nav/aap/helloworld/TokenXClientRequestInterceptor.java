@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
-@ConditionalOnK8s
+//@ConditionalOnK8s
 @Order(HIGHEST_PRECEDENCE)
 public class TokenXClientRequestInterceptor implements ClientHttpRequestInterceptor {
 
