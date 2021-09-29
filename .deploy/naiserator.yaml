@@ -1,11 +1,19 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
+  annotations:
+    nais.io/run-as-group: "0"
+    nais.io/read-only-file-system: "false"
   name: aap-hello-world
   namespace: aap
   labels:
     team: aap
 spec:
+
+  idporten:
+    enabled: true
+    sidecar:
+      enabled: true
   port: 8080
   cpuThresholdPercentage: 50
   image: {{image}}
