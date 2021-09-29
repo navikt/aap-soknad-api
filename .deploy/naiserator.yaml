@@ -3,6 +3,7 @@ kind: "Application"
 metadata:
   annotations:
     nais.io/read-only-file-system: "false"
+    nais.io/run-as-user: "1001"
   name: aap-hello-world
   namespace: aap
   labels:
