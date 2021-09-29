@@ -6,10 +6,6 @@ metadata:
   labels:
     team: aap
 spec:
-  idporten:
-    enabled: true
-    sidecar:
-       enabled: true
   image: {{image}}
   port: 8080
       cpuThresholdPercentage: 50
