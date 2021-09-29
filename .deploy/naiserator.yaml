@@ -6,9 +6,9 @@ metadata:
   labels:
     team: aap
 spec:
-  image: {{image}}
   port: 8080
       cpuThresholdPercentage: 50
+  image: {{image}}
   liveness:
       path: /actuator/health/liveness
       initialDelay: 60
