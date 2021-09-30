@@ -12,7 +12,7 @@ no.nav:
       issuer:
         idporten:
           validation:
-            optional_claims: aud
+            optional_claims: aud,nbf
           accepted_audience: ${idporten.client.id}
           discovery-url:  ${idporten.well.known.url}
   mvc:
