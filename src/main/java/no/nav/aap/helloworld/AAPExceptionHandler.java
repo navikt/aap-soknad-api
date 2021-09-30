@@ -14,6 +14,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
+
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @ControllerAdvice
@@ -21,7 +23,7 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ExceptionHandler.class);
 
     @ExceptionHandler
-    public ResponseEntity<Object> handleUncaught(Exception e, HttpHeaders headers, WebRequest req,HttpServletResponse res) {
+    public ResponseEntity<Object> handleUncaught(Exception e, HttpHeaders headers, WebRequest req,HttpServletResponse res) throws IOException {
         LOG.warn("XXXXXX {} {}", req.getContextPath(), e.getClass().getSimpleName());
         res.sendRedirect("http://www.vg.no");
         return null;
