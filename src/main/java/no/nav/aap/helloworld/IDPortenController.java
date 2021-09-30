@@ -4,7 +4,7 @@ import no.nav.security.token.support.spring.ProtectedRestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@ProtectedRestController(value = "/api", issuer = "test")
+@ProtectedRestController(value = "/api", issuer = "idporten")
 public class IDPortenController {
 
 
