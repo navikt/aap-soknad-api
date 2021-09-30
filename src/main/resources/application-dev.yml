@@ -11,7 +11,6 @@ no.nav:
     jwt:
       issuer:
         idporten:
-          proxy-url: http://webproxy.nais:8088
           discovery-url:  ${idporten.well.known.url}
   mvc:
     log-request-details : true
