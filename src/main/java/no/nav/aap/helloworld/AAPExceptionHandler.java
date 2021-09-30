@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 
+import static org.springframework.web.util.UriComponentsBuilder.newInstance;
+
 
 @ControllerAdvice
 public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
@@ -37,11 +39,10 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<Object> handleUncaught(Exception e, HttpServletRequest req)  {
         HttpHeaders headers = new HttpHeaders();
-        var  ny = UriComponentsBuilder.newInstance()
+        headers.setLocation(newInstance()
                 .scheme(wonderwall.getScheme())
                 .host(wonderwall.getHost())
-                .path("/oauth2/login").queryParam("redirect",req.getRequestURL()).build().toUri();
-        headers.setLocation(ny);
+                .path("/oauth2/login").queryParam("redirect",req.getRequestURL()).build().toUri());
         return new ResponseEntity<>(headers, HttpStatus.SEE_OTHER);
     }
 }

@@ -11,7 +11,7 @@ public class IDPortenController {
 
     @GetMapping(path = "me")
     public String me () {
-        return "hello";
+        return "gratulerer, du er autentisert!";
     }
 
     @GetMapping(path = "open")
