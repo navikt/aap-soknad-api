@@ -15,8 +15,9 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ExceptionHandler.class);
 
     @ExceptionHandler
-    public ResponseEntity<Object> handleUncaught(HttpStatus status, Exception e, WebRequest req) {
-        LOG.warn("{} {}", req.getContextPath(),  status, e);
+    public ResponseEntity<Object> handleUncaught(Exception e, WebRequest req) {
+
+        LOG.warn("{} {}", req.getContextPath(), e);
         return null;
     }
 }
