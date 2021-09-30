@@ -1,5 +1,6 @@
 package no.nav.aap.helloworld;
 
+import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ExceptionHandler.class);
 
     @ExceptionHandler
-    public ResponseEntity<Object> handleUncaught(Exception e, WebRequest req) {
+    public ResponseEntity<Object> handleUncaught(JwtTokenUnauthorizedException e, WebRequest req) {
 
         LOG.warn("{} {}", req.getContextPath(), e);
         return null;
