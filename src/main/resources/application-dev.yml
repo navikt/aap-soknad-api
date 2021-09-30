@@ -15,7 +15,7 @@ no.nav:
             token-exchange:
               audience: dev-fss:pdl:pdl-api
       issuer:
-        selvbetjening:
+        idporten:
           proxy-url: http://webproxy.nais:8088
   mvc:
     log-request-details : true
