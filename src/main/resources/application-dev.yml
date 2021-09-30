@@ -11,6 +11,7 @@ no.nav:
     jwt:
       issuer:
         idporten:
+          accepted_audience: ${idporten.client.id}
           discovery-url:  ${idporten.well.known.url}
   mvc:
     log-request-details : true
