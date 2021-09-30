@@ -29,7 +29,7 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final URI  wonderwall;
 
-    public AAPExceptionHandler(@Value("${wonderwall.url}") URI wonderwall ) {
+    public AAPExceptionHandler(@Value("${wonderwall.url:http://set.me}") URI wonderwall ) {
         this.wonderwall = wonderwall;
         LOG.info("XXXX " + wonderwall);
 
