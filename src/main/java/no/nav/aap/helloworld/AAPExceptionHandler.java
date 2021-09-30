@@ -23,7 +23,7 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ExceptionHandler.class);
 
     @ExceptionHandler
-    public ResponseEntity<Object> handleUncaught(Exception e, HttpHeaders headers, WebRequest req)  {
+    public ResponseEntity<Object> handleUncaught(Exception e, WebRequest req)  {
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create("http://www.vg.no"));
         return new ResponseEntity<>(headers, HttpStatus.SEE_OTHER);
