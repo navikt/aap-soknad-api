@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import javax.servlet.http.HttpServletResponse;
+
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @ControllerAdvice
@@ -18,9 +21,9 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ExceptionHandler.class);
 
     @ExceptionHandler
-    public ResponseEntity<Object> handleUncaught(Exception e, HttpHeaders headers, WebRequest req) {
-
+    public ResponseEntity<Object> handleUncaught(Exception e, HttpHeaders headers, WebRequest req,HttpServletResponse res) {
         LOG.warn("XXXXXX {} {}", req.getContextPath(), e.getClass().getSimpleName());
-        return handleExceptionInternal(e,"oops",headers ,HttpStatus.UNAUTHORIZED,req);
+        res.sendRedirect("http://www.vg.no");
+        return null;
     }
 }
