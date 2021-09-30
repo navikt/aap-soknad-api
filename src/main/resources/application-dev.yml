@@ -9,11 +9,6 @@ management :
 no.nav:
   security:
     jwt:
-      client:
-        registration:
-          pdl-api:
-            token-exchange:
-              audience: dev-fss:pdl:pdl-api
       issuer:
         idporten:
           proxy-url: http://webproxy.nais:8088
