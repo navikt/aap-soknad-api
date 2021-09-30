@@ -9,6 +9,9 @@ metadata:
   labels:
     team: aap
 spec:
+  env:
+    - name: WONDERWALL_URL
+      value: {{ ingress }}
   tokenx:
     enabled: true
   idporten:
@@ -32,9 +35,7 @@ spec:
       max: 2
       cpuThresholdPercentage: 50
   ingresses:
-{{#each ingresses as |url|}}
-    - {{url}}
-{{/each}}
+    - {{ingress}}
   resources:
       limits:
          cpu: 1500m

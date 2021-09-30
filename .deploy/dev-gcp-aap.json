@@ -1,4 +1,4 @@
 {
-  "ingresses": ["https://hello-aap.dev.intern.nav.no"]
+  "ingress": "https://hello-aap.dev.intern.nav.no"
 }
 
