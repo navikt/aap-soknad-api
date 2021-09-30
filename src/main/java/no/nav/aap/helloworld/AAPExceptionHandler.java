@@ -17,9 +17,9 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ExceptionHandler.class);
 
     @ExceptionHandler
-    public ResponseEntity<Object> handleUncaught(JwtTokenMissingException e, WebRequest req) {
+    public ResponseEntity<Object> handleUncaught(Exception e, WebRequest req) {
 
-        LOG.warn("{} {}", req.getContextPath(), e);
+        LOG.warn("XXXXXX {} {}", req.getContextPath(), e.getClass().getSimpleName(), e);
         return null;
     }
 }
