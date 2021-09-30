@@ -31,7 +31,6 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
 
     public AAPExceptionHandler(@Value("${wonderwall.url:http://set.me}") URI wonderwall ) {
         this.wonderwall = wonderwall;
-        LOG.info("XXXX " + wonderwall);
 
     }
 
@@ -42,8 +41,7 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
                 .scheme(wonderwall.getScheme())
                 .host(wonderwall.getHost())
                 .path("/oauth2/login").queryParam("redirect",req.getRequestURL()).build().toUri();
-        LOG.info("XXXX " + ny);
-        headers.setLocation(URI.create("http://www.vg.no"));
+        headers.setLocation(ny);
         return new ResponseEntity<>(headers, HttpStatus.SEE_OTHER);
     }
 }
