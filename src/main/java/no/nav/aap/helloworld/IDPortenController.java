@@ -1,9 +1,10 @@
 package no.nav.aap.helloworld;
 
+import no.nav.security.token.support.spring.ProtectedRestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/api")
+@ProtectedRestController(value = "/api", issuer = "test")
 public class IDPortenController {
 
 
