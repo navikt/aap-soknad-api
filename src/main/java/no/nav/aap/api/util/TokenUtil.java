@@ -1,21 +1,16 @@
-package no.nav.aap.helloworld;
+package no.nav.aap.api.util;
 
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
-import no.nav.security.token.support.core.exceptions.JwtTokenValidatorException;
 import no.nav.security.token.support.core.jwt.JwtToken;
 import no.nav.security.token.support.core.jwt.JwtTokenClaims;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 @Component
 public class TokenUtil {
-
-    public static final String BEARER = "Bearer ";
 
     private final TokenValidationContextHolder ctxHolder;
 
@@ -24,8 +19,12 @@ public class TokenUtil {
     }
 
     public String getSubject(String issuer) {
+        return getClaim(issuer,"pid");
+    }
+
+    public String getClaim(String issuer, String claim) {
         return Optional.ofNullable(claimSet(issuer))
-                .map(c -> c.getStringClaim("pid"))
+                .map(c -> c.getStringClaim(claim))
                 .orElse(null);
     }
 
@@ -50,7 +49,6 @@ public class TokenUtil {
 
     public JwtToken getJWTToken(String issuer) {
         return ctxHolder.getTokenValidationContext().getJwtToken(issuer);
-
     }
 
     @Override
