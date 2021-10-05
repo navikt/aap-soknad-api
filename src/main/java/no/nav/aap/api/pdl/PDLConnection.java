@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException;
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient;
 
-import static no.nav.aap.api.pdl.PdlClientConfig.PDL_SYSTEM;
 import static no.nav.aap.api.pdl.PdlClientConfig.PDL_USER;
 
 @Component
