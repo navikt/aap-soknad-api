@@ -5,6 +5,9 @@ import no.nav.aap.api.util.URIUtil;
 import java.net.URI;
 
 public class AbstractRestConfig {
+
+    private static final String IDPORTEN = "idporten";
+    public static final String ISSUER = IDPORTEN;
     private final URI baseUri;
     private final String pingPath;
     private final boolean enabled;

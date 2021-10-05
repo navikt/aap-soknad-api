@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class PdlClientConfig {
 
-    public static final String IDPORTEN = "idporten";
+    static final String NAVN_QUERY = "query-navn.graphql";
 
     private static final Logger LOG = LoggerFactory.getLogger(PdlClientConfig.class);
 

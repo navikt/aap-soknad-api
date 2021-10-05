@@ -1,5 +1,6 @@
 package no.nav.aap.api.util;
 
+import no.nav.aap.api.config.AbstractRestConfig;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.jwt.JwtToken;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 import java.util.Optional;
+
+import static no.nav.aap.api.config.AbstractRestConfig.ISSUER;
 
 @Component
 public class TokenUtil {
@@ -18,14 +21,22 @@ public class TokenUtil {
         this.ctxHolder = ctxHolder;
     }
 
-    public String getSubject(String issuer) {
-        return getClaim(issuer,"pid");
+    private String getSubject(String issuer) {
+        return getClaim(issuer, "pid");
+    }
+
+    public String getSubject() {
+        return getSubject(ISSUER);
     }
 
     public String getClaim(String issuer, String claim) {
         return Optional.ofNullable(claimSet(issuer))
                 .map(c -> c.getStringClaim(claim))
                 .orElse(null);
+    }
+
+    private JwtTokenClaims claimSet() {
+        return claimSet(ISSUER);
     }
 
     private JwtTokenClaims claimSet(String issuer) {
@@ -39,7 +50,11 @@ public class TokenUtil {
                 .orElse(null);
     }
 
-    public String getToken(String issuer) {
+    public String getToken() {
+        return getToken(ISSUER);
+    }
+
+    private String getToken(String issuer) {
         return Optional.ofNullable(context())
                 .map(c -> c.getJwtToken(issuer))
                 .filter(Objects::nonNull)
@@ -47,7 +62,11 @@ public class TokenUtil {
                 .orElse(null);
     }
 
-    public JwtToken getJWTToken(String issuer) {
+    public JwtToken getJWTToken() {
+        return getToken(ISSUER);
+    }
+
+    private JwtToken getJWTToken(String issuer) {
         return ctxHolder.getTokenValidationContext().getJwtToken(issuer);
     }
 
@@ -55,5 +74,4 @@ public class TokenUtil {
     public String toString() {
         return getClass().getSimpleName() + " [ctxHolder=" + ctxHolder + "]";
     }
-
 }

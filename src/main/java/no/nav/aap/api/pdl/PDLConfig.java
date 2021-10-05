@@ -12,8 +12,6 @@ public class PDLConfig extends AbstractRestConfig {
     private static final String DEFAULT_BASE_URI = "http://pdl-api.pdl/graphql";
     private static final String DEFAULT_PING_PATH = "/";
 
-    static final String NAVN_QUERY = "query-navn.graphql";
-
     @ConstructorBinding
     public PDLConfig(@DefaultValue(DEFAULT_PING_PATH) String pingPath,
                      @DefaultValue("true") boolean enabled,
