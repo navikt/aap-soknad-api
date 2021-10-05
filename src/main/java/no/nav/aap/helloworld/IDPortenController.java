@@ -15,7 +15,7 @@ public class IDPortenController {
 
     @GetMapping(path = "me")
     public String me () {
-        return tokenUtil.getSubject("idporten") + "er autentisert";
+        return tokenUtil.getToken("idporten") + " er autentisert";
     }
 
     @GetMapping(path = "open")

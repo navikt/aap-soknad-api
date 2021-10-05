@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.web.util.UriComponentsBuilder.newInstance;
 
 
@@ -33,7 +34,6 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
 
     public AAPExceptionHandler(@Value("${wonderwall.url:http://set.me}") URI wonderwall ) {
         this.wonderwall = wonderwall;
-
     }
 
     @ExceptionHandler
@@ -43,6 +43,6 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
                 .scheme(wonderwall.getScheme())
                 .host(wonderwall.getHost())
                 .path("/oauth2/login").queryParam("redirect",req.getRequestURL()).build().toUri());
-        return new ResponseEntity<>(headers, HttpStatus.SEE_OTHER);
+        return new ResponseEntity<>(headers, SEE_OTHER);
     }
 }

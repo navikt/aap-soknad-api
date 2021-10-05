@@ -40,7 +40,7 @@ public class TokenUtil {
                 .orElse(null);
     }
 
-    private String getToken(String issuer) {
+    public String getToken(String issuer) {
         return Optional.ofNullable(context())
                 .map(c -> c.getJwtToken(issuer))
                 .filter(Objects::nonNull)
