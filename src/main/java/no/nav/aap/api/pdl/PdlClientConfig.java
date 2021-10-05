@@ -34,7 +34,8 @@ public class PdlClientConfig {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdlClientConfig.class);
     public static final String PDL_USER = "PDL";
-    public static final String PDL_SYSTEM = "PDL-RELASJON";
+    public static final String PDL_SYSTEM = "PDL_SYSTEM";
+    public static final String STS = "STS";
     private static final String TEMA = "TEMA";
     private static final String AAP = "AAP";
     private static final String NAV_CONSUMER_TOKEN = "Nav-Consumer-Token";
