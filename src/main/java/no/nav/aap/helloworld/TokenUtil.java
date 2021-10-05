@@ -23,8 +23,8 @@ public class TokenUtil {
         this.ctxHolder = ctxHolder;
     }
 
-    public String getSubject() {
-        return Optional.ofNullable(claimSet())
+    public String getSubject(String issuer) {
+        return Optional.ofNullable(claimSet(issuer))
                 .map(JwtTokenClaims::getSubject)
                 .orElse(null);
     }
