@@ -13,16 +13,16 @@ import static no.nav.aap.api.pdl.PdlClientConfig.PDL_USER;
 public class PDLConnection {
 
     private final GraphQLWebClient userClient;
-    private final GraphQLWebClient systemClient;
+    //private final GraphQLWebClient systemClient;
     private final PDLConfig cfg;
     private final TokenUtil tokenUtil;
     private final PDLErrorResponseHandler errorHandler;
 
     PDLConnection(@Qualifier(PDL_USER) GraphQLWebClient userClient,
-                  @Qualifier(PDL_SYSTEM) GraphQLWebClient systemClient,
+                  //@Qualifier(PDL_SYSTEM) GraphQLWebClient systemClient,
                   PDLConfig cfg, TokenUtil tokenUtil, PDLErrorResponseHandler errorHandler) {
         this.userClient = userClient;
-        this.systemClient = systemClient;
+        //this.systemClient = systemClient;
         this.cfg = cfg;
         this.tokenUtil = tokenUtil;
         this.errorHandler = errorHandler;

@@ -82,7 +82,7 @@ public class PdlClientConfig {
       return new OAuth2ClientRequestInterceptor( properties,service, matcher) ;
     }
 
-    @Bean
+    //@Bean
     @Qualifier(STS)
     public WebClient webClientSTS(Builder builder, STSConfig cfg) {
         return builder
@@ -104,7 +104,7 @@ public class PdlClientConfig {
     }
 
     @Qualifier(PDL_SYSTEM)
-    @Bean
+   // @Bean
     public WebClient webClientSystemPDL(Builder builder, PDLConfig cfg, SystemTokenTjeneste sts) {
         return builder
                 .baseUrl(cfg.getBaseUri().toString())
