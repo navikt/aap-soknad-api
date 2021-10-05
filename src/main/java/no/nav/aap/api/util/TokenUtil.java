@@ -63,7 +63,7 @@ public class TokenUtil {
     }
 
     public JwtToken getJWTToken() {
-        return getToken(ISSUER);
+        return getJWTToken(ISSUER);
     }
 
     private JwtToken getJWTToken(String issuer) {
