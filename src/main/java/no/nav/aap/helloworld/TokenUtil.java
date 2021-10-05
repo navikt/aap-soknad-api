@@ -25,7 +25,7 @@ public class TokenUtil {
 
     public String getSubject(String issuer) {
         return Optional.ofNullable(claimSet(issuer))
-                .map(JwtTokenClaims::getStringClaim("pid"))
+                .map(c -> c.getStringClaim("pid"))
                 .orElse(null);
     }
 
