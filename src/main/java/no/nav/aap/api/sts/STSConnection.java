@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 
-@Component
+//@Component
 public class STSConnection extends AbstractWebClientConnection {
 
     private static final Logger LOG = LoggerFactory.getLogger(STSConnection.class);
