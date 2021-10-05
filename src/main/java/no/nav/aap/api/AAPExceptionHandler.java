@@ -29,6 +29,7 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<Object> handleUncaught(Exception e, HttpServletRequest req)  {
+        LOG.warn("Fikk exception " + e.getClass().getName());
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(newInstance()
                 .scheme(wonderwall.getScheme())

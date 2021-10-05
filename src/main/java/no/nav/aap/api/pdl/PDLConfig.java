@@ -1,6 +1,6 @@
 package no.nav.aap.api.pdl;
 
-import no.nav.aap.api.AbstractConfig;
+import no.nav.aap.api.config.AbstractRestConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import java.net.URI;
 
 @ConfigurationProperties(prefix = "pdl")
-public class PDLConfig extends AbstractConfig {
+public class PDLConfig extends AbstractRestConfig {
     private static final String DEFAULT_BASE_URI = "http://pdl-api.pdl/graphql";
     private static final String DEFAULT_PING_PATH = "/";
 
