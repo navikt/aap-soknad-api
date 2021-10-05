@@ -1,6 +1,7 @@
 package no.nav.aap.api.pdl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient;
+import no.nav.aap.api.sts.STSConfig;
 import no.nav.aap.api.sts.SystemTokenTjeneste;
 import no.nav.aap.api.util.MDCUtil;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
@@ -79,6 +80,16 @@ public class PdlClientConfig {
     @Bean
     public OAuth2ClientRequestInterceptor oauthInterceptor(ClientConfigurationProperties properties,OAuth2AccessTokenService service, ClientConfigurationPropertiesMatcher matcher) {
       return new OAuth2ClientRequestInterceptor( properties,service, matcher) ;
+    }
+
+    @Bean
+    @Qualifier(STS)
+    public WebClient webClientSTS(Builder builder, STSConfig cfg) {
+        return builder
+                .baseUrl(cfg.getBaseUri().toString())
+                .filter(correlatingFilterFunction())
+                .defaultHeaders(h -> h.setBasicAuth(cfg.getUsername(), cfg.getPassword()))
+                .build();
     }
 
     @Qualifier(PDL_USER)
