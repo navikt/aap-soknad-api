@@ -15,6 +15,8 @@ import static no.nav.aap.api.config.AbstractRestConfig.ISSUER;
 @Component
 public class TokenUtil {
 
+    public static final String BEARER = "Bearer ";
+
     private final TokenValidationContextHolder ctxHolder;
 
     public TokenUtil(TokenValidationContextHolder ctxHolder) {

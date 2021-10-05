@@ -1,4 +1,4 @@
-package no.nav.aap.api;
+package no.nav.aap.api.pdl;
 
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException;
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException;
@@ -9,7 +9,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,18 +20,18 @@ import static org.springframework.web.util.UriComponentsBuilder.newInstance;
 
 
 @ControllerAdvice
-public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(AAPExceptionHandler.class);
+public class PDLControllerAdvice extends ResponseEntityExceptionHandler {
+    private static final Logger LOG = LoggerFactory.getLogger(PDLControllerAdvice.class);
 
     private final URI  wonderwall;
 
-    public AAPExceptionHandler(@Value("${wonderwall.uri}") URI wonderwall ) {
+    public PDLControllerAdvice(@Value("${wonderwall.uri}") URI wonderwall ) {
         this.wonderwall = wonderwall;
     }
 
     @ExceptionHandler({ JwtTokenUnauthorizedException.class, JwtTokenMissingException.class})
     public ResponseEntity<Object> handleMissingOrExpiredToken(Exception e, HttpServletRequest req)  {
-        HttpHeaders headers = new HttpHeaders();
+        var headers = new HttpHeaders();
         headers.setLocation(newInstance()
                 .scheme(wonderwall.getScheme())
                 .host(wonderwall.getHost())
