@@ -16,13 +16,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.net.URI;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.SEE_OTHER;
 import static org.springframework.web.util.UriComponentsBuilder.newInstance;
 
 
 @ControllerAdvice
 public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(ExceptionHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AAPExceptionHandler.class);
 
     private final URI  wonderwall;
 

@@ -5,7 +5,7 @@ import no.nav.security.token.support.core.api.Unprotected;
 import no.nav.security.token.support.spring.ProtectedRestController;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import static no.nav.aap.api.config.Configs.IDPORTEN;
+import static no.nav.aap.api.pdl.PdlClientConfig.IDPORTEN;
 
 @ProtectedRestController(value = "/api", issuer = IDPORTEN)
 public class APIController {

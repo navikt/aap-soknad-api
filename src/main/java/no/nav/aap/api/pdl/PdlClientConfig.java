@@ -1,4 +1,4 @@
-package no.nav.aap.api.config;
+package no.nav.aap.api.pdl;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher;
@@ -8,15 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.net.URI;
-import java.util.regex.Pattern;
-
 @Configuration
-public class Configs {
+public class PdlClientConfig {
 
     public static final String IDPORTEN = "idporten";
 
-    private static final Logger LOG = LoggerFactory.getLogger(Configs.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PdlClientConfig.class);
 
     @Bean
     public ClientConfigurationPropertiesMatcher matcher()  {
