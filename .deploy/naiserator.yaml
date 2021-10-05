@@ -10,7 +10,7 @@ metadata:
     team: aap
 spec:
   env:
-    - name: WONDERWALL_URL
+    - name: WONDERWALL_URI
       value: {{ ingress }}
   tokenx:
     enabled: true

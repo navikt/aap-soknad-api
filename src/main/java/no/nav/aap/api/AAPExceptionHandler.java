@@ -1,5 +1,7 @@
 package no.nav.aap.api;
 
+import no.nav.security.token.support.core.exceptions.JwtTokenMissingException;
+import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,13 +26,12 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final URI  wonderwall;
 
-    public AAPExceptionHandler(@Value("${wonderwall.url:http://set.me}") URI wonderwall ) {
+    public AAPExceptionHandler(@Value("${wonderwall.uri}") URI wonderwall ) {
         this.wonderwall = wonderwall;
     }
 
-    @ExceptionHandler
-    public ResponseEntity<Object> handleUncaught(Exception e, HttpServletRequest req)  {
-        LOG.warn("Fikk exception " + e.getClass().getName());
+    @ExceptionHandler({ JwtTokenUnauthorizedException.class, JwtTokenMissingException.class})
+    public ResponseEntity<Object> handleMissingOrExpiredToken(Exception e, HttpServletRequest req)  {
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(newInstance()
                 .scheme(wonderwall.getScheme())
