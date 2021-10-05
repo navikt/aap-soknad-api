@@ -35,7 +35,7 @@ public class PdlClientConfig {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdlClientConfig.class);
     public static final String PDL_USER = "PDL";
-    public static final String PDL_SYSTEM = "PDL_SYSTEM";
+   //public static final String PDL_SYSTEM = "PDL_SYSTEM";
     public static final String STS = "STS";
     private static final String TEMA = "TEMA";
     private static final String AAP = "AAP";
@@ -82,7 +82,7 @@ public class PdlClientConfig {
       return new OAuth2ClientRequestInterceptor( properties,service, matcher) ;
     }
 
-    //@Bean
+    //  @Bean
     @Qualifier(STS)
     public WebClient webClientSTS(Builder builder, STSConfig cfg) {
         return builder
@@ -103,7 +103,7 @@ public class PdlClientConfig {
                 .build();
     }
 
-    @Qualifier(PDL_SYSTEM)
+    //@Qualifier(PDL_SYSTEM)
    // @Bean
     public WebClient webClientSystemPDL(Builder builder, PDLConfig cfg, SystemTokenTjeneste sts) {
         return builder
@@ -119,11 +119,12 @@ public class PdlClientConfig {
         return GraphQLWebClient.newInstance(client, mapper);
     }
 
-    @Qualifier(PDL_SYSTEM)
-    @Bean
+    //@Qualifier(PDL_SYSTEM)
+    //@Bean
+    /*
     public GraphQLWebClient pdlSystemWebClient(@Qualifier(PDL_SYSTEM) WebClient client, ObjectMapper mapper) {
         return GraphQLWebClient.newInstance(client, mapper);
-    }
+    }*/
 
     @Component
     public class TokenXFilterFunction implements ExchangeFilterFunction {
