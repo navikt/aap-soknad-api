@@ -1,6 +1,7 @@
 package no.nav.aap.api.pdl;
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException;
+import no.nav.aap.api.domain.Navn;
 import no.nav.aap.api.util.TokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +40,8 @@ public class PDLConnection {
     }
 
     public PDLNavn oppslagNavn(String id) {
-        LOG.info("Slår opp {}",id);
-        var n = oppslag(() -> userClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn.class).block(), "navn");)
-        LOG.info("Slo opp {}, fikk {}",id, n);
-         return n.navn().stream().findFirst().orElse(null);
+        return oppslag(() -> userClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn.class).block(), "navn")
+                .navn().stream().findFirst().orElse(null);
     }
     private static Map<String, Object> idFra(String id) {
         return Map.of(IDENT, id);
