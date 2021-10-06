@@ -90,7 +90,7 @@ public class PdlClientConfig {
     public TokenXConfigFinder configFinder() {
         return (cfgs, req) -> {
             LOG.info("Oppslag token X konfig for {}", req.getHost());
-            var cfg = cfgs.getRegistration().get(req.getHost().split("\\.")[0]));
+            var cfg = cfgs.getRegistration().get(req.getHost().split("\\.")[0]);
             if (cfg != null) {
                 LOG.info("Oppslag token X konfig for {} OK", req.getHost());
             } else {
