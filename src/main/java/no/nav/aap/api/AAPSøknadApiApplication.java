@@ -14,11 +14,11 @@ import static no.nav.foreldrepenger.boot.conditionals.Cluster.profiler;
 @EnableOAuth2Client(cacheEnabled = true)
 @ConfigurationPropertiesScan
 @EnableRetry
-public class AAPApiApplication {
+public class AAPSøknadApiApplication {
     public static void main(String[] args) {
-        new SpringApplicationBuilder(AAPApiApplication.class)
+        new SpringApplicationBuilder(AAPSøknadApiApplication.class)
                 .profiles(profiler())
-                .main(AAPApiApplication.class)
+                .main(AAPSøknadApiApplication.class)
                 .run(args);
 
     }

@@ -48,14 +48,6 @@ public class PdlClientConfig {
                 .orElse(consumer);
     }
 
-    private static ExchangeFilterFunction pdlSystemUserExchangeFilterFunction(SystemTokenTjeneste sts) {
-        return (req, next) -> next.exchange(ClientRequest.from(req)
-                .header(AUTHORIZATION, sts.bearerToken())
-                .header(TEMA, AAP)
-                .header(NAV_CONSUMER_TOKEN, sts.bearerToken())
-                .build());
-    }
-
     private ExchangeFilterFunction correlatingFilterFunction() {
         return (req, next) -> next.exchange(ClientRequest.from(req)
                 .header(NAV_CONSUMER_ID, consumerId())
@@ -81,16 +73,6 @@ public class PdlClientConfig {
       return new OAuth2ClientRequestInterceptor( properties,service, matcher) ;
     }
 
-    //  @Bean
-    @Qualifier(STS)
-    public WebClient webClientSTS(Builder builder, STSConfig cfg) {
-        return builder
-                .baseUrl(cfg.getBaseUri().toString())
-                .filter(correlatingFilterFunction())
-                .defaultHeaders(h -> h.setBasicAuth(cfg.getUsername(), cfg.getPassword()))
-                .build();
-    }
-
     @Qualifier(PDL_USER)
     @Bean
     public WebClient webClientPDL(Builder builder, PDLConfig cfg, TokenXFilterFunction tokenXFilterFunction) {
@@ -102,28 +84,11 @@ public class PdlClientConfig {
                 .build();
     }
 
-    //@Qualifier(PDL_SYSTEM)
-   // @Bean
-    public WebClient webClientSystemPDL(Builder builder, PDLConfig cfg, SystemTokenTjeneste sts) {
-        return builder
-                .baseUrl(cfg.getBaseUri().toString())
-                .filter(correlatingFilterFunction())
-                .filter(pdlSystemUserExchangeFilterFunction(sts))
-                .build();
-    }
-
     @Qualifier(PDL_USER)
     @Bean
     public GraphQLWebClient pdlWebClient(@Qualifier(PDL_USER) WebClient client, ObjectMapper mapper) {
         return GraphQLWebClient.newInstance(client, mapper);
     }
-
-    //@Qualifier(PDL_SYSTEM)
-    //@Bean
-    /*
-    public GraphQLWebClient pdlSystemWebClient(@Qualifier(PDL_SYSTEM) WebClient client, ObjectMapper mapper) {
-        return GraphQLWebClient.newInstance(client, mapper);
-    }*/
 
     @Component
     public class TokenXFilterFunction implements ExchangeFilterFunction {

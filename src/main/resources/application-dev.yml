@@ -34,3 +34,5 @@ no.nav:
           discovery-url:  ${idporten.well.known.url}
   mvc:
     log-request-details : true
+  pdl:
+    base-uri: https://pdl-api.dev-fss-pub.nais.io/graphql
