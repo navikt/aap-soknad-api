@@ -32,7 +32,7 @@ no.nav:
              optional_claims: aud,nbf
           accepted_audience: ${idporten.client.id}
           discovery-url:  ${idporten.well.known.url}
-  mvc:
-    log-request-details : true
-  pdl:
-    base-uri: https://pdl-api.dev-fss-pub.nais.io/graphql
+mvc:
+  log-request-details : true
+pdl:
+  base-uri: https://pdl-api.dev-fss-pub.nais.io/graphql
