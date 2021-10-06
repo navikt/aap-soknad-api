@@ -31,7 +31,6 @@ import static no.nav.aap.api.util.TokenUtil.BEARER;
 @Configuration
 public class PdlClientConfig {
 
-    static final String NAVN_QUERY = "query-navn.graphql";
 
     private static final Logger LOG = LoggerFactory.getLogger(PdlClientConfig.class);
     public static final String PDL_USER = "PDL";
