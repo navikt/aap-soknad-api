@@ -25,7 +25,9 @@ import org.springframework.web.reactive.function.client.WebClient.Builder;
 import java.net.URI;
 import java.util.Optional;
 
-import static no.nav.aap.api.util.MDCUtil.*;
+import static no.nav.aap.api.util.MDCUtil.NAV_CALL_ID;
+import static no.nav.aap.api.util.MDCUtil.NAV_CALL_ID1;
+import static no.nav.aap.api.util.MDCUtil.NAV_CONSUMER_ID;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static no.nav.aap.api.util.TokenUtil.BEARER;
 @Configuration
@@ -34,13 +36,12 @@ public class PdlClientConfig {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdlClientConfig.class);
     public static final String PDL_USER = "PDL";
-   //public static final String PDL_SYSTEM = "PDL_SYSTEM";
     public static final String STS = "STS";
     private static final String TEMA = "TEMA";
     private static final String AAP = "AAP";
     private static final String NAV_CONSUMER_TOKEN = "Nav-Consumer-Token";
 
-    @Value("${spring.application.name:aap-api}")
+    @Value("${spring.application.name:aap-soknad-api}")
     private String consumer;
 
     private String consumerId() {
@@ -68,11 +69,6 @@ public class PdlClientConfig {
         };
    }
 
-    @Bean
-    public OAuth2ClientRequestInterceptor oauthInterceptor(ClientConfigurationProperties properties,OAuth2AccessTokenService service, ClientConfigurationPropertiesMatcher matcher) {
-      return new OAuth2ClientRequestInterceptor( properties,service, matcher) ;
-    }
-
     @Qualifier(PDL_USER)
     @Bean
     public WebClient webClientPDL(Builder builder, PDLConfig cfg, TokenXFilterFunction tokenXFilterFunction) {
@@ -90,16 +86,30 @@ public class PdlClientConfig {
         return GraphQLWebClient.newInstance(client, mapper);
     }
 
+    @Bean
+    public TokenXConfigFinder configFinder() {
+        return (cfgs, req) -> {
+            LOG.info("Oppslag token X konfig for {}", req.getHost());
+            var cfg = cfgs.getRegistration().get(req.getHost().split("\\.")[0]));
+            if (cfg != null) {
+                LOG.info("Oppslag token X konfig for {} OK", req.getHost());
+            } else {
+                LOG.info("Oppslag token X konfig for {} fant ingenting", req.getHost());
+            }
+            return cfg;
+        };
+    }
+
     @Component
     public class TokenXFilterFunction implements ExchangeFilterFunction {
 
         private static final Logger LOG = LoggerFactory.getLogger(TokenXFilterFunction.class);
 
         private final OAuth2AccessTokenService service;
-        private final ClientConfigurationPropertiesMatcher matcher;
+        private final TokenXConfigFinder matcher;
         private final ClientConfigurationProperties configs;
 
-        TokenXFilterFunction(ClientConfigurationProperties configs, OAuth2AccessTokenService service, ClientConfigurationPropertiesMatcher matcher) {
+        TokenXFilterFunction(ClientConfigurationProperties configs, OAuth2AccessTokenService service, TokenXConfigFinder matcher) {
             this.service = service;
             this.matcher = matcher;
             this.configs = configs;
@@ -108,32 +118,16 @@ public class PdlClientConfig {
         @Override
         public Mono<ClientResponse> filter(ClientRequest req, ExchangeFunction next) {
             var url = req.url();
-            LOG.trace("Sjekker token exchange for {}", url);
-            var vanilla = new HttpRequest() {
-                @Override
-                public HttpHeaders getHeaders() {
-                    return new HttpHeaders();
-                }
-
-                @Override
-                public URI getURI() {
-                    return req.url();
-                }
-                @Override
-                public String getMethodValue() {
-                    return HttpMethod.POST.name();
-                }
-            };
-            var config = matcher.findProperties(configs, vanilla);
-            if (config.isPresent()) {
-                LOG.trace("Gjør token exchange for {} med konfig {}", url, config.get());
-                var token = service.getAccessToken(config.get()).getAccessToken();
+            LOG.info("Sjekker token exchange for {}", url);
+            var config = matcher.findProperties(configs, url);
+            if (config != null) {
+                LOG.trace("Gjør token exchange for {} med konfig {}", url, config);
+                var token = service.getAccessToken(config).getAccessToken();
                 LOG.info("Token exchange for {} OK", url);
-                return next
-                        .exchange(ClientRequest.from(req).header(AUTHORIZATION, BEARER + token)
+                return next.exchange(ClientRequest.from(req).header(AUTHORIZATION, BEARER + token)
                         .build());
             }
-            LOG.trace("Ingen token exchange for {}", url);
+            LOG.info("Ingen token exchange for {}", url);
             return next.exchange(ClientRequest.from(req).build());
         }
 
