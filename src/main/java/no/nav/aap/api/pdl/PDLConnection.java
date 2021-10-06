@@ -40,7 +40,7 @@ public class PDLConnection {
 
     public PDLNavn oppslagNavn(String id) {
         LOG.info("Slår opp {}",id);
-        var n = oppslag(() -> userClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn.class).block(), "navn"))
+        var n = oppslag(() -> userClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn.class).block(), "navn");)
         LOG.info("Slo opp {}, fikk {}",id, n);
          return n.navn().stream().findFirst().orElse(null);
     }
