@@ -33,7 +33,7 @@ public class SpringFoxConfig {
                 "API for å ta i mot søknader",
                 "1.0",
                 "Terms of service",
-                new Contact("Sallo Szrajbman", "www.baeldung.com", "salloszraj@gmail.com"),
+                new Contact("Jan-Olav Eide", "www.nav.no", "jan-olav.eide@nav.no"),
                 "MIT",
                 "https://github.com/navikt/aap-soeknad-api/blob/main/LICENSE.md",
                 List.of());
