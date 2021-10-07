@@ -17,7 +17,7 @@ public final class StreamUtil {
 
     public static <T> Stream<T> safeStream(List<T> list) {
         return Optional.ofNullable(list)
-                .orElseGet(Collections::emptyList)
+                .orElseGet(List::of)
                 .stream();
     }
 }

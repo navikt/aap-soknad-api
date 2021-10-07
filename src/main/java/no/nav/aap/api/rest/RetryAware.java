@@ -1,4 +1,4 @@
-package no.nav.aap.api;
+package no.nav.aap.api.rest;
 
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;

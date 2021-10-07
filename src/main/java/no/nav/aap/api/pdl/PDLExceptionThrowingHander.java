@@ -18,12 +18,12 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.util.Objects;
 
 @Component
-public class PDLExceptionGeneratingResponseHander implements PDLErrorResponseHandler {
+public class PDLExceptionThrowingHander implements PDLErrorHandler {
     private static final String UAUTENTISERT = "unauthenticated";
     private static final String FORBUDT = "unauthorized";
     private static final String UGYLDIG = "bad_request";
     private static final String IKKEFUNNET = "not_found";
-    private static final Logger LOG = LoggerFactory.getLogger(PDLExceptionGeneratingResponseHander.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PDLExceptionThrowingHander.class);
 
     @Override
     public <T> T handleError(GraphQLErrorsException e) {

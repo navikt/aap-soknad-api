@@ -28,9 +28,7 @@ public final class MDCUtil {
     }
 
     public static void toMDC(String key, Object value) {
-        if (value != null) {
-            toMDC(key, value.toString());
-        }
+        Optional.ofNullable(value).ifPresent(v -> toMDC(key,v));
     }
 
     public static void toMDC(String key, String value) {

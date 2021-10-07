@@ -1,10 +1,12 @@
 package no.nav.aap.api.util;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Optional;
 
+import static java.util.Base64.getEncoder;
 import static java.util.function.Predicate.not;
 
 public final class StringUtil {
@@ -18,8 +20,6 @@ public final class StringUtil {
             throw new IllegalArgumentException(value);
         return value;
     }
-
-
 
     public static String limit(String tekst) {
         return limit(tekst, DEFAULT_LENGTH);
@@ -36,7 +36,6 @@ public final class StringUtil {
         return limit(Arrays.toString(bytes), max);
     }
 
-
     public static String mask(String value) {
         return Optional.ofNullable(value)
                 .map(String::stripLeading)
@@ -44,12 +43,8 @@ public final class StringUtil {
                 .map(v -> "*".repeat(v.length()))
                 .orElse("<null>");
     }
-
+    
     public static String encode(String string) {
-        try {
-            return Base64.getEncoder().encodeToString(string.getBytes("utf-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException(e);
-        }
+        return getEncoder().encodeToString(string.getBytes(StandardCharsets.UTF_8));
     }
 }

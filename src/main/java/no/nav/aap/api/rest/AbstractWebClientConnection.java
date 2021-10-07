@@ -1,7 +1,8 @@
-package no.nav.aap.api;
+package no.nav.aap.api.rest;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
+
 import no.nav.aap.api.config.AbstractRestConfig;
 import java.net.URI;
 
