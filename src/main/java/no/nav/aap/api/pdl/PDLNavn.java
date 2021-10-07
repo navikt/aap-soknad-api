@@ -5,5 +5,5 @@ import java.util.Set;
 
 record PDLWrappedNavn(Set<PDLNavn> navn) {
 }
- record PDLNavn(String fornavn, String mellomnavn, String etternavn) {
+record PDLNavn(String fornavn, String mellomnavn, String etternavn) {
 }

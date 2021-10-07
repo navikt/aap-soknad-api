@@ -19,6 +19,13 @@ public final class StringUtil {
         return value;
     }
 
+    public static String partialMask(String value) {
+        return Optional.ofNullable(value)
+                .map(String::stripLeading)
+                .map(v -> v.substring(0,v.length()/2) + "*".repeat(v.length()/2)) //TODO robustify
+                .orElse("*");
+    }
+
     public static String limit(String tekst) {
         return limit(tekst, DEFAULT_LENGTH);
     }

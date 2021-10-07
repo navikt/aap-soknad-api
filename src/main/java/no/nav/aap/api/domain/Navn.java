@@ -1,6 +1,5 @@
 package no.nav.aap.api.domain;
 
-public class Navn {
-    public Navn(String fornavn, String mellomnavn, String etternavn, Object o) {
-    }
+public record Navn(String fornavn, String mellomnavn, String etternavn) {
 }
+

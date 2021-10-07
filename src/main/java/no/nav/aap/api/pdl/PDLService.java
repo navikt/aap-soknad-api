@@ -1,5 +1,6 @@
 package no.nav.aap.api.pdl;
 
+import no.nav.aap.api.domain.Navn;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,9 +11,8 @@ public class PDLService {
     public PDLService(PDLConnection pdl) {
         this.pdl = pdl;
     }
-
-    public String hentNavn() {
-        var n = pdl.hentNavn();
-        return n.fornavn() + "," + n.mellomnavn() + "," + n.etternavn();
+    public Navn navn() {
+        var n =  pdl.hentNavn();
+        return new Navn(n.fornavn(), n.mellomnavn(), n.etternavn());
     }
 }

@@ -1,5 +1,6 @@
 package no.nav.aap.api.util;
 
+import no.nav.aap.api.domain.Fødselsnummer;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.jwt.JwtToken;
@@ -74,5 +75,10 @@ public class TokenUtil {
     @Override
     public String toString() {
         return getClass().getSimpleName() + " [ctxHolder=" + ctxHolder + "]";
+    }
+
+    public Fødselsnummer getFnr() {
+        return Optional.ofNullable(getSubject())
+                .map(Fødselsnummer::new).orElseThrow();
     }
 }
