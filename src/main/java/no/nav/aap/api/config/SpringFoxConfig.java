@@ -31,10 +31,10 @@ public class SpringFoxConfig {
     private ApiInfo apiInfo() {
         return new ApiInfo(
                 "AAP Søknad api",
-                "API for å ta i mot søknader",
+                "API for mottak av AAP-søknader",
                 "1.0",
                 null,
-                new Contact("Jan-Olav Eide", "www.nav.no", "jan-olav.eide@nav.no"),
+                new Contact("AAP-devs", "http://www.nav.no", "aap-dev@nav.no"),
                 "MIT",
                 "https://github.com/navikt/aap-soeknad-api/blob/main/LICENSE.md",
                 List.of());
