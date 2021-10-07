@@ -1,12 +1,15 @@
 package no.nav.aap.api.config;
 
+import io.swagger.models.Contact;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spring.web.plugins.Docket;
 
+import java.util.List;
 import java.util.Set;
 
 import static springfox.documentation.builders.RequestHandlerSelectors.basePackage;
@@ -23,5 +26,16 @@ public class SpringFoxConfig {
                 .apis(basePackage("no.nav.aap"))
                 .paths(PathSelectors.any())
                 .build();
+    }
+    private ApiInfo apiInfo() {
+        return new ApiInfo(
+                "AAP Søknad api",
+                "API for å ta i mot søknader",
+                "1.0",
+                "Terms of service",
+                new Contact("Sallo Szrajbman", "www.baeldung.com", "salloszraj@gmail.com"),
+                "MIT",
+                "https://github.com/navikt/aap-soeknad-api/blob/main/LICENSE.md",
+                List.of());
     }
 }
