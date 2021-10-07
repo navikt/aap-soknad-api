@@ -2,21 +2,22 @@ package no.nav.aap.api.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.Set;
 
-import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
+import static springfox.documentation.spi.DocumentationType.OAS_30;
 
 @Configuration
-@EnableSwagger2
+@Import(BeanValidatorPluginsConfiguration.class)
 public class SpringFoxConfig {
     @Bean
     public Docket api() {
-        return new Docket(SWAGGER_2)
+        return new Docket(OAS_30)
                 .protocols(Set.of("http", "https"))
                 .select()
                 .apis(RequestHandlerSelectors.any())
