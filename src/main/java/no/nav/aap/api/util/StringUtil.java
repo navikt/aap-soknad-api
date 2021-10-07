@@ -1,11 +1,9 @@
 package no.nav.aap.api.util;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Optional;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Base64.getEncoder;
 import static java.util.function.Predicate.not;
 
@@ -43,8 +41,8 @@ public final class StringUtil {
                 .map(v -> "*".repeat(v.length()))
                 .orElse("<null>");
     }
-    
+
     public static String encode(String string) {
-        return getEncoder().encodeToString(string.getBytes(StandardCharsets.UTF_8));
+        return getEncoder().encodeToString(string.getBytes(UTF_8));
     }
 }

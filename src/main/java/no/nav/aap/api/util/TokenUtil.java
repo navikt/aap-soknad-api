@@ -1,6 +1,5 @@
 package no.nav.aap.api.util;
 
-import no.nav.aap.api.config.AbstractRestConfig;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.jwt.JwtToken;
