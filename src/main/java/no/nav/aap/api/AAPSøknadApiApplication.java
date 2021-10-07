@@ -10,7 +10,7 @@ import org.springframework.retry.annotation.EnableRetry;
 import static no.nav.foreldrepenger.boot.conditionals.Cluster.profiler;
 
 @SpringBootApplication
-@EnableJwtTokenValidation
+@EnableJwtTokenValidation(ignore  = {"springfox.documentation","org.springframework" })
 @EnableOAuth2Client(cacheEnabled = true)
 @ConfigurationPropertiesScan
 @EnableRetry
