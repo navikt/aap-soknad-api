@@ -17,4 +17,3 @@ public class Fødselsnummer {
             return getClass().getSimpleName() + " [fnr=" + partialMask(fnr) + "]";
         }
     }
-}
