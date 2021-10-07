@@ -6,11 +6,11 @@ import java.net.URI;
 
 public class AbstractRestConfig {
 
-    public static final String ISSUER = IDPORTEN;
     private static final String IDPORTEN = "idporten";
     private final URI baseUri;
     private final String pingPath;
     private final boolean enabled;
+    public static final String ISSUER = IDPORTEN;
 
     protected AbstractRestConfig(URI baseUri, String pingPath, boolean enabled) {
         this.baseUri = baseUri;
