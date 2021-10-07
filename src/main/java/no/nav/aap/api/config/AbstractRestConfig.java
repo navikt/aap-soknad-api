@@ -6,8 +6,8 @@ import java.net.URI;
 
 public class AbstractRestConfig {
 
-    private static final String IDPORTEN = "idporten";
     public static final String ISSUER = IDPORTEN;
+    private static final String IDPORTEN = "idporten";
     private final URI baseUri;
     private final String pingPath;
     private final boolean enabled;
@@ -20,10 +20,6 @@ public class AbstractRestConfig {
 
     public URI pingEndpoint() {
         return URIUtil.uri(baseUri, pingPath);
-    }
-
-    public String getPingPath() {
-        return pingPath;
     }
 
     public boolean isEnabled() {
