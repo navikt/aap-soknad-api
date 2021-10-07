@@ -1,8 +1,5 @@
 package no.nav.aap.api.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,8 +10,6 @@ import java.util.Optional;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
 public final class TimeUtil {
-    private static final Logger LOG = LoggerFactory.getLogger(TimeUtil.class);
-
     private TimeUtil() {
     }
 

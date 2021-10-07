@@ -72,13 +72,7 @@ public class PdlClientConfig {
     @Bean
     public TokenXConfigMatcher configMatcher() {
         return (cfgs, req) -> {
-            String host = req.getHost();
-            LOG.trace("Oppslag token X konfig for {}", host);
-            var cfg = Optional.ofNullable(cfgs.getRegistration().get(host.split("\\.")[0]));
-            cfg.ifPresentOrElse(
-                    c-> LOG.trace("Oppslag token X konfig for {} OK", host),
-                    () -> LOG.trace("Oppslag token X konfig for {} fant ingenting", host));
-           return cfg;
+            return Optional.ofNullable(cfgs.getRegistration().get(req.getHost().split("\\.")[0]));
         };
     }
 }
