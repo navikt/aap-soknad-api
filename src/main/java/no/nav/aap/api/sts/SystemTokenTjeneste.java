@@ -1,6 +1,7 @@
 package no.nav.aap.api.sts;
 
-import no.nav.aap.api.Pingable;
+
+import no.nav.aap.api.rest.Pingable;
 
 import static no.nav.aap.api.util.TokenUtil.BEARER;
 
