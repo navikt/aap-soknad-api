@@ -1,4 +1,4 @@
-package no.nav.aap.api.pdl;
+package no.nav.aap.api.error;
 
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException;
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException;
@@ -20,12 +20,12 @@ import static org.springframework.web.util.UriComponentsBuilder.newInstance;
 
 
 @ControllerAdvice
-public class PDLControllerAdvice extends ResponseEntityExceptionHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(PDLControllerAdvice.class);
+public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
+    private static final Logger LOG = LoggerFactory.getLogger(AAPExceptionHandler.class);
 
     private final URI  wonderwall;
 
-    public PDLControllerAdvice(@Value("${wonderwall.uri}") URI wonderwall ) {
+    public AAPExceptionHandler(@Value("${wonderwall.uri}") URI wonderwall ) {
         this.wonderwall = wonderwall;
     }
 
