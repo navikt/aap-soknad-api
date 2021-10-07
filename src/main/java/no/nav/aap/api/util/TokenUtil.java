@@ -1,5 +1,6 @@
 package no.nav.aap.api.util;
 
+import com.nimbusds.oauth2.sdk.token.AccessTokenType;
 import no.nav.aap.api.domain.Fødselsnummer;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
@@ -15,7 +16,7 @@ import static no.nav.aap.api.config.AbstractRestConfig.ISSUER;
 @Component
 public class TokenUtil {
 
-    public static final String BEARER = "Bearer ";
+    private static final String BEARER = AccessTokenType.BEARER.getValue() + " ";
 
     private final TokenValidationContextHolder ctxHolder;
 
@@ -35,6 +36,10 @@ public class TokenUtil {
         return Optional.ofNullable(claimSet(issuer))
                 .map(c -> c.getStringClaim(claim))
                 .orElse(null);
+    }
+
+    public static String bearerToken(String token) {
+        return BEARER + token;
     }
 
     private JwtTokenClaims claimSet() {
