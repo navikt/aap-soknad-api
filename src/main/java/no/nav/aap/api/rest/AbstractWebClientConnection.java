@@ -1,12 +1,12 @@
 package no.nav.aap.api.rest;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.http.MediaType.TEXT_PLAIN;
-
 import no.nav.aap.api.config.AbstractRestConfig;
+import org.springframework.web.reactive.function.client.WebClient;
+
 import java.net.URI;
 
-import org.springframework.web.reactive.function.client.WebClient;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.TEXT_PLAIN;
 
 
 public abstract class AbstractWebClientConnection implements RetryAware, PingEndpointAware {
@@ -28,6 +28,11 @@ public abstract class AbstractWebClientConnection implements RetryAware, PingEnd
                 .toEntity(String.class)
                 .block()
                 .getBody();
+    }
+
+    @Override
+    public String name() {
+        return cfg.name();
     }
 
     @Override
