@@ -25,24 +25,26 @@ public class PDLConnection extends AbstractWebClientConnection {
     private static final String IDENT = "ident";
     private static final String NAVN_QUERY = "query-navn.graphql";
 
-    private final GraphQLWebClient userClient;
+    private final GraphQLWebClient graphQLWebClient;
     private final TokenUtil tokenUtil;
     private final PDLErrorHandler errorHandler;
 
-    PDLConnection(@Qualifier(PDL_USER) GraphQLWebClient userClient, @Qualifier(PDL_USER) WebClient webClient, PDLConfig cfg, TokenUtil tokenUtil, PDLErrorHandler errorHandler) {
+    PDLConnection(@Qualifier(PDL_USER) GraphQLWebClient graphQLWebClient, @Qualifier(PDL_USER) WebClient webClient, PDLConfig cfg, TokenUtil tokenUtil, PDLErrorHandler errorHandler) {
         super(webClient,cfg);
-        this.userClient = userClient;
+        this.graphQLWebClient = graphQLWebClient;
         this.tokenUtil = tokenUtil;
         this.errorHandler = errorHandler;
     }
 
-    public PDLNavn hentNavn() {
-        return oppslagNavn(tokenUtil.getSubject());
+    public PDLNavn navn() {
+        return navn(tokenUtil.getSubject());
     }
 
-    public PDLNavn oppslagNavn(String id) {
-        return oppslag(() -> userClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn.class).block(), "navn")
-                .navn().stream().findFirst().orElse(null);
+    public PDLNavn navn(String id) {
+        return oppslag(() -> graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn.class).block(), "navn")
+                .navn().stream()
+                .findFirst()
+                .orElse(null);
     }
 
     private static Map<String, Object> idFra(String id) {

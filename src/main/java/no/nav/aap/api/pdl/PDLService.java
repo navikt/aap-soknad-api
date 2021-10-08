@@ -12,7 +12,7 @@ public class PDLService {
         this.pdl = pdl;
     }
     public Navn navn() {
-        var n =  pdl.hentNavn();
+        var n =  pdl.navn();
         return new Navn(n.fornavn(), n.mellomnavn(), n.etternavn());
     }
 }
