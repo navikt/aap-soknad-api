@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.rest;
 
-import no.nav.aap.api.søknad.config.AbstractRestConfig;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.net.URI;
@@ -9,11 +8,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
 
 
-public abstract class AbstractWebClientConnection implements RetryAware, PingEndpointAware {
+public abstract class AbstractWebClientAdapter implements RetryAware, PingEndpointAware {
     protected final WebClient webClient;
     protected final AbstractRestConfig cfg;
 
-    public AbstractWebClientConnection(WebClient webClient, AbstractRestConfig cfg) {
+    public AbstractWebClientAdapter(WebClient webClient, AbstractRestConfig cfg) {
         this.webClient = webClient;
         this.cfg = cfg;
     }

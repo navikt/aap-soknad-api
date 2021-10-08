@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
     @Component
     public class PDLHealthIndicator extends AbstractPingableHealthIndicator {
-        public PDLHealthIndicator(PDLConnection connection) {
+        public PDLHealthIndicator(PDLWebClientAdapter connection) {
             super(connection);
         }
 }

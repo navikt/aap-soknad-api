@@ -51,6 +51,6 @@ public class TokenXFilterFunction implements ExchangeFilterFunction {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [service=" + service + ", matcher=" + matcher + ", configs=" + configs + "]";
+        return getClass().getSimpleName() + " [tokenUtil=" + tokenUtil  + "service=" + service + ", matcher=" + matcher + ", configs=" + configs + "]";
     }
 }

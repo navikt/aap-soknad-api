@@ -2,7 +2,7 @@ package no.nav.aap.api.søknad.pdl;
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException;
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient;
-import no.nav.aap.api.søknad.rest.AbstractWebClientConnection;
+import no.nav.aap.api.søknad.rest.AbstractWebClientAdapter;
 import no.nav.aap.api.søknad.util.TokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +19,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
 
 @Component
-public class PDLConnection extends AbstractWebClientConnection {
-    private static final Logger LOG = LoggerFactory.getLogger(PDLConnection.class);
+public class PDLWebClientAdapter extends AbstractWebClientAdapter {
+    private static final Logger LOG = LoggerFactory.getLogger(PDLWebClientAdapter.class);
     private static final String IDENT = "ident";
     private static final String NAVN_QUERY = "query-navn.graphql";
 
@@ -28,7 +28,7 @@ public class PDLConnection extends AbstractWebClientConnection {
     private final TokenUtil tokenUtil;
     private final PDLErrorHandler errorHandler;
 
-    PDLConnection(@Qualifier(PDLClientConfig.PDL_USER) GraphQLWebClient graphQLWebClient, @Qualifier(PDLClientConfig.PDL_USER) WebClient webClient, PDLConfig cfg, TokenUtil tokenUtil, PDLErrorHandler errorHandler) {
+    PDLWebClientAdapter(@Qualifier(PDLClientConfig.PDL_USER) GraphQLWebClient graphQLWebClient, @Qualifier(PDLClientConfig.PDL_USER) WebClient webClient, PDLConfig cfg, TokenUtil tokenUtil, PDLErrorHandler errorHandler) {
         super(webClient,cfg);
         this.graphQLWebClient = graphQLWebClient;
         this.tokenUtil = tokenUtil;
@@ -39,7 +39,7 @@ public class PDLConnection extends AbstractWebClientConnection {
         return navn(tokenUtil.getSubject());
     }
 
-    public PDLNavn navn(String id) {
+    private PDLNavn navn(String id) {
         return oppslag(() -> graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn.class).block(), "navn")
                 .navn().stream()
                 .findFirst()
@@ -76,6 +76,16 @@ public class PDLConnection extends AbstractWebClientConnection {
                 .toBodilessEntity()
                 .block();
          return "OK";
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [" +
+                "graphQLWebClient=" + graphQLWebClient +
+                ", tokenUtil=" + tokenUtil +
+                ", errorHandler=" + errorHandler +
+                ", webClient=" + webClient +
+                ", cfg=" + cfg + "]";
     }
 }
 

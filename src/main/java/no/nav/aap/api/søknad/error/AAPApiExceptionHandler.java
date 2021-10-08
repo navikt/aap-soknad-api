@@ -20,12 +20,12 @@ import static org.springframework.web.util.UriComponentsBuilder.newInstance;
 
 
 @ControllerAdvice
-public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(AAPExceptionHandler.class);
+public class AAPApiExceptionHandler extends ResponseEntityExceptionHandler {
+    private static final Logger LOG = LoggerFactory.getLogger(AAPApiExceptionHandler.class);
 
     private final URI  wonderwall;
 
-    public AAPExceptionHandler(@Value("${wonderwall.uri}") URI wonderwall ) {
+    public AAPApiExceptionHandler(@Value("${wonderwall.uri}") URI wonderwall ) {
         this.wonderwall = wonderwall;
     }
 
@@ -37,5 +37,10 @@ public class AAPExceptionHandler extends ResponseEntityExceptionHandler {
                 .host(wonderwall.getHost())
                 .path("/oauth2/login").queryParam("redirect",req.getRequestURL()).build().toUri());
         return new ResponseEntity<>(headers, SEE_OTHER);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [" + "wonderwall=" + wonderwall + "]";
     }
 }

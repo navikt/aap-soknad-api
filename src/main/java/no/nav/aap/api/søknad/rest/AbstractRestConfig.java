@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.config;
+package no.nav.aap.api.søknad.rest;
 
 import java.net.URI;
 

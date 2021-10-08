@@ -2,7 +2,7 @@ package no.nav.aap.api.søknad.util;
 
 import com.nimbusds.oauth2.sdk.token.AccessTokenType;
 import no.nav.aap.api.søknad.domain.Fødselsnummer;
-import no.nav.aap.api.søknad.config.AbstractRestConfig;
+import no.nav.aap.api.søknad.rest.AbstractRestConfig;
 import no.nav.security.token.support.core.context.TokenValidationContext;
 import no.nav.security.token.support.core.context.TokenValidationContextHolder;
 import no.nav.security.token.support.core.jwt.JwtToken;
