@@ -9,7 +9,7 @@ import java.net.URI;
 
 @ConfigurationProperties(prefix = "pdl")
 public class PDLConfig extends AbstractRestConfig {
-    private static final String DEFAULT_BASE_URI = "http://pdl-api.pdl/graphql"; // må settes så lenge pdl er on prem
+    private static final String DEFAULT_BASE_URI = "http://pdl-api.pdl/graphql"; // må settes så lenge pdl er on prem of vi i gcp
     private static final String DEFAULT_PING_PATH = "/";
 
     @ConstructorBinding

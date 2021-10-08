@@ -19,12 +19,12 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.web.client.HttpClientErrorException.create;
 
 @Component
-public class PDLExceptionThrowingErrorHander implements PDLErrorHandler {
+public class PDLExceptionThrowingErrorHandler implements PDLErrorHandler {
     private static final String UAUTENTISERT = "unauthenticated";
     private static final String FORBUDT = "unauthorized";
     private static final String UGYLDIG = "bad_request";
     private static final String IKKEFUNNET = "not_found";
-    private static final Logger LOG = LoggerFactory.getLogger(PDLExceptionThrowingErrorHander.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PDLExceptionThrowingErrorHandler.class);
 
     @Override
     public <T> T handleError(GraphQLErrorsException e) {
