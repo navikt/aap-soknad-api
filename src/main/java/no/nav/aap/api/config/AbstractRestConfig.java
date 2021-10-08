@@ -1,8 +1,8 @@
 package no.nav.aap.api.config;
 
-import no.nav.aap.api.util.URIUtil;
-
 import java.net.URI;
+
+import static no.nav.aap.api.util.URIUtil.uri;
 
 public class AbstractRestConfig {
 
@@ -19,7 +19,7 @@ public class AbstractRestConfig {
     }
 
     public URI pingEndpoint() {
-        return URIUtil.uri(baseUri, pingPath);
+        return uri(baseUri, pingPath);
     }
 
     public boolean isEnabled() {
