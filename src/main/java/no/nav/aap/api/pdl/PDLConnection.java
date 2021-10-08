@@ -63,7 +63,7 @@ public class PDLConnection extends AbstractWebClientConnection {
     }
     @Override
     public String ping() {
-        LOG.trace("Pinger {}", pingEndpoint():
+        LOG.trace("Pinger {}", pingEndpoint());
         return webClient
                 .options()
                 .uri(pingEndpoint())
