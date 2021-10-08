@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad;
+package no.nav.aap.api;
 
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client;
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation;
