@@ -7,7 +7,9 @@ import no.nav.aap.api.util.TokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Map;
@@ -63,15 +65,16 @@ public class PDLConnection extends AbstractWebClientConnection {
     }
     @Override
     public String ping() {
-        LOG.trace("Pinger {}", pingEndpoint());
-        return webClient
+        LOG.trace("Pinger {}", getBaseUri());
+         webClient
                 .options()
-                .uri(pingEndpoint())
+                .uri(getBaseUri())
                 .accept(APPLICATION_JSON, TEXT_PLAIN)
                 .retrieve()
-                .toEntity(String.class)
-                .block()
-                .getBody();
+                .onStatus(HttpStatus::isError, ClientResponse::createException)
+                .toBodilessEntity()
+                .block();
+         return "OK";
     }
 }
 

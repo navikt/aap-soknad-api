@@ -35,6 +35,10 @@ public abstract class AbstractWebClientConnection implements RetryAware, PingEnd
         return cfg.name();
     }
 
+    protected URI getBaseUri() {
+        return cfg.getBaseUri();
+    }
+
     @Override
     public URI pingEndpoint() {
         return cfg.pingEndpoint();
