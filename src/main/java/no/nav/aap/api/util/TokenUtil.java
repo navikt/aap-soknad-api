@@ -57,6 +57,10 @@ public class TokenUtil {
                 .orElse(null);
     }
 
+    public boolean erAutentisert() {
+        return getToken() != null;
+    }
+
     public String getToken() {
         return getToken(ISSUER);
     }
