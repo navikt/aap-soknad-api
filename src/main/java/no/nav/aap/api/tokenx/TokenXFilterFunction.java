@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 import static no.nav.aap.api.util.TokenUtil.bearerToken;
 import static no.nav.foreldrepenger.boot.conditionals.EnvUtil.CONFIDENTIAL;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.web.reactive.function.client.ClientRequest.*;
 
 @Component
 public class TokenXFilterFunction implements ExchangeFilterFunction {
@@ -42,11 +43,11 @@ public class TokenXFilterFunction implements ExchangeFilterFunction {
             LOG.trace(CONFIDENTIAL,"Gjør token exchange for {} med konfig {}", url, cfg);
             var token = service.getAccessToken(cfg.get()).getAccessToken();
             LOG.trace("Token exchange for {} OK", url);
-            return next.exchange(ClientRequest.from(req).header(AUTHORIZATION, bearerToken(token))
+            return next.exchange(from(req).header(AUTHORIZATION, bearerToken(token))
                     .build());
         }
         LOG.trace("Ingen token exchange for {}", url);
-        return next.exchange(ClientRequest.from(req).build());
+        return next.exchange(from(req).build());
     }
 
     @Override

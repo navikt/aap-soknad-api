@@ -17,7 +17,7 @@ import static springfox.documentation.spi.DocumentationType.OAS_30;
 
 @Configuration
 @Import(BeanValidatorPluginsConfiguration.class)
-public class SpringFoxConfig {
+public class SwaggerConfig {
     @Bean
     public Docket api() {
         return new Docket(OAS_30)

@@ -58,7 +58,11 @@ public class TokenUtil {
     }
 
     public boolean erAutentisert() {
-        return getToken() != null;
+        return erAutentisert(ISSUER);
+    }
+
+    public boolean erAutentisert(String issuer) {
+        return getToken(issuer) != null;
     }
 
     public String getToken() {

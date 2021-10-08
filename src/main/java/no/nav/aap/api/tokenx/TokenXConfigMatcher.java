@@ -6,7 +6,6 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import java.net.URI;
 import java.util.Optional;
 
-public interface TokenXConfigMatcher {
+ interface TokenXConfigMatcher {
     Optional<ClientProperties> findProperties(ClientConfigurationProperties configs, URI uri);
-
 }

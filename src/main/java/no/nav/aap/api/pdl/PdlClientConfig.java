@@ -1,7 +1,6 @@
 package no.nav.aap.api.pdl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient;
-import no.nav.aap.api.tokenx.TokenXConfigMatcher;
 import no.nav.aap.api.tokenx.TokenXFilterFunction;
 import no.nav.aap.api.util.MDCUtil;
 import org.slf4j.Logger;
@@ -10,15 +9,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.function.client.*;
+import org.springframework.web.reactive.function.client.ClientRequest;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.Builder;
 
 import java.util.Optional;
 
-import static no.nav.aap.api.util.MDCUtil.NAV_CALL_ID;
-import static no.nav.aap.api.util.MDCUtil.NAV_CALL_ID1;
-import static no.nav.aap.api.util.MDCUtil.NAV_CONSUMER_ID;
-import static no.nav.aap.api.util.MDCUtil.callId;
+import static no.nav.aap.api.util.MDCUtil.*;
 
 @Configuration
 public class PdlClientConfig {
@@ -67,12 +65,5 @@ public class PdlClientConfig {
     @Bean
     public GraphQLWebClient pdlWebClient(@Qualifier(PDL_USER) WebClient client, ObjectMapper mapper) {
         return GraphQLWebClient.newInstance(client, mapper);
-    }
-
-    @Bean
-    public TokenXConfigMatcher configMatcher() {
-        return (cfgs, req) -> {
-            return Optional.ofNullable(cfgs.getRegistration().get(req.getHost().split("\\.")[0]));
-        };
     }
 }
