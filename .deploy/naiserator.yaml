@@ -9,6 +9,10 @@ metadata:
   labels:
     team: aap
 spec:
+  accessPolicy:
+    inbound:
+      rules:
+        - application: aap-soknad
   env:
     - name: WONDERWALL_URI
       value: {{ ingress }}
