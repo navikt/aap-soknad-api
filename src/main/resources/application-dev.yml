@@ -2,7 +2,7 @@ spring:
   main:
     banner-mode: off
   jackson:
-    default-property-inclusion: non_absent
+    default-property-inclusion: non_empty
     mapper:
       accept-case-insensitive-enums: true
       accept-case-insensitive-properties: true
