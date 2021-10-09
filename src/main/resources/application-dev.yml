@@ -2,7 +2,7 @@
 info:
   cluster-name: ${nais.cluster.name}
   image-name : ${nais.image.name}
-  java-vendor : ${java.version}
+  java-version : ${java.version}
   namespace-name: ${nais.namespace.name}
 spring:
   main:
@@ -20,16 +20,16 @@ spring:
       write-empty-json-arrays: false
       fail-on-empty-beans: false
 management :
+  health:
+    ping:
+      enabled: false
+    diskspace:
+      enabled: false
   endpoints:
     web:
       exposure:
         include:  '*'
   endpoint:
-    health:
-      ping:
-        enabled: false
-      diskspace:
-          enabled: false
       show-details : always
 no.nav:
   security:
