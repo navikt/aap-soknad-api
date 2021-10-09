@@ -1,3 +1,9 @@
+
+info:
+  cluster-name: ${nais.cluster.name}
+  image-name : ${nais.image.name}
+  java-vendor : ${java.version}
+  namespace-name: ${nais.namespace.name}
 spring:
   main:
     banner-mode: off
