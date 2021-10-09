@@ -30,7 +30,8 @@ management :
       exposure:
         include:  '*'
   endpoint:
-      show-details : always
+      health:
+        show-details : always
 no.nav:
   security:
     jwt:
