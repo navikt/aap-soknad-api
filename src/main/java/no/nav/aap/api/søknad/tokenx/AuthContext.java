@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.util;
+package no.nav.aap.api.søknad.tokenx;
 
 import com.nimbusds.oauth2.sdk.token.AccessTokenType;
 import no.nav.aap.api.søknad.domain.Fødselsnummer;
@@ -13,13 +13,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Component
-public class TokenUtil {
+public class AuthContext {
 
     private static final String BEARER = AccessTokenType.BEARER.getValue() + " ";
 
     private final TokenValidationContextHolder ctxHolder;
 
-    public TokenUtil(TokenValidationContextHolder ctxHolder) {
+    public AuthContext(TokenValidationContextHolder ctxHolder) {
         this.ctxHolder = ctxHolder;
     }
 

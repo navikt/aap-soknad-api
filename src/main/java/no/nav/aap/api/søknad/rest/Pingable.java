@@ -1,5 +1,9 @@
 package no.nav.aap.api.søknad.rest;
 
+import java.net.URI;
+
 public interface Pingable {
-        String ping();
+    void ping();
+    URI pingEndpoint();
+    String name();
 }

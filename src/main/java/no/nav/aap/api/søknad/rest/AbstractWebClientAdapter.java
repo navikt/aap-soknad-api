@@ -1,5 +1,7 @@
 package no.nav.aap.api.søknad.rest;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.net.URI;
@@ -8,7 +10,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.TEXT_PLAIN;
 
 
-public abstract class AbstractWebClientAdapter implements RetryAware, PingEndpointAware {
+public abstract class AbstractWebClientAdapter implements RetryAware, Pingable {
     protected final WebClient webClient;
     protected final AbstractRestConfig cfg;
 
@@ -18,15 +20,15 @@ public abstract class AbstractWebClientAdapter implements RetryAware, PingEndpoi
     }
 
     @Override
-    public String ping() {
-        return webClient
+    public void ping() {
+         webClient
                 .get()
                 .uri(pingEndpoint())
                 .accept(APPLICATION_JSON, TEXT_PLAIN)
                 .retrieve()
-                .toEntity(String.class)
-                .block()
-                .getBody();
+                 .onStatus(HttpStatus::isError, ClientResponse::createException)
+                 .toBodilessEntity()
+                .block();
     }
 
     @Override

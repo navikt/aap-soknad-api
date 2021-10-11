@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad.health;
 
-import no.nav.aap.api.søknad.rest.PingEndpointAware;
+import no.nav.aap.api.søknad.rest.Pingable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.health.Health;
@@ -9,9 +9,9 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 public abstract class AbstractPingableHealthIndicator implements HealthIndicator {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPingableHealthIndicator.class);
 
-    private final PingEndpointAware pingable;
+    private final Pingable pingable;
 
-    public AbstractPingableHealthIndicator(PingEndpointAware pingable) {
+    public AbstractPingableHealthIndicator(Pingable pingable) {
         this.pingable = pingable;
     }
 
@@ -19,8 +19,7 @@ public abstract class AbstractPingableHealthIndicator implements HealthIndicator
     public Health health() {
         try {
             LOG.trace("Pinger {} på {}", pingable.name(), pingable.pingEndpoint());
-            var respons = pingable.ping();
-            LOG.trace("Ping {} fikk respons {}", pingable.name(), respons);
+            pingable.ping();
             return up();
         } catch (Exception e) {
             return down(e);

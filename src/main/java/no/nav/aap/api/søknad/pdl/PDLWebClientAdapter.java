@@ -3,7 +3,7 @@ package no.nav.aap.api.søknad.pdl;
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException;
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient;
 import no.nav.aap.api.søknad.rest.AbstractWebClientAdapter;
-import no.nav.aap.api.søknad.util.TokenUtil;
+import no.nav.aap.api.søknad.tokenx.AuthContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,10 +25,10 @@ public class PDLWebClientAdapter extends AbstractWebClientAdapter {
     private static final String NAVN_QUERY = "query-navn.graphql";
 
     private final GraphQLWebClient graphQLWebClient;
-    private final TokenUtil tokenUtil;
+    private final AuthContext tokenUtil;
     private final PDLErrorHandler errorHandler;
 
-    PDLWebClientAdapter(@Qualifier(PDLClientConfig.PDL_USER) GraphQLWebClient graphQLWebClient, @Qualifier(PDLClientConfig.PDL_USER) WebClient webClient, PDLConfig cfg, TokenUtil tokenUtil, PDLErrorHandler errorHandler) {
+    PDLWebClientAdapter(@Qualifier(PDLClientConfig.PDL_USER) GraphQLWebClient graphQLWebClient, @Qualifier(PDLClientConfig.PDL_USER) WebClient webClient, PDLConfig cfg, AuthContext tokenUtil, PDLErrorHandler errorHandler) {
         super(webClient,cfg);
         this.graphQLWebClient = graphQLWebClient;
         this.tokenUtil = tokenUtil;
@@ -65,7 +65,7 @@ public class PDLWebClientAdapter extends AbstractWebClientAdapter {
         }
     }
     @Override
-    public String ping() {
+    public void ping() {
         LOG.trace("Pinger {}", getBaseUri());
          webClient
                 .options()
@@ -75,7 +75,6 @@ public class PDLWebClientAdapter extends AbstractWebClientAdapter {
                 .onStatus(HttpStatus::isError, ClientResponse::createException)
                 .toBodilessEntity()
                 .block();
-         return "OK";
     }
 
     @Override

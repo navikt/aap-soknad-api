@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.tokenx;
 
-import no.nav.aap.api.søknad.util.TokenUtil;
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService;
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties;
 import org.slf4j.Logger;
@@ -12,6 +11,7 @@ import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeFunction;
 import reactor.core.publisher.Mono;
 
+import static no.nav.aap.api.søknad.tokenx.AuthContext.*;
 import static no.nav.foreldrepenger.boot.conditionals.EnvUtil.CONFIDENTIAL;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.web.reactive.function.client.ClientRequest.*;
@@ -24,13 +24,13 @@ public class TokenXFilterFunction implements ExchangeFilterFunction {
     private final OAuth2AccessTokenService service;
     private final TokenXConfigMatcher matcher;
     private final ClientConfigurationProperties configs;
-    private final TokenUtil tokenUtil;
+    private final AuthContext authContext;
 
-    TokenXFilterFunction(ClientConfigurationProperties configs, OAuth2AccessTokenService service, TokenXConfigMatcher matcher, TokenUtil tokenUtil) {
+    TokenXFilterFunction(ClientConfigurationProperties configs, OAuth2AccessTokenService service, TokenXConfigMatcher matcher, AuthContext authContext) {
         this.service = service;
         this.matcher = matcher;
         this.configs = configs;
-        this.tokenUtil =  tokenUtil;
+        this.authContext = authContext;
     }
 
     @Override
@@ -38,11 +38,11 @@ public class TokenXFilterFunction implements ExchangeFilterFunction {
         var url = req.url();
         LOG.trace("Sjekker token exchange for {}", url);
         var cfg = matcher.findProperties(configs, url);
-        if (cfg.isPresent() && tokenUtil.erAutentisert()) {
+        if (cfg.isPresent() && authContext.erAutentisert()) {
             LOG.trace(CONFIDENTIAL,"Gjør token exchange for {} med konfig {}", url, cfg);
             var token = service.getAccessToken(cfg.get()).getAccessToken();
             LOG.trace("Token exchange for {} OK", url);
-            return next.exchange(from(req).header(AUTHORIZATION, TokenUtil.bearerToken(token))
+            return next.exchange(from(req).header(AUTHORIZATION, bearerToken(token))
                     .build());
         }
         LOG.trace("Ingen token exchange for {}", url);
@@ -51,6 +51,6 @@ public class TokenXFilterFunction implements ExchangeFilterFunction {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " [tokenUtil=" + tokenUtil  + "service=" + service + ", matcher=" + matcher + ", configs=" + configs + "]";
+        return getClass().getSimpleName() + " [authenticationContext=" + authContext + "service=" + service + ", matcher=" + matcher + ", configs=" + configs + "]";
     }
 }
