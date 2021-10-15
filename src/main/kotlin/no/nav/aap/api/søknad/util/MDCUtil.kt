@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.util
 
 import org.slf4j.MDC
-import java.util.Optional
+import java.util.*
 
 object MDCUtil {
     const val NAV_CONSUMER_ID = "Nav-Consumer-Id"
@@ -11,7 +11,7 @@ object MDCUtil {
         return MDC.get(NAV_CALL_ID)
     }
 
-    fun consumerId(): String {
+    fun consumerId(): String? {
         return MDC.get(NAV_CONSUMER_ID)
     }
 

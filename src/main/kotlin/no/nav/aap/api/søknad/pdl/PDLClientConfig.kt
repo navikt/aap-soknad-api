@@ -22,7 +22,7 @@ import java.util.*
 @Configuration
  class PDLClientConfig {
     @Value("aap-soknad-api")
-    private val consumer: String? = null
+    private val consumer: String = ""
     private fun consumerId(): String? {
         return Optional.ofNullable(MDCUtil.consumerId())
             .orElse(consumer)
