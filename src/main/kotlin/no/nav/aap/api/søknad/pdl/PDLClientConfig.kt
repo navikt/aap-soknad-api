@@ -21,7 +21,7 @@ import java.util.*
 
 @Configuration
  class PDLClientConfig {
-    @Value("\${nais.app.name:aap-soknad-api}")
+    @Value("aap-soknad-api")
     private val consumer: String? = null
     private fun consumerId(): String? {
         return Optional.ofNullable(MDCUtil.consumerId())
