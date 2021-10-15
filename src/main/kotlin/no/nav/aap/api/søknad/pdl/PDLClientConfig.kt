@@ -21,7 +21,7 @@ import java.util.*
 
 @Configuration
  class PDLClientConfig {
-    @Value("\${spring.application.name:aap-soknad-api}")
+    @Value("\${nais.app.name:aap-soknad-api}")
     private val consumer: String? = null
     private fun consumerId(): String? {
         return Optional.ofNullable(MDCUtil.consumerId())
