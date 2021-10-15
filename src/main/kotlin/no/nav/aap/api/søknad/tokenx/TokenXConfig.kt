@@ -13,8 +13,8 @@ import java.net.URI
 @Configuration
 class TokenXConfig {
     @Bean
-    fun configMatcher(): TokenXConfigMatcher {
-        return CCM()
+    fun configMatcher(): (ClientConfigurationProperties, URI) -> ClientProperties? {
+        return {  cfg: ClientConfigurationProperties, req: URI ->  cfg.registration[req.host.split("\\.".toRegex()).toTypedArray()[0]]  }
     }
     @Bean
     fun customizer(): Jackson2ObjectMapperBuilderCustomizer {
@@ -27,10 +27,4 @@ class TokenXConfig {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private interface IgnoreUnknownMixin
-
-    internal class CCM : TokenXConfigMatcher {
-        override fun findProperties(cfg: ClientConfigurationProperties, uri: URI): ClientProperties? {
-            return cfg.registration[uri.host.split("\\.".toRegex()).toTypedArray()[0]]
-        }
-    }
 }
