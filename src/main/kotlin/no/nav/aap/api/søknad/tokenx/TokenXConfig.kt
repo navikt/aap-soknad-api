@@ -11,12 +11,8 @@ import java.net.URI
 
 class TokenXConfig {
     @Bean
-    fun configMatcher(): TokenXConfigMatcher {
-        return object : TokenXConfigMatcher {
-            override fun findProperties(configs: ClientConfigurationProperties, request: URI): ClientProperties? {
-                return configs.registration[request.host.split("\\.".toRegex()).toTypedArray()[0]]
-            }
-        }
+    fun configMatcher(): (ClientConfigurationProperties, URI) -> ClientProperties? {
+        return {  cfg: ClientConfigurationProperties, req: URI ->  cfg.registration[req.host.split("\\.".toRegex()).toTypedArray()[0]]  }
     }
     @Bean
     fun customizer(): Jackson2ObjectMapperBuilderCustomizer {
