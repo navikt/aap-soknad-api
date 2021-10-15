@@ -8,7 +8,11 @@ object MDCUtil {
     const val NAV_CALL_ID = "Nav-CallId"
     const val NAV_CALL_ID1 = "Nav-Call-Id"
     fun callId(): String {
-        return MDC.get(NAV_CALL_ID)
+        var callId =  MDC.get(NAV_CALL_ID)
+        return when (callId) {
+            null -> UUID.randomUUID().toString()
+            else -> callId
+        }
     }
 
     fun consumerId(): String? {
