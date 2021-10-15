@@ -6,9 +6,11 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenRespons
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import java.net.URI
 
+@Configuration
 class TokenXConfig {
     @Bean
     fun configMatcher(): TokenXConfigMatcher {
