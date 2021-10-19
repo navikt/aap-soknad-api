@@ -16,7 +16,7 @@ object URIUtil {
             .toUri()
     }
 
-    fun builder(base: URI, path: String, queryParams: HttpHeaders?): UriComponentsBuilder {
+    private fun builder(base: URI, path: String, queryParams: HttpHeaders?): UriComponentsBuilder {
         return UriComponentsBuilder
             .fromUri(base)
             .pathSegment(path)

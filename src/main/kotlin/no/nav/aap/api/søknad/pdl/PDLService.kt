@@ -13,7 +13,6 @@ class PDLService(private val pdl: PDLWebClientAdapter) : PdlOperations {
         return null
     }
 
-    override fun toString(): String {
-        return javaClass.simpleName + " [pdl=" + pdl + "]"
-    }
+    override fun toString() = "${javaClass.simpleName} [pdl=$pdl]"
+
 }

@@ -1,8 +1,6 @@
 package no.nav.aap.api.søknad.pdl
 
-import graphql.kickstart.spring.webclient.boot.GraphQLError
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
-import no.nav.aap.api.søknad.util.StreamUtil.safeStream
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -12,7 +10,6 @@ import org.springframework.web.client.HttpClientErrorException.create
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.HttpStatusCodeException
 import java.nio.charset.Charset
-import java.util.*
 
 @Component
 class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
@@ -36,22 +33,10 @@ class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
         private val LOG = LoggerFactory.getLogger(PDLExceptionThrowingErrorHandler::class.java)
         private fun exceptionFra(kode: String, msg: String): HttpStatusCodeException {
             return when (kode) {
-                UAUTENTISERT -> exception(
-                    UNAUTHORIZED,
-                    msg
-                )
-                FORBUDT -> exception(
-                    FORBIDDEN,
-                    msg
-                )
-                UGYLDIG -> exception(
-                    BAD_REQUEST,
-                    msg
-                )
-                IKKEFUNNET -> exception(
-                    NOT_FOUND,
-                    msg
-                )
+                UAUTENTISERT -> exception(UNAUTHORIZED, msg)
+                FORBUDT -> exception(FORBIDDEN, msg)
+                UGYLDIG -> exception(BAD_REQUEST, msg)
+                IKKEFUNNET -> exception(NOT_FOUND, msg)
                 else -> HttpServerErrorException(INTERNAL_SERVER_ERROR, msg)
             }
         }

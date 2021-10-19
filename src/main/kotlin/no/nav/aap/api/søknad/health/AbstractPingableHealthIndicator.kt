@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.HealthIndicator
 
-abstract class AbstractPingableHealthIndicator(private val pingable: Pingable) : HealthIndicator {
+abstract class AbstractPingableHealthIndicator(val pingable: Pingable) : HealthIndicator {
     override fun health(): Health {
         return try {
             LOG.trace("Pinger {} på {}", pingable.name(), pingable.pingEndpoint())
@@ -30,9 +30,7 @@ abstract class AbstractPingableHealthIndicator(private val pingable: Pingable) :
             .build()
     }
 
-    override fun toString(): String {
-        return javaClass.simpleName + " [pingable=" + pingable + "]"
-    }
+    override fun toString() = "${javaClass.simpleName} [pingable=$pingable]"
 
     companion object {
         private val LOG = LoggerFactory.getLogger(AbstractPingableHealthIndicator::class.java)

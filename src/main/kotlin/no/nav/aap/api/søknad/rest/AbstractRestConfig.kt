@@ -5,7 +5,7 @@ import java.net.URI
 
 open class AbstractRestConfig protected constructor(
     val baseUri: URI,
-    private val pingPath: String,
+    protected val pingPath: String,
     val isEnabled: Boolean
 ) {
     fun pingEndpoint(): URI {

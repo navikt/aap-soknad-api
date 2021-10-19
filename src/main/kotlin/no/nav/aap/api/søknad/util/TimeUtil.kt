@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad.util
 
-import java.time.Instant
+import java.time.Instant.ofEpochMilli
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -13,15 +13,8 @@ object TimeUtil {
             .map { d: String? -> LocalDate.parse(d, DateTimeFormatter.ISO_LOCAL_DATE) }
             .orElse(null)
     }
-
-    fun localDateTime(date: Date): LocalDateTime {
-        return Instant.ofEpochMilli(date.time)
-            .atZone(ZoneId.systemDefault())
-            .toLocalDateTime()
-    }
-
     fun fraDato(dato: Date): LocalDateTime {
-        return Instant.ofEpochMilli(dato.time)
+        return ofEpochMilli(dato.time)
             .atZone(ZoneId.systemDefault())
             .toLocalDateTime()
     }

@@ -15,7 +15,7 @@ import java.util.Arrays.asList
 
 
 @ControllerAdvice
-class AAPApiExceptionHandler(val tokenUtil: AuthContext) : ResponseEntityExceptionHandler() {
+class AAPApiExceptionHandler(val authContext: AuthContext) : ResponseEntityExceptionHandler() {
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
     fun handleMissingOrExpiredToken(e: java.lang.Exception, req: WebRequest): ResponseEntity<Any> {
          return logAndHandle(UNAUTHORIZED,e,req,HttpHeaders());
@@ -43,4 +43,7 @@ class AAPApiExceptionHandler(val tokenUtil: AuthContext) : ResponseEntityExcepti
     ): ResponseEntity<Any> {
         return handleExceptionInternal(e, e.message, headers, status, req)
     }
+
+    override fun toString() = "${javaClass.simpleName} [authContext=$authContext]"
+
 }

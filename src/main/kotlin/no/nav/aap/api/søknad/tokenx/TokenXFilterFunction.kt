@@ -18,14 +18,11 @@ class TokenXFilterFunction internal constructor(
     private val configs: ClientConfigurationProperties,
     private val service: OAuth2AccessTokenService,
     private val matcher: TokenXConfigMatcher,
-    private val authContext: AuthContext
-) : ExchangeFilterFunction {
+    protected val authContext: AuthContext) : ExchangeFilterFunction {
     override fun filter(req: ClientRequest, next: ExchangeFunction): Mono<ClientResponse> {
         val url = req.url()
         LOG.trace("Sjekker token exchange for {}", url)
-        val cfg = matcher.findProperties(
-            configs, url
-        )
+        val cfg = matcher.findProperties(configs, url)
         if (cfg != null && authContext.erAutentisert()) {
             LOG.trace(EnvUtil.CONFIDENTIAL, "Gjør token exchange for {} med konfig {}", url, cfg)
             val token = service.getAccessToken(cfg).accessToken
@@ -39,9 +36,7 @@ class TokenXFilterFunction internal constructor(
         return next.exchange(ClientRequest.from(req).build())
     }
 
-    override fun toString(): String {
-        return javaClass.simpleName + " [authenticationContext=" + authContext + "service=" + service + ", matcher=" + matcher + ", configs=" + configs + "]"
-    }
+    override fun toString() = "${javaClass.simpleName} [[configs=$configs,authContext=$authContext,service=$service,matcher=$matcher]"
 
     companion object {
         private val LOG = LoggerFactory.getLogger(TokenXFilterFunction::class.java)

@@ -46,9 +46,7 @@ class AuthContext(private val ctxHolder: TokenValidationContextHolder) {
         return ctxHolder.tokenValidationContext.getJwtToken(issuer)
     }
 
-    override fun toString(): String {
-        return javaClass.simpleName + " [ctxHolder=" + ctxHolder + "]"
-    }
+    override fun toString() = "${javaClass.simpleName} [ctxHolder=$ctxHolder]"
 
     val fnr: Fødselsnummer
         get() = Optional.ofNullable(subject)

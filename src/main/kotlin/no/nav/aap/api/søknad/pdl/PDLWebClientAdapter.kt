@@ -16,8 +16,7 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Component
 class PDLWebClientAdapter internal constructor(
-    @Qualifier(PDL_USER)
-    private val graphQLWebClient: GraphQLWebClient,
+    @Qualifier(PDL_USER)  private val graphQLWebClient: GraphQLWebClient,
     @Qualifier(PDL_USER) webClient: WebClient, cfg: PDLConfig,
     private val authContext: AuthContext,
     private val errorHandler: PDLErrorHandler
@@ -60,14 +59,7 @@ class PDLWebClientAdapter internal constructor(
             .block()
     }
 
-    override fun toString(): String {
-        return javaClass.simpleName + " [" +
-                "graphQLWebClient=" + graphQLWebClient +
-                ", authContext=" + authContext +
-                ", errorHandler=" + errorHandler +
-                ", webClient=" + webClient +
-                ", cfg=" + cfg + "]"
-    }
+    override fun toString() = "${javaClass.simpleName} [webClient=$webClient,graphQLWebClient=$graphQLWebClient,authContext=$authContext,errorHandler=$errorHandler, cfg=$cfg]"
 
     companion object {
         private val LOG = LoggerFactory.getLogger(PDLWebClientAdapter::class.java)

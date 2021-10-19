@@ -42,11 +42,7 @@ import java.util.*
 
     @Qualifier(PDL_USER)
     @Bean
-    open fun webClientPDL(
-        builder: WebClient.Builder,
-        cfg: PDLConfig,
-        tokenXFilterFunction: TokenXFilterFunction
-    ): WebClient {
+    open fun webClientPDL(builder: WebClient.Builder,  cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction): WebClient {
         return builder
             .baseUrl(cfg.baseUri.toString())
             .filter(correlatingFilterFunction())
@@ -57,7 +53,7 @@ import java.util.*
 
     @Qualifier(PDL_USER)
     @Bean
-    open fun pdlWebClient(@Qualifier(PDL_USER) client: WebClient?, mapper: ObjectMapper?): GraphQLWebClient {
+    open fun pdlWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper): GraphQLWebClient {
         return GraphQLWebClient.newInstance(client, mapper)
     }
 

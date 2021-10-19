@@ -16,7 +16,5 @@ class SøknadInnsendingController(private val authContext: AuthContext) {
         return Kvittering("OK")
     }
 
-    override fun toString(): String {
-        return javaClass.simpleName + " [tokenUtil=" + authContext + "]"
-    }
+    override fun toString() = "${javaClass.simpleName} [authContext=$authContext]"
 }

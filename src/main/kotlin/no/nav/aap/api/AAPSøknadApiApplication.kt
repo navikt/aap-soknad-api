@@ -1,6 +1,6 @@
 package no.nav.aap.api
 
-import no.nav.foreldrepenger.boot.conditionals.Cluster
+import no.nav.foreldrepenger.boot.conditionals.Cluster.profiler
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -18,7 +18,7 @@ open class AAPSøknadApiApplication {
         @JvmStatic
         fun main(args: Array<String>) {
             SpringApplicationBuilder(AAPSøknadApiApplication::class.java)
-                .profiles(*Cluster.profiler())
+                .profiles(*profiler())
                 .main(AAPSøknadApiApplication::class.java)
                 .run(*args)
         }

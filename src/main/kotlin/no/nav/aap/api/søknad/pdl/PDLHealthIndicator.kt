@@ -4,4 +4,4 @@ import no.nav.aap.api.søknad.health.AbstractPingableHealthIndicator
 import org.springframework.stereotype.Component
 
 @Component
-class PDLHealthIndicator(adapter: PDLWebClientAdapter) : AbstractPingableHealthIndicator(adapter!!)
+class PDLHealthIndicator(adapter: PDLWebClientAdapter) : AbstractPingableHealthIndicator(adapter)

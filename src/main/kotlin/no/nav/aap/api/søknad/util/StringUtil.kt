@@ -2,14 +2,14 @@ package no.nav.aap.api.søknad.util
 
 import java.nio.charset.StandardCharsets
 import java.util.*
-import java.util.function.Predicate
+import java.util.function.Predicate.not
 
 object StringUtil {
     private const val DEFAULT_LENGTH = 50
 
     fun partialMask(value: String?): String {
         return Optional.ofNullable(value)
-            .map { obj: String -> obj.stripLeading() }
+            .map(String::stripLeading)
             .map { v: String -> v.substring(0, v.length / 2) + "*".repeat(v.length / 2) } //TODO robustify
             .orElse("*")
     }
@@ -29,7 +29,7 @@ object StringUtil {
     fun mask(value: String?): String {
         return Optional.ofNullable(value)
             .map { obj: String -> obj.stripLeading() }
-            .filter(Predicate.not { obj: String -> obj.isBlank() })
+            .filter(not { obj: String -> obj.isBlank() })
             .map { v: String -> "*".repeat(v.length) }
             .orElse("<null>")
     }
