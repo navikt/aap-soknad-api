@@ -17,8 +17,8 @@
         <conditionals.version>2.0.9</conditionals.version>
         <graphql.version>1.0.0</graphql.version>
         <i18n.version>1.29</i18n.version>
-        <java.version>17</java.version>
-        <kotlin.version>1.6.0-M1</kotlin.version>
+        <java.version>16</java.version>
+        <kotlin.version>1.5.31</kotlin.version>
         <logstash.version>6.6</logstash.version>
         <reactor.version>1.0.1.RELEASE</reactor.version>
         <sonar.organization>navit</sonar.organization>
@@ -219,7 +219,7 @@
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-maven-allopen</artifactId>
-                        <version>1.5.31</version>
+                        <version>${kotlin.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
