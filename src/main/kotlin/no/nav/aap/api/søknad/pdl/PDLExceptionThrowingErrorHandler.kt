@@ -17,15 +17,15 @@ import java.util.*
 @Component
 class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
     override fun <T> handleError(e: GraphQLErrorsException): T {
-        LOG.warn("PDL oppslag returnerte {} feil. {}", e!!.errors.size, e.errors, e)
-        throw safeStream(e.errors)
-            .findFirst()
-            .map { obj: GraphQLError -> obj.extensions }
-            .map { m: Map<String, Any> -> m["code"] }
-            .filter { obj: Any? -> Objects.nonNull(obj) }
-            .map { obj: Any? -> String::class.java.cast(obj) }
-            .map { k: String -> e.message?.let { exceptionFra(k, it) } }
-            .orElse(e!!.message?.let { HttpServerErrorException(INTERNAL_SERVER_ERROR, it, null, null, null) })
+        LOG.warn("PDL oppslag returnerte {} feil. {}", e.errors.size, e.errors, e)
+        val errorMessage = e.message ?: "Ukjent feil"
+        val firstExceptionCode = e.errors.firstOrNull()?.extensions?.get("code")
+
+        throw if (firstExceptionCode != null) {
+            exceptionFra(firstExceptionCode.toString(), errorMessage)
+        } else {
+            HttpServerErrorException(INTERNAL_SERVER_ERROR, errorMessage, null, null, null)
+        }
     }
 
     companion object {
