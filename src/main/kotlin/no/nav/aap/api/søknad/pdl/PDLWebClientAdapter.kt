@@ -28,8 +28,8 @@ class PDLWebClientAdapter internal constructor(
     }
 
     private fun navn(id: String): PDLNavn? {
-        var n =  oppslag({ graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn::class.java).block() }, "navn");
-            var f  = n?.navn?.first()
+        val n =  oppslag({ graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn::class.java).block() }, "navn");
+        val f  = n?.navn?.first()
         return f
     }
 

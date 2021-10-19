@@ -18,10 +18,6 @@ spec:
       value: {{ ingress }}
   tokenx:
     enabled: true
-  idporten:
-    enabled: true
-    sidecar:
-      enabled: true
   port: 8080
   cpuThresholdPercentage: 50
   image: {{image}}

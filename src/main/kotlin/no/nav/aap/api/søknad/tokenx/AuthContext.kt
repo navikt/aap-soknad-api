@@ -10,6 +10,7 @@ import no.nav.security.token.support.core.jwt.JwtTokenClaims
 import org.springframework.stereotype.Component
 import java.util.*
 
+
 @Component
 class AuthContext(private val ctxHolder: TokenValidationContextHolder) {
     private fun getSubject(issuer: String): String? {
