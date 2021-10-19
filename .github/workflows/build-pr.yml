@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches-ignore:
-      - master
+      - main
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   IMAGE_BASE: ghcr.io/${{ github.repository }}
