@@ -13,7 +13,6 @@ import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
-import java.util.function.Supplier
 
 @Component
 class PDLWebClientAdapter internal constructor(
@@ -28,15 +27,15 @@ class PDLWebClientAdapter internal constructor(
     }
 
     private fun navn(id: String): PDLNavn? {
-        val n =  oppslag({ graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn::class.java).block() }, "navn");
-        val f  = n?.navn?.first()
-        return f
+        val navneQuery = { graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn::class.java).block() }
+        val n = oppslag(navneQuery, "navn");
+        return n?.navn?.first()
     }
 
-    private fun <T> oppslag(oppslag: Supplier<T>, type: String): T {
+    private fun <T> oppslag(oppslag: () -> T, type: String): T {
         return try {
             LOG.info("PDL oppslag {}", type)
-            val res = oppslag.get()
+            val res = oppslag.invoke()
             LOG.trace("PDL oppslag {} respons={}", type, res)
             LOG.info("PDL oppslag {} OK", type)
             res
