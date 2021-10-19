@@ -19,17 +19,9 @@ class AuthContext(private val ctxHolder: TokenValidationContextHolder) {
     val subject: String?
         get() = getSubject(AbstractRestConfig.ISSUER)
 
-    fun getClaim(issuer: String, claim: String?): String? {
-        return Optional.ofNullable(claimSet(issuer))
-            .map { c: JwtTokenClaims -> c.getStringClaim(claim) }
-            .orElse(null)
-    }
+    fun getClaim(issuer: String, claim: String?) = claimSet(issuer)?.getStringClaim(claim)
 
-    private fun claimSet(issuer: String = AbstractRestConfig.ISSUER): JwtTokenClaims? {
-        return Optional.ofNullable(context())
-            .map { s: TokenValidationContext -> s.getClaims(issuer) }
-            .orElse(null)
-    }
+    private fun claimSet(issuer: String = AbstractRestConfig.ISSUER) = context()?.getClaims(issuer)
 
     private fun context(): TokenValidationContext? {
         return Optional.ofNullable(ctxHolder.tokenValidationContext)
@@ -44,13 +36,7 @@ class AuthContext(private val ctxHolder: TokenValidationContextHolder) {
     val token: String?
         get() = getToken(AbstractRestConfig.ISSUER)
 
-    private fun getToken(issuer: String): String? {
-        return Optional.ofNullable(context())
-            .map { c: TokenValidationContext -> c.getJwtToken(issuer) }
-            .filter { obj: JwtToken? -> Objects.nonNull(obj) }
-            .map { obj: JwtToken -> obj.tokenAsString }
-            .orElse(null)
-    }
+    private fun getToken(issuer: String) = context()?.getJwtToken(issuer)?.tokenAsString
 
     val jWTToken: JwtToken
         get() = getJWTToken(AbstractRestConfig.ISSUER)
