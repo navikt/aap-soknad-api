@@ -14,7 +14,5 @@ class APIOppslagController(private val authContext: AuthContext, private val pdl
         return Søker(authContext.fnr, pdl.navn())
     }
 
-    override fun toString(): String {
-        return javaClass.simpleName + " [tokenUtil=" + authContext + ", pdl=" + pdl + "]"
-    }
+    override fun toString() = "${javaClass.simpleName} [tokenUtil=$authContext, pdl=$pdl]"
 }
