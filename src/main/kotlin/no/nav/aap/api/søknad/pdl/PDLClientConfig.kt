@@ -29,7 +29,7 @@ import org.springframework.web.reactive.function.client.WebClient
 
     @Qualifier(PDL_USER)
     @Bean
-    open fun webClientPDL(builder: WebClient.Builder,  cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction): WebClient {
+     fun webClientPDL(builder: WebClient.Builder,  cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction): WebClient {
         return builder
             .baseUrl(cfg.baseUri.toString())
             .filter(correlatingFilterFunction())
@@ -40,7 +40,7 @@ import org.springframework.web.reactive.function.client.WebClient
 
     @Qualifier(PDL_USER)
     @Bean
-    open fun pdlWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper): GraphQLWebClient {
+     fun pdlWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper): GraphQLWebClient {
         return GraphQLWebClient.newInstance(client, mapper)
     }
 
