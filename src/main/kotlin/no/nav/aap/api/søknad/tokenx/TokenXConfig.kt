@@ -27,8 +27,8 @@ class TokenXConfig {
     private interface IgnoreUnknownMixin
 
     internal class CCM : TokenXConfigMatcher {
-        override fun findProperties(cfg: ClientConfigurationProperties, uri: URI): ClientProperties? {
-            return cfg.registration[uri.host.split("\\.".toRegex()).toTypedArray()[0]]
+        override fun findProperties(configs: ClientConfigurationProperties, uri: URI): ClientProperties? {
+            return configs.registration[uri.host.split("\\.".toRegex()).toTypedArray()[0]]
         }
     }
 }
