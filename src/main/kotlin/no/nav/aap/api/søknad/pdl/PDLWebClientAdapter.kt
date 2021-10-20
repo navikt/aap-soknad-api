@@ -2,7 +2,7 @@ package no.nav.aap.api.søknad.pdl
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
-import no.nav.aap.api.søknad.pdl.PDLClientConfig.Companion.PDL_USER
+import no.nav.aap.api.søknad.config.Constants.PDL_USER
 import no.nav.aap.api.søknad.rest.AbstractWebClientAdapter
 import no.nav.aap.api.søknad.tokenx.AuthContext
 import org.slf4j.LoggerFactory
@@ -19,10 +19,10 @@ class PDLWebClientAdapter internal constructor(
     @Qualifier(PDL_USER)  private val graphQLWebClient: GraphQLWebClient,
     @Qualifier(PDL_USER) webClient: WebClient, cfg: PDLConfig,
     private val authContext: AuthContext,
-    private val errorHandler: PDLErrorHandler
-) : AbstractWebClientAdapter(webClient, cfg) {
+    private val errorHandler: PDLErrorHandler) : AbstractWebClientAdapter(webClient, cfg) {
+
     internal fun navn(): PDLNavn? {
-        return authContext.subject?.let { navn(it) }
+        return authContext.getSubject()?.let { navn(it) }
     }
 
     private fun navn(id: String): PDLNavn? {

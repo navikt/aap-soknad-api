@@ -21,26 +21,15 @@ class AAPApiExceptionHandler(val authContext: AuthContext) : ResponseEntityExcep
          return logAndHandle(UNAUTHORIZED,e,req,HttpHeaders());
     }
 
-    private  fun logAndHandle(
-        status: HttpStatus,
-        e: java.lang.Exception,
-        req: WebRequest,
-        vararg messages: Any
-    ): ResponseEntity<Any> {
+    private  fun logAndHandle(status: HttpStatus, e: java.lang.Exception, req: WebRequest, vararg messages: Any): ResponseEntity<Any> {
         return logAndHandle(status, e, req, HttpHeaders(), *messages)
     }
 
-    private  fun logAndHandle(
-        status: HttpStatus, e: java.lang.Exception, req: WebRequest, headers: HttpHeaders,
-        vararg messages: Any
-    ): ResponseEntity<Any> {
+    private  fun logAndHandle(status: HttpStatus, e: java.lang.Exception, req: WebRequest, headers: HttpHeaders, vararg messages: Any): ResponseEntity<Any> {
         return logAndHandle(status, e, req, headers, asList(messages))
     }
 
-    private  fun logAndHandle(
-        status: HttpStatus, e: java.lang.Exception, req: WebRequest, headers: HttpHeaders,
-        messages: List<Any>
-    ): ResponseEntity<Any> {
+    private  fun logAndHandle(status: HttpStatus, e: java.lang.Exception, req: WebRequest, headers: HttpHeaders, messages: List<Any>): ResponseEntity<Any> {
         return handleExceptionInternal(e, e.message, headers, status, req)
     }
 

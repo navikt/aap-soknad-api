@@ -4,7 +4,7 @@ import no.nav.aap.api.søknad.domain.Navn
 import org.springframework.stereotype.Service
 
 @Service
-class PDLService(private val pdl: PDLWebClientAdapter) : PdlOperations {
+class PDLClient(private val pdl: PDLWebClientAdapter) : PdlOperations {
     override fun navn(): Navn? {
         val n: PDLNavn? = pdl.navn()
         if (n != null) {

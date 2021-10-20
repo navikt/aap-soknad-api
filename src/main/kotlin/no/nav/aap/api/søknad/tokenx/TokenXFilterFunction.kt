@@ -5,7 +5,7 @@ import no.nav.foreldrepenger.boot.conditionals.EnvUtil
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ClientResponse
@@ -28,7 +28,7 @@ class TokenXFilterFunction internal constructor(
             val token = service.getAccessToken(cfg).accessToken
             LOG.trace("Token exchange for {} OK", url)
             return next.exchange(
-                ClientRequest.from(req).header(HttpHeaders.AUTHORIZATION, bearerToken(token))
+                ClientRequest.from(req).header(AUTHORIZATION, bearerToken(token))
                     .build()
             )
         }

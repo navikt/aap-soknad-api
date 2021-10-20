@@ -19,9 +19,7 @@ class TokenXConfig {
     @Bean
     fun customizer(): Jackson2ObjectMapperBuilderCustomizer {
         return Jackson2ObjectMapperBuilderCustomizer { b: Jackson2ObjectMapperBuilder ->
-            b.mixIn(
-                OAuth2AccessTokenResponse::class.java, IgnoreUnknownMixin::class.java
-            )
+            b.mixIn(OAuth2AccessTokenResponse::class.java, IgnoreUnknownMixin::class.java)
         }
     }
 
