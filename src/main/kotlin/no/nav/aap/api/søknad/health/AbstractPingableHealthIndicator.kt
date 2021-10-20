@@ -6,6 +6,7 @@ import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.HealthIndicator
 
 abstract class AbstractPingableHealthIndicator(val pingable: Pingable) : HealthIndicator {
+    private val LOG = LoggerFactory.getLogger(AbstractPingableHealthIndicator::class.java)
     override fun health(): Health {
         return try {
             LOG.trace("Pinger {} på {}", pingable.name(), pingable.pingEndpoint())
@@ -31,8 +32,4 @@ abstract class AbstractPingableHealthIndicator(val pingable: Pingable) : HealthI
     }
 
     override fun toString() = "${javaClass.simpleName} [pingable=$pingable]"
-
-    companion object {
-        private val LOG = LoggerFactory.getLogger(AbstractPingableHealthIndicator::class.java)
-    }
 }

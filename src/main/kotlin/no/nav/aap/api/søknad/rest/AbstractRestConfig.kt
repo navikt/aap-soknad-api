@@ -8,16 +8,6 @@ open class AbstractRestConfig protected constructor(
     protected val pingPath: String,
     val isEnabled: Boolean
 ) {
-    fun pingEndpoint(): URI {
-        return URIUtil.uri(baseUri, pingPath)
-    }
-
-    fun name(): String {
-        return baseUri.host
-    }
-
-    companion object {
-        private const val IDPORTEN = "idporten"
-        const val ISSUER = IDPORTEN
-    }
+    fun pingEndpoint() = URIUtil.uri(baseUri, pingPath)
+    fun name() = baseUri.host
 }

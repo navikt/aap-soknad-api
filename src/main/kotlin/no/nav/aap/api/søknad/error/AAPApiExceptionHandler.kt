@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
-import java.util.Arrays.asList
 
 
 @ControllerAdvice
@@ -26,7 +25,7 @@ class AAPApiExceptionHandler(val authContext: AuthContext) : ResponseEntityExcep
     }
 
     private  fun logAndHandle(status: HttpStatus, e: java.lang.Exception, req: WebRequest, headers: HttpHeaders, vararg messages: Any): ResponseEntity<Any> {
-        return logAndHandle(status, e, req, headers, asList(messages))
+        return logAndHandle(status, e, req, headers, listOf(messages))
     }
 
     private  fun logAndHandle(status: HttpStatus, e: java.lang.Exception, req: WebRequest, headers: HttpHeaders, messages: List<Any>): ResponseEntity<Any> {
@@ -34,5 +33,4 @@ class AAPApiExceptionHandler(val authContext: AuthContext) : ResponseEntityExcep
     }
 
     override fun toString() = "${javaClass.simpleName} [authContext=$authContext]"
-
 }

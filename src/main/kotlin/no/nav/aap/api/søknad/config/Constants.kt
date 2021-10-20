@@ -6,4 +6,6 @@ object Constants {
     const val TEMA = "TEMA"
     const val AAP = "AAP"
     const val NAV_CONSUMER_TOKEN = "Nav-Consumer-Token"
+    const val IDPORTEN = "idporten"
+    const val ISSUER = IDPORTEN
 }

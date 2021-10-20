@@ -26,9 +26,7 @@ class PDLWebClientAdapter internal constructor(
     }
 
     private fun navn(id: String): PDLNavn? {
-        val navneQuery = { graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn::class.java).block() }
-        val n = oppslag(navneQuery, "navn");
-        return n?.navn?.first()
+        return oppslag({ graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn::class.java).block() }, "navn")?.navn?.first()
     }
 
     private fun <T> oppslag(oppslag: () -> T, type: String): T {
