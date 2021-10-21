@@ -20,7 +20,7 @@ class AAPApiExceptionHandler(val authContext: AuthContext) : ProblemHandling {
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
     fun handleMissingOrExpiredToken(e: java.lang.Exception, req: WebRequest) {
          LOG.warn("OOPS",e)
-         Problem.valueOf(Status.UNAUTHORIZED);
+         throw Problem.valueOf(Status.UNAUTHORIZED);
     }
 
     override fun toString() = "${javaClass.simpleName} [authContext=$authContext]"
