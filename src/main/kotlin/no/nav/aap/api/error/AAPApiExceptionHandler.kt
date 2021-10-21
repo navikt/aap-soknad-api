@@ -10,11 +10,11 @@ import org.springframework.web.context.request.WebRequest
 import org.zalando.problem.Problem
 import org.zalando.problem.Status
 import org.zalando.problem.ThrowableProblem
-import org.zalando.problem.spring.web.advice.ProblemHandling
+import org.zalando.problem.spring.webflux.advice.ProblemHandling
 
 
 @ControllerAdvice
-class AAPApiExceptionHandler(val authContext: AuthContext) :  ProblemHandling {
+class AAPApiExceptionHandler(val authContext: AuthContext) : ProblemHandling {
 
     private val LOG = LoggerFactory.getLogger(AAPApiExceptionHandler::class.java)
 
