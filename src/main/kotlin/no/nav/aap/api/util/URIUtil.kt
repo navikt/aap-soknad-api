@@ -9,7 +9,6 @@ object URIUtil {
         return uri(URI.create(base), path)
     }
 
-    @JvmOverloads
     fun uri(base: URI, path: String, queryParams: HttpHeaders? = null): URI {
         return builder(base, path, queryParams)
             .build()

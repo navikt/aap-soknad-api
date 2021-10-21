@@ -1,6 +1,6 @@
 package no.nav.aap.api.error
 
-import no.nav.aap.api.tokenx.AuthContext
+import no.nav.aap.api.util.AuthContext
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.http.HttpHeaders

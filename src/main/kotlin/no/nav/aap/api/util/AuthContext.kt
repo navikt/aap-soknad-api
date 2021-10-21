@@ -1,4 +1,4 @@
-package no.nav.aap.api.tokenx
+package no.nav.aap.api.util
 
 import com.nimbusds.oauth2.sdk.token.AccessTokenType
 import no.nav.aap.api.config.Constants.ISSUER

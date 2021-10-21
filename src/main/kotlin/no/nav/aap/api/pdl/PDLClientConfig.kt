@@ -23,7 +23,6 @@ import org.springframework.web.reactive.function.client.WebClient
 @Configuration
  class PDLClientConfig()  {
     private val LOG = LoggerFactory.getLogger(PDLClientConfig::class.java)
-    private val consumerId = MDCUtil.consumerId() ?: "aap-søknad-api"
 
     @Qualifier(PDL_USER)
     @Bean
@@ -46,7 +45,7 @@ import org.springframework.web.reactive.function.client.WebClient
         return ExchangeFilterFunction { req: ClientRequest, next: ExchangeFunction ->
             next.exchange(
                 ClientRequest.from(req)
-                    .header(NAV_CONSUMER_ID, consumerId)
+                    .header(NAV_CONSUMER_ID, MDCUtil.consumerId())
                     .header(NAV_CALL_ID, callId())
                     .header(NAV_CALL_ID1, callId())
                     .build()

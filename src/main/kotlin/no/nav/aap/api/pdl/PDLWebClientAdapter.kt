@@ -4,7 +4,7 @@ import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.config.Constants.PDL_USER
 import no.nav.aap.api.rest.AbstractWebClientAdapter
-import no.nav.aap.api.tokenx.AuthContext
+import no.nav.aap.api.util.AuthContext
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus

@@ -1,3 +1,3 @@
-package no.nav.aap.api.felles
+package no.nav.aap.api.søknad
 
 data class Kvittering(val msg: String)

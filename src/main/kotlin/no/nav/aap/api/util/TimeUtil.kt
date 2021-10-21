@@ -4,14 +4,12 @@ import java.time.Instant.ofEpochMilli
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 import java.util.*
 
 object TimeUtil {
     fun dato(dato: String?): LocalDate? {
-        return Optional.ofNullable(dato)
-            .map { d: String? -> LocalDate.parse(d, DateTimeFormatter.ISO_LOCAL_DATE) }
-            .orElse(null)
+        return dato?.let { d -> LocalDate.parse(d, ISO_LOCAL_DATE) }
     }
     fun fraDato(dato: Date): LocalDateTime {
         return ofEpochMilli(dato.time)

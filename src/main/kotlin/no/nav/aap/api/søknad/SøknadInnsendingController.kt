@@ -1,8 +1,7 @@
 package no.nav.aap.api.søknad
 
 import no.nav.aap.api.config.Constants.ISSUER
-import no.nav.aap.api.felles.Kvittering
-import no.nav.aap.api.tokenx.AuthContext
+import no.nav.aap.api.util.AuthContext
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
