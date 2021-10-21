@@ -10,7 +10,7 @@ object StringUtil {
     fun partialMask(value: String?): String {
         return Optional.ofNullable(value)
             .map(String::stripLeading)
-            .map { v: String -> v.substring(0, v.length / 2) + "*".repeat(v.length / 2) } //TODO robustify
+            .map { v: String -> v.substring(0, v.length / 2) + "*".repeat(v.length / 2) } // robustify
             .orElse("*")
     }
 
