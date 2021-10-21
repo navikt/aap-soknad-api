@@ -2,6 +2,6 @@ package no.nav.aap.api.pdl
 
 import no.nav.aap.api.oppslag.Navn
 
-interface PdlOperations {
+interface PDLOperations {
     fun navn(): Navn?
 }

@@ -4,7 +4,7 @@ import no.nav.aap.api.oppslag.Navn
 import org.springframework.stereotype.Service
 
 @Service
-class PDLClient(private val pdl: PDLWebClientAdapter) : PdlOperations {
+class PDLClient(private val pdl: PDLWebClientAdapter) : PDLOperations {
     override fun navn(): Navn? {
         return pdl.navn()?.let { Navn(it.fornavn, it.mellomnavn, it.etternavn) }
     }
