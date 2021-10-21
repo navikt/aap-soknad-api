@@ -17,10 +17,10 @@ import org.springframework.web.reactive.function.client.WebClient
 @Component
 class PDLWebClientAdapter internal constructor(
     @Qualifier(PDL_USER)  private val graphQLWebClient: GraphQLWebClient,
-    @Qualifier(PDL_USER) webClient: WebClient, cfg: PDLConfig,
+    @Qualifier(PDL_USER) webClient: WebClient,
+    cfg: PDLConfig,
     private val authContext: AuthContext,
-    private val errorHandler: PDLErrorHandler
-) : AbstractWebClientAdapter(webClient, cfg) {
+    private val errorHandler: PDLErrorHandler) : AbstractWebClientAdapter(webClient, cfg) {
 
     internal fun navn(): PDLNavn? {
         return authContext.getSubject()?.let { navn(it) }

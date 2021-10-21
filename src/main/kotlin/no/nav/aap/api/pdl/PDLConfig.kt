@@ -15,8 +15,7 @@ class PDLConfig @ConstructorBinding constructor(
     override fun toString() = "${javaClass.simpleName} [pingPath=$pingPath,enabled=$isEnabled,baseUri=$baseUri]"
 
     companion object {
-        private const val DEFAULT_BASE_URI =
-            "http://pdl-api.pdl/graphql" // må settes så lenge pdl er on prem of vi i gcp
+        private const val DEFAULT_BASE_URI = "http://pdl-api.pdl/graphql" // må settes så lenge pdl er on prem of vi i gcp
         private const val DEFAULT_PING_PATH = "/"
     }
 }

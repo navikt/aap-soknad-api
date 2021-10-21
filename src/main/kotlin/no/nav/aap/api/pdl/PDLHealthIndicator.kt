@@ -1,6 +1,6 @@
 package no.nav.aap.api.pdl
 
-import no.nav.aap.api.health.AbstractPingableHealthIndicator
+import no.nav.aap.api.rest.AbstractPingableHealthIndicator
 import org.springframework.stereotype.Component
 
 @Component

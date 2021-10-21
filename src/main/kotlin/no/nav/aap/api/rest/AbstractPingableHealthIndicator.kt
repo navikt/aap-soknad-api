@@ -1,6 +1,5 @@
-package no.nav.aap.api.health
+package no.nav.aap.api.rest
 
-import no.nav.aap.api.rest.Pingable
 import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.HealthIndicator

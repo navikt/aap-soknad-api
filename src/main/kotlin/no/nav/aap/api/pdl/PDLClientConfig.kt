@@ -11,7 +11,6 @@ import no.nav.aap.api.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.api.util.MDCUtil.NAV_CALL_ID1
 import no.nav.aap.api.util.MDCUtil.NAV_CONSUMER_ID
 import no.nav.aap.api.util.MDCUtil.callId
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -22,8 +21,6 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
  class PDLClientConfig()  {
-    private val LOG = LoggerFactory.getLogger(PDLClientConfig::class.java)
-
     @Qualifier(PDL_USER)
     @Bean
      fun webClientPDL(builder: WebClient.Builder, cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction): WebClient {
