@@ -1,4 +1,4 @@
-package no.nav.aap.api.tokenx
+package no.nav.aap.api.rest.tokenx
 
 import no.nav.aap.api.util.AuthContext
 import no.nav.aap.api.util.AuthContext.Companion.bearerToken

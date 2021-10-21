@@ -1,4 +1,4 @@
-package no.nav.aap.api.tokenx
+package no.nav.aap.api.rest.tokenx
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import no.nav.security.token.support.client.core.ClientProperties

@@ -5,7 +5,7 @@ import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.config.Constants.AAP
 import no.nav.aap.api.config.Constants.PDL_USER
 import no.nav.aap.api.config.Constants.TEMA
-import no.nav.aap.api.tokenx.TokenXFilterFunction
+import no.nav.aap.api.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.api.util.MDCUtil
 import no.nav.aap.api.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.api.util.MDCUtil.NAV_CALL_ID1
