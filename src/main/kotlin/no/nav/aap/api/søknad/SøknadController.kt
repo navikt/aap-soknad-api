@@ -9,7 +9,7 @@ import javax.validation.Valid
 
 
 @ProtectedRestController(value = ["/api/innsending"], issuer = ISSUER)
-class SøknadInnsendingController(private val authContext: AuthContext) {
+class SøknadController(private val authContext: AuthContext) {
     @PostMapping("/utland")
     fun utland(@RequestBody søknad: @Valid UtenlandsSøknad): Kvittering {
         return Kvittering("OK")

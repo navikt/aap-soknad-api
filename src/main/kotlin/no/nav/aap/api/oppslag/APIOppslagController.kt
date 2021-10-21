@@ -1,7 +1,7 @@
 package no.nav.aap.api.oppslag
 
 import no.nav.aap.api.config.Constants.ISSUER
-import no.nav.aap.api.pdl.PDLOperations
+import no.nav.aap.api.oppslag.pdl.PDLOperations
 import no.nav.aap.api.util.AuthContext
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.web.bind.annotation.GetMapping

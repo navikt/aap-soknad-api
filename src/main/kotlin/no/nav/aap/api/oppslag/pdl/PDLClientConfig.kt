@@ -1,4 +1,4 @@
-package no.nav.aap.api.pdl
+package no.nav.aap.api.oppslag.pdl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient

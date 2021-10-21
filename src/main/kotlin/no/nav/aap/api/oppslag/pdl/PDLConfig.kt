@@ -1,4 +1,4 @@
-package no.nav.aap.api.pdl
+package no.nav.aap.api.oppslag.pdl
 
 import no.nav.aap.api.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
