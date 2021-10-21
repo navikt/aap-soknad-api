@@ -13,6 +13,9 @@
                 </Pattern>
             </layout>
         </appender>
+        <logger name="secure" level="debug" additivity="false">
+            <appender-ref ref="stdout"/>
+        </logger>
     </springProfile>
     <root level="info">
         <appender-ref ref="stdout" />
@@ -24,6 +27,24 @@
             <Marker>CONFIDENTIAL</Marker>
             <OnMatch>DENY</OnMatch>
         </turboFilter>
+
+        <appender name="secureJson" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>/secure-logs/secure.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                <fileNamePattern>/secure-logs/secure.log.%i</fileNamePattern>
+                <minIndex>1</minIndex>
+                <maxIndex>1</maxIndex>
+            </rollingPolicy>
+            <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                <maxFileSize>50MB</maxFileSize>
+            </triggeringPolicy>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+        </appender>
+
+        <logger name="secure" level="debug" additivity="false">
+            <appender-ref ref="secureJson"/>
+        </logger>
+
     </springProfile>
     <springProfile name="dev,local">
         <logger name="no.nav.aap" level="trace" />
