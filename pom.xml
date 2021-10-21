@@ -30,8 +30,8 @@
 
     <dependencies>
         <dependency>
-           <groupId>org.zalando</groupId>
-           <artifactId>problem-spring-web-starter</artifactId>
+            <groupId>org.zalando</groupId>
+            <artifactId>problem-spring-webflux</artifactId>
             <version>${problem.version}</version>
         </dependency>
         <dependency>
