@@ -26,7 +26,7 @@ class TokenXConfig {
     @JsonIgnoreProperties(ignoreUnknown = true)
     private interface IgnoreUnknownMixin
 
-    internal class CCM : TokenXConfigMatcher {
+    private class CCM : TokenXConfigMatcher {
         override fun findProperties(configs: ClientConfigurationProperties, uri: URI): ClientProperties? {
             return configs.registration[uri.host.split("\\.".toRegex()).toTypedArray()[0]]
         }
