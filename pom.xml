@@ -20,6 +20,7 @@
         <java.version>16</java.version>
         <kotlin.version>1.5.31</kotlin.version>
         <logstash.version>6.6</logstash.version>
+        <problem.version>0.27.0</problem.version>
         <reactor.version>1.0.1.RELEASE</reactor.version>
         <sonar.organization>navit</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -28,6 +29,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+           <groupId>org.zalando</groupId>
+           <artifactId>problem-spring-web-starter</artifactId>
+            <version>${problem.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.neovisionaries</groupId>
             <artifactId>nv-i18n</artifactId>
