@@ -17,18 +17,18 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 class AAPApiExceptionHandler(val authContext: AuthContext) : ResponseEntityExceptionHandler() {
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
     fun handleMissingOrExpiredToken(e: java.lang.Exception, req: WebRequest): ResponseEntity<Any> {
-         return logAndHandle(UNAUTHORIZED,e,req,HttpHeaders());
+         return handle(UNAUTHORIZED,e,req,HttpHeaders());
     }
 
-    private  fun logAndHandle(status: HttpStatus, e: java.lang.Exception, req: WebRequest, vararg messages: Any): ResponseEntity<Any> {
-        return logAndHandle(status, e, req, HttpHeaders(), *messages)
+    private  fun handle(status: HttpStatus, e: java.lang.Exception, req: WebRequest, vararg messages: Any): ResponseEntity<Any> {
+        return handle(status, e, req, HttpHeaders(), *messages)
     }
 
-    private  fun logAndHandle(status: HttpStatus, e: java.lang.Exception, req: WebRequest, headers: HttpHeaders, vararg messages: Any): ResponseEntity<Any> {
-        return logAndHandle(status, e, req, headers, listOf(messages))
+    private  fun handle(status: HttpStatus, e: java.lang.Exception, req: WebRequest, headers: HttpHeaders, vararg messages: Any): ResponseEntity<Any> {
+        return handle(status, e, req, headers, listOf(messages))
     }
 
-    private  fun logAndHandle(status: HttpStatus, e: java.lang.Exception, req: WebRequest, headers: HttpHeaders, messages: List<Any>): ResponseEntity<Any> {
+    private  fun handle(status: HttpStatus, e: java.lang.Exception, req: WebRequest, headers: HttpHeaders, messages: List<Any>): ResponseEntity<Any> {
         return handleExceptionInternal(e, e.message, headers, status, req)
     }
 
