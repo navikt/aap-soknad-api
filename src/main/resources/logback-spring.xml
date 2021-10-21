@@ -26,7 +26,6 @@
         </turboFilter>
     </springProfile>
     <springProfile name="dev,local">
-        <logger name="no.nav.security" level="trace" />
         <logger name="no.nav.aap" level="trace" />
     </springProfile>
 </configuration>
