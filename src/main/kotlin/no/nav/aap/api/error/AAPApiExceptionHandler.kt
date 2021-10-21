@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
 import org.zalando.problem.Problem
 import org.zalando.problem.Status
-import org.zalando.problem.ThrowableProblem
 import org.zalando.problem.spring.webflux.advice.ProblemHandling
 
 
@@ -19,9 +18,9 @@ class AAPApiExceptionHandler(val authContext: AuthContext) : ProblemHandling {
     private val LOG = LoggerFactory.getLogger(AAPApiExceptionHandler::class.java)
 
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
-    fun handleMissingOrExpiredToken(e: java.lang.Exception, req: WebRequest): ThrowableProblem? {
-        LOG.warn("OOPS",e)
-        return Problem.valueOf(Status.UNAUTHORIZED);
+    fun handleMissingOrExpiredToken(e: java.lang.Exception, req: WebRequest) {
+         LOG.warn("OOPS",e)
+         Problem.valueOf(Status.UNAUTHORIZED);
     }
 
     override fun toString() = "${javaClass.simpleName} [authContext=$authContext]"
