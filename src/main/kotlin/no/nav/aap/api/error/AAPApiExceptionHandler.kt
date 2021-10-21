@@ -3,10 +3,10 @@ package no.nav.aap.api.error
 import no.nav.aap.api.util.AuthContext
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
+import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.WebRequest
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.zalando.problem.Problem
 import org.zalando.problem.Status
 import org.zalando.problem.ThrowableProblem
@@ -14,9 +14,13 @@ import org.zalando.problem.spring.web.advice.ProblemHandling
 
 
 @ControllerAdvice
-class AAPApiExceptionHandler(val authContext: AuthContext) :  ProblemHandling, ResponseEntityExceptionHandler() {
+class AAPApiExceptionHandler(val authContext: AuthContext) :  ProblemHandling {
+
+    private val LOG = LoggerFactory.getLogger(AAPApiExceptionHandler::class.java)
+
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
     fun handleMissingOrExpiredToken(e: java.lang.Exception, req: WebRequest): ThrowableProblem? {
+        LOG.warn("OOPS",e)
         return Problem.valueOf(Status.UNAUTHORIZED);
     }
 
