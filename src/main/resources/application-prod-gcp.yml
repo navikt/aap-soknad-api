@@ -1,0 +1,10 @@
+no.nav:
+  security:
+    jwt:
+      client:
+        registration:
+          pdl-api:
+            token-exchange:
+              audience: prod-fss:pdl:pdl-api
+pdl:
+  base-uri: https://pdl-api.prod-fss-pub.nais.io/graphql
