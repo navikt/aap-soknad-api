@@ -4,12 +4,18 @@
 # https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
 version: 2
+registries:
+  boot-cluster-conditionals : # Gir tilgang til registre innad i nav med boot-cluster-conditionals som inngang (PATen bestemmer)
+    type: maven-repository
+    url: https://maven.pkg.github.com/navikt/boot-cluster-conditionals
+    username: x-access-token
+    password: ${{ secrets.PAT }}
+
 updates:
   - package-ecosystem: github-actions
-    directory: "/"
-    schedule:
-      interval: daily 
-  - package-ecosystem: "maven" # See documentation for possible values
-    directory: "/" # Location of package manifests
-    schedule:
-      interval: "daily"
+      directory: "/"
+      registries:
+        - boot-cluster-conditionals
+      schedule:
+        interval: daily
+      open-pull-requests-limit: 20
