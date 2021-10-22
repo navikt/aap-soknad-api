@@ -1,0 +1,16 @@
+no.nav:
+  security:
+    jwt:
+      client:
+        registration:
+          pdl-api:
+            well-known-url: ${token.x.well.known.url}
+            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+            authentication:
+              client-id: ${token.x.client.id}
+              client-jwk: ${token.x.private.jwk}
+              client-auth-method: private_key_jwt
+      issuer:
+        tokenx:
+          discovery-url: ${token.x.well.known.url}
+          accepted-audience: ${token.x.client.id}

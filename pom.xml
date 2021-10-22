@@ -14,7 +14,7 @@
     <name>aap-soknad-api</name>
     <description>aap-soknad-api</description>
     <properties>
-        <conditionals.version>2.0.10</conditionals.version>
+        <conditionals.version>2.0.11</conditionals.version>
         <graphql.version>1.0.0</graphql.version>
         <i18n.version>1.29</i18n.version>
         <java.version>16</java.version>
