@@ -14,12 +14,11 @@ import java.nio.charset.Charset.defaultCharset
 
 @Component
 class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
-    private val LOG = LoggerFactory.getLogger(PDLExceptionThrowingErrorHandler::class.java)
-
+    private val log = LoggerFactory.getLogger(PDLExceptionThrowingErrorHandler::class.java)
     private val secureLogger = LoggerUtil.getSecureLogger()
 
     override fun <T> handleError(e: GraphQLErrorsException): T {
-        LOG.warn("PDL feilet, se secure logs for mer detaljer")
+        log.warn("PDL feilet, se secure logs for mer detaljer")
         secureLogger.error("PDL oppslag returnerte ${e.errors.size} feil. ${e.errors}", e)
         val errorMessage = e.message ?: "Ukjent feil"
         val firstExceptionCode = e.errors.firstOrNull()?.extensions?.get("code")

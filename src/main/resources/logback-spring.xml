@@ -4,30 +4,28 @@
         class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
     </appender>
-    <springProfile name="local">
+    <springProfile name="local,dev,test">
         <appender name="stdout"
             class="ch.qos.logback.core.ConsoleAppender">
             <layout class="ch.qos.logback.classic.PatternLayout">
-                <Pattern>
-                    %d{yyyy-MM-dd HH:mm:ss} %X{Nav-CallId} [%thread] %-5level %logger{70} - %msg%n
-                </Pattern>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} %X{Nav-CallId} [%thread] %-5level %logger{70} - %msg%n</Pattern>
             </layout>
         </appender>
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="stdout"/>
         </logger>
+        <logger name="no.nav.aap" level="trace" />
     </springProfile>
     <root level="info">
         <appender-ref ref="stdout" />
     </root>
-    <springProfile name="prod,test">
+    <springProfile name="prod">
         <turboFilter
             class="ch.qos.logback.classic.turbo.MarkerFilter">
             <Name>CONFIDENTIAL_FILTER</Name>
             <Marker>CONFIDENTIAL</Marker>
             <OnMatch>DENY</OnMatch>
         </turboFilter>
-
         <appender name="secureJson" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>/secure-logs/secure.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
@@ -40,14 +38,9 @@
             </triggeringPolicy>
             <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
         </appender>
-
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="secureJson"/>
         </logger>
-
-    </springProfile>
-    <springProfile name="dev,local">
-        <logger name="no.nav.aap" level="trace" />
     </springProfile>
 </configuration>
 

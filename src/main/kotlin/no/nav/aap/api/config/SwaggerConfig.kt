@@ -12,9 +12,7 @@ import springfox.documentation.spi.DocumentationType.OAS_30
 import springfox.documentation.spring.web.plugins.Docket
 
 @Configuration
-@Import(
-    BeanValidatorPluginsConfiguration::class
-)
+@Import(BeanValidatorPluginsConfiguration::class)
  class SwaggerConfig {
     @Bean
      fun api(): Docket {

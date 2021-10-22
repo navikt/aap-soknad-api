@@ -22,6 +22,8 @@ class PDLWebClientAdapter internal constructor(
     private val authContext: AuthContext,
     private val errorHandler: PDLErrorHandler) : AbstractWebClientAdapter(webClient, cfg) {
 
+    private val log = LoggerFactory.getLogger(PDLWebClientAdapter::class.java)
+
     internal fun navn(): PDLNavn? {
         return authContext.getSubject()?.let { navn(it) }
     }
@@ -32,22 +34,22 @@ class PDLWebClientAdapter internal constructor(
 
     private fun <T> oppslag(oppslag: () -> T, type: String): T {
         return try {
-            LOG.info("PDL oppslag {}", type)
+            log.info("PDL oppslag {}", type)
             val res = oppslag.invoke()
-            LOG.trace("PDL oppslag {} respons={}", type, res)
-            LOG.info("PDL oppslag {} OK", type)
+            log.trace("PDL oppslag {} respons={}", type, res)
+            log.info("PDL oppslag {} OK", type)
             res
         } catch (e: GraphQLErrorsException) {
-            LOG.warn("PDL oppslag {} feilet", type, e)
+            log.warn("PDL oppslag {} feilet", type, e)
             errorHandler.handleError(e)
         } catch (e: Exception) {
-            LOG.warn("PDL oppslag {} feilet med uventet feil", type, e)
+            log.warn("PDL oppslag {} feilet med uventet feil", type, e)
             throw e
         }
     }
 
     override fun ping() {
-        LOG.trace("Pinger {}", baseUri)
+        log.trace("Pinger {}", baseUri)
         webClient
             .options()
             .uri(baseUri)
@@ -61,7 +63,6 @@ class PDLWebClientAdapter internal constructor(
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient,graphQLWebClient=$graphQLWebClient,authContext=$authContext,errorHandler=$errorHandler, cfg=$cfg]"
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(PDLWebClientAdapter::class.java)
         private const val IDENT = "ident"
         private const val NAVN_QUERY = "query-navn.graphql"
         private fun idFra(id: String): Map<String, Any> {

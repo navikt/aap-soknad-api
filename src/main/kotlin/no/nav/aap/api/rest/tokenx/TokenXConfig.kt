@@ -18,7 +18,7 @@ class TokenXConfig {
             return configs.registration[uri.host.split("\\.".toRegex()).toTypedArray()[0]]
         }
     }
-        @Bean
+    @Bean
     fun customizer(): Jackson2ObjectMapperBuilderCustomizer {
         return Jackson2ObjectMapperBuilderCustomizer { b: Jackson2ObjectMapperBuilder ->
             b.mixIn(OAuth2AccessTokenResponse::class.java, IgnoreUnknownMixin::class.java)

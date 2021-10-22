@@ -20,23 +20,23 @@ class TokenXFilterFunction internal constructor(
     private val configs: ClientConfigurationProperties,
     private val service: OAuth2AccessTokenService,
     private val matcher: TokenXConfigMatcher,
-    protected val authContext: AuthContext
-) : ExchangeFilterFunction {
-    private val LOG = LoggerFactory.getLogger(TokenXFilterFunction::class.java)
+    private val authContext: AuthContext) : ExchangeFilterFunction {
+
+    private val log = LoggerFactory.getLogger(TokenXFilterFunction::class.java)
     private val secureLog = LoggerUtil.getSecureLogger();
     override fun filter(req: ClientRequest, next: ExchangeFunction): Mono<ClientResponse> {
         val url = req.url()
-        LOG.trace("Sjekker token exchange for {}", url)
+        log.trace("Sjekker token exchange for {}", url)
         val cfg = matcher.findProperties(configs, url)
         if (cfg != null && authContext.isAuthenticated()) {
-            LOG.trace(EnvUtil.CONFIDENTIAL, "Gjør token exchange for {} med konfig {}", url, cfg)
+            log.trace(EnvUtil.CONFIDENTIAL, "Gjør token exchange for {} med konfig {}", url, cfg)
             val token = service.getAccessToken(cfg).accessToken
-            LOG.trace("Token exchange for {} OK", url)
+            log.trace("Token exchange for {} OK", url)
             secureLog.trace("Token er {}",token)
             return next.exchange(ClientRequest.from(req).header(AUTHORIZATION, bearerToken(token)).build()
             )
         }
-        LOG.trace("Ingen token exchange for {}", url)
+        log.trace("Ingen token exchange for {}", url)
         return next.exchange(ClientRequest.from(req).build())
     }
 
