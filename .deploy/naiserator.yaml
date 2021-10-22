@@ -13,9 +13,6 @@ spec:
     inbound:
       rules:
         - application: aap-soknad
-  env:
-    - name: WONDERWALL_URI
-      value: {{ ingress }}
   tokenx:
     enabled: true
   port: 8080
