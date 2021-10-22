@@ -1,31 +1,4 @@
-
-info:
-  cluster-name: ${nais.cluster.name}
-  image-name : ${nais.app.image}
-  app-name : ${nais.app.name}
-  java-version : ${java.version}
-  namespace-name: ${nais.namespace}
-spring:
-  main:
-    banner-mode: off
-  jackson:
-    default-property-inclusion: non_empty
-    mapper:
-      accept-case-insensitive-enums: true
-      accept-case-insensitive-properties: true
-    deserialization:
-      read-unknown-enum-values-using-default-value: true
-      accept-single-value-as-array: true
-      fail-on-unknown-properties: true
-    serialization:
-      write-empty-json-arrays: false
-      fail-on-empty-beans: false
 management :
-  health:
-    ping:
-      enabled: false
-    diskspace:
-      enabled: false
   endpoints:
     web:
       exposure:
