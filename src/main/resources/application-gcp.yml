@@ -1,7 +1,7 @@
 management:
- endpoint:
+  endpoint:
     env:
-      additional-keys-to-sanitize: "*client-jwk"
+      additional-keys-to-sanitize: "client-jwk"
 no.nav:
   security:
     jwt:
