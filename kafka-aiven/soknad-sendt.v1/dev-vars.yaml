@@ -1,0 +1,12 @@
+pool: nav-dev
+config:
+  cleanupPolicy: delete
+  minimumInSyncReplicas: 1
+  partitions: 1
+  replication: 3
+  retentionBytes: -1
+  retentionHours: 120
+acl:
+  - team: aap
+    application: aap-soknad-api
+    access: write

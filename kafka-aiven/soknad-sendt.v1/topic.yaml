@@ -1,0 +1,19 @@
+apiVersion: kafka.nais.io/v1
+kind: Topic
+metadata:
+  name: aap-soknad-sendt.v1
+  namespace: aap
+  labels:
+    team: aap
+spec:
+  pool: {{pool}}
+  config:
+  {{#each config as |value key|}}
+     {{key}}: {{value}}
+  {{/each}}
+  acl:
+  {{#each acl}}
+     - team: {{team}}
+       application: {{application}}
+       access: {{access}}
+  {{/each}}
