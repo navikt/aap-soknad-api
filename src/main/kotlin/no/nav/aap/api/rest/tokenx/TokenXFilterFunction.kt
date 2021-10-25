@@ -3,7 +3,7 @@ package no.nav.aap.api.rest.tokenx
 import no.nav.aap.api.util.AuthContext
 import no.nav.aap.api.util.AuthContext.Companion.bearerToken
 import no.nav.aap.api.util.LoggerUtil
-import no.nav.foreldrepenger.boot.conditionals.EnvUtil
+import no.nav.boot.conditionals.EnvUtil
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import org.slf4j.LoggerFactory
