@@ -3,7 +3,8 @@ package no.nav.aap.api.oppslag.pdl
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.config.Constants.PDL_USER
-import no.nav.aap.api.rest.AbstractRestConfig
+import no.nav.aap.api.rest.AbstractRestConfig.Companion.correlatingFilterFunction
+import no.nav.aap.api.rest.AbstractRestConfig.Companion.temaFilterFunction
 import no.nav.aap.api.rest.tokenx.TokenXFilterFunction
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
@@ -17,8 +18,8 @@ import org.springframework.web.reactive.function.client.WebClient
      fun webClientPDL(builder: WebClient.Builder, cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction): WebClient {
         return builder
             .baseUrl(cfg.baseUri.toString())
-            .filter(AbstractRestConfig.correlatingFilterFunction())
-            .filter(AbstractRestConfig.temaFilterFunction())
+            .filter(correlatingFilterFunction())
+            .filter(temaFilterFunction())
             .filter(tokenXFilterFunction)
             .build()
     }

@@ -12,7 +12,6 @@ import org.springframework.web.util.UriBuilder
 import java.net.URI
 import java.time.Duration
 
-
 @ConfigurationProperties(prefix = "sts")
 class STSConfig @ConstructorBinding constructor(
     @DefaultValue(DEFAULT_BASE_URI) baseUri: URI,

@@ -24,7 +24,6 @@ import java.net.URI
              )
          }
      }
-
       fun temaFilterFunction(): ExchangeFilterFunction {
          return ExchangeFilterFunction { req: ClientRequest, next: ExchangeFunction ->
              next.exchange(
