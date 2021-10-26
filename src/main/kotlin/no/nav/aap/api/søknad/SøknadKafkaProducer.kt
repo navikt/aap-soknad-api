@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service
 
 @Service
 class SøknadKafkaProducer(
-    private val aivenKafkaProducerTemplate: KafkaTemplate<String, String>
+    private val aivenKafkaProducerTemplate: KafkaTemplate<String, String>,
+    private val objectMapper: ObjectMapper
 ) {
     private val log = LoggerFactory.getLogger(javaClass.enclosingClass)
     private val secureLog = LoggerUtil.getSecureLogger()
-    private val objectMapper = ObjectMapper().registerModule(JavaTimeModule())
     private val søknadTopic = "aap-soknad-sendt.v1"
 
     fun sendUtlandsSøknad(fnr: String, søknad: UtenlandsSøknadView) {
