@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.view
+package no.nav.aap.api.søknad.model
 
 import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Periode

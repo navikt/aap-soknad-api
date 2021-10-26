@@ -2,8 +2,8 @@ package no.nav.aap.api.søknad
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import no.nav.aap.api.søknad.view.UtenlandsSøknadView
-import no.nav.aap.api.søknad.view.toKafkaObject
+import no.nav.aap.api.søknad.model.UtenlandsSøknadView
+import no.nav.aap.api.søknad.model.toKafkaObject
 import no.nav.aap.api.util.LoggerUtil
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.core.KafkaTemplate

@@ -1,8 +1,8 @@
 package no.nav.aap.api.søknad
 
 import no.nav.aap.api.config.Constants.ISSUER
-import no.nav.aap.api.søknad.view.Kvittering
-import no.nav.aap.api.søknad.view.UtenlandsSøknadView
+import no.nav.aap.api.søknad.model.Kvittering
+import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.api.util.AuthContext
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.web.bind.annotation.PostMapping
