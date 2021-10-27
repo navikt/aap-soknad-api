@@ -12,7 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import java.time.Duration
 
 
-@Component
+//@Component
 class STSWebClientAdapter(@Qualifier(STS) webClient: WebClient, override val cfg: STSConfig) :  AbstractWebClientAdapter(webClient, cfg) {
     private val LOG: Logger = LoggerFactory.getLogger(STSWebClientAdapter::class.java)
 

@@ -2,7 +2,6 @@ package no.nav.aap.api.rest.sts
 
 import com.nimbusds.oauth2.sdk.GrantType.CLIENT_CREDENTIALS
 import no.nav.aap.api.rest.AbstractRestConfig
-import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.util.LinkedMultiValueMap
@@ -12,7 +11,7 @@ import org.springframework.web.util.UriBuilder
 import java.net.URI
 import java.time.Duration
 
-@ConfigurationProperties(prefix = "sts")
+//@ConfigurationProperties(prefix = "sts")
 class STSConfig @ConstructorBinding constructor(
     @DefaultValue(DEFAULT_BASE_URI) baseUri: URI,
     @DefaultValue(DEFAULT_SLACK) internal val slack: Duration,  val username: String,  val password: String,

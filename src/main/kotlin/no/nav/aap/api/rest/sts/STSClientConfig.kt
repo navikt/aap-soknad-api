@@ -4,11 +4,10 @@ import no.nav.aap.api.config.Constants.STS
 import no.nav.aap.api.rest.AbstractRestConfig.Companion.correlatingFilterFunction
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.client.WebClient
 
-@Configuration
+//@Configuration
 internal class STSClientConfig {
     @Bean
     @Qualifier(STS)
