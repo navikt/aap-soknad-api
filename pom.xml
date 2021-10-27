@@ -31,7 +31,7 @@
     <dependencies>
         <dependency>
             <groupId>org.zalando</groupId>
-            <artifactId>problem-spring-webflux</artifactId>
+            <artifactId>problem-spring-web</artifactId>
             <version>${problem.version}</version>
         </dependency>
         <dependency>
