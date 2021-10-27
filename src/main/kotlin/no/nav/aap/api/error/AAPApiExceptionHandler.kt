@@ -1,7 +1,6 @@
 package no.nav.aap.api.error
 
 import no.nav.aap.api.util.AuthContext
-import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.core.env.Environment
@@ -20,10 +19,6 @@ class AAPApiExceptionHandler(val authContext: AuthContext, private val env: Envi
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
     fun handleMissingOrExpiredToken(e: java.lang.Exception, req: NativeWebRequest): ResponseEntity<Problem>? {
         return create(Status.UNAUTHORIZED,e,req)
-    }
-
-    override fun isCausalChainsEnabled(): Boolean {
-        return isDevOrLocal(env)
     }
 
     override fun toString() = "${javaClass.simpleName} [authContext=$authContext]"
