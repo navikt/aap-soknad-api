@@ -13,7 +13,7 @@ import org.springframework.web.client.HttpStatusCodeException
 import java.nio.charset.Charset.defaultCharset
 
 @Component
-class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
+internal class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
     private val log = LoggerFactory.getLogger(PDLExceptionThrowingErrorHandler::class.java)
     private val secureLogger = LoggerUtil.getSecureLogger()
 
