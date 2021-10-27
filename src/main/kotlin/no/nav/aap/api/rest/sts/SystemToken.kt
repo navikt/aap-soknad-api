@@ -11,8 +11,8 @@ data class SystemToken(@JsonProperty("access_token") private val accessToken: Jw
                        @JsonProperty("token_type") private val  tokenType: String,
                        @JsonProperty("scope") private val scope: String) {
 
-    fun isExpired(slack: Duration) =  now().isAfter(expiration?.minus(slack)) ?: true
+    fun isExpired(slack: Duration) =  now().isAfter(expiration?.minus(slack))
     val token = accessToken.tokenAsString
-    val expiration = localDateTime(accessToken.jwtTokenClaims.expirationTime)
+    val expiration = localDateTime(accessToken?.jwtTokenClaims.expirationTime)
 
 }
