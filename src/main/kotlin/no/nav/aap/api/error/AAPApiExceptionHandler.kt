@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.NativeWebRequest
 import org.zalando.problem.Problem
-import org.zalando.problem.Status
+import org.zalando.problem.Status.UNAUTHORIZED
 import org.zalando.problem.spring.web.advice.ProblemHandling
 
 
@@ -18,7 +18,7 @@ class AAPApiExceptionHandler(val authContext: AuthContext, private val env: Envi
 
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
     fun handleMissingOrExpiredToken(e: java.lang.Exception, req: NativeWebRequest): ResponseEntity<Problem>? {
-        return create(Status.UNAUTHORIZED,e,req)
+        return create(UNAUTHORIZED,e,req)
     }
 
     override fun toString() = "${javaClass.simpleName} [authContext=$authContext]"
