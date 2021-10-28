@@ -16,7 +16,7 @@ class SøknadController(
 ) {
     @PostMapping("/utland")
     fun utland(@RequestBody søknad: @Valid UtenlandsSøknadView): Kvittering {
-        søknadKafkaProducer.sendUtlandsSøknad(authContext.getFnr(ISSUER).fnr, søknad)
+        søknadKafkaProducer.sendUtlandsSøknad(authContext.getFnr(), søknad)
         return Kvittering("OK")
     }
 
