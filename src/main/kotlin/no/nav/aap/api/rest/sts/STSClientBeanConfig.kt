@@ -8,7 +8,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.web.reactive.function.client.WebClient
 
 //@Configuration
-internal class STSClientConfig {
+internal class STSClientBeanConfig {
     @Bean
     @Qualifier(STS)
     fun webClientSTS(builder: WebClient.Builder, cfg: STSConfig): WebClient {

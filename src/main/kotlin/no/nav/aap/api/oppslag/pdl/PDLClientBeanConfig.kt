@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
- class PDLClientConfig()  {
+ class PDLClientBeanConfig()  {
     @Qualifier(PDL_USER)
     @Bean
      fun webClientPDL(builder: WebClient.Builder, cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction): WebClient {

@@ -17,7 +17,7 @@ import org.zalando.problem.spring.web.advice.ProblemHandling
 class AAPApiExceptionHandler(val authContext: AuthContext, private val env: Environment) : ProblemHandling {
 
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
-    fun handleMissingOrExpiredToken(e: java.lang.Exception, req: NativeWebRequest): ResponseEntity<Problem>? {
+    fun handleMissingOrExpiredToken(e: java.lang.Exception, req: NativeWebRequest): ResponseEntity<Problem> {
         return create(UNAUTHORIZED,e,req)
     }
 
