@@ -1,10 +1,17 @@
 package no.nav.aap.api.søknad.config
 
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.ConstructorBinding
+import org.springframework.boot.context.properties.NestedConfigurationProperty
 
-@Component
-class KafkaConfig(@Value("\${KAFKA_BROKERS}") val kafkaBrokers: String,
-                  @Value("\${KAFKA_TRUSTSTORE_PATH}") val kafkaTruststorePath: String,
-                  @Value("\${KAFKA_CREDSTORE_PASSWORD}") val kafkaCredstorePassword: String,
-                  @Value("\${KAFKA_KEYSTORE_PATH}")  val kafkaKeystorePath: String)
+@ConfigurationProperties("kafka")
+data class KafkaConfig @ConstructorBinding constructor (val brokers: String,
+                       @NestedConfigurationProperty val truststorePath: TrustStore,
+                       @NestedConfigurationProperty val credstorePassword: CredStore,
+                       @NestedConfigurationProperty val keystorePath: KeyStore)
+
+data class TrustStore(var path: String)
+data class KeyStore(var path: String)
+data class CredStore(var password: String)
+
+
