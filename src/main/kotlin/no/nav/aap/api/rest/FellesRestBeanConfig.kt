@@ -1,9 +1,8 @@
 package no.nav.aap.api.rest
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import no.nav.aap.api.rest.tokenx.TokenXModule
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
@@ -18,8 +17,7 @@ class FellesRestBeanConfig {
     @Bean
     fun customizer(): Jackson2ObjectMapperBuilderCustomizer {
         return Jackson2ObjectMapperBuilderCustomizer { b: Jackson2ObjectMapperBuilder ->
-            b.modules(ProblemModule(), JavaTimeModule())
-            b.mixIn(OAuth2AccessTokenResponse::class.java, IgnoreUnknownMixin::class.java)
+            b.modules(ProblemModule(), JavaTimeModule(), TokenXModule())
         }
     }
     @Bean
@@ -27,9 +25,4 @@ class FellesRestBeanConfig {
     fun httpTraceRepository(): HttpTraceRepository {
         return InMemoryHttpTraceRepository()
     }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    private interface IgnoreUnknownMixin
-
-
 }
