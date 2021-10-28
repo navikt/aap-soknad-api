@@ -8,6 +8,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.retry.annotation.EnableRetry
 
+
 @SpringBootApplication
 @EnableJwtTokenValidation(ignore = ["springfox.documentation", "org.springframework"])
 @EnableOAuth2Client(cacheEnabled = true)
