@@ -6,12 +6,12 @@ import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.api.søknad.model.toKafkaObject
 import no.nav.aap.api.util.LoggerUtil
 import org.slf4j.LoggerFactory
-import org.springframework.kafka.core.KafkaTemplate
+import org.springframework.kafka.core.KafkaOperations
 import org.springframework.stereotype.Service
 
 @Service
 class SøknadKafkaProducer(
-    private val aivenKafkaProducerTemplate: KafkaTemplate<String, String>,
+    private val aivenKafkaProducerTemplate: KafkaOperations<String, String>,
     private val objectMapper: ObjectMapper
 ) {
     private val log = LoggerFactory.getLogger(SøknadKafkaProducer::class.java)

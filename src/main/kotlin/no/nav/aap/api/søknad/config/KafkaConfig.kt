@@ -9,7 +9,6 @@ class KafkaConfig @ConstructorBinding constructor (val brokers: String,
                                                    @NestedConfigurationProperty val truststorePath: TrustStore,
                                                    @NestedConfigurationProperty val credstorePassword: CredStore,
                                                    @NestedConfigurationProperty val keystorePath: KeyStore)
-
 data class TrustStore(val path: String)
 data class KeyStore(val path: String)
 data class CredStore(val password: String)

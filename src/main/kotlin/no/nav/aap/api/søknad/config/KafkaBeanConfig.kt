@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
+import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.core.KafkaTemplate
 
 @Configuration
@@ -16,8 +17,7 @@ class KafkaBeanConfig {
     private val log = LoggerFactory.getLogger(KafkaBeanConfig::class.java)
 
     @Bean
-    fun aivenKafkaProducerTemplate(cfg: KafkaConfig): KafkaTemplate<String, String> {
-        log.info("XXXXXXXXXXXX " + cfg.keystorePath)
+    fun aivenKafkaProducerTemplate(cfg: KafkaConfig): KafkaOperations<String, String> {
         val config = mapOf(
             CLIENT_ID_CONFIG to "aap-soknad-producer",
             ACKS_CONFIG to "1",
