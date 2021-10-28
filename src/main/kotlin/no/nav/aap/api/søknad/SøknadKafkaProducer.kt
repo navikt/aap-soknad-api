@@ -14,7 +14,7 @@ class SøknadKafkaProducer(
     private val aivenKafkaProducerTemplate: KafkaTemplate<String, String>,
     private val objectMapper: ObjectMapper
 ) {
-    private val log = LoggerFactory.getLogger(javaClass.enclosingClass)
+    private val log = LoggerFactory.getLogger(SøknadKafkaProducer::class.java)
     private val secureLog = LoggerUtil.getSecureLogger()
     private val søknadTopic = "aap-utland-soknad-sendt.v1"
 

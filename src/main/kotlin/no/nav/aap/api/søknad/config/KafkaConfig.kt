@@ -5,13 +5,14 @@ import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 
 @ConfigurationProperties("kafka")
-data class KafkaConfig @ConstructorBinding constructor (val brokers: String,
-                       @NestedConfigurationProperty val truststorePath: TrustStore,
-                       @NestedConfigurationProperty val credstorePassword: CredStore,
-                       @NestedConfigurationProperty val keystorePath: KeyStore)
+class KafkaConfig @ConstructorBinding constructor (val brokers: String,
+                                                   @NestedConfigurationProperty val truststorePath: TrustStore,
+                                                   @NestedConfigurationProperty val credstorePassword: CredStore,
+                                                   @NestedConfigurationProperty val keystorePath: KeyStore)
 
-data class TrustStore(var path: String)
-data class KeyStore(var path: String)
-data class CredStore(var password: String)
+open  abstract class Store( protected val path: String)
+data class TrustStore(val p: String) : Store(p)
+data class KeyStore(val p: String) : Store(p)
+data class CredStore(val password: String)
 
 
