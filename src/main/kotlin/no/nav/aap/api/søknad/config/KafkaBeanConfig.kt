@@ -17,7 +17,7 @@ class KafkaBeanConfig {
 
     @Bean
     fun aivenKafkaProducerTemplate(cfg: KafkaConfig): KafkaTemplate<String, String> {
-        log.info("XXXXXXXXXXXX " + cfg)
+        log.info("XXXXXXXXXXXX " + cfg.keystorePath)
         val config = mapOf(
             CLIENT_ID_CONFIG to "aap-soknad-producer",
             ACKS_CONFIG to "1",
