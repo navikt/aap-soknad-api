@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 
-@Component
 @ConditionalOnDevOrLocal
 class ActuatorIgnoringTraceRequestFilter(repository: HttpTraceRepository?, tracer: HttpExchangeTracer?) :
     HttpTraceFilter(repository, tracer) {
