@@ -16,7 +16,7 @@ class SøknadKafkaProducer(
 ) {
     private val log = LoggerFactory.getLogger(javaClass.enclosingClass)
     private val secureLog = LoggerUtil.getSecureLogger()
-    private val søknadTopic = "aap-soknad-sendt.v1"
+    private val søknadTopic = "aap-utland-soknad-sendt.v1"
 
     fun sendUtlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
         runCatching {

@@ -1,7 +1,7 @@
 apiVersion: kafka.nais.io/v1
 kind: Topic
 metadata:
-  name: aap-soknad-sendt.v1
+  name: aap-utland-soknad-sendt.v1
   namespace: aap
   labels:
     team: aap
