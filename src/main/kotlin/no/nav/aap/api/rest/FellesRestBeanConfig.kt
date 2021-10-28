@@ -29,4 +29,6 @@ class FellesRestBeanConfig {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private interface IgnoreUnknownMixin
+
+
 }
