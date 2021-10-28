@@ -5,10 +5,10 @@ import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.HealthIndicator
 
 abstract class AbstractPingableHealthIndicator(val pingable: Pingable) : HealthIndicator {
-    private val LOG = LoggerFactory.getLogger(AbstractPingableHealthIndicator::class.java)
+    private val log = LoggerFactory.getLogger(AbstractPingableHealthIndicator::class.java)
     override fun health(): Health {
         return try {
-            LOG.trace("Pinger {} på {}", pingable.name(), pingable.pingEndpoint())
+            log.trace("Pinger {} på {}", pingable.name(), pingable.pingEndpoint())
             pingable.ping()
             up()
         } catch (e: Exception) {
@@ -23,7 +23,7 @@ abstract class AbstractPingableHealthIndicator(val pingable: Pingable) : HealthI
     }
 
     private fun down(e: Exception): Health {
-        LOG.warn("Kunne ikke pinge {} på {}", pingable.name(), pingable.pingEndpoint(), e)
+        log.warn("Kunne ikke pinge {} på {}", pingable.name(), pingable.pingEndpoint(), e)
         return Health.down()
             .withDetail(pingable.name(), pingable.pingEndpoint())
             .withException(e)
