@@ -33,10 +33,10 @@ class KafkaBeanConfig {
         SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG to "", // Disable server host name verification
         SSL_TRUSTSTORE_TYPE_CONFIG to "JKS",
         SSL_KEYSTORE_TYPE_CONFIG to "PKCS12",
-        SSL_TRUSTSTORE_LOCATION_CONFIG to cfg.truststorePath,
-        SSL_TRUSTSTORE_PASSWORD_CONFIG to cfg.credstorePassword,
-        SSL_KEYSTORE_LOCATION_CONFIG to cfg.keystorePath,
-        SSL_KEYSTORE_PASSWORD_CONFIG to cfg.credstorePassword,
-        SSL_KEY_PASSWORD_CONFIG to cfg.credstorePassword,
+        SSL_TRUSTSTORE_LOCATION_CONFIG to cfg.kafkaTruststorePath,
+        SSL_TRUSTSTORE_PASSWORD_CONFIG to cfg.kafkaCredstorePassword,
+        SSL_KEYSTORE_LOCATION_CONFIG to cfg.kafkaKeystorePath,
+        SSL_KEYSTORE_PASSWORD_CONFIG to cfg.kafkaCredstorePassword,
+        SSL_KEY_PASSWORD_CONFIG to cfg.kafkaCredstorePassword,
     )
 }
