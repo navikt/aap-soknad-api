@@ -1,5 +1,8 @@
 package no.nav.aap.api.søknad.config
 
+import com.fasterxml.jackson.databind.JsonSerializer
+import no.nav.aap.api.søknad.model.UtenlandsSøknadKafka
+import no.nav.boot.conditionals.ConditionalOnGCP
 import org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG
 import org.apache.kafka.clients.CommonClientConfigs.SECURITY_PROTOCOL_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig.*
@@ -17,13 +20,14 @@ class KafkaBeanConfig {
     private val log = LoggerFactory.getLogger(KafkaBeanConfig::class.java)
 
     @Bean
-    fun aivenKafkaProducerTemplate(cfg: KafkaConfig): KafkaOperations<String, String> {
+    @ConditionalOnGCP
+    fun aivenKafkaProducerTemplate(cfg: KafkaConfig): KafkaOperations<String, UtenlandsSøknadKafka> {
         val config = mapOf(
             BOOTSTRAP_SERVERS_CONFIG to cfg.brokers,
             CLIENT_ID_CONFIG to "aap-soknad-producer",
             ACKS_CONFIG to "1",
             KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
-            VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
+            VALUE_SERIALIZER_CLASS_CONFIG to JsonSerializer::class.java,
         ) + securityConfig(cfg)
 
         return KafkaTemplate(DefaultKafkaProducerFactory(config))

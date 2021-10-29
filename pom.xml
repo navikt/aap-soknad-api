@@ -20,6 +20,8 @@
         <java.version>16</java.version>
         <kotlin.version>1.5.31</kotlin.version>
         <logstash.version>6.6</logstash.version>
+        <mock-oauth2-server.version>0.3.6</mock-oauth2-server.version>
+        <okhttp3.version>4.9.1</okhttp3.version>
         <problem.version>0.27.0</problem.version>
         <reactor.version>1.0.1.RELEASE</reactor.version>
         <sonar.organization>navit</sonar.organization>
@@ -89,6 +91,11 @@
         <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>token-validation-spring</artifactId>
+            <version>${token.validation.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>token-validation-spring-test</artifactId>
             <version>${token.validation.version}</version>
         </dependency>
         <dependency>
