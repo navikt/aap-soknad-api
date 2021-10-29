@@ -1,34 +1,52 @@
 package no.nav.aap.api.søknad
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import no.nav.aap.api.error.IntegrationException
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.api.søknad.model.toKafkaObject
 import no.nav.aap.api.util.LoggerUtil
+import no.nav.aap.api.util.MDCUtil
+import no.nav.aap.api.util.MDCUtil.NAV_CALL_ID
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.core.KafkaOperations
+import org.springframework.kafka.support.KafkaHeaders.TOPIC
+import org.springframework.kafka.support.SendResult
+import org.springframework.messaging.Message
+import org.springframework.messaging.support.MessageBuilder
 import org.springframework.stereotype.Service
+import org.springframework.util.concurrent.ListenableFutureCallback
+
+
+
 
 @Service
-class SøknadKafkaProducer(
-    private val aivenKafkaProducerTemplate: KafkaOperations<String, String>,
-    private val objectMapper: ObjectMapper
-) {
+class SøknadKafkaProducer(private val kafkaOperations: KafkaOperations<String, String>, private val objectMapper: ObjectMapper) {
     private val log = LoggerFactory.getLogger(SøknadKafkaProducer::class.java)
     private val secureLog = LoggerUtil.getSecureLogger()
     private val søknadTopic = "aap-utland-soknad-sendt.v1"
 
     fun sendUtlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
-        runCatching {
-            val søknadToSend = søknad.toKafkaObject(fnr.fnr)
-            val result = aivenKafkaProducerTemplate.send(søknadTopic, søknadToSend.toJson()).get()
-            log.info("Søknad sent til Kafka.")
-            secureLog.debug("Søknad $søknadToSend sent til kafka ($result)")
-        }.onFailure {
-            log.error("Klarte ikke sende søknad til Kafka, se secure log for info")
-            secureLog.error("Klarte ikke sende til Kafka", it)
-            throw RuntimeException("Klarte ikke sende inn søknad",it)
-        }
+            send(
+                MessageBuilder
+                .withPayload(søknad.toKafkaObject(fnr.fnr).toJson())
+                .setHeader(TOPIC, søknadTopic)
+                .setHeader(NAV_CALL_ID, MDCUtil.callId())
+                .build())
+    }
+
+    private fun send(melding: Message<String>) {
+        kafkaOperations.send(melding).addCallback(object : ListenableFutureCallback<SendResult<String?, String?>?> {
+            override fun onSuccess(result: SendResult<String?, String?>?) {
+                log.info("Søknad sent til Kafka med offset {} OK", result?.recordMetadata?.offset())
+                secureLog.debug("Søknad $melding sent til kafka ($result)")
+            }
+            override fun onFailure(e: Throwable) {
+                log.error("Klarte ikke sende søknad til Kafka, se secure log for info")
+                secureLog.error("Klarte ikke sende $melding til Kafka", e)
+                throw IntegrationException("Klarte ikke sende inn søknad",e)
+            }
+        })
     }
 
     private fun Any.toJson() = objectMapper.writeValueAsString(this)
