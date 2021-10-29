@@ -11,7 +11,7 @@ no.nav:
             grant-type: urn:ietf:params:oauth:grant-type:token-exchange
             authentication:
               client-id: id
-              client-jwk: dummy
+              client-jwk: src/test/resources/jwk.json
               client-auth-method: private_key_jwt
       issuer:
         idporten:
