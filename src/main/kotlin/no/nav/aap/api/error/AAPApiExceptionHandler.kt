@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.NativeWebRequest
 import org.zalando.problem.Problem
 import org.zalando.problem.Status.UNAUTHORIZED
+import org.zalando.problem.Status.UNPROCESSABLE_ENTITY
 import org.zalando.problem.spring.web.advice.ProblemHandling
 
 
@@ -19,6 +20,10 @@ class AAPApiExceptionHandler(val authContext: AuthContext, private val env: Envi
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
     fun handleMissingOrExpiredToken(e: java.lang.Exception, req: NativeWebRequest): ResponseEntity<Problem> {
         return create(UNAUTHORIZED,e,req)
+    }
+    @ExceptionHandler(IntegrationException::class)
+    fun handleIntegrationException(e: java.lang.Exception, req: NativeWebRequest): ResponseEntity<Problem> {
+        return create(UNPROCESSABLE_ENTITY,e,req)
     }
 
     override fun toString() = "${javaClass.simpleName} [authContext=$authContext]"

@@ -22,7 +22,7 @@ object StringUtil {
     }
 
     fun mask(value: String?): String {
-        value?.trim().takeIf { it.isNotBlank() }
+        value?.trim().takeIf { it!!.isNotBlank() }
         return Optional.ofNullable(value)
             .map { obj: String -> obj.stripLeading() }
             .filter(not { obj: String -> obj.isBlank() })
