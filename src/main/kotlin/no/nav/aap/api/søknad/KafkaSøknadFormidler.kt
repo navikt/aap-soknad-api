@@ -23,8 +23,8 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
 @ConditionalOnGCP
-class SøknadKafkaProducer(private val kafkaOperations: KafkaOperations<String, UtenlandsSøknadKafka>) : SøknadSender{
-    private val log = LoggerFactory.getLogger(SøknadKafkaProducer::class.java)
+class KafkaSøknadFormidler(private val kafkaOperations: KafkaOperations<String, UtenlandsSøknadKafka>) : SøknadFormidler{
+    private val log = LoggerFactory.getLogger(KafkaSøknadFormidler::class.java)
     private val secureLog = LoggerUtil.getSecureLogger()
     private val søknadTopic = "aap-utland-soknad-sendt.v1"
 

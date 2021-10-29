@@ -6,11 +6,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.stereotype.Component
 
-@ConditionalOnMissingBean(SøknadKafkaProducer::class)
+@ConditionalOnMissingBean(KafkaSøknadFormidler::class)
 @Component
-class LoggingSøknadSender : SøknadSender {
+class LoggingSøknadFormidler : SøknadFormidler {
 
-    private val log = LoggerFactory.getLogger(LoggingSøknadSender::class.java)
+    private val log = LoggerFactory.getLogger(LoggingSøknadFormidler::class.java)
     override fun sendUtlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
         log.info("Sender søknad")
     }
