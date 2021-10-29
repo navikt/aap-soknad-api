@@ -12,11 +12,11 @@ import javax.validation.Valid
 @ProtectedRestController(value = ["/api/innsending"], issuer = ISSUER)
 class SøknadController(
     private val authContext: AuthContext,
-    private val søknadKafkaProducer: SøknadKafkaProducer
+    private val sender: SøknadSender
 ) {
     @PostMapping("/utland")
     fun utland(@RequestBody søknad: @Valid UtenlandsSøknadView): Kvittering {
-        søknadKafkaProducer.sendUtlandsSøknad(authContext.getFnr(), søknad)
+        sender.sendUtlandsSøknad(authContext.getFnr(), søknad)
         return Kvittering("OK")
     }
 
