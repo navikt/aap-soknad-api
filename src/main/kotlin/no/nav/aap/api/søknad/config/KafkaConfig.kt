@@ -1,12 +1,12 @@
 package no.nav.aap.api.søknad.config
 
-import no.nav.boot.conditionals.ConditionalOnGCP
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 
 @ConfigurationProperties("kafka")
-@ConditionalOnGCP
+@ConditionalOnProperty("kafka.brokers")
 data class KafkaConfig @ConstructorBinding constructor (val brokers: String,
                                                    @NestedConfigurationProperty val truststorePath: TrustStore,
                                                    @NestedConfigurationProperty val credstorePassword: CredStore,
