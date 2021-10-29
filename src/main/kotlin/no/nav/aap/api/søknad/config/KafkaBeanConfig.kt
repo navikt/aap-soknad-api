@@ -19,18 +19,15 @@ class KafkaBeanConfig {
     @Bean
     fun aivenKafkaProducerTemplate(cfg: KafkaConfig): KafkaOperations<String, String> {
         val config = mapOf(
+            BOOTSTRAP_SERVERS_CONFIG to cfg.brokers,
             CLIENT_ID_CONFIG to "aap-soknad-producer",
             ACKS_CONFIG to "1",
             KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
             VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
-        ) + commonConfig(cfg)
+        ) + securityConfig(cfg)
 
         return KafkaTemplate(DefaultKafkaProducerFactory(config))
     }
-
-    private fun commonConfig(cfg: KafkaConfig) = mapOf(
-        BOOTSTRAP_SERVERS_CONFIG to cfg.brokers
-    ) + securityConfig(cfg)
 
     private fun securityConfig(cfg: KafkaConfig) = mapOf(
         SECURITY_PROTOCOL_CONFIG to "SSL",

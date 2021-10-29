@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.HealthIndicator
 
-abstract class AbstractPingableHealthIndicator(val pingable: Pingable) : HealthIndicator {
+abstract class AbstractPingableHealthIndicator(private val pingable: Pingable) : HealthIndicator {
     private val log = LoggerFactory.getLogger(AbstractPingableHealthIndicator::class.java)
     override fun health(): Health {
         return try {
