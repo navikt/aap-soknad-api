@@ -10,6 +10,7 @@ management:
       additional-keys-to-sanitize: "client-jwk,private.jwk"
 spring:
   kafka:
+    bootstrap-servers: ${kafka.brokers}
     properties:
       endpoint:
         identification:
@@ -25,7 +26,6 @@ spring:
       key-store-password:  ${kafka.credstore.password}
     producer:
       client-id: ${spring.application.name}
-      bootstrap-servers: ${kafka.brokers}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: com.fasterxml.jackson.databind.JsonSerializer
 no.nav:
