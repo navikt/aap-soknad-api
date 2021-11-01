@@ -8,6 +8,28 @@ management:
   endpoint:
     env:
       additional-keys-to-sanitize: "client-jwk,private.jwk"
+spring:
+  kafka:
+    properties:
+      security:
+        protocol: SSL
+    ssl:
+      endpoint:
+        identification:
+          algorithm:
+      keystore:
+         location: ${kafka.keystore.path}
+         password: ${kafka.credstore.password}
+         type: PKCS12
+      truststore:
+         location: ${kafka.truststore.path}
+         password: ${kafka.credstore.password}
+         type: JKS
+    producer:
+      client-id: ${spring.application.name}
+      bootstrap-servers: ${kafka.brokers}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.fasterxml.jackson.databind.JsonSerializer
 no.nav:
   security:
     jwt:

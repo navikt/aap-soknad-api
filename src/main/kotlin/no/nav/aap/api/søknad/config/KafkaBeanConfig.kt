@@ -2,25 +2,22 @@ package no.nav.aap.api.søknad.config
 
 import com.fasterxml.jackson.databind.JsonSerializer
 import no.nav.aap.api.søknad.model.UtenlandsSøknadKafka
-import no.nav.boot.conditionals.ConditionalOnGCP
 import org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG
 import org.apache.kafka.clients.CommonClientConfigs.SECURITY_PROTOCOL_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig.*
 import org.apache.kafka.common.config.SslConfigs.*
 import org.apache.kafka.common.serialization.StringSerializer
 import org.slf4j.LoggerFactory
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.core.KafkaTemplate
 
-@Configuration
+//@Configuration
 class KafkaBeanConfig {
     private val log = LoggerFactory.getLogger(KafkaBeanConfig::class.java)
 
-    @Bean
-    @ConditionalOnGCP
+//    @Bean
+//    @ConditionalOnGCP
     fun aivenKafkaProducerTemplate(cfg: KafkaConfig): KafkaOperations<String, UtenlandsSøknadKafka> {
         val config = mapOf(
             BOOTSTRAP_SERVERS_CONFIG to cfg.brokers,
