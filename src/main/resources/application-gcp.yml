@@ -11,8 +11,11 @@ management:
 spring:
   kafka:
     properties:
-      security:
-        protocol: SSL
+      endpoint:
+        identification:
+           algorithm: ''
+    security:
+       protocol: SSL
     ssl:
       trust-store-location: ${kafka.truststore.path}
       trust-store-type: JKS
