@@ -14,17 +14,12 @@ spring:
       security:
         protocol: SSL
     ssl:
-      endpoint:
-        identification:
-          algorithm:
-      keystore:
-         location: ${kafka.keystore.path}
-         password: ${kafka.credstore.password}
-         type: PKCS12
-      truststore:
-         location: ${kafka.truststore.path}
-         password: ${kafka.credstore.password}
-         type: JKS
+      trust-store-location: ${kafka.truststore.path}
+      trust-store-type: JKS
+      trust-store-password: ${kafka.credstore.password}
+      key-store-location: ${kafka.keystore.path}
+      key-store-type: PKCS12
+      key-store-password:  ${kafka.credstore.password}
     producer:
       client-id: ${spring.application.name}
       bootstrap-servers: ${kafka.brokers}
