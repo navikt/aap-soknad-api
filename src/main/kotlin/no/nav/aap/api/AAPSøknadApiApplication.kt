@@ -6,6 +6,7 @@ import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
+import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.retry.annotation.EnableRetry
 
 
@@ -14,6 +15,7 @@ import org.springframework.retry.annotation.EnableRetry
 @EnableOAuth2Client(cacheEnabled = true)
 @ConfigurationPropertiesScan
 @EnableRetry
+@EnableKafka
 open class AAPSøknadApiApplication {
     companion object {
         @JvmStatic
