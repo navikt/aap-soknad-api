@@ -10,6 +10,7 @@ import no.nav.aap.api.util.MDCUtil
 import no.nav.aap.api.util.MDCUtil.NAV_CALL_ID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.KafkaHeaders.TOPIC
 import org.springframework.kafka.support.SendResult
@@ -22,10 +23,9 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
-class KafkaSøknadFormidler(private val kafkaOperations: KafkaOperations<String, UtenlandsSøknadKafka>) : SøknadFormidler{
+class KafkaSøknadFormidler(private val kafkaOperations: KafkaOperations<String, UtenlandsSøknadKafka>, @Value("#{'\${utenlands.topic}'}") private val søknadTopic: String) : SøknadFormidler{
     private val log = LoggerFactory.getLogger(KafkaSøknadFormidler::class.java)
     private val secureLog = LoggerUtil.getSecureLogger()
-    private val søknadTopic = "aap-utland-soknad-sendt.v1"
 
 
     override fun sendUtlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {

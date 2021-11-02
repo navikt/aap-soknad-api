@@ -21,3 +21,5 @@ management :
       enabled: false
     diskspace:
       enabled: false
+utenlands:
+  topic: aap-utland-soknad-sendt.v1

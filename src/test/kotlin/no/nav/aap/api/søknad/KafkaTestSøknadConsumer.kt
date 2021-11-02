@@ -14,7 +14,7 @@ class KafkaTestSøknadConsumer {
     var value: UtenlandsSøknadKafka? = null
     val latch = CountDownLatch(1)
 
-    @KafkaListener(topics = ["aap-utland-soknad-sendt.v1"],groupId ="test")
+    @KafkaListener(topics = ["#{'\${utenlands.topic}'}"],groupId ="test")
     fun receive(consumerRecord: ConsumerRecord<*, *>) {
         value = consumerRecord.value() as UtenlandsSøknadKafka
         latch.countDown()
