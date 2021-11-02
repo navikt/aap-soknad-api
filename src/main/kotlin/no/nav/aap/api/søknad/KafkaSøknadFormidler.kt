@@ -22,7 +22,6 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
-@ConditionalOnGCP
 class KafkaSøknadFormidler(private val kafkaOperations: KafkaOperations<String, UtenlandsSøknadKafka>) : SøknadFormidler{
     private val log = LoggerFactory.getLogger(KafkaSøknadFormidler::class.java)
     private val secureLog = LoggerUtil.getSecureLogger()
@@ -39,10 +38,11 @@ class KafkaSøknadFormidler(private val kafkaOperations: KafkaOperations<String,
     }
 
     private fun send(melding: Message<UtenlandsSøknadKafka>) {
+        log.info("Søknad sendes til Kafka på topic {}", søknadTopic)
         kafkaOperations.send(melding)
             .addCallback(object : ListenableFutureCallback<SendResult<String, UtenlandsSøknadKafka>> {
                 override fun onSuccess(result: SendResult<String, UtenlandsSøknadKafka>?) {
-                    log.info("Søknad sent til Kafka med offset {} OK", result?.recordMetadata?.offset())
+                    log.info("Søknad sent til Kafka på topic {} med offset {} OK", søknadTopic,result?.recordMetadata?.offset())
                     secureLog.debug("Søknad $melding sent til kafka ($result)")
                 }
                 override fun onFailure(e: Throwable) {
