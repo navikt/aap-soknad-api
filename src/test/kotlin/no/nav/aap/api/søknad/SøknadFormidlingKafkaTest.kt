@@ -18,7 +18,7 @@ import java.time.LocalDate.now
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
 
-@SpringBootTest(classes= [KafkaAutoConfiguration::class, KafkaSøknadFormidler::class, KafkaTestSøknadConsumer::class])
+@SpringBootTest(classes= [KafkaAutoConfiguration::class, KafkaSøknadFormidler::class, KafkaTestSøknadKonsument::class])
 @EnableMockOAuth2Server
 @ActiveProfiles("test")
 @DirtiesContext
@@ -28,7 +28,7 @@ internal class  SøknadFormidlingKafkaTest {
     @Autowired
     private lateinit var formidler: SøknadFormidler
     @Autowired
-    private lateinit var consumer: KafkaTestSøknadConsumer
+    private lateinit var consumer: KafkaTestSøknadKonsument
     private val utenlandsSøknadView = UtenlandsSøknadView(AC, Periode(now(), now().plusDays(20)))
     private val fnr = "01010111111"
 

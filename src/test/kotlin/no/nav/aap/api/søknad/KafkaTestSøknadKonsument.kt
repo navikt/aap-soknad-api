@@ -10,13 +10,13 @@ import java.util.concurrent.CountDownLatch
 
 @Profile(TEST)
 @Component
-class KafkaTestSøknadConsumer {
+class KafkaTestSøknadKonsument {
     var value: UtenlandsSøknadKafka? = null
     val latch = CountDownLatch(1)
 
-    @KafkaListener(topics = ["#{'\${utenlands.topic}'}"],groupId ="test")
-    fun receive(consumerRecord: ConsumerRecord<*, *>) {
-        value = consumerRecord.value() as UtenlandsSøknadKafka
+    @KafkaListener(topics = ["#{'\${utenlands.topic}'}"])
+    fun konsumer(consumerRecord: ConsumerRecord<String, UtenlandsSøknadKafka>) {
+        value = consumerRecord.value()
         latch.countDown()
     }
 }
