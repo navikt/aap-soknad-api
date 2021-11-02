@@ -28,7 +28,7 @@ class KafkaSøknadFormidler(private val kafkaOperations: KafkaOperations<String,
     private val secureLog = LoggerUtil.getSecureLogger()
 
 
-    override fun sendUtlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
+    override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
             send(
                 MessageBuilder
                 .withPayload(søknad.toKafkaObject(fnr.fnr))

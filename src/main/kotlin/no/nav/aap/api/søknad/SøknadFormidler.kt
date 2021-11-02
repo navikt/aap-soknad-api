@@ -5,5 +5,5 @@ import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 
 interface SøknadFormidler {
 
-    fun sendUtlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView)
+    fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView)
 }
