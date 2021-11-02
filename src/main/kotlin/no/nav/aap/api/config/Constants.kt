@@ -8,4 +8,5 @@ object Constants {
     const val NAV_CONSUMER_TOKEN = "Nav-Consumer-Token"
     const val IDPORTEN = "idporten"
     const val ISSUER = IDPORTEN
+    const val TEST = "test"
 }
