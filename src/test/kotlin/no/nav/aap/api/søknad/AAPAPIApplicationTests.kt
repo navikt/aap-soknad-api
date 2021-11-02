@@ -15,18 +15,18 @@ import org.springframework.kafka.test.context.EmbeddedKafka
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDate.now
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.MILLISECONDS
 
 
 @SpringBootTest
 @EnableMockOAuth2Server
 @ActiveProfiles("test")
 @DirtiesContext
-@EmbeddedKafka(partitions = 1, brokerProperties = arrayOf("listeners=PLAINTEXT://localhost:9092","port=9092"))
+@EmbeddedKafka(partitions = 1, brokerProperties = ["listeners=PLAINTEXT://localhost:9092", "port=9092"])
 internal class  AAPAPIApplicationTests {
 
     @Autowired
-    private val formidler: SøknadFormidler? = null
+    private lateinit var formidler: SøknadFormidler
     @Autowired
     private lateinit var consumer: KafkaTestSøknadConsumer
 
@@ -38,8 +38,9 @@ internal class  AAPAPIApplicationTests {
 
     @Test
     fun contextLoads() {
-        formidler!!.sendUtlandsSøknad(Fødselsnummer("01010111111"), UtenlandsSøknadView(AC, Periode(now(), now().plusDays(20))))
-        consumer.latch.await(10000, TimeUnit.MILLISECONDS);
+        formidler
+            .sendUtlandsSøknad(Fødselsnummer("01010111111"), UtenlandsSøknadView(AC, Periode(now(), now().plusDays(20))))
+        consumer.latch.await(10000, MILLISECONDS);
         //assertEquals(0,consumer.latch.count)
     }
 }
