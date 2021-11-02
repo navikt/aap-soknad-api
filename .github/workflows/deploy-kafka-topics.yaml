@@ -18,7 +18,7 @@ jobs:
       - name: deploy utland-soknad-sendt-topic to dev
         uses: nais/deploy/actions/deploy@v1
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           RESOURCE: kafka-aiven/utland-soknad-sendt.v1/topic.yaml
           VARS: kafka-aiven/utland-soknad-sendt.v1/dev-vars.yaml
