@@ -32,7 +32,7 @@ internal class  SøknadFormidlingKafkaTest {
     private val fnr = "01010111111"
 
     @Test
-    fun contextLoads() {
+    fun fordelOgKonsumerSøknad() {
         formidler.sendUtenlandsSøknad(Fødselsnummer(fnr), søknad)
         consumer.latch.await(10000, MILLISECONDS);
         assertEquals(0,consumer.latch.count)
