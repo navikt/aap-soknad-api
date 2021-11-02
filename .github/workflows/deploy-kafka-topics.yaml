@@ -1,0 +1,25 @@
+name: Deploy kafka topics
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - kafka-aiven/**
+      - '!kafka-aiven/README.md'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: deploy utland-soknad-sendt-topic to dev
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: kafka-aiven/utland-soknad-sendt.v1/topic.yaml
+          VARS: kafka-aiven/utland-soknad-sendt.v1/dev-vars.yaml
+          PRINT_PAYLOAD: true
