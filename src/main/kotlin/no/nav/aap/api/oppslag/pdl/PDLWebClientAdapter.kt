@@ -5,7 +5,7 @@ import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.config.Constants.PDL_USER
 import no.nav.aap.api.rest.AbstractWebClientAdapter
 import no.nav.aap.api.util.AuthContext
-import org.slf4j.LoggerFactory
+import no.nav.aap.api.util.LoggerUtil.getLogger
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -13,7 +13,6 @@ import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
-
 @Component
 class PDLWebClientAdapter internal constructor(
     @Qualifier(PDL_USER)  private val graphQLWebClient: GraphQLWebClient,
@@ -21,8 +20,7 @@ class PDLWebClientAdapter internal constructor(
     cfg: PDLConfig,
     private val authContext: AuthContext,
     private val errorHandler: PDLErrorHandler) : AbstractWebClientAdapter(webClient, cfg) {
-
-    private val log = LoggerFactory.getLogger(PDLWebClientAdapter::class.java)
+    private val log = getLogger(javaClass)
 
     internal fun navn(): PDLNavn? {
         return authContext.getSubject()?.let { navn(it) }

@@ -19,7 +19,7 @@ object StringUtil {
         return limit(Arrays.toString(bytes), max)
     }
 
-    fun mask(value: String,  mask: String = "*"): String {
+    fun mask(value: String?,  mask: String = "*"): String {
         return value?.replace(("[^\\.]").toRegex(), mask) ?: "<null>"
     }
 

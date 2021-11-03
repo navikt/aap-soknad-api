@@ -1,11 +1,11 @@
 package no.nav.aap.api.rest
 
-import org.slf4j.LoggerFactory
+import no.nav.aap.api.util.LoggerUtil.getLogger
 import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.HealthIndicator
 
 abstract class AbstractPingableHealthIndicator(private val pingable: Pingable) : HealthIndicator {
-    private val log = LoggerFactory.getLogger(AbstractPingableHealthIndicator::class.java)
+    private val log = getLogger(javaClass)
     override fun health(): Health {
         return try {
             log.trace("Pinger {} på {}", pingable.name(), pingable.pingEndpoint())
