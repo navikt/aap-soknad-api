@@ -1,6 +1,7 @@
 package no.nav.aap.api.rest
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.aap.api.rest.tokenx.TokenXModule
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository
@@ -17,7 +18,7 @@ class FellesRestBeanConfig {
     @Bean
     fun customizer(): Jackson2ObjectMapperBuilderCustomizer {
         return Jackson2ObjectMapperBuilderCustomizer { b: Jackson2ObjectMapperBuilder ->
-            b.modules(ProblemModule(), JavaTimeModule(), TokenXModule())
+            b.modules(ProblemModule(), JavaTimeModule(), TokenXModule(), KotlinModule())
         }
     }
     @Bean
