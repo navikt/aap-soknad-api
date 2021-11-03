@@ -4,7 +4,7 @@
         class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
     </appender>
-    <springProfile name="local,dev,test">
+    <springProfile name="local,test">
         <appender name="stdout"
             class="ch.qos.logback.core.ConsoleAppender">
             <layout class="ch.qos.logback.classic.PatternLayout">
@@ -42,4 +42,3 @@
         </logger>
     </springProfile>
 </configuration>
-
