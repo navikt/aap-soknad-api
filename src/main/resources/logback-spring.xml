@@ -4,6 +4,10 @@
         class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
     </appender>
+    <springProfile name="dev">
+        <logger name="reactor.netty.http.client.HttpClient" level="trace"/>
+        <logger name="no.nav.aap" level="trace" />
+    </springProfile>
     <springProfile name="local,test">
         <appender name="stdout"
             class="ch.qos.logback.core.ConsoleAppender">
