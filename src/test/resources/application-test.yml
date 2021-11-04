@@ -6,7 +6,7 @@ no.nav:
           pdl-api:
             token-exchange:
               audience: someaudience
-            well-known-url:  http://localhost:${mock-oauth2-server.port}/issuer1/.well-known/openid-configuration
+            well-known-url: ${mock-oauth2-server.baseUrl}/idporten/.well-known/openid-configuration
             grant-type: urn:ietf:params:oauth:grant-type:token-exchange
             authentication:
               client-id: id
@@ -14,10 +14,10 @@ no.nav:
               client-auth-method: private_key_jwt
       issuer:
         idporten:
-          discovery-url: http://localhost:${mock-oauth2-server.port}/issuer1/.well-known/openid-configuration
+          well-known-url: ${mock-oauth2-server.baseUrl}/idporten/.well-known/openid-configuration
           accepted-audience: someaudience
 pdl:
-  base-uri: https://pdl-api.dev-fss-pub.nais.io/graphql
+  base-uri: ${mock-oauth2-server.baseUrl}/pdl/graphql
 
 spring:
   kafka:
