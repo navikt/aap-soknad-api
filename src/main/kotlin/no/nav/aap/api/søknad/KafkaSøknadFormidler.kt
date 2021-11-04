@@ -24,9 +24,7 @@ class KafkaSøknadFormidler(private val kafkaOperations: KafkaOperations<String,
 
 
     override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
-        val payload = søknad.toKafkaObject(fnr.fnr);
-        log.info(CONFIDENTIAL,"Sender payload for {}",payload)
-        send(fnr.fnr,payload)
+        send(fnr.fnr,søknad.toKafkaObject(fnr.fnr))
     }
 
     private fun send(key: String, value: UtenlandsSøknadKafka ) {
