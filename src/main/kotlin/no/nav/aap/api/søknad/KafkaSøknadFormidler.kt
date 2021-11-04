@@ -9,6 +9,8 @@ import no.nav.aap.api.util.LoggerUtil.getSecureLogger
 import no.nav.aap.api.util.LoggerUtil.getLogger
 import no.nav.aap.api.util.MDCUtil
 import no.nav.aap.api.util.MDCUtil.NAV_CALL_ID
+import no.nav.boot.conditionals.EnvUtil
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.KafkaHeaders.TOPIC
@@ -28,9 +30,11 @@ class KafkaSøknadFormidler(private val kafkaOperations: KafkaOperations<String,
 
 
     override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
-            send(
+        val payload = søknad.toKafkaObject(fnr.fnr);
+        log.info(CONFIDENTIAL,"Sender payload for {}",payload)
+        send(
                 MessageBuilder
-                .withPayload(søknad.toKafkaObject(fnr.fnr))
+                .withPayload(payload)
                 .setHeader(TOPIC, søknadTopic)
                 .setHeader(NAV_CALL_ID, MDCUtil.callId())
                 .build())
