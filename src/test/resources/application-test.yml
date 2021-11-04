@@ -3,7 +3,7 @@ no.nav:
     jwt:
       client:
         registration:
-          pdl-api:
+          localhost:
             token-exchange:
               audience: someaudience
             well-known-url: ${mock-oauth2-server.baseUrl}/idporten/.well-known/openid-configuration
@@ -14,7 +14,7 @@ no.nav:
               client-auth-method: private_key_jwt
       issuer:
         idporten:
-          well-known-url: ${mock-oauth2-server.baseUrl}/idporten/.well-known/openid-configuration
+          discovery-url: ${mock-oauth2-server.baseUrl}/idporten/.well-known/openid-configuration
           accepted-audience: someaudience
 pdl:
   base-uri: ${mock-oauth2-server.baseUrl}/pdl/graphql

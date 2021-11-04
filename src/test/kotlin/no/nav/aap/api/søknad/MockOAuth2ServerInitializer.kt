@@ -9,25 +9,20 @@ import org.springframework.context.support.GenericApplicationContext
 import java.util.Map
 import java.util.function.Supplier
 class MockOAuth2ServerInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
-    override fun initialize(applicationContext: ConfigurableApplicationContext) {
-        val server = registerMockOAuth2Server(applicationContext)
+
+    private val MOCK_OAUTH_2_SERVER_BASE_URL = "mock-oauth2-server.baseUrl"
+
+    override fun initialize(ctx: ConfigurableApplicationContext) {
+        val server = registerMockOAuth2Server(ctx as GenericApplicationContext)
         val baseUrl = server.baseUrl().toString().replace("/$".toRegex(), "")
-        TestPropertyValues
-            .of(Map.of(MOCK_OAUTH_2_SERVER_BASE_URL, baseUrl))
-            .applyTo(applicationContext)
+        TestPropertyValues.of(Map.of(MOCK_OAUTH_2_SERVER_BASE_URL, baseUrl))
+            .applyTo(ctx)
     }
 
-    private fun registerMockOAuth2Server(applicationContext: ConfigurableApplicationContext): MockOAuth2Server =
-        MockOAuth2Server(
-            route("/pdl/graphql") {
-                OAuth2HttpResponse(status = 200, body = "pdl")
-            }
+    private fun registerMockOAuth2Server(ctx: GenericApplicationContext): MockOAuth2Server =
+        MockOAuth2Server(route("/pdl/graphql") { OAuth2HttpResponse(status = 200, body = "pdl") }
         ).apply {
             start()
-            (applicationContext as GenericApplicationContext).registerBean(MockOAuth2Server::class.java, Supplier{ this })
+            ctx.registerBean(MockOAuth2Server::class.java, Supplier{ this })
         }
-
-    companion object {
-        const val MOCK_OAUTH_2_SERVER_BASE_URL = "mock-oauth2-server.baseUrl"
-    }
 }
