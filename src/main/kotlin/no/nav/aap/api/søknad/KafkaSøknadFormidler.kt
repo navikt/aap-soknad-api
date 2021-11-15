@@ -17,7 +17,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
-class KafkaSøknadFormidler(private val kafkaOperations: KafkaOperations<String, UtenlandsSøknadKafka>, @Value("#{'\${utenlands.topic}'}")  val søknadTopic: String) : SøknadFormidler{
+class KafkaSøknadFormidler(private val kafkaOperations: KafkaOperations<String, UtenlandsSøknadKafka>, @Value("#{'\${utenlands.topic:aap-utland-soknad-sendt.v1}'}")  val søknadTopic: String) : SøknadFormidler{
     private val log = getLogger(javaClass)
     private val secureLog = getSecureLogger()
 

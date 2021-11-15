@@ -45,5 +45,3 @@ no.nav:
         idporten:
           discovery-url: ${token.x.well.known.url}
           accepted-audience: ${token.x.client.id}
-utenlands:
-  topic: aap.aap-utland-soknad-sendt.v1

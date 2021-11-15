@@ -1,9 +1,7 @@
 package no.nav.aap.api.søknad
 
-import no.nav.aap.api.config.Constants.TEST
 import no.nav.aap.api.søknad.model.UtenlandsSøknadKafka
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.springframework.context.annotation.Profile
 import org.springframework.kafka.annotation.KafkaListener
 import java.util.concurrent.CountDownLatch
 
@@ -11,7 +9,7 @@ class KafkaTestSøknadKonsument {
     var value: UtenlandsSøknadKafka? = null
     val latch = CountDownLatch(1)
 
-    @KafkaListener(topics = ["#{'\${utenlands.topic}'}"])
+    @KafkaListener(topics = ["#{'\${utenlands.topic:aap-utland-soknad-sendt.v1}'}"])
     fun konsumer(consumerRecord: ConsumerRecord<String, UtenlandsSøknadKafka>) {
         value = consumerRecord.value()
         latch.countDown()
