@@ -7,6 +7,7 @@ on:
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   IMAGE: ghcr.io/navikt/aap-soeknad-api:${{ github.sha }}
+  TAG: ${{ github.sha }}
 
 jobs:
   bygg:
@@ -15,12 +16,6 @@ jobs:
 
       - name: Sjekk ut kode
         uses: actions/checkout@v2
-
-      - name: Hent tag
-        run: |
-          echo 'TAG<<EOF' >> $GITHUB_ENV
-          git log -1 --pretty=%ad --date=format:%Y%m%d%H%M%S-`echo $GITHUB_SHA | cut -c1-7`  >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
 
       - name: Sett opp Java 17
         uses: actions/setup-java@v2
