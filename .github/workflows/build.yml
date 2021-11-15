@@ -6,7 +6,7 @@ on:
       - main
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  IMAGE_BASE: ghcr.io/${{ github.repository }}
+  IMAGE: ghcr.io/navikt/aap-fss-proxy:${{ github.sha }}
 
 jobs:
   bygg:
@@ -44,8 +44,8 @@ jobs:
 
       - name: Bygg, tag og push Docker image
         run: |
-          docker build --pull --tag ${IMAGE_BASE}:${TAG} --tag ${IMAGE_BASE}:latest .
-          docker push ${IMAGE_BASE} --all-tags
+          docker build --tag ${IMAGE} .
+          docker push ${IMAGE}
 
   deploytildev:
     name: Deploy til dev-gcp
