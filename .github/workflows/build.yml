@@ -46,7 +46,7 @@ jobs:
           docker push ${IMAGE_BASE} --all-tags
 
       - name: Deploy
-      - uses: nais/deploy/actions/deploy@master
+        uses: nais/deploy/actions/deploy@master
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
