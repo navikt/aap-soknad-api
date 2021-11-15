@@ -9,7 +9,7 @@ env:
   IMAGE_BASE: ghcr.io/${{ github.repository }}
 
 jobs:
-  kompiler:
+  bygg:
     runs-on: ubuntu-latest
     steps:
 
