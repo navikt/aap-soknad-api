@@ -6,8 +6,7 @@ on:
       - main
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  IMAGE: ghcr.io/navikt/aap-soeknad-api:${{ github.sha }}
-  TAG: ${{ github.sha }}
+  IMAGE_BASE: ghcr.io/${{ github.repository }}
 
 jobs:
   bygg:
@@ -23,11 +22,16 @@ jobs:
           java-version: 17
           distribution: 'adopt'
           cache: 'maven'
+      - name: Hent tag
+        run: |
+          echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
 
       - name: Kompiler
         run: |
           mvn versions:set -DnewVersion=${TAG}
           mvn --settings .github/.m2/settings.xml package
+      - name: Setter IMAGE 
+          run: echo "IMAGE=$IMAGE_BASE:$TAG" >> $GITHUB_ENV
 
       - name: Login to GitHub Packages Docker Registry
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9 # Use commit-sha1 instead of tag for security concerns
@@ -38,8 +42,8 @@ jobs:
 
       - name: Bygg, tag og push Docker image
         run: |
-          docker build --tag ${TAG} .
-          docker push ${IMAGE}
+          docker build --pull --tag ${IMAGE_BASE}:${TAG} --tag ${IMAGE_BASE}:latest .
+          docker push ${IMAGE_BASE} --all-tags
 
   deploytildev:
     name: Deploy til dev-gcp
