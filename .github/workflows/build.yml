@@ -47,44 +47,16 @@ jobs:
           docker build --pull --tag ${IMAGE_BASE}:${TAG} --tag ${IMAGE_BASE}:latest .
           docker push ${IMAGE_BASE} --all-tags
 
-      - name: Lukk gamle bygg-issues
-        uses: actions/github-script@v5
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              labels: ['bygg']
-            }).then(response => {
-              response.data.forEach(issue => {
-                github.rest.issues.update({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: issue.number,
-                  state: 'closed'
-                });
-              });
-            });
-
-
-      - name: Opprett issue, trigg deploy til  dev-gcp
-        if: success()
-        uses: actions/github-script@v5
-        with:
-          github-token: ${{ secrets.NOTIFICATION }}
-          script: |
-              github.rest.issues.create( {
-                owner: context.issue.owner,
-                repo: context.issue.repo,
-                labels: ['bygg'],
-                title: 'Deploy av ${{ env.TAG }}'})
-              .then(response => {
-                      const issue = { owner: context.issue.owner,
-                      repo: context.issue.repo,
-                      issue_number: response.data.number }
-                      github.rest.issues.createComment({...issue,
-                            title: 'Deploy av ${{ env.TAG }}',
-                            body: '/promote dev-gcp'})
-               });
+  deploytildev:
+    name: Deploy til dev-gcp
+    needs: bygg
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+        name: Checkout code
+      - uses: nais/deploy/actions/deploy@master
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: .deploy/naiserator.yaml
+          VARS: .deploy/dev-gcp-aap.yaml
