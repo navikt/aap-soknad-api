@@ -50,6 +50,9 @@ jobs:
     needs: bygg
     runs-on: ubuntu-latest
     steps:
+      - name: Hent tag
+          run: |
+            echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
       - name: Setter IMAGE
            run: echo "IMAGE=$(echo $IMAGE_BASE)-$(echo $TAG)" >> $GITHUB_ENV
       - uses: actions/checkout@master
