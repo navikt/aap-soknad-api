@@ -32,7 +32,6 @@ jobs:
       - name: Kompiler
         run: |
           mvn versions:set -DnewVersion=${TAG}
-          echo "IMAGE=$IMAGE_BASE:$TAG" >> $GITHUB_ENV
           mvn --settings .github/.m2/settings.xml package
 
       - name: Login to GitHub Packages Docker Registry
