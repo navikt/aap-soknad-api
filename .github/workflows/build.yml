@@ -45,18 +45,7 @@ jobs:
           docker build --pull --tag ${IMAGE_BASE}:${TAG} --tag ${IMAGE_BASE}:latest .
           docker push ${IMAGE_BASE} --all-tags
 
-  deploytildev:
-    name: Deploy til dev-gcp
-    needs: bygg
-    runs-on: ubuntu-latest
-    steps:
-      - name: Hent tag
-          run: |
-            echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
-      - name: Setter IMAGE
-           run: echo "IMAGE=$(echo $IMAGE_BASE)-$(echo $TAG)" >> $GITHUB_ENV
-      - uses: actions/checkout@master
-        name: Checkout code
+      - name: Deploy
       - uses: nais/deploy/actions/deploy@master
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
