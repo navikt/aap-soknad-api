@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import javax.validation.Valid
 
-@ProtectedRestController(value = ["/api/innsending"], issuer = ISSUER)
+@ProtectedRestController(value = ["/api/innsending"], issuer = ISSUER, claimMap = ["#{'\${variabel.med.verdi}'}"])
 class SøknadController(
     private val authContext: AuthContext,
     private val formidler: SøknadFormidler

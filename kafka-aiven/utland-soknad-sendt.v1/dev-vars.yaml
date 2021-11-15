@@ -10,3 +10,6 @@ acl:
   - team: aap
     application: aap-soknad-api
     access: write
+  - team: aap
+    application: aap-soknad-konsument
+    access: read

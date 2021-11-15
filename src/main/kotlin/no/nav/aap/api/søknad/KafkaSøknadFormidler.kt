@@ -7,7 +7,6 @@ import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.api.søknad.model.toKafkaObject
 import no.nav.aap.api.util.LoggerUtil.getSecureLogger
 import no.nav.aap.api.util.LoggerUtil.getLogger
-import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
@@ -40,6 +39,6 @@ class KafkaSøknadFormidler(private val kafkaOperations: KafkaOperations<String,
                     secureLog.error("Klarte ikke sende $value til Kafka", e)
                     throw IntegrationException("Klarte ikke sende inn søknad", e)
                 }
-            });
+            })
     }
 }
