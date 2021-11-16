@@ -29,7 +29,8 @@ internal class  SøknadFormidlingKafkaTest {
     @Autowired
     private lateinit var consumer: KafkaTestSøknadKonsument
     private val søknad = UtenlandsSøknadView(AC, Periode(now(), now().plusDays(20)))
-    private val fnr = "01010111111"
+    private val fnr = "01010111112"
+
 
     @Test
     fun fordelOgKonsumerSøknad() {
