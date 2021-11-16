@@ -19,7 +19,7 @@
         <i18n.version>1.29</i18n.version>
         <java.version>16</java.version>
         <kotlin.version>1.6.0</kotlin.version>
-        <logstash.version>6.6</logstash.version>
+        <logstash.version>7.0</logstash.version>
         <mock-oauth2-server.version>0.3.6</mock-oauth2-server.version>
         <okhttp3.version>4.9.1</okhttp3.version>
         <problem.version>0.27.0</problem.version>
