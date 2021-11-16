@@ -17,7 +17,7 @@
         <conditionals.version>2.0.13</conditionals.version>
         <graphql.version>1.0.0</graphql.version>
         <i18n.version>1.29</i18n.version>
-        <java.version>16</java.version>
+        <java.version>17</java.version>
         <kotlin.version>1.6.0</kotlin.version>
         <logstash.version>7.0</logstash.version>
         <mock-oauth2-server.version>0.3.6</mock-oauth2-server.version>
