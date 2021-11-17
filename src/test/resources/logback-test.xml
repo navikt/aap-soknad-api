@@ -9,7 +9,8 @@
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="stdout"/>
         </logger>
-        <logger name="no.nav.aap" level="trace" />
+    <logger name="org.springframewerl.kafka" level="trace" />
+    <logger name="no.nav.aap" level="trace" />
     <root level="info">
         <appender-ref ref="stdout" />
     </root>
