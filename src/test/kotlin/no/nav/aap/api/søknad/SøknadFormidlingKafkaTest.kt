@@ -35,7 +35,7 @@ internal class  SøknadFormidlingKafkaTest {
     @Test
     fun fordelOgKonsumerSøknad() {
         formidler.sendUtenlandsSøknad(Fødselsnummer(fnr), søknad)
-        consumer.latch.await(10000, MILLISECONDS);
+        consumer.latch.await(15000, MILLISECONDS);
         assertEquals(0,consumer.latch.count)
         assertEquals(søknad.toKafkaObject(fnr),consumer.value)
     }
