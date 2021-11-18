@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 @SpringBootTest(classes= [KafkaAutoConfiguration::class, KafkaSøknadFormidler::class, KafkaTestSøknadKonsument::class])
 @ActiveProfiles(TEST)
 @DirtiesContext
-@EmbeddedKafka(partitions = 2, brokerProperties = ["listeners=PLAINTEXT://localhost:9092", "port=9092"],)
+@EmbeddedKafka(partitions = 1, brokerProperties = ["listeners=PLAINTEXT://localhost:9092", "port=9092"],)
 internal class  SøknadFormidlingKafkaTest {
 
     @Autowired
