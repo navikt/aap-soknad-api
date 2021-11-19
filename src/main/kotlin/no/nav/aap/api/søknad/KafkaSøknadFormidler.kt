@@ -7,9 +7,14 @@ import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.api.søknad.model.toKafkaObject
 import no.nav.aap.api.util.LoggerUtil.getSecureLogger
 import no.nav.aap.api.util.LoggerUtil.getLogger
+import no.nav.aap.api.util.MDCUtil
+import no.nav.aap.api.util.MDCUtil.NAV_CALL_ID
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
+import org.springframework.kafka.support.KafkaHeaders.MESSAGE_KEY
+import org.springframework.kafka.support.KafkaHeaders.TOPIC
 import org.springframework.kafka.support.SendResult
+import org.springframework.messaging.support.MessageBuilder
 import org.springframework.stereotype.Service
 import org.springframework.util.concurrent.ListenableFutureCallback
 
@@ -28,7 +33,14 @@ class KafkaSøknadFormidler(private val kafkaOperations: KafkaOperations<String,
 
     private fun send(key: String, value: UtenlandsSøknadKafka ) {
         log.info("Søknad sendes til Kafka på topic {}", søknadTopic)
-        kafkaOperations.send(søknadTopic,key,value)
+        var m = MessageBuilder
+            .withPayload(value)
+            .setHeader(MESSAGE_KEY,key)
+            .setHeader(TOPIC, søknadTopic)
+            .setHeader(NAV_CALL_ID, MDCUtil.callId())
+            .build();
+        kafkaOperations.send(m)
+       // kafkaOperations.send(søknadTopic,key,value)
             .addCallback(object : ListenableFutureCallback<SendResult<String, UtenlandsSøknadKafka>> {
                 override fun onSuccess(result: SendResult<String, UtenlandsSøknadKafka>?) {
                     log.info("Søknad sent til Kafka på topic {} med offset {} OK", søknadTopic,result?.recordMetadata?.offset())
