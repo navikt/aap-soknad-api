@@ -4,6 +4,8 @@ import com.neovisionaries.i18n.CountryCode.AC
 import no.nav.aap.api.config.Constants.TEST
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Periode
+import no.nav.aap.api.oppslag.Navn
+import no.nav.aap.api.oppslag.Søker
 import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.api.søknad.model.toKafkaObject
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -39,6 +41,6 @@ internal class  SøknadFormidlingKafkaTest {
         formidler.sendUtenlandsSøknad(Fødselsnummer(fnr), søknad)
         consumer.latch.await(15000, MILLISECONDS);
         assertEquals(0,consumer.latch.count)
-        assertEquals(søknad.toKafkaObject(fnr),consumer.value)
+        assertEquals(søknad.toKafkaObject(Søker(Fødselsnummer(fnr), Navn("a","b","c"))),consumer.value)
     }
 }
