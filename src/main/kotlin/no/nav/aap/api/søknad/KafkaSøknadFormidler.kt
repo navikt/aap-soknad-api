@@ -2,6 +2,8 @@ package no.nav.aap.api.søknad
 
 import no.nav.aap.api.error.IntegrationException
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.oppslag.Søker
+import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.model.UtenlandsSøknadKafka
 import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.api.søknad.model.toKafkaObject
@@ -22,13 +24,13 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
-class KafkaSøknadFormidler(private val kafkaOperations: KafkaOperations<String, UtenlandsSøknadKafka>, @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}")  val søknadTopic: String) : SøknadFormidler{
+class KafkaSøknadFormidler(private val pdl: PDLClient, private val kafkaOperations: KafkaOperations<String, UtenlandsSøknadKafka>, @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}")  val søknadTopic: String) : SøknadFormidler{
     private val log = getLogger(javaClass)
     private val secureLog = getSecureLogger()
 
 
     override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
-        send(fnr.fnr,søknad.toKafkaObject(fnr.fnr))
+        send(fnr.fnr,søknad.toKafkaObject(Søker(fnr,pdl.navn())))
     }
 
     private fun send(key: String, value: UtenlandsSøknadKafka ) {
