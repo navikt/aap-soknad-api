@@ -6,7 +6,7 @@ import java.util.*
 object StringUtil {
     private const val DEFAULT_LENGTH = 50
 
-    fun partialMask(value: String?): String? {
+    fun partialMask(value: String?): String {
         val start = value?.length?.div(2) ?: 0
         val end = value?.length ?: 0
         return value?.takeIf { it.isNotEmpty() }?.replaceRange(start + 1,end ,"*".repeat(end -(start + 1))) ?: "<null>"
