@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import no.nav.aap.api.rest.tokenx.TokenXModule
+import no.nav.aap.api.util.TimeUtil.format
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import org.springframework.boot.actuate.info.InfoContributor
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
@@ -21,64 +22,53 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.CommonsRequestLoggingFilter
 import org.zalando.problem.jackson.ProblemModule
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 
 
 @Configuration
 class FellesRestBeanConfig {
+
     @Bean
-    fun customizer(): Jackson2ObjectMapperBuilderCustomizer {
-        return Jackson2ObjectMapperBuilderCustomizer { b: Jackson2ObjectMapperBuilder ->
+    fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b: Jackson2ObjectMapperBuilder ->
             b.modules(ProblemModule(), JavaTimeModule(), TokenXModule(), KotlinModule.Builder().build())
-        }
     }
+
     @Bean
     @ConditionalOnDevOrLocal
-    fun httpTraceRepository(): HttpTraceRepository {
-        return InMemoryHttpTraceRepository()
-    }
+    fun httpTraceRepository() = InMemoryHttpTraceRepository()
+
     @Bean
-    fun swagger(p: BuildProperties): OpenAPI? {
-        return OpenAPI()
+    fun opemAPI(p: BuildProperties) =
+         OpenAPI()
             .info(
                 Info().title("AAP søknadmottaker")
                     .description("Mottak av søknader")
                     .version(p.version)
-                    .license(License().name("MIT").url("http://nav.no"))
-            )
-    }
+                    .license(License().name("MIT").url("http://www.nav.no")))
 
     @ConditionalOnDevOrLocal
     class ActuatorIgnoringTraceRequestFilter(repository: HttpTraceRepository?, tracer: HttpExchangeTracer?) :
         HttpTraceFilter(repository, tracer) {
         @Throws(ServletException::class)
-        override fun shouldNotFilter(request: HttpServletRequest): Boolean {
-            return request.servletPath.contains("actuator") || request.servletPath.contains("swagger")
-        }
+        override fun shouldNotFilter(request: HttpServletRequest) = request.servletPath.contains("actuator") || request.servletPath.contains("swagger")
     }
+
     @Component
     class StartupInfoContributor(val ctx: ApplicationContext) : InfoContributor {
         override fun contribute(builder: org.springframework.boot.actuate.info.Info.Builder) {
-            builder.withDetail("extra-info", mapOf(
-                "Startup time" to LocalDateTime.ofInstant(Instant.ofEpochMilli(ctx.startupDate), ZoneId.systemDefault())
-                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-            ))
+            builder.withDetail("extra-info", mapOf("Startup time" to format(ctx.startupDate)))
         }
     }
 
     @ConditionalOnDevOrLocal
     @Bean
-    fun requestLoggingFilter(): CommonsRequestLoggingFilter? {
-        val loggingFilter = CommonsRequestLoggingFilter()
-        loggingFilter.setIncludeClientInfo(true)
-        loggingFilter.setIncludeQueryString(true)
-        loggingFilter.setIncludePayload(true)
-        loggingFilter.setIncludeHeaders(false)
-        return loggingFilter
+    fun requestLoggingFilter(): CommonsRequestLoggingFilter {
+        val filter = CommonsRequestLoggingFilter()
+        filter.setIncludeClientInfo(true)
+        filter.setIncludeQueryString(true)
+        filter.setIncludePayload(true)
+        filter.setIncludeHeaders(false)
+        return filter
     }
 }
