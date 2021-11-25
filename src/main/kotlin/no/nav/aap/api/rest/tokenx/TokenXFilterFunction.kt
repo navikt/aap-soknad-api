@@ -15,14 +15,14 @@ import org.springframework.web.reactive.function.client.ExchangeFilterFunction
 import org.springframework.web.reactive.function.client.ExchangeFunction
 import reactor.core.publisher.Mono
 @Component
-class TokenXFilterFunction internal constructor(
+class TokenXFilterFunction  (
     private val configs: ClientConfigurationProperties,
     private val service: OAuth2AccessTokenService,
     private val matcher: TokenXConfigMatcher,
     private val authContext: AuthContext) : ExchangeFilterFunction {
-
     private val log = getLogger(javaClass)
     private val secureLog = getSecureLogger();
+
     override fun filter(req: ClientRequest, next: ExchangeFunction): Mono<ClientResponse> {
         val url = req.url()
         log.trace("Sjekker token exchange for {}", url)

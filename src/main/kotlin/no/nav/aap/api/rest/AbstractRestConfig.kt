@@ -10,11 +10,11 @@ import java.net.URI
 
  abstract class AbstractRestConfig  protected constructor(val baseUri: URI, protected val pingPath: String, val isEnabled: Boolean) {
     fun pingEndpoint() = URIUtil.uri(baseUri, pingPath)
-    fun name(): String = baseUri.host
+    fun name()  = baseUri.host
 
      companion object {
-      fun correlatingFilterFunction(): ExchangeFilterFunction {
-         return ExchangeFilterFunction { req: ClientRequest, next: ExchangeFunction ->
+      fun correlatingFilterFunction()  =
+          ExchangeFilterFunction { req: ClientRequest, next: ExchangeFunction ->
              next.exchange(
                  ClientRequest.from(req)
                      .header(MDCUtil.NAV_CONSUMER_ID, MDCUtil.consumerId())
@@ -22,16 +22,16 @@ import java.net.URI
                      .header(MDCUtil.NAV_CALL_ID1, MDCUtil.callId())
                      .build()
              )
-         }
      }
-      fun temaFilterFunction(): ExchangeFilterFunction {
-         return ExchangeFilterFunction { req: ClientRequest, next: ExchangeFunction ->
+      fun temaFilterFunction()  =
+          ExchangeFilterFunction { req: ClientRequest, next: ExchangeFunction ->
              next.exchange(
                  ClientRequest.from(req)
                      .header(Constants.TEMA, Constants.AAP)
                      .build()
              )
-         }
+          }
      }
-     }
-}
+
+     override fun toString() = "${javaClass.simpleName} [pingPath=$pingPath,enabled=$isEnabled,baseUri=$baseUri]"
+ }

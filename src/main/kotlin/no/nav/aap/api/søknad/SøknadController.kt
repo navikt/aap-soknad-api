@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import javax.validation.Valid
 
 @ProtectedRestController(value = ["/api/innsending"], issuer = IDPORTEN)
-class SøknadController(
-    private val authContext: AuthContext,
-    private val formidler: SøknadFormidler
-) {
+class SøknadController(private val authContext: AuthContext, private val formidler: SøknadFormidler) {
     private val log = getLogger(javaClass)
     @PostMapping("/utland")
     fun utland(@RequestBody søknad: @Valid UtenlandsSøknadView): Kvittering {

@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 import java.net.URI
 
-abstract class AbstractWebClientAdapter(protected val webClient: WebClient, protected open val cfg: AbstractRestConfig) : RetryAware, Pingable {
+abstract class AbstractWebClientAdapter(protected val webClient: WebClient, protected  val cfg: AbstractRestConfig) : RetryAware, Pingable {
     override fun ping() {
         webClient
             .get()
@@ -19,13 +19,7 @@ abstract class AbstractWebClientAdapter(protected val webClient: WebClient, prot
             .block()
     }
 
-    override fun name(): String {
-        return cfg.name()
-    }
-
+    override fun name() =cfg.name()
     protected val baseUri: URI = cfg.baseUri
-
-    override fun pingEndpoint(): URI {
-        return cfg.pingEndpoint()
-    }
+    override fun pingEndpoint() = cfg.pingEndpoint()
 }

@@ -19,7 +19,7 @@ import reactor.netty.http.client.HttpClient
  class PDLClientBeanConfig()  {
     @Qualifier(PDL_USER)
     @Bean
-     fun pdlWebClient(builder: WebClient.Builder, cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction, env: Environment) =
+    fun pdlWebClient(builder: WebClient.Builder, cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction, env: Environment) =
          builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
@@ -27,8 +27,8 @@ import reactor.netty.http.client.HttpClient
             .filter(temaFilterFunction())
             .filter(tokenXFilterFunction)
             .build()
-    
+
     @Qualifier(PDL_USER)
     @Bean
-     fun graphQlWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
-}
+    fun graphQlWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
+ }
