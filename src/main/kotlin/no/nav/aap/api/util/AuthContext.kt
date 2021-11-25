@@ -20,8 +20,6 @@ class AuthContext(private val ctxHolder: TokenValidationContextHolder) {
 
     companion object {
         private val BEARER = AccessTokenType.BEARER.value + " "
-        fun bearerToken(token: String): String {
-            return BEARER + token
-        }
+        fun bearerToken(token: String) = BEARER + token
     }
 }

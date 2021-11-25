@@ -29,7 +29,8 @@ class KafkaSøknadFormidler(private val pdl: PDLClient, private val kafkaOperati
     private val secureLog = getSecureLogger()
 
 
-    override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) = send(fnr.fnr,søknad.toKafkaObject(Søker(fnr,pdl.navn())))
+    override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) =
+         send(fnr.fnr,søknad.toKafkaObject(Søker(fnr,pdl.navn())))
 
     private fun send(key: String, value: UtenlandsSøknadKafka )  =
         kafkaOperations.send(

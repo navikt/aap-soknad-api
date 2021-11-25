@@ -4,5 +4,4 @@ import java.util.*
 
 object CallIdGenerator {
     fun create() =  UUID.randomUUID().toString()
-
 }
