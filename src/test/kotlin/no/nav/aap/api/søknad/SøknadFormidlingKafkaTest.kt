@@ -3,9 +3,9 @@ package no.nav.aap.api.søknad
 import com.neovisionaries.i18n.CountryCode.AC
 import no.nav.aap.api.config.Constants.TEST
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.Periode
-import no.nav.aap.api.oppslag.Navn
-import no.nav.aap.api.oppslag.Søker
+import no.nav.aap.api.felles.Søker
 import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.api.søknad.model.toKafkaObject
 import org.junit.jupiter.api.Assertions.assertEquals
