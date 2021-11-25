@@ -16,6 +16,11 @@ spring:
       write-empty-json-arrays: false
       fail-on-empty-beans: false
 management :
+  info:
+    java:
+      enabled: true
+    env:
+      enabled: true
   health:
     ping:
       enabled: false
