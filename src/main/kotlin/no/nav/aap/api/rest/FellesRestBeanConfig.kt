@@ -13,6 +13,7 @@ import org.springframework.boot.actuate.trace.http.HttpTraceRepository
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
 import org.springframework.boot.actuate.web.trace.servlet.HttpTraceFilter
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
+import org.springframework.boot.info.BuildProperties
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -42,12 +43,12 @@ class FellesRestBeanConfig {
         return InMemoryHttpTraceRepository()
     }
     @Bean
-    fun swagger(): OpenAPI? {
+    fun swagger(p: BuildProperties): OpenAPI? {
         return OpenAPI()
             .info(
                 Info().title("AAP søknadmottaker")
                     .description("Mottak av søknader")
-                    .version("v0.0.1")
+                    .version(p.version)
                     .license(License().name("MIT").url("http://nav.no"))
             )
     }
