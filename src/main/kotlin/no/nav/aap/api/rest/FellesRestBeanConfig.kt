@@ -7,15 +7,22 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import no.nav.aap.api.rest.tokenx.TokenXModule
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
+import org.springframework.boot.actuate.info.InfoContributor
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
 import org.springframework.boot.actuate.web.trace.servlet.HttpTraceFilter
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
+import org.springframework.stereotype.Component
 import org.zalando.problem.jackson.ProblemModule
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 
@@ -37,7 +44,7 @@ class FellesRestBeanConfig {
     fun swagger(): OpenAPI? {
         return OpenAPI()
             .info(
-                Info().title("AAP søknadmotaker")
+                Info().title("AAP søknadmottaker")
                     .description("Mottak av søknader")
                     .version("v0.0.1")
                     .license(License().name("MIT").url("http://nav.no"))
@@ -50,6 +57,15 @@ class FellesRestBeanConfig {
         @Throws(ServletException::class)
         override fun shouldNotFilter(request: HttpServletRequest): Boolean {
             return request.servletPath.contains("actuator") || request.servletPath.contains("swagger")
+        }
+    }
+    @Component
+    class StartupInfoContributor(val ctx: ApplicationContext) : InfoContributor {
+        override fun contribute(builder: org.springframework.boot.actuate.info.Info.Builder) {
+            builder.withDetail("extra-info", mapOf(
+                "Startup time" to LocalDateTime.ofInstant(Instant.ofEpochMilli(ctx.startupDate), ZoneId.systemDefault())
+                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            ))
         }
     }
 
