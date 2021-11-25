@@ -11,7 +11,7 @@ import org.springframework.retry.annotation.EnableRetry
 
 
 @SpringBootApplication
-@EnableJwtTokenValidation(ignore = ["springfox.documentation", "org.springframework"])
+@EnableJwtTokenValidation(ignore = ["org.springdoc", "org.springframework"])
 @EnableOAuth2Client(cacheEnabled = true)
 @ConfigurationPropertiesScan
 @EnableRetry
