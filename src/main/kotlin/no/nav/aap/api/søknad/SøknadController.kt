@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad
 
-import no.nav.aap.api.config.Constants.ISSUER
+import no.nav.aap.api.config.Constants.IDPORTEN
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.api.util.AuthContext
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import javax.validation.Valid
 
-@ProtectedRestController(value = ["/api/innsending"], issuer = ISSUER, claimMap = ["#{'\${variabel.med.verdi}'}"])
+@ProtectedRestController(value = ["/api/innsending"], issuer = IDPORTEN)
 class SøknadController(
     private val authContext: AuthContext,
     private val formidler: SøknadFormidler
@@ -23,6 +23,5 @@ class SøknadController(
         formidler.sendUtenlandsSøknad(authContext.getFnr(), søknad)
         return Kvittering("OK")
     }
-
     override fun toString() = "${javaClass.simpleName} [authContext=$authContext]"
 }

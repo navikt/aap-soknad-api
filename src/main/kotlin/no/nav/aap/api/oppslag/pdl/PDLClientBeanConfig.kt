@@ -3,6 +3,7 @@ package no.nav.aap.api.oppslag.pdl
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.config.Constants.PDL_USER
+import no.nav.aap.api.config.QualifiedBean
 import no.nav.aap.api.rest.AbstractRestConfig.Companion.correlatingFilterFunction
 import no.nav.aap.api.rest.AbstractRestConfig.Companion.temaFilterFunction
 import no.nav.aap.api.rest.tokenx.TokenXFilterFunction
@@ -19,21 +20,20 @@ import reactor.netty.http.client.HttpClient
  class PDLClientBeanConfig()  {
     @Qualifier(PDL_USER)
     @Bean
-     fun webClientPDL(builder: WebClient.Builder, cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction, env: Environment): WebClient {
-        return builder
+     fun pdlWebClient(builder: WebClient.Builder, cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction, env: Environment) =
+         builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
             .filter(correlatingFilterFunction())
             .filter(temaFilterFunction())
             .filter(tokenXFilterFunction)
             .build()
-    }
 
+@QualifiedBean("jalla")
+fun jalla() {
+    "hello world"
+}
     @Qualifier(PDL_USER)
     @Bean
-     fun pdlWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper): GraphQLWebClient {
-        return GraphQLWebClient.newInstance(client, mapper)
-    }
-
-
+     fun graphQlWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
 }
