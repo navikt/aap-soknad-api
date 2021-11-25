@@ -60,15 +60,4 @@ class FellesRestBeanConfig {
             builder.withDetail("extra-info", mapOf("Startup time" to format(ctx.startupDate)))
         }
     }
-
-    @ConditionalOnDevOrLocal
-    @Bean
-    fun requestLoggingFilter(): CommonsRequestLoggingFilter {
-        val filter = CommonsRequestLoggingFilter()
-        filter.setIncludeClientInfo(true)
-        filter.setIncludeQueryString(true)
-        filter.setIncludePayload(true)
-        filter.setIncludeHeaders(false)
-        return filter
-    }
 }
