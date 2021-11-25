@@ -70,7 +70,6 @@ class FellesRestBeanConfig {
         }
     }
 
-    @Bean
     @ConditionalOnDevOrLocal
     fun requestLoggingFilter(): CommonsRequestLoggingFilter? {
         val loggingFilter = CommonsRequestLoggingFilter()
