@@ -35,14 +35,13 @@ internal class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
         private const val FORBUDT = "unauthorized"
         private const val UGYLDIG = "bad_request"
         private const val IKKEFUNNET = "not_found"
-        private fun exceptionFra(kode: String, msg: String): HttpStatusCodeException {
-            return when (kode) {
+        private fun exceptionFra(kode: String, msg: String): HttpStatusCodeException =
+            when (kode) {
                 UAUTENTISERT -> exception(UNAUTHORIZED, msg)
                 FORBUDT -> exception(FORBIDDEN, msg)
                 UGYLDIG -> exception(BAD_REQUEST, msg)
                 IKKEFUNNET -> exception(NOT_FOUND, msg)
                 else -> HttpServerErrorException(INTERNAL_SERVER_ERROR, msg)
-            }
         }
 
         private fun exception(status: HttpStatus, msg: String) = create(status, msg, HttpHeaders(), ByteArray(0), defaultCharset())
