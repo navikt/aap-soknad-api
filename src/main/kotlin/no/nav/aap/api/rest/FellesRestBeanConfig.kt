@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.stereotype.Component
+import org.springframework.web.filter.CommonsRequestLoggingFilter
 import org.zalando.problem.jackson.ProblemModule
 import java.time.Instant
 import java.time.LocalDateTime
@@ -67,6 +68,17 @@ class FellesRestBeanConfig {
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
             ))
         }
+    }
+
+    @Bean
+    @ConditionalOnDevOrLocal
+    fun requestLoggingFilter(): CommonsRequestLoggingFilter? {
+        val loggingFilter = CommonsRequestLoggingFilter()
+        loggingFilter.setIncludeClientInfo(true)
+        loggingFilter.setIncludeQueryString(true)
+        loggingFilter.setIncludePayload(true)
+        loggingFilter.setIncludeHeaders(false)
+        return loggingFilter
     }
 
 }

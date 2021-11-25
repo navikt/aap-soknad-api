@@ -14,7 +14,8 @@ no.nav:
           pdl-api:
             token-exchange:
               audience: dev-fss:pdl:pdl-api
-mvc:
-  log-request-details : true
+spring:
+ mvc:
+   log-request-details : true
 pdl:
   base-uri: https://pdl-api.dev-fss-pub.nais.io/graphql
