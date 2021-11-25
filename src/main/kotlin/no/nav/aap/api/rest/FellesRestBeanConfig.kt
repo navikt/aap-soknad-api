@@ -72,6 +72,7 @@ class FellesRestBeanConfig {
     }
 
     @ConditionalOnDevOrLocal
+    @Bean
     fun requestLoggingFilter(): CommonsRequestLoggingFilter? {
         val loggingFilter = CommonsRequestLoggingFilter()
         loggingFilter.setIncludeClientInfo(true)
@@ -80,5 +81,4 @@ class FellesRestBeanConfig {
         loggingFilter.setIncludeHeaders(false)
         return loggingFilter
     }
-
 }
