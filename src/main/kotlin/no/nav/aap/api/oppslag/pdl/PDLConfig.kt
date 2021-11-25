@@ -12,7 +12,6 @@ class PDLConfig @ConstructorBinding constructor(
     @DefaultValue("true") enabled: Boolean,
     @DefaultValue(DEFAULT_BASE_URI) baseUri: URI) : AbstractRestConfig(baseUri, pingPath, enabled) {
 
-
     companion object {
         private const val DEFAULT_BASE_URI = "http://pdl-api.pdl/graphql" // må settes så lenge pdl er on prem of vi i gcp
         private const val DEFAULT_PING_PATH = "/"

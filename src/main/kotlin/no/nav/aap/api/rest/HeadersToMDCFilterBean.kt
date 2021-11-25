@@ -6,6 +6,7 @@ import no.nav.aap.api.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.api.util.MDCUtil.NAV_CONSUMER_ID
 import no.nav.aap.api.util.MDCUtil.toMDC
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
@@ -39,4 +40,11 @@ class HeadersToMDCFilterBean constructor(@Value("\${spring.application.name}") v
     }
 
     override fun toString() = javaClass.simpleName + " [ applicationName=" + applicationName + "]"
+}
+
+@Component
+class HeadersToMDCFilterRegistrationBean(filter: HeadersToMDCFilterBean?) : FilterRegistrationBean<HeadersToMDCFilterBean?>(filter) {
+    init {
+        urlPatterns = listOf("/*")
+    }
 }

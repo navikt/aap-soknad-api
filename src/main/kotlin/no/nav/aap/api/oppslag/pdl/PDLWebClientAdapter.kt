@@ -23,7 +23,6 @@ class PDLWebClientAdapter (@Qualifier(PDL_USER)  private val graphQLWebClient: G
     internal fun navn(): PDLNavn? = authContext.getSubject()?.let { navn(it) }
     private fun navn(id: String): PDLNavn? = oppslag({ graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn::class.java).block() }, "navn")?.navn?.first()
 
-
     private fun <T> oppslag(oppslag: () -> T, type: String): T {
         return try {
             oppslag.invoke()

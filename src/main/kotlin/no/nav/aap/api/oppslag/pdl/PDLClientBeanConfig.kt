@@ -3,8 +3,8 @@ package no.nav.aap.api.oppslag.pdl
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.config.Constants.PDL_USER
-import no.nav.aap.api.rest.AbstractRestConfig.Companion.correlatingFilterFunction
-import no.nav.aap.api.rest.AbstractRestConfig.Companion.temaFilterFunction
+import no.nav.aap.api.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
+import no.nav.aap.api.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
 import no.nav.aap.api.rest.tokenx.TokenXFilterFunction
 import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
 import org.springframework.beans.factory.annotation.Qualifier
