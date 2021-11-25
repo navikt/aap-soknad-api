@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest
 
 @Component
 @Order(LOWEST_PRECEDENCE)
-class HeadersToMDCFilterBean constructor(val generator: CallIdGenerator, @Value("\${spring.application.name}") val applicationName: String) : GenericFilterBean() {
+class HeadersToMDCFilterBean constructor(@Value("\${spring.application.name}") val applicationName: String) : GenericFilterBean() {
     private val log = getLogger(javaClass)
 
     @Throws(IOException::class, ServletException::class)
@@ -32,11 +32,11 @@ class HeadersToMDCFilterBean constructor(val generator: CallIdGenerator, @Value(
     private fun putValues(req: HttpServletRequest) {
         try {
             toMDC(NAV_CONSUMER_ID, req.getHeader(NAV_CONSUMER_ID), applicationName)
-            toMDC(NAV_CALL_ID, req.getHeader(NAV_CALL_ID), generator.create())
+            toMDC(NAV_CALL_ID, req.getHeader(NAV_CALL_ID), CallIdGenerator.create())
         } catch (e: Exception) {
             log.warn("Feil ved setting av MDC-verdier for {}, MDC-verdier er inkomplette", req.requestURI, e)
         }
     }
 
-    override fun toString() = javaClass.simpleName + " [generator=" + generator + ", applicationName=" + applicationName + "]"
+    override fun toString() = javaClass.simpleName + " [ applicationName=" + applicationName + "]"
 }
