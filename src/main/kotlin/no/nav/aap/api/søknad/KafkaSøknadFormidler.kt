@@ -29,20 +29,17 @@ class KafkaSøknadFormidler(private val pdl: PDLClient, private val kafkaOperati
     private val secureLog = getSecureLogger()
 
 
-    override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
-        send(fnr.fnr,søknad.toKafkaObject(Søker(fnr,pdl.navn())))
-    }
+    override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) = send(fnr.fnr,søknad.toKafkaObject(Søker(fnr,pdl.navn())))
 
-    private fun send(key: String, value: UtenlandsSøknadKafka ) {
-        log.info("Søknad sendes til Kafka på topic {}", søknadTopic)
-        var m = MessageBuilder
-            .withPayload(value)
-            .setHeader(MESSAGE_KEY,key)
-            .setHeader(TOPIC, søknadTopic)
-            .setHeader(NAV_CALL_ID, MDCUtil.callId())
-            .build();
-        kafkaOperations.send(m)
-       // kafkaOperations.send(søknadTopic,key,value)
+    private fun send(key: String, value: UtenlandsSøknadKafka )  =
+        kafkaOperations.send(
+            MessageBuilder
+                .withPayload(value)
+                .setHeader(MESSAGE_KEY, key)
+                .setHeader(TOPIC, søknadTopic)
+                .setHeader(NAV_CALL_ID, MDCUtil.callId())
+                .build()
+        )
             .addCallback(object : ListenableFutureCallback<SendResult<String, UtenlandsSøknadKafka>> {
                 override fun onSuccess(result: SendResult<String, UtenlandsSøknadKafka>?) {
                     log.info("Søknad sent til Kafka på topic {} med offset {} OK", søknadTopic,result?.recordMetadata?.offset())
@@ -54,5 +51,4 @@ class KafkaSøknadFormidler(private val pdl: PDLClient, private val kafkaOperati
                     throw IntegrationException("Klarte ikke sende inn søknad", e)
                 }
             })
-    }
 }

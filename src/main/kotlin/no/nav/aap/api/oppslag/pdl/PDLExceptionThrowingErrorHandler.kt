@@ -45,8 +45,6 @@ internal class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
             }
         }
 
-        private fun exception(status: HttpStatus, msg: String): HttpStatusCodeException {
-            return create(status, msg, HttpHeaders(), ByteArray(0), defaultCharset())
-        }
+        private fun exception(status: HttpStatus, msg: String) = create(status, msg, HttpHeaders(), ByteArray(0), defaultCharset())
     }
 }
