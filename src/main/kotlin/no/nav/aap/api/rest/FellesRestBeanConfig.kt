@@ -34,7 +34,7 @@ class FellesRestBeanConfig {
     @Bean
     fun customizer(): Jackson2ObjectMapperBuilderCustomizer {
         return Jackson2ObjectMapperBuilderCustomizer { b: Jackson2ObjectMapperBuilder ->
-            b.modules(ProblemModule(), JavaTimeModule(), TokenXModule(), KotlinModule())
+            b.modules(ProblemModule(), JavaTimeModule(), TokenXModule(), KotlinModule.Builder().build())
         }
     }
     @Bean
