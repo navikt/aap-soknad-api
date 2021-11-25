@@ -3,7 +3,6 @@ package no.nav.aap.api.oppslag.pdl
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.config.Constants.PDL_USER
-import no.nav.aap.api.config.QualifiedBean
 import no.nav.aap.api.rest.AbstractRestConfig.Companion.correlatingFilterFunction
 import no.nav.aap.api.rest.AbstractRestConfig.Companion.temaFilterFunction
 import no.nav.aap.api.rest.tokenx.TokenXFilterFunction
@@ -28,11 +27,7 @@ import reactor.netty.http.client.HttpClient
             .filter(temaFilterFunction())
             .filter(tokenXFilterFunction)
             .build()
-
-@QualifiedBean("jalla")
-fun jalla() {
-    "hello world"
-}
+    
     @Qualifier(PDL_USER)
     @Bean
      fun graphQlWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
