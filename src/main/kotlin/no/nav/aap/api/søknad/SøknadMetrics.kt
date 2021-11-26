@@ -12,7 +12,7 @@ class SøknadMetrics(private val meterRegistry: MeterRegistry) {
 
     private val SØKNAD_UTLAND = "utland"
 
-    private val COUNTER_SØKNAD_MOTTATT = "aap_søknad_mottatt"
+    private val COUNTER_SØKNAD_MOTTATT = "aap_soknad_mottatt"
 
     fun incrementSøknadUtlandMottatt(land: String, periode: Periode) {
         runCatching {
