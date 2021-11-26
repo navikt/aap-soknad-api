@@ -14,11 +14,13 @@ import javax.validation.Valid
 @ProtectedRestController(value = ["/api/innsending"], issuer = IDPORTEN)
 class SøknadController(private val authContext: AuthContext, private val formidler: SøknadFormidler) {
     private val log = getLogger(javaClass)
+
     @PostMapping("/utland")
     fun utland(@RequestBody søknad: @Valid UtenlandsSøknadView): Kvittering {
-        log.info(CONFIDENTIAL,"Sender søknad for {}",authContext.getFnr())
+        log.info(CONFIDENTIAL, "Sender søknad for {}", authContext.getFnr())
         formidler.sendUtenlandsSøknad(authContext.getFnr(), søknad)
         return Kvittering("OK")
     }
+
     override fun toString() = "${javaClass.simpleName} [authContext=$authContext]"
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping
 class APIOppslagController(private val ctx: AuthContext, private val pdl: PDLOperations) {
 
     @GetMapping("me")
-    fun søker()  = Søker(ctx.getFnr(), pdl.navn())
+    fun søker() = Søker(ctx.getFnr(), pdl.navn())
 
     override fun toString() = "${javaClass.simpleName} [authContext=$ctx, pdl=$pdl]"
 }

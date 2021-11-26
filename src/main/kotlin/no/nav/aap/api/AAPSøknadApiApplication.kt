@@ -16,7 +16,7 @@ import org.springframework.retry.annotation.EnableRetry
 @ConfigurationPropertiesScan
 @EnableRetry
 @EnableKafka
-open class AAPSøknadApiApplication {
+class AAPSøknadApiApplication {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
@@ -25,5 +25,5 @@ open class AAPSøknadApiApplication {
                 .main(AAPSøknadApiApplication::class.java)
                 .run(*args)
         }
-     }
- }
+    }
+}

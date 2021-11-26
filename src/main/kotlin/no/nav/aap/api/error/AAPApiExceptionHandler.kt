@@ -17,13 +17,16 @@ import org.zalando.problem.spring.web.advice.ProblemHandling
 class AAPApiExceptionHandler(val authContext: AuthContext) : ProblemHandling {
 
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
-    fun handleMissingOrExpiredToken(e: java.lang.Exception, req: NativeWebRequest): ResponseEntity<Problem> = create(UNAUTHORIZED,e,req)
+    fun handleMissingOrExpiredToken(e: java.lang.Exception, req: NativeWebRequest): ResponseEntity<Problem> =
+        create(UNAUTHORIZED, e, req)
 
     @ExceptionHandler(IntegrationException::class)
-    fun handleIntegrationException(e: java.lang.Exception, req: NativeWebRequest): ResponseEntity<Problem> = create(UNPROCESSABLE_ENTITY,e,req)
+    fun handleIntegrationException(e: java.lang.Exception, req: NativeWebRequest): ResponseEntity<Problem> =
+        create(UNPROCESSABLE_ENTITY, e, req)
 
     @ExceptionHandler(HttpClientErrorException.NotFound::class)
-    fun handleNotFound(e: java.lang.Exception, req: NativeWebRequest): ResponseEntity<Problem> = create(NOT_FOUND,e,req)
+    fun handleNotFound(e: java.lang.Exception, req: NativeWebRequest): ResponseEntity<Problem> =
+        create(NOT_FOUND, e, req)
 
     override fun toString() = "${javaClass.simpleName} [authContext=$authContext]"
 }

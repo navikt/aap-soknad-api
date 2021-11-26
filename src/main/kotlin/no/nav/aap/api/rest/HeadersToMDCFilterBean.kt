@@ -21,7 +21,8 @@ import javax.servlet.http.HttpServletRequest
 
 @Component
 @Order(LOWEST_PRECEDENCE)
-class HeadersToMDCFilterBean constructor(@Value("\${spring.application.name}") val applicationName: String) : GenericFilterBean() {
+class HeadersToMDCFilterBean constructor(@Value("\${spring.application.name}") val applicationName: String) :
+    GenericFilterBean() {
     private val log = getLogger(javaClass)
 
     @Throws(IOException::class, ServletException::class)
@@ -43,7 +44,8 @@ class HeadersToMDCFilterBean constructor(@Value("\${spring.application.name}") v
 }
 
 @Component
-class HeadersToMDCFilterRegistrationBean(filter: HeadersToMDCFilterBean?) : FilterRegistrationBean<HeadersToMDCFilterBean?>(filter) {
+class HeadersToMDCFilterRegistrationBean(filter: HeadersToMDCFilterBean?) :
+    FilterRegistrationBean<HeadersToMDCFilterBean?>(filter) {
     init {
         urlPatterns = listOf("/*")
     }

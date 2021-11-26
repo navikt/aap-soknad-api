@@ -16,11 +16,16 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 
 @Configuration
- class PDLClientBeanConfig()  {
+class PDLClientBeanConfig {
     @Qualifier(PDL_USER)
     @Bean
-    fun pdlWebClient(builder: WebClient.Builder, cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction, env: Environment) =
-         builder
+    fun pdlWebClient(
+        builder: WebClient.Builder,
+        cfg: PDLConfig,
+        tokenXFilterFunction: TokenXFilterFunction,
+        env: Environment
+    ) =
+        builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
             .filter(correlatingFilterFunction())
@@ -30,5 +35,6 @@ import reactor.netty.http.client.HttpClient
 
     @Qualifier(PDL_USER)
     @Bean
-    fun graphQlWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
- }
+    fun graphQlWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper) =
+        GraphQLWebClient.newInstance(client, mapper)
+}

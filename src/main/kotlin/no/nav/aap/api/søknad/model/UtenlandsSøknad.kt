@@ -6,5 +6,6 @@ import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.felles.Søker
 
 data class UtenlandsSøknadView(val land: CountryCode, val periode: Periode)
-fun UtenlandsSøknadView.toKafkaObject(søker: Søker) = UtenlandsSøknadKafka(søker.fnr.fnr, land, periode,søker.navn)
-data class UtenlandsSøknadKafka(val fnr: String, val land: CountryCode, val periode: Periode,val navn: Navn?)
+
+fun UtenlandsSøknadView.toKafkaObject(søker: Søker) = UtenlandsSøknadKafka(søker.fnr.fnr, land, periode, søker.navn)
+data class UtenlandsSøknadKafka(val fnr: String, val land: CountryCode, val periode: Periode, val navn: Navn?)

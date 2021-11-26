@@ -42,8 +42,9 @@ internal class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
                 UGYLDIG -> exception(BAD_REQUEST, msg)
                 IKKEFUNNET -> exception(NOT_FOUND, msg)
                 else -> HttpServerErrorException(INTERNAL_SERVER_ERROR, msg)
-        }
+            }
 
-        private fun exception(status: HttpStatus, msg: String) = create(status, msg, HttpHeaders(), ByteArray(0), defaultCharset())
+        private fun exception(status: HttpStatus, msg: String) =
+            create(status, msg, HttpHeaders(), ByteArray(0), defaultCharset())
     }
 }

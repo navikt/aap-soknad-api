@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.stereotype.Component
-import org.springframework.web.filter.CommonsRequestLoggingFilter
 import org.zalando.problem.jackson.ProblemModule
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
@@ -31,7 +30,7 @@ class FellesRestBeanConfig {
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b: Jackson2ObjectMapperBuilder ->
-            b.modules(ProblemModule(), JavaTimeModule(), TokenXModule(), KotlinModule.Builder().build())
+        b.modules(ProblemModule(), JavaTimeModule(), TokenXModule(), KotlinModule.Builder().build())
     }
 
     @Bean
@@ -40,18 +39,20 @@ class FellesRestBeanConfig {
 
     @Bean
     fun opemAPI(p: BuildProperties) =
-         OpenAPI()
+        OpenAPI()
             .info(
                 Info().title("AAP søknadmottaker")
                     .description("Mottak av søknader")
                     .version(p.version)
-                    .license(License().name("MIT").url("http://www.nav.no")))
+                    .license(License().name("MIT").url("http://www.nav.no"))
+            )
 
     @ConditionalOnDevOrLocal
     class ActuatorIgnoringTraceRequestFilter(repository: HttpTraceRepository?, tracer: HttpExchangeTracer?) :
         HttpTraceFilter(repository, tracer) {
         @Throws(ServletException::class)
-        override fun shouldNotFilter(request: HttpServletRequest) = request.servletPath.contains("actuator") || request.servletPath.contains("swagger")
+        override fun shouldNotFilter(request: HttpServletRequest) =
+            request.servletPath.contains("actuator") || request.servletPath.contains("swagger")
     }
 
     @Component

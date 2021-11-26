@@ -13,15 +13,21 @@ import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
+
 @Component
-class PDLWebClientAdapter (@Qualifier(PDL_USER)  private val graphQLWebClient: GraphQLWebClient,
-                           @Qualifier(PDL_USER) webClient: WebClient, cfg: PDLConfig,
-                           private val authContext: AuthContext,
-                           private val errorHandler: PDLErrorHandler) : AbstractWebClientAdapter(webClient, cfg) {
+class PDLWebClientAdapter(
+    @Qualifier(PDL_USER) private val graphQLWebClient: GraphQLWebClient,
+    @Qualifier(PDL_USER) webClient: WebClient, cfg: PDLConfig,
+    private val authContext: AuthContext,
+    private val errorHandler: PDLErrorHandler
+) : AbstractWebClientAdapter(webClient, cfg) {
 
     private val log = getLogger(javaClass)
     internal fun navn(): PDLNavn? = authContext.getSubject()?.let { navn(it) }
-    private fun navn(id: String): PDLNavn? = oppslag({ graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn::class.java).block() }, "navn")?.navn?.first()
+    private fun navn(id: String): PDLNavn? = oppslag(
+        { graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedNavn::class.java).block() },
+        "navn"
+    )?.navn?.first()
 
     private fun <T> oppslag(oppslag: () -> T, type: String): T {
         return try {
@@ -47,7 +53,8 @@ class PDLWebClientAdapter (@Qualifier(PDL_USER)  private val graphQLWebClient: G
             .block()
     }
 
-    override fun toString() = "${javaClass.simpleName} [webClient=$webClient,graphQLWebClient=$graphQLWebClient,authContext=$authContext,errorHandler=$errorHandler, cfg=$cfg]"
+    override fun toString() =
+        "${javaClass.simpleName} [webClient=$webClient,graphQLWebClient=$graphQLWebClient,authContext=$authContext,errorHandler=$errorHandler, cfg=$cfg]"
 
     companion object {
         private const val IDENT = "ident"

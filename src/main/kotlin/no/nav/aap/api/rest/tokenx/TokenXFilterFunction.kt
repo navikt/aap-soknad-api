@@ -14,14 +14,16 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
 import org.springframework.web.reactive.function.client.ExchangeFunction
 import reactor.core.publisher.Mono
+
 @Component
-class TokenXFilterFunction  (
+class TokenXFilterFunction(
     private val configs: ClientConfigurationProperties,
     private val service: OAuth2AccessTokenService,
     private val matcher: TokenXConfigMatcher,
-    private val authContext: AuthContext) : ExchangeFilterFunction {
+    private val authContext: AuthContext
+) : ExchangeFilterFunction {
     private val log = getLogger(javaClass)
-    private val secureLog = getSecureLogger();
+    private val secureLog = getSecureLogger()
 
     override fun filter(req: ClientRequest, next: ExchangeFunction): Mono<ClientResponse> {
         val url = req.url()
@@ -31,13 +33,15 @@ class TokenXFilterFunction  (
             log.trace(CONFIDENTIAL, "Gjør token exchange for {} med konfig {}", url, cfg)
             val token = service.getAccessToken(cfg).accessToken
             log.trace("Token exchange for {} OK", url)
-            secureLog.trace("Token er {}",token)
-            return next.exchange(ClientRequest.from(req).header(AUTHORIZATION, bearerToken(token)).build()
+            secureLog.trace("Token er {}", token)
+            return next.exchange(
+                ClientRequest.from(req).header(AUTHORIZATION, bearerToken(token)).build()
             )
         }
         log.trace("Ingen token exchange for {}", url)
         return next.exchange(ClientRequest.from(req).build())
     }
 
-    override fun toString() = "${javaClass.simpleName} [[configs=$configs,authContext=$authContext,service=$service,matcher=$matcher]"
+    override fun toString() =
+        "${javaClass.simpleName} [[configs=$configs,authContext=$authContext,service=$service,matcher=$matcher]"
 }
