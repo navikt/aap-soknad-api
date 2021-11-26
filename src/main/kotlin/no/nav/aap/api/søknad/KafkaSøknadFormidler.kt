@@ -24,7 +24,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 @Service
 class KafkaSøknadFormidler(
     private val pdl: PDLClient,
-    private val kafkaOperations: KafkaOperations<String, UtenlandsSøknadKafka>,
+    private val kafkaOperations: KafkaOperations<Fødselsnummer, UtenlandsSøknadKafka>,
     @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String
 ) : SøknadFormidler {
 
@@ -32,9 +32,9 @@ class KafkaSøknadFormidler(
     private val secureLog = getSecureLogger()
 
     override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) =
-        send(fnr.fnr, søknad.toKafkaObject(Søker(fnr, pdl.navn())))
+        send(fnr, søknad.toKafkaObject(Søker(fnr, pdl.navn())))
 
-    private fun send(key: String, value: UtenlandsSøknadKafka) =
+    private fun send(key: Fødselsnummer, value: UtenlandsSøknadKafka) =
         kafkaOperations.send(
             MessageBuilder
                 .withPayload(value)
@@ -43,8 +43,8 @@ class KafkaSøknadFormidler(
                 .setHeader(NAV_CALL_ID, MDCUtil.callId())
                 .build()
         )
-            .addCallback(object : ListenableFutureCallback<SendResult<String, UtenlandsSøknadKafka>> {
-                override fun onSuccess(result: SendResult<String, UtenlandsSøknadKafka>?) {
+            .addCallback(object : ListenableFutureCallback<SendResult<Fødselsnummer, UtenlandsSøknadKafka>> {
+                override fun onSuccess(result: SendResult<Fødselsnummer, UtenlandsSøknadKafka>?) {
                     log.info(
                         "Søknad sent til Kafka på partition {}, topic {} med offset {} OK",
                         søknadTopic,
