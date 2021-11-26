@@ -26,6 +26,10 @@ management :
       enabled: false
     diskspace:
       enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
 springdoc:
   packagesToScan: no.nav.aap
   swagger-ui:
