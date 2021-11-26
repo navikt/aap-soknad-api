@@ -46,7 +46,7 @@ class KafkaSøknadFormidler(
             .addCallback(object : ListenableFutureCallback<SendResult<Fødselsnummer, UtenlandsSøknadKafka>> {
                 override fun onSuccess(result: SendResult<Fødselsnummer, UtenlandsSøknadKafka>?) {
                     log.info(
-                        "Søknad sent til Kafka på partition {}, topic {} med offset {} OK",
+                        "Søknad sent til Kafka på topic {}, partition {} med offset {} OK",
                         søknadTopic,
                         result?.recordMetadata?.partition(),
                         result?.recordMetadata?.offset()
