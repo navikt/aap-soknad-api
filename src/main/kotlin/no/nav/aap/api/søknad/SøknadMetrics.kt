@@ -21,7 +21,9 @@ class SøknadMetrics(private val meterRegistry: MeterRegistry) {
                 SØKNAD_UTLAND,
                 land,
                 periode.varighetDager().toString()
-            ).increment()
+            ).increment().also {
+                log.debug("incrementSøknadUtlandMottatt for $land")
+            }
         }.onFailure {
             log.debug("incrementSøknadUtlandMottatt feilet", it)
         }
