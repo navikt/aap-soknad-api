@@ -15,7 +15,7 @@ spring:
     serialization:
       write-empty-json-arrays: false
       fail-on-empty-beans: false
-management :
+management:
   info:
     java:
       enabled: true
@@ -26,10 +26,6 @@ management :
       enabled: false
     diskspace:
       enabled: false
-  endpoints:
-    web:
-      exposure:
-        include: health,info,prometheus
 springdoc:
   packagesToScan: no.nav.aap
   swagger-ui:
