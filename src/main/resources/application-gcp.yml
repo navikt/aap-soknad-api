@@ -1,8 +1,8 @@
 info:
   nais:
     cluster: ${nais.cluster.name}
-    image : ${nais.app.image}
-    app : ${nais.app.name}
+    image: ${nais.app.image}
+    app: ${nais.app.name}
     namespace: ${nais.namespace}
 management:
   endpoint:
@@ -14,20 +14,20 @@ spring:
     properties:
       endpoint:
         identification:
-           algorithm: ''
+          algorithm: ''
     security:
-       protocol: SSL
+      protocol: SSL
     ssl:
       trust-store-location: file:${kafka.truststore.path}
       trust-store-type: JKS
       trust-store-password: ${kafka.credstore.password}
       key-store-location: file:${kafka.keystore.path}
       key-store-type: PKCS12
-      key-store-password:  ${kafka.credstore.password}
+      key-store-password: ${kafka.credstore.password}
     producer:
       acks: 1
       client-id: ${spring.application.name}
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      key-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 no.nav:
   security:
