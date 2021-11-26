@@ -9,7 +9,7 @@ data class Periode(val fom: LocalDate, val tom: LocalDate?) {
         return if(tom == null) {
             -1
         } else {
-            Duration.between(fom, tom).toDays()
+            Duration.between(fom.atStartOfDay(), tom.atStartOfDay()).toDays()
         }
     }
 
