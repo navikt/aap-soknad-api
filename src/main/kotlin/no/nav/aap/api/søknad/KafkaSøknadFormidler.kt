@@ -23,10 +23,10 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
 class KafkaSøknadFormidler(
-    private val pdl: PDLClient,
-    private val kafkaOperations: KafkaOperations<Fødselsnummer, UtenlandsSøknadKafka>,
-    @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String
-) : SøknadFormidler {
+        private val pdl: PDLClient,
+        private val kafkaOperations: KafkaOperations<Fødselsnummer, UtenlandsSøknadKafka>,
+        @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String
+                          ) : SøknadFormidler {
 
     private val log = getLogger(javaClass)
     private val secureLog = getSecureLogger()
@@ -36,21 +36,20 @@ class KafkaSøknadFormidler(
 
     private fun send(key: Fødselsnummer, value: UtenlandsSøknadKafka) =
         kafkaOperations.send(
-            MessageBuilder
-                .withPayload(value)
-                .setHeader(MESSAGE_KEY, key)
-                .setHeader(TOPIC, søknadTopic)
-                .setHeader(NAV_CALL_ID, MDCUtil.callId())
-                .build()
-        )
+                MessageBuilder
+                    .withPayload(value)
+                    .setHeader(MESSAGE_KEY, key)
+                    .setHeader(TOPIC, søknadTopic)
+                    .setHeader(NAV_CALL_ID, MDCUtil.callId())
+                    .build())
             .addCallback(object : ListenableFutureCallback<SendResult<Fødselsnummer, UtenlandsSøknadKafka>> {
                 override fun onSuccess(result: SendResult<Fødselsnummer, UtenlandsSøknadKafka>?) {
                     log.info(
-                        "Søknad sent til Kafka på topic {}, partition {} med offset {} OK",
-                        søknadTopic,
-                        result?.recordMetadata?.partition(),
-                        result?.recordMetadata?.offset()
-                    )
+                            "Søknad sent til Kafka på topic {}, partition {} med offset {} OK",
+                            søknadTopic,
+                            result?.recordMetadata?.partition(),
+                            result?.recordMetadata?.offset()
+                            )
                     secureLog.debug("Søknad $value sent til kafka ($result)")
                 }
 
