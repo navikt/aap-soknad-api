@@ -32,13 +32,13 @@ class KafkaSøknadFormidler(
     private val secureLog = getSecureLogger()
 
     override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) =
-        send(fnr, søknad.toKafkaObject(Søker(fnr, pdl.navn())))
+        send(søknad.toKafkaObject(Søker(fnr, pdl.navn())))
 
-    private fun send(key: Fødselsnummer, value: UtenlandsSøknadKafka) =
+    private fun send(søknad: UtenlandsSøknadKafka) =
         kafkaOperations.send(
                 MessageBuilder
-                    .withPayload(value)
-                    .setHeader(MESSAGE_KEY, key)
+                    .withPayload(søknad)
+                    .setHeader(MESSAGE_KEY, søknad.søker.fnr)
                     .setHeader(TOPIC, søknadTopic)
                     .setHeader(NAV_CALL_ID, MDCUtil.callId())
                     .build())
@@ -50,12 +50,12 @@ class KafkaSøknadFormidler(
                             result?.recordMetadata?.partition(),
                             result?.recordMetadata?.offset()
                             )
-                    secureLog.debug("Søknad $value sent til kafka ($result)")
+                    secureLog.debug("Søknad $søknad sent til kafka ($result)")
                 }
 
                 override fun onFailure(e: Throwable) {
                     log.error("Klarte ikke sende søknad til Kafka, se secure log for info")
-                    secureLog.error("Klarte ikke sende $value til Kafka", e)
+                    secureLog.error("Klarte ikke sende $søknad til Kafka", e)
                     throw IntegrationException("Klarte ikke sende inn søknad", e)
                 }
             })
