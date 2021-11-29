@@ -1,9 +1,9 @@
 package no.nav.aap.api.rest.tokenx
 
-import no.nav.aap.api.util.AuthContext
-import no.nav.aap.api.util.AuthContext.Companion.bearerToken
-import no.nav.aap.api.util.LoggerUtil.getLogger
-import no.nav.aap.api.util.LoggerUtil.getSecureLogger
+import no.nav.aap.util.AuthContext
+import no.nav.aap.util.AuthContext.Companion.bearerToken
+import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.LoggerUtil.getSecureLogger
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
@@ -17,11 +17,11 @@ import reactor.core.publisher.Mono
 
 @Component
 class TokenXFilterFunction(
-    private val configs: ClientConfigurationProperties,
-    private val service: OAuth2AccessTokenService,
-    private val matcher: TokenXConfigMatcher,
-    private val authContext: AuthContext
-) : ExchangeFilterFunction {
+        private val configs: ClientConfigurationProperties,
+        private val service: OAuth2AccessTokenService,
+        private val matcher: TokenXConfigMatcher,
+        private val authContext: AuthContext
+                          ) : ExchangeFilterFunction {
     private val log = getLogger(javaClass)
     private val secureLog = getSecureLogger()
 
@@ -35,8 +35,8 @@ class TokenXFilterFunction(
             log.trace("Token exchange for {} OK", url)
             secureLog.trace("Token er {}", token)
             return next.exchange(
-                ClientRequest.from(req).header(AUTHORIZATION, bearerToken(token)).build()
-            )
+                    ClientRequest.from(req).header(AUTHORIZATION, bearerToken(token)).build()
+                                )
         }
         log.trace("Ingen token exchange for {}", url)
         return next.exchange(ClientRequest.from(req).build())
