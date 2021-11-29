@@ -30,8 +30,19 @@
         <springdoc.version>1.5.12</springdoc.version>
         <token.validation.version>1.3.9</token.validation.version>
     </properties>
-
     <dependencies>
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>token-validation-spring-test</artifactId>
+            <version>${token.validation.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>no.nav.security</groupId>
+            <artifactId>token-validation-test-support</artifactId>
+            <version>${token.validation.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>no.nav.aap</groupId>
             <artifactId>aap-domain</artifactId>
