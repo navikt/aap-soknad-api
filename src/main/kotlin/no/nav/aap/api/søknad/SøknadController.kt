@@ -1,9 +1,9 @@
 package no.nav.aap.api.søknad
 
-import no.nav.aap.api.config.Constants.IDPORTEN
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.util.AuthContext
+import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.security.token.support.spring.ProtectedRestController

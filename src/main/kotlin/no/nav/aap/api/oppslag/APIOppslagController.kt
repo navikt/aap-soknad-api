@@ -1,9 +1,9 @@
 package no.nav.aap.api.oppslag
 
-import no.nav.aap.api.config.Constants.IDPORTEN
 import no.nav.aap.api.felles.Søker
 import no.nav.aap.api.oppslag.pdl.PDLOperations
 import no.nav.aap.util.AuthContext
+import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.web.bind.annotation.GetMapping
 

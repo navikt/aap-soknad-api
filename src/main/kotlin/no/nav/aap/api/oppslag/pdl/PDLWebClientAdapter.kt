@@ -2,9 +2,9 @@ package no.nav.aap.api.oppslag.pdl
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
-import no.nav.aap.api.config.Constants.PDL_USER
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.AuthContext
+import no.nav.aap.util.Constants.PDL_USER
 import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus

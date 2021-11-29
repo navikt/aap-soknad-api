@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
-import no.nav.aap.api.rest.tokenx.TokenXModule
+import no.nav.aap.rest.TokenXModule
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.TimeUtil.format
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal

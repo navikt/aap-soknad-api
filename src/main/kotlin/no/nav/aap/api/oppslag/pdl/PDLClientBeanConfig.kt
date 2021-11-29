@@ -2,10 +2,10 @@ package no.nav.aap.api.oppslag.pdl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
-import no.nav.aap.api.config.Constants.PDL_USER
 import no.nav.aap.api.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
+import no.nav.aap.util.Constants.PDL_USER
 import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
