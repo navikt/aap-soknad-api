@@ -6,8 +6,10 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import no.nav.aap.api.rest.tokenx.TokenXModule
-import no.nav.aap.api.util.TimeUtil.format
+import no.nav.aap.util.AuthContext
+import no.nav.aap.util.TimeUtil.format
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.boot.actuate.info.InfoContributor
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository
@@ -38,14 +40,17 @@ class FellesRestBeanConfig {
     fun httpTraceRepository() = InMemoryHttpTraceRepository()
 
     @Bean
+    fun authContext(ctxHolder: TokenValidationContextHolder) = AuthContext(ctxHolder)
+
+    @Bean
     fun opemAPI(p: BuildProperties) =
         OpenAPI()
             .info(
-                Info().title("AAP søknadmottaker")
-                    .description("Mottak av søknader")
-                    .version(p.version)
-                    .license(License().name("MIT").url("http://www.nav.no"))
-            )
+                    Info().title("AAP søknadmottaker")
+                        .description("Mottak av søknader")
+                        .version(p.version)
+                        .license(License().name("MIT").url("http://www.nav.no"))
+                 )
 
     @ConditionalOnDevOrLocal
     class ActuatorIgnoringTraceRequestFilter(repository: HttpTraceRepository?, tracer: HttpExchangeTracer?) :

@@ -1,10 +1,10 @@
 package no.nav.aap.api.rest
 
-import no.nav.aap.api.util.CallIdGenerator
-import no.nav.aap.api.util.LoggerUtil.getLogger
-import no.nav.aap.api.util.MDCUtil.NAV_CALL_ID
-import no.nav.aap.api.util.MDCUtil.NAV_CONSUMER_ID
-import no.nav.aap.api.util.MDCUtil.toMDC
+import no.nav.aap.util.CallIdGenerator
+import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.MDCUtil.NAV_CALL_ID
+import no.nav.aap.util.MDCUtil.NAV_CONSUMER_ID
+import no.nav.aap.util.MDCUtil.toMDC
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest
 @Order(LOWEST_PRECEDENCE)
 class HeadersToMDCFilterBean constructor(@Value("\${spring.application.name}") val applicationName: String) :
     GenericFilterBean() {
-    private val log = getLogger(javaClass)
+    private val log = LoggerUtil.getLogger(javaClass)
 
     @Throws(IOException::class, ServletException::class)
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {

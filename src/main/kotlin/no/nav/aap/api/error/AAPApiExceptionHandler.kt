@@ -1,6 +1,6 @@
 package no.nav.aap.api.error
 
-import no.nav.aap.api.util.AuthContext
+import no.nav.aap.util.AuthContext
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.http.ResponseEntity
@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.context.request.NativeWebRequest
 import org.zalando.problem.Problem
-import org.zalando.problem.Status.*
+import org.zalando.problem.Status.NOT_FOUND
+import org.zalando.problem.Status.UNAUTHORIZED
+import org.zalando.problem.Status.UNPROCESSABLE_ENTITY
 import org.zalando.problem.spring.web.advice.ProblemHandling
 
 

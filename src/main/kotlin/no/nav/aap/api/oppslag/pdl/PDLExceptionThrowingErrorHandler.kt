@@ -1,11 +1,14 @@
 package no.nav.aap.api.oppslag.pdl
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
-import no.nav.aap.api.util.LoggerUtil.getLogger
-import no.nav.aap.api.util.LoggerUtil.getSecureLogger
+import no.nav.aap.util.LoggerUtil
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.*
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException.create
 import org.springframework.web.client.HttpServerErrorException
@@ -14,8 +17,8 @@ import java.nio.charset.Charset.defaultCharset
 
 @Component
 internal class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
-    private val log = getLogger(javaClass)
-    private val secureLogger = getSecureLogger()
+    private val log = LoggerUtil.getLogger(javaClass)
+    private val secureLogger = LoggerUtil.getSecureLogger()
 
     override fun <T> handleError(e: GraphQLErrorsException): T {
         log.warn("PDL feilet, se secure logs for mer detaljer")
@@ -25,7 +28,8 @@ internal class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
 
         throw if (firstExceptionCode != null) {
             exceptionFra(firstExceptionCode.toString(), errorMessage)
-        } else {
+        }
+        else {
             HttpServerErrorException(INTERNAL_SERVER_ERROR, errorMessage, null, null, null)
         }
     }

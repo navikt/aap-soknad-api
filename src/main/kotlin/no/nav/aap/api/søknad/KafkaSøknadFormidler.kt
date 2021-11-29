@@ -7,10 +7,9 @@ import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.model.UtenlandsSøknadKafka
 import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.api.søknad.model.toKafkaObject
-import no.nav.aap.api.util.LoggerUtil.getLogger
-import no.nav.aap.api.util.LoggerUtil.getSecureLogger
-import no.nav.aap.api.util.MDCUtil
-import no.nav.aap.api.util.MDCUtil.NAV_CALL_ID
+import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.MDCUtil
+import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.KafkaHeaders.MESSAGE_KEY
@@ -28,8 +27,8 @@ class KafkaSøknadFormidler(
         @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String
                           ) : SøknadFormidler {
 
-    private val log = getLogger(javaClass)
-    private val secureLog = getSecureLogger()
+    private val log = LoggerUtil.getLogger(javaClass)
+    private val secureLog = LoggerUtil.getSecureLogger()
 
     override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) =
         send(søknad.toKafkaObject(Søker(fnr, pdl.navn())))
