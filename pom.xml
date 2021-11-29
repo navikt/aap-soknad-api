@@ -33,6 +33,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>no.nav.aap</groupId>
+            <artifactId>aap-domain</artifactId>
+            <version>0.0.6</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-reactor-netty</artifactId>
         </dependency>
