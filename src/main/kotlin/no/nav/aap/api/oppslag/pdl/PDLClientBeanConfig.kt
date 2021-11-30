@@ -23,8 +23,7 @@ class PDLClientBeanConfig {
             builder: WebClient.Builder,
             cfg: PDLConfig,
             tokenXFilterFunction: TokenXFilterFunction,
-            env: Environment
-                    ) =
+            env: Environment) =
         builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
