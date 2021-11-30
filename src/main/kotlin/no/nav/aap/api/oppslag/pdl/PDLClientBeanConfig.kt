@@ -19,7 +19,7 @@ import reactor.netty.http.client.HttpClient
 @Configuration
 class PDLClientBeanConfig {
     @Value("\${spring.application.name}")
-    lateinit var applicationName: String
+    private lateinit var applicationName: String
 
     @Qualifier(PDL_USER)
     @Bean
