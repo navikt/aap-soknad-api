@@ -8,6 +8,7 @@ import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
 import no.nav.aap.util.Constants.PDL_USER
 import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
@@ -17,6 +18,9 @@ import reactor.netty.http.client.HttpClient
 
 @Configuration
 class PDLClientBeanConfig {
+    @Value("\${spring.application.name}")
+    lateinit var applicationName: String
+
     @Qualifier(PDL_USER)
     @Bean
     fun pdlWebClient(
@@ -27,7 +31,7 @@ class PDLClientBeanConfig {
         builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
-            .filter(correlatingFilterFunction())
+            .filter(correlatingFilterFunction(applicationName))
             .filter(temaFilterFunction())
             .filter(tokenXFilterFunction)
             .build()
