@@ -35,8 +35,7 @@ class TokenXFilterFunction(
             log.trace("Token exchange for {} OK", url)
             secureLog.trace("Token er {}", token)
             return next.exchange(
-                    ClientRequest.from(req).header(AUTHORIZATION, bearerToken(token)).build()
-                                )
+                    ClientRequest.from(req).header(AUTHORIZATION, bearerToken(token)).build())
         }
         log.trace("Ingen token exchange for {}", url)
         return next.exchange(ClientRequest.from(req).build())
