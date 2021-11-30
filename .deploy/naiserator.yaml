@@ -9,9 +9,10 @@ metadata:
   labels:
     team: aap
 spec:
-  buckets:
-    - name: aap-utland-mellomlagring
-      retentionPeriodDays: 2
+  gcp:
+    buckets:
+      - name: aap-utland-mellomlagring
+        retentionPeriodDays: 2
   accessPolicy:
     inbound:
       rules:
