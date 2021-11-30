@@ -3,8 +3,8 @@ package no.nav.aap.api.søknad
 import no.nav.aap.api.error.IntegrationException
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Søker
+import no.nav.aap.api.felles.UtenlandsSøknadKafka
 import no.nav.aap.api.oppslag.pdl.PDLClient
-import no.nav.aap.api.søknad.model.UtenlandsSøknadKafka
 import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.api.søknad.model.toKafkaObject
 import no.nav.aap.util.LoggerUtil

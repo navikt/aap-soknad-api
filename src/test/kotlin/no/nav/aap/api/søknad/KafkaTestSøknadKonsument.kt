@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad
 
-import no.nav.aap.api.søknad.model.UtenlandsSøknadKafka
+import no.nav.aap.api.felles.UtenlandsSøknadKafka
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
