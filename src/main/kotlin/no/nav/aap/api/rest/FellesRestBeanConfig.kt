@@ -2,8 +2,6 @@ package no.nav.aap.api.rest
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.google.api.gax.retrying.RetrySettings
-import com.google.cloud.storage.StorageOptions
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
@@ -12,7 +10,6 @@ import no.nav.aap.util.AuthContext
 import no.nav.aap.util.TimeUtil.format
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.info.InfoContributor
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository
@@ -25,7 +22,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.stereotype.Component
-import org.threeten.bp.Duration
 import org.zalando.problem.jackson.ProblemModule
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
@@ -45,19 +41,6 @@ class FellesRestBeanConfig {
 
     @Bean
     fun authContext(ctxHolder: TokenValidationContextHolder) = AuthContext(ctxHolder)
-
-    @Bean
-    fun retrySettings(@Value("\${mellomlagring.timeout:3000}") timeoutMs: Long) =
-        RetrySettings.newBuilder()
-            .setTotalTimeout(Duration.ofMillis(timeoutMs))
-            .build()
-
-    @Bean
-    fun storage(retrySettings: RetrySettings) = StorageOptions
-        .newBuilder()
-        .setRetrySettings(retrySettings)
-        .build()
-        .service
 
     @Bean
     fun openAPI(p: BuildProperties) =
