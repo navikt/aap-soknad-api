@@ -16,6 +16,7 @@
     <description>aap-soknad-api</description>
     <properties>
         <conditionals.version>2.0.13</conditionals.version>
+        <gcp.version>0.163.0</gcp.version>
         <graphql.version>1.0.0</graphql.version>
         <i18n.version>1.29</i18n.version>
         <java.version>17</java.version>
@@ -30,7 +31,22 @@
         <springdoc.version>1.5.12</springdoc.version>
         <token.validation.version>1.3.9</token.validation.version>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>google-cloud-bom</artifactId>
+                <version>${gcp.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-storage</artifactId>
+        </dependency>
         <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>token-validation-spring-test</artifactId>
