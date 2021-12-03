@@ -1,7 +1,10 @@
 package no.nav.aap.api.mellomlagring
 
+import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.søknad.SkjemaType
+
 interface Mellomlagring {
-    fun lagre(katalog: String, key: String, value: String)
-    fun les(katalog: String, key: String): String?
-    fun slett(katalog: String, key: String): Boolean
+    fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String)
+    fun les(fnr: Fødselsnummer, type: SkjemaType): String?
+    fun slett(fnr: Fødselsnummer, type: SkjemaType): Boolean
 }
