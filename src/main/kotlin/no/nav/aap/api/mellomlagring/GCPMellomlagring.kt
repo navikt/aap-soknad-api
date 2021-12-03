@@ -10,7 +10,12 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.web.client.HttpClientErrorException
+import java.nio.charset.Charset
 import javax.servlet.http.HttpServletResponse.SC_NOT_FOUND
 
 
@@ -32,12 +37,15 @@ class GCPMellomlagring(@Value("\${mellomlagring.bucket:aap-mellomlagring}") val 
         } catch (e: StorageException) {
             if (SC_NOT_FOUND === e.code) {
                 log.info(CONFIDENTIAL, "Mellomlagret skjema {} ikke funnet, ({})", fnr, type, e)
-                null
+                throw exception(NOT_FOUND)
             }
-            log.warn("Mellomlagret  skjema {} ikke funnet, ({})", fnr, e.code, e)
+            log.warn("Uventet feil ved ooslag av mellomlagret  skjema for {},", fnr, e)
             throw e
         }
     }
+
+    private fun exception(status: HttpStatus, msg: String) =
+        HttpClientErrorException.create(status, msg, HttpHeaders(), ByteArray(0), Charset.defaultCharset())
 
     override fun slett(fnr: Fødselsnummer, type: SkjemaType) = storage.delete(blobFra(fnr, type))
     private fun key(fnr: Fødselsnummer, type: SkjemaType) = type.name + "_" + fnr.fnr
