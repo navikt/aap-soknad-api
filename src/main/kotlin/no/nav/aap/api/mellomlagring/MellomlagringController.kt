@@ -30,10 +30,8 @@ class MellomlagringController(private val gcp: GCPMellomlagring) {
         return ResponseEntity<String>(data, CREATED)
     }
 
-
     @GetMapping("/les/{fnr}/{type}")
-    fun les(@PathVariable fnr: Fødselsnummer, @PathVariable type: SkjemaType) =
-        gcp.les(fnr, type)
+    fun les(@PathVariable fnr: Fødselsnummer, @PathVariable type: SkjemaType) = gcp.les(fnr, type)
 
     @DeleteMapping("/slett/{fnr}/{type}")
     fun slett(@PathVariable fnr: Fødselsnummer, @PathVariable type: SkjemaType): ResponseEntity<Void> {
