@@ -12,7 +12,7 @@ spec:
   gcp:
     buckets:
       - name: aap-utland-mellomlagring
-        retentionPeriodDays: 2
+        cascadingDelete: true
   accessPolicy:
     inbound:
       rules:
