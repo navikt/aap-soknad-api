@@ -1,7 +1,7 @@
 package no.nav.aap.api.mellomlagring
 
+import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.SkjemaType
-import no.nav.aap.util.AuthContext
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.http.HttpStatus.CREATED
@@ -18,24 +18,26 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @Unprotected
-@RequestMapping(value = ["buckets"], produces = [APPLICATION_JSON_VALUE])
+@RequestMapping(value = ["dev/buckets"], produces = [APPLICATION_JSON_VALUE])
 @ConditionalOnDevOrLocal
-class MellomlagringController(private val gcp: GCPMellomlagring, private val authCtx: AuthContext) {
+class MellomlagringDevController(private val gcp: GCPMellomlagring) {
 
-
-    @PostMapping("/lagre/{type}")
-    fun lagre(@PathVariable type: SkjemaType,
+    @PostMapping("/lagre/{fnr}/{type}")
+    fun lagre(@PathVariable fnr: Fødselsnummer,
+              @PathVariable type: SkjemaType,
               @RequestBody data: String): ResponseEntity<String> {
-        gcp.lagre(authCtx.getFnr(), type, data)
+        gcp.lagre(fnr, type, data)
         return ResponseEntity<String>(data, CREATED)
     }
 
-    @GetMapping("/les/{type}")
-    fun les(@PathVariable type: SkjemaType) = gcp.les(authCtx.getFnr(), type)
+
+    @GetMapping("/les/{fnr}/{type}")
+    fun les(@PathVariable fnr: Fødselsnummer, @PathVariable type: SkjemaType) = gcp.les(fnr, type)
+
 
     @DeleteMapping("/slett/{fnr}/{type}")
-    fun slett(@PathVariable type: SkjemaType): ResponseEntity<Void> {
-        gcp.slett(authCtx.getFnr(), type)
+    fun slett(@PathVariable fnr: Fødselsnummer, @PathVariable type: SkjemaType): ResponseEntity<Void> {
+        gcp.slett(fnr, type)
         return ResponseEntity<Void>(NO_CONTENT)
     }
 }
