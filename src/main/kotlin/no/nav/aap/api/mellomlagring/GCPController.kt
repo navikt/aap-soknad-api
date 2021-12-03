@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -24,7 +23,7 @@ class GCPController(private val gcp: GCPMellomlagring) {
         gcp.lagre(fnr, type, data)
 
     @GetMapping("/les/{fnr}/{type}")
-    fun les(@PathVariable fnr: Fødselsnummer, @PathVariable type: SkjemaType, @RequestParam data: String) =
+    fun les(@PathVariable fnr: Fødselsnummer, @PathVariable type: SkjemaType) =
         gcp.les(fnr, type)
 
     @PostMapping("/slett/{fnr}/{type}")
