@@ -10,9 +10,6 @@ metadata:
     team: aap
 spec:
   gcp:
-    buckets:
-      - name: aap-utland-mellomlagring
-        cascadingDelete: true
   accessPolicy:
     inbound:
       rules:
