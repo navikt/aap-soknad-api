@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController
 @ConditionalOnDevOrLocal
 class GCPController(private val gcp: GCPMellomlagring) {
 
-    @PostMapping("/lagre/{fnr}")
+    @PostMapping("/lagre/{fnr}/{type}")
     fun lagre(@PathVariable fnr: Fødselsnummer, @PathVariable type: SkjemaType, @RequestBody data: String) =
         gcp.lagre(fnr, type, data)
 
-    @GetMapping("/les/{fnr}")
+    @GetMapping("/les/{fnr}/{type}")
     fun les(@PathVariable fnr: Fødselsnummer, @PathVariable type: SkjemaType, @RequestParam data: String) =
         gcp.les(fnr, type)
 
-    @PostMapping("/slett/{fnr}")
+    @PostMapping("/slett/{fnr}/{type}")
     fun slett(@PathVariable fnr: Fødselsnummer, @PathVariable type: SkjemaType) = gcp.slett(fnr, type)
 }
