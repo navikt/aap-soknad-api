@@ -13,6 +13,8 @@ spec:
     buckets:
       - name: aap-mellomlagring
         cascadingDelete: true
+        lifecycleCondition:
+          age: 1
   accessPolicy:
     inbound:
       rules:
