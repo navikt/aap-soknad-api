@@ -37,9 +37,9 @@ class GCPMellomlagring(@Value("\${mellomlagring.bucket:aap-mellomlagring}") val 
         } catch (e: StorageException) {
             if (SC_NOT_FOUND === e.code) {
                 log.info(CONFIDENTIAL, "Mellomlagret skjema {} ikke funnet, ({})", fnr, type, e)
-                throw exception(NOT_FOUND)
+                throw exception(NOT_FOUND, "Ingen mellomlagring funnet")
             }
-            log.warn("Uventet feil ved ooslag av mellomlagret  skjema for {},", fnr, e)
+            log.warn("Uventet feil ved oppslag av mellomlagret  skjema for {},", fnr, e)
             throw e
         }
     }
