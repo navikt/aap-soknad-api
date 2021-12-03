@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse.SC_NOT_FOUND
 
 
 @ConditionalOnGCP
-class GCPMellomlagring(@Value("\${mellomlagring.utland.bucket:aap-utland-mellomlagring}") val bøttenavn: String,
+class GCPMellomlagring(@Value("\${mellomlagring.utland.bucket:aap-mellomlagring}") val bøttenavn: String,
                        val storage: Storage) : Mellomlagring {
     private val log = getLogger(GCPMellomlagring::class.java)
 
