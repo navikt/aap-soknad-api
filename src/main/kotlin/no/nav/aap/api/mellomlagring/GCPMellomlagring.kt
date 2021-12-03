@@ -8,7 +8,6 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.SkjemaType
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
-import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -16,7 +15,6 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.client.HttpClientErrorException
 import java.nio.charset.Charset
-import javax.servlet.http.HttpServletResponse.SC_NOT_FOUND
 
 
 @ConditionalOnGCP
@@ -32,13 +30,10 @@ class GCPMellomlagring(@Value("\${mellomlagring.bucket:aap-mellomlagring}") val 
 
 
     override fun les(fnr: Fødselsnummer, type: SkjemaType): String? {
-        return try {
+        try {
             return storage.get(bøttenavn, key(fnr, type))?.getContent()?.let { String(it) }
+                ?: throw exception(NOT_FOUND, "Ingen mellomlagring funnet")
         } catch (e: StorageException) {
-            if (SC_NOT_FOUND === e.code) {
-                log.info(CONFIDENTIAL, "Mellomlagret skjema {} ikke funnet, ({})", fnr, type, e)
-                throw exception(NOT_FOUND, "Ingen mellomlagring funnet")
-            }
             log.warn("Uventet feil ved oppslag av mellomlagret  skjema for {},", fnr, e)
             throw e
         }
