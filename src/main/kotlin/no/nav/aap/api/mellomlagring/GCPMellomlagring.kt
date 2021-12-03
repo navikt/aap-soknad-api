@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.client.HttpClientErrorException
 import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets.UTF_8
 
 
 @ConditionalOnGCP
@@ -25,7 +26,7 @@ class GCPMellomlagring(@Value("\${mellomlagring.bucket:aap-mellomlagring}") val 
     override fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) {
         storage.create(
                 BlobInfo.newBuilder(blobFra(fnr, type))
-                    .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(Charsets.UTF_8))
+                    .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8))
     }
 
 

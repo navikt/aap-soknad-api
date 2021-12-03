@@ -4,7 +4,10 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.SkjemaType
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import no.nav.security.token.support.core.api.Unprotected
+import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,6 +29,9 @@ class GCPController(private val gcp: GCPMellomlagring) {
     fun les(@PathVariable fnr: Fødselsnummer, @PathVariable type: SkjemaType) =
         gcp.les(fnr, type)
 
-    @PostMapping("/slett/{fnr}/{type}")
-    fun slett(@PathVariable fnr: Fødselsnummer, @PathVariable type: SkjemaType) = gcp.slett(fnr, type)
+    @DeleteMapping("/slett/{fnr}/{type}")
+    fun slett(@PathVariable fnr: Fødselsnummer, @PathVariable type: SkjemaType): ResponseEntity<Void> {
+        gcp.slett(fnr, type)
+        return ResponseEntity<Void>(NO_CONTENT)
+    }
 }
