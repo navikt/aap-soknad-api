@@ -1,7 +1,6 @@
 package no.nav.aap.api.rest
 
 import no.nav.aap.util.CallIdGenerator
-import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.NAV_CONSUMER_ID
 import no.nav.aap.util.MDCUtil.toMDC
@@ -22,7 +21,6 @@ import javax.servlet.http.HttpServletRequest
 @Component
 @Order(LOWEST_PRECEDENCE)
 class HeadersToMDCFilterBean(@Value("\${spring.application.name}") val applicationName: String) : GenericFilterBean() {
-    private val log = getLogger(javaClass)
 
     @Throws(IOException::class, ServletException::class)
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
@@ -31,12 +29,8 @@ class HeadersToMDCFilterBean(@Value("\${spring.application.name}") val applicati
     }
 
     private fun putValues(req: HttpServletRequest) {
-        try {
-            toMDC(NAV_CONSUMER_ID, req.getHeader(NAV_CONSUMER_ID), applicationName)
-            toMDC(NAV_CALL_ID, req.getHeader(NAV_CALL_ID), CallIdGenerator.create())
-        } catch (e: Exception) {
-            log.warn("Feil ved setting av MDC-verdier for {}, MDC-verdier er inkomplette", req.requestURI, e)
-        }
+        toMDC(NAV_CONSUMER_ID, req.getHeader(NAV_CONSUMER_ID), applicationName)
+        toMDC(NAV_CALL_ID, req.getHeader(NAV_CALL_ID), CallIdGenerator.create())
     }
 
     override fun toString() = javaClass.simpleName + " [ applicationName=" + applicationName + "]"
