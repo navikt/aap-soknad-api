@@ -1,8 +1,8 @@
 package no.nav.aap.api.mellomlagring
 
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.rest.UnprotectedRestController
 import no.nav.aap.api.søknad.SkjemaType
+import no.nav.aap.rest.UnprotectedRestController
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.ResponseEntity
