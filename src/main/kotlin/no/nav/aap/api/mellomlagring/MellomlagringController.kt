@@ -1,7 +1,5 @@
 package no.nav.aap.api.mellomlagring
 
-import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import no.nav.aap.api.søknad.SkjemaType
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
@@ -26,8 +24,6 @@ class MellomlagringController(private val gcp: GCPMellomlagring, private val aut
         return ResponseEntity<String>(data, CREATED)
     }
 
-    @Operation(summary = "Les", description = "Les fra bucket")
-    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/les/{type}")
     fun les(@PathVariable type: SkjemaType) = gcp.les(authCtx.getFnr(), type)
 
