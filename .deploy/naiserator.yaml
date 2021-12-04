@@ -15,7 +15,6 @@ spec:
         cascadingDelete: true
         lifecycleCondition:
           age: 1
-          withState: ANY
   accessPolicy:
     inbound:
       rules:
