@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException.create
-import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.HttpStatusCodeException
 import java.nio.charset.Charset.defaultCharset
 
@@ -23,15 +22,7 @@ internal class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
     override fun <T> handleError(e: GraphQLErrorsException): T {
         log.warn("PDL feilet, se secure logs for mer detaljer")
         secureLogger.error("PDL oppslag returnerte ${e.errors.size} feil. ${e.errors}", e)
-        val errorMessage = e.message ?: "Ukjent feil"
-        val firstExceptionCode = e.errors.firstOrNull()?.extensions?.get("code")
-
-        throw if (firstExceptionCode != null) {
-            exceptionFra(firstExceptionCode.toString(), errorMessage)
-        }
-        else {
-            HttpServerErrorException(INTERNAL_SERVER_ERROR, errorMessage, null, null, null)
-        }
+        throw exceptionFra(e.errors.firstOrNull()?.extensions?.get("code"), e.message ?: "Ukjent feil")
     }
 
     companion object {
@@ -39,13 +30,13 @@ internal class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
         private const val FORBUDT = "unauthorized"
         private const val UGYLDIG = "bad_request"
         private const val IKKEFUNNET = "not_found"
-        private fun exceptionFra(kode: String, msg: String): HttpStatusCodeException =
-            when (kode) {
+        private fun exceptionFra(kode: Any?, msg: String): HttpStatusCodeException =
+            when (kode?.toString()) {
                 UAUTENTISERT -> exception(UNAUTHORIZED, msg)
                 FORBUDT -> exception(FORBIDDEN, msg)
                 UGYLDIG -> exception(BAD_REQUEST, msg)
                 IKKEFUNNET -> exception(NOT_FOUND, msg)
-                else -> HttpServerErrorException(INTERNAL_SERVER_ERROR, msg)
+                else -> exception(INTERNAL_SERVER_ERROR, msg)
             }
 
         private fun exception(status: HttpStatus, msg: String) =
