@@ -2,9 +2,6 @@ package no.nav.aap.api.rest
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.swagger.v3.oas.annotations.OpenAPIDefinition
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType.HTTP
-import io.swagger.v3.oas.annotations.security.SecurityScheme
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
@@ -69,9 +66,4 @@ class FellesRestBeanConfig {
             builder.withDetail("extra-info", mapOf("Startup time" to format(ctx.startupDate)))
         }
     }
-
-    @Configuration
-    @OpenAPIDefinition(info = io.swagger.v3.oas.annotations.info.Info(title = "My API", version = "v1"))
-    @SecurityScheme(name = "bearerAuth", type = HTTP, bearerFormat = "JWT", scheme = "bearer")
-    class OpenApi30Config
 }
