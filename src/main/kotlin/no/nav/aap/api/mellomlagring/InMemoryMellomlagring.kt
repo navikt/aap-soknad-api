@@ -12,7 +12,7 @@ class InMemoryMellomlagring : Mellomlagring {
         store[key(fnr, type)] = value
     }
 
-    override fun les(fnr: Fødselsnummer, type: SkjemaType): String? = store[key(fnr, type)]
-    override fun slett(fnr: Fødselsnummer, type: SkjemaType): Boolean = store.remove(key(fnr, type)) != null
+    override fun les(fnr: Fødselsnummer, type: SkjemaType) = store[key(fnr, type)]
+    override fun slett(fnr: Fødselsnummer, type: SkjemaType) = store.remove(key(fnr, type)) != null
     private fun key(fnr: Fødselsnummer, type: SkjemaType) = fnr.fnr.plus("_").plus(type.name)
 }
