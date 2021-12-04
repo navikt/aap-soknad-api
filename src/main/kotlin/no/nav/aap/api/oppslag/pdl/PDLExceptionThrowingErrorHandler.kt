@@ -24,11 +24,11 @@ internal class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
         throw e.convertToHttpClientException()
     }
 
-    private fun GraphQLErrorsException.code() = errors.firstOrNull()?.extensions?.get("code")
+    private fun GraphQLErrorsException.code() = errors.firstOrNull()?.extensions?.get("code")?.toString()
     private fun GraphQLErrorsException.convertToHttpClientException() = exceptionFra(code(), message ?: "Ukjent feil")
 
-    private fun exceptionFra(kode: Any?, msg: String) =
-        when (kode?.toString()) {
+    private fun exceptionFra(kode: String?, msg: String) =
+        when (kode) {
             "unauthenticated" -> exception(UNAUTHORIZED, msg)
             "unauthorized" -> exception(FORBIDDEN, msg)
             "bad_request" -> exception(BAD_REQUEST, msg)
