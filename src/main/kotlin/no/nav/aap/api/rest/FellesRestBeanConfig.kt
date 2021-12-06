@@ -7,7 +7,7 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import no.nav.aap.rest.TokenXModule
 import no.nav.aap.util.AuthContext
-import no.nav.aap.util.TimeUtil.format
+import no.nav.aap.util.TimeExtensions.format
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.boot.actuate.info.InfoContributor
@@ -63,7 +63,7 @@ class FellesRestBeanConfig {
     @Component
     class StartupInfoContributor(val ctx: ApplicationContext) : InfoContributor {
         override fun contribute(builder: org.springframework.boot.actuate.info.Info.Builder) {
-            builder.withDetail("extra-info", mapOf("Startup time" to format(ctx.startupDate)))
+            builder.withDetail("extra-info", mapOf("Startup time" to ctx.startupDate.format()))
         }
     }
 }
