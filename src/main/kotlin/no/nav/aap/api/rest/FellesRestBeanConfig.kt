@@ -7,9 +7,9 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
 import no.nav.aap.rest.HeadersToMDCFilter
-import no.nav.aap.rest.TokenXModule
 import no.nav.aap.rest.tokenx.TokenXConfigMatcher
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
+import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.StartupInfoContributor
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
@@ -40,7 +40,7 @@ class FellesRestBeanConfig {
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b: Jackson2ObjectMapperBuilder ->
-        b.modules(ProblemModule(), JavaTimeModule(), TokenXModule(), KotlinModule.Builder().build())
+        b.modules(ProblemModule(), JavaTimeModule(), TokenXJacksonModule(), KotlinModule.Builder().build())
     }
 
     @Bean
