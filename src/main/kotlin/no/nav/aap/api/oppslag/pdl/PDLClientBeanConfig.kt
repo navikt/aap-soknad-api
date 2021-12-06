@@ -2,6 +2,7 @@ package no.nav.aap.api.oppslag.pdl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
+import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
@@ -38,4 +39,9 @@ class PDLClientBeanConfig(@Value("\${spring.application.name}") val applicationN
     @Bean
     fun graphQlWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper): GraphQLWebClient =
         GraphQLWebClient.newInstance(client, mapper)
+
+    @Bean
+    fun pdlHealthIndicator(adapter: PDLWebClientAdapter) = object: AbstractPingableHealthIndicator(adapter){
+
+    }
 }
