@@ -22,7 +22,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
 class KafkaSøknadFormidler(
-        private val søknadMetrics: SøknadMetrics, // TODO initialiser statisk, fjern fra ctr
+        private val søknadMetrics: SøknadMetrics, 
         private val pdl: PDLClient,
         private val kafkaOperations: KafkaOperations<Fødselsnummer, UtenlandsSøknadKafka>,
         @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String
@@ -50,7 +50,7 @@ class KafkaSøknadFormidler(
                             result?.recordMetadata?.partition(),
                             result?.recordMetadata?.offset())
                     secureLog.debug("Søknad $søknad sent til kafka ($result)")
-                    søknadMetrics.incrementSøknadUtlandMottatt(søknad.land.alpha3, søknad.periode)
+                    søknadMetrics.increment(søknad)
                 }
 
                 override fun onFailure(e: Throwable) {
