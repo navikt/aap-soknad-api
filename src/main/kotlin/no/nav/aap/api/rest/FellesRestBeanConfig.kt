@@ -5,26 +5,34 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
+import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
+import no.nav.aap.rest.HeadersToMDCFilter
 import no.nav.aap.rest.TokenXModule
+import no.nav.aap.rest.tokenx.TokenXConfigMatcher
+import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.util.AuthContext
-import no.nav.aap.util.TimeExtensions.format
+import no.nav.aap.util.StartupInfoContributor
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
+import no.nav.security.token.support.client.core.ClientProperties
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
-import org.springframework.boot.actuate.info.InfoContributor
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
-import org.springframework.boot.actuate.web.trace.servlet.HttpTraceFilter
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
+import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.Ordered.LOWEST_PRECEDENCE
+import org.springframework.core.annotation.Order
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.stereotype.Component
 import org.zalando.problem.jackson.ProblemModule
-import javax.servlet.ServletException
-import javax.servlet.http.HttpServletRequest
+import java.net.URI
 
 
 @Configuration
@@ -43,7 +51,7 @@ class FellesRestBeanConfig {
     fun authContext(ctxHolder: TokenValidationContextHolder) = AuthContext(ctxHolder)
 
     @Bean
-    fun openAPI(p: BuildProperties) =
+    fun openAPI(p: BuildProperties): OpenAPI =
         OpenAPI()
             .info(
                     Info().title("AAP søknadmottaker")
@@ -52,18 +60,28 @@ class FellesRestBeanConfig {
                         .license(License().name("MIT").url("http://www.nav.no"))
                  )
 
-    @ConditionalOnDevOrLocal
-    class ActuatorIgnoringTraceRequestFilter(repository: HttpTraceRepository?, tracer: HttpExchangeTracer?) :
-        HttpTraceFilter(repository, tracer) {
-        @Throws(ServletException::class)
-        override fun shouldNotFilter(request: HttpServletRequest) =
-            request.servletPath.contains("actuator") || request.servletPath.contains("swagger")
+    @Bean
+    fun configMatcher() = object : TokenXConfigMatcher {
+        override fun findProperties(configs: ClientConfigurationProperties, uri: URI): ClientProperties? {
+            return configs.registration[uri.host.split("\\.".toRegex()).toTypedArray()[0]]
+        }
     }
+    @Bean
+    fun tokenXFilterFunction(configs: ClientConfigurationProperties, service: OAuth2AccessTokenService, matcher: TokenXConfigMatcher, authContext: AuthContext) = TokenXFilterFunction(configs, service, matcher, authContext)
+
+    @Bean
+    @ConditionalOnDevOrLocal
+    fun actuatorIgnoringTraceRequestFilter(repo: HttpTraceRepository, tracer: HttpExchangeTracer?) = ActuatorIgnoringTraceRequestFilter(repo,tracer)
+
+    @Bean
+    fun startupInfoContributor(ctx: ApplicationContext) =  StartupInfoContributor(ctx)
 
     @Component
-    class StartupInfoContributor(val ctx: ApplicationContext) : InfoContributor {
-        override fun contribute(builder: org.springframework.boot.actuate.info.Info.Builder) {
-            builder.withDetail("extra-info", mapOf("Startup time" to ctx.startupDate.format()))
+    @Order(LOWEST_PRECEDENCE)
+    class HeadersToMDCFilterRegistrationBean(@Value("\${spring.application.name}") applicationName: String) :
+        FilterRegistrationBean<HeadersToMDCFilter?>(HeadersToMDCFilter(applicationName)) {
+        init {
+            urlPatterns = listOf("/*")
         }
     }
 }
