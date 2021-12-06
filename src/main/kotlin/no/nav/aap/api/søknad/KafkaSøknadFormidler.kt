@@ -22,7 +22,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
 class KafkaSøknadFormidler(
-        private val søknadMetrics: SøknadMetrics, 
+        private val søknadMetrics: SøknadMetrics,
         private val pdl: PDLClient,
         private val kafkaOperations: KafkaOperations<Fødselsnummer, UtenlandsSøknadKafka>,
         @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String

@@ -16,5 +16,4 @@ class SøknadMetrics(private val meterRegistry: MeterRegistry) {
                 TAG_VARIGHET, søknad.periode.varighetDager().toString())
             .increment()
     }
-
 }
