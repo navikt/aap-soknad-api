@@ -51,7 +51,7 @@ class FellesRestBeanConfig {
     fun authContext(ctxHolder: TokenValidationContextHolder) = AuthContext(ctxHolder)
 
     @Bean
-    fun openAPI(p: BuildProperties): OpenAPI =
+    fun openAPI(p: BuildProperties) =
         OpenAPI()
             .info(
                     Info().title("AAP søknadmottaker")

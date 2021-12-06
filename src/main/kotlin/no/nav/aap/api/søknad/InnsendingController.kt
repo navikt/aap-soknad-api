@@ -15,14 +15,12 @@ import javax.validation.Valid
 class InnsendingController(
         private val authContext: AuthContext,
         private val formidler: SøknadFormidler,
-        private val søknadMetrics: SøknadMetrics
-                          ) {
+        private val søknadMetrics: SøknadMetrics) {
     private val log = LoggerUtil.getLogger(javaClass)
 
     @PostMapping("/utland")
     fun utland(@RequestBody søknad: @Valid UtenlandsSøknadView): Kvittering {
         log.info(CONFIDENTIAL, "Sender søknad for {}", authContext.getFnr())
-        søknadMetrics.incrementSøknadUtlandMottatt(søknad.land.alpha3, søknad.periode)
         formidler.sendUtenlandsSøknad(authContext.getFnr(), søknad)
         return Kvittering("OK")
     }
