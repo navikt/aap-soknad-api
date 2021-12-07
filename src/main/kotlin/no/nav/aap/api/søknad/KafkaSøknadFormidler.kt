@@ -1,10 +1,10 @@
 package no.nav.aap.api.søknad
 
-import no.nav.aap.api.error.IntegrationException
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Søker
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
-import no.nav.aap.api.oppslag.pdl.PDLClient
+import no.nav.aap.api.felles.error.IntegrationException
+import no.nav.aap.api.oppslag.pdl.PDLOperations
 import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.api.søknad.model.toKafkaObject
 import no.nav.aap.util.LoggerUtil
@@ -23,7 +23,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 @Service
 class KafkaSøknadFormidler(
         private val søknadMetrics: SøknadMetrics,
-        private val pdl: PDLClient,
+        private val pdl: PDLOperations,
         private val kafkaOperations: KafkaOperations<Fødselsnummer, UtenlandsSøknadKafka>,
         @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String
                           ) : SøknadFormidler {
@@ -52,11 +52,13 @@ class KafkaSøknadFormidler(
                     secureLog.debug("Søknad $søknad sent til kafka ($result)")
                     søknadMetrics.increment(søknad)
                 }
-
                 override fun onFailure(e: Throwable) {
                     log.error("Klarte ikke sende søknad til Kafka, se secure log for info")
                     secureLog.error("Klarte ikke sende $søknad til Kafka", e)
-                    throw IntegrationException("Klarte ikke sende inn søknad", e)
+                    throw IntegrationException("Klarte ikke sende inn søknad", uri=null, e)
                 }
             })
+
+    override fun toString() = "${javaClass.simpleName} [kafkaOperations=$kafkaOperations,pdl=$pdl]"
+
 }

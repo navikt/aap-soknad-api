@@ -14,8 +14,7 @@ import javax.validation.Valid
 @ProtectedRestController(value = ["/api/innsending"], issuer = IDPORTEN)
 class InnsendingController(
         private val authContext: AuthContext,
-        private val formidler: SøknadFormidler,
-        private val søknadMetrics: SøknadMetrics) {
+        private val formidler: SøknadFormidler) {
     private val log = LoggerUtil.getLogger(javaClass)
 
     @PostMapping("/utland")
