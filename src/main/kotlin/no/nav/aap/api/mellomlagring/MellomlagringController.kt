@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody
 
 
 @ProtectedRestController(value = ["buckets"], issuer = IDPORTEN)
-class MellomlagringController(private val gcp: GCPMellomlagring, private val authCtx: AuthContext) {
+class MellomlagringController(private val gcp: Mellomlagring, private val authCtx: AuthContext) {
 
     @PostMapping("/lagre/{type}")
     fun lagre(@PathVariable type: SkjemaType,

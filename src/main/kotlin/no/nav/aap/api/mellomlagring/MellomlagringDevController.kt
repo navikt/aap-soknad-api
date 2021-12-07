@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody
 
 
 @UnprotectedRestController(value = ["dev/buckets"])
-class MellomlagringDevController(private val gcp: GCPMellomlagring) {
+class MellomlagringDevController(private val gcp: Mellomlagring) {
 
     @PostMapping("/lagre/{fnr}/{type}")
     fun lagre(@PathVariable fnr: Fødselsnummer,
