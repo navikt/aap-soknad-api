@@ -14,22 +14,22 @@ spec:
     - alert: aap-soknad-api-app-nede
       expr: kube_deployment_status_replicas_unavailable{deployment="aap-soknad-api",job="kubernetes-service-endpoints"} > 0
       for: 5m
-      description: "{{ $labels.app }} har utilgjengelige podder i {{ $labels.kubernetes_namespace }}"
-      action: "`kubectl describe pod -l app={{ $labels.deployment }} -n {{ $labels.namespace }}` for events og `kubectl get pods -l app=\{{ $labels.deployment }} -n \{{ $labels.namespace }}` for å se feilende podder"
+      description: '\{{ $labels.app }} har utilgjengelige podder i \{{ $labels.kubernetes_namespace }}'
+      action: 'kubectl describe pod -l app=\{{ $labels.deployment }} -n \{{ $labels.namespace }}` for events og `kubectl get pods -l app=\{{ $labels.deployment }} -n \{{ $labels.namespace }}` for å se feilende podder'
       sla: respond within 1h, during office hours
       severity: danger
     - alert: aap-soknad-api-kontinuerlig-restart
       expr: sum(increase(kube_pod_container_status_restarts_total{container=~"aap-soknad-api"}[5m])) by (container) > 2
       for: 2m
-      description: "{{ $labels.container }} har restartet flere ganger de siste 5 minuttene!"
-      action: "Se `kubectl describe pod {{ $labels.container }}` for events, og `kubectl logs {{ $labels.container }}` for logger"
+      description: '\{{ $labels.container }} har restartet flere ganger de siste 5 minuttene!'
+      action: 'Se `kubectl describe pod \{{ $labels.container }}` for events, og `kubectl logs \{{ $labels.container }}` for logger'
       sla: respond within 1h, during office hours
       severity: danger
     - alert: aap-soknad-api-mangler-metrikker
       expr: absent(up{app=~"aap-soknad-api",job="kubernetes-pods"})
       for: 2m
-      description: "{{ $labels.app }} rapporterer ingen metrikker i {{ $labels.kubernetes_namespace }}"
-      action: "Sjekk om {{ $labels.app }} i {{ $labels.kubernetes_namespace }} er oppe"
+      description: '\{{ $labels.app }} rapporterer ingen metrikker i \{{ $labels.kubernetes_namespace }}'
+      action: 'Sjekk om \{{ $labels.app }} i \{{ $labels.kubernetes_namespace }} er oppe'
       sla: respond within 1h, during office hours
       severity: danger
     - alert: høy feilrate i logger
