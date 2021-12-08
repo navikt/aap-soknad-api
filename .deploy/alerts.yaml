@@ -35,4 +35,4 @@ spec:
     - alert: høy feilrate i logger
       expr: (100 * sum by (log_app, log_namespace) (rate(logd_messages_total{log_app="aap-soknad-api",log_level=~"Error"}[10m])) / sum by (log_app, log_namespace) (rate(logd_messages_total{log_app="aap-soknad-api"}[10m]))) > 15
       for: 5m
-      action: "<https://logs.adeo.no/goto/33db4cfe9af54f191d99038b1e1e9d75|Check logs>"
+      action: "<https://logs.adeo.no/goto/1d394a6a4c647c93c51eda75e60999ed|Check logs>"
