@@ -1,5 +1,9 @@
 package no.nav.aap.api.søknad
 
+import io.micrometer.core.annotation.Counted
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.Metrics
+import io.micrometer.core.instrument.Tags
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Søker
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
@@ -22,12 +26,14 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
 class KafkaSøknadFormidler(
-        private val søknadMetrics: SøknadMetrics,
         private val pdl: PDLOperations,
         private val kafkaOperations: KafkaOperations<Fødselsnummer, UtenlandsSøknadKafka>,
         @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String
                           ) : SøknadFormidler {
 
+    private val TAG_LAND = "land"
+    private val TAG_VARIGHET = "varighet"
+    private val COUNTER_SØKNAD_UTLAND_MOTTATT = "aap_soknad_utland_mottatt"
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()
 
@@ -44,13 +50,13 @@ class KafkaSøknadFormidler(
                     .build())
             .addCallback(object : ListenableFutureCallback<SendResult<Fødselsnummer, UtenlandsSøknadKafka>> {
                 override fun onSuccess(result: SendResult<Fødselsnummer, UtenlandsSøknadKafka>?) {
+                    Metrics.counter(COUNTER_SØKNAD_UTLAND_MOTTATT, Tags.of(TAG_LAND, søknad.land.alpha3, TAG_VARIGHET,søknad.periode.varighetDager().toString())).increment()
                     log.info(
                             "Søknad sent til Kafka på topic {}, partition {} med offset {} OK",
                             søknadTopic,
                             result?.recordMetadata?.partition(),
                             result?.recordMetadata?.offset())
                     secureLog.debug("Søknad $søknad sent til kafka ($result)")
-                    søknadMetrics.increment(søknad)
                 }
                 override fun onFailure(e: Throwable) {
                     log.error("Klarte ikke sende søknad til Kafka, se secure log for info")
