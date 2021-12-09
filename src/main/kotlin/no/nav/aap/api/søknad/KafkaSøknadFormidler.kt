@@ -1,9 +1,9 @@
 package no.nav.aap.api.søknad
 
-import io.micrometer.core.annotation.Counted
-import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Metrics
 import io.micrometer.core.instrument.Tags
+import io.opencensus.metrics.MetricRegistry
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Søker
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
@@ -28,8 +28,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 class KafkaSøknadFormidler(
         private val pdl: PDLOperations,
         private val kafkaOperations: KafkaOperations<Fødselsnummer, UtenlandsSøknadKafka>,
-        @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String
-                          ) : SøknadFormidler {
+        @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String) : SøknadFormidler {
 
     private val TAG_LAND = "land"
     private val TAG_VARIGHET = "varighet"
@@ -50,7 +49,10 @@ class KafkaSøknadFormidler(
                     .build())
             .addCallback(object : ListenableFutureCallback<SendResult<Fødselsnummer, UtenlandsSøknadKafka>> {
                 override fun onSuccess(result: SendResult<Fødselsnummer, UtenlandsSøknadKafka>?) {
-                    Metrics.counter(COUNTER_SØKNAD_UTLAND_MOTTATT, Tags.of(TAG_LAND, søknad.land.alpha3, TAG_VARIGHET,søknad.periode.varighetDager().toString())).increment()
+                    Metrics.counter(COUNTER_SØKNAD_UTLAND_MOTTATT,
+                            Tags.of(TAG_LAND, søknad.land.alpha3,
+                                    TAG_VARIGHET,søknad.periode.varighetDager().toString()))
+                        .increment()
                     log.info(
                             "Søknad sent til Kafka på topic {}, partition {} med offset {} OK",
                             søknadTopic,
