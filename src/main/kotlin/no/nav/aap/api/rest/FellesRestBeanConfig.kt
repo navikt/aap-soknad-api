@@ -94,11 +94,13 @@ class FellesRestBeanConfig {
         }
     }
 
-    @Component
-    class PPPP : EnvironmentPostProcessor {
-        override fun postProcessEnvironment(environment: ConfigurableEnvironment, application: SpringApplication) {
-            val verdier = mapOf("meaning" to "42")
-            environment.propertySources.addFirst(MapPropertySource("JALLA", verdier))
+    companion object {
+        @Component
+        class PPPP : EnvironmentPostProcessor {
+            override fun postProcessEnvironment(environment: ConfigurableEnvironment, application: SpringApplication) {
+                val verdier = mapOf("meaning" to "42")
+                environment.propertySources.addFirst(MapPropertySource("JALLA", verdier))
+            }
         }
     }
 }
