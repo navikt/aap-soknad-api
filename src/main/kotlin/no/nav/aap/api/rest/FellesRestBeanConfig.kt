@@ -18,10 +18,12 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.SpringApplication
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
+import org.springframework.boot.env.EnvironmentPostProcessor
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.ApplicationContext
@@ -29,6 +31,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
+import org.springframework.core.env.ConfigurableEnvironment
+import org.springframework.core.env.MapPropertySource
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.stereotype.Component
 import org.zalando.problem.jackson.ProblemModule
@@ -66,15 +70,20 @@ class FellesRestBeanConfig {
             return configs.registration[uri.host.split("\\.".toRegex()).toTypedArray()[0]]
         }
     }
+
     @Bean
-    fun tokenXFilterFunction(configs: ClientConfigurationProperties, service: OAuth2AccessTokenService, matcher: TokenXConfigMatcher, authContext: AuthContext) = TokenXFilterFunction(configs, service, matcher, authContext)
+    fun tokenXFilterFunction(configs: ClientConfigurationProperties,
+                             service: OAuth2AccessTokenService,
+                             matcher: TokenXConfigMatcher,
+                             authContext: AuthContext) = TokenXFilterFunction(configs, service, matcher, authContext)
 
     @Bean
     @ConditionalOnDevOrLocal
-    fun actuatorIgnoringTraceRequestFilter(repo: HttpTraceRepository, tracer: HttpExchangeTracer?) = ActuatorIgnoringTraceRequestFilter(repo,tracer)
+    fun actuatorIgnoringTraceRequestFilter(repo: HttpTraceRepository, tracer: HttpExchangeTracer?) =
+        ActuatorIgnoringTraceRequestFilter(repo, tracer)
 
     @Bean
-    fun startupInfoContributor(ctx: ApplicationContext) =  StartupInfoContributor(ctx)
+    fun startupInfoContributor(ctx: ApplicationContext) = StartupInfoContributor(ctx)
 
     @Component
     @Order(LOWEST_PRECEDENCE)
@@ -82,6 +91,14 @@ class FellesRestBeanConfig {
         FilterRegistrationBean<HeadersToMDCFilter?>(HeadersToMDCFilter(applicationName)) {
         init {
             urlPatterns = listOf("/*")
+        }
+    }
+
+    @Component
+    class PP : EnvironmentPostProcessor {
+        override fun postProcessEnvironment(environment: ConfigurableEnvironment, application: SpringApplication) {
+            val verdier = mapOf("meaning" to "42")
+            environment.propertySources.addFirst(MapPropertySource("JALLA", verdier))
         }
     }
 }
