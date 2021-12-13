@@ -5,6 +5,7 @@ on:
     branches:
       - main
 env:
+  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
 jobs:
   security:
@@ -13,8 +14,6 @@ jobs:
       - uses: actions/checkout@master
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/maven@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
         with:
           args: --org=aap -- -s .github/.m2/settings.xml
-    
