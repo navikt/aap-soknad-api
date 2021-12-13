@@ -42,6 +42,5 @@ class PDLClientBeanConfig(@Value("\${spring.application.name}") val applicationN
 
     @Bean
     fun pdlHealthIndicator(adapter: PDLWebClientAdapter) = object: AbstractPingableHealthIndicator(adapter){
-
     }
 }

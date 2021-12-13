@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.util.AuthContext
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import javax.validation.Valid
 
 @ProtectedRestController(value = ["/api/innsending"], issuer = IDPORTEN)
+@SecurityRequirement(name = "bearerAuth")
 class InnsendingController(
         private val authContext: AuthContext,
         private val formidler: SøknadFormidler) {
