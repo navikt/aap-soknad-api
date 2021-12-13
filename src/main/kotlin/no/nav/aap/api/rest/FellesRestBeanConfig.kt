@@ -2,8 +2,6 @@ package no.nav.aap.api.rest
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
-import io.swagger.v3.oas.annotations.security.SecurityScheme
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
@@ -38,11 +36,6 @@ import java.net.URI
 
 
 @Configuration
-@SecurityScheme(
-        name = "bearerAuth",
-        type = SecuritySchemeType.HTTP,
-        bearerFormat = "JWT",
-        scheme = "bearer")
 class FellesRestBeanConfig {
 
     @Bean
