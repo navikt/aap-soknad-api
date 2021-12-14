@@ -1,4 +1,4 @@
-name: Snyk
+name: Quodana
 
 on:
   push:
