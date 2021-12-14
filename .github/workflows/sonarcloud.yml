@@ -22,10 +22,7 @@ jobs:
           java-version: 17
           distribution: 'adopt'
           cache: 'maven'
-      - name: Hent tag
-        run: |
-          echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
-      - name: Kompiler
+      - name: Analyser
         run: |
           mvn versions:set -DnewVersion=${TAG}
           mvn --settings .github/.m2/settings.xml sonar:sonar -Dsonar.login=${SONAR_TOKEN}
