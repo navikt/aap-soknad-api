@@ -9,7 +9,7 @@ registries:
     type: maven-repository
     url: https://maven.pkg.github.com/navikt/boot-cluster-conditionals
     username: x-access-token
-    password: ${{ secrets.NOTIFICATION }}
+    password: ${{ secrets.GITHU_TOKEN }}
 
 updates:
   - package-ecosystem: github-actions
