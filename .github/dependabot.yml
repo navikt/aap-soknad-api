@@ -1,27 +1,20 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
-
 version: 2
 registries:
-  aap-domain :
+  boot-cluster-conditionals :
     type: maven-repository
-    url: https://maven.pkg.github.com/navikt/aap-domain
+    url: https://maven.pkg.github.com/navikt/boot-cluster-conditionals
     username: x-access-token
-    password: ${{ secrets.GITHUB_TOKEN }}
+    password: ${{ secrets.DEPENDABOT }}   
 updates:
 - package-ecosystem: github-actions
-    directory: "/"
-    schedule:
-      time: "11:00"
-      interval: daily
-    open-pull-requests-limit: 10
+  directory: "/"
+  schedule:
+     interval: daily
+  open-pull-requests-limit: 10
 - package-ecosystem: maven
   directory: "/"
   registries:
-      - aap-domain
+     - boot-cluster-conditionals
   schedule:
     interval: daily
-    time: "11:00"
   open-pull-requests-limit: 10
