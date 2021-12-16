@@ -21,7 +21,8 @@ updates:
   - package-ecosystem: github-actions
       directory: "/"
       registries:
-        - boot-cluster-conditionals
+        - aap-domain
       schedule:
+        time: "10:50"
         interval: daily
       open-pull-requests-limit: 20
