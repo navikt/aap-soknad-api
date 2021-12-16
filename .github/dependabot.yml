@@ -16,7 +16,7 @@ updates:
     registries:
       - aap-domain
     schedule:
-       time: "10:50"
+      time: "10:50"
       interval: daily
   - package-ecosystem: github-actions
       directory: "/"
