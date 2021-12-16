@@ -2,9 +2,8 @@ name: Build PR or branch
 
 on:
   pull_request:
-  push:
-    branches-ignore:
-      - main
+    branches:
+      - master
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   IMAGE_BASE: ghcr.io/${{ github.repository }}
