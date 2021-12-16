@@ -5,13 +5,18 @@
 
 version: 2
 registries:
-  boot-cluster-conditionals : # Gir tilgang til registre innad i nav med boot-cluster-conditionals som inngang (PATen bestemmer)
+  aap-domain :
     type: maven-repository
-    url: https://maven.pkg.github.com/navikt/boot-cluster-conditionals
+    url: https://maven.pkg.github.com/navikt/aap-domain
     username: x-access-token
     password: ${{ secrets.GITHUB_TOKEN }}
-
 updates:
+  - package-ecosystem: maven
+    directory: "/"
+    registries:
+      - aap-domain
+    schedule:
+      interval: daily
   - package-ecosystem: github-actions
       directory: "/"
       registries:
