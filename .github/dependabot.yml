@@ -11,16 +11,17 @@ registries:
     username: x-access-token
     password: ${{ secrets.GITHUB_TOKEN }}
 updates:
-  - package-ecosystem: maven
+- package-ecosystem: github-actions
     directory: "/"
-    registries:
-      - aap-domain
     schedule:
-      time: "10:50"
+      time: "11:00"
       interval: daily
-  - package-ecosystem: github-actions
-      directory: "/"
-      schedule:
-        time: "10:50"
-        interval: daily
-      open-pull-requests-limit: 20
+    open-pull-requests-limit: 10
+- package-ecosystem: maven
+  directory: "/"
+  registries:
+      - aap-domain
+  schedule:
+    interval: daily
+    time: "11:00"
+  open-pull-requests-limit: 10
