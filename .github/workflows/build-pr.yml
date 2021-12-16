@@ -3,7 +3,7 @@ name: Build PR or branch
 on:
   pull_request:
     branches:
-      - master
+      - main
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   IMAGE_BASE: ghcr.io/${{ github.repository }}
