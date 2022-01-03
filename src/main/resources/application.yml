@@ -3,6 +3,11 @@ spring:
     name: ${nais.app.name:aap-soknad-api}
   main:
     banner-mode: off
+  cloud:
+    discovery:
+      client:
+        health-indicator:
+          enabled: false
   jackson:
     default-property-inclusion: non_empty
     mapper:

@@ -10,17 +10,16 @@ import org.threeten.bp.Duration
 
 
 @Configuration
+@ConditionalOnGCP
 class MellomlagringBeanConfig {
 
     @Bean
-    @ConditionalOnGCP
     fun retrySettings(@Value("\${mellomlagring.timeout:3000}") timeoutMs: Long) =
         RetrySettings.newBuilder()
             .setTotalTimeout(Duration.ofMillis(timeoutMs))
             .build()
 
     @Bean
-    @ConditionalOnGCP
     fun storage(retrySettings: RetrySettings) = StorageOptions
         .newBuilder()
         .setRetrySettings(retrySettings)
