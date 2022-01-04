@@ -4,14 +4,6 @@ query($ident: ID!){
     fornavn
     mellomnavn
     etternavn
-    },
-    foedsel {
-    foedselsdato
-    },
-    forelderBarnRelasjon {
-    relatertPersonsIdent
-    relatertPersonsRolle
-    minRolleForPerson
     }
 }
 }
