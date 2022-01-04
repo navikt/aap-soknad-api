@@ -237,7 +237,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>no.nav.aap.api.AAPSøknadApiApplication</mainClass>
+                    <mainClass>no.nav.aap.api.AAPSøknadApiApplicationKt</mainClass>
                 </configuration>
             </plugin>
             <plugin>
