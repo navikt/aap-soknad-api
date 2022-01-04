@@ -1,9 +1,17 @@
 query($ident: ID!){
   hentPerson(ident: $ident) {
-     navn {
-       fornavn
-       mellomnavn
-       etternavn
-     }
-  }
+    navn {
+    fornavn
+    mellomnavn
+    etternavn
+    },
+    foedsel {
+    foedselsdato
+    },
+    forelderBarnRelasjon {
+    relatertPersonsIdent
+    relatertPersonsRolle
+    minRolleForPerson
+    }
+}
 }

@@ -236,9 +236,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <mainClass>no.nav.aap.api.AAPSøknadApiApplicationKt</mainClass>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
