@@ -206,9 +206,11 @@
                         <image>gcr.io/distroless/java17</image>
                     </from>
                     <to>
+                        <!--suppress UnresolvedMavenProperty -->
                         <image>${env.IMAGE}</image>
                         <auth>
                             <username>x-access-token</username>
+                            <!--suppress UnresolvedMavenProperty -->
                             <password>${env.GITHUB_TOKEN}</password>
                         </auth>
                     </to>
