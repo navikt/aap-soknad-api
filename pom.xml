@@ -213,6 +213,7 @@
                     <to>
                         <auth>
                             <username>x-access-token</username>
+                            <password>${env.GITHUB_TOKEN}</password>
                         </auth>
                     </to>
                     <container>
