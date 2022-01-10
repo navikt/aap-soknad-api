@@ -210,6 +210,11 @@
                     <from>
                         <image>gcr.io/distroless/java17</image>
                     </from>
+                    <to>
+                        <auth>
+                            <username>x-access-token</username>
+                        </auth>
+                    </to>
                     <container>
                         <jvmFlags>
                             <jvmFlag>--enable-preview</jvmFlag>
