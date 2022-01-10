@@ -221,6 +221,11 @@
                     <from>
                         <image>navikt/java:17-appdynamics</image>
                     </from>
+                    <container>
+                        <jvmFlags>
+                            <jvmFlag>--enable-preview</jvmFlag>
+                        </jvmFlags>
+                    </container>
                 </configuration>
             </plugin>
             <plugin>
