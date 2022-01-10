@@ -33,21 +33,9 @@ jobs:
       - name: Setter IMAGE
         run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
 
-      - name: Login to GitHub Packages Docker Registry
-        uses: docker/login-action@42d299face0c5c43a0487c477f595ac9cf22f1a7 # Use commit-sha1 instead of tag for security concerns
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Bygg, tag og push Docker image
-        run: |
-          docker build --pull --tag ${IMAGE_BASE}:${TAG} --tag ${IMAGE_BASE}:latest .
-          docker push ${IMAGE_BASE} --all-tags
-
       - name: Bygg, tag og push Docker image med jib
         run: |
-          mvn --settings .github/.m2/settings.xml jib:build -Dimage=${IMAGE_BASE}:${TAG}-junk -Djib.to.auth.username=x-access-token -Djib.to.auth.password=${GITHUB_TOKEN}
+          mvn --settings .github/.m2/settings.xml jib:build -Dimage=${IMAGE_BASE}:${TAG} -Djib.to.auth.username=x-access-token -Djib.to.auth.password=${GITHUB_TOKEN}
 
       - name: Deploy
         uses: nais/deploy/actions/deploy@master
