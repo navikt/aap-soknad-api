@@ -26,17 +26,14 @@ jobs:
         run: |
           echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
 
+      - name: Setter IMAGE
+          run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
+
       - name: Kompiler
         run: |
           mvn versions:set -DnewVersion=${TAG}
-          mvn --settings .github/.m2/settings.xml package
-      - name: Setter IMAGE
-        run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
-
-      - name: Bygg, tag og push Docker image med jib
-        run: |
-          mvn --settings .github/.m2/settings.xml jib:build -Dimage=${IMAGE_BASE}:${TAG} -Djib.to.auth.username=x-access-token -Djib.to.auth.password=${GITHUB_TOKEN}
-
+          mvn --settings .github/.m2/settings.xml package jib:build -Dimage=${IMAGE_BASE}:${TAG} -Djib.to.auth.username=x-access-token -Djib.to.auth.password=${GITHUB_TOKEN}
+               
       - name: Deploy
         uses: nais/deploy/actions/deploy@master
         env:
