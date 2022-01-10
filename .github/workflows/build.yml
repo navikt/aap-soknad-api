@@ -47,7 +47,7 @@ jobs:
 
       - name: Bygg, tag og push Docker image med jib
         run: |
-          mvn jit:build -Dimage=${IMAGE_BASE}:${TAG}-junk -Djib.to.auth.username=x-access-token -Djib.to.auth.password=${GITHUB_TOKEN}
+          mvn jib:build -Dimage=${IMAGE_BASE}:${TAG}-junk -Djib.to.auth.username=x-access-token -Djib.to.auth.password=${GITHUB_TOKEN}
 
       - name: Deploy
         uses: nais/deploy/actions/deploy@master
