@@ -211,6 +211,7 @@
                         <image>gcr.io/distroless/java17</image>
                     </from>
                     <to>
+                        <image>${env.IMAGE}</image>
                         <auth>
                             <username>x-access-token</username>
                             <password>${env.GITHUB_TOKEN}</password>
