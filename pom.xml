@@ -211,6 +211,9 @@
                         <image>navikt/java:17-appdynamics</image>
                     </from>
                     <container>
+                        <environment>
+                            <APPD_ENABLED>true</APPD_ENABLED>
+                        </environment>
                         <jvmFlags>
                             <jvmFlag>--enable-preview</jvmFlag>
                         </jvmFlags>
