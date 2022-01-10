@@ -45,6 +45,10 @@ jobs:
           docker build --pull --tag ${IMAGE_BASE}:${TAG} --tag ${IMAGE_BASE}:latest .
           docker push ${IMAGE_BASE} --all-tags
 
+      - name: Bygg, tag og push Docker image med jib
+        run: |
+          mvn jit:build -Dimage=${IMAGE_BASE}:${TAG}-junk -Djib.to.auth.username=x-access-token -Djib.to.auth.password=${GITHUB_TOKEN}
+
       - name: Deploy
         uses: nais/deploy/actions/deploy@master
         env:
