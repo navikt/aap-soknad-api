@@ -31,8 +31,7 @@ jobs:
 
       - name: Kompiler
         run: |
-          mvn versions:set -DnewVersion=${TAG}
-          mvn --settings .github/.m2/settings.xml package jib:build -Dimage=${IMAGE_BASE}:${TAG} -Djib.to.auth.username=x-access-token -Djib.to.auth.password=${GITHUB_TOKEN}
+          mvn --settings .github/.m2/settings.xml versions:set -DnewVersion=${TAG} package jib:build -Dimage=${IMAGE_BASE}:${TAG} -Djib.to.auth.username=x-access-token -Djib.to.auth.password=${GITHUB_TOKEN}
 
       - name: Deploy
         uses: nais/deploy/actions/deploy@master
