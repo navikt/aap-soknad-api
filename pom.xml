@@ -208,7 +208,7 @@
                 <version>${jib.version}</version>
                 <configuration>
                     <from>
-                        <image>gcr.io/distroless/java:17</image>
+                        <image>navikt/java:17-appdynamics</image>
                     </from>
                     <container>
                         <environment>
