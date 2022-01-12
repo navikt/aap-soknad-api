@@ -31,9 +31,7 @@ jobs:
         run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
 
       - name: Kompiler og deploy image med jib
-        run: |
-          mvn --settings .github/.m2/settings.xml versions:set -DnewVersion=${TAG}          
-          mvn --settings .github/.m2/settings.xml package jib:build
+        run: mvn --settings .github/.m2/settings.xml versions:set -DnewVersion=${TAG} versions:commit package jib:build
 
       - name: Deploy
         uses: nais/deploy/actions/deploy@master
