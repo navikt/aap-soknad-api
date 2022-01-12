@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import javax.validation.Valid
 
-@ProtectedRestController(value = ["/api/innsending"], issuer = IDPORTEN)
+@ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 @SecurityRequirement(name = "bearerAuth")
 @SecurityScheme(
         name = "bearerAuth",
