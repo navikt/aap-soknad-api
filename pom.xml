@@ -11,7 +11,7 @@
     </parent>
     <groupId>no.nav.aap.api</groupId>
     <artifactId>soknad</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${revision}</version>
     <name>aap-soknad-api</name>
     <description>aap-soknad-api</description>
     <properties>
@@ -28,6 +28,7 @@
         <okhttp3.version>4.9.1</okhttp3.version>
         <problem.version>0.27.0</problem.version>
         <reactor.version>1.0.1.RELEASE</reactor.version>
+        <revision>0.0.1-SNAPSHOT</revision>
         <sonar.organization>navit</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.projectKey>navikt_aap-soeknad-api</sonar.projectKey>
