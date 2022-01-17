@@ -55,7 +55,7 @@ class PDLWebClientAdapter(
 
     companion object {
         private const val IDENT = "ident"
-        private const val NAVN_QUERY = "query-navn.graphql"
+        private const val NAVN_QUERY = "query-person.graphql"
         private fun idFra(id: String): Map<String, Any> = java.util.Map.of<String, Any>(IDENT, id)
     }
 }
