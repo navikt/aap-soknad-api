@@ -23,7 +23,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
-class KafkaSøknadFormidler(
+class KafkaUtenlandsSøknadFormidler(
         private val pdl: PDLOperations,
         private val kafkaOperations: KafkaOperations<Fødselsnummer, UtenlandsSøknadKafka>,
         @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String) : SøknadFormidler {
@@ -32,7 +32,7 @@ class KafkaSøknadFormidler(
     private val secureLog = LoggerUtil.getSecureLogger()
 
     override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) =
-        send(søknad.toKafkaObject(Søker(fnr, pdl.navn())))
+        send(søknad.toKafkaObject(Søker(fnr, pdl.person()?.navn)))
 
     private fun send(søknad: UtenlandsSøknadKafka) =
         kafkaOperations.send(

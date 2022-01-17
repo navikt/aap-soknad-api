@@ -4,6 +4,9 @@ query($ident: ID!){
     fornavn
     mellomnavn
     etternavn
+    },
+    foedsel {
+    foedselsdato
     }
 }
 }

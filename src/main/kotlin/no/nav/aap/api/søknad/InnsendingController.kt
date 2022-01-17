@@ -33,5 +33,13 @@ class InnsendingController(
         return Kvittering("OK")
     }
 
+    @PostMapping("/soknad")
+    fun utland(@RequestBody søknad: @Valid Søknad): Kvittering {
+        log.info("Wohoo, mottatt søknad")
+        return Kvittering("OK")
+    }
+
     override fun toString() = "${javaClass.simpleName} [authContext=$authContext]"
 }
+
+data class Søknad

@@ -5,6 +5,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class PDLClient(private val pdl: PDLWebClientAdapter) : PDLOperations {
-    override fun navn() = pdl.navn()?.let { Navn(it.fornavn, it.mellomnavn, it.etternavn) }
+    override fun person() = pdl.person()?.let { Person(Navn(it.fornavn, it.mellomnavn, it.etternavn), it.fødselsdato) }
     override fun toString() = "${javaClass.simpleName} [pdl=$pdl]"
 }
