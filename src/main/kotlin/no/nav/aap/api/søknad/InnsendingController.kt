@@ -42,4 +42,4 @@ class InnsendingController(
     override fun toString() = "${javaClass.simpleName} [authContext=$authContext]"
 }
 
-data class Søknad
+class Søknad
