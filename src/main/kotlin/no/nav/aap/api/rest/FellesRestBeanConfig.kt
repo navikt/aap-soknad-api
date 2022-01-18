@@ -29,10 +29,10 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.ApplicationContext
+import org.springframework.context.ApplicationEvent
 import org.springframework.context.ApplicationListener
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.event.ApplicationContextEvent
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
@@ -85,7 +85,7 @@ class FellesRestBeanConfig {
     }
 
     @Bean
-    fun appEventListener() = ApplicationListener<ApplicationContextEvent> { e -> log.info("Application event $e") }
+    fun appEventListener() = ApplicationListener<ApplicationEvent> { e -> log.info("Application event $e") }
 
     @Bean
     fun tokenXFilterFunction(configs: ClientConfigurationProperties,
