@@ -33,7 +33,7 @@ class KafkaUtenlandsSøknadFormidler(
 
     override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
         val p = pdl.person()
-        log.info("Fødselsdato {}", p.fødseldato)
+        log.info("Fødselsdato {}", p?.fødseldato)
         send(søknad.toKafkaObject(Søker(fnr, p?.navn)))
     }
 
