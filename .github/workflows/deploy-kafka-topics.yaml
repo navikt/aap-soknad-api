@@ -23,3 +23,12 @@ jobs:
           RESOURCE: kafka-aiven/utland-soknad-sendt.v1/topic.yaml
           VARS: kafka-aiven/utland-soknad-sendt.v1/dev-vars.yaml
           PRINT_PAYLOAD: true
+      
+      - name: deploy soknad-sendt-topic to dev
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-gcp
+          RESOURCE: kafka-aiven/soknad-sendt.v1/topic.yaml
+          VARS: kafka-aiven/soknad-sendt.v1/dev-vars.yaml
+          PRINT_PAYLOAD: true     
