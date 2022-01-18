@@ -31,7 +31,6 @@ class InnsendingController(
     fun utland(@RequestBody søknad: @Valid UtenlandsSøknadView): Kvittering {
         log.info(CONFIDENTIAL, "Sender søknad for {}", authContext.getFnr())
         utenlandsFormidler.formidle(authContext.getFnr(), søknad)
-        formidler.formidle(authContext.getFnr())  // Kun for test
         return Kvittering("OK")
     }
 
