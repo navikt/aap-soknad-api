@@ -8,12 +8,12 @@ metadata:
 spec:
   pool: {{pool}}
   config:
-  { { #each config as |value key|}}
-      {{key } }: {{value}}
+  {{ #each config as |value key|}}
+      {{key }}: {{value}}
   {{/each}}
   acl:
-  { { #each acl}}
-      - team: {{team } }
+  {{ #each acl}}
+      - team: {{team }}
   application: {{application}}
   access: {{access}}
   {{/each}}
