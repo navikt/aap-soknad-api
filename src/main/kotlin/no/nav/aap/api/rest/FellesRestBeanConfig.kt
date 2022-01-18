@@ -14,6 +14,7 @@ import no.nav.aap.rest.tokenx.TokenXConfigMatcher
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
+import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.StartupInfoContributor
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import no.nav.security.token.support.client.core.ClientProperties
@@ -28,8 +29,10 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.ApplicationContext
+import org.springframework.context.ApplicationListener
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.event.ApplicationContextEvent
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
@@ -42,6 +45,8 @@ import java.net.URI
 
 @Configuration
 class FellesRestBeanConfig {
+    private val log = LoggerUtil.getLogger(javaClass)
+
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b: Jackson2ObjectMapperBuilder ->
@@ -78,6 +83,9 @@ class FellesRestBeanConfig {
             return configs.registration[uri.host.split("\\.".toRegex()).toTypedArray()[0]]
         }
     }
+
+    @Bean
+    fun appEventListener() = ApplicationListener<ApplicationContextEvent> { e -> log.info("Application event $e") }
 
     @Bean
     fun tokenXFilterFunction(configs: ClientConfigurationProperties,
