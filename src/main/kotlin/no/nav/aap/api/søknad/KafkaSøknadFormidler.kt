@@ -1,14 +1,9 @@
 package no.nav.aap.api.søknad
 
 import io.micrometer.core.instrument.Metrics.counter
-import io.micrometer.core.instrument.Tags
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.felles.Søker
-import no.nav.aap.api.felles.UtenlandsSøknadKafka
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.oppslag.pdl.PDLOperations
-import no.nav.aap.api.søknad.model.UtenlandsSøknadView
-import no.nav.aap.api.søknad.model.toKafkaObject
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
@@ -23,37 +18,31 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
-class KafkaUtenlandsSøknadFormidler(
+class KafkaSøknadFormidler(
         private val pdl: PDLOperations,
-        private val kafkaOperations: KafkaOperations<Fødselsnummer, UtenlandsSøknadKafka>,
-        @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String) :
-    UtenlandsSøknadFormidler {
+        private val kafkaOperations: KafkaOperations<Fødselsnummer, SøknadKafka>,
+        @Value("#{'\${utenlands.topic:aap.aap-soknad-sendt.v1}'}") val søknadTopic: String) {
 
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()
 
-    override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
+    fun sendSøknad(fnr: Fødselsnummer) {
         val p = pdl.person()
         log.info("Fødselsdato {}", p?.fødseldato)
-        send(søknad.toKafkaObject(Søker(fnr, p?.navn)))
+        send(SøknadKafka(fnr, p?.fødseldato))
     }
 
-    private fun send(søknad: UtenlandsSøknadKafka) =
+    private fun send(søknad: SøknadKafka) =
         kafkaOperations.send(
                 MessageBuilder
                     .withPayload(søknad)
-                    .setHeader(MESSAGE_KEY, søknad.søker.fnr)
+                    .setHeader(MESSAGE_KEY, søknad.ident.verdi)
                     .setHeader(TOPIC, søknadTopic)
                     .setHeader(NAV_CALL_ID, MDCUtil.callId())
                     .build())
-            .addCallback(object : ListenableFutureCallback<SendResult<Fødselsnummer, UtenlandsSøknadKafka>> {
-                override fun onSuccess(result: SendResult<Fødselsnummer, UtenlandsSøknadKafka>?) {
-                    counter(
-                            COUNTER_SØKNAD_UTLAND_MOTTATT,
-                            Tags.of(
-                                    TAG_LAND, søknad.land.alpha3,
-                                    TAG_VARIGHET, søknad.periode.varighetDager().toString()))
-                        .increment()
+            .addCallback(object : ListenableFutureCallback<SendResult<Fødselsnummer, SøknadKafka>> {
+                override fun onSuccess(result: SendResult<Fødselsnummer, SøknadKafka>?) {
+                    counter(COUNTER_SØKNAD_MOTTATT).increment()
                     log.info(
                             "Søknad sent til Kafka på topic {}, partition {} med offset {} OK",
                             søknadTopic,
@@ -72,10 +61,6 @@ class KafkaUtenlandsSøknadFormidler(
     override fun toString() = "${javaClass.simpleName} [kafkaOperations=$kafkaOperations,pdl=$pdl]"
 
     companion object {
-        private const val TAG_LAND = "land"
-        private const val TAG_VARIGHET = "varighet"
-        private const val COUNTER_SØKNAD_UTLAND_MOTTATT = "aap_soknad_utland_mottatt"
-
+        private const val COUNTER_SØKNAD_MOTTATT = "aap_soknad_mottatt"
     }
-
 }

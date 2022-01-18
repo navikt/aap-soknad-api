@@ -6,7 +6,7 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.felles.UtenlandsSøknadKafka
+import no.nav.aap.api.søknad.SøknadKafka
 import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
 import no.nav.aap.rest.HeadersToMDCFilter
 import no.nav.aap.rest.tokenx.TokenXConfigMatcher
@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
+import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
 import org.springframework.stereotype.Component
 import org.zalando.problem.jackson.ProblemModule
@@ -54,9 +55,7 @@ class FellesRestBeanConfig {
     fun authContext(ctxHolder: TokenValidationContextHolder) = AuthContext(ctxHolder)
 
     @Bean
-    fun hello(pf: ProducerFactory<Fødselsnummer, UtenlandsSøknadKafka>): String {
-        return "Hello world"
-    }
+    fun søknadTemplate(pf: ProducerFactory<Fødselsnummer, SøknadKafka>) = KafkaTemplate(pf)
 
     @Bean
     fun openAPI(p: BuildProperties) =
