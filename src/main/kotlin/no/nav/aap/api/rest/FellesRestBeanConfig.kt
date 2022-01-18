@@ -29,8 +29,6 @@ import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilde
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.ApplicationContext
-import org.springframework.context.ApplicationEvent
-import org.springframework.context.ApplicationListener
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
@@ -83,10 +81,7 @@ class FellesRestBeanConfig {
             return configs.registration[uri.host.split("\\.".toRegex()).toTypedArray()[0]]
         }
     }
-
-    @Bean
-    fun appEventListener() = ApplicationListener<ApplicationEvent> { e -> log.info("Application event $e") }
-
+    
     @Bean
     fun tokenXFilterFunction(configs: ClientConfigurationProperties,
                              service: OAuth2AccessTokenService,
