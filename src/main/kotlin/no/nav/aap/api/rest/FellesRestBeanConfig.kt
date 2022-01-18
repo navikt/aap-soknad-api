@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.felles.UtenlandsSøknadKafka
 import no.nav.aap.api.søknad.SøknadKafka
 import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
 import no.nav.aap.rest.HeadersToMDCFilter
@@ -56,6 +57,10 @@ class FellesRestBeanConfig {
 
     @Bean
     fun søknadTemplate(pf: ProducerFactory<Fødselsnummer, SøknadKafka>) = KafkaTemplate(pf)
+
+    @Bean
+    fun utenlandsSøknadTemplate(pf: ProducerFactory<Fødselsnummer, UtenlandsSøknadKafka>) = KafkaTemplate(pf)
+
 
     @Bean
     fun openAPI(p: BuildProperties) =
