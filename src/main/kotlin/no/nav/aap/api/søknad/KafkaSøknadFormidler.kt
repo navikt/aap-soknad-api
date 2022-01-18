@@ -42,7 +42,7 @@ class KafkaSøknadFormidler(
                 override fun onSuccess(result: SendResult<Fødselsnummer, SøknadKafka>?) {
                     counter(COUNTER_SØKNAD_MOTTATT).increment()
                     log.info(
-                            "Søknad sent til Kafka på topic {}, partition {} med offset {} OK",
+                            "Søknad $søknad sent til Kafka på topic {}, partition {} med offset {} OK",
                             søknadTopic,
                             result?.recordMetadata?.partition(),
                             result?.recordMetadata?.offset())
