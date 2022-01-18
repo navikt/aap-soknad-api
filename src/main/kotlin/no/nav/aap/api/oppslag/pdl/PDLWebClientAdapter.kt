@@ -24,10 +24,9 @@ class PDLWebClientAdapter(
     private val log = LoggerUtil.getLogger(javaClass)
     internal fun person(): PDLPerson? = authContext.getSubject()?.let { person(it) }
     private fun person(id: String): PDLPerson {
-        val p = oppslag(
-                { graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedPerson::class.java).block() },
-                "navn")
-        return PDLPerson(p?.navn?.first(), p?.foedsel?.first())
+        val person =
+            oppslag({ graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedPerson::class.java).block() }, "navn")
+        return PDLPerson(person?.navn?.first(), person?.fødsel?.first())
     }
 
     private fun <T> oppslag(oppslag: () -> T, type: String): T {

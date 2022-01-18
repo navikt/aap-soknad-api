@@ -1,6 +1,7 @@
 package no.nav.aap.api.oppslag.pdl
 
 import no.nav.aap.api.felles.Navn
+import no.nav.aap.api.søknad.model.Person
 import org.springframework.stereotype.Component
 
 @Component

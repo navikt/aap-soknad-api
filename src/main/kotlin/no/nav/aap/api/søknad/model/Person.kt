@@ -1,4 +1,4 @@
-package no.nav.aap.api.oppslag.pdl
+package no.nav.aap.api.søknad.model
 
 import no.nav.aap.api.felles.Navn
 import java.time.LocalDate

@@ -81,7 +81,7 @@ class FellesRestBeanConfig {
             return configs.registration[uri.host.split("\\.".toRegex()).toTypedArray()[0]]
         }
     }
-    
+
     @Bean
     fun tokenXFilterFunction(configs: ClientConfigurationProperties,
                              service: OAuth2AccessTokenService,

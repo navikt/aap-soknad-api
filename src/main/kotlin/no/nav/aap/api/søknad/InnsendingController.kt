@@ -24,21 +24,20 @@ import javax.validation.Valid
 class InnsendingController(
         private val authContext: AuthContext,
         private val formidler: KafkaSøknadFormidler,
-        private val utenlandsFormidler: UtenlandsSøknadFormidler) {
+        private val utenlandsFormidler: KafkaUtenlandsSøknadFormidler) {
     private val log = LoggerUtil.getLogger(javaClass)
 
     @PostMapping("/utland")
     fun utland(@RequestBody søknad: @Valid UtenlandsSøknadView): Kvittering {
-        log.info(CONFIDENTIAL, "Sender søknad for {}", authContext.getFnr())
+        log.info(CONFIDENTIAL, "Formidler utenlandssøknad for {}", authContext.getFnr())
         utenlandsFormidler.formidle(authContext.getFnr(), søknad)
         return Kvittering("OK")
     }
 
     @PostMapping("/soknad")
     fun utland(@RequestBody søknad: @Valid Søknad): Kvittering {
-        log.info("Wohoo, mottatt søknad, formidler")
+        log.info(CONFIDENTIAL, "Formidler ssøknad for {}", authContext.getFnr())
         formidler.formidle(authContext.getFnr())
-        log.info("Wohoo, mottatt søknad formidlet OK")
         return Kvittering("OK")
     }
 

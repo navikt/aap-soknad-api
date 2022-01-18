@@ -25,21 +25,18 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 @Service
 class KafkaUtenlandsSøknadFormidler(
         private val pdl: PDLOperations,
-        private val kafkaOperations: KafkaOperations<Fødselsnummer, UtenlandsSøknadKafka>,
-        @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String) :
-    UtenlandsSøknadFormidler {
+        private val formidler: KafkaOperations<Fødselsnummer, UtenlandsSøknadKafka>,
+        @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String) {
 
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()
 
-    override fun formidle(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
-        val p = pdl.person()
-        log.info("Fødselsdato {}", p?.fødseldato)
-        send(søknad.toKafkaObject(Søker(fnr, p?.navn)))
+    fun formidle(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
+        send(søknad.toKafkaObject(Søker(fnr, pdl.person()?.navn)))
     }
 
     private fun send(søknad: UtenlandsSøknadKafka) =
-        kafkaOperations.send(
+        formidler.send(
                 MessageBuilder
                     .withPayload(søknad)
                     .setHeader(MESSAGE_KEY, søknad.søker.fnr)
@@ -69,7 +66,7 @@ class KafkaUtenlandsSøknadFormidler(
                 }
             })
 
-    override fun toString() = "${javaClass.simpleName} [kafkaOperations=$kafkaOperations,pdl=$pdl]"
+    override fun toString() = "${javaClass.simpleName} [kafkaOperations=$formidler,pdl=$pdl]"
 
     companion object {
         private const val TAG_LAND = "land"
