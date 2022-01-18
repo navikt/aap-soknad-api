@@ -32,7 +32,7 @@ class KafkaUtenlandsSøknadFormidler(
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()
 
-    override fun sendUtenlandsSøknad(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
+    override fun formidle(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
         val p = pdl.person()
         log.info("Fødselsdato {}", p?.fødseldato)
         send(søknad.toKafkaObject(Søker(fnr, p?.navn)))

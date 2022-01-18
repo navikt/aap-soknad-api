@@ -30,14 +30,14 @@ class InnsendingController(
     @PostMapping("/utland")
     fun utland(@RequestBody søknad: @Valid UtenlandsSøknadView): Kvittering {
         log.info(CONFIDENTIAL, "Sender søknad for {}", authContext.getFnr())
-        utenlandsFormidler.sendUtenlandsSøknad(authContext.getFnr(), søknad)
+        utenlandsFormidler.formidle(authContext.getFnr(), søknad)
         return Kvittering("OK")
     }
 
     @PostMapping("/soknad")
     fun utland(@RequestBody søknad: @Valid Søknad): Kvittering {
         log.info("Wohoo, mottatt søknad, formidler")
-        formidler.sendSøknad(authContext.getFnr())
+        formidler.formidle(authContext.getFnr())
         log.info("Wohoo, mottatt søknad formidlet OK")
         return Kvittering("OK")
     }

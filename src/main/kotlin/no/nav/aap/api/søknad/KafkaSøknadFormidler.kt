@@ -26,10 +26,8 @@ class KafkaSøknadFormidler(
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()
 
-    fun sendSøknad(fnr: Fødselsnummer) {
-        val p = pdl.person()
-        log.info("Fødselsdato {}", p?.fødseldato)
-        send(SøknadKafka(fnr, p?.fødseldato))
+    fun formidle(fnr: Fødselsnummer) {
+        send(SøknadKafka(fnr, pdl.person()?.fødseldato))
     }
 
     private fun send(søknad: SøknadKafka) =
