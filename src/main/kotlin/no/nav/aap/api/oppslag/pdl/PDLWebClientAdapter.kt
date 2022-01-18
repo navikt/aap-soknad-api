@@ -22,10 +22,13 @@ class PDLWebClientAdapter(
         private val errorHandler: PDLErrorHandler) : AbstractWebClientAdapter(webClient, cfg) {
 
     private val log = LoggerUtil.getLogger(javaClass)
-    internal fun navn(): PDLNavn? = authContext.getSubject()?.let { navn(it) }
-    private fun navn(id: String): PDLNavn? = oppslag(
-            { graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedPerson::class.java).block() },
-            "navn")?.navn?.first()
+    internal fun person(): PDLPerson? = authContext.getSubject()?.let { person(it) }
+    private fun person(id: String): PDLPerson {
+        val p = oppslag(
+                { graphQLWebClient.post(NAVN_QUERY, idFra(id), PDLWrappedPerson::class.java).block() },
+                "navn")
+        return PDLPerson(p?.navn?.first(), p?.foedsel?.first())
+    }
 
     private fun <T> oppslag(oppslag: () -> T, type: String): T {
         return try {
