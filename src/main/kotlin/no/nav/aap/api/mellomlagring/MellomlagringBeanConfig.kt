@@ -1,6 +1,7 @@
 package no.nav.aap.api.mellomlagring
 
 import com.google.api.gax.retrying.RetrySettings
+import com.google.cloud.storage.Storage
 import com.google.cloud.storage.StorageOptions
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.springframework.beans.factory.annotation.Value
@@ -14,13 +15,13 @@ import org.threeten.bp.Duration
 class MellomlagringBeanConfig {
 
     @Bean
-    fun retrySettings(@Value("\${mellomlagring.timeout:3000}") timeoutMs: Long) =
+    fun retrySettings(@Value("\${mellomlagring.timeout:3000}") timeoutMs: Long): RetrySettings =
         RetrySettings.newBuilder()
             .setTotalTimeout(Duration.ofMillis(timeoutMs))
             .build()
 
     @Bean
-    fun storage(retrySettings: RetrySettings) = StorageOptions
+    fun storage(retrySettings: RetrySettings): Storage = StorageOptions
         .newBuilder()
         .setRetrySettings(retrySettings)
         .build()

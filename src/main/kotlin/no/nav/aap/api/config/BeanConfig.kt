@@ -1,4 +1,4 @@
-package no.nav.aap.api.rest
+package no.nav.aap.api.config
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -42,10 +42,9 @@ import java.net.URI
 
 
 @Configuration
-class FellesRestBeanConfig {
+class BeanConfig {
     private val log = LoggerUtil.getLogger(javaClass)
-
-
+    
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b: Jackson2ObjectMapperBuilder ->
         b.modules(ProblemModule(), JavaTimeModule(), TokenXJacksonModule(), KotlinModule.Builder().build())

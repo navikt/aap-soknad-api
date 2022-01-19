@@ -20,18 +20,18 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 @Service
 class KafkaSøknadFormidler(
         private val pdl: PDLOperations,
-        private val kafkaOperations: KafkaOperations<Fødselsnummer, SøknadKafka>,
+        private val formidler: KafkaOperations<Fødselsnummer, SøknadKafka>,
         @Value("#{'\${utenlands.topic:aap.aap-soknad-sendt.v1}'}") val søknadTopic: String) {
 
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()
 
     fun formidle(fnr: Fødselsnummer) {
-        send(SøknadKafka(fnr, pdl.person()?.fødseldato))
+        formidle(SøknadKafka(fnr, pdl.person()?.fødseldato))
     }
 
-    private fun send(søknad: SøknadKafka) =
-        kafkaOperations.send(
+    private fun formidle(søknad: SøknadKafka) =
+        formidler.send(
                 MessageBuilder
                     .withPayload(søknad)
                     .setHeader(MESSAGE_KEY, søknad.ident.verdi)
@@ -56,7 +56,7 @@ class KafkaSøknadFormidler(
                 }
             })
 
-    override fun toString() = "${javaClass.simpleName} [kafkaOperations=$kafkaOperations,pdl=$pdl]"
+    override fun toString() = "${javaClass.simpleName} [formidler=$formidler,pdl=$pdl]"
 
     companion object {
         private const val COUNTER_SØKNAD_MOTTATT = "aap_soknad_mottatt"

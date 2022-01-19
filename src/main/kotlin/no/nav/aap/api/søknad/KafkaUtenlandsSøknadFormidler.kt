@@ -32,10 +32,10 @@ class KafkaUtenlandsSøknadFormidler(
     private val secureLog = LoggerUtil.getSecureLogger()
 
     fun formidle(fnr: Fødselsnummer, søknad: UtenlandsSøknadView) {
-        send(søknad.toKafkaObject(Søker(fnr, pdl.person()?.navn)))
+        formidle(søknad.toKafkaObject(Søker(fnr, pdl.person()?.navn)))
     }
 
-    private fun send(søknad: UtenlandsSøknadKafka) =
+    private fun formidle(søknad: UtenlandsSøknadKafka) =
         formidler.send(
                 MessageBuilder
                     .withPayload(søknad)
@@ -72,7 +72,5 @@ class KafkaUtenlandsSøknadFormidler(
         private const val TAG_LAND = "land"
         private const val TAG_VARIGHET = "varighet"
         private const val COUNTER_SØKNAD_UTLAND_MOTTATT = "aap_soknad_utland_mottatt"
-
     }
-
 }

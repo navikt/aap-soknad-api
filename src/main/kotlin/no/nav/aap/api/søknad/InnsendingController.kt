@@ -1,8 +1,6 @@
 package no.nav.aap.api.søknad
 
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
-import io.swagger.v3.oas.annotations.security.SecurityScheme
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.util.AuthContext
@@ -16,11 +14,6 @@ import javax.validation.Valid
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 @SecurityRequirement(name = "bearerAuth")
-@SecurityScheme(
-        name = "bearerAuth",
-        type = SecuritySchemeType.HTTP,
-        bearerFormat = "JWT",
-        scheme = "bearer")
 class InnsendingController(
         private val authContext: AuthContext,
         private val formidler: KafkaSøknadFormidler,
