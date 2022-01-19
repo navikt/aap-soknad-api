@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 internal class SøknadFormidlingKafkaTest {
 
     @Autowired
-    private lateinit var formidler: UtenlandsSøknadFormidler
+    private lateinit var formidler: KafkaUtenlandsSøknadFormidler
 
     @Autowired
     private lateinit var consumer: KafkaTestSøknadKonsument
