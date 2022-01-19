@@ -14,6 +14,11 @@ data class PDLNavn(val fornavn: String,
                    val etternavn: String)
 
 
-data class PDLPerson(val navn: PDLNavn, val fødsel: PDLFødsel?)
+data class PDLPerson(val navn: PDLNavn, val fødsel: PDLFødsel?) {
+    val fornavn = navn.fornavn
+    val mellomnavn = navn.mellomnavn
+    val etternavn = navn.etternavn
+    val fødselsdato = fødsel?.fødselsdato
+}
 
 data class PDLFødsel(@JsonProperty("foedselsdato") val fødselsdato: LocalDate?)
