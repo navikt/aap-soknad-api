@@ -11,5 +11,5 @@ acl:
     application: soknad-api
     access: write
   - team: aap
-    application: aap-soknad-konsument
+    application: soknad-konsument
     access: read
