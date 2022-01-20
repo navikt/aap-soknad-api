@@ -8,7 +8,7 @@ config:
   retentionHours: 120
 acl:
   - team: aap
-    application: aap-soknad-api
+    application: soknad-api
     access: write
   - team: aap
     application: aap-soknad-konsument
