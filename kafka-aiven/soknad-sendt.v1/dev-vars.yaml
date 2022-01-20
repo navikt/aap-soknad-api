@@ -11,5 +11,5 @@ acl:
     application: aap-soknad-api
     access: write
   - team: aap
-    application: apparat
+    application: vedtak
     access: read
