@@ -20,6 +20,7 @@ import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
+import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
@@ -39,6 +40,7 @@ import org.springframework.kafka.core.ProducerFactory
 import org.springframework.stereotype.Component
 import org.zalando.problem.jackson.ProblemModule
 import java.net.URI
+import java.util.*
 
 
 @Configuration
@@ -75,16 +77,16 @@ class BeanConfig {
                  )
 
     @Bean
-    fun configMatcher() = object : TokenXConfigMatcher {
-        override fun findProperties(configs: ClientConfigurationProperties, uri: URI): ClientProperties? {
-            return configs.registration[uri.host.split("\\.".toRegex()).toTypedArray()[0]]
+    fun configMatcher() = object : ClientConfigurationPropertiesMatcher {
+        override fun findProperties(configs: ClientConfigurationProperties, uri: URI): Optional<ClientProperties> {
+            return Optional.ofNullable(configs.registration[uri.host.split("\\.".toRegex()).toTypedArray()[0]])
         }
     }
 
     @Bean
     fun tokenXFilterFunction(configs: ClientConfigurationProperties,
                              service: OAuth2AccessTokenService,
-                             matcher: TokenXConfigMatcher,
+                             matcher: ClientConfigurationPropertiesMatcher,
                              authContext: AuthContext) = TokenXFilterFunction(configs, service, matcher, authContext)
 
     @Bean
