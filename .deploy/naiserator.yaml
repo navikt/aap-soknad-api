@@ -18,7 +18,6 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: aap-soknad
         - application: soknad
   tokenx:
     enabled: true
