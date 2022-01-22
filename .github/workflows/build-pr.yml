@@ -5,8 +5,7 @@ on:
     branches:
       - main
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  IMAGE_BASE: ghcr.io/${{ github.repository }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }
 
 jobs:
   kompiler:
@@ -31,4 +30,4 @@ jobs:
 
       - name: Kompiler
         run: |
-          mvn install --batch-mode --quiet --settings .github/.m2/settings.xml
+          mvn test --batch-mode --quiet --settings .github/.m2/settings.xml
