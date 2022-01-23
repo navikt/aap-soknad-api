@@ -15,7 +15,10 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 
 @Component
-class PDLWebClientAdapter(
+class
+
+
+PDLWebClientAdapter(
         @Qualifier(PDL_USER) private val graphQLWebClient: GraphQLWebClient,
         @Qualifier(PDL_USER) webClient: WebClient, cfg: PDLConfig,
         private val authContext: AuthContext,

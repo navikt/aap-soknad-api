@@ -37,5 +37,5 @@ jobs:
         uses: nais/deploy/actions/deploy@master
         env:
           CLUSTER: dev-gcp
-          RESOURCE: .deploy/naiserator.yaml,.deploy/alerts.yaml
-          VARS: .deploy/dev-gcp-aap.json
+          RESOURCE: .nais/naiserator.yaml,.nais/alerts.yaml
+          VARS: .nais/dev.json

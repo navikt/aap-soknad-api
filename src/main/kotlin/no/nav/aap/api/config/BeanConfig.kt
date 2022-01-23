@@ -45,8 +45,6 @@ import java.util.*
 
 @Configuration
 class BeanConfig {
-    private val log = LoggerUtil.getLogger(javaClass)
-    
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b: Jackson2ObjectMapperBuilder ->
         b.modules(ProblemModule(), JavaTimeModule(), TokenXJacksonModule(), KotlinModule.Builder().build())
@@ -64,7 +62,6 @@ class BeanConfig {
 
     @Bean
     fun utenlandsSøknadTemplate(pf: ProducerFactory<Fødselsnummer, UtenlandsSøknadKafka>) = KafkaTemplate(pf)
-
 
     @Bean
     fun openAPI(p: BuildProperties) =
@@ -91,8 +88,7 @@ class BeanConfig {
 
     @Bean
     @ConditionalOnDevOrLocal
-    fun actuatorIgnoringTraceRequestFilter(repo: HttpTraceRepository, tracer: HttpExchangeTracer?) =
-        ActuatorIgnoringTraceRequestFilter(repo, tracer)
+    fun actuatorIgnoringTraceRequestFilter(repo: HttpTraceRepository, tracer: HttpExchangeTracer?) = ActuatorIgnoringTraceRequestFilter(repo, tracer)
 
     @Bean
     fun startupInfoContributor(ctx: ApplicationContext) = StartupInfoContributor(ctx)
