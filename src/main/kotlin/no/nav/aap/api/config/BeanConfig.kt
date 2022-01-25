@@ -10,11 +10,9 @@ import no.nav.aap.api.felles.UtenlandsSøknadKafka
 import no.nav.aap.api.søknad.SøknadKafka
 import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
 import no.nav.aap.rest.HeadersToMDCFilter
-import no.nav.aap.rest.tokenx.TokenXConfigMatcher
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
-import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.StartupInfoContributor
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import no.nav.security.token.support.client.core.ClientProperties
