@@ -31,4 +31,14 @@ jobs:
           CLUSTER: dev-gcp
           RESOURCE: kafka-aiven/soknad-sendt.v1/topic.yaml
           VARS: kafka-aiven/soknad-sendt.v1/dev-vars.yaml
-          PRINT_PAYLOAD: true     
+          PRINT_PAYLOAD: true
+
+      - name: deploy soknad-sendt-topic to prod
+        environment: prod-gcp:aap
+        uses: nais/deploy/actions/deploy@v1
+        env:
+            APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+            CLUSTER: prod-gcp
+            RESOURCE: kafka-aiven/soknad-sendt.v1/topic.yaml
+            VARS: kafka-aiven/soknad-sendt.v1/prod-vars.yaml
+            PRINT_PAYLOAD: true
