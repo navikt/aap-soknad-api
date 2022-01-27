@@ -35,7 +35,7 @@ jobs:
 
   deploy-prod:
     runs-on: ubuntu-latest
-    environment: prod-gcp_aap
+    environment: prod-gcp:aap
     steps:
 
      - name: Checkout code
