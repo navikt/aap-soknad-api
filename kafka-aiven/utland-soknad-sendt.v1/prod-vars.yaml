@@ -1,4 +1,4 @@
-pool: nav-dev
+pool: nav-prod
 config:
   cleanupPolicy: delete
   minimumInSyncReplicas: 1

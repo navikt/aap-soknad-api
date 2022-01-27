@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  deploy-dev:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -33,12 +33,27 @@ jobs:
           VARS: kafka-aiven/soknad-sendt.v1/dev-vars.yaml
           PRINT_PAYLOAD: true
 
-      - name: deploy soknad-sendt-topic to prod
-        environment: prod-gcp:aap
-        uses: nais/deploy/actions/deploy@v1
-        env:
-            APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-            CLUSTER: prod-gcp
-            RESOURCE: kafka-aiven/soknad-sendt.v1/topic.yaml
-            VARS: kafka-aiven/soknad-sendt.v1/prod-vars.yaml
-            PRINT_PAYLOAD: true
+  deploy-prod:
+    runs-on: ubuntu-latest
+    environment: prod-gcp_aap
+    steps:
+
+     - name: Checkout code
+       uses: actions/checkout@v2
+     - name: deploy utland-soknad-sendt-topic to prod
+       uses: nais/deploy/actions/deploy@v1
+       env:
+         APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+         CLUSTER: dev-gcp
+         RESOURCE: kafka-aiven/utland-soknad-sendt.v1/topic.yaml
+         VARS: kafka-aiven/utland-soknad-sendt.v1/prod-vars.yaml
+         PRINT_PAYLOAD: true
+
+     - name: deploy soknad-sendt-topic to prod
+       uses: nais/deploy/actions/deploy@v1
+       env:
+         APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+         CLUSTER: dev-gcp
+         RESOURCE: kafka-aiven/soknad-sendt.v1/topic.yaml
+         VARS: kafka-aiven/soknad-sendt.v1/prod-vars.yaml
+         PRINT_PAYLOAD: true
