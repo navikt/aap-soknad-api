@@ -44,7 +44,7 @@ jobs:
        uses: nais/deploy/actions/deploy@v1
        env:
          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-         CLUSTER: dev-gcp
+         CLUSTER: prod-gcp
          RESOURCE: kafka-aiven/utland-soknad-sendt.v1/topic.yaml
          VARS: kafka-aiven/utland-soknad-sendt.v1/prod-vars.yaml
          PRINT_PAYLOAD: true
@@ -53,7 +53,7 @@ jobs:
        uses: nais/deploy/actions/deploy@v1
        env:
          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-         CLUSTER: dev-gcp
+         CLUSTER: prod-gcp
          RESOURCE: kafka-aiven/soknad-sendt.v1/topic.yaml
          VARS: kafka-aiven/soknad-sendt.v1/prod-vars.yaml
          PRINT_PAYLOAD: true
