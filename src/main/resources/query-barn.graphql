@@ -1,0 +1,26 @@
+query($ident: ID!){
+    hentPerson(ident: $ident) {
+        foedsel {
+           foedselsdato
+        },
+        navn {
+           fornavn
+           mellomnavn
+           etternavn
+        },
+        kjoenn {
+           kjoenn
+        },
+        adressebeskyttelse {
+           gradering
+        },
+        doedsfall {
+           doedsdato
+        },
+        forelderBarnRelasjon {
+           relatertPersonsIdent
+           relatertPersonsRolle
+           minRolleForPerson
+        }
+    }
+}
