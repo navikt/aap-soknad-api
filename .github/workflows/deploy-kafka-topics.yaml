@@ -46,7 +46,7 @@ jobs:
          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
          CLUSTER: prod-gcp
          RESOURCE: kafka-aiven/utland-soknad-sendt.v1/topic.yaml
-           VARS: kafka-aiven/utland-soknad-sendt.v1/prod-vars.yaml
+         VARS: kafka-aiven/utland-soknad-sendt.v1/prod-vars.yaml
          PRINT_PAYLOAD: true
 
      - name: deploy soknad-sendt-topic to prod
