@@ -20,8 +20,8 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 17
-          distribution: 'temurin'
-          cache: 'maven'
+          distribution: temurin
+          cache: maven
       - name: Analyser
         run: |
           mvn versions:set -DnewVersion=${TAG}
