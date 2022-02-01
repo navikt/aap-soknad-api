@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 @Component
 class PostnummerTjeneste(private val fil: String = "postnr.txt") {
 
-    private val map = ClassPathResource(fil)
+    private val poststedFor = ClassPathResource(fil)
         .inputStream.bufferedReader(Charsets.UTF_8)
         .lineSequence()
         .map { line ->
@@ -14,6 +14,6 @@ class PostnummerTjeneste(private val fil: String = "postnr.txt") {
                 .toTypedArray()
     }.associate { it[0] to it[1] }
 
-    fun poststedFor(s: String) = map[s]
+    fun poststedFor(postnr: String) = poststedFor[postnr]
 
 }

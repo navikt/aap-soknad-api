@@ -32,3 +32,11 @@ jobs:
 
       - name: Kompiler og deploy image med jib
         run: mvn --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
+
+      -   name: Deploy
+          uses: nais/deploy/actions/deploy@master
+          env:
+             APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+             CLUSTER: dev-gcp
+             RESOURCE: .deploy/naiserator.yaml,.deploy/alerts.yaml
+             VARS: .deploy/dev-gcp-aap.json
