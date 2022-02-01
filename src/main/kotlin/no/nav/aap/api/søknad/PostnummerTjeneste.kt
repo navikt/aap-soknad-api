@@ -1,7 +1,9 @@
 package no.nav.aap.api.søknad
 
 import org.springframework.core.io.ClassPathResource
+import org.springframework.stereotype.Component
 
+@Component
 class PostnummerTjeneste(private val fil: String = "postnr.txt") {
 
     private val map = ClassPathResource(fil)
