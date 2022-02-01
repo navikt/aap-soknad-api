@@ -22,4 +22,4 @@ data class PDLFødsel(@JsonProperty("foedselsdato") val fødselsdato: LocalDate?
 
 data class PDLBostedadresse(val vegadresse: PDLVegadresse)
 
-data class PDLVegadresse(val adressenavn: String, val husbokstav: String, val husnummer: String, val postnummer: String)
+data class PDLVegadresse(val adressenavn: String, val husbokstav: String?, val husnummer: String?, val postnummer: String)
