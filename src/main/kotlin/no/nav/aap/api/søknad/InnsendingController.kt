@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import javax.validation.Valid
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
-@SecurityRequirement(name = "bearerAuth")
 class InnsendingController(
         private val formidler: KafkaSøknadFormidler,
         private val utenlandsFormidler: KafkaUtenlandsSøknadFormidler) {
@@ -24,6 +23,7 @@ class InnsendingController(
 
     @PostMapping("/soknad")
     fun utland(@RequestBody søknad: @Valid Søknad): Kvittering {
+        formidler.formidle()
         return Kvittering("OK")
     }
 

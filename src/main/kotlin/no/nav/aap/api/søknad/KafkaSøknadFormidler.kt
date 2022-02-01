@@ -7,6 +7,7 @@ import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.boot.conditionals.EnvUtil
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.KafkaHeaders.MESSAGE_KEY
@@ -25,7 +26,7 @@ class KafkaSøknadFormidler(
     private val log = LoggerUtil.getLogger(javaClass)
 
     fun formidle() {
-        log.info(EnvUtil.CONFIDENTIAL, "Formidler ssøknad for {}", authContext.getFnr())
+        log.info(CONFIDENTIAL, "Formidler søknad for {}", authContext.getFnr())
         formidle(SøknadKafka(authContext.getFnr(), pdl.person()?.fødseldato))
     }
 
