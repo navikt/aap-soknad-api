@@ -15,6 +15,7 @@ import no.nav.aap.rest.HeadersToMDCFilter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
+import no.nav.aap.util.Constants.STS
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.StartupInfoContributor
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
@@ -23,6 +24,7 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository
@@ -70,8 +72,8 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
     @Bean
     fun utenlandsSøknadTemplate(pf: ProducerFactory<Fødselsnummer, UtenlandsSøknadKafka>) = KafkaTemplate(pf)
 
-    //@Bean
-    //@Qualifier(STS)
+    @Bean
+    @Qualifier(STS)
     fun webClientSTS(builder: Builder, cfg: STSConfig): WebClient =
         builder
             .baseUrl(cfg.baseUri.toString())
