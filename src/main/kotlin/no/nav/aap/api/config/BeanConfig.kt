@@ -51,13 +51,13 @@ import java.util.*
 
 
 @Configuration
-class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String, private val cfg: TestIt) {
+class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String) {
     private val log = LoggerUtil.getLogger(javaClass)
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer {
         b: Jackson2ObjectMapperBuilder ->
-        log.info("XXXXXX " + cfg)
+       // log.info("XXXXXX " + cfg)
         b.modules(ProblemModule(), JavaTimeModule(), TokenXJacksonModule(), KotlinModule.Builder().build())
     }
 
