@@ -8,6 +8,7 @@ import io.swagger.v3.oas.models.info.License
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
 import no.nav.aap.api.oppslag.system.STSConfig
+import no.nav.aap.api.oppslag.system.SystemTokenTjeneste
 import no.nav.aap.api.søknad.SøknadKafka
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
@@ -49,13 +50,13 @@ import java.util.*
 
 
 @Configuration
-class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String) {
+class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String, val sts: SystemTokenTjeneste) {
     private val log = LoggerUtil.getLogger(javaClass)
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer {
         b: Jackson2ObjectMapperBuilder ->
-       // log.info("XXXXXX " + cfg)
+       log.info("XXXXXX " + sts.getSystemToken())
         b.modules(ProblemModule(), JavaTimeModule(), TokenXJacksonModule(), KotlinModule.Builder().build())
     }
 

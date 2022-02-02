@@ -1,6 +1,6 @@
 package no.nav.aap.api.oppslag.system
 
-import com.nimbusds.oauth2.sdk.GrantType
+import com.nimbusds.oauth2.sdk.GrantType.CLIENT_CREDENTIALS
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -25,7 +25,7 @@ class STSConfig(@DefaultValue(DEFAULT_SLACK) val slack: Duration,
 
     fun stsBody(): FormInserter<String> {
         val m = LinkedMultiValueMap<String, String>()
-        m.add(GRANT_TYPE, GrantType.CLIENT_CREDENTIALS.value)
+        m.add(GRANT_TYPE, CLIENT_CREDENTIALS.value)
         m.add(SCOPE, "openid")
         return BodyInserters.fromFormData(m)
     }
