@@ -51,7 +51,7 @@ import java.util.*
 
 
 @Configuration
-class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String,@Value("\${sts.username:NOPE}") private val cfg: TestIt) {
+class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String, private val cfg: TestIt) {
     private val log = LoggerUtil.getLogger(javaClass)
 
     @Bean
