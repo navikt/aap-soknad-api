@@ -2,7 +2,7 @@ package no.nav.aap.api.oppslag.system
 
 import org.springframework.stereotype.Service
 
-//@Service
+@Service
 class STSSystemTokenTjeneste(private val adapter: STSWebClientAdapter) : SystemTokenTjeneste {
     private var systemToken: SystemToken? = null
 

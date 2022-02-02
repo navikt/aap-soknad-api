@@ -16,7 +16,7 @@ import java.time.Duration
 @ConfigurationProperties(prefix = "sts")
 @ConstructorBinding
 class STSConfig(@DefaultValue(DEFAULT_SLACK) val slack: Duration,
-                val base: URI,
+                private val base: URI,
                 val username: String,
                 val password: String,
                 @DefaultValue("true") val enabled: Boolean,
