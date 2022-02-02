@@ -18,8 +18,8 @@ const val DEFAULT_PATH = "/rest/v1/sts/token"
 const val DEFAULT_SLACK = "20s"
 const val PING_PATH = ".well-known/openid-configuration"
 const val SCOPE = "scope"
-@ConfigurationProperties(prefix = "sts")
-@ConstructorBinding
+//@ConfigurationProperties(prefix = "sts")
+//@ConstructorBinding
 class STSConfig(base: URI,
                 @DefaultValue(DEFAULT_SLACK) val slack: Duration,
                 val username: String,

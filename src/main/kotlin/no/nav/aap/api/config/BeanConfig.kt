@@ -16,6 +16,7 @@ import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.STS
+import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.StartupInfoContributor
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import no.nav.security.token.support.client.core.ClientProperties
@@ -23,6 +24,7 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
@@ -48,10 +50,13 @@ import java.util.*
 
 
 @Configuration
-class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String) {
+class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String,@Value("\${sts.username:NOPE}") private val username: String) {
+    private val log = LoggerUtil.getLogger(javaClass)
 
     @Bean
-    fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b: Jackson2ObjectMapperBuilder ->
+    fun customizer() = Jackson2ObjectMapperBuilderCustomizer {
+        b: Jackson2ObjectMapperBuilder ->
+        log.info("XXXXXX " + username)
         b.modules(ProblemModule(), JavaTimeModule(), TokenXJacksonModule(), KotlinModule.Builder().build())
     }
 
