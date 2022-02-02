@@ -9,6 +9,8 @@ metadata:
   labels:
     team: aap
 spec:
+  envFrom:
+    - secret: srvaap-selvbetjening
   gcp:
     buckets:
       - name: aap-mellomlagring
