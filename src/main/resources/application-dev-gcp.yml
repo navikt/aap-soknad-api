@@ -19,3 +19,5 @@ spring:
    log-request-details : true
 pdl:
   base-uri: https://pdl-api.dev-fss-pub.nais.io/graphql
+sts:
+  base-uri: https://security-token-service.dev.adeo.no
