@@ -12,11 +12,7 @@ import org.springframework.web.util.UriBuilder
 import java.net.URI
 import java.time.Duration
 
-const val  GRANT_TYPE = "grant_type"
-const val DEFAULT_PATH = "/rest/v1/sts/token"
-const val DEFAULT_SLACK = "20s"
-const val PING_PATH = ".well-known/openid-configuration"
-const val SCOPE = "scope"
+
 @ConfigurationProperties(prefix = "sts")
 @ConstructorBinding
 class STSConfig(@DefaultValue(DEFAULT_SLACK) val slack: Duration,
@@ -34,4 +30,12 @@ class STSConfig(@DefaultValue(DEFAULT_SLACK) val slack: Duration,
         return BodyInserters.fromFormData(m)
     }
     fun stsURI(b: UriBuilder) = b.path(stsPath).build()
+
+    companion object {
+        const val  GRANT_TYPE = "grant_type"
+        const val DEFAULT_PATH = "/rest/v1/sts/token"
+        const val DEFAULT_SLACK = "20s"
+        const val PING_PATH = ".well-known/openid-configuration"
+        const val SCOPE = "scope"
+    }
 }

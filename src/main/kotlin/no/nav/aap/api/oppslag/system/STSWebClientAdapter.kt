@@ -11,7 +11,7 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 
-//@Component
+@Component
 public class STSWebClientAdapter(@Qualifier(STS) val  client: WebClient, private val cf: STSConfig) : AbstractWebClientAdapter(client,cf) {
 
     val slack = cf.slack
