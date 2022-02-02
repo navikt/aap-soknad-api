@@ -20,7 +20,7 @@ const val PING_PATH = ".well-known/openid-configuration"
 const val SCOPE = "scope"
 @ConfigurationProperties(prefix = "sts")
 @ConstructorBinding
-class STSConfig( val base: URI,
+class STSConfig(base: URI,
                 @DefaultValue(DEFAULT_SLACK) val slack: Duration,
                 val username: String,
                 val password: String,
