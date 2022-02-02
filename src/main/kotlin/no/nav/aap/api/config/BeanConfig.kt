@@ -8,7 +8,6 @@ import io.swagger.v3.oas.models.info.License
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
 import no.nav.aap.api.oppslag.system.STSConfig
-import no.nav.aap.api.oppslag.system.TestIt
 import no.nav.aap.api.søknad.SøknadKafka
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
@@ -16,7 +15,6 @@ import no.nav.aap.rest.HeadersToMDCFilter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
-import no.nav.aap.util.Constants.STS
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.StartupInfoContributor
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
@@ -25,8 +23,6 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository
