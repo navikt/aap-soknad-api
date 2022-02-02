@@ -68,8 +68,8 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
     @Bean
     fun utenlandsSøknadTemplate(pf: ProducerFactory<Fødselsnummer, UtenlandsSøknadKafka>) = KafkaTemplate(pf)
 
-    @Bean
-    @Qualifier(STS)
+    //@Bean
+    //@Qualifier(STS)
     fun webClientSTS(builder: Builder, cfg: STSConfig): WebClient =
         builder
             .baseUrl(cfg.baseUri.toString())
