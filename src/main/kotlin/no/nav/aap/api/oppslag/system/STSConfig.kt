@@ -20,13 +20,13 @@ const val PING_PATH = ".well-known/openid-configuration"
 const val SCOPE = "scope"
 //@ConfigurationProperties(prefix = "sts")
 //@ConstructorBinding
-class STSConfig(base: URI,
+class STSConfig(baseUri: URI,
                 @DefaultValue(DEFAULT_SLACK) val slack: Duration,
                 val username: String,
                 val password: String,
                 @DefaultValue(PING_PATH) val ping: String,
                 @DefaultValue("true") val enabled: Boolean,
-                @DefaultValue(DEFAULT_PATH) private val stsPath:  String) : AbstractRestConfig(base,ping,enabled) {
+                @DefaultValue(DEFAULT_PATH) private val stsPath:  String) : AbstractRestConfig(baseUri,ping,enabled) {
 
     fun stsBody(): FormInserter<String> {
         val m = LinkedMultiValueMap<String, String>()

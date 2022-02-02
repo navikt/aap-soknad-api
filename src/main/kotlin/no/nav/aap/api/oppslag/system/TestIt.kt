@@ -11,9 +11,9 @@ import java.time.Duration
 @ConfigurationProperties(prefix = "sts")
 @ConstructorBinding
 class TestIt(@DefaultValue(DEFAULT_SLACK) val slack: Duration,
-             val base: URI,
+             val baseUri: URI,
              val username: String,
              val password: String,
              @DefaultValue("true") val enabled: Boolean,
              @DefaultValue(PING_PATH) val ping: String,
-             @DefaultValue(DEFAULT_PATH) private val stsPath:  String) : AbstractRestConfig(base, ping, enabled)
+             @DefaultValue(DEFAULT_PATH) private val stsPath:  String) : AbstractRestConfig(baseUri, ping, enabled)
