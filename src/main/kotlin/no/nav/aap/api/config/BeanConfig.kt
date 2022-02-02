@@ -8,6 +8,7 @@ import io.swagger.v3.oas.models.info.License
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
 import no.nav.aap.api.oppslag.system.STSConfig
+import no.nav.aap.api.oppslag.system.TestIt
 import no.nav.aap.api.søknad.SøknadKafka
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
@@ -50,13 +51,13 @@ import java.util.*
 
 
 @Configuration
-class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String,@Value("\${sts.username:NOPE}") private val username: String) {
+class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String,@Value("\${sts.username:NOPE}") private val cfg: TestIt) {
     private val log = LoggerUtil.getLogger(javaClass)
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer {
         b: Jackson2ObjectMapperBuilder ->
-        log.info("XXXXXX " + username)
+        log.info("XXXXXX " + cfg)
         b.modules(ProblemModule(), JavaTimeModule(), TokenXJacksonModule(), KotlinModule.Builder().build())
     }
 
