@@ -2,11 +2,11 @@ package no.nav.aap.api.søknad
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.oppslag.pdl.PDLOperations
+import no.nav.aap.api.søknad.model.Søknad
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
-import no.nav.boot.conditionals.EnvUtil
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
@@ -14,6 +14,7 @@ import org.springframework.kafka.support.KafkaHeaders.MESSAGE_KEY
 import org.springframework.kafka.support.KafkaHeaders.TOPIC
 import org.springframework.messaging.support.MessageBuilder
 import org.springframework.stereotype.Service
+import javax.validation.Valid
 
 
 @Service
@@ -34,7 +35,7 @@ class KafkaSøknadFormidler(
         formidler.send(
                 MessageBuilder
                     .withPayload(søknad)
-                    .setHeader(MESSAGE_KEY, søknad.ident.verdi)
+                    .setHeader(MESSAGE_KEY, søknad.id)
                     .setHeader(TOPIC, søknadTopic)
                     .setHeader(NAV_CALL_ID, MDCUtil.callId())
                     .build())

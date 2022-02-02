@@ -7,12 +7,15 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
+import no.nav.aap.api.oppslag.system.STSConfig
 import no.nav.aap.api.søknad.SøknadKafka
+import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
 import no.nav.aap.rest.HeadersToMDCFilter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
+import no.nav.aap.util.Constants.STS
 import no.nav.aap.util.StartupInfoContributor
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import no.nav.security.token.support.client.core.ClientProperties
@@ -20,6 +23,7 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository
@@ -36,13 +40,16 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
 import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClient.Builder
 import org.zalando.problem.jackson.ProblemModule
 import java.net.URI
 import java.util.*
 
 
 @Configuration
-class BeanConfig {
+class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String) {
+
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b: Jackson2ObjectMapperBuilder ->
         b.modules(ProblemModule(), JavaTimeModule(), TokenXJacksonModule(), KotlinModule.Builder().build())
@@ -60,6 +67,15 @@ class BeanConfig {
 
     @Bean
     fun utenlandsSøknadTemplate(pf: ProducerFactory<Fødselsnummer, UtenlandsSøknadKafka>) = KafkaTemplate(pf)
+
+    @Bean
+    @Qualifier(STS)
+    fun webClientSTS(builder: Builder, cfg: STSConfig): WebClient =
+        builder
+            .baseUrl(cfg.baseUri.toString())
+            .filter(correlatingFilterFunction(applicationName))
+            .defaultHeaders { h -> h.setBasicAuth(cfg.username, cfg.password) }
+            .build()
 
     @Bean
     fun openAPI(p: BuildProperties) =
