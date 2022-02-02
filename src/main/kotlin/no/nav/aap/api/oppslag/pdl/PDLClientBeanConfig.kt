@@ -31,8 +31,8 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 @Configuration
 class PDLClientBeanConfig(@Value("\${spring.application.name}") val applicationName: String) {
 
-    @Qualifier(PDL_SYSTEM)
-    @Bean
+    //@Qualifier(PDL_SYSTEM)
+    //@Bean
     fun pdlSystemWebClient(builder: Builder, cfg: PDLConfig, sts: SystemTokenTjeneste): WebClient? {
         return builder
             .baseUrl(cfg.baseUri.toString())
