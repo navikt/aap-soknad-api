@@ -27,4 +27,4 @@ spring:
    log-request-details : true
 pdl:
   base-uri: https://pdl-api.dev-fss-pub.nais.io/graphql
-  scope:    api://dev-fss:pdl:pdl-api/.default
+  scope:    api://dev-fss.pdl.pdl-api/.default
