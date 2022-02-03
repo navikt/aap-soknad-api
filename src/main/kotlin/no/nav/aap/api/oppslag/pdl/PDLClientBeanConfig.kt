@@ -12,14 +12,17 @@ import no.nav.aap.util.StringExtensions.asBearer
 import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
+import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.*
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
+import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
@@ -72,5 +75,17 @@ class PDLClientBeanConfig(@Value("\${spring.application.name}") val applicationN
 
     @Bean
     fun pdlHealthIndicator(adapter: PDLWebClientAdapter) = object: AbstractPingableHealthIndicator(adapter){
+    }
+
+    @Component
+    class ApplicationStartupRunner(private val configs: ClientConfigurationProperties, private val service: OAuth2AccessTokenService) :
+        CommandLineRunner {
+        val logger = LogFactory.getLog(javaClass)
+        @Throws(Exception::class)
+        override fun run(vararg args: String) {
+            logger.info("XXX  henter token")
+            val token = service.getAccessToken(configs.registration["client-credentials-pdl"]).accessToken
+            logger.info("XXX  token er  $token")
+        }
     }
 }
