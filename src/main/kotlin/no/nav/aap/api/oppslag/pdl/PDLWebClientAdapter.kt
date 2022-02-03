@@ -31,8 +31,16 @@ class PDLWebClientAdapter(
     private fun person(id: String): PDLPerson? {
         val p = oppslag({ graphQLWebClient.post(PERSON_QUERY, idFra(id), PDLWrappedPerson::class.java).block() }, "navn")
         log.info("Hentet persoon {}",p)
-        barn(id)  // TEST
+        testBarn(id)
         return p?.active
+    }
+
+    private fun testBarn(id: String) {
+        try {
+            barn(id)  // TEST
+        } catch (e: Exception) {
+            log.warn("Uffda", e)
+        }
     }
 
     private fun barn(id: String): PDLBarn? {
