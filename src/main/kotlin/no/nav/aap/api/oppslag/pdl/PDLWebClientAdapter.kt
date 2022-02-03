@@ -37,20 +37,16 @@ class PDLWebClientAdapter(
 
     private fun testBarn(id: String) {
         try {
-            barn(id)  // TEST
+            log.info("Henter barn for $id ")
+            val b = barn(id)  
+            log.info("Hentet barn $b for $id")
+
         } catch (e: Exception) {
             log.warn("Uffda", e)
         }
     }
 
-    private fun barn(id: String): PDLBarn? {
-        log.info("Henter barn for $id ")
-        val b = oppslag({ systemGraphQLWebClient.post(BARN_QUERY, idFra(id), PDLBarn::class.java).block() }, "barn")
-        log.info("Hentet barn $b for $id")
-        return b
-    }
-
-
+    private fun barn(id: String): PDLBarn? = oppslag({ systemGraphQLWebClient.post(BARN_QUERY, idFra(id), PDLBarn::class.java).block() }, "barn")
 
     private fun <T> oppslag(oppslag: () -> T, type: String): T {
         return try {
