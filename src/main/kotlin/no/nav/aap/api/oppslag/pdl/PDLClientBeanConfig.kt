@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpHeaders.*
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
@@ -45,7 +46,7 @@ class PDLClientBeanConfig(@Value("\${spring.application.name}") val applicationN
     fun aadPDLClientCredentialFilterFunction(configs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
         ExchangeFilterFunction { req, next ->
             val token = service.getAccessToken(configs.registration["client-credentials-pdl"]).accessToken
-            next.exchange(ClientRequest.from(req).header(HttpHeaders.AUTHORIZATION, token.asBearer()).build())
+            next.exchange(ClientRequest.from(req).header(AUTHORIZATION, token.asBearer()).build())
         }
 
     @Qualifier(PDL_SYSTEM)
