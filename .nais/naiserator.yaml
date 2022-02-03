@@ -9,6 +9,9 @@ metadata:
   labels:
     team: aap
 spec:
+  azure:
+    application:
+      enabled: true
   envFrom:
     - secret: srvaap-selvbetjening
   gcp:
