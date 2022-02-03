@@ -23,3 +23,35 @@ data class PDLFødsel(@JsonProperty("foedselsdato") val fødselsdato: LocalDate?
 data class PDLBostedadresse(val vegadresse: PDLVegadresse)
 
 data class PDLVegadresse(val adressenavn: String, val husbokstav: String?, val husnummer: String?, val postnummer: String)
+
+data class PDLBarn(@JsonProperty("foedsel") val  fødselsdato: Set<PDLFødsel>,
+                   val navn: Set<PDLNavn>,
+                   @JsonProperty("kjoenn") val kjønn: Set <PDLKjønn>,
+                   @JsonProperty("adressebeskyttelse") val beskyttelse: Set<PDLAdresseBeskyttelse>,
+                   @JsonProperty("doedsfall") val dødsfall: Set<PDLDødsfall>,
+                   val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon>)
+
+data class PDLDødsfall(@JsonProperty("doedsdato") val dødsdato: LocalDate)
+
+
+enum class PDLAdresseBeskyttelse {
+    STRENGT_FORTROLIG_UTLAND,
+    STRENGT_FORTROLIG,
+    FORTROLIG,
+    UGRADERT
+}
+
+enum class PDLKjønn {
+    MANN,
+    KVINNE,
+    UKJENT
+}
+data class PDLForelderBarnRelasjon(@JsonProperty("relatertPersonsIdent") val id: String,
+                                   val relatertPersonsrolle: PDLRelasjonsRolle,
+                                   @JsonProperty("minRolleForPerson") val minRolle: PDLRelasjonsRolle)
+enum class PDLRelasjonsRolle {
+        BARN,
+        MOR,
+        FAR,
+        MEDMOR
+}

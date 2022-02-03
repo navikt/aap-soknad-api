@@ -4,6 +4,7 @@ import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.AuthContext
+import no.nav.aap.util.Constants.PDL_SYSTEM
 import no.nav.aap.util.Constants.PDL_USER
 import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.annotation.Qualifier
@@ -18,7 +19,9 @@ import org.springframework.web.reactive.function.client.WebClient
 @Component
 class PDLWebClientAdapter(
         @Qualifier(PDL_USER) private val graphQLWebClient: GraphQLWebClient,
-        @Qualifier(PDL_USER) webClient: WebClient, cfg: PDLConfig,
+        @Qualifier(PDL_USER) webClient: WebClient,
+        @Qualifier(PDL_SYSTEM) private val systemGraphQLWebClient: GraphQLWebClient,
+        cfg: PDLConfig,
         private val authContext: AuthContext,
         private val errorHandler: PDLErrorHandler) : AbstractWebClientAdapter(webClient, cfg) {
 
@@ -28,8 +31,18 @@ class PDLWebClientAdapter(
     private fun person(id: String): PDLPerson? {
         val p = oppslag({ graphQLWebClient.post(PERSON_QUERY, idFra(id), PDLWrappedPerson::class.java).block() }, "navn")
         log.info("Hentet persoon {}",p)
+        barn(id)  // TEST
         return p?.active
     }
+
+    private fun barn(id: String): PDLBarn? {
+        log.info("Henter barn for $id ")
+        val b = oppslag({ systemGraphQLWebClient.post(BARN_QUERY, idFra(id), PDLBarn::class.java).block() }, "barn")
+        log.info("Hentet barn $b for $id")
+        return b
+    }
+
+
 
     private fun <T> oppslag(oppslag: () -> T, type: String): T {
         return try {
@@ -61,6 +74,7 @@ class PDLWebClientAdapter(
     companion object {
         private const val IDENT = "ident"
         private const val PERSON_QUERY = "query-person.graphql"
+        private const val BARN_QUERY = "query-barn.graphql"
         private fun idFra(id: String): Map<String, Any> = java.util.Map.of<String, Any>(IDENT, id)
 
     }
