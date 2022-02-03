@@ -14,8 +14,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 
-const val IDENT = "ident"
-const val PERSON_QUERY = "query-person.graphql"
+
 @Component
 class PDLWebClientAdapter(
         @Qualifier(PDL_USER) private val graphQLWebClient: GraphQLWebClient,
@@ -55,10 +54,15 @@ class PDLWebClientAdapter(
             .block()
     }
 
-    private fun idFra(id: String): Map<String, Any> = java.util.Map.of<String, Any>(IDENT, id)
 
     override fun toString() =
         "${javaClass.simpleName} [webClient=$webClient,graphQLWebClient=$graphQLWebClient,authContext=$authContext,errorHandler=$errorHandler, cfg=$cfg]"
 
+    companion object {
+        private const val IDENT = "ident"
+        private const val PERSON_QUERY = "query-person.graphql"
+        private fun idFra(id: String): Map<String, Any> = java.util.Map.of<String, Any>(IDENT, id)
+
+    }
 
 }

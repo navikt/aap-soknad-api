@@ -11,6 +11,14 @@ no.nav:
     jwt:
       client:
         registration:
+          client-credentials-pdl:
+            token-endpoint-url: ${azure.openid.config.token.endpoint}
+            grant-type: client_credentials
+            scope: ${pdl.scope}
+            authentication:
+              client-id: ${azure.app.client.id}
+              client-jwk: ${azure.app.jwk}
+              client-auth-method: private_key_jwt
           pdl-api:
             token-exchange:
               audience: dev-fss:pdl:pdl-api
@@ -19,5 +27,4 @@ spring:
    log-request-details : true
 pdl:
   base-uri: https://pdl-api.dev-fss-pub.nais.io/graphql
-sts:
-  base: https://security-token-service.dev.adeo.no
+  scope:    api://dev-fss:pdl:pdl-api/.default
