@@ -46,7 +46,7 @@ class PDLWebClientAdapter(
         }
     }
 
-    private fun barn(id: String): PDLBarn? = oppslag({ systemGraphQLWebClient.post(BARN_QUERY, idFra(id), PDLBarn::class.java).block() }, "barn")
+    private fun barn(id: String) = oppslag({ systemGraphQLWebClient.post(BARN_QUERY, idFra(id), PDLWrappedBarn::class.java).block() }, "barn")
 
     private fun <T> oppslag(oppslag: () -> T, type: String): T {
         return try {
