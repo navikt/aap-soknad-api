@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag.pdl
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
@@ -28,7 +29,7 @@ data class PDLVegadresse(val adressenavn: String, val husbokstav: String?, val h
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class PDLBarn(@JsonProperty("foedsel") val  fødselsdato: Set<PDLFødsel>,
                    val navn: Set<PDLNavn>,
-                 //  @JsonProperty("kjoenn") val kjønn: Set <PDLKjønn>,
+                   @JsonProperty("kjoenn") val kjønn: Set <PDLKjønn>,
                    @JsonProperty("adressebeskyttelse") val beskyttelse: Set<PDLAdresseBeskyttelse>?,
                    @JsonProperty("doedsfall") val dødsfall: Set<PDLDødsfall>?)
 
@@ -42,12 +43,15 @@ enum class PDLAdresseBeskyttelse {
     UGRADERT
 }
 
-
-enum class PDLKjønn {
-    MANN,
-    KVINNE,
-    UKJENT
+data class PDLKjønn(val kjoenn: Kjoenn) {
+    enum class Kjoenn {
+        MANN,
+        KVINNE,
+        UKJENT
+    }
 }
+
+
 data class PDLForelderBarnRelasjon(@JsonProperty("relatertPersonsIdent") val id: String,
                                    val relatertPersonsrolle: PDLRelasjonsRolle,
                                    @JsonProperty("minRolleForPerson") val minRolle: PDLRelasjonsRolle)
