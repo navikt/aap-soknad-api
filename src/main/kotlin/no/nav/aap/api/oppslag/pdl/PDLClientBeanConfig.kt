@@ -76,16 +76,4 @@ class PDLClientBeanConfig(@Value("\${spring.application.name}") val applicationN
     @Bean
     fun pdlHealthIndicator(adapter: PDLWebClientAdapter) = object: AbstractPingableHealthIndicator(adapter){
     }
-
-    @Component
-    class ApplicationStartupRunner(private val configs: ClientConfigurationProperties, private val service: OAuth2AccessTokenService) :
-        CommandLineRunner {
-        val logger = LogFactory.getLog(javaClass)
-        @Throws(Exception::class)
-        override fun run(vararg args: String) {
-            logger.info("XXX  henter token")
-            val token = service.getAccessToken(configs.registration["client-credentials-pdl"]).accessToken
-            logger.info("XXX  token er  $token")
-        }
-    }
 }
