@@ -9,6 +9,9 @@ management:
     env:
       additional-keys-to-sanitize: "client-jwk,private.jwk"
 spring:
+  devtools:
+      restart:
+        enabled=false:
   kafka:
     bootstrap-servers: ${kafka.brokers}
     properties:
