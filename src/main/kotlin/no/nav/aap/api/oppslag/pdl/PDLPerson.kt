@@ -26,7 +26,7 @@ data class PDLVegadresse(val adressenavn: String, val husbokstav: String?, val h
 
 data class PDLBarn(@JsonProperty("foedsel") val  fødselsdato: Set<PDLFødsel>,
                    val navn: Set<PDLNavn>,
-                   @JsonProperty("kjoenn") val kjønn: Set <PDLKjønn>,
+                 //  @JsonProperty("kjoenn") val kjønn: Set <PDLKjønn>,
                    @JsonProperty("adressebeskyttelse") val beskyttelse: Set<PDLAdresseBeskyttelse>?,
                    @JsonProperty("doedsfall") val dødsfall: Set<PDLDødsfall>?)
 
