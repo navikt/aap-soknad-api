@@ -5,8 +5,8 @@ import java.time.LocalDate
 
 
 data class PDLWrappedPerson(val navn: Set<PDLNavn>,
-                            @JsonProperty("foedsel") val fødsel: Set<PDLFødsel>, val bostedsadresse: List<PDLBostedadresse>,val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon>? ) {
-    val active = PDLPerson(navn.first(), fødsel.firstOrNull(), bostedsadresse.firstOrNull()?.vegadresse,forelderBarnRelasjon)
+                            @JsonProperty("foedsel") val fødsel: Set<PDLFødsel>, val bostedsadresse: List<PDLBostedadresse>,val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon> ) {
+    val active = PDLPerson(navn.first(), fødsel.firstOrNull(), bostedsadresse.firstOrNull()?.vegadresse,forelderBarnRelasjon.filter { it.relatertPersonsrolle == PDLRelasjonsRolle.BARN }.toSet())
 }
 
 data class PDLWrappedBarn( val navn: Set<PDLBarn>)

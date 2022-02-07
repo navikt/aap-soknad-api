@@ -31,7 +31,7 @@ class PDLWebClientAdapter(
     private fun person(id: String): PDLPerson? {
         val p = oppslag({ graphQLWebClient.post(PERSON_QUERY, idFra(id), PDLWrappedPerson::class.java).block() }, "navn")
         log.info("Hentet person {}",p)
-       // testBarn(id)
+        p?.forelderBarnRelasjon.stream().forEach { it -> testBarn(it.id) }
         return p?.active
     }
 
