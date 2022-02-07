@@ -16,11 +16,6 @@ query($ident: ID!){
         },
         doedsfall {
            doedsdato
-        },
-        forelderBarnRelasjon {
-           relatertPersonsIdent
-           relatertPersonsRolle
-           minRolleForPerson
         }
     }
 }

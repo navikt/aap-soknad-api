@@ -9,7 +9,6 @@ data class PDLWrappedPerson(val navn: Set<PDLNavn>,
     val active = PDLPerson(navn.first(), fødsel.firstOrNull(), bostedsadresse.firstOrNull()?.vegadresse,forelderBarnRelasjon.filter { it.relatertPersonsrolle == PDLRelasjonsRolle.BARN }.toSet())
 }
 
-data class PDLWrappedBarn( val navn: Set<PDLBarn>)
 data class PDLNavn(val fornavn: String, val mellomnavn: String?, val etternavn: String)
 
 data class PDLPerson(val navn: PDLNavn, val fødsel: PDLFødsel?, val vegadresse: PDLVegadresse?, val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon>? ) {
@@ -28,9 +27,8 @@ data class PDLVegadresse(val adressenavn: String, val husbokstav: String?, val h
 data class PDLBarn(@JsonProperty("foedsel") val  fødselsdato: Set<PDLFødsel>,
                    val navn: Set<PDLNavn>,
                    @JsonProperty("kjoenn") val kjønn: Set <PDLKjønn>,
-                   @JsonProperty("adressebeskyttelse") val beskyttelse: Set<PDLAdresseBeskyttelse>,
-                   @JsonProperty("doedsfall") val dødsfall: Set<PDLDødsfall>,
-                   val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon>)
+                   @JsonProperty("adressebeskyttelse") val beskyttelse: Set<PDLAdresseBeskyttelse>?,
+                   @JsonProperty("doedsfall") val dødsfall: Set<PDLDødsfall>?)
 
 data class PDLDødsfall(@JsonProperty("doedsdato") val dødsdato: LocalDate)
 

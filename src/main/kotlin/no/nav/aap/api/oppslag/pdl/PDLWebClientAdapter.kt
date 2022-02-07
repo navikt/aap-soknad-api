@@ -37,7 +37,7 @@ class PDLWebClientAdapter(
 
     private fun testBarn(id: String) {
         try {
-            log.info("Henter barn  $id ")
+            log.info("Henter barn med $id ")
             val b = barn(id)    
             log.info("Hentet barn $b med $id")
 
@@ -46,7 +46,7 @@ class PDLWebClientAdapter(
         }
     }
 
-    private fun barn(id: String) = oppslag({ systemGraphQLWebClient.post(BARN_QUERY, idFra(id), Map::class.java).block() }, "barn")
+    private fun barn(id: String) = oppslag({ systemGraphQLWebClient.post(BARN_QUERY, idFra(id), PDLBarn::class.java).block() }, "barn")
 
     private fun <T> oppslag(oppslag: () -> T, type: String): T {
         return try {
