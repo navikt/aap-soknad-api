@@ -38,7 +38,7 @@ class PDLWebClientAdapter(
     private fun testBarn(id: String) {
         try {
             log.info("Henter barn for $id ")
-            val b = barn(id)  
+            val b = barn(id)    
             log.info("Hentet barn $b for $id")
 
         } catch (e: Exception) {
