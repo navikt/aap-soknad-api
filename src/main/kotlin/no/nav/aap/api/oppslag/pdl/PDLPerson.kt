@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag.pdl
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
 
@@ -24,6 +25,7 @@ data class PDLBostedadresse(val vegadresse: PDLVegadresse)
 
 data class PDLVegadresse(val adressenavn: String, val husbokstav: String?, val husnummer: String?, val postnummer: String)
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class PDLBarn(@JsonProperty("foedsel") val  fødselsdato: Set<PDLFødsel>,
                    val navn: Set<PDLNavn>,
                  //  @JsonProperty("kjoenn") val kjønn: Set <PDLKjønn>,
@@ -39,6 +41,7 @@ enum class PDLAdresseBeskyttelse {
     FORTROLIG,
     UGRADERT
 }
+
 
 enum class PDLKjønn {
     MANN,
