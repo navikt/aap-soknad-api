@@ -36,8 +36,9 @@ class PDLClientBeanConfig(@Value("\${spring.application.name}") val applicationN
 
     @Bean
     @Qualifier(PDL_SYSTEM)
-    fun webClientPDLSystem(@Value("\${pdl.base-uri}") baseUri: String, builder: Builder,  @Qualifier(PDL_SYSTEM) aadPDLFilterFunction: ExchangeFilterFunction)  =
+    fun webClientPDLSystem(env: Environment, @Value("\${pdl.base-uri}") baseUri: String, builder: Builder,  @Qualifier(PDL_SYSTEM) aadPDLFilterFunction: ExchangeFilterFunction)  =
         builder
+            .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(baseUri)
             .filter(correlatingFilterFunction(applicationName))
             .filter(temaFilterFunction())

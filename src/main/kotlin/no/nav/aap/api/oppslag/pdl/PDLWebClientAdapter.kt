@@ -31,15 +31,15 @@ class PDLWebClientAdapter(
     private fun person(id: String): PDLPerson? {
         val p = oppslag({ graphQLWebClient.post(PERSON_QUERY, idFra(id), PDLWrappedPerson::class.java).block() }, "person")
         log.info("Hentet person {}",p)
-        p?.forelderBarnRelasjon?.stream()?.forEach { it -> testBarn(it.id) }
+        p?.forelderBarnRelasjon?.stream()?.forEach { it -> hentBarn(it.id) }
         return p?.active
     }
 
-    private fun testBarn(id: String) {
+    private fun hentBarn(id: String) {
         try {
-            log.info("Henter barn med $id ")
+            log.info("Henter barn med id $id ")
             val b = barn(id)    
-            log.info("Hentet barn $b med $id")
+            log.info("Hentet barn $b med id $id")
 
         } catch (e: Exception) {
             log.warn("Uffda", e)
