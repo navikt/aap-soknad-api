@@ -29,9 +29,9 @@ class PDLWebClientAdapter(
     fun person(): PDLPerson? = authContext.getSubject()?.let { person(it) }
 
     private fun person(id: String): PDLPerson? {
-        val p = oppslag({ graphQLWebClient.post(PERSON_QUERY, idFra(id), PDLWrappedPerson::class.java).block() }, "navn")
+        val p = oppslag({ graphQLWebClient.post(PERSON_QUERY, idFra(id), PDLWrappedPerson::class.java).block() }, "person")
         log.info("Hentet person {}",p)
-        p?.forelderBarnRelasjon.stream().forEach { it -> testBarn(it.id) }
+        p?.forelderBarnRelasjon?.stream().forEach { it -> testBarn(it.id) }
         return p?.active
     }
 
