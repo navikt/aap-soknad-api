@@ -5,14 +5,14 @@ import java.time.LocalDate
 
 
 data class PDLWrappedPerson(val navn: Set<PDLNavn>,
-                            @JsonProperty("foedsel") val fødsel: Set<PDLFødsel>, val bostedsadresse: List<PDLBostedadresse>) {
-    val active = PDLPerson(navn.first(), fødsel.firstOrNull(), bostedsadresse.firstOrNull()?.vegadresse)
+                            @JsonProperty("foedsel") val fødsel: Set<PDLFødsel>, val bostedsadresse: List<PDLBostedadresse>,val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon>? ) {
+    val active = PDLPerson(navn.first(), fødsel.firstOrNull(), bostedsadresse.firstOrNull()?.vegadresse,forelderBarnRelasjon)
 }
 
 data class PDLWrappedBarn( val navn: Set<PDLBarn>)
 data class PDLNavn(val fornavn: String, val mellomnavn: String?, val etternavn: String)
 
-data class PDLPerson(val navn: PDLNavn, val fødsel: PDLFødsel?, val vegadresse: PDLVegadresse?) {
+data class PDLPerson(val navn: PDLNavn, val fødsel: PDLFødsel?, val vegadresse: PDLVegadresse?, val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon>? ) {
     val fornavn = navn.fornavn
     val mellomnavn = navn.mellomnavn
     val etternavn = navn.etternavn

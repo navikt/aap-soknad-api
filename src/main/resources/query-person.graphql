@@ -7,7 +7,12 @@ query($ident: ID!){
     },
      foedsel {
       foedselsdato
-    }
+    },
+    forelderBarnRelasjon {
+       relatertPersonsIdent
+        relatertPersonsRolle
+        minRolleForPerson
+    },
     bostedsadresse {
       vegadresse {
          adressenavn
