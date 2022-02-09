@@ -2,7 +2,6 @@ package no.nav.aap.api.søknad
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.oppslag.pdl.PDLOperations
-import no.nav.aap.api.søknad.model.Søknad
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil
@@ -14,7 +13,6 @@ import org.springframework.kafka.support.KafkaHeaders.MESSAGE_KEY
 import org.springframework.kafka.support.KafkaHeaders.TOPIC
 import org.springframework.messaging.support.MessageBuilder
 import org.springframework.stereotype.Service
-import javax.validation.Valid
 
 
 @Service
@@ -28,7 +26,7 @@ class KafkaSøknadFormidler(
 
     fun formidle() {
         log.info(CONFIDENTIAL, "Formidler søknad for {}", authContext.getFnr())
-        formidle(SøknadKafka(authContext.getFnr(), pdl.person()?.fødseldato))
+        formidle(SøknadKafka(authContext.getFnr(), pdl.søker()?.fødseldato))
     }
 
     private fun formidle(søknad: SøknadKafka) =

@@ -28,8 +28,9 @@ class KafkaUtenlandsSøknadFormidler(
     private val log = LoggerUtil.getLogger(javaClass)
 
     fun formidle(søknad: UtenlandsSøknadView) {
-        log.info(EnvUtil.CONFIDENTIAL, "Formidler utenlandssøknad for {}", authContext.getFnr())
-        formidle(søknad.toKafkaObject(Søker(authContext.getFnr(), pdl.person()?.navn)))
+        log.info(EnvUtil.CONFIDENTIAL, "Formidler utenlandssøknad for ${authContext.getFnr()}")
+        log.info(EnvUtil.CONFIDENTIAL, "Med barn for ${pdl.søker(true)}")
+        formidle(søknad.toKafkaObject(Søker(authContext.getFnr(), pdl.søker()?.navn)))
     }
 
     private fun formidle(søknad: UtenlandsSøknadKafka) =

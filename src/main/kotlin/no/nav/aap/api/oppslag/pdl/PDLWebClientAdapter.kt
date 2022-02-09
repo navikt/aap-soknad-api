@@ -2,6 +2,10 @@ package no.nav.aap.api.oppslag.pdl
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
+import no.nav.aap.api.felles.Navn
+import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
+import no.nav.aap.api.søknad.model.Barn
+import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.PDL_SYSTEM
@@ -18,35 +22,40 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Component
 class PDLWebClientAdapter(
-        @Qualifier(PDL_USER) private val graphQLWebClient: GraphQLWebClient,
+        @Qualifier(PDL_USER) private val userWebClient: GraphQLWebClient,
         @Qualifier(PDL_USER) webClient: WebClient,
-        @Qualifier(PDL_SYSTEM) private val systemGraphQLWebClient: GraphQLWebClient,
+        @Qualifier(PDL_SYSTEM) private val systemWebClient: GraphQLWebClient,
         cfg: PDLConfig,
         private val authContext: AuthContext,
         private val errorHandler: PDLErrorHandler) : AbstractWebClientAdapter(webClient, cfg) {
 
     private val log = LoggerUtil.getLogger(javaClass)
-    fun person(): PDLPerson? = authContext.getSubject()?.let { person(it) }
-
-    private fun person(id: String): PDLPerson? {
-        val p = oppslag({ graphQLWebClient.post(PERSON_QUERY, idFra(id), PDLWrappedPerson::class.java).block() }, "person")
-        log.info("Hentet person {}",p)
-        p?.forelderBarnRelasjon?.stream()?.forEach { it -> hentBarn(it.id) }
-        return p?.active
+    fun søker(medBarn: Boolean) = authContext.getSubject()?.let {
+        søkerFra(it,medBarn)
     }
 
-    private fun hentBarn(id: String) {
-        try {
-            log.info("Henter barn med id $id ")
-            val b = barn(id)    
-            log.info("Hentet barn $b med id $id")
-
-        } catch (e: Exception) {
-            log.warn("Uffda", e)
+    private fun søkerFra(id: String, medBarn: Boolean): Søker? {
+        val søker = oppslag({ userWebClient.post(PERSON_QUERY, idFra(id), PDLWrappedSøker::class.java).block() }, "søker")?.active
+        return søker?.let {
+            Søker(Navn(it.navn.fornavn, it.navn.mellomnavn, it.navn.etternavn), it.fødsel?.fødselsdato, barnFra(it.forelderBarnRelasjon, medBarn))
         }
     }
 
-    private fun barn(id: String) = oppslag({ systemGraphQLWebClient.post(BARN_QUERY, idFra(id), PDLBarn::class.java).block() }, "barn")
+    private fun barnFra(relasjoner: List<PDLForelderBarnRelasjon>, medBarn: Boolean): List<Barn?> {
+        if (medBarn) {
+            return relasjoner.map { barn(it.relatertPersonsIdent) }
+        }
+        return listOf()
+    }
+
+    fun barn(id: String): Barn? {
+        val b =  oppslag({ systemWebClient.post(BARN_QUERY, idFra(id), PDLBarn::class.java).block() }, "barn")
+        return b?.let { navn(it)?.let { it1 -> Barn(it1, it.fødselsdato.firstOrNull()?.fødselsdato) } }
+    }
+
+    private fun navn(b: PDLBarn?): Navn? {
+        return b?.navn?.firstOrNull()?.let { Navn(it.fornavn, it.mellomnavn, it.etternavn) }
+    }
 
     private fun <T> oppslag(oppslag: () -> T, type: String): T {
         return try {
@@ -72,8 +81,8 @@ class PDLWebClientAdapter(
     }
 
 
-    override fun toString() =
-        "${javaClass.simpleName} [webClient=$webClient,graphQLWebClient=$graphQLWebClient,authContext=$authContext,errorHandler=$errorHandler, cfg=$cfg]"
+    override fun toString() = "${javaClass.simpleName} [webClient=$webClient,graphQLWebClient=$userWebClient,authContext=$authContext,errorHandler=$errorHandler, cfg=$cfg]"
+
 
     companion object {
         private const val IDENT = "ident"
