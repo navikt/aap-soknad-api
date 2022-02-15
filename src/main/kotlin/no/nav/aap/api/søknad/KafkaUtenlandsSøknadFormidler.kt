@@ -29,7 +29,6 @@ class KafkaUtenlandsSøknadFormidler(
 
     fun formidle(søknad: UtenlandsSøknadView) {
         log.info(EnvUtil.CONFIDENTIAL, "Formidler utenlandssøknad for ${authContext.getFnr()}")
-        log.info(EnvUtil.CONFIDENTIAL, "Med barn for ${pdl.søker(true)}")
         formidle(søknad.toKafkaObject(Søker(authContext.getFnr(), pdl.søker(false)?.navn)))
     }
 
