@@ -2,7 +2,6 @@ package no.nav.aap.api.søknad
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.oppslag.pdl.PDLClient
-import no.nav.aap.api.oppslag.pdl.PDLOperations
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil

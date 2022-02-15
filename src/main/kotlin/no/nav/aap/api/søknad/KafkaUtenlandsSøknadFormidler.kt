@@ -9,7 +9,7 @@ import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
-import no.nav.boot.conditionals.EnvUtil
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.KafkaHeaders.MESSAGE_KEY
@@ -28,7 +28,7 @@ class KafkaUtenlandsSøknadFormidler(
     private val log = LoggerUtil.getLogger(javaClass)
 
     fun formidle(søknad: UtenlandsSøknadView) {
-        log.info(EnvUtil.CONFIDENTIAL, "Formidler utenlandssøknad for ${authContext.getFnr()}")
+        log.info(CONFIDENTIAL, "Formidler utenlandssøknad for ${authContext.getFnr()}")
         formidle(søknad.toKafkaObject(Søker(authContext.getFnr(), pdl.søker(false)?.navn)))
     }
 
