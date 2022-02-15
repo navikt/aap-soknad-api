@@ -3,7 +3,7 @@ package no.nav.aap.api.søknad
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Søker
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
-import no.nav.aap.api.oppslag.pdl.PDLOperations
+import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service
 @Service
 class KafkaUtenlandsSøknadFormidler(
         private val authContext: AuthContext,
-        private val pdl: PDLOperations,
+        private val pdl: PDLClient,
         private val formidler: KafkaOperations<Fødselsnummer, UtenlandsSøknadKafka>,
         @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String) {
 
@@ -30,7 +30,7 @@ class KafkaUtenlandsSøknadFormidler(
     fun formidle(søknad: UtenlandsSøknadView) {
         log.info(EnvUtil.CONFIDENTIAL, "Formidler utenlandssøknad for ${authContext.getFnr()}")
         log.info(EnvUtil.CONFIDENTIAL, "Med barn for ${pdl.søker(true)}")
-        formidle(søknad.toKafkaObject(Søker(authContext.getFnr(), pdl.søker()?.navn)))
+        formidle(søknad.toKafkaObject(Søker(authContext.getFnr(), pdl.søker(false)?.navn)))
     }
 
     private fun formidle(søknad: UtenlandsSøknadKafka) =

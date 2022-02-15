@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad
 
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.oppslag.pdl.PDLOperations
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service
 @Service
 class KafkaSøknadFormidler(
         private val authContext: AuthContext,
-        private val pdl: PDLOperations,
+        private val pdl: PDLClient,
         private val formidler: KafkaOperations<Fødselsnummer, SøknadKafka>,
         @Value("#{'\${utenlands.topic:aap.aap-soknad-sendt.v1}'}") val søknadTopic: String) {
 
