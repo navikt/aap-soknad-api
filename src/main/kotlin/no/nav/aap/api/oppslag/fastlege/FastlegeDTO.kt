@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag.fastlege
 
+import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.Periode
 
 data class FastlegeDTO(
@@ -38,3 +39,5 @@ data class Pasient(
 data class Relasjon(
         val kodeVerdi: String,
         val kodeTekst: String)
+
+data class Fastlege(val navn: Navn?) // TODO mer

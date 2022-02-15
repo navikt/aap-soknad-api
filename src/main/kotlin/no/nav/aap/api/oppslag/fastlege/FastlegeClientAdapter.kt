@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag.fastlege
 
+import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.oppslag.fastlege.FastlegeConfig.Companion.FASTLEGE
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.AuthContext
@@ -28,15 +29,11 @@ class FastlegeClientAdapter(
             .retrieve()
             .onStatus({ obj: HttpStatus -> obj.isError }) { obj: ClientResponse -> obj.createException() }
             .bodyToMono<FastlegeDTO>()
-            .map { this::tilFastlege }
+            .map(::tilFastlege)
             .block()
     }
 
-    private fun tilFastlege(dto: FastlegeDTO) = Fastlege() // TODO
+    private fun tilFastlege(dto: FastlegeDTO) = Fastlege(Navn(dto.fornavn,dto.mellomnavn,dto.etternavn)) // TODO
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient,authContext=$authContext, cfg=$cf]"
-}
-
-class Fastlege {
-
 }
