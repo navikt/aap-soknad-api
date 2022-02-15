@@ -4,7 +4,6 @@ import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.oppslag.fastlege.Fastlege
 import no.nav.aap.api.oppslag.fastlege.FastlegeClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
-import no.nav.aap.api.oppslag.pdl.PDLOperations
 import no.nav.aap.util.Constants
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.web.bind.annotation.GetMapping
