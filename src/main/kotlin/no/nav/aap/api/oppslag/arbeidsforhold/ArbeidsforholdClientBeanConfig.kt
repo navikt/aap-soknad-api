@@ -11,7 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 
-@Configuration
+//@Configuration
 class ArbeidsforholdClientBeanConfig(@Value("\${spring.application.name}") val applicationName: String) {
 
     @Bean

@@ -11,7 +11,7 @@ import java.time.Period
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 
 
-@ConfigurationProperties(prefix = "arbeidsforhold")
+//@ConfigurationProperties(prefix = "arbeidsforhold")
 class ArbeidsforholdConfig @ConstructorBinding constructor(@DefaultValue(DEFAULT_BASE_URI) baseUri: URI,
                                                            @DefaultValue(DEFAULT_PING) pingPath: String,
                                                            @DefaultValue(V1_ARBEIDSTAKER_ARBEIDSFORHOLD) val arbeidsforholdPath: String,
