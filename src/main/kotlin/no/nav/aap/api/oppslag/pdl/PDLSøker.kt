@@ -17,7 +17,7 @@ data class PDLWrappedSøker(val navn: Set<PDLNavn>,
 
 data class PDLNavn(val fornavn: String, val mellomnavn: String?, val etternavn: String)
 
-data class PDLSøker(val navn: PDLNavn, val fødsel: PDLFødsel?, val vegadresse: PDLVegadresse?, val forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) {
+data class PDLSøker(val navn: PDLNavn, val fødsel: PDLFødsel?, val vegadresse: PDLVegadresse?, val forelderBarnRelasjon: List<PDLForelderBarnRelasjon>?) {
     data class PDLForelderBarnRelasjon(val relatertPersonsIdent: String,
                                        val relatertPersonsrolle: PDLRelasjonsRolle,
                                        val minRolleForPerson: PDLRelasjonsRolle)  {

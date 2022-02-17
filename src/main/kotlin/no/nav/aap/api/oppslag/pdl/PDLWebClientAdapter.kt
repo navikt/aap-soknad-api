@@ -41,8 +41,8 @@ class PDLWebClientAdapter(
         }
     }
 
-    private fun barnFra(relasjoner: List<PDLForelderBarnRelasjon>, medBarn: Boolean): List<Barn?> {
-        if (medBarn) {
+    private fun barnFra(relasjoner: List<PDLForelderBarnRelasjon>?, medBarn: Boolean): List<Barn?> {
+        if (medBarn && relasjoner != null) {
             return relasjoner.map { barn(it.relatertPersonsIdent) }
         }
         return listOf()

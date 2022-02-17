@@ -1,4 +1,4 @@
-package no.nav.aap.api.oppslag.brukerinfo
+package no.nav.aap.api.oppslag
 
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.oppslag.fastlege.Fastlege
