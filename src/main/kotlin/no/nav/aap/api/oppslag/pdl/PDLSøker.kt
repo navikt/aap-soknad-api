@@ -10,9 +10,10 @@ import java.time.LocalDate
 
 
 data class PDLWrappedSøker(val navn: Set<PDLNavn>,
-                           @JsonProperty("foedsel") val fødsel: Set<PDLFødsel>, val bostedsadresse: List<PDLBostedadresse>, val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon>) {
-    val active = PDLSøker(navn.first(), fødsel.firstOrNull(), bostedsadresse.firstOrNull()?.vegadresse,forelderBarnRelasjon
-        .filter { it.relatertPersonsrolle == BARN })
+                           @JsonProperty("foedsel") val fødsel: Set<PDLFødsel>, val bostedsadresse: List<PDLBostedadresse>, val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon>?) {
+    val active = PDLSøker(navn.first(), fødsel.firstOrNull(), bostedsadresse.firstOrNull()?.vegadresse,
+            forelderBarnRelasjon
+                ?.filter { it.relatertPersonsrolle == BARN })
 }
 
 data class PDLNavn(val fornavn: String, val mellomnavn: String?, val etternavn: String)
