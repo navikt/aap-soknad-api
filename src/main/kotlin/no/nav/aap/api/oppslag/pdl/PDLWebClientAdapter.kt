@@ -30,7 +30,7 @@ class PDLWebClientAdapter(
         private val errorHandler: PDLErrorHandler) : AbstractWebClientAdapter(webClient, cfg) {
 
     private val log = LoggerUtil.getLogger(javaClass)
-    fun søker(medBarn: Boolean) = authContext.getSubject()?.let {
+    fun søker(medBarn: Boolean = false) = authContext.getSubject()?.let {
         søkerFra(it,medBarn)
     }
 
@@ -41,11 +41,11 @@ class PDLWebClientAdapter(
         }
     }
 
-    private fun barnFra(relasjoner: List<PDLForelderBarnRelasjon>?, medBarn: Boolean): List<Barn?> {
-        if (medBarn && relasjoner != null) {
+    private fun barnFra(relasjoner: List<PDLForelderBarnRelasjon>, medBarn: Boolean): List<Barn?> {
+        if (medBarn) {
             return relasjoner.map { barn(it.relatertPersonsIdent) }
         }
-        return listOf()
+        return emptyList()
     }
 
     fun barn(id: String): Barn? {
@@ -61,7 +61,6 @@ class PDLWebClientAdapter(
         return try {
             oppslag.invoke()
         } catch (e: GraphQLErrorsException) {
-            log.warn("PDL oppslag {} feilet", type, e)
             errorHandler.handleError(e)
         } catch (e: Exception) {
             log.warn("PDL oppslag {} feilet med uventet feil", type, e)
