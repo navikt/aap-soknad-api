@@ -7,7 +7,7 @@ info:
 management:
   endpoint:
     env:
-      additional-keys-to-sanitize: "client-jwk,private.jwk"
+      additional-keys-to-sanitize: "client-jwk,jwk,jwks"
 spring:
   devtools:
       restart:
