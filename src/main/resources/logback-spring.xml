@@ -7,7 +7,6 @@
     <springProfile name="dev">
         <logger name="reactor.netty.http.client.HttpClient" level="trace"/>
         <logger name="no.nav.aap" level="trace" />
-        <logger name="no.nav.security" level="trace" />
         <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="trace" />
     </springProfile>
     <springProfile name="local,test">
