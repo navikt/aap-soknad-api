@@ -30,7 +30,7 @@ spring:
     producer:
       acks: 1
       client-id: ${spring.application.name}
-      key-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 no.nav:
   security:
