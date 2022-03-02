@@ -16,7 +16,7 @@
     <properties>
         <conditionals.version>2.0.16</conditionals.version>
         <domain.version>0.0.32</domain.version>
-        <gcp.version>0.167.0</gcp.version>
+        <gcp.version>0.169.0</gcp.version>
         <graphql.version>1.0.0</graphql.version>
         <i18n.version>1.29</i18n.version>
         <java.version>17</java.version>
