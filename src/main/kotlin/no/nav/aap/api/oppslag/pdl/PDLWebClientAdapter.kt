@@ -2,6 +2,7 @@ package no.nav.aap.api.oppslag.pdl
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
+import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.api.søknad.model.Barn
@@ -50,7 +51,7 @@ class PDLWebClientAdapter(
 
     fun barn(id: String): Barn? {
         val b =  oppslag({ systemWebClient.post(BARN_QUERY, idFra(id), PDLBarn::class.java).block() }, "barn")
-        return b?.let { navn(it)?.let { it1 -> Barn(it1, it.fødselsdato.firstOrNull()?.fødselsdato) } }
+        return b?.let { navn(it)?.let { it1 -> Barn(Fødselsnummer(id), it1, it.fødselsdato.firstOrNull()?.fødselsdato) } }
     }
 
     private fun navn(b: PDLBarn?): Navn? {
