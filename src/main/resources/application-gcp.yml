@@ -37,7 +37,7 @@ no.nav:
     jwt:
       client:
         registration:
-          fastlegerest:
+          isdialogmelding:
             well-known-url: ${token.x.well.known.url}
             grant-type: urn:ietf:params:oauth:grant-type:token-exchange
             authentication:
