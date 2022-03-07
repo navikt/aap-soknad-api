@@ -12,5 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping
 class OppslagController(val pdl: PDLClient, val fastlege: FastlegeClient) {
 
     @GetMapping("/soeker")
-    fun søker(): SøkerInfo = SøkerInfo(pdl.søker(true), Fastlege(Navn("Ikke", "implementert","enda")))
+    fun søker() : SøkerInfo {
+        fastlege.fastlege()
+        return SøkerInfo(pdl.søker(true), Fastlege(Navn("Ikke", "implementert","enda")))
+    }
 }

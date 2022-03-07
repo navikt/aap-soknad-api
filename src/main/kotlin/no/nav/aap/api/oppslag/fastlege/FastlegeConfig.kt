@@ -17,8 +17,8 @@ class FastlegeConfig(
 
     companion object {
         const val FASTLEGE = "fastlege"
-        const val DEFAULT_BASE_URI = "http://fastlegerest.teamsykefravr/fastlegerest/"
-        const val DEFAULT_PATH = "api/v2/sluttbruker/fastlege/"
+        const val DEFAULT_BASE_URI = "https://isdialogmelding.dev.intern.nav.no/api"
+        const val DEFAULT_PATH = "/person/v1/behandler/self"
         const val DEFAULT_PING_PATH = "internal/isAlive"
     }
 }
