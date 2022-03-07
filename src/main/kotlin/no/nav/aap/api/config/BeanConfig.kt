@@ -5,26 +5,20 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
-import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
 import no.nav.aap.api.søknad.SøknadKafka
-import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
 import no.nav.aap.rest.HeadersToMDCFilter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
-import no.nav.aap.util.Constants.AAD
-import no.nav.aap.util.Constants.PDL_SYSTEM
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.StartupInfoContributor
-import no.nav.aap.util.StringExtensions.asBearer
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository
@@ -37,14 +31,10 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
-import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.ClientRequest.from
-import org.springframework.web.reactive.function.client.ExchangeFilterFunction
-import org.springframework.web.reactive.function.client.WebClient.Builder
 import org.zalando.problem.jackson.ProblemModule
 import java.net.URI
 import java.util.*
@@ -85,12 +75,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                  )
 
     @Bean
-    fun configMatcher() = object :  ClientConfigurationPropertiesMatcher {
-        override fun findProperties(configs: ClientConfigurationProperties, uri: URI)  =
-            Optional.ofNullable(configs.registration[uri.host.split("\\.".toRegex()).toTypedArray()[0]])
-    }
-
-
+    fun configMatcher() = object :  ClientConfigurationPropertiesMatcher {}
 
     @Bean
     fun tokenXFilterFunction(configs: ClientConfigurationProperties,

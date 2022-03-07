@@ -25,6 +25,8 @@ no.nav:
 spring:
  mvc:
    log-request-details : true
+fastlege:
+  base-uri: https://isdialogmelding.dev.intern.nav.no/api
 pdl:
   base-uri: https://pdl-api.dev-fss-pub.nais.io/graphql
   scope:    api://dev-fss.pdl.pdl-api/.default

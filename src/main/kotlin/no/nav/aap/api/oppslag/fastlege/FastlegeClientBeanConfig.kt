@@ -1,7 +1,6 @@
 package no.nav.aap.api.oppslag.fastlege
 
 import no.nav.aap.api.oppslag.fastlege.FastlegeConfig.Companion.FASTLEGE
-import no.nav.aap.api.oppslag.pdl.PDLWebClientAdapter
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
@@ -20,12 +19,12 @@ class FastlegeClientBeanConfig(@Value("\${spring.application.name}") val applica
 
     @Qualifier(FASTLEGE)
     @Bean
-    fun fastlegeWebClient(builder: Builder, cfg: FastlegeConfig, tokenXFilterFunction: TokenXFilterFunction, env: Environment) =
+    fun fastlegeWebClient(builder: Builder, cfg: FastlegeConfig, filter: TokenXFilterFunction, env: Environment) =
         builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
             .filter(AbstractWebClientAdapter.correlatingFilterFunction(applicationName))
-            .filter(tokenXFilterFunction)
+            .filter(filter)
             .build()
 
     @Bean
