@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import java.util.*
+import java.util.Arrays.stream
 
 
 @Component
@@ -29,12 +29,15 @@ class FastlegeClientAdapter(
             .accept(APPLICATION_JSON)
             .retrieve()
             .onStatus({ obj: HttpStatus -> obj.isError }) { obj: ClientResponse -> obj.createException() }
-            .bodyToMono<FastlegeDTO>()
-            .map(::tilFastlege)
+            .toEntityList(BehandlerDTO::class.java)
             .block()
+            ?.body?.let { it.stream()
+                .map(::tilFastlege)
+                .findFirst()
+            }
     }
 
-    private fun tilFastlege(dto: FastlegeDTO) = Fastlege(Navn(dto.fornavn,dto.mellomnavn,dto.etternavn)) // TODO
+    private fun tilFastlege(dto: BehandlerDTO) = Fastlege(Navn(dto.fornavn,dto.mellomnavn,dto.etternavn)) // TODO
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient,authContext=$authContext, cfg=$cf]"
 }

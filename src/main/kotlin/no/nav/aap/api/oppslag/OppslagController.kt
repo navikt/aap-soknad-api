@@ -13,7 +13,7 @@ class OppslagController(val pdl: PDLClient, val fastlege: FastlegeClient) {
 
     @GetMapping("/soeker")
     fun søker() : SøkerInfo {
-        fastlege.fastlege()
+        val lege = fastlege.fastlege()
         return SøkerInfo(pdl.søker(true), Fastlege(Navn("Ikke", "implementert","enda")))
     }
 }
