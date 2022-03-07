@@ -68,10 +68,10 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
     fun authContext(ctxHolder: TokenValidationContextHolder) = AuthContext(ctxHolder)
 
     @Bean
-    fun søknadTemplate(pf: ProducerFactory<Fødselsnummer, SøknadKafka>) = KafkaTemplate(pf)
+    fun søknadTemplate(pf: ProducerFactory<String, SøknadKafka>) = KafkaTemplate(pf)
 
     @Bean
-    fun utenlandsSøknadTemplate(pf: ProducerFactory<Fødselsnummer, UtenlandsSøknadKafka>) = KafkaTemplate(pf)
+    fun utenlandsSøknadTemplate(pf: ProducerFactory<String, UtenlandsSøknadKafka>) = KafkaTemplate(pf)
 
 
     @Bean

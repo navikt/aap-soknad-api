@@ -9,11 +9,11 @@ import org.springframework.kafka.support.SendResult
 import org.springframework.util.concurrent.ListenableFutureCallback
 
 class FormidlingCallback(val søknad: SøknadKafka) :
-    ListenableFutureCallback<SendResult<Fødselsnummer, SøknadKafka>> {
+    ListenableFutureCallback<SendResult<String, SøknadKafka>> {
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()
 
-    override fun onSuccess(result: SendResult<Fødselsnummer, SøknadKafka>?) {
+    override fun onSuccess(result: SendResult<String, SøknadKafka>?) {
         Metrics.counter(Counters.COUNTER_SØKNAD_MOTTATT).increment()
         log.info(
                 "Søknad $søknad sent til Kafka på topic {}, partition {} med offset {} OK",

@@ -11,11 +11,11 @@ import org.springframework.kafka.support.SendResult
 import org.springframework.util.concurrent.ListenableFutureCallback
 
 class UtenlandsFormidlingCallback(val søknad: UtenlandsSøknadKafka) :
-    ListenableFutureCallback<SendResult<Fødselsnummer, UtenlandsSøknadKafka>> {
+    ListenableFutureCallback<SendResult<String, UtenlandsSøknadKafka>> {
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()
 
-    override fun onSuccess(result: SendResult<Fødselsnummer, UtenlandsSøknadKafka>?) {
+    override fun onSuccess(result: SendResult<String, UtenlandsSøknadKafka>?) {
         Metrics.counter(
                 Counters.COUNTER_SØKNAD_UTLAND_MOTTATT,
                 Tags.of(
