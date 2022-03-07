@@ -21,6 +21,7 @@ class FastlegeClientAdapter(
 
     private val log = LoggerUtil.getLogger(javaClass)
     fun fastlege() = authContext.getSubject()?.let {
+        log.info("Henter fastleger")
         webClient
             .get()
             .uri { b -> b.path(cf.path).build() }

@@ -28,6 +28,6 @@ class FastlegeClientBeanConfig(@Value("\${spring.application.name}") val applica
             .build()
 
     @Bean
-    fun fastlegeHealthIndicator(adapter: FastlegeClientAdapter) = object: AbstractPingableHealthIndicator(adapter){
+    fun fastlegeHealthIndicator(a: FastlegeClientAdapter) = object: AbstractPingableHealthIndicator(a){
     }
 }
