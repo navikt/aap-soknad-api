@@ -17,7 +17,7 @@ class FastlegeConfig(
 
     companion object {
         const val FASTLEGE = "fastlege"
-        const val DEFAULT_PATH = "/person/v1/behandler/self"
-        const val DEFAULT_PING_PATH = "internal/isAlive"
+        const val DEFAULT_PATH = "api/person/v1/behandler/self"
+        const val DEFAULT_PING_PATH = "is_alive"
     }
 }
