@@ -9,10 +9,10 @@ import java.net.URI
 @ConfigurationProperties(prefix = "fastlege")
 @ConstructorBinding
 class FastlegeConfig(
-        @DefaultValue(DEFAULT_PING_PATH) val pp: String,
+        @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
         @DefaultValue(DEFAULT_PATH) val path: String,
         @DefaultValue("true")  enabled: Boolean,
-        baseUri: URI) : AbstractRestConfig(baseUri, pp, enabled) {
+        baseUri: URI) : AbstractRestConfig(baseUri, pingPath, enabled) {
 
 
     companion object {

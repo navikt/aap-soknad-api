@@ -17,3 +17,6 @@ data class BehandlerDTO(
         val telefon: String?)
 
 data class Fastlege(val navn: Navn?) // TODO mer
+
+
+fun BehandlerDTO.tilFastlege() = Fastlege(Navn(fornavn,mellomnavn,etternavn)) // TODO

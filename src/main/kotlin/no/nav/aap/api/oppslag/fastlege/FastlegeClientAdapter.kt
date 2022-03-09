@@ -23,20 +23,16 @@ class FastlegeClientAdapter(
     fun fastlege() = authContext.getSubject()?.let {
         log.info("Henter fastleger")
         webClient
-            .get()
-            .uri { b -> b.path(cf.path).build() }
-            .accept(APPLICATION_JSON)
-            .retrieve()
-            .onStatus({ obj: HttpStatus -> obj.isError }) { obj: ClientResponse -> obj.createException() }
-            .toEntityList(BehandlerDTO::class.java)
-            .block()
-            ?.body?.let { it.stream()
-                .map(::tilFastlege)
-                .findFirst()
-            }
+                .get()
+                .uri { b -> b.path(cf.path).build() }
+                .accept(APPLICATION_JSON)
+                .retrieve()
+                .onStatus({ obj: HttpStatus -> obj.isError }) { obj: ClientResponse -> obj.createException() }
+                .toEntityList(BehandlerDTO::class.java)
+                .block()
+                ?.body?.stream()?.map(BehandlerDTO::tilFastlege)?.findFirst()
     }
 
-    private fun tilFastlege(dto: BehandlerDTO) = Fastlege(Navn(dto.fornavn,dto.mellomnavn,dto.etternavn)) // TODO
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient,authContext=$authContext, cfg=$cf]"
 }
