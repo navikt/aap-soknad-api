@@ -4,7 +4,10 @@ import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
+import org.springframework.boot.convert.PeriodFormat
+import org.springframework.boot.convert.PeriodStyle.SIMPLE
 import java.net.URI
+import java.time.Period
 
 
 @ConfigurationProperties(prefix = "arbeidsforhold")
@@ -12,8 +15,8 @@ import java.net.URI
 class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
                            @DefaultValue(PATH) val path: String,
                            @DefaultValue("true") enabled: Boolean,
-                         //  @DefaultValue(FEMÅR) val tidTilbake: Period,
-                           @DefaultValue("false") private val sporingsinformasjon: Boolean
+                           @DefaultValue(FEMÅR) val tidTilbake: Period,
+                           @DefaultValue("false") @PeriodFormat(SIMPLE) private val sporingsinformasjon: Boolean
                            ): AbstractRestConfig(baseUri, "ping", enabled) {
 
     /*
