@@ -11,12 +11,12 @@ import java.time.Period
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 
 
-//@ConfigurationProperties(prefix = "arbeidsforhold")
-class ArbeidsforholdConfig @ConstructorBinding constructor(@DefaultValue(DEFAULT_BASE_URI) baseUri: URI,
+@ConfigurationProperties(prefix = "arbeidsforhold")
+class ArbeidsforholdConfig @ConstructorBinding constructor(baseUri: URI,
                                                            @DefaultValue(DEFAULT_PING) pingPath: String,
                                                            @DefaultValue(V1_ARBEIDSTAKER_ARBEIDSFORHOLD) val arbeidsforholdPath: String,
                                                            @DefaultValue("true") enabled: Boolean,
-                                                           @DefaultValue(TREÅR) val tidTilbake: Period,
+                                                           @DefaultValue(FEMÅR) val tidTilbake: Period,
                                                            private val sporingsinformasjon: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
 
 
@@ -31,12 +31,11 @@ class ArbeidsforholdConfig @ConstructorBinding constructor(@DefaultValue(DEFAULT
     companion object {
         const val ARBEIDSFORHOLD = "arbeidsforhold"
         private const val DEFAULT_PING = "ping"
-        private const val TREÅR = "3y"
-        private const val V1_ARBEIDSTAKER_ARBEIDSFORHOLD = "/v1/arbeidstaker/arbeidsforhold"
+        private const val FEMÅR = "5y"
+        private const val V1_ARBEIDSTAKER_ARBEIDSFORHOLD = "api/v2/arbeidstaker/arbeidsforhold"
         const val FOM = "ansettelsesperiodeFom"
         const val TOM = "ansettelsesperiodeTom"
         const val SPORINGSINFORMASJON = "sporingsinformasjon"
         const val HISTORIKK = "historikk"
-        private const val DEFAULT_BASE_URI = "http://must.be.set"
     }
 }

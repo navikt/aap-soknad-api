@@ -1,27 +1,41 @@
-management :
-  endpoints:
-    web:
-      exposure:
-        include:  '*'
-  endpoint:
-      health:
-        show-details : always
+management:
+    endpoints:
+        web:
+            exposure:
+                include: '*'
+    endpoint:
+        health:
+            show-details: always
 no.nav:
-  security:
-    jwt:
-      client:
-        registration:
-          isdialogmelding:
-            token-exchange:
-              audience: dev-gcp:teamsykefravr:isdialogmelding
-          pdl-api:
-            token-exchange:
-              audience: dev-fss:pdl:pdl-api
+    security:
+        jwt:
+            client:
+                registration:
+                    aareg-services-q1:
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
+                        token-exchange:
+                            audience: dev-fss:arbeidsforhold:aareg-services-nais-q1
+                    isdialogmelding:
+                        token-exchange:
+                            audience: dev-gcp:teamsykefravr:isdialogmelding
+                    pdl-api:
+                        token-exchange:
+                            audience: dev-fss:pdl:pdl-api
 spring:
- mvc:
-   log-request-details : true
+    mvc:
+        log-request-details: true
+
+arbeidsforhold:
+    base-uri: https://aareg-services-q1.dev.intern.nav.no/aareg-services
+
 fastlege:
-  base-uri: https://isdialogmelding.dev.intern.nav.no
+    base-uri: https://isdialogmelding.dev.intern.nav.no
+
 pdl:
-  base-uri: https://pdl-api.dev-fss-pub.nais.io/graphql
-  scope:    api://dev-fss.pdl.pdl-api/.default
+    base-uri: https://pdl-api.dev-fss-pub.nais.io/graphql
+    scope: api://dev-fss.pdl.pdl-api/.default
