@@ -18,8 +18,8 @@ import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
                            @DefaultValue(PATH) val path: String,
                            @DefaultValue("true") enabled: Boolean,
-                           @DefaultValue(FEMÅR) val tidTilbake: Period,
-                           @DefaultValue("false") @PeriodFormat(SIMPLE) private val sporingsinformasjon: Boolean): AbstractRestConfig(baseUri, "ping", enabled) {
+                           @DefaultValue(FEMÅR) @PeriodFormat(SIMPLE) val tidTilbake: Period,
+                           @DefaultValue("false")  val sporingsinformasjon: Boolean): AbstractRestConfig(baseUri, "ping", enabled) {
 
     fun arbeidsforholdURI(b: UriBuilder, fom: LocalDate) =
         b.path(path)
