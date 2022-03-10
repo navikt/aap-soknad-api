@@ -18,6 +18,8 @@ class OppslagController(val pdl: PDLClient, val fastlege: FastlegeClient, val ar
 
     @GetMapping("/soeker")
     fun søker() : SøkerInfo {
+        val a = arbeid.arbeidsforhold()
+        log.info("Arbeid $a")
         //log.info("Slår opp fastlege")
         //val lege = fastlege.fastlege()
        // log.info("Slått opp fastlege $lege")
