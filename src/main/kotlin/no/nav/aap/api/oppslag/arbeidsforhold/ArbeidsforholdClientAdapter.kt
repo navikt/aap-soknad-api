@@ -20,6 +20,7 @@ class ArbeidsforholdClientAdapter(
         private val authContext: AuthContext) : AbstractWebClientAdapter(webClient, cf) {
 
     private val log = LoggerUtil.getLogger(javaClass)
+    /*
     fun arbeidsforhold(fom: LocalDate) = authContext.getSubject()?.let {
         log.info("Henter arbeidsforhold")
         webClient
@@ -32,6 +33,6 @@ class ArbeidsforholdClientAdapter(
             .block()
             ?.body
     }
-
+*/
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient,authContext=$authContext, cfg=$cf]"
 }
