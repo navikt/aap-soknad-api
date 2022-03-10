@@ -12,6 +12,6 @@ class FastlegeClient(private val adapter: FastlegeClientAdapter) {
         log.info("Henter fastleger")
         var lege =  adapter.fastlege()
         log.info("Hentet fastlege $lege")
-        return lege;
+        return lege
     }
 }

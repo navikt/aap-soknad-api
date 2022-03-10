@@ -18,7 +18,7 @@ object TimeUtil {
     }
 
     fun localDateTime(date: Date): LocalDateTime {
-        return Instant.ofEpochMilli(date.getTime())
+        return Instant.ofEpochMilli(date.time)
             .atZone(ZoneId.systemDefault())
             .toLocalDateTime()
     }
@@ -41,7 +41,7 @@ object TimeUtil {
     }
 
     fun fraDato(dato: Date): LocalDateTime {
-        return Instant.ofEpochMilli(dato.getTime())
+        return Instant.ofEpochMilli(dato.time)
             .atZone(ZoneId.systemDefault())
             .toLocalDateTime()
     }

@@ -12,12 +12,13 @@ import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 
 
 @ConfigurationProperties(prefix = "arbeidsforhold")
-class ArbeidsforholdConfig @ConstructorBinding constructor(baseUri: URI,
-                                                           @DefaultValue(DEFAULT_PING) pingPath: String,
-                                                           @DefaultValue(V1_ARBEIDSTAKER_ARBEIDSFORHOLD) val arbeidsforholdPath: String,
-                                                           @DefaultValue("true") enabled: Boolean,
-                                                           @DefaultValue(FEMÅR) val tidTilbake: Period,
-                                                           private val sporingsinformasjon: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
+@ConstructorBinding
+class ArbeidsforholdConfig (baseUri: URI,
+                            @DefaultValue(DEFAULT_PING) pingPath: String,
+                            @DefaultValue(V1_ARBEIDSTAKER_ARBEIDSFORHOLD) val arbeidsforholdPath: String,
+                            @DefaultValue("true") enabled: Boolean,
+                            @DefaultValue(FEMÅR) val tidTilbake: Period,
+                            private val sporingsinformasjon: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
 
 
     fun arbeidsforholdURI(b: UriBuilder, fom: LocalDate): URI {
