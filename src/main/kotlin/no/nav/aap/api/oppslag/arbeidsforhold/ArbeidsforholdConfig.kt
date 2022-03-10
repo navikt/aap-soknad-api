@@ -4,11 +4,7 @@ import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
-import org.springframework.web.util.UriBuilder
 import java.net.URI
-import java.time.LocalDate
-import java.time.Period
-import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 
 
 @ConfigurationProperties(prefix = "arbeidsforhold")
@@ -17,7 +13,8 @@ class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
                            @DefaultValue(PATH) val path: String,
                            @DefaultValue("true") enabled: Boolean,
                          //  @DefaultValue(FEMÅR) val tidTilbake: Period,
-                           private val sporingsinformasjon: Boolean): AbstractRestConfig(baseUri, "ping", enabled) {
+                         //  private val sporingsinformasjon: Boolean
+                           ): AbstractRestConfig(baseUri, "ping", enabled) {
 
     /*
     fun arbeidsforholdURI(b: UriBuilder, fom: LocalDate): URI {
