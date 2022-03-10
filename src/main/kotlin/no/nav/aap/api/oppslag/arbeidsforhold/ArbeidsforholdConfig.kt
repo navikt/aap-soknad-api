@@ -6,8 +6,11 @@ import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.boot.convert.PeriodFormat
 import org.springframework.boot.convert.PeriodStyle.SIMPLE
+import org.springframework.web.util.UriBuilder
 import java.net.URI
+import java.time.LocalDate
 import java.time.Period
+import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 
 
 @ConfigurationProperties(prefix = "arbeidsforhold")
@@ -16,17 +19,14 @@ class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
                            @DefaultValue(PATH) val path: String,
                            @DefaultValue("true") enabled: Boolean,
                            @DefaultValue(FEMÅR) val tidTilbake: Period,
-                           @DefaultValue("false") @PeriodFormat(SIMPLE) private val sporingsinformasjon: Boolean
-                           ): AbstractRestConfig(baseUri, "ping", enabled) {
+                           @DefaultValue("false") @PeriodFormat(SIMPLE) private val sporingsinformasjon: Boolean): AbstractRestConfig(baseUri, "ping", enabled) {
 
-    /*
-    fun arbeidsforholdURI(b: UriBuilder, fom: LocalDate): URI {
-        return b.path(path)
-            .queryParam(HISTORIKK, false)
+    fun arbeidsforholdURI(b: UriBuilder, fom: LocalDate) =
+        b.path(path)
+             .queryParam(HISTORIKK, false)
             .queryParam(SPORINGSINFORMASJON, sporingsinformasjon)
             .queryParam(FOM, fom.format(ISO_LOCAL_DATE))
-            .build()
-    }*/
+             .build()
 
     companion object {
         const val DEFAULT_URI  ="https://aareg-services-q1.dev.intern.nav.no/aareg-services"
