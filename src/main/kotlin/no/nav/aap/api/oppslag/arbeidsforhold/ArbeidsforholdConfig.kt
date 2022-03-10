@@ -18,8 +18,9 @@ import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
                            @DefaultValue(PATH) val path: String,
                            @DefaultValue("true") enabled: Boolean,
+                           @DefaultValue(DEFAULT_PING)  pp: String,
                            @DefaultValue(FEMÅR) @PeriodFormat(SIMPLE) val tidTilbake: Period,
-                           @DefaultValue("false")  val sporingsinformasjon: Boolean): AbstractRestConfig(baseUri, "ping", enabled) {
+                           @DefaultValue("false")  val sporingsinformasjon: Boolean): AbstractRestConfig(baseUri, pp, enabled) {
 
     fun arbeidsforholdURI(b: UriBuilder, fom: LocalDate) =
         b.path(path)
@@ -29,6 +30,7 @@ class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
              .build()
 
     companion object {
+        const val DEFAULT_PING = "/internal/isAlive"
         const val DEFAULT_URI  ="https://aareg-services-q1.dev.intern.nav.no/aareg-services"
         const val ARBEIDSFORHOLD = "arbeidsforhold"
         const val PATH = "/api/v2/arbeidstaker/arbeidsforhold"
