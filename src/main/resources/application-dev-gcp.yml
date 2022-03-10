@@ -30,9 +30,6 @@ spring:
     mvc:
         log-request-details: true
 
-arbeidsforhold:
-    base-uri: https://aareg-services-q1.dev.intern.nav.no/aareg-services
-
 fastlege:
     base-uri: https://isdialogmelding.dev.intern.nav.no
 
