@@ -5,6 +5,7 @@ import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.util.AuthContext
+import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -22,6 +23,8 @@ import reactor.netty.http.client.HttpClient
 @Configuration
 class ArbeidsforholdClientBeanConfig(@Value("\${spring.application.name}") val applicationName: String) {
     val NAV_PERSON_IDENT = "Nav-Personident"
+    private val log = LoggerUtil.getLogger(javaClass)
+
 
     @Bean
     @Qualifier(ARBEIDSFORHOLD)
@@ -36,9 +39,10 @@ class ArbeidsforholdClientBeanConfig(@Value("\${spring.application.name}") val a
 
 
     private fun navPersonIdentFunction(ctx: AuthContext): ExchangeFilterFunction {
+        log.trace("Subject {}",ctx.getSubject())
         return ExchangeFilterFunction { req: ClientRequest, next: ExchangeFunction ->
             next.exchange(ClientRequest.from(req)
-                        .header(NAV_PERSON_IDENT, ctx.getFnr().fnr)
+                        .header(NAV_PERSON_IDENT, ctx.getSubject())
                         .build())
         }
     }
