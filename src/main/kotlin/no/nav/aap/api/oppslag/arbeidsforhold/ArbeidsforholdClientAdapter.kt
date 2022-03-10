@@ -3,7 +3,6 @@ package no.nav.aap.api.oppslag.arbeidsforhold
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdConfig.Companion.ARBEIDSFORHOLD
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.AuthContext
-import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -15,22 +14,6 @@ class ArbeidsforholdClientAdapter(
         private val cf: ArbeidsforholdConfig,
         private val authContext: AuthContext) : AbstractWebClientAdapter(webClient, cf) {
 
-    private val log = LoggerUtil.getLogger(javaClass)
-    /*
-    fun arbeidsforhold(fom: LocalDate) = authContext.getSubject()?.let {
-        log.info("Henter arbeidsforhold")
-        webClient
-            .get()
-            .uri { b -> cf.arbeidsforholdURI(b, fom) }
-            .accept(APPLICATION_JSON)
-            .retrieve()
-            .onStatus(HttpStatus::isError, ClientResponse::createException)
-            .toEntityList(Map::class.java)
-            .block()
-            ?.body
-    }
-
-     */
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient,authContext=$authContext, cfg=$cf]"
 }

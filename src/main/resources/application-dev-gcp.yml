@@ -29,7 +29,6 @@ no.nav:
 spring:
     mvc:
         log-request-details: true
-
 fastlege:
     base-uri: https://isdialogmelding.dev.intern.nav.no
 

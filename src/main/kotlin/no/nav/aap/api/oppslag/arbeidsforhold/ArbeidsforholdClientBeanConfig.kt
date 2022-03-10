@@ -1,12 +1,10 @@
 package no.nav.aap.api.oppslag.arbeidsforhold
 
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdConfig.Companion.ARBEIDSFORHOLD
-import no.nav.aap.api.oppslag.fastlege.FastlegeClientAdapter
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
-import no.nav.boot.conditionals.EnvUtil
-import no.nav.boot.conditionals.EnvUtil.*
+import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -20,18 +18,17 @@ import reactor.netty.http.client.HttpClient
 
 @Configuration
 class ArbeidsforholdClientBeanConfig(@Value("\${spring.application.name}") val applicationName: String) {
+
     @Bean
     @Qualifier(ARBEIDSFORHOLD)
-    fun webClientArbeidsforhold(builder: Builder,
-                                      cfg: ArbeidsforholdConfig,
-                                      filter: TokenXFilterFunction,env: Environment): WebClient {
-        return builder
+    fun webClientArbeidsforhold(builder: Builder,cfg: ArbeidsforholdConfig, filter: TokenXFilterFunction,env: Environment) =
+         builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
             .filter(correlatingFilterFunction(applicationName))
             .filter(filter)
             .build()
-    }
+
 
     @Bean
     fun arbeidsforholdHealthIndicator(a: ArbeidsforholdClientAdapter) = object: AbstractPingableHealthIndicator(a){
