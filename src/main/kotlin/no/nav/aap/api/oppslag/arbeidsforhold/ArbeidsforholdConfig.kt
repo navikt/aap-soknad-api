@@ -8,11 +8,11 @@ import java.net.URI
 import java.time.Period
 
 
-@ConfigurationProperties(prefix = "arbeidsforhold", ignoreInvalidFields = true)
+@ConfigurationProperties(prefix = "arbeidsforhold")
 @ConstructorBinding
-class ArbeidsforholdConfig(baseUri: URI,
+class ArbeidsforholdConfig(@DefaultValue("https://aareg-services-q1.dev.intern.nav.no/aareg-services") baseUri: URI,
                             @DefaultValue(DEFAULT_PING) pingPath: String,
-                            @DefaultValue(V1_ARBEIDSTAKER_ARBEIDSFORHOLD) val arbeidsforholdPath: String,
+                            @DefaultValue(PATH) val path: String,
                             @DefaultValue("true") enabled: Boolean,
                             @DefaultValue(FEMÅR) val tidTilbake: Period,
                             private val sporingsinformasjon: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
@@ -33,7 +33,7 @@ class ArbeidsforholdConfig(baseUri: URI,
         const val ARBEIDSFORHOLD = "arbeidsforhold"
         private const val DEFAULT_PING = "ping"
         private const val FEMÅR = "5y"
-        private const val V1_ARBEIDSTAKER_ARBEIDSFORHOLD = "api/v2/arbeidstaker/arbeidsforhold"
+        private const val PATH = "api/v2/arbeidstaker/arbeidsforhold"
         const val FOM = "ansettelsesperiodeFom"
         const val TOM = "ansettelsesperiodeTom"
         const val SPORINGSINFORMASJON = "sporingsinformasjon"
