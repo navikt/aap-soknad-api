@@ -21,11 +21,11 @@ class ArbeidsforholdClientAdapter(
 
     private val log = LoggerUtil.getLogger(javaClass)
 
-    fun arbeidsforhold(fom: LocalDate =  LocalDate.now().minus(cf.tidTilbake)): MutableList<Map<*, *>>? {
+    fun arbeidsforhold(): MutableList<Map<*, *>>? {
         log.info("Henter arbeidsforhold")
         return webClient
             .get()
-             .uri { b -> cf.arbeidsforholdURI(b, fom) }
+             .uri { b -> cf.arbeidsforholdURI(b, LocalDate.now().minus(cf.tidTilbake)) }
             .accept(APPLICATION_JSON)
             .retrieve()
             .onStatus(HttpStatus::isError, ClientResponse::createException)
