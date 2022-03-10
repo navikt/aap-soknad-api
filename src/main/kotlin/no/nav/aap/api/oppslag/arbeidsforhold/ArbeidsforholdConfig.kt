@@ -9,7 +9,8 @@ import java.net.URI
 
 @ConfigurationProperties(prefix = "arbeidsforhold")
 @ConstructorBinding
-class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI): AbstractRestConfig(baseUri, "ping", true) {
+class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
+                          @DefaultValue("true") enabled: Boolean): AbstractRestConfig(baseUri, "ping", enabled) {
 
     companion object {
         const val DEFAULT_URI  ="https://aareg-services-q1.dev.intern.nav.no/aareg-services"
