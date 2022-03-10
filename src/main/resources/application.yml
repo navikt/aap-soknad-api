@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ${nais.app.name:soknad-api}
+    name: soknad-api
   main:
     banner-mode: off
   cloud:

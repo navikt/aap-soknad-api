@@ -10,7 +10,7 @@ import java.time.Period
 
 @ConfigurationProperties(prefix = "arbeidsforhold", ignoreInvalidFields = true)
 @ConstructorBinding
-class ArbeidsforholdConfig (baseUri: URI,
+class ArbeidsforholdConfig(baseUri: URI,
                             @DefaultValue(DEFAULT_PING) pingPath: String,
                             @DefaultValue(V1_ARBEIDSTAKER_ARBEIDSFORHOLD) val arbeidsforholdPath: String,
                             @DefaultValue("true") enabled: Boolean,

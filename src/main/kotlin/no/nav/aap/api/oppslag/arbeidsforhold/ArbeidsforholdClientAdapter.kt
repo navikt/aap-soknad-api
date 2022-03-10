@@ -33,7 +33,7 @@ class ArbeidsforholdClientAdapter(
             .block()
             ?.body
     }
-    
+
      */
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient,authContext=$authContext, cfg=$cf]"
