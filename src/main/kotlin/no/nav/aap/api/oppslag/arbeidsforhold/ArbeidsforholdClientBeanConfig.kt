@@ -20,7 +20,6 @@ import reactor.netty.http.client.HttpClient
 
 @Configuration
 class ArbeidsforholdClientBeanConfig(@Value("\${spring.application.name}") val applicationName: String) {
-
     @Bean
     @Qualifier(ARBEIDSFORHOLD)
     fun webClientArbeidsforhold(builder: Builder,

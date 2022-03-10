@@ -11,11 +11,10 @@ import java.time.Period
 @ConfigurationProperties(prefix = "arbeidsforhold")
 @ConstructorBinding
 class ArbeidsforholdConfig(@DefaultValue("https://aareg-services-q1.dev.intern.nav.no/aareg-services") baseUri: URI,
-                            @DefaultValue(DEFAULT_PING) pingPath: String,
-                            @DefaultValue(PATH) val path: String,
-                            @DefaultValue("true") enabled: Boolean,
-                            @DefaultValue(FEMÅR) val tidTilbake: Period,
-                            private val sporingsinformasjon: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
+                           // @DefaultValue(DEFAULT_PING) pingPath: String,
+                            //@DefaultValue(PATH) val path: String,
+                            //@DefaultValue(FEMÅR) val tidTilbake: Period,
+                            private val sporingsinformasjon: Boolean) : AbstractRestConfig(baseUri, "ping", true) {
 
 
     /*

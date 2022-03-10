@@ -3,7 +3,7 @@ package no.nav.aap.api.oppslag.arbeidsforhold
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
-@Component
+//@Component
 class ArbeidsforholdMapper {
     companion object {
         private const val PERIODE = "periode"
