@@ -39,8 +39,8 @@ class ArbeidsforholdClientBeanConfig(@Value("\${spring.application.name}") val a
 
 
     private fun navPersonIdentFunction(ctx: AuthContext): ExchangeFilterFunction {
-        log.trace("Subject {}",ctx.getSubject())
         return ExchangeFilterFunction { req: ClientRequest, next: ExchangeFunction ->
+            log.trace("Subject {}",ctx.getSubject())
             next.exchange(ClientRequest.from(req)
                         .header(NAV_PERSON_IDENT, ctx.getSubject())
                         .build())
