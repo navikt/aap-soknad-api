@@ -12,4 +12,4 @@ acl:
     access: write
   - team: aap
     application: vedtak
-    access: read
+    access: readwrite
