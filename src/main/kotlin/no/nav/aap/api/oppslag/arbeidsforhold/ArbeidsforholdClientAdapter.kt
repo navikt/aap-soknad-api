@@ -24,7 +24,7 @@ class ArbeidsforholdClientAdapter(
         log.info("Henter arbeidsforhold")
         webClient
             .get()
-            .uri { b -> cf.arbeidsforholdURI(b, fom) }
+           // .uri { b -> cf.arbeidsforholdURI(b, fom) }
             .accept(APPLICATION_JSON)
             .retrieve()
             .onStatus(HttpStatus::isError, ClientResponse::createException)

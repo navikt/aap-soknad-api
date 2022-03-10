@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.web.util.UriBuilder
 import java.net.URI
 import java.time.LocalDate
+import java.time.Period
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 
 
@@ -15,15 +16,17 @@ import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
                            @DefaultValue(PATH) val path: String,
                            @DefaultValue("true") enabled: Boolean,
+                           @DefaultValue(FEMÅR) val tidTilbake: Period,
                            private val sporingsinformasjon: Boolean): AbstractRestConfig(baseUri, "ping", enabled) {
 
+    /*
     fun arbeidsforholdURI(b: UriBuilder, fom: LocalDate): URI {
         return b.path(path)
             .queryParam(HISTORIKK, false)
             .queryParam(SPORINGSINFORMASJON, sporingsinformasjon)
             .queryParam(FOM, fom.format(ISO_LOCAL_DATE))
             .build()
-    }
+    }*/
 
     companion object {
         const val DEFAULT_URI  ="https://aareg-services-q1.dev.intern.nav.no/aareg-services"
@@ -31,6 +34,7 @@ class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
         const val PATH = "api/v2/arbeidstaker/arbeidsforhold"
         const val FOM = "ansettelsesperiodeFom"
         const val TOM = "ansettelsesperiodeTom"
+        const val FEMÅR = "5y"
         const val SPORINGSINFORMASJON = "sporingsinformasjon"
         const val HISTORIKK = "historikk"
     }
