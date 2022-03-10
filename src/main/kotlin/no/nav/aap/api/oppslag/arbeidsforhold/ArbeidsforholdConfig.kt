@@ -13,7 +13,7 @@ class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
                            @DefaultValue(PATH) val path: String,
                            @DefaultValue("true") enabled: Boolean,
                          //  @DefaultValue(FEMÅR) val tidTilbake: Period,
-                           private val sporingsinformasjon: Boolean
+                           @DefaultValue("false") private val sporingsinformasjon: Boolean
                            ): AbstractRestConfig(baseUri, "ping", enabled) {
 
     /*
