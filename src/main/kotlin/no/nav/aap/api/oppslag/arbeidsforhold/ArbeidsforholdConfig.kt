@@ -33,7 +33,7 @@ class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
         const val DEFAULT_PING = "/actuator/health/liveness"
         const val DEFAULT_URI  ="https://aap-fss-proxy.dev-fss-pub.nais.io"
         const val ARBEIDSFORHOLD = "arbeidsforhold"
-        const val PATH = "/v1/arbeidstaker/arbeidsforhold"
+        const val PATH = ARBEIDSFORHOLD
         const val FOM = "ansettelsesperiodeFom"
         const val TOM = "ansettelsesperiodeTom"
         const val FEMÅR = "5y"
