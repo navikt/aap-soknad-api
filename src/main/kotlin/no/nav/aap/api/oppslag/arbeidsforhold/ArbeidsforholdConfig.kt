@@ -30,7 +30,7 @@ class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
              .build()
 
     companion object {
-        const val DEFAULT_PING = "/actuator/health/liveness"
+        const val DEFAULT_PING = "actuator/health/liveness"
         const val DEFAULT_URI  ="https://aap-fss-proxy.dev-fss-pub.nais.io"
         const val ARBEIDSFORHOLD = "arbeidsforhold"
         const val PATH = ARBEIDSFORHOLD
