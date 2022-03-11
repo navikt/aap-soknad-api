@@ -30,10 +30,10 @@ class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
              .build()
 
     companion object {
-        const val DEFAULT_PING = "actuator/health/liveness"
-        const val DEFAULT_URI  ="https://aap-fss-proxy.dev-fss-pub.nais.io"
+        const val DEFAULT_PING = "/internal/isAlive"
+        const val DEFAULT_URI  ="https://aareg-services-q1.dev.intern.nav.no"
         const val ARBEIDSFORHOLD = "arbeidsforhold"
-        const val PATH = ARBEIDSFORHOLD
+        const val PATH = "api/v1/arbeidstaker/arbeidsforhold"
         const val FOM = "ansettelsesperiodeFom"
         const val TOM = "ansettelsesperiodeTom"
         const val FEMÅR = "5y"
