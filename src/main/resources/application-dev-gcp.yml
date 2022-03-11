@@ -11,7 +11,7 @@ no.nav:
         jwt:
             client:
                 registration:
-                    aareg-services-q1:
+                    aap-fss-proxy:
                         well-known-url: ${token.x.well.known.url}
                         grant-type: urn:ietf:params:oauth:grant-type:token-exchange
                         authentication:
@@ -19,7 +19,7 @@ no.nav:
                             client-jwk: ${token.x.private.jwk}
                             client-auth-method: private_key_jwt
                         token-exchange:
-                            audience: dev-fss:arbeidsforhold:aareg-services-nais-q1
+                            audience: dev-fss:aap:fss-proxy
                     isdialogmelding:
                         token-exchange:
                             audience: dev-gcp:teamsykefravr:isdialogmelding
