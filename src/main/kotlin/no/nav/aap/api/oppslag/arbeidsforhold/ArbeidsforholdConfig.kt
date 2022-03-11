@@ -31,7 +31,7 @@ class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
 
     companion object {
         const val DEFAULT_PING = "/internal/isAlive"
-        const val DEFAULT_URI  ="https://aareg-services-q1.dev.intern.nav.no"
+        const val DEFAULT_URI  ="https://aareg-services-q1.dev-fss-pub.nais.io"
         const val ARBEIDSFORHOLD = "arbeidsforhold"
         const val PATH = "api/v1/arbeidstaker/arbeidsforhold"
         const val FOM = "ansettelsesperiodeFom"
