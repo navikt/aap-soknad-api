@@ -21,9 +21,9 @@ class OppslagController(val pdl: PDLClient, val fastlege: FastlegeClient, val ar
         log.info("Arbeid")
         val a = arbeid.arbeidsforhold()
         log.info("Arbeid $a")
-        //log.info("Slår opp fastlege")
-        //val lege = fastlege.fastlege()
-       // log.info("Slått opp fastlege $lege")
+        log.info("Slår opp fastlege")
+        val lege = fastlege.fastlege()
+        log.info("Slått opp fastlege $lege")
         return SøkerInfo(pdl.søker(true), Fastlege(Navn("Ikke", "implementert","enda")))
     }
 }
