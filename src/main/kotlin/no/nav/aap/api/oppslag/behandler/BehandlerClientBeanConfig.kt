@@ -1,6 +1,6 @@
-package no.nav.aap.api.oppslag.fastlege
+package no.nav.aap.api.oppslag.behandler
 
-import no.nav.aap.api.oppslag.fastlege.FastlegeConfig.Companion.FASTLEGE
+import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.FASTLEGE
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
@@ -15,11 +15,11 @@ import org.springframework.web.reactive.function.client.WebClient.Builder
 import reactor.netty.http.client.HttpClient
 
 @Configuration
-class FastlegeClientBeanConfig(@Value("\${spring.application.name}") val applicationName: String) {
+class BehandlerClientBeanConfig(@Value("\${spring.application.name}") val applicationName: String) {
 
     @Qualifier(FASTLEGE)
     @Bean
-    fun fastlegeWebClient(builder: Builder, cfg: FastlegeConfig, filter: TokenXFilterFunction, env: Environment) =
+    fun behandlereWebClient(builder: Builder, cfg: BehandlerConfig, filter: TokenXFilterFunction, env: Environment) =
         builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
@@ -28,6 +28,6 @@ class FastlegeClientBeanConfig(@Value("\${spring.application.name}") val applica
             .build()
 
     @Bean
-    fun fastlegeHealthIndicator(a: FastlegeClientAdapter) = object: AbstractPingableHealthIndicator(a){
+    fun behandlerHealthIndicator(a: BehandlerClientAdapter) = object: AbstractPingableHealthIndicator(a){
     }
 }

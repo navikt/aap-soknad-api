@@ -1,4 +1,4 @@
-package no.nav.aap.api.oppslag.fastlege
+package no.nav.aap.api.oppslag.behandler
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.OrgNummer
-import no.nav.aap.api.oppslag.fastlege.Fastlege.BehandlerType.FASTLEGE
+import no.nav.aap.api.oppslag.behandler.Behandler.BehandlerType.FASTLEGE
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import kotlin.test.assertEquals
 
 @SpringBootTest(classes = [ObjectMapper::class])
-class FastlegeTest {
+class BehandlerTest {
     @Autowired
     lateinit var mapper: ObjectMapper
     val json = "[\n" +

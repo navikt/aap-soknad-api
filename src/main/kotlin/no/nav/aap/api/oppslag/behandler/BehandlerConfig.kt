@@ -1,4 +1,4 @@
-package no.nav.aap.api.oppslag.fastlege
+package no.nav.aap.api.oppslag.behandler
 
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -8,7 +8,7 @@ import java.net.URI
 
 @ConfigurationProperties(prefix = "fastlege")
 @ConstructorBinding
-class FastlegeConfig(
+class BehandlerConfig(
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
         @DefaultValue(DEFAULT_PATH) val path: String,
         @DefaultValue("true")  enabled: Boolean,

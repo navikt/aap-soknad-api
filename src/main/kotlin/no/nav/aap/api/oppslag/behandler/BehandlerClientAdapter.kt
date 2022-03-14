@@ -1,6 +1,6 @@
-package no.nav.aap.api.oppslag.fastlege
+package no.nav.aap.api.oppslag.behandler
 
-import no.nav.aap.api.oppslag.fastlege.FastlegeConfig.Companion.FASTLEGE
+import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.FASTLEGE
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
@@ -13,9 +13,9 @@ import org.springframework.web.reactive.function.client.WebClient
 
 
 @Component
-class FastlegeClientAdapter(
+class BehandlerClientAdapter(
         @Qualifier(FASTLEGE) webClient: WebClient,
-        private val cf: FastlegeConfig,
+        private val cf: BehandlerConfig,
         private val authContext: AuthContext) : AbstractWebClientAdapter(webClient, cf) {
 
     private val log = LoggerUtil.getLogger(javaClass)
@@ -27,7 +27,7 @@ class FastlegeClientAdapter(
                 .onStatus({ obj: HttpStatus -> obj.isError }) { obj: ClientResponse -> obj.createException() }
                 .toEntityList(BehandlerDTO::class.java)
                 .block()
-                ?.body?.map { it.tilFastlege() }.orEmpty()
+                ?.body?.map { it.tilBehandler() }.orEmpty()
 
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient,authContext=$authContext, cfg=$cf]"
