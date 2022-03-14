@@ -13,7 +13,7 @@ data class BehandlerDTO(
         val fornavn: String,
         val mellomnavn: String?,
         val etternavn: String,
-        @JsonAlias("orgnr") val orgnummer: OrgNummer?,
+        val orgnummer: OrgNummer?,
         val kontor: String?,
         val adresse: String?,
         val postnummer: String?,
