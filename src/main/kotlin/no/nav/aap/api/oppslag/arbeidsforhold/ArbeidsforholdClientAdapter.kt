@@ -21,7 +21,7 @@ class ArbeidsforholdClientAdapter(
 
     private val log = LoggerUtil.getLogger(javaClass)
 
-    fun arbeidsforhold(): MutableList<Map<*, *>>? {
+    fun arbeidsforhold(): MutableList<ArbeidsforholdDTO>? {
         log.info("Henter arbeidsforhold")
         return webClient
             .get()
@@ -29,7 +29,7 @@ class ArbeidsforholdClientAdapter(
             .accept(APPLICATION_JSON)
             .retrieve()
             .onStatus(HttpStatus::isError, ClientResponse::createException)
-            .toEntityList(Map::class.java)
+            .toEntityList(ArbeidsforholdDTO::class.java)
             .block()
             ?.body
     }
