@@ -1,5 +1,7 @@
 package no.nav.aap.api.oppslag.fastlege
 
+import com.fasterxml.jackson.annotation.JsonAlias
+import com.google.gson.annotations.JsonAdapter
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.OrgNummer
@@ -11,7 +13,7 @@ data class BehandlerDTO(
         val fornavn: String,
         val mellomnavn: String?,
         val etternavn: String,
-        val orgnummer: OrgNummer?,
+        @JsonAlias("orgnr") val orgnummer: OrgNummer?,
         val kontor: String?,
         val adresse: String?,
         val postnummer: String?,
