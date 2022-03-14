@@ -6,7 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.OrgNummer
-import no.nav.aap.api.oppslag.fastlege.BehandlerType.FASTLEGE
+import no.nav.aap.api.oppslag.fastlege.Fastlege.BehandlerType.FASTLEGE
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,7 +39,8 @@ class FastlegeTest {
     fun serdeserTest() {
         val o = OrgNummer("976673867")
         serdeser(o)
-        val f = BehandlerDTO(FASTLEGE,"123", Fødselsnummer("11111111111"),"Unni", "Mellom","Larsen",
+        val f = BehandlerDTO(
+                FASTLEGE,"123", Fødselsnummer("11111111111"),"Unni", "Mellom","Larsen",
                 OrgNummer("976673867"),"Kontor","Adresse","5300","KLEPPESTØ","61253479")
         serdeser(f,true)
     }

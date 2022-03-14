@@ -1,6 +1,5 @@
 package no.nav.aap.api.oppslag.fastlege
 
-import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.oppslag.fastlege.FastlegeConfig.Companion.FASTLEGE
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.AuthContext
@@ -20,9 +19,7 @@ class FastlegeClientAdapter(
         private val authContext: AuthContext) : AbstractWebClientAdapter(webClient, cf) {
 
     private val log = LoggerUtil.getLogger(javaClass)
-    fun fastlege() = authContext.getSubject()?.let {
-        log.info("Henter fastleger")
-        webClient
+    fun fastlege() = webClient
                 .get()
                 .uri { b -> b.path(cf.path).build() }
                 .accept(APPLICATION_JSON)
@@ -30,8 +27,7 @@ class FastlegeClientAdapter(
                 .onStatus({ obj: HttpStatus -> obj.isError }) { obj: ClientResponse -> obj.createException() }
                 .toEntityList(BehandlerDTO::class.java)
                 .block()
-                ?.body?.stream()?.map(BehandlerDTO::tilFastlege)?.findFirst()
-    }
+                ?.body?.map { it.tilFastlege() }.orEmpty()
 
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient,authContext=$authContext, cfg=$cf]"
