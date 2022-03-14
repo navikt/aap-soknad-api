@@ -21,11 +21,19 @@ data class BehandlerDTO(
         val telefon: String?)
 
 
-data class Behandler(val type: BehandlerType, val navn: Navn, val kontaktinformasjon: KontaktInformasjon) {
+data class Behandler(val type: BehandlerType,
+                     val navn: Navn,
+                     val kontaktinformasjon: KontaktInformasjon) {
     enum class BehandlerType {
         FASTLEGE
     }
-    data class KontaktInformasjon(val behandlerRef: String, val kontor: String?, val orgnummer: OrgNummer?, val adresse: String?, val postnr: String?, val poststed: String?, var telefon: String?)
+    data class KontaktInformasjon(val behandlerRef: String,
+                                  val kontor: String?,
+                                  val orgnummer: OrgNummer?,
+                                  val adresse: String?,
+                                  val postnr: String?,
+                                  val poststed: String?,
+                                  var telefon: String?)
 }
 fun BehandlerDTO.tilBehandler() = Behandler(type,Navn(fornavn,mellomnavn,etternavn),
         KontaktInformasjon(behandlerRef,kontor,orgnummer,adresse,postnummer,poststed,telefon))

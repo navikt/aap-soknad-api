@@ -2,8 +2,6 @@ package no.nav.aap.api.oppslag.behandler
 
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.FASTLEGE
 import no.nav.aap.rest.AbstractWebClientAdapter
-import no.nav.aap.util.AuthContext
-import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -15,10 +13,8 @@ import org.springframework.web.reactive.function.client.WebClient
 @Component
 class BehandlerClientAdapter(
         @Qualifier(FASTLEGE) webClient: WebClient,
-        private val cf: BehandlerConfig,
-        private val authContext: AuthContext) : AbstractWebClientAdapter(webClient, cf) {
+        private val cf: BehandlerConfig) : AbstractWebClientAdapter(webClient, cf) {
 
-    private val log = LoggerUtil.getLogger(javaClass)
     fun fastlege() = webClient
                 .get()
                 .uri { b -> b.path(cf.path).build() }
@@ -30,5 +26,5 @@ class BehandlerClientAdapter(
                 ?.body?.map { it.tilBehandler() }.orEmpty()
 
 
-    override fun toString() = "${javaClass.simpleName} [webClient=$webClient,authContext=$authContext, cfg=$cf]"
+    override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cf]"
 }
