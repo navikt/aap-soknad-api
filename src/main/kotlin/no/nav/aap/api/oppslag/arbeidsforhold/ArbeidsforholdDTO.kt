@@ -18,12 +18,20 @@ data class ArbeidsforholdDTO(
         val registrert: LocalDateTime,
         val sistBekreftet: LocalDateTime) {
 
-    data class Arbeidstaker(val type: String,
+    data class Arbeidstaker(val type: ArbeidstakerType,
                             val offentligIdent: String,
-                            val aktoerId: String)
+                            val aktoerId: String) {
+        enum ArbeidstakerType() {
+            Person
+        }
+    }
 
-    data class Arbeidsgiver(val type: String,
-                            val organisasjonsnummer: OrgNummer)
+    data class Arbeidsgiver(val type: ArbeidsgiverType,
+                            val organisasjonsnummer: OrgNummer) {
+        enum ArbeidsgiverType {
+            Organisasjon,Person
+        }
+    }
 
     data class Varsel(val entitet: String,
                       val varslingskode: String)
