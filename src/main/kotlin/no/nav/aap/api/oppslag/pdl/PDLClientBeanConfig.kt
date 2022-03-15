@@ -12,17 +12,13 @@ import no.nav.aap.util.StringExtensions.asBearer
 import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
-import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.*
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
-import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
@@ -49,9 +45,10 @@ class PDLClientBeanConfig(@Value("\${spring.application.name}") val applicationN
     @Qualifier(PDL_SYSTEM)
     fun aadPDLClientCredentialFilterFunction(configs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
         ExchangeFilterFunction { req, next ->
-            val token = service.getAccessToken(configs.registration["client-credentials-pdl"]).accessToken
-            next.exchange(ClientRequest.from(req).header(AUTHORIZATION, token.asBearer()).build())
+            next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.systemToken(configs).asBearer()).build())
         }
+
+    private fun OAuth2AccessTokenService.systemToken(configs: ClientConfigurationProperties) = getAccessToken(configs.registration["client-credentials-pdl"]).accessToken
 
     @Qualifier(PDL_SYSTEM)
     @Bean

@@ -9,7 +9,7 @@ import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.web.bind.annotation.GetMapping
 
 @ProtectedRestController(value = ["/oppslag"], issuer = Constants.IDPORTEN)
-class OppslagController(val pdl: PDLClient, val fastlege: BehandlerClient, val arbeid: ArbeidsforholdClient) {
+class OppslagController(val pdl: PDLClient, val behandler: BehandlerClient, val arbeid: ArbeidsforholdClient) {
 
     private val log = LoggerUtil.getLogger(javaClass)
 
@@ -18,9 +18,9 @@ class OppslagController(val pdl: PDLClient, val fastlege: BehandlerClient, val a
         log.info("Arbeid")
         val a = arbeid.arbeidsforhold()
         log.info("Arbeid $a")
-        log.info("Slår opp fastlege")
-        val lege = fastlege.fastlege()
-        log.info("Slått opp fastlege $lege")
-        return SøkerInfo(pdl.søker(true), lege.firstOrNull())
+        log.info("Slår opp behandlere")
+        val behandlere = behandler.behandlere()
+        log.info("Slått opp behandlere $behandlere")
+        return SøkerInfo(pdl.søker(true), behandlere)
     }
 }
