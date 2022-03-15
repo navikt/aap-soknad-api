@@ -21,14 +21,14 @@ data class ArbeidsforholdDTO(
     data class Arbeidstaker(val type: ArbeidstakerType,
                             val offentligIdent: String,
                             val aktoerId: String) {
-        enum ArbeidstakerType {
+        enum class ArbeidstakerType {
             Person
         }
     }
 
     data class Arbeidsgiver(val type: ArbeidsgiverType,
                             val organisasjonsnummer: OrgNummer) {
-        enum ArbeidsgiverType {
+        enum class ArbeidsgiverType {
             Organisasjon,Person
         }
     }
