@@ -21,7 +21,7 @@ data class ArbeidsforholdDTO(
     data class Arbeidstaker(val type: ArbeidstakerType,
                             val offentligIdent: String,
                             val aktoerId: String) {
-        enum ArbeidstakerType() {
+        enum ArbeidstakerType {
             Person
         }
     }
