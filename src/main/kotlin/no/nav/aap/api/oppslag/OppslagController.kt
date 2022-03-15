@@ -23,7 +23,7 @@ class OppslagController(val pdl: PDLClient, val behandler: BehandlerClient, val 
         val behandlere = behandler.behandlere()
         log.info("Slått opp behandlere $behandlere")
         */
-         */
+      
         return SøkerInfo(pdl.søker(true), listOf()/*behandlere*/, arbeidsforhold)
     }
 }
