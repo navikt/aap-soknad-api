@@ -17,7 +17,7 @@ class ArbeidsforholdClientAdapter(
         private val cf: ArbeidsforholdConfig) : AbstractWebClientAdapter(webClient, cf) {
 
 
-    fun arbeidsforhold(): MutableList<ArbeidsforholdDTO>? =
+    fun arbeidsforhold() =
          webClient
             .get()
              .uri { b -> cf.arbeidsforholdURI(b, now().minus(cf.tidTilbake)) }
@@ -27,6 +27,7 @@ class ArbeidsforholdClientAdapter(
             .toEntityList(ArbeidsforholdDTO::class.java)
             .block()
             ?.body
+             ?.map { it.tilArbeidsforhold() }.orEmpty()
 
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cf]"

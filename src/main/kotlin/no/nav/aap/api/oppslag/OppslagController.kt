@@ -16,11 +16,14 @@ class OppslagController(val pdl: PDLClient, val behandler: BehandlerClient, val 
     @GetMapping("/soeker")
     fun søker() : SøkerInfo {
         log.info("Arbeid")
-        val a = arbeid.arbeidsforhold()
-        log.info("Arbeid $a")
+        val arbeidsforhold = arbeid.arbeidsforhold()
+        log.info("Arbeidsforhold $arbeidsforhold")
+        /*
         log.info("Slår opp behandlere")
         val behandlere = behandler.behandlere()
         log.info("Slått opp behandlere $behandlere")
-        return SøkerInfo(pdl.søker(true), behandlere)
+        */
+         */
+        return SøkerInfo(pdl.søker(true), listOf()/*behandlere*/, arbeidsforhold)
     }
 }
