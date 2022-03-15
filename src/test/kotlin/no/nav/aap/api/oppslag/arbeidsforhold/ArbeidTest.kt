@@ -8,7 +8,9 @@ import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.Ansettelsesperiode
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.Arbeidsavtale
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.Arbeidsgiver
+import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.Arbeidsgiver.ArbeidsgiverType.Organisasjon
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.Arbeidstaker
+import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.Arbeidstaker.ArbeidstakerType.Person
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.Opplysningspliktig
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.Varsel
 import org.assertj.core.api.Assertions.assertThat
@@ -78,9 +80,9 @@ class ArbeidTest {
 
     @Test
     fun serdeserTest() {
-        val a = Arbeidstaker("123", "456", aktoerId = "789")
+        val a = Arbeidstaker(Person, "456", aktoerId = "789")
         serdeser(a)
-        val a1 = Arbeidsgiver("123", OrgNummer("999263550"))
+        val a1 = Arbeidsgiver(Organisasjon, OrgNummer("999263550"))
         serdeser(a1)
         val v = Varsel("entitet","kode")
         serdeser(v)
