@@ -3,6 +3,7 @@ package no.nav.aap.api.oppslag.arbeidsforhold
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.Ansettelsesperiode
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.Arbeidsavtale
@@ -79,11 +80,11 @@ class ArbeidTest {
     fun serdeserTest() {
         val a = Arbeidstaker("123", "456", aktoerId = "789")
         serdeser(a)
-        val a1 = Arbeidsgiver("123", "456")
+        val a1 = Arbeidsgiver("123", OrgNummer("999263550"))
         serdeser(a1)
         val v = Varsel("entitet","kode")
         serdeser(v)
-        val o = Opplysningspliktig("ja","123")
+        val o = Opplysningspliktig("ja",OrgNummer("999263550"))
         serdeser(o)
         val p = Periode(LocalDate.now(),LocalDate.now().plusDays(1))
         serdeser(p)
