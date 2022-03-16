@@ -31,7 +31,8 @@ spring:
         log-request-details: true
 fastlege:
     base-uri: https://isdialogmelding.dev.intern.nav.no
-
+organisasjon:
+    base-uri: https://aap-fss-proxy.dev-fss-pub.nais.io
 pdl:
     base-uri: https://pdl-api.dev-fss-pub.nais.io/graphql
     scope: api://dev-fss.pdl.pdl-api/.default

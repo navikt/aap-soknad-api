@@ -26,6 +26,11 @@ spec:
     inbound:
       rules:
         - application: soknad
+    outbound:
+      rules:
+        - application: fss-proxy
+          namespace: aap
+          cluster: dev-fss
   tokenx:
     enabled: true
   kafka:

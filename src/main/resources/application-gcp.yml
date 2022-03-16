@@ -37,6 +37,13 @@ no.nav:
     jwt:
       client:
         registration:
+          fss-proxy:
+            well-known-url: ${token.x.well.known.url}
+            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+            authentication:
+              client-id: ${token.x.client.id}
+              client-jwk: ${token.x.private.jwk}
+              client-auth-method: private_key_jwt
           client-credentials-pdl:
             token-endpoint-url: ${azure.openid.config.token.endpoint}
             grant-type: client_credentials

@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.Søknad
 import no.nav.aap.api.søknad.model.UtenlandsSøknadView

@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad
 
-import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Søker
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
 import no.nav.aap.api.oppslag.pdl.PDLClient
@@ -29,7 +28,7 @@ class KafkaUtenlandsSøknadFormidler(
 
     fun formidle(søknad: UtenlandsSøknadView) {
         log.info(CONFIDENTIAL, "Formidler utenlandssøknad for ${authContext.getFnr()}")
-        formidle(søknad.toKafkaObject(Søker(authContext.getFnr(), pdl.søker(false)?.navn)))
+        formidle(søknad.toKafkaObject(Søker(authContext.getFnr(), pdl.søkerUtenBarn()?.navn)))
     }
 
     private fun formidle(søknad: UtenlandsSøknadKafka) =
