@@ -18,11 +18,11 @@ class OppslagController(val pdl: PDLClient, val behandler: BehandlerClient, val 
         log.info("Arbeid")
         val arbeidsforhold = arbeid.arbeidsforhold()
         log.info("Arbeidsforhold $arbeidsforhold")
-        /*
+
         log.info("Slår opp behandlere")
         val behandlere = behandler.behandlere()
         log.info("Slått opp behandlere $behandlere")
-        */
+        
 
         return SøkerInfo(pdl.søker(true), listOf()/*behandlere*/, arbeidsforhold)
     }
