@@ -33,7 +33,6 @@ class OrganisasjonConfig (baseUri: URI,
             return newInstance()
                 .path(organisasjonPath)
                 .queryParam("orgnummer", NAV)
-                .build(NAV)
                 .toString()
         }
     }
