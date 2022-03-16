@@ -25,7 +25,7 @@ class KafkaSøknadFormidler(
 
     fun formidle() {
         log.info(CONFIDENTIAL, "Formidler søknad for {}", authContext.getFnr())
-        formidle(SøknadKafka(authContext.getFnr(), pdl.søker(false)?.fødseldato))
+        formidle(SøknadKafka(authContext.getFnr(), pdl.søkerUtenBarn()?.fødseldato))
     }
 
     private fun formidle(søknad: SøknadKafka) =
