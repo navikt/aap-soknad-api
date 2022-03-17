@@ -45,7 +45,7 @@ no.nav:
               client-jwk: ${token.x.private.jwk}
               client-auth-method: private_key_jwt
 
-          fss-proxy:
+          aap-fss-proxy:
             well-known-url: ${token.x.well.known.url}
             grant-type: urn:ietf:params:oauth:grant-type:token-exchange
             authentication:

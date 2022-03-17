@@ -11,7 +11,7 @@ no.nav:
         jwt:
             client:
                 registration:
-                    fss-proxy:
+                    aap-fss-proxy:
                         token-exchange:
                             audience: dev-fss:aap:fss-proxy
                     aareg-services-q1:
