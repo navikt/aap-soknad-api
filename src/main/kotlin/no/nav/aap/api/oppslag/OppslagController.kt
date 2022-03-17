@@ -15,7 +15,7 @@ class OppslagController(val pdl: PDLClient, val behandler: BehandlerClient, val 
 
     @GetMapping("/soeker")
     fun søker() : SøkerInfo {
-        log.info("Arbeid")
+        log.info("Slår opp arbeidsforhold")
         val arbeidsforhold = arbeid.arbeidsforhold()
         log.info("Arbeidsforhold $arbeidsforhold")
 
