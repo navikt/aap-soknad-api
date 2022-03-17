@@ -1,6 +1,6 @@
 package no.nav.aap.api.oppslag.behandler
 
-import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.FASTLEGE
+import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLERE
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
@@ -11,11 +11,11 @@ import org.springframework.web.reactive.function.client.WebClient
 
 
 @Component
-class BehandlerClientAdapter(
-        @Qualifier(FASTLEGE) webClient: WebClient,
+class BehandlerWebClientAdapter(
+        @Qualifier(BEHANDLERE) webClient: WebClient,
         private val cf: BehandlerConfig) : AbstractWebClientAdapter(webClient, cf) {
 
-    fun fastlege() = webClient
+    fun behandlere() = webClient
                 .get()
                 .uri { b -> b.path(cf.path).build() }
                 .accept(APPLICATION_JSON)

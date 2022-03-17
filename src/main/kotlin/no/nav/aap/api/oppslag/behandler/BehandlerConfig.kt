@@ -16,7 +16,7 @@ class BehandlerConfig(
 
 
     companion object {
-        const val FASTLEGE = "fastlege"
+        const val BEHANDLERE = "fastlege"
         const val DEFAULT_PATH = "api/person/v1/behandler/self"
         const val DEFAULT_PING_PATH = "is_alive"
     }

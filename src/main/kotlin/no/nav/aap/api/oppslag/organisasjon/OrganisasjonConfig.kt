@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag.organisasjon
 
+import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -16,11 +17,11 @@ class OrganisasjonConfig (baseUri: URI,
                           @DefaultValue(PINGPATH)  val pp: String,
                           @DefaultValue("true") enabled: Boolean) :
     AbstractRestConfig(baseUri, pp, enabled) {
-    fun getOrganisasjonURI(b: UriBuilder, orgnr: String?): URI {
-        return b.path(organisasjonPath)
-            .queryParam("orgnummer", orgnr)
+    fun getOrganisasjonURI(b: UriBuilder, orgnr: OrgNummer) =
+         b.path(organisasjonPath)
+            .queryParam("orgnummer", orgnr.orgnr)
             .build()
-    }
+
 
     override fun toString(): String {
         return javaClass.simpleName + "[organisasjonPath=" + organisasjonPath + ", pingEndpoint=" + pingEndpoint + "]"

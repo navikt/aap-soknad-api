@@ -1,6 +1,6 @@
 package no.nav.aap.api.oppslag.behandler
 
-import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.FASTLEGE
+import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLERE
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
@@ -17,7 +17,7 @@ import reactor.netty.http.client.HttpClient
 @Configuration
 class BehandlerClientBeanConfig(@Value("\${spring.application.name}") val applicationName: String) {
 
-    @Qualifier(FASTLEGE)
+    @Qualifier(BEHANDLERE)
     @Bean
     fun behandlereWebClient(builder: Builder, cfg: BehandlerConfig, filter: TokenXFilterFunction, env: Environment) =
         builder
@@ -28,6 +28,6 @@ class BehandlerClientBeanConfig(@Value("\${spring.application.name}") val applic
             .build()
 
     @Bean
-    fun behandlerHealthIndicator(a: BehandlerClientAdapter) = object: AbstractPingableHealthIndicator(a){
+    fun behandlerHealthIndicator(a: BehandlerWebClientAdapter) = object: AbstractPingableHealthIndicator(a){
     }
 }
