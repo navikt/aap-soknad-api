@@ -3,6 +3,7 @@ package no.nav.aap.api.oppslag.organisasjon
 import no.nav.aap.api.oppslag.organisasjon.OrganisasjonConfig.Companion.ORGANISASJON
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
+import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.boot.conditionals.EnvUtil
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -18,11 +19,12 @@ class OrganisasjonClientBeanConfig(@Value("\${spring.application.name}") val app
 
     @Bean
     @Qualifier(ORGANISASJON)
-    fun organisasjonkWebClient(builder: WebClient.Builder,env: Environment) =
+    fun organisasjonWebClient(builder: WebClient.Builder, tokenXFilter: TokenXFilterFunction, env: Environment) =
         builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(EnvUtil.isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
             .filter(correlatingFilterFunction(applicationName))
+            .filter(tokenXFilter)
             .build()
 
     @Bean
