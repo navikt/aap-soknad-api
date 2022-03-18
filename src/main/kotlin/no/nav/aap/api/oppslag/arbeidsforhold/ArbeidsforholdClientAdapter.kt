@@ -1,7 +1,6 @@
 package no.nav.aap.api.oppslag.arbeidsforhold
 
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdConfig.Companion.ARBEIDSFORHOLD
-import no.nav.aap.api.oppslag.behandler.BehandlerDTO
 import no.nav.aap.api.oppslag.organisasjon.OrganisasjonWebClientAdapter
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.beans.factory.annotation.Qualifier

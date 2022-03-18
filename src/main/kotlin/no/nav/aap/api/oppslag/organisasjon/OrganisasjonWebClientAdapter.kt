@@ -9,7 +9,6 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import java.util.*
@@ -27,7 +26,8 @@ class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON)  val client: WebClie
                  .onStatus({ obj: HttpStatus -> obj.isError }) { Mono.empty() }
                  .bodyToMono(String::class.java)
                  .defaultIfEmpty(orgnr.orgnr)
-                .block()
+                .block() ?: orgnr.orgnr
+
 
     override fun name() =  capitalize(ORGANISASJON.lowercase(Locale.getDefault()))
 }
