@@ -10,7 +10,7 @@ import java.net.URI
 
 @ConfigurationProperties(prefix = "krr")
 @ConstructorBinding
-class KRRConfig (@DefaultValue(DEFAULT_BASE_URI) baseUri: URI,
+class KRRConfig (baseUri: URI,
                  @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
                  @DefaultValue(DEFAULT_PERSON_PATH) private val personPath: String,
                  @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
@@ -21,6 +21,5 @@ class KRRConfig (@DefaultValue(DEFAULT_BASE_URI) baseUri: URI,
         const val KRR = "krr"
         private const val DEFAULT_PING_PATH = "rest/ping"
         private const val DEFAULT_PERSON_PATH = "rest/v1/person"
-        private const val DEFAULT_BASE_URI = "https://digdir-krr-proxy.intern.nav.no"
     }
 }

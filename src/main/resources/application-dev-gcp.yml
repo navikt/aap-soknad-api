@@ -11,6 +11,9 @@ no.nav:
         jwt:
             client:
                 registration:
+                    digdir-krr-proxy:
+                        token-exchange:
+                            audience: dev-gcp:team-rocket:digdir-krr-proxy
                     aap-fss-proxy:
                         token-exchange:
                             audience: dev-fss:aap:fss-proxy
@@ -26,6 +29,8 @@ no.nav:
 spring:
     mvc:
         log-request-details: true
+krr:
+    base-uri: https://digdir-krr-proxy.intern.nav.no
 fastlege:
     base-uri: https://isdialogmelding.dev.intern.nav.no
 organisasjon:
