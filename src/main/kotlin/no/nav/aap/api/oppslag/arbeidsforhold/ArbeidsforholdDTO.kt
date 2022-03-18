@@ -28,8 +28,8 @@ data class ArbeidsforholdDTO(
     }
 
     data class ArbeidsgiverDTO(val type: ArbeidsgiverType,
-                               val organisasjonsnummer: OrgNummer) {
-    }
+                               val organisasjonsnummer: OrgNummer)
+
     enum class ArbeidsgiverType {
         Organisasjon,Person
     }
@@ -54,7 +54,7 @@ data class ArbeidsforholdDTO(
          fun tilAvtale()  = Arbeidsavtale(stillingsprosent,antallTimerPrUke)
     }
 
-    fun tilArbeidsforhold(orgNavn: String) = Arbeidsforhold(orgNavn,arbeidsavtaler?.map{ it.tilAvtale() })
+    fun tilArbeidsforhold(orgNavn: String) = Arbeidsforhold(orgNavn, arbeidsavtaler.map{ it.tilAvtale() })
 
     data class Arbeidsforhold(val navn: String,val avtaler: List<Arbeidsavtale>){
         data class Arbeidsavtale(val stillingsprosent: Double,val antallTimerPrUke: Double)

@@ -16,14 +16,14 @@ class BehandlerWebClientAdapter(
         private val cf: BehandlerConfig) : AbstractWebClientAdapter(webClient, cf) {
 
     fun behandlere() = webClient
-                .get()
-                .uri { b -> b.path(cf.path).build() }
-                .accept(APPLICATION_JSON)
-                .retrieve()
-                .onStatus({ obj: HttpStatus -> obj.isError }) { obj: ClientResponse -> obj.createException() }
-                .toEntityList(BehandlerDTO::class.java)
-                .block()
-                ?.body?.map { it.tilBehandler() }.orEmpty()
+        .get()
+        .uri { b -> b.path(cf.path).build() }
+        .accept(APPLICATION_JSON)
+        .retrieve()
+        .bodyToFlux(BehandlerDTO::class.java)
+        .collectList()
+        .block()
+        ?.map { it.tilBehandler() }.orEmpty()
 
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cf]"

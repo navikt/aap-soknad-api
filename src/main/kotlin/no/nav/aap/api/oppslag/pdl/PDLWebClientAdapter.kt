@@ -75,7 +75,6 @@ class PDLWebClientAdapter(
             .uri(baseUri)
             .accept(APPLICATION_JSON, TEXT_PLAIN)
             .retrieve()
-            .onStatus({ obj: HttpStatus -> obj.isError }) { obj: ClientResponse -> obj.createException() }
             .toBodilessEntity()
             .block()
     }

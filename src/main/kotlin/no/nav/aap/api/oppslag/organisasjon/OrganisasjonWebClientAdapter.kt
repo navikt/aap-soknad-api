@@ -24,10 +24,10 @@ class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON)  val client: WebClie
                 .uri { b -> cf.getOrganisasjonURI(b, orgnr) }
                 .accept(APPLICATION_JSON)
                 .retrieve()
-                 .onStatus({ obj: HttpStatus -> obj.isError }) { obj: ClientResponse -> Mono.empty() }
-                .toEntity(String::class.java)
+                 .onStatus({ obj: HttpStatus -> obj.isError }) { Mono.empty() }
+                 .bodyToMono(String::class.java)
+                 .defaultIfEmpty(orgnr.orgnr)
                 .block()
-                ?.body
-                ?: orgnr.orgnr
+
     override fun name() =  capitalize(ORGANISASJON.lowercase(Locale.getDefault()))
 }

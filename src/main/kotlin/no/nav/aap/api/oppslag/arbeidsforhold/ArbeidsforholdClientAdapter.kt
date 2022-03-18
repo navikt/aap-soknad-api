@@ -1,6 +1,7 @@
 package no.nav.aap.api.oppslag.arbeidsforhold
 
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdConfig.Companion.ARBEIDSFORHOLD
+import no.nav.aap.api.oppslag.behandler.BehandlerDTO
 import no.nav.aap.api.oppslag.organisasjon.OrganisasjonWebClientAdapter
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.beans.factory.annotation.Qualifier
@@ -24,10 +25,10 @@ class ArbeidsforholdClientAdapter(
              .uri { b -> cf.arbeidsforholdURI(b, now().minus(cf.tidTilbake)) }
             .accept(APPLICATION_JSON)
             .retrieve()
-            .toEntityList(ArbeidsforholdDTO::class.java)
-            .block()
-            ?.body
-             ?.map { it.tilArbeidsforhold(orgAdapter.orgNavn(it.arbeidsgiver.organisasjonsnummer)) }.orEmpty()
+             .bodyToFlux(ArbeidsforholdDTO::class.java)
+             .collectList()
+             .block()
+            ?.map { it.tilArbeidsforhold(orgAdapter.orgNavn(it.arbeidsgiver.organisasjonsnummer)) }.orEmpty()
 
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cf]"
