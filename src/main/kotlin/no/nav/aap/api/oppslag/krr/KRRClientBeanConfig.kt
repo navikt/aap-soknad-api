@@ -29,7 +29,7 @@ class KRRClientBeanConfig(@Value("\${spring.application.name}") val applicationN
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
             .filter(AbstractWebClientAdapter.correlatingFilterFunction(applicationName))
-            .filter(navPersonIdentFilterFunction(ctx))
+            .filter(navPersonIdentFilterFunction(Constants.NAV_PERSON_IDENT) { ctx.getSubject() })
             .filter(tokenXFilterFunction)
             .build()
 
@@ -37,11 +37,12 @@ class KRRClientBeanConfig(@Value("\${spring.application.name}") val applicationN
     fun krrHealthIndicator(a: KRRWebClientAdapter) = object: AbstractPingableHealthIndicator(a){
     }
 
-    fun navPersonIdentFilterFunction(ctx: AuthContext) =
+    fun navPersonIdentFilterFunction(key: String, value: () -> String) =
         ExchangeFilterFunction { req: ClientRequest, next: ExchangeFunction ->
             next.exchange(
                     ClientRequest.from(req)
-                        .header(Constants.NAV_PERSON_IDENT, ctx.getSubject())
+                        .header(key, value.invoke())
                         .build())
         }
+
 }
