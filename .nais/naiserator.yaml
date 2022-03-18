@@ -31,6 +31,9 @@ spec:
         - application: fss-proxy
           namespace: aap
           cluster: dev-fss
+        - application: digdir-krr-proxy
+          namespace: team-rocket
+          cluster: dev-gcp
   tokenx:
     enabled: true
   kafka:
