@@ -29,7 +29,7 @@ class KRRClientBeanConfig(@Value("\${spring.application.name}") val applicationN
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
             .filter(AbstractWebClientAdapter.correlatingFilterFunction(applicationName))
-            .filter(navPersonIdentFilterFunction(Constants.NAV_PERSON_IDENT) { ctx.getSubject() })
+            .filter(navPersonIdentFilterFunction(Constants.NAV_PERSON_IDENT) { ctx.getSubject() ?: "unauthenticated" })
             .filter(tokenXFilterFunction)
             .build()
 
