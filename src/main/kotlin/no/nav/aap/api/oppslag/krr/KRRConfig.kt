@@ -19,7 +19,7 @@ class KRRConfig (baseUri: URI,
 
     companion object {
         const val KRR = "krr"
-        private const val DEFAULT_PING_PATH = "rest/ping"
+        private const val DEFAULT_PING_PATH = "internal/health/liveness"
         private const val DEFAULT_PERSON_PATH = "rest/v1/person"
     }
 }
