@@ -3,10 +3,8 @@ package no.nav.aap.api.oppslag.behandler
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLERE
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 
 
