@@ -11,7 +11,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
-import java.util.*
+import java.util.Locale.getDefault
 
 @Component
 class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON)  val client: WebClient, private val cf: OrganisasjonConfig) : AbstractWebClientAdapter(client, cf) {
@@ -29,5 +29,5 @@ class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON)  val client: WebClie
                 .block() ?: orgnr.orgnr
 
 
-    override fun name() =  capitalize(ORGANISASJON.lowercase(Locale.getDefault()))
+    override fun name() =  capitalize(ORGANISASJON.lowercase(getDefault()))
 }

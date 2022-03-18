@@ -13,6 +13,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
+import org.springframework.web.reactive.function.client.ClientRequest
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction
+import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.springframework.web.reactive.function.client.WebClient.Builder
 import reactor.netty.http.client.HttpClient
 
@@ -34,6 +37,11 @@ class KRRClientBeanConfig(@Value("\${spring.application.name}") val applicationN
     fun krrHealthIndicator(a: KRRWebClientAdapter) = object: AbstractPingableHealthIndicator(a){
     }
 
-    private fun navPersonIdentFilterFunction(ctx: AuthContext) =  AbstractWebClientAdapter.headerFilterFunction(Constants.NAV_PERSON_IDENT,ctx.getSubject() ?: "una")
-
+    fun navPersonIdentFilterFunction(ctx: AuthContext) =
+        ExchangeFilterFunction { req: ClientRequest, next: ExchangeFunction ->
+            next.exchange(
+                    ClientRequest.from(req)
+                        .header(Constants.NAV_PERSON_IDENT, ctx.getSubject())
+                        .build())
+        }
 }
