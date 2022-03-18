@@ -51,12 +51,12 @@ data class ArbeidsforholdDTO(
                                 val bruksperiode: Periode,
                                 val gyldighetsperiode: Periode) {
 
-         fun tilAvtale()  = Arbeidsavtale(stillingsprosent,antallTimerPrUke)
+         fun tilAvtale(periode: Periode)  = Arbeidsavtale(stillingsprosent,antallTimerPrUke, periode)
     }
 
-    fun tilArbeidsforhold(orgNavn: String) = Arbeidsforhold(orgNavn, arbeidsavtaler.map{ it.tilAvtale() })
+    fun tilArbeidsforhold(orgNavn: String) = Arbeidsforhold(orgNavn, arbeidsavtaler.map{ it.tilAvtale(ansettelsesperiode.periode) })
 
     data class Arbeidsforhold(val navn: String,val avtaler: List<Arbeidsavtale>){
-        data class Arbeidsavtale(val stillingsprosent: Double,val antallTimerPrUke: Double)
+        data class Arbeidsavtale(val stillingsprosent: Double,val antallTimerPrUke: Double, val periode: Periode)
     }
 }
