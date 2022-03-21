@@ -29,8 +29,8 @@ no.nav:
 spring:
     mvc:
         log-request-details: true
-fastlege:
-    base-uri: https://isdialogmelding.dev.intern.nav.no
+behandler:
+    base-uri: http://isdialogmelding.teamsykefravr
 organisasjon:
     base-uri: https://aap-fss-proxy.dev-fss-pub.nais.io
 pdl:

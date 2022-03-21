@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
 import java.net.URI
 
-@ConfigurationProperties(prefix = "fastlege")
+@ConfigurationProperties("behandler")
 @ConstructorBinding
 class BehandlerConfig(
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
@@ -16,7 +16,7 @@ class BehandlerConfig(
 
 
     companion object {
-        const val BEHANDLERE = "fastlege"
+        const val BEHANDLERE = "behandler"
         const val DEFAULT_PATH = "api/person/v1/behandler/self"
         const val DEFAULT_PING_PATH = "is_alive"
     }
