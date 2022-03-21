@@ -34,6 +34,10 @@ spec:
         - application: digdir-krr-proxy
           namespace: team-rocket
           cluster: dev-gcp
+        - application: isdialogmelding
+          namespace: teamsykefravr
+          cluster: dev-gcp
+
   tokenx:
     enabled: true
   kafka:

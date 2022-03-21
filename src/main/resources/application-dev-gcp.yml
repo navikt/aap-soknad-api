@@ -32,8 +32,6 @@ spring:
 
 arbeidsforhold:
     base-uri: https://aareg-services-q1.dev-fss-pub.nais.io
-behandler:
-    base-uri: https://isdialogmelding.dev.intern.nav.no
 organisasjon:
     base-uri: https://aap-fss-proxy.dev-fss-pub.nais.io
 pdl:

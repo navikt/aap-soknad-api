@@ -10,15 +10,16 @@ import java.net.URI
 @ConfigurationProperties("behandler")
 @ConstructorBinding
 class BehandlerConfig(
+        @DefaultValue(DEFAULT_BASE_URI) baseUri: URI,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
         @DefaultValue(DEFAULT_PATH) private val path: String,
-        @DefaultValue("true")  enabled: Boolean,
-        baseUri: URI) : AbstractRestConfig(baseUri, pingPath, enabled) {
+        @DefaultValue("true")  enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
 
     fun path(b: UriBuilder) = b.path(path).build()
 
     companion object {
         const val BEHANDLER = "behandler"
+        const val DEFAULT_BASE_URI = "http://isdialogmelding.teamsykefravr"
         const val DEFAULT_PATH = "api/person/v1/behandler/self"
         const val DEFAULT_PING_PATH = "is_alive"
     }
