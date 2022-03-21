@@ -1,14 +1,8 @@
 package no.nav.aap.api.oppslag.krr
 
 import no.nav.aap.api.oppslag.krr.KRRConfig.Companion.KRR
-import no.nav.aap.api.oppslag.krr.Målform.Companion
-import no.nav.aap.api.oppslag.krr.Målform.EN
-import no.nav.aap.api.oppslag.krr.Målform.NB
 import no.nav.aap.rest.AbstractWebClientAdapter
-import no.nav.aap.util.LoggerUtil
 import org.apache.commons.lang3.StringUtils.capitalize
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
@@ -19,8 +13,6 @@ import java.util.*
 @Component
 class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) :
     AbstractWebClientAdapter(client, cf) {
-
-    private val log: Logger = LoggerUtil.getLogger(javaClass)
 
     fun målform() =
          webClient.get()

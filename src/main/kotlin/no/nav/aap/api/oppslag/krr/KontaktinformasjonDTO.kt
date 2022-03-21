@@ -11,6 +11,6 @@ class Kontaktinformasjon(@JsonProperty("spraak") val  målform: Målform)
 enum class Målform {
     NB,NN,EN;
     companion object {
-        fun standard() =NB
+        fun standard() = NB
     }
 }

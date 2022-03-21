@@ -22,11 +22,11 @@ class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
                            @DefaultValue(FEMÅR) @PeriodFormat(SIMPLE) val tidTilbake: Period,
                            @DefaultValue("false")  val sporingsinformasjon: Boolean): AbstractRestConfig(baseUri, pp, enabled) {
 
-    fun arbeidsforholdURI(b: UriBuilder, fom: LocalDate) =
+    fun arbeidsforholdURI(b: UriBuilder) =
         b.path(path)
              .queryParam(HISTORIKK, false)
             .queryParam(SPORINGSINFORMASJON, sporingsinformasjon)
-            .queryParam(FOM, fom.format(ISO_LOCAL_DATE))
+            .queryParam(FOM, LocalDate.now().minus(tidTilbake).format(ISO_LOCAL_DATE))
              .build()
 
     companion object {

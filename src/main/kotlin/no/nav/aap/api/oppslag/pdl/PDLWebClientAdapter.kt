@@ -30,7 +30,6 @@ class PDLWebClientAdapter(
         private val authContext: AuthContext,
         private val errorHandler: PDLErrorHandler) : AbstractWebClientAdapter(webClient, cfg) {
 
-    private val log = LoggerUtil.getLogger(javaClass)
     fun søker(medBarn: Boolean = false) = authContext.getSubject()?.let {
         søkerFra(it,medBarn)
     }

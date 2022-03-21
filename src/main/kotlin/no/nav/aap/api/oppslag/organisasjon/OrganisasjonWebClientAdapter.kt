@@ -1,12 +1,9 @@
 package no.nav.aap.api.oppslag.organisasjon
 
 import no.nav.aap.api.felles.OrgNummer
-import no.nav.aap.api.oppslag.krr.Målform
 import no.nav.aap.api.oppslag.organisasjon.OrganisasjonConfig.Companion.ORGANISASJON
 import no.nav.aap.rest.AbstractWebClientAdapter
-import no.nav.aap.util.LoggerUtil
 import org.apache.commons.lang3.StringUtils.capitalize
-import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -16,8 +13,6 @@ import java.util.Locale.getDefault
 
 @Component
 class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON)  val client: WebClient, private val cf: OrganisasjonConfig) : AbstractWebClientAdapter(client, cf) {
-
-    private val log: Logger = LoggerUtil.getLogger(javaClass)
 
     @Cacheable(cacheNames = ["organisasjon"])
     fun orgNavn(orgnr: OrgNummer)  =

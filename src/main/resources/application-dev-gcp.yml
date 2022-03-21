@@ -30,7 +30,7 @@ spring:
     mvc:
         log-request-details: true
 krr:
-    base-uri: https://digdir-krr-proxy.dev.intern.nav.no
+    base-uri: https://digdir-krr-proxy.team-rocket
 fastlege:
     base-uri: https://isdialogmelding.dev.intern.nav.no
 organisasjon:
