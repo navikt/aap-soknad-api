@@ -1,6 +1,6 @@
 package no.nav.aap.api.oppslag.behandler
 
-import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLERE
+import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLER
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
@@ -17,7 +17,7 @@ import reactor.netty.http.client.HttpClient
 @Configuration
 class BehandlerClientBeanConfig(@Value("\${spring.application.name}") val applicationName: String) {
 
-    @Qualifier(BEHANDLERE)
+    @Qualifier(BEHANDLER)
     @Bean
     fun behandlereWebClient(builder: Builder, cfg: BehandlerConfig, filter: TokenXFilterFunction, env: Environment) =
         builder
