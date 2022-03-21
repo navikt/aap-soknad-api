@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
+import org.springframework.cache.annotation.EnableCaching
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.retry.annotation.EnableRetry
 import org.springframework.stereotype.Component
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component
 @ConfigurationPropertiesScan
 @EnableRetry
 @EnableKafka
+@EnableCaching
 class AAPSøknadApiApplication
 
 fun main(args: Array<String>) {
