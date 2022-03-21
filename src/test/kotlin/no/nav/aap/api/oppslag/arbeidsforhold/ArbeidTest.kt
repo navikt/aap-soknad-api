@@ -5,20 +5,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.api.felles.Periode
-import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.AnsettelsesperiodeDTO
-import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.ArbeidsavtaleDTO
-import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.ArbeidsgiverDTO
-import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.ArbeidsgiverType.Organisasjon
-import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.ArbeidstakerDTO
-import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.ArbeidstakerDTO.ArbeidstakerType.Person
-import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.OpplysningspliktigDTO
-import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdDTO.VarselDTO
+import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsgiverType.Organisasjon
+import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsgiverType.Person
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @SpringBootTest(classes = [ObjectMapper::class])
 class ArbeidTest {
@@ -80,22 +73,16 @@ class ArbeidTest {
 
     @Test
     fun serdeserTest() {
-        val a = ArbeidstakerDTO(Person, "456", aktoerId = "789")
-        serdeser(a)
-        val a1 = ArbeidsgiverDTO(Organisasjon, OrgNummer("999263550"))
+       val a1 = ArbeidsgiverDTO(Organisasjon, OrgNummer("999263550"))
         serdeser(a1)
-        val v = VarselDTO("entitet","kode")
-        serdeser(v)
-        val o = OpplysningspliktigDTO(Organisasjon,OrgNummer("999263550"))
-        serdeser(o)
         val p = Periode(LocalDate.now(),LocalDate.now().plusDays(1))
         serdeser(p)
-        val ap = AnsettelsesperiodeDTO(p,p)
+        val ap = AnsettelsesperiodeDTO(p)
         serdeser(ap)
-        val aa = ArbeidsavtaleDTO("type","ordning","sjef",100.0,37.5,37.5,p,p)
+        val aa = ArbeidsavtaleDTO(100.0,37.5)
         serdeser(aa)
-        //val af = ArbeidsforholdDTO("1","2",a,a1,o,"type",ap,listOf(aa),listOf(v),true, LocalDateTime.now(),LocalDateTime.now())
-        //serdeser(af)
+        val af = ArbeidsforholdDTO(ap,listOf(aa),a1)
+        serdeser(af)
     }
 
     private fun serdeser(a: Any, print: Boolean = false) {
