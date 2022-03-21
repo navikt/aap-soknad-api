@@ -10,7 +10,7 @@ import java.net.URI
 
 @ConfigurationProperties(prefix = "krr")
 @ConstructorBinding
-class KRRConfig (baseUri: URI,
+class KRRConfig (@DefaultValue(DEFAULT_URI) baseUri: URI,
                  @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
                  @DefaultValue(DEFAULT_PERSON_PATH) private val personPath: String,
                  @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
@@ -19,6 +19,7 @@ class KRRConfig (baseUri: URI,
 
     companion object {
         const val KRR = "krr"
+        private const val DEFAULT_URI = "http://digdir-krr-proxy.team-rocket"
         private const val DEFAULT_PING_PATH = "internal/health/liveness"
         private const val DEFAULT_PERSON_PATH = "rest/v1/person"
     }
