@@ -30,7 +30,7 @@ spring:
     mvc:
         log-request-details: true
 behandler:
-    base-uri: http://isdialogmelding.teamsykefravr
+    base-uri: https://isdialogmelding.dev.intern.nav.no
 organisasjon:
     base-uri: https://aap-fss-proxy.dev-fss-pub.nais.io
 pdl:
