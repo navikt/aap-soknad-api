@@ -15,11 +15,11 @@ class BehandlerWebClientAdapter(
 
     fun behandlere() = webClient
         .get()
-        .uri { b -> b.path(cf.path).build() }
+        .uri(cf::path)
         .accept(APPLICATION_JSON)
         .retrieve()
         .bodyToFlux(BehandlerDTO::class.java)
-        .doOnError { t: Throwable -> log.warn("AAREG oppslag areidsforhold feilet", t) }
+        .doOnError { t: Throwable -> log.warn("AAREG oppslag arbeidsforhold feilet", t) }
         .collectList()
         .block()
         ?.map { it.tilBehandler() }

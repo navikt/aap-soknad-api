@@ -15,12 +15,12 @@ import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 
 @ConfigurationProperties(prefix = "arbeidsforhold")
 @ConstructorBinding
-class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
-                           @DefaultValue(PATH) val path: String,
+class ArbeidsforholdConfig(baseUri: URI,
+                           @DefaultValue(PATH) private val path: String,
                            @DefaultValue("true") enabled: Boolean,
-                           @DefaultValue(DEFAULT_PING)  pp: String,
-                           @DefaultValue(FEMÅR) @PeriodFormat(SIMPLE) val tidTilbake: Period,
-                           @DefaultValue("false")  val sporingsinformasjon: Boolean): AbstractRestConfig(baseUri, pp, enabled) {
+                           @DefaultValue(DEFAULT_PING)  pingPath: String,
+                           @DefaultValue(FEMÅR) @PeriodFormat(SIMPLE) private val tidTilbake: Period,
+                           @DefaultValue("false")  val sporingsinformasjon: Boolean): AbstractRestConfig(baseUri, pingPath, enabled) {
 
     fun arbeidsforholdURI(b: UriBuilder) =
         b.path(path)
@@ -31,11 +31,9 @@ class ArbeidsforholdConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
 
     companion object {
         const val DEFAULT_PING = "internal/isAlive"
-        const val DEFAULT_URI  ="https://aareg-services-q1.dev-fss-pub.nais.io"
         const val ARBEIDSFORHOLD = "arbeidsforhold"
         const val PATH = "api/v1/arbeidstaker/arbeidsforhold"
         const val FOM = "ansettelsesperiodeFom"
-        const val TOM = "ansettelsesperiodeTom"
         const val FEMÅR = "5y"
         const val SPORINGSINFORMASJON = "sporingsinformasjon"
         const val HISTORIKK = "historikk"

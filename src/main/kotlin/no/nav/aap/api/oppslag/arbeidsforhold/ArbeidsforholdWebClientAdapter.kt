@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 
 @Component
-class ArbeidsforholdClientAdapter(
+class ArbeidsforholdWebClientAdapter(
         @Qualifier(ARBEIDSFORHOLD) webClient: WebClient,
         private val orgAdapter: OrganisasjonWebClientAdapter,
         private val cf: ArbeidsforholdConfig) : AbstractWebClientAdapter(webClient, cf) {

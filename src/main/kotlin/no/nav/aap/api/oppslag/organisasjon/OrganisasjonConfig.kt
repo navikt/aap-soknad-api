@@ -10,14 +10,14 @@ import java.net.URI
 import org.springframework.web.util.UriComponentsBuilder.newInstance
 
 
-@ConfigurationProperties(prefix = "organisasjon")
+@ConfigurationProperties("organisasjon")
 @ConstructorBinding
 class OrganisasjonConfig (baseUri: URI,
                           @DefaultValue(ORGPATH) private val organisasjonPath: String,
-                          @DefaultValue(PINGPATH)  val pp: String,
-                          @DefaultValue("true") enabled: Boolean) :
-    AbstractRestConfig(baseUri, pp, enabled) {
-    fun getOrganisasjonURI(b: UriBuilder, orgnr: OrgNummer) =
+                          @DefaultValue(PINGPATH)   pingPath: String,
+                          @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
+
+    fun orgURI(b: UriBuilder, orgnr: OrgNummer) =
          b.path(organisasjonPath)
             .queryParam("orgnummer", orgnr.orgnr)
             .build()

@@ -18,7 +18,7 @@ class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON)  val client: WebClie
     fun orgNavn(orgnr: OrgNummer)  =
              webClient
                 .get()
-                .uri { b -> cf.getOrganisasjonURI(b, orgnr) }
+                .uri { b -> cf.orgURI(b, orgnr) }
                 .accept(APPLICATION_JSON)
                 .retrieve()
                  .bodyToMono(String::class.java)

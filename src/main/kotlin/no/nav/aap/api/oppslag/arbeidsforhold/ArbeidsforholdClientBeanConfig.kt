@@ -42,6 +42,6 @@ class ArbeidsforholdClientBeanConfig(@Value("\${spring.application.name}") val a
                         .build())
     }
     @Bean
-    fun arbeidsforholdHealthIndicator(a: ArbeidsforholdClientAdapter) = object: AbstractPingableHealthIndicator(a){
+    fun arbeidsforholdHealthIndicator(a: ArbeidsforholdWebClientAdapter) = object: AbstractPingableHealthIndicator(a){
     }
 }
