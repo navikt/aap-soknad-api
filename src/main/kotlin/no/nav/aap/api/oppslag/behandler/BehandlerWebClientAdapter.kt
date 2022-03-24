@@ -19,7 +19,7 @@ class BehandlerWebClientAdapter(
         .accept(APPLICATION_JSON)
         .retrieve()
         .bodyToFlux(BehandlerDTO::class.java)
-        .doOnError { t: Throwable -> log.warn("AAREG oppslag arbeidsforhold feilet", t) }
+        .doOnError { t: Throwable -> log.warn("BEHANDLER oppslag feilet", t) }
         .collectList()
         .block()
         ?.map { it.tilBehandler() }
