@@ -10,8 +10,6 @@ import java.util.Map
 import java.util.function.Supplier
 class MockOAuth2ServerInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-    private val MOCK_OAUTH_2_SERVER_BASE_URL = "mock-oauth2-server.baseUrl"
-
     override fun initialize(ctx: ConfigurableApplicationContext) {
         val server = registerMockOAuth2Server(ctx as GenericApplicationContext)
         val baseUrl = server.baseUrl().toString().replace("/$".toRegex(), "")
@@ -25,4 +23,8 @@ class MockOAuth2ServerInitializer : ApplicationContextInitializer<ConfigurableAp
             start()
             ctx.registerBean(MockOAuth2Server::class.java, Supplier{ this })
         }
+
+    companion object {
+        private const val MOCK_OAUTH_2_SERVER_BASE_URL = "mock-oauth2-server.baseUrl"
+    }
 }
