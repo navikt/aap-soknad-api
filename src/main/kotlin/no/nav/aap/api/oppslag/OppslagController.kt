@@ -7,7 +7,6 @@ import no.nav.aap.api.oppslag.behandler.BehandlerClient
 import no.nav.aap.api.oppslag.krr.KRRClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.util.Constants
-import no.nav.aap.util.LoggerUtil
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,28 +17,14 @@ class OppslagController(val pdl: PDLClient,
                         val arbeid: ArbeidsforholdClient,
                         val krr: KRRClient,
                        var h: TokenValidationContextHolder) {
-    private val log = LoggerUtil.getLogger(javaClass)
 
     @GetMapping("/soeker")
-    suspend fun søker() : SøkerInfo {
-        var info =  SøkerInfo(pdl.søkerMedBarn(),behandler.behandlere(),arbeid.arbeidsforhold(),xxx() )
-        /*
-       try {
-           log.info("COROUTINE KALL")
-           val mf = xxx()
-           log.info("COROUTINE KALL OK $mf")
-
-       }
-       catch (e: Exception) {
-           log.info("COROUTINE KALL FEIL",e)
-       }
-
-         */
-        return info;
-    }
-
-    suspend fun xxx() = coroutineScope {
-        withContext(TokenValidationThreadContextElement(h)) { krr.målform() }
+    suspend fun søker() = oppslag()
+    
+    suspend fun oppslag() = coroutineScope {
+        withContext(TokenValidationThreadContextElement(h)) {
+            SøkerInfo(pdl.søkerMedBarn(), behandler.behandlere(), arbeid.arbeidsforhold(), krr.målform())
+        }
     }
 
 }
