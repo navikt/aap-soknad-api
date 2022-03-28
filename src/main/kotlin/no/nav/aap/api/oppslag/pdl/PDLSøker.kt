@@ -14,15 +14,17 @@ data class PDLWrappedSøker(val navn: Set<PDLNavn>,
                            val bostedsadresse: List<PDLBostedadresse>,
                            val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon>?) {
     val active = PDLSøker(navn.first(), fødsel.firstOrNull(), bostedsadresse.firstOrNull()?.vegadresse,
-            forelderBarnRelasjon
-                ?.filter { it.relatertPersonsrolle == BARN } ?: emptyList())
+            forelderBarnRelasjon?.filter {
+                    it.relatertPersonsrolle == BARN
+                } ?: emptyList())
 }
 
 data class PDLNavn(val fornavn: String,
                    val mellomnavn: String?,
                    val etternavn: String)
 
-data class PDLSøker(val navn: PDLNavn, val fødsel: PDLFødsel?,
+data class PDLSøker(val navn: PDLNavn,
+                    val fødsel: PDLFødsel?,
                     val vegadresse: PDLVegadresse?,
                     val forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) {
 
