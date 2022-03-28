@@ -22,6 +22,7 @@
         <java.version>17</java.version>
         <jib.version>3.2.0</jib.version>
         <kotlin.version>1.6.10</kotlin.version>
+        <kotlinx.coroutines.version>1.6.0</kotlinx.coroutines.version>
         <logstash.version>7.0.1</logstash.version>
         <mock-oauth2-server.version>0.3.6</mock-oauth2-server.version>
         <okhttp3.version>4.9.1</okhttp3.version>
@@ -52,6 +53,11 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-core</artifactId>
+            <version>${kotlinx.coroutines.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-storage</artifactId>

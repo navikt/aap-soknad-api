@@ -26,7 +26,7 @@ class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) 
                 .doOnError { t: Throwable -> log.warn("KRR oppslag målform feilet. Bruker default Målform", t) }
                 .onErrorReturn(Målform.standard())
             .blockOptional()
-            .orElse(Målform.standard())
+            .orElse(Målform.standard()) ?: Målform.standard()
 
 
     override fun name(): String {
