@@ -25,8 +25,8 @@ class OppslagController(val pdl: PDLClient,
         var info =  SøkerInfo(pdl.søkerMedBarn(),behandler.behandlere(),arbeid.arbeidsforhold(),krr.målform() )
        try {
            log.info("COROUTINE KALL")
-           xxx()
-           log.info("COROUTINE KALL OK")
+           val mf = xxx()
+           log.info("COROUTINE KALL OK $mf")
 
        }
        catch (e: Exception) {
