@@ -19,12 +19,12 @@ class OppslagController(val pdl: PDLClient,
                        var h: TokenValidationContextHolder) {
 
     @GetMapping("/soeker")
-    suspend fun søker() = oppslag()
-    
-    suspend fun oppslag() = coroutineScope {
-        withContext(TokenValidationThreadContextElement(h)) {
-            SøkerInfo(pdl.søkerMedBarn(), behandler.behandlere(), arbeid.arbeidsforhold(), krr.målform())
-        }
-    }
+    suspend fun søker() =SøkerInfo(s(), two(), three(), four())
+
+
+    suspend fun s() = coroutineScope { withContext(TokenValidationThreadContextElement(h)) { pdl.søkerMedBarn() } }
+    suspend fun two() = coroutineScope { withContext(TokenValidationThreadContextElement(h)) { behandler.behandlere() } }
+    suspend fun three() = coroutineScope { withContext(TokenValidationThreadContextElement(h)) { arbeid.arbeidsforhold() } }
+    suspend fun four() = coroutineScope { withContext(TokenValidationThreadContextElement(h)) { krr.målform() } }
 
 }
