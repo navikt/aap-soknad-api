@@ -1,5 +1,6 @@
 package no.nav.aap.api.mellomlagring
 
+import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.SkjemaType
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN

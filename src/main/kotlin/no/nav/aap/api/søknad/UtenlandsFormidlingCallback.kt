@@ -20,7 +20,7 @@ class UtenlandsFormidlingCallback(val søknad: UtenlandsSøknadKafka) :
                 Counters.COUNTER_SØKNAD_UTLAND_MOTTATT,
                 Tags.of(
                         Counters.TAG_LAND, søknad.land.alpha3,
-                        Counters.TAG_VARIGHET, søknad.periode.varighetDager().toString()))
+                        Counters.TAG_VARIGHET, søknad.periode.varighetDager.toString()))
             .increment()
         log.info(
                 "Søknad sent til Kafka på topic {}, partition {} med offset {} OK",

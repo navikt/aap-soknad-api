@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad
 import no.nav.aap.api.felles.Søker
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
 import no.nav.aap.api.oppslag.pdl.PDLClient
+import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.model.UtenlandsSøknadView
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
