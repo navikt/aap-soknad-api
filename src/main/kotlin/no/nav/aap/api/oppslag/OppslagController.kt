@@ -18,10 +18,10 @@ class OppslagController(val pdl: PDLClient,
     @GetMapping("/soeker")
     suspend fun søker() = coroutineScope {
         SøkerInfo(
-                async { pdl.søkerMedBarn() }.await(),
-                async { behandler.behandlere() }.await(),
-                async { arbeid.arbeidsforhold() }.await(),
-                async { krr.målform() }.await())
+                async(Dispatchers.IO) { pdl.søkerMedBarn() }.await(),
+                async(Dispatchers.IO) { behandler.behandlere() }.await(),
+                async(Dispatchers.IO) { arbeid.arbeidsforhold() }.await(),
+                async(Dispatchers.IO) { krr.målform() }.await())
     }
 
 }
