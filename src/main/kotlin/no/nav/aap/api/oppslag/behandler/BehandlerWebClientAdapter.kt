@@ -24,6 +24,8 @@ class BehandlerWebClientAdapter(
         .block()
         ?.map { it.tilBehandler() }
         .orEmpty()
+        .also { log.trace("Behandlere er $it") }
+
 
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cf]"

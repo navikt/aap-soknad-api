@@ -27,6 +27,7 @@ class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON)  val client: WebClie
                  .defaultIfEmpty(orgnr.orgnr)
                  .blockOptional()
                  .orElse(orgnr.orgnr)
+                 .also { log.trace("Orgnavn er $it") }
 
 
     override fun name() =  capitalize(ORGANISASJON.lowercase(getDefault()))

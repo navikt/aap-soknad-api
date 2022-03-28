@@ -26,6 +26,8 @@ class ArbeidsforholdClientAdapter(
              .collectList()
              .block()
             ?.map { it.tilArbeidsforhold(orgAdapter.orgNavn(it.arbeidsgiver.organisasjonsnummer)) }.orEmpty()
+             .also { log.trace("Arbeidsforhold er $it") }
+
 
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cf]"

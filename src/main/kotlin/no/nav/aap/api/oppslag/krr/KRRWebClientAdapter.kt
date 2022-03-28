@@ -26,6 +26,8 @@ class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) 
                 .onErrorReturn(Målform.standard())
             .blockOptional()
             .orElse(Målform.standard())
+             .also { log.trace("Målform er $it") }
+
 
     override fun name(): String {
         return capitalize(KRR.lowercase(Locale.getDefault()))

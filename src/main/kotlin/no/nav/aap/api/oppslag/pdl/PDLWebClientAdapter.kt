@@ -15,6 +15,7 @@ import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.PDL_SYSTEM
 import no.nav.aap.util.Constants.PDL_USER
+import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.TEXT_PLAIN
@@ -57,18 +58,23 @@ class PDLWebClientAdapter(
             adresseFra(s.vegadresse),
             fødselsdatoFra(s.fødsel),
             barnFra(s.forelderBarnRelasjon, medBarn))
+            .also { log.trace("Søker er $it") }
+
     }
 
     private fun adresseFra(a: PDLVegadresse?) =  a?.let {
         Adresse(a.adressenavn,a.husbokstav,a.husnummer, PostNummer(a.postnummer))
+            .also { log.trace("Adresse er $it") }
     }
 
     private fun navnFra(n: Set<PDLNavn>)  = navnFra(n.first())
 
     private fun navnFra(n: PDLNavn) =  Navn(n.fornavn, n.mellomnavn, n.etternavn)
+        .also { log.trace("Navn er $it") }
 
     private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) = if (medBarn) r.map {
         barnOppslag(it.relatertPersonsIdent)
+            .also { log.trace("Barn er $it") }
     } else emptyList()
 
     private fun <T> oppslag(oppslag: () -> T, type: String): T {
