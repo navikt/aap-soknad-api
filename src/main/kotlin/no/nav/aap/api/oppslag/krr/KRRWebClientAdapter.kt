@@ -22,11 +22,11 @@ class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) 
             .bodyToMono(Kontaktinformasjon::class.java)
                 .mapNotNull(Kontaktinformasjon::målform)
                 .defaultIfEmpty(Målform.standard())
+                .doOnSuccess {  log.trace("Målform er $it")}
                 .doOnError { t: Throwable -> log.warn("KRR oppslag målform feilet. Bruker default Målform", t) }
                 .onErrorReturn(Målform.standard())
             .blockOptional()
             .orElse(Målform.standard())
-             .also { log.trace("Målform er $it") }
 
 
     override fun name(): String {
