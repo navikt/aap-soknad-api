@@ -22,7 +22,8 @@ class OppslagController(val pdl: PDLClient,
 
     @GetMapping("/soeker")
     suspend fun søker() : SøkerInfo {
-        var info =  SøkerInfo(pdl.søkerMedBarn(),behandler.behandlere(),arbeid.arbeidsforhold(),krr.målform() )
+        var info =  SøkerInfo(pdl.søkerMedBarn(),behandler.behandlere(),arbeid.arbeidsforhold(),xxx() )
+        /*
        try {
            log.info("COROUTINE KALL")
            val mf = xxx()
@@ -32,6 +33,8 @@ class OppslagController(val pdl: PDLClient,
        catch (e: Exception) {
            log.info("COROUTINE KALL FEIL",e)
        }
+
+         */
         return info;
     }
 
