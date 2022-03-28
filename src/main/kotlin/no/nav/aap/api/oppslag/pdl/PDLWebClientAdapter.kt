@@ -20,6 +20,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import java.time.LocalDate
 
 
 @Component
@@ -43,8 +44,11 @@ class PDLWebClientAdapter(
     private fun barnOppslag(fnr: String) =
         oppslag({
             systemWebClient.post(BARN_QUERY, idFra(fnr), PDLBarn::class.java).block() }, "barn")?.let {
-            barn -> Barn(Fødselsnummer(fnr), navnFra(barn.navn.first()), barn.fødselsdato.firstOrNull()?.fødselsdato)
+            barn -> Barn(Fødselsnummer(fnr), navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
         }
+
+    private fun fødselsdatoFra(fødsel: Set<PDLFødsel>?) = fødselsdatoFra(fødsel?.firstOrNull())
+
     private fun fødselsdatoFra(fødsel: PDLFødsel?) = fødsel?.fødselsdato
 
     private fun søkerFra(søker: PDLSøker?,medBarn: Boolean) =  søker?.let { s ->
@@ -59,14 +63,13 @@ class PDLWebClientAdapter(
         Adresse(a.adressenavn,a.husbokstav,a.husnummer, PostNummer(a.postnummer))
     }
 
+    private fun navnFra(n: Set<PDLNavn>)  = navnFra(n.first())
+
     private fun navnFra(n: PDLNavn) =  Navn(n.fornavn, n.mellomnavn, n.etternavn)
 
     private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) = if (medBarn) r.map {
         barnOppslag(it.relatertPersonsIdent)
     } else emptyList()
-
-
-
 
     private fun <T> oppslag(oppslag: () -> T, type: String): T {
         return try {
