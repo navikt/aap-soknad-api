@@ -15,7 +15,7 @@ class PeriodeTest {
         val then = now.plusDays(5)
         val periode = Periode(now, then)
 
-        assertEquals(5, periode.varighetDager())
+        assertEquals(5, periode.varighetDager)
     }
     @Test
     fun map() {
