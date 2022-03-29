@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag
 
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdClient
@@ -19,12 +20,17 @@ class OppslagController(val pdl: PDLClient,
                        var h: TokenValidationContextHolder) {
 
     @GetMapping("/soeker")
-    suspend fun søker() =SøkerInfo(s(), two(), three(), four())
+    suspend fun søker() = coroutineScope  {
+        val s = s()
+        val two = two()
+        val three = three()
+        val four = four()
+        SøkerInfo(s.await(), two.await(), three.await(), four.await())
+    }
 
-
-    suspend fun s() = coroutineScope { withContext(TokenValidationThreadContextElement(h)) { pdl.søkerMedBarn() } }
-    suspend fun two() = coroutineScope { withContext(TokenValidationThreadContextElement(h)) { behandler.behandlere() } }
-    suspend fun three() = coroutineScope { withContext(TokenValidationThreadContextElement(h)) { arbeid.arbeidsforhold() } }
-    suspend fun four() = coroutineScope { withContext(TokenValidationThreadContextElement(h)) { krr.målform() } }
+    suspend fun s() = coroutineScope { async(TokenValidationThreadContextElement(h)) { pdl.søkerMedBarn() } }
+    suspend fun two() = coroutineScope { async(TokenValidationThreadContextElement(h)) { behandler.behandlere() } }
+    suspend fun three() = coroutineScope { async(TokenValidationThreadContextElement(h)) { arbeid.arbeidsforhold() } }
+    suspend fun four() = coroutineScope { async(TokenValidationThreadContextElement(h)) { krr.målform() } }
 
 }
