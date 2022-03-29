@@ -15,13 +15,11 @@ import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.PDL_SYSTEM
 import no.nav.aap.util.Constants.PDL_USER
-import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import java.time.LocalDate
 
 
 @Component
@@ -35,7 +33,7 @@ class PDLWebClientAdapter(
 
     fun søker(medBarn: Boolean = false) = ctx.getSubject()?.let {fnr ->
         søkerOppslag(fnr)?.let {
-            s -> søkerFra(s,medBarn)
+            s -> søkerFra(s,fnr,medBarn)
         }
     }
     private fun søkerOppslag(fnr: String) = oppslag({
@@ -52,15 +50,17 @@ class PDLWebClientAdapter(
 
     private fun fødselsdatoFra(fødsel: PDLFødsel?) = fødsel?.fødselsdato
 
-    private fun søkerFra(søker: PDLSøker?,medBarn: Boolean) =  søker?.let { s ->
+    private fun søkerFra(søker: PDLSøker?, fnr: String, medBarn: Boolean) =  søker?.let { s ->
         Søker(
-            navnFra(s.navn),
+            navnFra(s.navn), fødselsnummerFra(fnr),
             adresseFra(s.vegadresse),
             fødselsdatoFra(s.fødsel),
             barnFra(s.forelderBarnRelasjon, medBarn))
             .also { log.trace("Søker er $it") }
 
     }
+
+    private fun fødselsnummerFra(fnr: String) = Fødselsnummer(fnr)
 
     private fun adresseFra(a: PDLVegadresse?) =  a?.let {
         Adresse(a.adressenavn,a.husbokstav,a.husnummer, PostNummer(a.postnummer))
