@@ -14,14 +14,14 @@ class TokenValidationThreadContextElement(val holder: TokenValidationContextHold
     private val log = LoggerUtil.getLogger(javaClass)
 
     override fun updateThreadContext(ctx: CoroutineContext): TokenValidationContext {
-        log.info("COROUTINE UPDATE THREAD CTX")
+        log.info("COROUTINE UPDATE THREAD CTX in thread ${Thread.currentThread().name}")
         val oldState = holder.tokenValidationContext
         holder.tokenValidationContext = ctx[Key]?.holder?.tokenValidationContext
         return oldState
     }
 
     override fun restoreThreadContext(ctx: CoroutineContext, oldState: TokenValidationContext) {
-        log.info("COROUTINE RESTORE THREAD CTX")
+        log.info("COROUTINE RESTORE THREAD CTX in thread ${Thread.currentThread().name}")
         holder.tokenValidationContext = oldState
     }
 
