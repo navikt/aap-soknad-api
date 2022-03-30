@@ -31,6 +31,13 @@ class OppslagController(val pdl: PDLClient,
                         val arbeid: ArbeidsforholdClient,
                         val krr: KRRClient,
                         val h: TokenValidationContextHolder) {
+    init {
+         val decorator1 = BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService?> { _: Scheduler, serv: ScheduledExecutorService? ->
+            log.info("ZIP Decorating $h")
+            serv
+        }
+        Schedulers.addExecutorServiceDecorator("test",decorator1)
+    }
 
     @GetMapping("/soeker")
      fun søker() :SøkerInfo {
@@ -54,13 +61,8 @@ class OppslagController(val pdl: PDLClient,
     }
     companion object {
         val log = LoggerUtil.getLogger(OppslagController::class.java)
-        val decorator1: BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService?> =
-            BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService?> { _: Scheduler, serv: ScheduledExecutorService? ->
-                log.info("ZIP Decorating")
-                serv
-            }
+
         init {
-            Schedulers.addExecutorServiceDecorator("test",decorator1)
             log.info("ZIP hook init")
             Schedulers.onScheduleHook("mdc") { runnable: Runnable ->
                 log.info("ZIP hook in action")
