@@ -5,4 +5,5 @@ import org.springframework.stereotype.Component
 @Component
 class ArbeidsforholdClient(private val adapter: ArbeidsforholdClientAdapter)  {
     fun arbeidsforhold() = adapter.arbeidsforhold()
+    fun arbeidsforholdM() = adapter.arbeidsforholdM()
 }
