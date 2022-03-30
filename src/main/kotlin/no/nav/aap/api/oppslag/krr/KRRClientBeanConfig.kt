@@ -2,6 +2,7 @@ package no.nav.aap.api.oppslag.krr
 
 import no.nav.aap.api.oppslag.krr.KRRConfig.Companion.KRR
 import no.nav.aap.health.AbstractPingableHealthIndicator
+import no.nav.aap.rest.MDCPropagatingFilterFunction
 import no.nav.aap.rest.AbstractWebClientAdapter as felles
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.util.AuthContext
@@ -21,10 +22,11 @@ class KRRClientBeanConfig(@Value("\${spring.application.name}") val applicationN
 
     @Qualifier(KRR)
     @Bean
-    fun krrWebClient(builder: Builder, cfg: KRRConfig, tokenXFilterFunction: TokenXFilterFunction, ctx: AuthContext, env: Environment) =
+    fun krrWebClient(builder: Builder, cfg: KRRConfig, p: MDCPropagatingFilterFunction, tokenXFilterFunction: TokenXFilterFunction, ctx: AuthContext, env: Environment) =
         builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
+            .filter(p)
             .filter(felles.correlatingFilterFunction(applicationName))
             .filter(felles.generellFilterFunction(Constants.NAV_PERSON_IDENT) { ctx.getSubject() ?: "unauthenticated" })
             .filter(tokenXFilterFunction)

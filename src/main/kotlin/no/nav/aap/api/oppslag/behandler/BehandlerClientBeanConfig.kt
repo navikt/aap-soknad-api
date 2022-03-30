@@ -3,6 +3,7 @@ package no.nav.aap.api.oppslag.behandler
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLER
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter
+import no.nav.aap.rest.MDCPropagatingFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
 import org.springframework.beans.factory.annotation.Qualifier
@@ -19,10 +20,11 @@ class BehandlerClientBeanConfig(@Value("\${spring.application.name}") val applic
 
     @Qualifier(BEHANDLER)
     @Bean
-    fun behandlereWebClient(builder: Builder, cfg: BehandlerConfig, filter: TokenXFilterFunction, env: Environment) =
+    fun behandlereWebClient(builder: Builder, cfg: BehandlerConfig, p: MDCPropagatingFilterFunction, filter: TokenXFilterFunction, env: Environment) =
         builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
+            .filter(p)
             .filter(AbstractWebClientAdapter.correlatingFilterFunction(applicationName))
             .filter(filter)
             .build()

@@ -3,6 +3,7 @@ package no.nav.aap.api.oppslag.arbeidsforhold
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdConfig.Companion.ARBEIDSFORHOLD
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
+import no.nav.aap.rest.MDCPropagatingFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants
@@ -25,10 +26,11 @@ class ArbeidsforholdClientBeanConfig(@Value("\${spring.application.name}") val a
 
     @Bean
     @Qualifier(ARBEIDSFORHOLD)
-    fun webClientArbeidsforhold(builder: Builder,cfg: ArbeidsforholdConfig, tokenXFilter: TokenXFilterFunction,ctx: AuthContext,env: Environment) =
+    fun webClientArbeidsforhold(builder: Builder, cfg: ArbeidsforholdConfig, p: MDCPropagatingFilterFunction, tokenXFilter: TokenXFilterFunction, ctx: AuthContext, env: Environment) =
          builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
              .baseUrl(cfg.baseUri.toString())
+             .filter(p)
              .filter(navPersonIdentFunction(ctx))
              .filter(correlatingFilterFunction(applicationName))
              .filter(tokenXFilter)
