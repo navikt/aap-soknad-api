@@ -31,7 +31,7 @@ class OppslagController(val pdl: PDLClient,
             .map(this::combine);
         log.info("ZIP end")
 
-        return SøkerInfo(pdl.søkerMedBarn(),behandler.behandlere().,arbeid.arbeidsforhold(),krr.kontaktinfo())
+        return SøkerInfo(pdl.søkerMedBarn(),behandler.behandlere(),arbeid.arbeidsforhold(),krr.kontaktinfo())
     }
     private fun combine(zip: Tuple3<KontaktinformasjonDTO, List<BehandlerDTO>,List<ArbeidsforholdDTO>>) {
            log.info("ZIP ${zip.t1} and ${zip.t2} and ${zip.t3}")
