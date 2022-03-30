@@ -28,6 +28,17 @@ class ArbeidsforholdClientAdapter(
             ?.map { it.tilArbeidsforhold(orgAdapter.orgNavn(it.arbeidsgiver.organisasjonsnummer)) }.orEmpty()
              .also { log.trace("Arbeidsforhold er $it") }
 
+    fun arbeidsforholdM() =
+        webClient
+            .get()
+            .uri(cf::arbeidsforholdURI)
+            .accept(APPLICATION_JSON)
+            .retrieve()
+            .bodyToFlux(ArbeidsforholdDTO::class.java)
+            .doOnError { t: Throwable -> log.warn("AAREG oppslag areidsforhold feilet", t) }
+            .collectList()
+
+
 
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cf]"

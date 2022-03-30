@@ -24,6 +24,15 @@ class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) 
                 .doOnError { t: Throwable -> log.warn("KRR oppslag målform feilet. Bruker default Målform", t) }
             .block()
 
+    fun kontaktInformasjonM() =
+        webClient.get()
+            .uri(cf::kontaktUri)
+            .accept(APPLICATION_JSON)
+            .retrieve()
+            .bodyToMono(KontaktinformasjonDTO::class.java)
+            .doOnSuccess {  log.trace("KOntaktinformasjon er $it")}
+            .doOnError { t: Throwable -> log.warn("KRR oppslag målform feilet. Bruker default Målform", t) }
+
 
     override fun name(): String {
         return capitalize(KRR.lowercase(Locale.getDefault()))
