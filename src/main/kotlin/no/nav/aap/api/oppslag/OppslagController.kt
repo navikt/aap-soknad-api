@@ -32,11 +32,27 @@ class OppslagController(val pdl: PDLClient,
                         val krr: KRRClient,
                         val h: TokenValidationContextHolder) {
     init {
-         val decorator1 = BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService?> { _: Scheduler, serv: ScheduledExecutorService? ->
-            log.info("ZIP Decorating $h")
-            serv
+
+        log.info("ZIP hook init")
+        Schedulers.onScheduleHook("mdc") { runnable: Runnable ->
+            log.info("ZIP hook in action")
+            val map = MDC.getCopyOfContextMap()
+            val current = h.tokenValidationContext
+            Runnable {
+                if (map != null) {
+                    MDC.setContextMap(map)
+                }
+                try {
+                    log.info("ZIP hook run")
+                    h.tokenValidationContext = current
+                    runnable.run()
+                } finally {
+                    log.info("ZIP hook done")
+                    MDC.clear()
+                }
+            }
         }
-        Schedulers.addExecutorServiceDecorator("test",decorator1)
+
     }
 
     @GetMapping("/soeker")
@@ -62,24 +78,5 @@ class OppslagController(val pdl: PDLClient,
     companion object {
         val log = LoggerUtil.getLogger(OppslagController::class.java)
 
-        init {
-            log.info("ZIP hook init")
-            Schedulers.onScheduleHook("mdc") { runnable: Runnable ->
-                log.info("ZIP hook in action")
-                val map = MDC.getCopyOfContextMap()
-                Runnable {
-                    if (map != null) {
-                        MDC.setContextMap(map)
-                    }
-                    try {
-                        log.info("ZIP hook run")
-                        runnable.run()
-                    } finally {
-                        log.info("ZIP hook done")
-                        MDC.clear()
-                    }
-                }
-            }
-        }
     }
 }
