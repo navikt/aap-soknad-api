@@ -9,19 +9,28 @@ import no.nav.aap.api.oppslag.krr.KontaktinformasjonDTO
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.util.Constants
 import no.nav.aap.util.LoggerUtil
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.slf4j.MDC
 import org.springframework.web.bind.annotation.GetMapping
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Scheduler
 import reactor.core.scheduler.Schedulers
 import reactor.util.function.Tuple3
+import java.util.concurrent.ScheduledExecutorService
+
+import java.util.function.BiFunction
+
+
+
 
 
 @ProtectedRestController(value = ["/oppslag"], issuer = Constants.IDPORTEN)
 class OppslagController(val pdl: PDLClient,
                         val behandler: BehandlerClient,
                         val arbeid: ArbeidsforholdClient,
-                        val krr: KRRClient) {
+                        val krr: KRRClient,
+                        val h: TokenValidationContextHolder) {
 
     @GetMapping("/soeker")
      fun søker() :SøkerInfo {
@@ -45,7 +54,13 @@ class OppslagController(val pdl: PDLClient,
     }
     companion object {
         val log = LoggerUtil.getLogger(OppslagController::class.java)
+        val decorator1: BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService?> =
+            BiFunction<Scheduler, ScheduledExecutorService, ScheduledExecutorService?> { _: Scheduler, serv: ScheduledExecutorService? ->
+                log.info("ZIP Decorating")
+                serv
+            }
         init {
+            Schedulers.addExecutorServiceDecorator("test",decorator1)
             log.info("ZIP hook init")
             Schedulers.onScheduleHook("mdc") { runnable: Runnable ->
                 log.info("ZIP hook in action")
