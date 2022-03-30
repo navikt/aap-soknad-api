@@ -24,11 +24,12 @@ class OppslagController(val pdl: PDLClient,
     @GetMapping("/soeker")
      fun søker() :SøkerInfo {
         log.info("ZIP start")
-         Mono.zip(
+        val zip =  Mono.zip(
                 krr.kontaktinfoM(),
                 behandler.behandlereM(),
                 arbeid.arbeidsforholdM())
             .map(this::combine);
+        zip.block()
         log.info("ZIP end")
 
         return SøkerInfo(pdl.søkerMedBarn(),behandler.behandlere(),arbeid.arbeidsforhold(),krr.kontaktinfo())
