@@ -27,9 +27,11 @@ class OppslagController(val pdl: PDLClient,
         val zip =  Mono.zip(
                 krr.kontaktinfoM(),
                 behandler.behandlereM(),
-                arbeid.arbeidsforholdM())
-            .map(this::combine);
-        zip.block()
+                arbeid.arbeidsforholdM()).flatMap(data->{
+            log.info(data.getT1());
+            log.info(data.getT2());
+            log.info(data.getT3());
+        }
         log.info("ZIP end")
         log.info("SYNC start")
         return SøkerInfo(pdl.søkerMedBarn(),behandler.behandlere(),arbeid.arbeidsforhold(),krr.kontaktinfo())
