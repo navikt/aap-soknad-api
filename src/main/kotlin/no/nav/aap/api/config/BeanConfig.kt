@@ -57,10 +57,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                 .license(License()
                     .name("MIT")
                     .url("https://www.nav.no")))
-
-    @Bean
-    fun requestContextListener() = RequestContextListener()
-
+    
     @Bean
     fun configMatcher() = object :  ClientConfigurationPropertiesMatcher {}
 
