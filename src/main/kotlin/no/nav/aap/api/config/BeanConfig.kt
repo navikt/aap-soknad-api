@@ -30,6 +30,10 @@ import org.springframework.web.reactive.function.client.ClientResponse
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
 import org.springframework.web.reactive.function.client.ExchangeFunction
 import org.zalando.problem.jackson.ProblemModule
+import org.springframework.web.context.request.RequestContextListener
+
+
+
 
 
 @Configuration
@@ -53,6 +57,9 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                 .license(License()
                     .name("MIT")
                     .url("https://www.nav.no")))
+
+    @Bean
+    fun requestContextListener() = RequestContextListener()
 
     @Bean
     fun configMatcher() = object :  ClientConfigurationPropertiesMatcher {}

@@ -37,19 +37,19 @@ class OppslagController(val pdl: PDLClient,
         Schedulers.onScheduleHook("mdc") { runnable: Runnable ->
             log.info("ZIP hook in action")
             val map = MDC.getCopyOfContextMap()
-           // val current = h.tokenValidationContext
+            val current = h.tokenValidationContext
             Runnable {
                 if (map != null) {
                     MDC.setContextMap(map)
                 }
                 try {
                     log.info("ZIP hook run")
-                 //   h.tokenValidationContext = current
+                    h.tokenValidationContext = current
                     runnable.run()
                 } finally {
                     log.info("ZIP hook done")
                     MDC.clear()
-                 //   h.tokenValidationContext = null
+                    h.tokenValidationContext = null
                 }
             }
         }
