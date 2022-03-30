@@ -59,7 +59,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
 
     @Bean
     @Order(HIGHEST_PRECEDENCE + 1)
-    fun mdcPropagator() = MDCPropagatingFilterFunction()
+    fun mdcPropagator(h: TokenValidationContextHolder) = MDCPropagatingFilterFunction(h)
 
     @Bean
     @Order(HIGHEST_PRECEDENCE + 2)

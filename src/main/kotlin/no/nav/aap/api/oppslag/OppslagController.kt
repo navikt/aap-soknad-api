@@ -44,7 +44,7 @@ class OppslagController(val pdl: PDLClient,
         log.info("ZIP ${zip.t1} and ${zip.t2} and ${zip.t3}")
     }
     companion object {
-        val log = LoggerUtil.getLogger(javaClass)
+        val log = LoggerUtil.getLogger(OppslagController::class.java)
         init {
             log.info("ZIP hook init")
             Schedulers.onScheduleHook("mdc") { runnable: Runnable ->
