@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.scheduler.Schedulers
 
 
 @Component
@@ -34,6 +35,8 @@ class BehandlerWebClientAdapter(
         .bodyToFlux(BehandlerDTO::class.java)
         .doOnError { t: Throwable -> log.warn("BEHANDLER oppslag feilet", t) }
         .collectList()
+        .subscribeOn(Schedulers.parallel());
+
 
 
 

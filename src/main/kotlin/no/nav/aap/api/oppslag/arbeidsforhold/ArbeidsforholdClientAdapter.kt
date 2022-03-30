@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.scheduler.Schedulers
 
 @Component
 class ArbeidsforholdClientAdapter(
@@ -37,6 +38,8 @@ class ArbeidsforholdClientAdapter(
             .bodyToFlux(ArbeidsforholdDTO::class.java)
             .doOnError { t: Throwable -> log.warn("AAREG oppslag areidsforhold feilet", t) }
             .collectList()
+            .subscribeOn(Schedulers.parallel());
+
 
 
 

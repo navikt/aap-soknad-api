@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.scheduler.Schedulers
 import java.util.*
 
 
@@ -32,6 +33,8 @@ class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) 
             .bodyToMono(KontaktinformasjonDTO::class.java)
             .doOnSuccess {  log.trace("KOntaktinformasjon er $it")}
             .doOnError { t: Throwable -> log.warn("KRR oppslag målform feilet. Bruker default Målform", t) }
+            .subscribeOn(Schedulers.parallel());
+
 
 
     override fun name(): String {
