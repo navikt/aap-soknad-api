@@ -20,7 +20,7 @@
         <graphql.version>1.0.0</graphql.version>
         <i18n.version>1.29</i18n.version>
         <java.version>17</java.version>
-        <jib.version>3.2.0</jib.version>
+        <jib.version>3.2.1</jib.version>
         <kotlin.version>1.6.10</kotlin.version>
         <kotlinx.coroutines.version>1.6.0</kotlinx.coroutines.version>
         <logstash.version>7.0.1</logstash.version>
