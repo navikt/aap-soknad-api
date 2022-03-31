@@ -22,11 +22,10 @@ class KRRClientBeanConfig(@Value("\${spring.application.name}") val applicationN
 
     @Qualifier(KRR)
     @Bean
-    fun krrWebClient(builder: Builder, cfg: KRRConfig, p: MDCPropagatingFilterFunction, tokenXFilterFunction: TokenXFilterFunction, ctx: AuthContext, env: Environment) =
+    fun krrWebClient(builder: Builder, cfg: KRRConfig, tokenXFilterFunction: TokenXFilterFunction, ctx: AuthContext, env: Environment) =
         builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
-            .filter(p)
             .filter(felles.correlatingFilterFunction(applicationName))
             .filter(felles.generellFilterFunction(Constants.NAV_PERSON_IDENT) { ctx.getSubject() ?: "unauthenticated" })
             .filter(tokenXFilterFunction)

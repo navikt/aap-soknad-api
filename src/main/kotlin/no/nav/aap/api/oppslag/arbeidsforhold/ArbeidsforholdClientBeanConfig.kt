@@ -26,11 +26,10 @@ class ArbeidsforholdClientBeanConfig(@Value("\${spring.application.name}") val a
 
     @Bean
     @Qualifier(ARBEIDSFORHOLD)
-    fun webClientArbeidsforhold(builder: Builder, cfg: ArbeidsforholdConfig, p: MDCPropagatingFilterFunction, tokenXFilter: TokenXFilterFunction, ctx: AuthContext, env: Environment) =
+    fun webClientArbeidsforhold(builder: Builder, cfg: ArbeidsforholdConfig, tokenXFilter: TokenXFilterFunction, ctx: AuthContext, env: Environment) =
          builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
              .baseUrl(cfg.baseUri.toString())
-             .filter(p)
              .filter(navPersonIdentFunction(ctx))
              .filter(correlatingFilterFunction(applicationName))
              .filter(tokenXFilter)

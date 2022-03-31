@@ -5,6 +5,5 @@ import org.springframework.stereotype.Component
 @Component
 class KRRClient(private val adapter: KRRWebClientAdapter) {
     fun kontaktinfo() = adapter.kontaktInformasjon()
-    fun kontaktinfoM() = adapter.kontaktInformasjonM()
 
 }

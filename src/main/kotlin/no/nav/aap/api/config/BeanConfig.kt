@@ -57,13 +57,9 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                 .license(License()
                     .name("MIT")
                     .url("https://www.nav.no")))
-    
-    @Bean
-    fun configMatcher() = object :  ClientConfigurationPropertiesMatcher {}
 
     @Bean
-    @Order(HIGHEST_PRECEDENCE + 1)
-    fun mdcPropagator(h: TokenValidationContextHolder) = MDCPropagatingFilterFunction(h)
+    fun configMatcher() = object :  ClientConfigurationPropertiesMatcher {}
 
     @Bean
     @Order(HIGHEST_PRECEDENCE + 2)

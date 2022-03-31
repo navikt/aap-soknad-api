@@ -27,16 +27,6 @@ class BehandlerWebClientAdapter(
         .orEmpty()
         .also { log.trace("Behandlere er $it") }
 
-    fun behandlereM() = webClient
-        .get()
-        .uri(cf::path)
-        .accept(APPLICATION_JSON)
-        .retrieve()
-        .bodyToFlux(BehandlerDTO::class.java)
-        .doOnError { t: Throwable -> log.warn("BEHANDLER oppslag feilet", t) }
-        .collectList()
-        .subscribeOn(Schedulers.parallel());
-
 
 
 

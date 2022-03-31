@@ -20,11 +20,10 @@ class BehandlerClientBeanConfig(@Value("\${spring.application.name}") val applic
 
     @Qualifier(BEHANDLER)
     @Bean
-    fun behandlereWebClient(builder: Builder, cfg: BehandlerConfig, p: MDCPropagatingFilterFunction, filter: TokenXFilterFunction, env: Environment) =
+    fun behandlereWebClient(builder: Builder, cfg: BehandlerConfig,  filter: TokenXFilterFunction, env: Environment) =
         builder
             .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
-            .filter(p)
             .filter(AbstractWebClientAdapter.correlatingFilterFunction(applicationName))
             .filter(filter)
             .build()
