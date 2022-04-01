@@ -224,7 +224,7 @@
                 <version>${jib.version}</version>
                 <configuration>
                     <from>
-                        <image>gcr.io/distroless/java17</image>
+                        <image>gcr.io/distroless/java18</image>
                     </from>
                     <to>
                         <!--suppress UnresolvedMavenProperty -->
