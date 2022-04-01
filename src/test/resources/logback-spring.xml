@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="secureJson" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/secure-logs/secure.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>/secure-logs/secure.log.%i</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>1</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>50MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+    <appender name="stdout"
+        class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
+    <springProfile name="dev">
+        <logger name="reactor.netty.http.client.HttpClient" level="trace"/>
+        <logger name="no.nav.aap" level="trace" />
+        <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="trace" />
+        <logger name="secure" level="debug" additivity="false">
+            <appender-ref ref="secureJson"/>
+        </logger>
+    </springProfile>
+    <springProfile name="local,test">
+        <appender name="stdout"
+            class="ch.qos.logback.core.ConsoleAppender">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} %X{Nav-CallId} [%thread] %-5level %logger{70} - %msg%n</Pattern>
+            </layout>
+        </appender>
+        <logger name="secure" level="debug" additivity="false">
+            <appender-ref ref="stdout"/>
+        </logger>
+        <logger name="no.nav.aap" level="trace" />
+    </springProfile>
+    <root level="info">
+        <appender-ref ref="stdout" />
+    </root>
+    <springProfile name="prod">
+        <turboFilter class="ch.qos.logback.classic.turbo.MarkerFilter">
+            <Name>CONFIDENTIAL_FILTER</Name>
+            <Marker>CONFIDENTIAL</Marker>
+            <OnMatch>DENY</OnMatch>
+        </turboFilter>
+        <logger name="secure" level="debug" additivity="false">
+            <appender-ref ref="secureJson"/>
+        </logger>
+    </springProfile>
+</configuration>

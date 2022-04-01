@@ -19,10 +19,10 @@
         <gcp.version>0.171.0</gcp.version>
         <graphql.version>1.0.0</graphql.version>
         <i18n.version>1.29</i18n.version>
-        <java.version>17</java.version>
+        <java.version>18</java.version>
         <jib.version>3.2.1</jib.version>
-        <kotlin.version>1.6.10</kotlin.version>
         <kotlinx.coroutines.version>1.6.0-native-mt</kotlinx.coroutines.version>
+        <kotlin.version>1.6.20</kotlin.version>
         <logstash.version>7.0.1</logstash.version>
         <mock-oauth2-server.version>0.3.6</mock-oauth2-server.version>
         <okhttp3.version>4.9.1</okhttp3.version>
@@ -53,6 +53,11 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-core</artifactId>

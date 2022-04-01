@@ -21,7 +21,7 @@ class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) 
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono(KontaktinformasjonDTO::class.java)
-                .doOnSuccess {  log.trace("KOntaktinformasjon er $it")}
+                .doOnSuccess {  log.trace("Kontaktinformasjon er $it")}
                 .doOnError { t: Throwable -> log.warn("KRR oppslag målform feilet. Bruker default Målform", t) }
             .block()
 
