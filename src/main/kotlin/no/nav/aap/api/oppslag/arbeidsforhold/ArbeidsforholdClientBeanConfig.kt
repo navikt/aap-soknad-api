@@ -3,43 +3,32 @@ package no.nav.aap.api.oppslag.arbeidsforhold
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdConfig.Companion.ARBEIDSFORHOLD
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.generellFilterFunction
-import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.util.AuthContext
-import no.nav.aap.util.Constants
-import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
+import no.nav.aap.util.Constants.NAV_PERSON_IDENT
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.env.Environment
-import org.springframework.http.client.reactive.ReactorClientHttpConnector
-import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.WebClient.Builder
-import reactor.netty.http.client.HttpClient
 
 
 @Configuration
-class ArbeidsforholdClientBeanConfig(@Value("\${spring.application.name}") val applicationName: String) {
+class ArbeidsforholdClientBeanConfig
 
     @Bean
     @Qualifier(ARBEIDSFORHOLD)
-    fun webClientArbeidsforhold(builder: Builder, cfg: ArbeidsforholdConfig, tokenXFilter: TokenXFilterFunction, ctx: AuthContext, env: Environment) =
+    fun webClientArbeidsforhold(builder: Builder, cfg: ArbeidsforholdConfig, tokenXFilter: TokenXFilterFunction, ctx: AuthContext) =
          builder
-            .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
-             .baseUrl(cfg.baseUri.toString())
+             .baseUrl("${cfg.baseUri}")
              .filter(navPersonIdentFunction(ctx))
-             .filter(correlatingFilterFunction(applicationName))
              .filter(tokenXFilter)
             .build()
 
 
-    private fun navPersonIdentFunction(ctx: AuthContext) = generellFilterFunction(Constants.NAV_PERSON_IDENT) {
+    private fun navPersonIdentFunction(ctx: AuthContext) = generellFilterFunction(NAV_PERSON_IDENT) {
         ctx.getSubject() ?: throw JwtTokenMissingException()
     }
 
     @Bean
-    fun arbeidsforholdHealthIndicator(a: ArbeidsforholdClientAdapter) = object: AbstractPingableHealthIndicator(a){
-    }
-}
+    fun arbeidsforholdHealthIndicator(a: ArbeidsforholdClientAdapter) = object: AbstractPingableHealthIndicator(a){}

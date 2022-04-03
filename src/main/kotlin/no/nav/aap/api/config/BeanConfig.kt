@@ -5,35 +5,31 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
+import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.HeadersToMDCFilter
-import no.nav.aap.rest.MDCPropagatingFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.StartupInfoContributor
+import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
-import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
+import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.annotation.Order
-import org.springframework.web.reactive.function.client.ClientRequest
-import org.springframework.web.reactive.function.client.ClientResponse
-import org.springframework.web.reactive.function.client.ExchangeFilterFunction
-import org.springframework.web.reactive.function.client.ExchangeFunction
+import org.springframework.core.env.Environment
+import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.zalando.problem.jackson.ProblemModule
-import org.springframework.web.context.request.RequestContextListener
-
-
-
+import reactor.netty.http.client.HttpClient
 
 
 @Configuration
@@ -41,7 +37,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer {
-        b -> b.modules(ProblemModule(), JavaTimeModule(), TokenXJacksonModule(), KotlinModule.Builder().build())
+        b ->  b.modules(ProblemModule(), JavaTimeModule(), TokenXJacksonModule(), KotlinModule.Builder().build())
     }
 
     @Bean
@@ -78,4 +74,11 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                 urlPatterns = listOf("/*")
                 setOrder(HIGHEST_PRECEDENCE)
             }
+
+    @Bean
+    fun webClientCustomizer(env: Environment) =
+         WebClientCustomizer { b ->
+             b.clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
+                 .filter(correlatingFilterFunction(applicationName))
+    }
 }

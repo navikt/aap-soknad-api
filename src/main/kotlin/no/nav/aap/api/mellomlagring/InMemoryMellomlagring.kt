@@ -2,9 +2,9 @@ package no.nav.aap.api.mellomlagring
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.SkjemaType
-import no.nav.boot.conditionals.ConditionalOnLocal
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 
-@ConditionalOnLocal
+@ConditionalOnMissingBean(GCPMellomlagring::class)
 class InMemoryMellomlagring : Mellomlagring {
     private val store = mutableMapOf<String, String>()
 

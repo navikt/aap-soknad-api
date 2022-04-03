@@ -29,6 +29,8 @@ class ArbeidsforholdConfig(baseUri: URI,
             .queryParam(FOM, LocalDate.now().minus(tidTilbake).format(ISO_LOCAL_DATE))
              .build()
 
+    override fun toString() = "$javaClass.simpleName [baseUri=$baseUri,  path=$path, pingEndpoint=$pingEndpoint, tidTilbake=$tidTilbake]"
+
     companion object {
         const val DEFAULT_PING = "internal/isAlive"
         const val ARBEIDSFORHOLD = "arbeidsforhold"

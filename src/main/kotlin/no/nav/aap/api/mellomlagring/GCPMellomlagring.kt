@@ -21,8 +21,7 @@ class GCPMellomlagring(@Value("\${mellomlagring.bucket:aap-mellomlagring}") val 
                 value.toByteArray(UTF_8))
     }
 
-    override fun les(fnr: Fødselsnummer, type: SkjemaType) =
-        storage.get(bøttenavn, key(fnr, type))?.getContent()?.let { String(it) }
+    override fun les(fnr: Fødselsnummer, type: SkjemaType) = storage.get(bøttenavn, key(fnr, type))?.getContent()?.let { String(it) }
 
     override fun slett(fnr: Fødselsnummer, type: SkjemaType) = storage.delete(blobFra(fnr, type))
     private fun key(fnr: Fødselsnummer, type: SkjemaType) = type.name.plus("_").plus(fnr.fnr)

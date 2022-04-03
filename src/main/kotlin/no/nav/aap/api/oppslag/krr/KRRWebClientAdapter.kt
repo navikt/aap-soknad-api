@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.scheduler.Schedulers
 import java.util.*
+import java.util.Locale.getDefault
 
 
 @Component
-class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) :
-    AbstractWebClientAdapter(client, cf) {
+class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) : AbstractWebClientAdapter(client, cf) {
 
     fun kontaktInformasjon() =
          webClient.get()
@@ -22,16 +22,8 @@ class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) 
             .retrieve()
             .bodyToMono(KontaktinformasjonDTO::class.java)
                 .doOnSuccess {  log.trace("Kontaktinformasjon er $it")}
-                .doOnError { t: Throwable -> log.warn("KRR oppslag målform feilet. Bruker default Målform", t) }
+                .doOnError { t: Throwable -> log.warn("Krr oppslag feilet", t) }
             .block()
 
-
-
-    override fun name(): String {
-        return capitalize(KRR.lowercase(Locale.getDefault()))
-    }
-
-    override fun toString(): String {
-        return javaClass.simpleName + " [cfg=" + cfg + "]"
-    }
+    override fun name()  = capitalize(KRR.lowercase(getDefault()))
 }

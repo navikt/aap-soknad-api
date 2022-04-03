@@ -22,12 +22,13 @@ class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON)  val client: WebClie
                 .accept(APPLICATION_JSON)
                 .retrieve()
                  .bodyToMono(String::class.java)
-                 .doOnError { t: Throwable -> log.warn("EREG oppslag ${orgnr.orgnr} feilet", t) }
+                 .doOnError { t: Throwable -> log.warn("Ereg oppslag ${orgnr.orgnr} feilet", t) }
+                 .doOnSuccess {  log.trace("Ereg resultat er $it")}
                  .onErrorReturn(orgnr.orgnr)
                  .defaultIfEmpty(orgnr.orgnr)
                  .blockOptional()
                  .orElse(orgnr.orgnr)
-                 .also { log.trace("Orgnavn er $it") }
+                 .also { log.trace("Ereg orgnavn er $it") }
 
 
     override fun name() =  capitalize(ORGANISASJON.lowercase(getDefault()))
