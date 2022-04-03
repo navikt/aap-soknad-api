@@ -17,6 +17,8 @@ class KRRConfig (@DefaultValue(DEFAULT_URI) baseUri: URI,
 
     fun kontaktUri(b: UriBuilder) = b.path(personPath).build()
 
+    override fun toString() = "$javaClass.simpleName [baseUri=$baseUri,  personPath=$personPath, pingEndpoint=$pingEndpoint]"
+
     companion object {
         const val KRR = "krr"
         private const val DEFAULT_URI = "http://digdir-krr-proxy.team-rocket"

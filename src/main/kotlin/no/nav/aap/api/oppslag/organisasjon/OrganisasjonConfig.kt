@@ -23,9 +23,7 @@ class OrganisasjonConfig (baseUri: URI,
             .build()
 
 
-    override fun toString(): String {
-        return javaClass.simpleName + "[organisasjonPath=" + organisasjonPath + ", pingEndpoint=" + pingEndpoint + "]"
-    }
+    override fun toString() = "$javaClass.simpleName [baseUri=$baseUri,  organisasjonPath=$organisasjonPath, pingEndpoint=$pingEndpoint]"
 
     companion object {
         const val ORGANISASJON = "Organisasjon"

@@ -13,6 +13,8 @@ class PDLConfig(
         @DefaultValue("true") enabled: Boolean,
         @DefaultValue(DEFAULT_BASE_URI) baseUri: URI) : AbstractRestConfig(baseUri, pingPath, enabled) {
 
+    override fun toString() = "$javaClass.simpleName [baseUri=$baseUri, pingEndpoint=$pingEndpoint]"
+
     companion object {
         const val DEFAULT_BASE_URI = "http://pdl-api.pdl/graphql" // må settes så lenge pdl er on prem og vi i gcp
         const val DEFAULT_PING_PATH = "/"

@@ -16,21 +16,20 @@ import org.springframework.web.bind.annotation.RequestBody
 
 
 @ProtectedRestController(value = ["buckets"], issuer = IDPORTEN)
-class MellomlagringController(private val gcp: Mellomlagring, private val authCtx: AuthContext) {
+class MellomlagringController(private val lager: Mellomlagring, private val authCtx: AuthContext) {
 
     @PostMapping("/lagre/{type}")
-    fun lagre(@PathVariable type: SkjemaType,
-              @RequestBody data: String): ResponseEntity<String> {
-        gcp.lagre(authCtx.getFnr(), type, data)
+    fun lagre(@PathVariable type: SkjemaType, @RequestBody data: String): ResponseEntity<String> {
+        lager.lagre(authCtx.getFnr(), type, data)
         return ResponseEntity<String>(data, CREATED)
     }
 
     @GetMapping("/les/{type}")
-    fun les(@PathVariable type: SkjemaType) = gcp.les(authCtx.getFnr(), type)
+    fun les(@PathVariable type: SkjemaType) = lager.les(authCtx.getFnr(), type)
 
     @DeleteMapping("/slett/{type}")
     fun slett(@PathVariable type: SkjemaType): ResponseEntity<Void> {
-        gcp.slett(authCtx.getFnr(), type)
+        lager.slett(authCtx.getFnr(), type)
         return ResponseEntity<Void>(NO_CONTENT)
     }
 }

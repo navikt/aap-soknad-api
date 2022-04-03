@@ -12,7 +12,7 @@ import reactor.core.scheduler.Schedulers
 @Component
 class BehandlerWebClientAdapter(
         @Qualifier(BEHANDLER) webClient: WebClient,
-        private val cf: BehandlerConfig) : AbstractWebClientAdapter(webClient, cf) {
+         val cf: BehandlerConfig) : AbstractWebClientAdapter(webClient, cf) {
 
     fun behandlere() = webClient
         .get()
@@ -20,16 +20,13 @@ class BehandlerWebClientAdapter(
         .accept(APPLICATION_JSON)
         .retrieve()
         .bodyToFlux(BehandlerDTO::class.java)
-        .doOnError { t: Throwable -> log.warn("BEHANDLER oppslag feilet", t) }
+        .doOnError { t: Throwable -> log.warn("Behandler oppslag feilet", t) }
         .collectList()
+        .doOnSuccess {  log.trace("Behandlere er $it")}
         .block()
         ?.map { it.tilBehandler() }
         .orEmpty()
-        .also { log.trace("Behandlere er $it") }
+        .also { log.trace("Behandlere mappet er $it") }
 
-
-
-
-
-    override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cf]"
+    override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cfg]"
 }

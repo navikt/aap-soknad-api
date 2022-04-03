@@ -16,4 +16,4 @@ class DevBeanConfig
     @Bean
     fun httpTraceRepository() = InMemoryHttpTraceRepository()
     @Bean
-    fun actuatorIgnoringTraceRequestFilter(repo: HttpTraceRepository, tracer: HttpExchangeTracer?) = ActuatorIgnoringTraceRequestFilter(repo, tracer)
+    fun actuatorIgnoringTraceRequestFilter(repo: HttpTraceRepository, tracer: HttpExchangeTracer) = ActuatorIgnoringTraceRequestFilter(repo, tracer)

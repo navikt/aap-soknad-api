@@ -3,7 +3,7 @@ package no.nav.aap.api.oppslag.behandler
 import org.springframework.stereotype.Component
 
 @Component
-class BehandlerClient(private val adapter: BehandlerWebClientAdapter) {
-    fun behandlere() = adapter.behandlere()
+class BehandlerClient(private val a: BehandlerWebClientAdapter) {
+    fun behandlere() = a.behandlere()
 
 }

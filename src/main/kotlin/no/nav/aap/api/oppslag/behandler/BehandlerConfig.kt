@@ -17,6 +17,8 @@ class BehandlerConfig(
 
     fun path(b: UriBuilder) = b.path(path).build()
 
+    override fun toString() = "$javaClass.simpleName [baseUri=$baseUri,  path=$path, pingEndpoint=$pingEndpoint]"
+
     companion object {
         const val BEHANDLER = "behandler"
         const val DEFAULT_BASE_URI = "http://isdialogmelding.teamsykefravr"
