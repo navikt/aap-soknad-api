@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
-class OrganisasjonClientBeanConfig
+class OrganisasjonClientBeanConfig {
 
     @Bean
     @Qualifier(ORGANISASJON)
@@ -21,3 +21,4 @@ class OrganisasjonClientBeanConfig
 
     @Bean
     fun organisasjonHealthIndicator(a: OrganisasjonWebClientAdapter) = object : AbstractPingableHealthIndicator(a){}
+}

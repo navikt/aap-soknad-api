@@ -14,7 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient.Builder
 
 
 @Configuration
-class ArbeidsforholdClientBeanConfig
+class ArbeidsforholdClientBeanConfig {
 
     @Bean
     @Qualifier(ARBEIDSFORHOLD)
@@ -32,3 +32,5 @@ class ArbeidsforholdClientBeanConfig
 
     @Bean
     fun arbeidsforholdHealthIndicator(a: ArbeidsforholdClientAdapter) = object: AbstractPingableHealthIndicator(a){}
+
+}

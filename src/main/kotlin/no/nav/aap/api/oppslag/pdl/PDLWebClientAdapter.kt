@@ -37,13 +37,14 @@ class PDLWebClientAdapter(
         }
     }
     private fun søkerOppslag(fnr: String) = oppslag({
-        userWebClient.post(PERSON_QUERY, idFra(fnr), PDLWrappedSøker::class.java).block()?.active
-    }, "søker")
+        userWebClient.post(PERSON_QUERY, idFra(fnr), PDLWrappedSøker::class.java).block()
+            ?.active }, "søker")
 
     private fun barnOppslag(fnr: String) =
         oppslag({
-            systemWebClient.post(BARN_QUERY, idFra(fnr), PDLBarn::class.java).block() }, "barn")?.let {
-            barn -> Barn(Fødselsnummer(fnr), navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
+            systemWebClient.post(BARN_QUERY, idFra(fnr), PDLBarn::class.java).block() }, "barn")
+            ?.let {
+                barn -> Barn(Fødselsnummer(fnr), navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
         }
 
     private fun fødselsdatoFra(fødsel: Set<PDLFødsel>?) = fødselsdatoFra(fødsel?.firstOrNull())

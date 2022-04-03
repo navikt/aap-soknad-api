@@ -23,8 +23,8 @@ import org.springframework.web.reactive.function.client.WebClient.Builder
 
 
 @Configuration
-class PDLClientBeanConfig
-
+class PDLClientBeanConfig  {
+    
     @Bean
     @Qualifier(PDL_SYSTEM)
     fun webClientPDLSystem(env: Environment, @Value("\${pdl.base-uri}") baseUri: String, builder: Builder,  @Qualifier(PDL_SYSTEM) aadPDLFilterFunction: ExchangeFilterFunction)  =
@@ -52,7 +52,7 @@ class PDLClientBeanConfig
     @Bean
     fun pdlUserWebClient(builder: Builder, cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction) =
         builder
-            .baseUrl(cfg.baseUri.toString())
+            .baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
             .filter(tokenXFilterFunction)
             .build()
@@ -63,3 +63,5 @@ class PDLClientBeanConfig
 
     @Bean
     fun pdlHealthIndicator(a: PDLWebClientAdapter) = object: AbstractPingableHealthIndicator(a){}
+
+}
