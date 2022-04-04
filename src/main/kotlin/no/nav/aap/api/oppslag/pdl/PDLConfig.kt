@@ -9,14 +9,14 @@ import java.net.URI
 @ConfigurationProperties(prefix = "pdl")
 @ConstructorBinding
 class PDLConfig(
+        @DefaultValue(DEFAULT_URI) baseUri: URI,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
-        @DefaultValue("true") enabled: Boolean,
-        @DefaultValue(DEFAULT_BASE_URI) baseUri: URI) : AbstractRestConfig(baseUri, pingPath, enabled) {
+        @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
 
     override fun toString() = "$javaClass.simpleName [baseUri=$baseUri, pingEndpoint=$pingEndpoint]"
 
     companion object {
-        const val DEFAULT_BASE_URI = "http://pdl-api.pdl/graphql" // må settes så lenge pdl er on prem og vi i gcp
+        const val DEFAULT_URI = "http://pdl-api.pdl/graphql" // må settes så lenge pdl er on prem og vi i gcp
         const val DEFAULT_PING_PATH = "/"
     }
 }

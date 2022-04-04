@@ -1,12 +1,12 @@
 package no.nav.aap.api.oppslag.arbeidsforhold
 
+import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsgiverType.Organisasjon
-import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsgiverType.Person
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,60 +17,33 @@ import java.time.LocalDate
 class ArbeidTest {
     @Autowired
     lateinit var mapper: ObjectMapper
-   val json = " [\n" +
-           "    {\n" +
-           "        \"navArbeidsforholdId\":9602,\n" +
-           "        \"arbeidsforholdId\":\"1\",\n" +
-           "        \"arbeidstaker\":{\n" +
-           "        \"type\":\"Person\",\n" +
-           "        \"offentligIdent\":\"08089403198\",\n" +
-           "        \"aktoerId\":\"2187363752271\"\n" +
-           "    },\n" +
-           "        \"arbeidsgiver\":{\n" +
-           "        \"type\":\"Organisasjon\",\n" +
-           "        \"organisasjonsnummer\":\"947064649\"\n" +
-           "    },\n" +
-           "        \"opplysningspliktig\":{\n" +
-           "        \"type\":\"Organisasjon\",\n" +
-           "        \"organisasjonsnummer\":\"928497704\"\n" +
-           "    },\n" +
-           "        \"type\":\"ordinaertArbeidsforhold\",\n" +
-           "        \"ansettelsesperiode\":{\n" +
-           "        \"periode\":{\n" +
-           "        \"fom\":\"2001-11-05\"\n" +
-           "    },\n" +
-           "        \"bruksperiode\":{\n" +
-           "        \"fom\":\"2022-01-13T14:50:36.243\"\n" +
-           "    }\n" +
-           "    },\n" +
-           "        \"arbeidsavtaler\":[\n" +
-           "        {\n" +
-           "            \"type\":\"Ordinaer\",\n" +
-           "            \"arbeidstidsordning\":\"ikkeSkift\",\n" +
-           "            \"yrke\":\"2521106\",\n" +
-           "            \"stillingsprosent\":100.0,\n" +
-           "            \"antallTimerPrUke\":37.5,\n" +
-           "            \"beregnetAntallTimerPrUke\":37.5,\n" +
-           "            \"bruksperiode\":{\n" +
-           "            \"fom\":\"2022-01-13T14:50:36.243\"\n" +
-           "        },\n" +
-           "            \"gyldighetsperiode\":{\n" +
-           "            \"fom\":\"2001-11-01\"\n" +
-           "        }\n" +
-           "        }\n" +
-           "        ],\n" +
-           "        \"varsler\":[\n" +
-           "        {\n" +
-           "            \"entitet\":\"ARBEIDSFORHOLD\",\n" +
-           "            \"varslingskode\":\"NAVEND\"\n" +
-           "        }\n" +
-           "        ],\n" +
-           "        \"innrapportertEtterAOrdningen\":true,\n" +
-           "        \"registrert\":\"2022-01-13T14:50:36.146\",\n" +
-           "        \"sistBekreftet\":\"2022-01-13T14:50:36\"\n" +
-           "    }\n" +
-           "    ]"
-
+    var json = """     [ {
+            "type":"Ordinaer",
+            "arbeidstidsordning":"ikkeSkift",
+            "yrke":"2521106",
+            "stillingsprosent":100.0,
+            "antallTimerPrUke":37.5,
+            "beregnetAntallTimerPrUke":37.5,
+            "bruksperiode":{
+               "fom":"2022-01-13T14:50:36.243"
+            },
+            "gyldighetsperiode":{
+               "fom":"2001-11-01"
+            }
+         }
+      ],
+      "varsler":[
+         {
+            "entitet":"ARBEIDSFORHOLD",
+            "varslingskode":"NAVEND"
+         }
+      ],
+      "innrapportertEtterAOrdningen":true,
+      "registrert":"2022-01-13T14:50:36.146",
+      "sistBekreftet":"2022-01-13T14:50:36"
+   }
+]
+    """.trimIndent()
     @Test
     fun serdeserTest() {
        val a1 = ArbeidsgiverDTO(Organisasjon, OrgNummer("999263550"))

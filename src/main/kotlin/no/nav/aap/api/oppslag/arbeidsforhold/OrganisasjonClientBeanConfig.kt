@@ -1,6 +1,7 @@
-package no.nav.aap.api.oppslag.organisasjon
+package no.nav.aap.api.oppslag.arbeidsforhold
 
-import no.nav.aap.api.oppslag.organisasjon.OrganisasjonConfig.Companion.ORGANISASJON
+import no.nav.aap.api.oppslag.arbeidsforhold.OrganisasjonConfig.Companion.ORGANISASJON
+import no.nav.aap.api.oppslag.arbeidsforhold.OrganisasjonWebClientAdapter
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import org.springframework.context.annotation.Bean
@@ -13,7 +14,7 @@ class OrganisasjonClientBeanConfig {
 
     @Bean
     @Qualifier(ORGANISASJON)
-    fun organisasjonWebClient(builder: WebClient.Builder, cfg: OrganisasjonConfig,tokenXFilter: TokenXFilterFunction) =
+    fun organisasjonWebClient(builder: WebClient.Builder, cfg: OrganisasjonConfig, tokenXFilter: TokenXFilterFunction) =
         builder
             .baseUrl("${cfg.baseUri}")
             .filter(tokenXFilter)
