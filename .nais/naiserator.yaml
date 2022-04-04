@@ -28,6 +28,7 @@ spec:
         - application: soknad
     outbound:
       rules:
+        - application: pdfgen
         - application: fss-proxy
           namespace: aap
           cluster: dev-fss

@@ -12,7 +12,7 @@ import javax.validation.Valid
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 class InnsendingController(
         private val formidler: KafkaSøknadFormidler,
-        private val utenlandsFormidler: KafkaUtenlandsSøknadFormidler) {
+        private val utenlandsFormidler: UtenlandSøknadFormidler) {
 
     @PostMapping("/utland")
     fun utland(@RequestBody søknad: @Valid UtenlandsSøknadView): Kvittering {
@@ -21,7 +21,7 @@ class InnsendingController(
     }
 
     @PostMapping("/soknad")
-    fun utland(@RequestBody søknad: @Valid Søknad): Kvittering {
+    fun standard(@RequestBody søknad: @Valid Søknad): Kvittering {
         formidler.formidle()
         return Kvittering("OK")
     }
