@@ -37,3 +37,4 @@ class AADFilterFunction(
     }
 
     override fun toString() = "${javaClass.simpleName} [[configs=$configs,service=$service,matcher=$matcher]"
+}
