@@ -29,19 +29,10 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
 class KafkaUtenlandsSøknadFormidler(
-        private val authContext: AuthContext,
-        private val pdl: PDLClient,
         private val formidler: KafkaOperations<String, UtenlandsSøknadKafka>,
         @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String) {
 
-    private val log = LoggerUtil.getLogger(javaClass)
-
-    fun formidle(søknad: UtenlandsSøknadView) {
-        log.info(CONFIDENTIAL, "Formidler utenlandssøknad for ${authContext.getFnr()}")
-        formidle(søknad.toKafkaObject(Søker(authContext.getFnr(), pdl.søkerUtenBarn()?.navn)))
-    }
-
-    private fun formidle(søknad: UtenlandsSøknadKafka) =
+    fun formidle(søknad: UtenlandsSøknadKafka) =
         formidler.send(
                 MessageBuilder
                     .withPayload(søknad)
@@ -51,7 +42,7 @@ class KafkaUtenlandsSøknadFormidler(
                     .build())
             .addCallback(UtenlandsFormidlingCallback(søknad))
 
-    override fun toString() = "${javaClass.simpleName} [kafkaOperations=$formidler,pdl=$pdl]"
+    override fun toString() = "$javaClass.simpleName [kafkaOperations=$formidler]"
 }
 
 

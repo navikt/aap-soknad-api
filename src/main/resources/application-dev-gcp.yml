@@ -37,3 +37,5 @@ organisasjon:
 pdl:
     base-uri: https://pdl-api.dev-fss-pub.nais.io/graphql
     scope: api://dev-fss.pdl.pdl-api/.default
+joark:
+    base-uri: https://aap-fss-proxy.dev-fss-pub.nais.io

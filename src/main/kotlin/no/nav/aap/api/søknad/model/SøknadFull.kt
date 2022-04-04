@@ -87,7 +87,7 @@ enum class ArbeidsgiverGodtgjørelseType {
     LØPENDE_UTBETALING
 }
 
-class Barn(
+class BarnX(
         val ident: Ident,
         val navn: Navn,
         val mottarBarnepensjon: Boolean = false,

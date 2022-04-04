@@ -37,6 +37,15 @@ no.nav:
     jwt:
       client:
         registration:
+          clientcredentials:
+            token-endpoint-url: https://login.microsoftonline.com/${azure.app.tenant.id}/oauth2/v2.0/token
+            grant-type: client_credentials
+            scope: api://dev-fss.aap.fss-proxy/.default
+            authentication:
+              client-id: ${azure.app.client.id}
+              client-jwk: ${azure.app.jwk}
+              client-auth-method: private_key_jwt
+
           aareg-services-q1:
             well-known-url: ${token.x.well.known.url}
             grant-type: urn:ietf:params:oauth:grant-type:token-exchange
