@@ -21,8 +21,8 @@ class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) 
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono(KontaktinformasjonDTO::class.java)
-                .doOnSuccess {  log.trace("Kontaktinformasjon er $it")}
-                .doOnError { t: Throwable -> log.warn("Krr oppslag feilet", t) }
+             .doOnSuccess {  log.trace("Kontaktinformasjon er $it")}
+             .doOnError { t: Throwable -> log.warn("Krr oppslag feilet", t) }
             .block()
 
     override fun name()  = capitalize(KRR.lowercase(getDefault()))

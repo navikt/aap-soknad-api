@@ -11,7 +11,7 @@ import org.springframework.kafka.core.ProducerFactory
 @Configuration
 class KafkaBeanConfig {
     @Bean
-    fun søknadTemplate(pf: ProducerFactory<String, SøknadKafka>) = KafkaTemplate(pf)
+    fun søknadTemplate(pf: ProducerFactory<String, StandardSøknadKafka>) = KafkaTemplate(pf)
 
     @Bean
     fun utenlandsSøknadTemplate(pf: ProducerFactory<String, UtenlandsSøknadKafka>) = KafkaTemplate(pf)

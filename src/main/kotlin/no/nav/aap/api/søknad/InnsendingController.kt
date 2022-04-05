@@ -1,8 +1,9 @@
 package no.nav.aap.api.søknad
 
+import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Kvittering
-import no.nav.aap.api.søknad.model.Søknad
-import no.nav.aap.api.søknad.model.UtenlandsSøknadView
+import no.nav.aap.api.søknad.model.UtenlandSøknad
+import no.nav.aap.api.søknad.model.UtenlandsSøknad
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.web.bind.annotation.PostMapping
@@ -11,18 +12,24 @@ import javax.validation.Valid
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 class InnsendingController(
-        private val formidler: KafkaSøknadFormidler,
-        private val utenlandsFormidler: UtenlandSøknadFormidler) {
+        private val formidler: StandardSøknadKafkaFormidler,
+        private val utenlandsFormidler: UtenlandSøknadFormidler,
+        private val standardFormidler: StandardSøknadFormidler) {
 
     @PostMapping("/utland")
-    fun utland(@RequestBody søknad: @Valid UtenlandsSøknadView): Kvittering {
+    fun utland(@RequestBody søknad: @Valid UtenlandsSøknad): Kvittering {
         utenlandsFormidler.formidle(søknad)
         return Kvittering("OK")
     }
 
     @PostMapping("/soknad")
-    fun standard(@RequestBody søknad: @Valid Søknad): Kvittering {
+    fun standard(): Kvittering {
         formidler.formidle()
+        return Kvittering("OK")
+    }
+    @PostMapping("/soknadny")
+    fun standardNy(@RequestBody søknad: @Valid StandardSøknad): Kvittering {
+        standardFormidler.formidle(søknad)
         return Kvittering("OK")
     }
 

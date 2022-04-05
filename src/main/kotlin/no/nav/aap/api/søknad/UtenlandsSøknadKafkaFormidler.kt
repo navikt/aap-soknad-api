@@ -2,21 +2,14 @@ package no.nav.aap.api.søknad
 
 import io.micrometer.core.instrument.Metrics
 import io.micrometer.core.instrument.Tags
-import no.nav.aap.api.config.Counters
 import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_UTLAND_MOTTATT
 import no.nav.aap.api.config.Counters.TAG_LAND
 import no.nav.aap.api.config.Counters.TAG_VARIGHET
-import no.nav.aap.api.felles.Søker
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.oppslag.pdl.PDLClient
-import no.nav.aap.api.søknad.AuthContextExtension.getFnr
-import no.nav.aap.api.søknad.model.UtenlandsSøknadView
-import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
-import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.KafkaHeaders.MESSAGE_KEY
@@ -28,7 +21,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
-class KafkaUtenlandsSøknadFormidler(
+class UtenlandsSøknadKafkaFormidler(
         private val formidler: KafkaOperations<String, UtenlandsSøknadKafka>,
         @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String) {
 
