@@ -5,7 +5,7 @@ import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.søknad.Ident
 
-class FullSøknad(
+class StandardSøknad(
         val ident: Ident,
         val navn: Navn,
         val adresse: Adresse,

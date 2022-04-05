@@ -1,6 +1,6 @@
 package no.nav.aap.api.oppslag.arbeidsforhold
 
-import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdConfig.Companion.ARBEIDSFORHOLD
+import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidConfig.Companion.ARBEIDSFORHOLD
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -16,12 +16,12 @@ import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 
 @ConfigurationProperties(ARBEIDSFORHOLD)
 @ConstructorBinding
-class ArbeidsforholdConfig(baseUri: URI,
-                           @DefaultValue(PATH) private val path: String,
-                           @DefaultValue("true") enabled: Boolean,
-                           @DefaultValue(PINGPATH)  pingPath: String,
-                           @DefaultValue(FEMÅR) @PeriodFormat(SIMPLE) private val tidTilbake: Period,
-                           @DefaultValue("false")  val sporingsinformasjon: Boolean): AbstractRestConfig(baseUri, pingPath, enabled) {
+class ArbeidConfig(baseUri: URI,
+                   @DefaultValue(PATH) private val path: String,
+                   @DefaultValue("true") enabled: Boolean,
+                   @DefaultValue(PINGPATH)  pingPath: String,
+                   @DefaultValue(FEMÅR) @PeriodFormat(SIMPLE) private val tidTilbake: Period,
+                   @DefaultValue("false")  val sporingsinformasjon: Boolean): AbstractRestConfig(baseUri, pingPath, enabled) {
 
     fun arbeidsforholdURI(b: UriBuilder) =
         b.path(path)

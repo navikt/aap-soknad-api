@@ -11,8 +11,6 @@ data class Søker(val navn: Navn,
                  val fødseldato: LocalDate?,
                  val barn: List<Barn?>)
 
-class Søknad
-
 data class Barn(val fnr: Fødselsnummer,
                 val navn: Navn,
                 val fødseldato: LocalDate?)

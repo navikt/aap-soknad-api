@@ -1,6 +1,6 @@
 package no.nav.aap.api.oppslag.arbeidsforhold
 
-import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsforholdConfig.Companion.ARBEIDSFORHOLD
+import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidConfig.Companion.ARBEIDSFORHOLD
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.generellFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
@@ -14,11 +14,11 @@ import org.springframework.web.reactive.function.client.WebClient.Builder
 
 
 @Configuration
-class ArbeidsforholdClientBeanConfig {
+class ArbeidClientBeanConfig {
 
     @Bean
     @Qualifier(ARBEIDSFORHOLD)
-    fun webClientArbeidsforhold(builder: Builder, cfg: ArbeidsforholdConfig, tokenXFilter: TokenXFilterFunction, ctx: AuthContext) =
+    fun webClientArbeidsforhold(builder: Builder, cfg: ArbeidConfig, tokenXFilter: TokenXFilterFunction, ctx: AuthContext) =
          builder
              .baseUrl("${cfg.baseUri}")
              .filter(navPersonIdentFunction(ctx))
@@ -31,6 +31,6 @@ class ArbeidsforholdClientBeanConfig {
     }
 
     @Bean
-    fun arbeidsforholdHealthIndicator(a: ArbeidsforholdClientAdapter) = object: AbstractPingableHealthIndicator(a){}
+    fun arbeidsforholdHealthIndicator(a: ArbeidClientAdapter) = object: AbstractPingableHealthIndicator(a){}
 
 }
