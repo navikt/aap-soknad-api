@@ -77,7 +77,6 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
             .apply {
                 urlPatterns = listOf("/*")
                 setOrder(HIGHEST_PRECEDENCE)
-
             }
 
     @Bean
@@ -91,4 +90,4 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
     private fun client(env: Environment) =
         if (isDevOrLocal(env))
             HttpClient.create().wiretap(javaClass.canonicalName, TRACE, TEXTUAL)
-        else HttpClient.create().wiretap(false)
+        else HttpClient.create()
