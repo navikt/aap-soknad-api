@@ -2,7 +2,6 @@ package no.nav.aap.api.søknad
 
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Kvittering
-import no.nav.aap.api.søknad.model.UtenlandSøknad
 import no.nav.aap.api.søknad.model.UtenlandsSøknad
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController

@@ -14,7 +14,7 @@ class StandardSøknadFormidler(private val joark: JoarkClient,
                               private val pdl: PDLClient,
                               private val ctx: AuthContext,
                               private val kafka: StandardSøknadKafkaFormidler) {
-    fun formidle(søknad: StandardSøknad) {
+    fun formidle(søknad: StandardSøknad?) {
         // arkiver her
         var beriketSøknad = StandardSøknadKafka(ctx.getFnr(), pdl.søkerUtenBarn()?.fødseldato)
         kafka.formidle(beriketSøknad)

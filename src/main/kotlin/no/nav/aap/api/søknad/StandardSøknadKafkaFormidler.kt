@@ -6,6 +6,7 @@ import io.micrometer.core.instrument.Metrics.counter
 import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_MOTTATT
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.oppslag.pdl.PDLClient
+import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil
@@ -22,12 +23,16 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
 class StandardSøknadKafkaFormidler(
-        private val authContext: AuthContext,
+        private val ctx: AuthContext,
         private val pdl: PDLClient,
         private val formidler: KafkaOperations<String, StandardSøknadKafka>,
         @Value("#{'\${standard.topic:aap.aap-soknad-sendt.v1}'}") val søknadTopic: String) {
 
-     fun formidle(søknad: StandardSøknadKafka) =
+     fun formidle() {
+         formidle(StandardSøknadKafka(ctx.getFnr(), pdl.søkerUtenBarn()?.fødseldato))
+     }
+    override fun toString() = "$javaClass.simpleName [formidler=$formidler,pdl=$pdl]"
+    fun formidle(søknad: StandardSøknadKafka) {
         formidler.send(
                 MessageBuilder
                     .withPayload(søknad)
@@ -36,8 +41,7 @@ class StandardSøknadKafkaFormidler(
                     .setHeader(NAV_CALL_ID, MDCUtil.callId())
                     .build())
             .addCallback(FormidlingCallback(søknad,counter(COUNTER_SØKNAD_MOTTATT)))
-
-    override fun toString() = "$javaClass.simpleName [formidler=$formidler,pdl=$pdl]"
+    }
 }
 
 private class FormidlingCallback(val søknad: StandardSøknadKafka, val counter: Counter) :
