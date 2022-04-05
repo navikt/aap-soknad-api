@@ -30,6 +30,7 @@ class PDFGeneratorAdapter(@Qualifier(PDFGEN) client: WebClient, val cf: PDFGener
             .bodyValue(søknad.pdfData(mapper))
             .retrieve()
             .bodyToMono<ByteArray>()
+            .log(log)
             .doOnError { t: Throwable -> log.warn("PDF-generering feiler", t) }
             .doOnSuccess {  log.trace("PDF-generering OK")}
             .block()
