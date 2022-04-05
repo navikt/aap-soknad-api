@@ -1,18 +1,22 @@
 package no.nav.aap.api.søknad.model
 
 import com.neovisionaries.i18n.CountryCode
+import no.nav.aap.api.felles.Adresse
+import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.Periode
+import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.søknad.Ident
+import java.time.LocalDate
 
 class StandardSøknad(
-        val ident: Ident,
+        val fnr: Fødselsnummer,
         val navn: Navn,
+        val startdato: LocalDate,
         val adresse: Adresse,
         val kontaktinformasjon: Kontaktinformasjon,
-        val leger: List<Lege>,
+        val behandlere: List<Behandler>,
         val utenlandsopphold: List<Utenlandsopphold> = emptyList(),
-        val arbeidUtland: List<ArbeidUtland> = emptyList(),
         val yrkesskadeType: YrkesskadeType,
         val utbetalinger: Utbetaling?,
         val arbeidsgiverGodtgjørelseType: ArbeidsgiverGodtgjørelseType?,
@@ -20,48 +24,19 @@ class StandardSøknad(
         val tilleggsopplysninger: String?,
         val vedlegg: List<Vedlegg> = emptyList())
 
-class Adresse(
-        val erFolkeregistrert: Boolean,
-        val gateadresse: String,
-        val postnummer: String?,
-        val poststed: String,
-        val land: String?)
+data class Kontaktinformasjon(val epost: String?, val telefonnummer: String?)
 
-class Kontaktinformasjon(
-        val epost: String?,
-        val telefonnummer: String?)
-
-class Lege(
-        val rolle: Rolle,
-        val navn: Navn,
-        val gateadresse: String,
-        val postnummer: String,
-        val poststed: String,
-        val telefonnummer: String) {
-    enum class Rolle {
-        FASTLEGE,
-        BEHANDLER
-    }
-}
-
-class Utenlandsopphold(
-        val land: CountryCode,
-        val periode: Periode)
-
-class ArbeidUtland(
-        val land: CountryCode,
-        val periode: Periode)
+data class Utenlandsopphold(val arbeidet: Boolean  = true, val land: CountryCode, val periode: Periode)
 
 enum class YrkesskadeType {
-    GODKJENT_AV_NAV,
-    IKKE_GODKJENT_AV_NAV,
-    SØKNAD,
+    JA,
+    NEI,
     VET_IKKE
 }
 
-class Utbetaling(
-        val stønadstyper: List<Stønadstype> = emptyList(),
+class Utbetaling(val stønadstyper: List<Stønadstype> = emptyList(),
         val godtgjørelseForVerv: Boolean = false,
+                 val sluttpakke: Sluttpakke?,
         val utenlandskeYtelser: List<UtenlandskYtelse> = emptyList(),
         val andreUtbetalinger: List<AndreUtbetalinger> = emptyList(),
         val feriePeriode: Periode?)
@@ -71,11 +46,15 @@ enum class Stønadstype {
     ØKONOMISK_SOSIALHJELP,
     INTRODUKSJONSSTØNAD,
     OMSORGSSTØNAD,
-    FOSTERHJEMSGODTGJØRELSE
+    FOSTERHJEMSGODTGJØRELSE,
+    VERV,
+    UTENLANDSK_TRYGD,
+    ANNET
 }
 
-class UtenlandskYtelse(
-        val land: String,
+data class Sluttpakke(val type: ArbeidsgiverGodtgjørelseType, val beløp: Double)
+
+class UtenlandskYtelse(val land: CountryCode,
         val ytelse: String)
 
 class AndreUtbetalinger(
@@ -88,11 +67,10 @@ enum class ArbeidsgiverGodtgjørelseType {
 }
 
 class BarnX(
-        val ident: Ident,
+        val ident: Fødselsnummer,
         val navn: Navn,
         val mottarBarnepensjon: Boolean = false,
         val harÅrligInntektOverGrunnbeløpet: Boolean = false,
-        val bostedsland: String
-          )
+        val bostedsland: String)
 
 class Vedlegg

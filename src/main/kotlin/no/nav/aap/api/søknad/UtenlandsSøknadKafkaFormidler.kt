@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad
 
 import io.micrometer.core.instrument.Metrics
+import io.micrometer.core.instrument.Metrics.counter
 import io.micrometer.core.instrument.Tags
 import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_UTLAND_MOTTATT
 import no.nav.aap.api.config.Counters.TAG_LAND
@@ -45,7 +46,7 @@ class UtenlandsFormidlingCallback(val søknad: UtenlandsSøknadKafka) :
     private val secureLog = LoggerUtil.getSecureLogger()
 
     override fun onSuccess(result: SendResult<String, UtenlandsSøknadKafka>?) {
-        Metrics.counter(COUNTER_SØKNAD_UTLAND_MOTTATT,
+        counter(COUNTER_SØKNAD_UTLAND_MOTTATT,
                 Tags.of(TAG_LAND, søknad.land.alpha3,
                         TAG_VARIGHET, søknad.periode.varighetDager.toString()))
             .increment()

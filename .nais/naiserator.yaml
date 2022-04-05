@@ -29,6 +29,8 @@ spec:
     outbound:
       rules:
         - application: pdfgen
+          namespace: aap
+          cluster: dev-gcp
         - application: fss-proxy
           namespace: aap
           cluster: dev-fss
