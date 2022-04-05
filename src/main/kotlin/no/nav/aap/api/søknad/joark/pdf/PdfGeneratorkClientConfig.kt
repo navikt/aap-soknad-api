@@ -24,8 +24,6 @@ class PdfGeneratorkClientConfig {
     fun webClientPdfGen(builder: WebClient.Builder, cfg: PDFGeneratorConfig, env: Environment) =
         builder
             .codecs { c -> c.defaultCodecs().maxInMemorySize(50 * 1024 * 1024) }
-            .clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
             .baseUrl(cfg.baseUri.toString())
-            .filter(correlatingFilterFunction(applicationName))
             .build()
 }
