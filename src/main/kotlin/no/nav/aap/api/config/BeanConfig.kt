@@ -2,6 +2,8 @@ package no.nav.aap.api.config
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.netty.handler.logging.LogLevel
+import io.netty.handler.logging.LogLevel.*
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
@@ -30,6 +32,8 @@ import org.springframework.core.env.Environment
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
+import reactor.netty.transport.logging.AdvancedByteBufFormat
+import reactor.netty.transport.logging.AdvancedByteBufFormat.*
 
 
 @Configuration
@@ -73,12 +77,15 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
             .apply {
                 urlPatterns = listOf("/*")
                 setOrder(HIGHEST_PRECEDENCE)
+
             }
 
     @Bean
     fun webClientCustomizer(env: Environment) =
          WebClientCustomizer { b ->
-             b.clientConnector(ReactorClientHttpConnector(HttpClient.create().wiretap(isDevOrLocal(env))))
+             b.clientConnector(ReactorClientHttpConnector(HttpClient.create()
+                 .wiretap(javaClass.canonicalName, DEBUG, TEXTUAL)
+           //      .wiretap(isDevOrLocal(env))))
                  .filter(correlatingFilterFunction(applicationName))
     }
 }
