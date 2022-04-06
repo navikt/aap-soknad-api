@@ -2,7 +2,6 @@ package no.nav.aap.api.søknad.joark
 
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
-import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.util.Constants.JOARK
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
@@ -14,11 +13,11 @@ class JoarkClientConfig {
 
     @Qualifier(JOARK)
     @Bean
-    fun webClientJoark(builder: WebClient.Builder, cfg: JoarkConfig, tokenXFilterFunction: TokenXFilterFunction, ) =
+    fun webClientJoark(builder: WebClient.Builder, cfg: JoarkConfig, aadFilterFunction: AADFilterFunction) =
         builder
             .baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
-            .filter(tokenXFilterFunction)
+            .filter(aadFilterFunction)
             .build()
 
     @Bean
