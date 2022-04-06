@@ -3,7 +3,7 @@ package no.nav.aap.api.config
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.netty.handler.logging.LogLevel
-import io.netty.handler.logging.LogLevel.*
+import io.netty.handler.logging.LogLevel.TRACE
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
@@ -32,8 +32,7 @@ import org.springframework.core.env.Environment
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
-import reactor.netty.transport.logging.AdvancedByteBufFormat
-import reactor.netty.transport.logging.AdvancedByteBufFormat.*
+import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 
 
 @Configuration
@@ -90,3 +89,4 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         if (isDevOrLocal(env))
             HttpClient.create().wiretap(javaClass.canonicalName, TRACE, TEXTUAL)
         else HttpClient.create()
+}
