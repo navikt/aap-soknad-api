@@ -83,7 +83,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
          WebClientCustomizer { b ->
              b.clientConnector(ReactorClientHttpConnector(client(env)))
                  .filter(correlatingFilterFunction(applicationName))
-}
+         }
 
     private fun client(env: Environment) =
         if (isDevOrLocal(env))

@@ -16,14 +16,11 @@ import reactor.netty.http.client.HttpClient
 
 @Configuration
 class PdfGeneratorkClientConfig {
-    @Value("\${spring.application.name}")
-    private lateinit var applicationName: String
-
     @Qualifier(PDFGEN)
     @Bean
     fun webClientPdfGen(builder: WebClient.Builder, cfg: PDFGeneratorConfig, env: Environment) =
         builder
             .codecs { c -> c.defaultCodecs().maxInMemorySize(50 * 1024 * 1024) }
-            .baseUrl(cfg.baseUri.toString())
+            .baseUrl("${cfg.baseUri}")
             .build()
 }

@@ -11,8 +11,8 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
-class JoarkClientAdapter(@Qualifier(JOARK) webClient: WebClient, val cf: JoarkConfig) :
-    AbstractWebClientAdapter(webClient, cf) {
+class JoarkClientAdapter(@Qualifier(JOARK) webClient: WebClient, val cf: JoarkConfig) : AbstractWebClientAdapter(webClient, cf) {
+
     fun opprettJournalpost(journalpost: Journalpost) =
         webClient.post()
             .uri { b -> b.path(cf.joarkPath).build() }
