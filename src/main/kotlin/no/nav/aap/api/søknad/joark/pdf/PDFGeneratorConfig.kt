@@ -16,7 +16,7 @@ class PDFGeneratorConfig(
 
     companion object {
         const val PDFGEN = "PDFGEN"
-        private const val DEFAULT_BASE_URI = "http://aap-pdfgen"
+        private const val DEFAULT_BASE_URI = "http://pdfgen"
         private const val DEFAULT_PATH = "api/v1/genpdf/aap-pdfgen/soknad-utland"
         private const val DEFAULT_PING_PATH = "/"
     }
