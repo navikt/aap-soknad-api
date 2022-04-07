@@ -27,12 +27,14 @@ class UtenlandSøknadFormidler(private val joark: JoarkClient,
 
     fun formidle(søknad: UtenlandsSøknad)   {
         val beriketSøknad = søknad.berikSøknad(Søker(ctx.getFnr(), pdl.søkerUtenBarn()?.navn))
+        /*
         joark.opprettJournalpost(Journalpost(
                 dokumenter = docs(beriketSøknad),
                 tittel = "Søknad om å beholde AAP ved opphold i utlandet",
                 avsenderMottaker = AvsenderMottaker(ctx.getFnr(), navn=beriketSøknad.fulltNavn),
                 bruker = Bruker(ctx.getFnr())))
             .also {  log.info("Journalført $it OK") }
+         */
         kafka.formidle(beriketSøknad)
 }
 
