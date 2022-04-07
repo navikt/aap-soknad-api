@@ -30,7 +30,7 @@ class UtenlandsSøknadKafkaFormidler(
         formidler.send(
                 MessageBuilder
                     .withPayload(søknad)
-                    .setHeader(MESSAGE_KEY, søknad.søker.fnr)
+                    .setHeader(MESSAGE_KEY, søknad.søker.fnr.fnr)
                     .setHeader(TOPIC, søknadTopic)
                     .setHeader(NAV_CALL_ID, MDCUtil.callId())
                     .build())
