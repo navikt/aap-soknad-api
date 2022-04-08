@@ -12,7 +12,7 @@ import javax.validation.Valid
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 class InnsendingController(
         private val legacyFormidler: LegacyStandardSøknadKafkaFormidler,
-        private val utenlandsFormidler: UtenlandSøknadFormidler,
+        private val utenlandsFormidler: UtlandSøknadFormidler,
         private val standardFormidler:  StandardSøknadFormidler) {
 
     @PostMapping("/utland")

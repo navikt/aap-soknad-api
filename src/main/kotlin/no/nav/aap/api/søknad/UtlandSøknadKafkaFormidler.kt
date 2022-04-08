@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad
 
-import io.micrometer.core.instrument.Metrics
 import io.micrometer.core.instrument.Metrics.counter
 import io.micrometer.core.instrument.Tags
 import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_UTLAND_MOTTATT
@@ -9,7 +8,6 @@ import no.nav.aap.api.config.Counters.TAG_VARIGHET
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.util.LoggerUtil
-import no.nav.aap.util.MDCUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
 import org.springframework.beans.factory.annotation.Value
@@ -23,7 +21,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
-class UtenlandsSøknadKafkaFormidler(
+class UtlandSøknadKafkaFormidler(
         private val formidler: KafkaOperations<String, UtenlandsSøknadKafka>,
         @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String) {
 
@@ -35,13 +33,13 @@ class UtenlandsSøknadKafkaFormidler(
                     .setHeader(TOPIC, søknadTopic)
                     .setHeader(NAV_CALL_ID, callId())
                     .build())
-            .addCallback(UtenlandsFormidlingCallback(søknad))
+            .addCallback(UtlandFormidlingCallback(søknad))
 
     override fun toString() = "$javaClass.simpleName [kafkaOperations=$formidler]"
 }
 
 
-class UtenlandsFormidlingCallback(val søknad: UtenlandsSøknadKafka) :
+class UtlandFormidlingCallback(val søknad: UtenlandsSøknadKafka) :
     ListenableFutureCallback<SendResult<String, UtenlandsSøknadKafka>> {
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()

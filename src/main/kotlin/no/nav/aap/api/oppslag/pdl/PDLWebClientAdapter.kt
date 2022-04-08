@@ -16,6 +16,7 @@ import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.PDL_SYSTEM
 import no.nav.aap.util.Constants.PDL_USER
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
+import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.TEXT_PLAIN
@@ -36,7 +37,8 @@ class PDLWebClientAdapter(
         søkerOppslag(fnr)?.let {
             s -> søkerFra(s,fnr,medBarn)
         }
-    }
+    } ?: throw JwtTokenMissingException()
+
     private fun søkerOppslag(fnr: String) = oppslag({
         userWebClient.post(PERSON_QUERY, idFra(fnr), PDLWrappedSøker::class.java).block()
             ?.active }, "søker")
