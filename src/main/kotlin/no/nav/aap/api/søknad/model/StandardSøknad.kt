@@ -9,11 +9,8 @@ import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.søknad.Ident
 import java.time.LocalDate
 
-class StandardSøknad(
-        val fnr: Fødselsnummer,
-        val navn: Navn,
+data class StandardSøknad(
         val startdato: LocalDate,
-        val adresse: Adresse,
         val kontaktinformasjon: Kontaktinformasjon,
         val behandlere: List<Behandler>,
         val utenlandsopphold: List<Utenlandsopphold> = emptyList(),

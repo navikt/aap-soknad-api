@@ -9,6 +9,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
+import no.nav.aap.api.søknad.StandardSøknadBeriket
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorConfig.Companion.PDFGEN
 import org.springframework.beans.factory.annotation.Qualifier
@@ -23,6 +24,17 @@ import java.time.LocalDate.now
 class PDFGeneratorAdapter(@Qualifier(PDFGEN) client: WebClient, val cf: PDFGeneratorConfig, val mapper: ObjectMapper) :
     AbstractWebClientAdapter(client, cf) {
 
+    fun generate(søknad: StandardSøknadBeriket) =
+        webClient.post()
+            .uri { it.path(cf.standardPath).build() }
+            .contentType(APPLICATION_JSON)
+            .bodyValue(søknad.pdfData(mapper))
+            .retrieve()
+            .bodyToMono<ByteArray>()
+            .doOnError { t: Throwable -> log.warn("PDF-generering feiler", t) }
+            .doOnSuccess {  log.trace("PDF-generering OK")}
+            .block()
+
     fun generate(søknad: UtenlandsSøknadKafka) =
         webClient.post()
             .uri { it.path(cf.path).build() }
@@ -30,16 +42,18 @@ class PDFGeneratorAdapter(@Qualifier(PDFGEN) client: WebClient, val cf: PDFGener
             .bodyValue(søknad.pdfData(mapper))
             .retrieve()
             .bodyToMono<ByteArray>()
-            .log()
             .doOnError { t: Throwable -> log.warn("PDF-generering feiler", t) }
             .doOnSuccess {  log.trace("PDF-generering OK")}
             .block()
 }
 
-private fun UtenlandsSøknadKafka.pdfData(m: ObjectMapper) =
-    m.writeValueAsString(UtlandPDFData(søker.fnr, land.land(), søker.navn, periode))
+private fun UtenlandsSøknadKafka.pdfData(m: ObjectMapper) = m.writeValueAsString(UtlandPDFData(søker.fnr, land.land(), søker.navn, periode))
+
+private fun StandardSøknadBeriket.pdfData(m: ObjectMapper) = m.writeValueAsString(StandardPDFData(søker.fødselsnummer, søker.navn))
 
 private fun CountryCode.land() = toLocale().displayCountry
+
+private data class StandardPDFData(val fødselsnummer: Fødselsnummer, @get:JsonUnwrapped val navn: Navn?)
 
 private data class UtlandPDFData(val fødselsnummer: Fødselsnummer,
                                  val land: String, @get:JsonUnwrapped val navn: Navn?,

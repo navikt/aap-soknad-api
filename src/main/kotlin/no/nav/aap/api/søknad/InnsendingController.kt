@@ -11,7 +11,7 @@ import javax.validation.Valid
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 class InnsendingController(
-        private val formidler: LegacyStandardSøknadKafkaFormidler,
+        private val legacyFormidler: LegacyStandardSøknadKafkaFormidler,
         private val utenlandsFormidler: UtenlandSøknadFormidler,
         private val standardFormidler:  StandardSøknadFormidler) {
 
@@ -23,7 +23,7 @@ class InnsendingController(
 
     @PostMapping("/soknad")
     fun standard(): Kvittering {
-        formidler.formidle()
+        legacyFormidler.formidle()
         return Kvittering("OK")
     }
     @PostMapping("/soknadny")
@@ -32,5 +32,5 @@ class InnsendingController(
         return Kvittering("OK")
     }
 
-    override fun toString() = "${javaClass.simpleName} [formidler=$formidler,utenlandsFormidler=$utenlandsFormidler]"
+    override fun toString() = "$javaClass.simpleName [standardFormidler=$standardFormidler,utenlandsFormidler=$utenlandsFormidler]"
 }

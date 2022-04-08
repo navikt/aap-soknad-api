@@ -14,7 +14,7 @@ class KafkaBeanConfig {
     fun legacySøknadTemplate(pf: ProducerFactory<String, LegacyStandardSøknadKafka>) = KafkaTemplate(pf)
 
     @Bean
-    fun standardSøknadTemplate(pf: ProducerFactory<String, StandardSøknadKafka>) = KafkaTemplate(pf)
+    fun standardSøknadTemplate(pf: ProducerFactory<String, StandardSøknadBeriket>) = KafkaTemplate(pf)
 
     @Bean
     fun utenlandsSøknadTemplate(pf: ProducerFactory<String, UtenlandsSøknadKafka>) = KafkaTemplate(pf)

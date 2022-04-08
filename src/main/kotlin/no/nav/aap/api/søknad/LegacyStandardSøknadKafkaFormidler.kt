@@ -10,6 +10,7 @@ import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
+import no.nav.aap.util.MDCUtil.callId
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.KafkaHeaders.MESSAGE_KEY
@@ -38,7 +39,7 @@ class LegacyStandardSøknadKafkaFormidler(
                     .withPayload(søknad)
                     .setHeader(MESSAGE_KEY, søknad.id)
                     .setHeader(TOPIC, søknadTopic)
-                    .setHeader(NAV_CALL_ID, MDCUtil.callId())
+                    .setHeader(NAV_CALL_ID, callId())
                     .build())
             .addCallback(FormidlingCallback(søknad,counter(COUNTER_SØKNAD_MOTTATT)))
     }

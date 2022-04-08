@@ -4,12 +4,11 @@ import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics.counter
 import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_MOTTATT
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.oppslag.pdl.PDLClient
-import no.nav.aap.api.søknad.AuthContextExtension.getFnr
-import no.nav.aap.util.AuthContext
+import no.nav.aap.api.søknad.StandardSøknadFormidler.StandardSøknadBeriket
 import no.nav.aap.util.LoggerUtil
-import no.nav.aap.util.MDCUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
+import no.nav.aap.util.MDCUtil.callId
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.KafkaHeaders.MESSAGE_KEY
@@ -21,36 +20,29 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
-class StandardSøknadKafkaFormidler(
-        private val ctx: AuthContext,
-        private val pdl: PDLClient,
-        private val formidler: KafkaOperations<String, StandardSøknadKafka>,
-        @Value("#{'\${standard.ny.topic:aap.aap-soknad-sendt-ny.v1}'}") val søknadTopic: String) {
+class StandardSøknadKafkaFormidler(private val formidler: KafkaOperations<String, StandardSøknadBeriket>, @Value("#{'\${standard.ny.topic:aap.aap-soknad-sendt-ny.v1}'}") val søknadTopic: String) {
 
-     fun formidle() {
-         formidle(StandardSøknadKafka(ctx.getFnr(), pdl.søkerUtenBarn()?.fødseldato))
-     }
-    override fun toString() = "$javaClass.simpleName [formidler=$formidler,pdl=$pdl]"
-    fun formidle(søknad: StandardSøknadKafka) {
+
+    fun formidle(søknad: StandardSøknadBeriket) {
         formidler.send(
                 MessageBuilder
                     .withPayload(søknad)
-                    .setHeader(MESSAGE_KEY, søknad.id)
+                    .setHeader(MESSAGE_KEY, søknad.søker!!.fødselsnummer.fnr)  //TODO FIX
                     .setHeader(TOPIC, søknadTopic)
-                    .setHeader(NAV_CALL_ID, MDCUtil.callId())
+                    .setHeader(NAV_CALL_ID, callId())
                     .build())
             .addCallback(StandardFormidlingCallback(søknad,counter(COUNTER_SØKNAD_MOTTATT)))
     }
 }
 
-private class StandardFormidlingCallback(val søknad: StandardSøknadKafka, val counter: Counter) :
-    ListenableFutureCallback<SendResult<String, StandardSøknadKafka>> {
-    private val log = LoggerUtil.getLogger(javaClass)
+private class StandardFormidlingCallback(val søknad: StandardSøknadBeriket, val counter: Counter) :
+    ListenableFutureCallback<SendResult<String, StandardSøknadBeriket>> {
     private val secureLog = LoggerUtil.getSecureLogger()
+    val log = LoggerUtil.getLogger(javaClass)
 
-    override fun onSuccess(result: SendResult<String, StandardSøknadKafka>?) {
+    override fun onSuccess(result: SendResult<String, StandardSøknadBeriket>?) {
         counter.increment()
-        log.info(
+        log.info(CONFIDENTIAL,
                 "Søknad $søknad sent til Kafka på topic {}, partition {} med offset {} OK",
                 result?.recordMetadata?.topic(),
                 result?.recordMetadata?.partition(),
