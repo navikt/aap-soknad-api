@@ -11,9 +11,9 @@ import javax.validation.Valid
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 class InnsendingController(
-        private val formidler: StandardSøknadKafkaFormidler,
+        private val formidler: LegacyStandardSøknadKafkaFormidler,
         private val utenlandsFormidler: UtenlandSøknadFormidler,
-        private val standardFormidler: StandardSøknadFormidler) {
+        private val standardFormidler:  StandardSøknadFormidler) {
 
     @PostMapping("/utland")
     fun utland(@RequestBody søknad: @Valid UtenlandsSøknad): Kvittering {

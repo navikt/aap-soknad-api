@@ -21,17 +21,18 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
-class StandardSøknadKafkaFormidler(
+class LegacyStandardSøknadKafkaFormidler(
         private val ctx: AuthContext,
         private val pdl: PDLClient,
-        private val formidler: KafkaOperations<String, StandardSøknadKafka>,
-        @Value("#{'\${standard.ny.topic:aap.aap-soknad-sendt-ny.v1}'}") val søknadTopic: String) {
+        private val formidler: KafkaOperations<String, LegacyStandardSøknadKafka>,
+        @Value("#{'\${standard.topic:aap.aap-soknad-sendt.v1}'}") val søknadTopic: String) {
 
      fun formidle() {
-         formidle(StandardSøknadKafka(ctx.getFnr(), pdl.søkerUtenBarn()?.fødseldato))
+         formidle(LegacyStandardSøknadKafka(ctx.getFnr(), pdl.søkerUtenBarn()?.fødseldato))
      }
     override fun toString() = "$javaClass.simpleName [formidler=$formidler,pdl=$pdl]"
-    fun formidle(søknad: StandardSøknadKafka) {
+    
+    fun formidle(søknad: LegacyStandardSøknadKafka) {
         formidler.send(
                 MessageBuilder
                     .withPayload(søknad)
@@ -39,16 +40,16 @@ class StandardSøknadKafkaFormidler(
                     .setHeader(TOPIC, søknadTopic)
                     .setHeader(NAV_CALL_ID, MDCUtil.callId())
                     .build())
-            .addCallback(StandardFormidlingCallback(søknad,counter(COUNTER_SØKNAD_MOTTATT)))
+            .addCallback(FormidlingCallback(søknad,counter(COUNTER_SØKNAD_MOTTATT)))
     }
 }
 
-private class StandardFormidlingCallback(val søknad: StandardSøknadKafka, val counter: Counter) :
-    ListenableFutureCallback<SendResult<String, StandardSøknadKafka>> {
+private class FormidlingCallback(val søknad: LegacyStandardSøknadKafka, val counter: Counter) :
+    ListenableFutureCallback<SendResult<String, LegacyStandardSøknadKafka>> {
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()
 
-    override fun onSuccess(result: SendResult<String, StandardSøknadKafka>?) {
+    override fun onSuccess(result: SendResult<String, LegacyStandardSøknadKafka>?) {
         counter.increment()
         log.info(
                 "Søknad $søknad sent til Kafka på topic {}, partition {} med offset {} OK",
