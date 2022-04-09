@@ -26,8 +26,8 @@ class StandardSøknadFormidler(private val joark: JoarkClient, private val pdfGe
                 Journalpost(
                 dokumenter = docs(beriketSøknad),
                 tittel = HOVED.tittel,
-                avsenderMottaker = AvsenderMottaker(beriketSøknad.søker.fødselsnummer, navn=beriketSøknad.fulltNavn),
-                bruker = Bruker(beriketSøknad.søker.fødselsnummer)))
+                avsenderMottaker = AvsenderMottaker(beriketSøknad.fødselsnummer, navn=beriketSøknad.fulltNavn),
+                bruker = Bruker(beriketSøknad.fødselsnummer)))
             .also {  log.info("Journalført $it OK") }
         kafka.formidle(beriketSøknad)
     }
@@ -39,6 +39,8 @@ class StandardSøknadFormidler(private val joark: JoarkClient, private val pdfGe
 data class StandardSøknadBeriket(val søknad: StandardSøknad, val søker: Søker) {
     @JsonIgnore
     val fulltNavn = søker.navn.navn
+    @JsonIgnore
+    val fødselsnummer = søker.fødselsnummer
 }
 
 fun StandardSøknad.berik(pdl: PDLClient): StandardSøknadBeriket {

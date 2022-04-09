@@ -25,7 +25,7 @@ class StandardSøknadKafkaFormidler(private val formidler: KafkaOperations<Strin
         formidler.send(
                 MessageBuilder
                     .withPayload(søknad)
-                    .setHeader(MESSAGE_KEY, søknad.søker!!.fødselsnummer.fnr)  //TODO FIX
+                    .setHeader(MESSAGE_KEY, søknad.søker.fødselsnummer.fnr)  //TODO FIX
                     .setHeader(TOPIC, søknadTopic)
                     .setHeader(NAV_CALL_ID, callId())
                     .build())
