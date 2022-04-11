@@ -54,7 +54,7 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
                     add(PRAGMA, "no-cache")
                     add(CACHE_CONTROL, "no-cache, no-store, must-revalidate")
                     add(CONTENT_DISPOSITION,
-                            "attachment; filename=vedlegg.${parseMimeType(data.contentType)?.subtype}")
+                            "attachment; filename=${data.metadata[FILNAVN]}.${parseMimeType(data.contentType)?.subtype}")
                     contentType = parseMediaType(data.contentType) },
                 OK)} ?: ResponseEntity<ByteArray>(NOT_FOUND)
     }

@@ -1,5 +1,6 @@
 package no.nav.aap.api.mellomlagring
 
+import no.nav.aap.api.mellomlagring.GCPVedlegg.Companion
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
@@ -43,7 +44,8 @@ class VedleggController(private val vedlegg: GCPVedlegg, private val ctx: AuthCo
                     add(EXPIRES, "0")
                     add(PRAGMA, "no-cache")
                     add(CACHE_CONTROL, "no-cache, no-store, must-revalidate")
-                    add(CONTENT_DISPOSITION, "attachment; filename=vedlegg.${parseMimeType(data.contentType)?.subtype}")
+                    add(CONTENT_DISPOSITION,
+                            "attachment; filename=${data.metadata[GCPVedlegg.FILNAVN]}.${parseMimeType(data.contentType)?.subtype}")
                     contentType = parseMediaType(data.contentType)
                 },
                 OK)} ?: ResponseEntity<ByteArray>(NOT_FOUND)
