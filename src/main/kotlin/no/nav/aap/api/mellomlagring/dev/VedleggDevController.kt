@@ -5,6 +5,8 @@ import no.nav.aap.api.mellomlagring.GCPVedlegg
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
+import org.springframework.http.MediaType.APPLICATION_PDF
+import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -28,7 +30,7 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
         val uuid  = vedlegg.lagre(fnr, file.contentType,file.bytes)
         return ResponseEntity<UUID>(uuid, CREATED)
     }
-    @GetMapping("les/{fnr}/{uuid}")
+    @GetMapping(path= ["les/{fnr}/{uuid}"], produces = [APPLICATION_PDF_VALUE])
     fun lesVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID) = vedlegg.les(fnr, uuid)
 
     @DeleteMapping("slett/{fnr}/{uuid}")
