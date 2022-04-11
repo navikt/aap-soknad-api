@@ -3,6 +3,7 @@ package no.nav.aap.api.mellomlagring
 import com.google.cloud.storage.BlobId
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
+import com.google.cloud.storage.Storage.BlobField.CONTENT_TYPE
 import com.google.cloud.storage.Storage.BlobField.METADATA
 import com.google.cloud.storage.Storage.BlobGetOption.fields
 import no.nav.aap.api.felles.Fødselsnummer
@@ -29,7 +30,7 @@ class GCPVedlegg(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøt
         return uuid
     }
 
-    fun les(fnr: Fødselsnummer, uuid: UUID) = storage.get(bøttenavn, "${hash(fnr, uuid)}", fields(METADATA))
+    fun les(fnr: Fødselsnummer, uuid: UUID) = storage.get(bøttenavn, "${hash(fnr, uuid)}", fields(METADATA, CONTENT_TYPE))
 
     fun slett(fnr: Fødselsnummer,uuid: UUID) = storage.delete(BlobId.of(bøttenavn, "${hash(fnr, uuid)}"))
 }
