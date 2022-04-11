@@ -42,8 +42,8 @@ class MellomlagringController(private val lager: Mellomlagring,private val vedle
         val uuid  = vedlegg.lagre(authCtx.getFnr(), file.contentType,file.bytes)
         return ResponseEntity<UUID>(uuid, CREATED)
     }
-    @GetMapping("/vedlegg/les")
-    fun lesVedlegg(uuid: UUID) = vedlegg.les(authCtx.getFnr(), uuid)
+    @GetMapping("/vedlegg/les/uuid}")
+    fun lesVedlegg(@PathVariable uuid: UUID) = vedlegg.les(authCtx.getFnr(), uuid)
 
     @DeleteMapping("/vedlegg/slett/{uuid}")
     fun slettVedlegg(@PathVariable uuid: UUID): ResponseEntity<Void> {
