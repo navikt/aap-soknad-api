@@ -16,17 +16,17 @@ import java.util.Objects.hash
 class GCPVedlegg(@Value("\${mellomlagring.bucket:aap-vedlegg}") val bøttenavn: String,
                  val storage: Storage)  {
 
-     fun lagre(fnr: Fødselsnummer, type: SkjemaType, bytes: ByteArray): UUID {
+     fun lagre(fnr: Fødselsnummer, contentType: String?,bytes: ByteArray): UUID {
          val uuid = UUID.randomUUID()
          storage.create(
-                 newBuilder(BlobId.of(bøttenavn, key(fnr, type, uuid)))
-                    .setContentType(Tika().detect(bytes))
+                 newBuilder(BlobId.of(bøttenavn, key(fnr, uuid)))
+                    .setContentType(contentType)
                     .build(), bytes)
         return uuid
     }
 
-        fun les(fnr: Fødselsnummer, type: SkjemaType,uuid: UUID) =  storage.get(bøttenavn, key(fnr, type, uuid))?.getContent()
+    fun les(fnr: Fødselsnummer, uuid: UUID) =  storage.get(bøttenavn, key(fnr, uuid))?.getContent()
 
-    fun slett(fnr: Fødselsnummer, type: SkjemaType, uuid: UUID) = storage.delete(BlobId.of(bøttenavn, key(fnr, type,uuid)))
-    private fun key(fnr: Fødselsnummer, type: SkjemaType, uuid: UUID) = hash(type.name,fnr, uuid).toString()
+    fun slett(fnr: Fødselsnummer,uuid: UUID) = storage.delete(BlobId.of(bøttenavn, key(fnr,uuid)))
+    private fun key(fnr: Fødselsnummer,  uuid: UUID) = hash(fnr, uuid).toString()
 }
