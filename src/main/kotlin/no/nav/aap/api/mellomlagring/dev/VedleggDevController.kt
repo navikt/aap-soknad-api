@@ -20,20 +20,17 @@ import org.springframework.web.bind.annotation.RestController
 
 @Unprotected
 @RestController
-@RequestMapping(value= ["/dev/jalla/"])
+@RequestMapping(value= ["/dev/vedlegg/"])
 class VedleggDevController(private val vedlegg: GCPVedlegg) {
 
-    @Unprotected
     @PostMapping(value = ["lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
     fun lagreVedlegg(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") file: MultipartFile): ResponseEntity<UUID> {
         val uuid  = vedlegg.lagre(fnr, file.contentType,file.bytes)
         return ResponseEntity<UUID>(uuid, CREATED)
     }
-    @Unprotected
     @GetMapping("les/{fnr}/{uuid}")
     fun lesVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID) = vedlegg.les(fnr, uuid)
 
-    @Unprotected
     @DeleteMapping("slett/{fnr}/{uuid}")
     fun slettVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID): ResponseEntity<Void> {
         vedlegg.slett(fnr,uuid)
