@@ -23,14 +23,17 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(value= ["/dev/vedlegg"])
 class VedleggDevController(private val vedlegg: GCPVedlegg, private val ctx: AuthContext) {
 
+    @Unprotected
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
     fun lagreVedlegg(@RequestPart("vedlegg") file: MultipartFile): ResponseEntity<UUID> {
         val uuid  = vedlegg.lagre(ctx.getFnr(), file.contentType,file.bytes)
         return ResponseEntity<UUID>(uuid, CREATED)
     }
+    @Unprotected
     @GetMapping("/les/{uuid}")
     fun lesVedlegg(@PathVariable uuid: UUID) = vedlegg.les(ctx.getFnr(), uuid)
 
+    @Unprotected
     @DeleteMapping("/slett/{uuid}")
     fun slettVedlegg(@PathVariable uuid: UUID): ResponseEntity<Void> {
         vedlegg.slett(ctx.getFnr(),uuid)
