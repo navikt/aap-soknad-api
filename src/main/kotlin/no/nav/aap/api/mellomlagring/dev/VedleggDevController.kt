@@ -45,8 +45,8 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
     @GetMapping(path= ["les/{fnr}/{uuid}"])
     fun lesVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID) : ResponseEntity<ByteArray>?{
         val data = vedlegg.les(fnr, uuid)
-        log.info("Originalt filnavn fra metadata er ${data.metadata[FILNAVN]} ")
         return data?.let {
+            log.info("Originalt filnavn fra metadata er ${it.metadata[FILNAVN]} ")
             ResponseEntity<ByteArray>(
                 data.getContent(),
                 HttpHeaders().apply {
@@ -54,7 +54,7 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
                     add(PRAGMA, "no-cache")
                     add(CACHE_CONTROL, "no-cache, no-store, must-revalidate")
                     add(CONTENT_DISPOSITION,
-                            "attachment; filename=${data.metadata[FILNAVN]}")
+                            "attachment; filename=${it.metadata[FILNAVN]}")
                     contentType = parseMediaType(data.contentType) },
                 OK)} ?: ResponseEntity<ByteArray>(NOT_FOUND)
     }
