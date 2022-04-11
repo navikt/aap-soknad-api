@@ -8,7 +8,10 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.HttpStatus.OK
-import org.springframework.http.MediaType
+import org.springframework.http.HttpHeaders.CACHE_CONTROL
+import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
+import org.springframework.http.HttpHeaders.EXPIRES
+import org.springframework.http.HttpHeaders.PRAGMA
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.MediaType.parseMediaType
 import org.springframework.util.MimeTypeUtils.parseMimeType
 
 
@@ -36,12 +40,11 @@ class VedleggController(private val vedlegg: GCPVedlegg, private val ctx: AuthCo
         return data?.let {  ResponseEntity<ByteArray>(
                 data.getContent(),
                 HttpHeaders().apply {
-                    add(HttpHeaders.EXPIRES, "0")
-                    add(HttpHeaders.PRAGMA, "no-cache")
-                    add(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate")
-                    add(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=vedlegg.${parseMimeType(data.contentType)?.subtype.lowercase()}")
-                    contentType = MediaType.parseMediaType(data.contentType)
+                    add(EXPIRES, "0")
+                    add(PRAGMA, "no-cache")
+                    add(CACHE_CONTROL, "no-cache, no-store, must-revalidate")
+                    add(CONTENT_DISPOSITION, "attachment; filename=vedlegg.${parseMimeType(data.contentType)?.subtype}")
+                    contentType = parseMediaType(data.contentType)
                 },
                 OK)} ?: ResponseEntity<ByteArray>(NOT_FOUND)
     }
