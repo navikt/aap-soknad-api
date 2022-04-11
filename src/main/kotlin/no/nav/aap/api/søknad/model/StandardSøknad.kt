@@ -1,45 +1,46 @@
 package no.nav.aap.api.søknad.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.RadioValg.NEI
 import no.nav.aap.api.søknad.model.RadioValg.VET_IKKE
-import no.nav.aap.api.søknad.model.SøkerType.STUDENT
-import no.nav.aap.api.søknad.model.SøkerType.VANLIG
+import no.nav.aap.api.søknad.model.SøkerType.STANDARD
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit.DAYS
 
 data class StandardSøknad(
-        val type: SøkerType = VANLIG,
+        val type: SøkerType = STANDARD,
         val startdato: LocalDate,
         val ferie: Ferie,
-        val kontaktinformasjon: Kontaktinformasjon,
+        val medlemsskap: Medlemskap,
         val behandlere: List<Behandler>,
-        val utenlandsopphold: List<Utenlandsopphold> = emptyList(),
         val yrkesskadeType: RadioValg,
         val utbetalinger: Utbetaling?,
-        val arbeidsgiverGodtgjørelseType: ArbeidsgiverGodtgjørelseType?,
         val barn: List<BarnOgInntekt> = emptyList(),
         val tilleggsopplysninger: String?,
         val vedlegg: List<Vedlegg> = emptyList())
 
-data class Kontaktinformasjon(val epost: String?, val telefonnummer: String?)
+data class Medlemskap(val boddINorgeSamenhengendeSiste5: Boolean,
+                      val jobbetUtenforNorgeFørSyk: Boolean,
+                      val jobbetSammenhengendeINorgeSiste5: Boolean?,
+                      val utenlandsopphold: List<Utenlandsopphold>)
 
-data class Utenlandsopphold(val arbeidet: Boolean  = true, val land: CountryCode, val periode: Periode)
+data class Utenlandsopphold(val land: CountryCode, val periode: Periode, val arbeidet: Boolean, val id: String?)
 
 data class Ferie(val periode: Periode? = null, val dager: Long? = null)  {
     constructor(dager: Long) : this(null,dager)
-   constructor(periode: Periode) : this(periode, DAYS.between(periode.tom,periode.fom))
+   constructor(periode: Periode) : this(periode,null)
+    @JsonIgnore
     val valgt: RadioValg = if (periode == null && dager == null) {
         VET_IKKE
     }
     else {
-        if (dager == 0L){
-            NEI
+        if (periode != null || (dager != null && dager > 0)){
+            JA
         }
-        JA
+        else NEI
     }
 }
 data class BarnOgInntekt(val barn: Barn, val inntekt: Inntekt)
@@ -48,14 +49,9 @@ enum class RadioValg { JA, NEI, VET_IKKE }
 
 data class Inntekt(val inntekt: Double)
 
-class Utbetaling(val stønadstyper: List<Stønadstype> = emptyList(),
-        val godtgjørelseForVerv: Boolean = false,
-                 val sluttpakke: Sluttpakke?,
-        val utenlandskeYtelser: List<UtenlandskYtelse> = emptyList(),
-        val andreUtbetalinger: List<AndreUtbetalinger> = emptyList(),
-        val feriePeriode: Periode?)
+class Utbetaling(val fraArbeidsgiver: Boolean,val stønadstyper: List<AnnenStønadstype> = emptyList())
 
-enum class Stønadstype {
+enum class AnnenStønadstype {
     KVALIFISERINGSSTØNAD,
     ØKONOMISK_SOSIALHJELP,
     INTRODUKSJONSSTØNAD,
@@ -63,25 +59,14 @@ enum class Stønadstype {
     FOSTERHJEMSGODTGJØRELSE,
     VERV,
     UTENLANDSK_TRYGD,
-    ANNET
+    ANNET,
+    INGEN
 }
 
 enum class SøkerType {
-    STUDENT,VANLIG
+    STUDENT,STANDARD
 }
 
-data class Sluttpakke(val type: ArbeidsgiverGodtgjørelseType, val beløp: Double)
+class Vedlegg(vararg typer: String?) {
 
-class UtenlandskYtelse(val land: CountryCode,
-        val ytelse: String)
-
-class AndreUtbetalinger(
-        val typeUtbetaling: String,
-        val hvemUtbetaler: String)
-
-enum class ArbeidsgiverGodtgjørelseType {
-    ENGANGSBELØP,
-    LØPENDE_UTBETALING
 }
-
-class Vedlegg
