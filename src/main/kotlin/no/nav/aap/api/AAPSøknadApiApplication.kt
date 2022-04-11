@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component
 
 
 @SpringBootApplication
-@EnableJwtTokenValidation(ignore = ["org.springdoc", "org.springframework"])
+@EnableJwtTokenValidation(ignore = ["org.springdoc", "org.springframework","no.nav.aap.api.mellomlagring.dev"])
 @EnableOAuth2Client(cacheEnabled = true)
 @ConfigurationPropertiesScan
 @EnableRetry

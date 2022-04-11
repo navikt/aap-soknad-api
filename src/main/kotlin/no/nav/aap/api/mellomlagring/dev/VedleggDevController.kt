@@ -1,5 +1,6 @@
-package no.nav.aap.api.mellomlagring
+package no.nav.aap.api.mellomlagring.dev
 
+import no.nav.aap.api.mellomlagring.GCPVedlegg
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.util.AuthContext
 import no.nav.security.token.support.core.api.Unprotected
