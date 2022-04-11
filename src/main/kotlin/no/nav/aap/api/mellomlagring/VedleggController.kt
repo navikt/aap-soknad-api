@@ -27,7 +27,7 @@ class VedleggController(private val vedlegg: GCPVedlegg, private val ctx: AuthCo
         val uuid  = vedlegg.lagre(ctx.getFnr(), file.contentType,file.bytes)
         return ResponseEntity<UUID>(uuid, CREATED)
     }
-    @GetMapping("/les/{uuid}")
+    @GetMapping("/les/{uuid}")  // INCOMPLETE
     fun lesVedlegg(@PathVariable uuid: UUID) = vedlegg.les(ctx.getFnr(), uuid)
 
     @DeleteMapping("/slett/{uuid}")

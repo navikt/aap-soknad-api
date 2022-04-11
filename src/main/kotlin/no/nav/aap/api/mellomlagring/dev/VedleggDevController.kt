@@ -4,8 +4,11 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.mellomlagring.GCPVedlegg
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus.*
-import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
+import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
+import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.NO_CONTENT
+import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.MediaType.parseMediaType
 import org.springframework.http.ResponseEntity
@@ -13,11 +16,11 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestPart
-import org.springframework.web.multipart.MultipartFile
-import java.util.UUID
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
+import java.util.*
 
 
 @Unprotected
@@ -35,7 +38,12 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
         val data = vedlegg.les(fnr, uuid)
         return data?.let {  ResponseEntity<ByteArray>(
                 data.second,
-                HttpHeaders().apply { contentType = parseMediaType(data.first) },
+                HttpHeaders().apply {
+                    add("Expires", "0")
+                    add("Pragma", "no-cache")
+                    add("Cache-Control", "no-cache, no-store, must-revalidate")
+                    add(CONTENT_DISPOSITION,"attachment; filename=data.pdf")
+                    contentType = parseMediaType(data.first) },
                 OK)} ?: ResponseEntity<ByteArray>(NOT_FOUND)
     }
 
