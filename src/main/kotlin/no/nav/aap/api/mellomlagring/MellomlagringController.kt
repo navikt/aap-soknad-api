@@ -35,7 +35,7 @@ class MellomlagringController(private val lager: Mellomlagring,private val vedle
     }
 
     @PostMapping("/vedlegg/lagre/{type}")
-    fun lagreVedlegg(@PathVariable type: SkjemaType, @RequestBody data: String): ResponseEntity<UUID> {
+    fun lagreVedlegg(@PathVariable type: SkjemaType, @RequestBody data: ByteArray): ResponseEntity<UUID> {
         val uuid  = vedlegg.lagre(authCtx.getFnr(), type, data)
         return ResponseEntity<UUID>(uuid, CREATED)
     }
