@@ -31,7 +31,7 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
     }
     @Unprotected
     @GetMapping("les/{fnr}/{uuid}")
-    fun lesVedlegg(@PathVariable fnr: Fødselsnummer,,@PathVariable uuid: UUID) = vedlegg.les(fnr, uuid)
+    fun lesVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID) = vedlegg.les(fnr, uuid)
 
     @Unprotected
     @DeleteMapping("slett/{fnr}/{uuid}")
