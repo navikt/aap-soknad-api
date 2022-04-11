@@ -30,10 +30,8 @@ import org.springframework.http.MediaType.parseMediaType
 class VedleggController(private val vedlegg: GCPVedlegg, private val ctx: AuthContext) {
 
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
-    fun lagreVedlegg(@RequestPart("vedlegg") file: MultipartFile): ResponseEntity<UUID> {
-        val uuid  = vedlegg.lagre(ctx.getFnr(), file)
-        return ResponseEntity<UUID>(uuid, CREATED)
-    }
+    fun lagreVedlegg(@RequestPart("vedlegg") file: MultipartFile) = ResponseEntity<UUID>(vedlegg.lagre(ctx.getFnr(), file), CREATED)
+
     @GetMapping("/les/{uuid}")
     fun lesVedlegg(@PathVariable uuid: UUID)  =
         vedlegg.les(ctx.getFnr(), uuid)?.let {

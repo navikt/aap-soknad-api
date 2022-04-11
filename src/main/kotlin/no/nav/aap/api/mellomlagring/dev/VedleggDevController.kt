@@ -35,10 +35,9 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
 
 
     @PostMapping(value = ["lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
-    fun lagreVedlegg(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") file: MultipartFile): ResponseEntity<UUID> {
-        val uuid  = vedlegg.lagre(fnr, file)
-        return ResponseEntity<UUID>(uuid, CREATED)
-    }
+    fun lagreVedlegg(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") file: MultipartFile) =
+         ResponseEntity<UUID>(vedlegg.lagre(fnr, file), CREATED)
+
     @GetMapping(path= ["les/{fnr}/{uuid}"])
     fun lesVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID) =
          vedlegg.les(fnr, uuid)?.let {
