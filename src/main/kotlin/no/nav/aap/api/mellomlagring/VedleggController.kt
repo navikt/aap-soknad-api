@@ -19,21 +19,20 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 
-@ProtectedRestController(value = ["buckets"], issuer = IDPORTEN)
-class MellomlagringController(private val lager: Mellomlagring, private val ctx: AuthContext) {
+@ProtectedRestController(value = ["vedlegg"], issuer = IDPORTEN)
+class VedleggController(private val vedlegg: GCPVedlegg, private val ctx: AuthContext) {
 
-    @PostMapping("/lagre/{type}")
-    fun lagre(@PathVariable type: SkjemaType, @RequestBody data: String): ResponseEntity<String> {
-        lager.lagre(ctx.getFnr(), type, data)
-        return ResponseEntity<String>(data, CREATED)
+    @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
+    fun lagreVedlegg(@RequestPart("vedlegg") file: MultipartFile): ResponseEntity<UUID> {
+        val uuid  = vedlegg.lagre(ctx.getFnr(), file.contentType,file.bytes)
+        return ResponseEntity<UUID>(uuid, CREATED)
     }
+    @GetMapping("/les/{uuid}")
+    fun lesVedlegg(@PathVariable uuid: UUID) = vedlegg.les(ctx.getFnr(), uuid)
 
-    @GetMapping("/les/{type}")
-    fun les(@PathVariable type: SkjemaType) = lager.les(ctx.getFnr(), type)
-
-    @DeleteMapping("/slett/{type}")
-    fun slett(@PathVariable type: SkjemaType): ResponseEntity<Void> {
-        lager.slett(ctx.getFnr(), type)
+    @DeleteMapping("/slett/{uuid}")
+    fun slettVedlegg(@PathVariable uuid: UUID): ResponseEntity<Void> {
+        vedlegg.slett(ctx.getFnr(),uuid)
         return ResponseEntity<Void>(NO_CONTENT)
     }
 }
