@@ -1,6 +1,5 @@
 package no.nav.aap.api.mellomlagring
 
-import no.nav.aap.api.mellomlagring.GCPVedlegg.Companion
 import no.nav.aap.api.mellomlagring.GCPVedlegg.Companion.FILNAVN
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.util.AuthContext
@@ -25,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.parseMediaType
-import org.springframework.util.MimeTypeUtils.parseMimeType
 
 
 @ProtectedRestController(value = ["vedlegg"], issuer = IDPORTEN)
@@ -37,20 +35,20 @@ class VedleggController(private val vedlegg: GCPVedlegg, private val ctx: AuthCo
         return ResponseEntity<UUID>(uuid, CREATED)
     }
     @GetMapping("/les/{uuid}")
-    fun lesVedlegg(@PathVariable uuid: UUID)  : ResponseEntity<ByteArray>? {
-        val data = vedlegg.les(ctx.getFnr(), uuid)
-        return data?.let {  ResponseEntity<ByteArray>(
-                data.getContent(),
-                HttpHeaders().apply {
-                    add(EXPIRES, "0")
-                    add(PRAGMA, "no-cache")
-                    add(CACHE_CONTROL, "no-cache, no-store, must-revalidate")
-                    add(CONTENT_DISPOSITION,
-                            "attachment; filename=${data.metadata[FILNAVN]}")
-                    contentType = parseMediaType(data.contentType)
-                },
-                OK)} ?: ResponseEntity<ByteArray>(NOT_FOUND)
-    }
+    fun lesVedlegg(@PathVariable uuid: UUID)  =
+        vedlegg.les(ctx.getFnr(), uuid)?.let {
+            ResponseEntity<ByteArray>(
+                    it.getContent(),
+                    HttpHeaders().apply {
+                        add(EXPIRES, "0")
+                        add(PRAGMA, "no-cache")
+                        add(CACHE_CONTROL, "no-cache, no-store, must-revalidate")
+                        add(CONTENT_DISPOSITION, "attachment; filename=${it.metadata[FILNAVN]}")
+                        contentType = parseMediaType(it.contentType)
+                    },
+                    OK)
+        } ?: ResponseEntity<ByteArray>(NOT_FOUND)
+
     @DeleteMapping("/slett/{uuid}")
     fun slettVedlegg(@PathVariable uuid: UUID): ResponseEntity<Void> {
         vedlegg.slett(ctx.getFnr(),uuid)
