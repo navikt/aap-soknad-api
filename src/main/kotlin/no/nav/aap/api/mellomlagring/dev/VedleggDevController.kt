@@ -2,6 +2,7 @@ package no.nav.aap.api.mellomlagring.dev
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.mellomlagring.GCPVedlegg
+import no.nav.aap.api.mellomlagring.GCPVedlegg.Companion.FILNAVN
 import no.nav.aap.util.LoggerUtil
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.http.HttpHeaders
@@ -28,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 
+
 @Unprotected
 @RestController
 @RequestMapping(value= ["/dev/vedlegg/"])
@@ -43,7 +45,7 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
     @GetMapping(path= ["les/{fnr}/{uuid}"])
     fun lesVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID) : ResponseEntity<ByteArray>?{
         val data = vedlegg.les(fnr, uuid)
-        log.info("Originalt filnavn er ${data.metadata["filnavn"]} ")
+        log.info("Originalt filnavn fra metadata er ${data.metadata[FILNAVN]} ")
         return data?.let {  ResponseEntity<ByteArray>(
                 data.getContent(),
                 HttpHeaders().apply {

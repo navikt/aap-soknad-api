@@ -25,7 +25,7 @@ class GCPVedlegg(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøt
          val blob = storage.create(
                  newBuilder(BlobId.of(bøttenavn, "${hash(fnr, uuid)}"))
                     .setContentType(file.contentType)
-                     .setMetadata(mapOf("filnavn" to file.originalFilename))
+                     .setMetadata(mapOf(FILNAVN to file.originalFilename))
                     .build(), file.bytes)
         return uuid
     }
@@ -33,4 +33,9 @@ class GCPVedlegg(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøt
     fun les(fnr: Fødselsnummer, uuid: UUID) = storage.get(bøttenavn, "${hash(fnr, uuid)}", fields(METADATA, CONTENT_TYPE))
 
     fun slett(fnr: Fødselsnummer,uuid: UUID) = storage.delete(BlobId.of(bøttenavn, "${hash(fnr, uuid)}"))
+
+    companion object {
+         const val FILNAVN = "filnavn"
+    }
+
 }
