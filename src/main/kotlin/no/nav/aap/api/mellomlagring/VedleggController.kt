@@ -24,7 +24,7 @@ class VedleggController(private val vedlegg: GCPVedlegg, private val ctx: AuthCo
 
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
     fun lagreVedlegg(@RequestPart("vedlegg") file: MultipartFile): ResponseEntity<UUID> {
-        val uuid  = vedlegg.lagre(ctx.getFnr(), file.contentType,file.bytes)
+        val uuid  = vedlegg.lagre(ctx.getFnr(), file)
         return ResponseEntity<UUID>(uuid, CREATED)
     }
     @GetMapping("/les/{uuid}")  // INCOMPLETE
