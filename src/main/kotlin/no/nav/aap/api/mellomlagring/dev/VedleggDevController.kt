@@ -46,14 +46,15 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
     fun lesVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID) : ResponseEntity<ByteArray>?{
         val data = vedlegg.les(fnr, uuid)
         log.info("Originalt filnavn fra metadata er ${data.metadata[FILNAVN]} ")
-        return data?.let {  ResponseEntity<ByteArray>(
+        return data?.let {
+            ResponseEntity<ByteArray>(
                 data.getContent(),
                 HttpHeaders().apply {
                     add(EXPIRES, "0")
                     add(PRAGMA, "no-cache")
                     add(CACHE_CONTROL, "no-cache, no-store, must-revalidate")
                     add(CONTENT_DISPOSITION,
-                            "attachment; filename=vedlegg.${parseMimeType(data.contentType)?.subtype.lowercase()}")
+                            "attachment; filename=vedlegg.${parseMimeType(data.contentType)?.subtype}")
                     contentType = parseMediaType(data.contentType) },
                 OK)} ?: ResponseEntity<ByteArray>(NOT_FOUND)
     }
