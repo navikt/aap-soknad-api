@@ -2,6 +2,7 @@ package no.nav.aap.api.mellomlagring.dev
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.mellomlagring.GCPVedlegg
+import no.nav.aap.util.LoggerUtil
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.CACHE_CONTROL
@@ -32,6 +33,8 @@ import java.util.*
 @RequestMapping(value= ["/dev/vedlegg/"])
 class VedleggDevController(private val vedlegg: GCPVedlegg) {
 
+    val log = LoggerUtil.getLogger(javaClass)
+
     @PostMapping(value = ["lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
     fun lagreVedlegg(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") file: MultipartFile): ResponseEntity<UUID> {
         val uuid  = vedlegg.lagre(fnr, file)
@@ -40,6 +43,7 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
     @GetMapping(path= ["les/{fnr}/{uuid}"])
     fun lesVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID) : ResponseEntity<ByteArray>?{
         val data = vedlegg.les(fnr, uuid)
+        log.info("Originalt filnavn er ${data.metadata["filnavn"]} ")
         return data?.let {  ResponseEntity<ByteArray>(
                 data.getContent(),
                 HttpHeaders().apply {
