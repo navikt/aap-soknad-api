@@ -13,7 +13,7 @@ import java.util.Objects.hash
 
 
 @ConditionalOnGCP
-class GCPVedlegg(@Value("\${mellomlagring.bucket:aap-vedlegg}") val bøttenavn: String, val storage: Storage)  {
+class GCPVedlegg(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøttenavn: String, private val storage: Storage)  {
 
     val log = LoggerUtil.getLogger(javaClass)
      fun lagre(fnr: Fødselsnummer, file: MultipartFile): UUID {
