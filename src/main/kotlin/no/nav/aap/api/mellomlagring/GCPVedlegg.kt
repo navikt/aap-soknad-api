@@ -21,7 +21,7 @@ class GCPVedlegg(@Value("\${mellomlagring.bucket:aap-vedlegg}") val bøttenavn: 
 
     val log = LoggerUtil.getLogger(javaClass)
      fun lagre(fnr: Fødselsnummer, file: MultipartFile): UUID {
-         log.info("Lagrer vedlegg")
+         log.info("Lagrer vedlegg fra ${file.originalFilename}")
          val uuid = UUID.randomUUID()
          storage.create(
                  newBuilder(BlobId.of(bøttenavn, key(fnr, uuid)))
