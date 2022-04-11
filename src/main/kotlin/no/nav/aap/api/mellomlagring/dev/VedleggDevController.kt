@@ -3,11 +3,11 @@ package no.nav.aap.api.mellomlagring.dev
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.mellomlagring.GCPVedlegg
 import no.nav.security.token.support.core.api.Unprotected
-import org.springframework.http.HttpStatus.CREATED
-import org.springframework.http.HttpStatus.NO_CONTENT
-import org.springframework.http.MediaType.APPLICATION_PDF
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus.*
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
+import org.springframework.http.MediaType.parseMediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,8 +30,16 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
         val uuid  = vedlegg.lagre(fnr, file.contentType,file.bytes)
         return ResponseEntity<UUID>(uuid, CREATED)
     }
-    @GetMapping(path= ["les/{fnr}/{uuid}"], produces = [APPLICATION_PDF_VALUE])
-    fun lesVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID) = vedlegg.les(fnr, uuid)
+    @GetMapping(path= ["les/{fnr}/{uuid}"])
+    fun lesVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID) : ResponseEntity<ByteArray>?{
+        val data = vedlegg.les(fnr, uuid)
+        return data?.let {  ResponseEntity<ByteArray>(
+                data.second,
+                HttpHeaders().apply { contentType = parseMediaType(data.first) },
+                OK)} ?: ResponseEntity<ByteArray>(NOT_FOUND)
+    }
+
+
 
     @DeleteMapping("slett/{fnr}/{uuid}")
     fun slettVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID): ResponseEntity<Void> {

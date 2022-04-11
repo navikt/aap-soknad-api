@@ -28,7 +28,10 @@ class GCPVedlegg(@Value("\${mellomlagring.bucket:aap-vedlegg}") val bøttenavn: 
         return uuid
     }
 
-    fun les(fnr: Fødselsnummer, uuid: UUID) =  storage.get(bøttenavn, key(fnr, uuid))?.getContent()
+    fun les(fnr: Fødselsnummer, uuid: UUID) : Pair<String,ByteArray>?{
+        val data = storage.get(bøttenavn, key(fnr, uuid))
+        return data?.let { Pair(it.contentType,it.getContent()) }
+    }
 
     fun slett(fnr: Fødselsnummer,uuid: UUID) = storage.delete(BlobId.of(bøttenavn, key(fnr,uuid)))
     private fun key(fnr: Fødselsnummer,  uuid: UUID) = hash(fnr, uuid).toString()
