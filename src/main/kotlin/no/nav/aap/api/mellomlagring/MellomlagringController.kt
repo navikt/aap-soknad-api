@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import java.util.*
 
 
 @ProtectedRestController(value = ["buckets"], issuer = IDPORTEN)
-class MellomlagringController(private val lager: Mellomlagring, private val authCtx: AuthContext) {
+class MellomlagringController(private val lager: Mellomlagring,private val vedlegg: GCPVedlegg, private val authCtx: AuthContext) {
 
     @PostMapping("/lagre/{type}")
     fun lagre(@PathVariable type: SkjemaType, @RequestBody data: String): ResponseEntity<String> {
@@ -32,4 +33,19 @@ class MellomlagringController(private val lager: Mellomlagring, private val auth
         lager.slett(authCtx.getFnr(), type)
         return ResponseEntity<Void>(NO_CONTENT)
     }
+
+    @PostMapping("/vedlegg/lagre/{type}")
+    fun lagreVedlegg(@PathVariable type: SkjemaType, @RequestBody data: String): ResponseEntity<UUID> {
+        val uuid  = vedlegg.lagre(authCtx.getFnr(), type, data)
+        return ResponseEntity<UUID>(uuid, CREATED)
+    }
+    @GetMapping("/vedlegg/les/{type}")
+    fun lesVedlegg(@PathVariable type: SkjemaType, uuid: UUID) = vedlegg.les(authCtx.getFnr(), type, uuid)
+
+    @DeleteMapping("/vedlegg/slett/{type}")
+    fun slettVedlegg(@PathVariable type: SkjemaType,uuid: UUID): ResponseEntity<Void> {
+        vedlegg.slett(authCtx.getFnr(), type,uuid)
+        return ResponseEntity<Void>(NO_CONTENT)
+    }
+
 }

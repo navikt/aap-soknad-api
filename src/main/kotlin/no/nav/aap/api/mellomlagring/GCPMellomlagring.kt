@@ -9,21 +9,26 @@ import no.nav.boot.conditionals.ConditionalOnGCP
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.nio.charset.StandardCharsets.UTF_8
+import java.util.Objects.hash
 
 
 @ConditionalOnGCP
 class GCPMellomlagring(@Value("\${mellomlagring.bucket:aap-mellomlagring}") val bøttenavn: String,
                        val storage: Storage) : Mellomlagring {
 
-    override fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) {
+    override fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String): String {
+        var blob = BlobId.of(bøttenavn, key(fnr, type))
         storage.create(
-                newBuilder(blobFra(fnr, type)).setContentType(APPLICATION_JSON_VALUE).build(),
+                newBuilder(blob).setContentType(APPLICATION_JSON_VALUE).build(),
                 value.toByteArray(UTF_8))
+        return blob.toGsUtilUri()
     }
 
-    override fun les(fnr: Fødselsnummer, type: SkjemaType) = storage.get(bøttenavn, key(fnr, type))?.getContent()?.let { String(it) }
+    override fun les(fnr: Fødselsnummer, type: SkjemaType) = storage.get(bøttenavn, key(fnr, type))
+        ?.getContent()
+        ?.let { String(it, UTF_8)
+        }
 
-    override fun slett(fnr: Fødselsnummer, type: SkjemaType) = storage.delete(blobFra(fnr, type))
-    private fun key(fnr: Fødselsnummer, type: SkjemaType) = type.name.plus("_").plus(fnr.fnr)
-    private fun blobFra(fnr: Fødselsnummer, type: SkjemaType) = BlobId.of(bøttenavn, key(fnr, type))
+    override fun slett(fnr: Fødselsnummer, type: SkjemaType) = storage.delete(BlobId.of(bøttenavn, key(fnr, type)))
+    private fun key(fnr: Fødselsnummer, type: SkjemaType) = hash(type.name,fnr).toString()
 }

@@ -18,6 +18,10 @@ spec:
     - secret: srvaap-selvbetjening
   gcp:
     buckets:
+      - name: aap-vedlegg
+        cascadingDelete: true
+        lifecycleCondition:
+          age: 1
       - name: aap-mellomlagring
         cascadingDelete: true
         lifecycleCondition:
