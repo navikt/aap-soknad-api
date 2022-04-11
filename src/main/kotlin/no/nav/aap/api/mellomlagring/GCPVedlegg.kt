@@ -5,6 +5,7 @@ import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.SkjemaType
+import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.apache.tika.Tika
 import org.springframework.beans.factory.annotation.Value
@@ -16,7 +17,9 @@ import java.util.Objects.hash
 class GCPVedlegg(@Value("\${mellomlagring.bucket:aap-vedlegg}") val bøttenavn: String,
                  val storage: Storage)  {
 
+    val log = LoggerUtil.getLogger(javaClass)
      fun lagre(fnr: Fødselsnummer, contentType: String?,bytes: ByteArray): UUID {
+         log.info("Lagrer vedlegg")
          val uuid = UUID.randomUUID()
          storage.create(
                  newBuilder(BlobId.of(bøttenavn, key(fnr, uuid)))
