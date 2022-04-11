@@ -46,12 +46,11 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
                     add(EXPIRES, "0")
                     add(PRAGMA, "no-cache")
                     add(CACHE_CONTROL, "no-cache, no-store, must-revalidate")
-                    add(CONTENT_DISPOSITION,"attachment; filename=data.${extensionFra(data.contentType)}")
+                    add(CONTENT_DISPOSITION,
+                            "attachment; filename=data.${parseMimeType(data.contentType)?.subtype.lowercase()}")
                     contentType = parseMediaType(data.contentType) },
                 OK)} ?: ResponseEntity<ByteArray>(NOT_FOUND)
     }
-
-    private fun extensionFra(mimeType: String) = parseMimeType(mimeType)?.subtype.lowercase()
 
     @DeleteMapping("slett/{fnr}/{uuid}")
     fun slettVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID): ResponseEntity<Void> {
