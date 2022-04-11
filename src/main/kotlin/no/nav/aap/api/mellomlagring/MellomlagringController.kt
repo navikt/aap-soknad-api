@@ -20,35 +20,34 @@ import java.util.*
 
 
 @ProtectedRestController(value = ["buckets"], issuer = IDPORTEN)
-class MellomlagringController(private val lager: Mellomlagring,private val vedlegg: GCPVedlegg, private val authCtx: AuthContext) {
+class MellomlagringController(private val lager: Mellomlagring,private val vedlegg: GCPVedlegg, private val ctx: AuthContext) {
 
     @PostMapping("/lagre/{type}")
     fun lagre(@PathVariable type: SkjemaType, @RequestBody data: String): ResponseEntity<String> {
-        lager.lagre(authCtx.getFnr(), type, data)
+        lager.lagre(ctx.getFnr(), type, data)
         return ResponseEntity<String>(data, CREATED)
     }
 
     @GetMapping("/les/{type}")
-    fun les(@PathVariable type: SkjemaType) = lager.les(authCtx.getFnr(), type)
+    fun les(@PathVariable type: SkjemaType) = lager.les(ctx.getFnr(), type)
 
     @DeleteMapping("/slett/{type}")
     fun slett(@PathVariable type: SkjemaType): ResponseEntity<Void> {
-        lager.slett(authCtx.getFnr(), type)
+        lager.slett(ctx.getFnr(), type)
         return ResponseEntity<Void>(NO_CONTENT)
     }
 
     @PostMapping(value = ["/vedlegg/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
     fun lagreVedlegg(@RequestPart("vedlegg") file: MultipartFile): ResponseEntity<UUID> {
-        val uuid  = vedlegg.lagre(authCtx.getFnr(), file.contentType,file.bytes)
+        val uuid  = vedlegg.lagre(ctx.getFnr(), file.contentType,file.bytes)
         return ResponseEntity<UUID>(uuid, CREATED)
     }
     @GetMapping("/vedlegg/les/uuid}")
-    fun lesVedlegg(@PathVariable uuid: UUID) = vedlegg.les(authCtx.getFnr(), uuid)
+    fun lesVedlegg(@PathVariable uuid: UUID) = vedlegg.les(ctx.getFnr(), uuid)
 
     @DeleteMapping("/vedlegg/slett/{uuid}")
     fun slettVedlegg(@PathVariable uuid: UUID): ResponseEntity<Void> {
-        vedlegg.slett(authCtx.getFnr(),uuid)
+        vedlegg.slett(ctx.getFnr(),uuid)
         return ResponseEntity<Void>(NO_CONTENT)
     }
-
 }
