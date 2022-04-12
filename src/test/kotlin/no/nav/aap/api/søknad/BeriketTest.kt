@@ -10,7 +10,6 @@ import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.oppslag.behandler.Behandler.BehandlerType.FASTLEGE
 import no.nav.aap.api.oppslag.behandler.Behandler.KontaktInformasjon
-import no.nav.aap.api.søknad.model.AnnenStønadstype.FOSTERHJEMSGODTGJØRELSE
 import no.nav.aap.api.søknad.model.Barn
 import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Ferie
@@ -23,6 +22,9 @@ import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.SøkerType.STANDARD
 import no.nav.aap.api.søknad.model.Utbetaling
+import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønad
+import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.FOSTERHJEMSGODTGJØRELSE
+import no.nav.aap.api.søknad.model.Utbetaling.AnnenUtbetaling
 import no.nav.aap.api.søknad.model.Utenlandsopphold
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -31,6 +33,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.boot.test.json.JacksonTester
 import java.time.LocalDate.now
+import java.util.UUID
 
 @JsonTest
 class BeriketTest {
@@ -71,15 +74,17 @@ class BeriketTest {
                                 "A",
                                 "Legesen"),
                         KontaktInformasjon("ref",
-                                "Kontor",
+                                "Legekontoret",
                                 OrgNummer("888888888"),
-                                "gata",
-                                "2600",
-                                "Lillehammer",
+                                Adresse("Legegata",
+                                        null,null,
+                                        PostNummer("2600", "Lillehammer")),
                                 "22222222"))),
                 JA,
                Utbetaling(false,
-                       listOf(FOSTERHJEMSGODTGJØRELSE)),
+                       listOf(AnnenStønad(FOSTERHJEMSGODTGJØRELSE,UUID.randomUUID())),
+                       listOf(AnnenUtbetaling("hvilken",
+                               "hvem"))),
                 listOf(BarnOgInntekt(
                         Barn(Fødselsnummer("22222222"),
                                 Navn("Et",
@@ -95,10 +100,10 @@ class BeriketTest {
                        Adresse("Rådyrstien",
                                null,
                                "29",
-                       PostNummer("2619",
+                               PostNummer("2619",
                                "Lillehammer")),
                        now(),
-                listOf()))
+                       listOf()))
         println(json.write(s).json)
     }
     @SpringBootApplication

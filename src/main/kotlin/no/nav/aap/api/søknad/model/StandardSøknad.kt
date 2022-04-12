@@ -8,7 +8,9 @@ import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.RadioValg.NEI
 import no.nav.aap.api.søknad.model.RadioValg.VET_IKKE
 import no.nav.aap.api.søknad.model.SøkerType.STANDARD
+import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype
 import java.time.LocalDate
+import java.util.*
 
 data class StandardSøknad(
         val type: SøkerType = STANDARD,
@@ -19,10 +21,9 @@ data class StandardSøknad(
         val yrkesskadeType: RadioValg,
         val utbetalinger: Utbetaling?,
         val barn: List<BarnOgInntekt> = emptyList(),
-        val tilleggsopplysninger: String?,
-        val vedlegg: List<Vedlegg> = emptyList())
+        val tilleggsopplysninger: String?)
 
-data class Medlemskap(val boddINorgeSamenhengendeSiste5: Boolean,
+data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
                       val jobbetUtenforNorgeFørSyk: Boolean,
                       val jobbetSammenhengendeINorgeSiste5: Boolean?,
                       val utenlandsopphold: List<Utenlandsopphold>)
@@ -43,30 +44,27 @@ data class Ferie(val periode: Periode? = null, val dager: Long? = null)  {
         else NEI
     }
 }
-data class BarnOgInntekt(val barn: Barn, val inntekt: Inntekt)
+data class BarnOgInntekt(val barn: Barn, val inntekt: Inntekt?)
 
 enum class RadioValg { JA, NEI, VET_IKKE }
 
 data class Inntekt(val inntekt: Double)
 
-class Utbetaling(val fraArbeidsgiver: Boolean,val stønadstyper: List<AnnenStønadstype> = emptyList())
+class Utbetaling(val fraArbeidsgiver: Boolean, val stønadstyper: List<AnnenStønad> = emptyList(), val andreUtbetalinger: List<AnnenUtbetaling>) {
+   data  class AnnenUtbetaling(val hvilken: String, val hvem: String, val vedlegg: UUID? = null)
 
-enum class AnnenStønadstype {
-    KVALIFISERINGSSTØNAD,
-    ØKONOMISK_SOSIALHJELP,
-    INTRODUKSJONSSTØNAD,
-    OMSORGSSTØNAD,
-    FOSTERHJEMSGODTGJØRELSE,
-    VERV,
-    UTENLANDSK_TRYGD,
-    ANNET,
-    INGEN
+    data class AnnenStønad(val type: AnnenStønadstype,val vedlegg: UUID? = null)
+    enum class AnnenStønadstype {
+        KVALIFISERINGSSTØNAD,
+        ØKONOMISK_SOSIALHJELP,
+        INTRODUKSJONSSTØNAD,
+        OMSORGSSTØNAD,
+        FOSTERHJEMSGODTGJØRELSE,
+        VERV,
+        UTENLANDSK_TRYGD,
+        ANNET,
+        INGEN
+    }
 }
 
-enum class SøkerType {
-    STUDENT,STANDARD
-}
-
-class Vedlegg(vararg typer: String?) {
-
-}
+enum class SøkerType { STUDENT,STANDARD }
