@@ -19,7 +19,6 @@ import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.RadioValg.NEI
 import no.nav.aap.api.søknad.model.RadioValg.VET_IKKE
 import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.SøkerType.STANDARD
 import no.nav.aap.api.søknad.model.Utbetaling
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønad
@@ -38,7 +37,7 @@ import java.util.UUID
 @JsonTest
 class BeriketTest {
     @Autowired
-     lateinit var json: JacksonTester<StandardSøknadBeriket>
+    lateinit var json: JacksonTester<StandardSøknad>
     @Autowired
     lateinit var barn: JacksonTester<BarnOgInntekt>
     @Autowired
@@ -58,7 +57,7 @@ class BeriketTest {
     }
     @Test
     fun søknad(){
-       val s =  StandardSøknadBeriket(StandardSøknad(STANDARD,
+       val s =  StandardSøknad(STANDARD,
                now(),
                Ferie(21),
                Medlemskap(true,
@@ -92,18 +91,7 @@ class BeriketTest {
                                         "Barn"),
                         now().minusYears(14)),
                         Inntekt(42.5))),
-               "Tilegg"),
-               Søker(Navn("Søker",
-                       "Mellomnavn",
-                       "Søkersen"),
-                       Fødselsnummer("03016536325"),
-                       Adresse("Rådyrstien",
-                               null,
-                               "29",
-                               PostNummer("2619",
-                               "Lillehammer")),
-                       now(),
-                       listOf()))
+               "Tilegg")
         println(json.write(s).json)
     }
     @SpringBootApplication
