@@ -25,6 +25,7 @@ import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.stereotype.Component
 import java.util.*
+import kotlin.collections.List as List1
 
 @Component
 class StandardSøknadFormidler(private val joark: JoarkClient,
@@ -50,25 +51,25 @@ class StandardSøknadFormidler(private val joark: JoarkClient,
                 .also { log.info("Formidlet søknad til Kakfa OK") }
         }
 
-    private fun docs(søker: Søker, søknad: StandardSøknad): List<Dokument> {
-         val andreStønader = søknad.utbetalinger?.stønadstyper
-           ?.filterNot { it.vedlegg == null }
-            ?.map { with(vedlegg.les(søker.fødselsnummer,it.vedlegg!!)) { dokumentVariant() } }
-             ?.filterNotNull()
-             .orEmpty()
-
-          val andreUtbetalinger = søknad.utbetalinger?.andreUtbetalinger
-              ?.filterNot { it.vedlegg == null }
-              ?.map { with(vedlegg.les(søker.fødselsnummer,it.vedlegg!!)) { dokumentVariant() } }
-              ?.filterNotNull()
-              .orEmpty()
-
-        return listOf(Dokument(
+    private fun docs(søker: Søker, søknad: StandardSøknad) =
+        listOf(Dokument(
                 HOVED.tittel, HOVED.kode, listOf(
-                        DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL),
-                        DokumentVariant(PDFA, pdf.generate(søker, søknad), ARKIV))
-                  + andreStønader + andreUtbetalinger))
-    }
+                DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL),
+                DokumentVariant(PDFA, pdf.generate(søker, søknad), ARKIV))
+                + andreStønader(søknad, søker) + andreUtbetalinger(søknad, søker)))
+
+
+    private fun andreStønader(søknad: StandardSøknad, søker: Søker) = søknad.utbetalinger?.stønadstyper
+        ?.filterNot { it.vedlegg == null }
+        ?.map { with(vedlegg.les(søker.fødselsnummer, it.vedlegg!!)) { dokumentVariant() } }
+        ?.filterNotNull()
+        .orEmpty()
+
+    private fun andreUtbetalinger(søknad: StandardSøknad, søker: Søker) = søknad.utbetalinger?.andreUtbetalinger
+        ?.filterNot { it.vedlegg == null }
+        ?.map { with(vedlegg.les(søker.fødselsnummer, it.vedlegg!!)) { dokumentVariant() } }
+        ?.filterNotNull()
+        .orEmpty()
 
     private fun Blob.dokumentVariant() =
         when (contentType) {
@@ -80,6 +81,6 @@ class StandardSøknadFormidler(private val joark: JoarkClient,
             }
     }
 
-    fun Blob.encodedContent() = Base64.getEncoder().encodeToString(getContent())
+    private fun Blob.encodedContent() = Base64.getEncoder().encodeToString(getContent())
 
 }
