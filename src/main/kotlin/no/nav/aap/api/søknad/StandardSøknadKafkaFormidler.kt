@@ -4,6 +4,8 @@ import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics.counter
 import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_MOTTATT
 import no.nav.aap.api.felles.error.IntegrationException
+import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
@@ -19,13 +21,13 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
-class StandardSøknadKafkaFormidler(private val formidler: KafkaOperations<String, StandardSøknadBeriket>, @Value("#{'\${standard.ny.topic:aap.aap-soknad-sendt-ny.v1}'}") val søknadTopic: String) {
+class StandardSøknadKafkaFormidler(private val formidler: KafkaOperations<String, StandardSøknad>, @Value("#{'\${standard.ny.topic:aap.aap-soknad-sendt-ny.v1}'}") val søknadTopic: String) {
 
-    fun formidle(søknad: StandardSøknadBeriket) {
+    fun formidle(søknad: StandardSøknad, søker: Søker) {
         formidler.send(
                 MessageBuilder
                     .withPayload(søknad)
-                    .setHeader(MESSAGE_KEY, søknad.søker.fødselsnummer.fnr)  //TODO FIX
+                    .setHeader(MESSAGE_KEY, søker.fødselsnummer.fnr)  //TODO FIX
                     .setHeader(TOPIC, søknadTopic)
                     .setHeader(NAV_CALL_ID, callId())
                     .build())
@@ -33,12 +35,12 @@ class StandardSøknadKafkaFormidler(private val formidler: KafkaOperations<Strin
     }
 }
 
-private class StandardFormidlingCallback(val søknad: StandardSøknadBeriket, val counter: Counter) :
-    ListenableFutureCallback<SendResult<String, StandardSøknadBeriket>> {
+private class StandardFormidlingCallback(val søknad: StandardSøknad, val counter: Counter) :
+    ListenableFutureCallback<SendResult<String, StandardSøknad>> {
     private val secureLog = LoggerUtil.getSecureLogger()
     val log = LoggerUtil.getLogger(javaClass)
 
-    override fun onSuccess(result: SendResult<String, StandardSøknadBeriket>?) {
+    override fun onSuccess(result: SendResult<String, StandardSøknad>?) {
         counter.increment()
         log.info(CONFIDENTIAL,
                 "Søknad $søknad sent til Kafka på topic {}, partition {} med offset {} OK",

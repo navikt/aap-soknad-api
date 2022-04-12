@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad
 
-import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.SkjemaType.HOVED
 import no.nav.aap.api.søknad.joark.JoarkClient
@@ -11,39 +11,37 @@ import no.nav.aap.joark.AvsenderMottaker
 import no.nav.aap.joark.Bruker
 import no.nav.aap.joark.Dokument
 import no.nav.aap.joark.DokumentVariant
+import no.nav.aap.joark.Filtype.JSON
+import no.nav.aap.joark.Filtype.PDFA
 import no.nav.aap.joark.Journalpost
+import no.nav.aap.joark.VariantFormat.ARKIV
+import no.nav.aap.joark.VariantFormat.ORIGINAL
 import no.nav.aap.util.LoggerUtil
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class StandardSøknadFormidler(private val joark: JoarkClient, private val pdfGen: PDFGenerator,private val pdl: PDLClient, private val kafka: StandardSøknadKafkaFormidler) {
+class StandardSøknadFormidler(private val joark: JoarkClient, private val pdf: PDFGenerator, private val pdl: PDLClient, private val kafka: StandardSøknadKafkaFormidler) {
 
+    @Autowired
+    private lateinit var mapper: ObjectMapper
     private val log = LoggerUtil.getLogger(javaClass)
 
-    fun formidle(søknad: StandardSøknad) {
-        var beriketSøknad = søknad.berik(pdl)
-        joark.opprettJournalpost(
-                Journalpost(
-                dokumenter = docs(beriketSøknad),
-                tittel = HOVED.tittel,
-                avsenderMottaker = AvsenderMottaker(beriketSøknad.fødselsnummer, navn=beriketSøknad.fulltNavn),
-                bruker = Bruker(beriketSøknad.fødselsnummer)))
-            .also {  log.info("Journalført $it OK") }
-        kafka.formidle(beriketSøknad)
-    }
+    fun formidle(søknad: StandardSøknad) =
+        with(pdl.søkerUtenBarn()) {
+            joark.opprettJournalpost(
+                    Journalpost(
+                            dokumenter = docs(this, søknad),
+                            tittel = HOVED.tittel,
+                            avsenderMottaker = AvsenderMottaker(fødselsnummer, navn = navn.navn),
+                            bruker = Bruker(fødselsnummer)))
+                .also { log.info("Journalført søknad $it OK") }
+            kafka.formidle(søknad, this)
+                .also { log.info("Formidlet søknad til Kakfa OK") }
+        }
 
-    private fun docs(beriketSøknad: StandardSøknadBeriket)  =
-        listOf(Dokument(HOVED.tittel, HOVED.kode, listOf(DokumentVariant(fysiskDokument = pdfGen.generate(beriketSøknad)))))
-}
-
-data class StandardSøknadBeriket(val søknad: StandardSøknad, val søker: Søker) {
-    @JsonIgnore
-    val fulltNavn = søker.navn.navn
-    @JsonIgnore
-    val fødselsnummer = søker.fødselsnummer
-}
-
-fun StandardSøknad.berik(pdl: PDLClient): StandardSøknadBeriket {
-    val søker =  pdl.søkerMedBarn()
-    return StandardSøknadBeriket(this,søker)
+    private fun docs(søker: Søker, søknad: StandardSøknad)  =
+        listOf(Dokument(HOVED.tittel, HOVED.kode, listOf(
+                DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL),
+                DokumentVariant(PDFA, pdf.generate(søker, søknad), ARKIV))))
 }

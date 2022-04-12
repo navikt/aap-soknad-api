@@ -9,9 +9,10 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
-import no.nav.aap.api.søknad.StandardSøknadBeriket
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorConfig.Companion.PDFGEN
+import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.model.Søker
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
@@ -24,11 +25,11 @@ import java.time.LocalDate.now
 class PDFGeneratorAdapter(@Qualifier(PDFGEN) client: WebClient, val cf: PDFGeneratorConfig, val mapper: ObjectMapper) :
     AbstractWebClientAdapter(client, cf) {
 
-    fun generate(søknad: StandardSøknadBeriket) =
+    fun generate(søknad: StandardSøknad, søker: Søker) =
         webClient.post()
             .uri { it.path(cf.standardPath).build() }
             .contentType(APPLICATION_JSON)
-            .bodyValue(søknad.pdfData(mapper))
+            .bodyValue(søker.pdfData(mapper))
             .retrieve()
             .bodyToMono<ByteArray>()
             .doOnError { t: Throwable -> log.warn("PDF-generering feiler", t) }
@@ -49,7 +50,7 @@ class PDFGeneratorAdapter(@Qualifier(PDFGEN) client: WebClient, val cf: PDFGener
 
 private fun UtenlandsSøknadKafka.pdfData(m: ObjectMapper) = m.writeValueAsString(UtlandPDFData(søker.fnr, land.land(), søker.navn, periode))
 
-private fun StandardSøknadBeriket.pdfData(m: ObjectMapper) = m.writeValueAsString(StandardPDFData(søker.fødselsnummer, søker.navn))
+private fun Søker.pdfData(m: ObjectMapper) = m.writeValueAsString(StandardPDFData(fødselsnummer, navn))
 
 private fun CountryCode.land() = toLocale().displayCountry
 

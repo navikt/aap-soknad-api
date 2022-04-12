@@ -1,7 +1,9 @@
 package no.nav.aap.api.søknad.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.neovisionaries.i18n.CountryCode
+import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.søknad.model.RadioValg.JA
@@ -9,6 +11,7 @@ import no.nav.aap.api.søknad.model.RadioValg.NEI
 import no.nav.aap.api.søknad.model.RadioValg.VET_IKKE
 import no.nav.aap.api.søknad.model.SøkerType.STANDARD
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype
+import org.springframework.kafka.support.JacksonUtils
 import java.time.LocalDate
 import java.util.*
 
@@ -21,7 +24,10 @@ data class StandardSøknad(
         val yrkesskadeType: RadioValg,
         val utbetalinger: Utbetaling?,
         val barn: List<BarnOgInntekt> = emptyList(),
-        val tilleggsopplysninger: String?)
+        val tilleggsopplysninger: String?)  {
+
+    fun toEncodedJson( mapper: ObjectMapper) = Base64.getEncoder().encodeToString(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this).toByteArray())
+}
 
 data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
                       val jobbetUtenforNorgeFørSyk: Boolean,
