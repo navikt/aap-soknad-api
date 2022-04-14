@@ -35,8 +35,10 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
 
 
     @PostMapping(value = ["lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
-    fun lagreVedlegg(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") file: MultipartFile) =
-         ResponseEntity<UUID>(vedlegg.lagreVedlegg(fnr, file), CREATED)
+    fun lagreVedlegg(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") file: MultipartFile): ResponseEntity<UUID> {
+        val uuid = UUID.randomUUID()
+        return ResponseEntity.created(vedlegg.lagreVedlegg(fnr, uuid, file)).body(uuid)
+    }
 
     @GetMapping(path= ["les/{fnr}/{uuid}"])
     fun lesVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID) =

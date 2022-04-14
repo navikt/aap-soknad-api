@@ -33,8 +33,7 @@ class VedleggController(private val bucket: GCPVedlegg, private val ctx: AuthCon
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
     fun lagreVedlegg(@RequestPart("vedlegg") file: MultipartFile): ResponseEntity<UUID> {
         val uuid = UUID.randomUUID()
-        return created(bucket.lagreVedlegg(ctx.getFnr(), uuid,file))
-            .body(uuid)
+        return created(bucket.lagreVedlegg(ctx.getFnr(), uuid,file)).body(uuid)
     }
 
     @GetMapping("/les/{uuid}")

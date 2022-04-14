@@ -29,7 +29,7 @@ class GCPVedlegg(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøt
                          .build(), bytes)
               URI.create("http://storage.googleapis.com/$bøtte/$doc")
          }
-    
+
     fun lesVedlegg(fnr: Fødselsnummer, uuid: UUID) = storage.get(bøtte, "${hash(fnr, uuid)}", fields(METADATA, CONTENT_TYPE))
 
     fun slettVedlegg(fnr: Fødselsnummer, uuid: UUID) = storage.delete(of(bøtte, "${hash(fnr, uuid)}"))
