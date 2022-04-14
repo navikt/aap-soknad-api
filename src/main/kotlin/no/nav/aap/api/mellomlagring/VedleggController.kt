@@ -7,18 +7,11 @@ import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
-import org.springframework.http.CacheControl
 import org.springframework.http.CacheControl.noCache
-import org.springframework.http.ContentDisposition
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
-import org.springframework.http.HttpStatus.OK
-import org.springframework.http.HttpHeaders.CACHE_CONTROL
-import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
-import org.springframework.http.HttpHeaders.EXPIRES
-import org.springframework.http.HttpHeaders.PRAGMA
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -28,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
-import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.parseMediaType
 
 
@@ -48,7 +40,7 @@ class VedleggController(private val vedlegg: GCPVedlegg, private val ctx: AuthCo
                 .contentType(parseMediaType(it.contentType))
                 .cacheControl(noCache().mustRevalidate())
                 .headers(HttpHeaders().apply {
-                    contentDisposition = attachment().filename(it.metadata[FILNAVN]!!).build(),
+                    contentDisposition = attachment().filename(it.metadata[FILNAVN]!!).build()
             })
                 .body(it.getContent())
         } ?: ResponseEntity.notFound()
