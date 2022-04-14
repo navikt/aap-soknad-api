@@ -1,10 +1,16 @@
 package no.nav.aap.api.mellomlagring
 
 import no.nav.aap.api.mellomlagring.GCPVedlegg.Companion.FILNAVN
+import no.nav.aap.api.mellomlagring.GCPVedlegg.Companion.FNR
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
+import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
+import org.springframework.http.CacheControl
+import org.springframework.http.CacheControl.noCache
+import org.springframework.http.ContentDisposition
+import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
@@ -30,26 +36,26 @@ import org.springframework.http.MediaType.parseMediaType
 class VedleggController(private val vedlegg: GCPVedlegg, private val ctx: AuthContext) {
 
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
-    fun lagreVedlegg(@RequestPart("vedlegg") file: MultipartFile) = ResponseEntity<UUID>(vedlegg.lagre(ctx.getFnr(), file), CREATED)
+    fun lagreVedlegg(@RequestPart("vedlegg") file: MultipartFile) = ResponseEntity<UUID>(vedlegg.lagreVedlegg(ctx.getFnr(), file), CREATED)
 
     @GetMapping("/les/{uuid}")
     fun lesVedlegg(@PathVariable uuid: UUID)  =
-        vedlegg.les(ctx.getFnr(), uuid)?.let {
-            ResponseEntity<ByteArray>(
-                    it.getContent(),
-                    HttpHeaders().apply {
-                        add(EXPIRES, "0")
-                        add(PRAGMA, "no-cache")
-                        add(CACHE_CONTROL, "no-cache, no-store, must-revalidate")
-                        add(CONTENT_DISPOSITION, "attachment; filename=${it.metadata[FILNAVN]}")
-                        contentType = parseMediaType(it.contentType)
-                    },
-                    OK)
-        } ?: ResponseEntity<ByteArray>(NOT_FOUND)
+        vedlegg.lesVedlegg(ctx.getFnr(), uuid)?.let {
+            if (ctx.getFnr().fnr != it.metadata[FNR]) {
+               throw JwtTokenUnauthorizedException("Dokumentet med id $uuid er ikke eid av ${ctx.getFnr()}")
+            }
+            ResponseEntity.ok()
+                .contentType(parseMediaType(it.contentType))
+                .cacheControl(noCache().mustRevalidate())
+                .headers(HttpHeaders().apply {
+                    contentDisposition = attachment().filename(it.metadata[FILNAVN]!!).build(),
+            })
+                .body(it.getContent())
+        } ?: ResponseEntity.notFound()
 
     @DeleteMapping("/slett/{uuid}")
     fun slettVedlegg(@PathVariable uuid: UUID): ResponseEntity<Void> {
-        vedlegg.slett(ctx.getFnr(),uuid)
+        vedlegg.slettVedlegg(ctx.getFnr(),uuid)
         return ResponseEntity<Void>(NO_CONTENT)
     }
 }

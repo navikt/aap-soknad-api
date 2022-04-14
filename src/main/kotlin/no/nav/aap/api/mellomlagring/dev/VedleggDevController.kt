@@ -36,11 +36,11 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
 
     @PostMapping(value = ["lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
     fun lagreVedlegg(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") file: MultipartFile) =
-         ResponseEntity<UUID>(vedlegg.lagre(fnr, file), CREATED)
+         ResponseEntity<UUID>(vedlegg.lagreVedlegg(fnr, file), CREATED)
 
     @GetMapping(path= ["les/{fnr}/{uuid}"])
     fun lesVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID) =
-         vedlegg.les(fnr, uuid)?.let {
+         vedlegg.lesVedlegg(fnr, uuid)?.let {
             ResponseEntity<ByteArray>(
                     it.getContent(),
                     HttpHeaders().apply {
@@ -55,7 +55,7 @@ class VedleggDevController(private val vedlegg: GCPVedlegg) {
 
     @DeleteMapping("slett/{fnr}/{uuid}")
     fun slettVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID): ResponseEntity<Void> {
-        vedlegg.slett(fnr,uuid)
+        vedlegg.slettVedlegg(fnr,uuid)
         return ResponseEntity<Void>(NO_CONTENT)
     }
 }

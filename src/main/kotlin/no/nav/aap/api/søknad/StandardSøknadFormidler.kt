@@ -13,25 +13,21 @@ import no.nav.aap.joark.AvsenderMottaker
 import no.nav.aap.joark.Bruker
 import no.nav.aap.joark.Dokument
 import no.nav.aap.joark.DokumentVariant
-import no.nav.aap.joark.Filtype.JPG
+import no.nav.aap.joark.Filtype.Companion.of
 import no.nav.aap.joark.Filtype.JSON
 import no.nav.aap.joark.Filtype.PDFA
 import no.nav.aap.joark.Journalpost
-import no.nav.aap.joark.VariantFormat.ARKIV
 import no.nav.aap.joark.VariantFormat.ORIGINAL
 import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
-import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.stereotype.Component
-import java.util.*
-import kotlin.collections.List as List1
+import java.util.Base64
 
 @Component
 class StandardSøknadFormidler(private val joark: JoarkClient,
                               private val pdf: PDFGenerator,
                               private val pdl: PDLClient,
-                              private val vedlegg: GCPVedlegg,
+                              private val bucket: GCPVedlegg,
                               private val kafka: StandardSøknadKafkaFormidler) {
 
     @Autowired
@@ -55,32 +51,28 @@ class StandardSøknadFormidler(private val joark: JoarkClient,
         listOf(Dokument(
                 HOVED.tittel, HOVED.kode, listOf(
                 DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL),
-                DokumentVariant(PDFA, pdf.generate(søker, søknad), ARKIV))
-                + andreStønader(søknad, søker) + andreUtbetalinger(søknad, søker)))
+                DokumentVariant(PDFA, pdf.generate(søker, søknad)))
+                + andreStønaderVedlegg(søknad, søker)
+                + andreUtbetalingerVedlegg(søknad, søker)))
 
-
-    private fun andreStønader(søknad: StandardSøknad, søker: Søker) = søknad.utbetalinger?.stønadstyper
+    private fun andreStønaderVedlegg(søknad: StandardSøknad, søker: Søker) = søknad.utbetalinger?.stønadstyper
         ?.filterNot { it.vedlegg == null }
-        ?.map { with(vedlegg.les(søker.fødselsnummer, it.vedlegg!!)) { dokumentVariant() } }
-        ?.filterNotNull()
-        .orEmpty()
-
-    private fun andreUtbetalinger(søknad: StandardSøknad, søker: Søker) = søknad.utbetalinger?.andreUtbetalinger
-        ?.filterNot { it.vedlegg == null }
-        ?.map { with(vedlegg.les(søker.fødselsnummer, it.vedlegg!!)) { dokumentVariant() } }
-        ?.filterNotNull()
-        .orEmpty()
-
-    private fun Blob.dokumentVariant() =
-        when (contentType) {
-            APPLICATION_PDF_VALUE -> DokumentVariant(PDFA, encodedContent(), ARKIV)
-            IMAGE_JPEG_VALUE -> DokumentVariant(JPG, encodedContent(), ARKIV)
-            else -> {
-                log.warn("Contemt type $contentType er ukjent")
-                null
+        ?.map {
+            with(bucket.lesVedlegg(søker.fødselsnummer, it.vedlegg!!)) {
+                DokumentVariant(of(contentType), encode())
             }
-    }
+        }
+        .orEmpty()
 
-    private fun Blob.encodedContent() = Base64.getEncoder().encodeToString(getContent())
+    private fun andreUtbetalingerVedlegg(søknad: StandardSøknad, søker: Søker) = søknad.utbetalinger?.andreUtbetalinger
+        ?.filterNot { it.vedlegg == null }
+        ?.map {
+            with(bucket.lesVedlegg(søker.fødselsnummer, it.vedlegg!!)) {
+                DokumentVariant(of(contentType), encode())
+            }
+        }
+        .orEmpty()
+
+    private fun Blob.encode() = Base64.getEncoder().encodeToString(getContent())
 
 }
