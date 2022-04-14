@@ -22,32 +22,41 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 import org.springframework.http.MediaType.parseMediaType
+import org.springframework.http.ResponseEntity.created
+import org.springframework.http.ResponseEntity.notFound
+import org.springframework.http.ResponseEntity.ok
 
 
 @ProtectedRestController(value = ["vedlegg"], issuer = IDPORTEN)
-class VedleggController(private val vedlegg: GCPVedlegg, private val ctx: AuthContext) {
+class VedleggController(private val bucket: GCPVedlegg, private val ctx: AuthContext) {
 
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
-    fun lagreVedlegg(@RequestPart("vedlegg") file: MultipartFile) = ResponseEntity<UUID>(vedlegg.lagreVedlegg(ctx.getFnr(), file), CREATED)
+    fun lagreVedlegg(@RequestPart("vedlegg") file: MultipartFile): ResponseEntity<UUID> {
+        val uuid = UUID.randomUUID()
+        return created(bucket.lagreVedlegg(ctx.getFnr(), uuid,file))
+            .body(uuid)
+    }
 
     @GetMapping("/les/{uuid}")
     fun lesVedlegg(@PathVariable uuid: UUID)  =
-        vedlegg.lesVedlegg(ctx.getFnr(), uuid)?.let {
-            if (ctx.getFnr().fnr != it.metadata[FNR]) {
-               throw JwtTokenUnauthorizedException("Dokumentet med id $uuid er ikke eid av ${ctx.getFnr()}")
-            }
-            ResponseEntity.ok()
-                .contentType(parseMediaType(it.contentType))
-                .cacheControl(noCache().mustRevalidate())
-                .headers(HttpHeaders().apply {
-                    contentDisposition = attachment().filename(it.metadata[FILNAVN]!!).build()
-            })
-                .body(it.getContent())
-        } ?: ResponseEntity.notFound()
+        bucket.lesVedlegg(ctx.getFnr(), uuid)
+            ?.let { vedlegg ->
+                with(vedlegg) {
+                    if (ctx.getFnr().fnr != metadata[FNR]) {
+                        throw JwtTokenUnauthorizedException("Dokumentet med id $uuid er ikke eid av ${ctx.getFnr()}")
+                    }
+                    ok()
+                        .contentType(parseMediaType(contentType))
+                        .cacheControl(noCache().mustRevalidate())
+                        .headers(HttpHeaders().apply {
+                            contentDisposition = attachment().filename(metadata[FILNAVN]!!).build() })
+                        .body(getContent())
+                }
+            } ?: notFound()
 
     @DeleteMapping("/slett/{uuid}")
     fun slettVedlegg(@PathVariable uuid: UUID): ResponseEntity<Void> {
-        vedlegg.slettVedlegg(ctx.getFnr(),uuid)
+        bucket.slettVedlegg(ctx.getFnr(),uuid)
         return ResponseEntity<Void>(NO_CONTENT)
     }
 }
