@@ -35,8 +35,8 @@ class VedleggDevController(private val bucket: GCPVedlegg) {
 
 
     @PostMapping(value = ["lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
-    fun lagreVedlegg(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") file: MultipartFile): ResponseEntity<Void> =
-        status(CREATED).header(LOCATION, "${bucket.lagreVedlegg(fnr, file)}").build()
+    fun lagreVedlegg(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") vedlegg: MultipartFile): ResponseEntity<Void> =
+        status(CREATED).header(LOCATION, "${bucket.lagreVedlegg(fnr, vedlegg)}").build()
 
     @GetMapping(path= ["les/{fnr}/{uuid}"])
     fun lesVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID) =
@@ -53,11 +53,11 @@ class VedleggDevController(private val bucket: GCPVedlegg) {
                             contentDisposition = attachment().filename(metadata[FILNAVN]!!).build() })
                         .body(getContent())
                 }
-            } ?: notFound()
+            } ?: notFound().build()
 
     @DeleteMapping("slett/{fnr}/{uuid}")
     fun slettVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID): ResponseEntity<Void> {
         bucket.slettVedlegg(fnr,uuid)
-        return ResponseEntity<Void>(NO_CONTENT)
+        return noContent().build()
     }
 }

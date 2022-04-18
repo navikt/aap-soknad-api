@@ -23,19 +23,15 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 import org.springframework.http.MediaType.parseMediaType
-import org.springframework.http.ResponseEntity.created
-import org.springframework.http.ResponseEntity.notFound
-import org.springframework.http.ResponseEntity.ok
+import org.springframework.http.ResponseEntity.*
 
 
 @ProtectedRestController(value = ["vedlegg"], issuer = IDPORTEN)
 class VedleggController(private val bucket: GCPVedlegg, private val ctx: AuthContext) {
 
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
-    fun lagreVedlegg(@RequestPart("vedlegg") file: MultipartFile): ResponseEntity<Void> {
-        val uuid = bucket.lagreVedlegg(ctx.getFnr(), file)
-        return ResponseEntity.status(CREATED).header(LOCATION,"$uuid").build()
-    }
+    fun lagreVedlegg(@RequestPart("vedlegg") vedlegg: MultipartFile): ResponseEntity<Void> =
+        status(CREATED).header(LOCATION, "${bucket.lagreVedlegg(ctx.getFnr(), vedlegg)}").build()
 
         @GetMapping("/les/{uuid}")
     fun lesVedlegg(@PathVariable uuid: UUID)  =
@@ -52,11 +48,11 @@ class VedleggController(private val bucket: GCPVedlegg, private val ctx: AuthCon
                             contentDisposition = attachment().filename(metadata[FILNAVN]!!).build() })
                         .body(getContent())
                 }
-            } ?: notFound()
+            } ?: notFound().build()
 
     @DeleteMapping("/slett/{uuid}")
     fun slettVedlegg(@PathVariable uuid: UUID): ResponseEntity<Void> {
         bucket.slettVedlegg(ctx.getFnr(),uuid)
-        return ResponseEntity<Void>(NO_CONTENT)
+        return noContent().build()
     }
 }
