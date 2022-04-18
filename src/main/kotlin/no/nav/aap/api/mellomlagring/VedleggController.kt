@@ -51,8 +51,6 @@ class VedleggController(private val bucket: GCPVedlegg, private val ctx: AuthCon
             } ?: notFound().build()
 
     @DeleteMapping("/slett/{uuid}")
-    fun slettVedlegg(@PathVariable uuid: UUID): ResponseEntity<Void> {
-        bucket.slettVedlegg(ctx.getFnr(),uuid)
-        return noContent().build()
-    }
+    fun slettVedlegg(@PathVariable uuid: UUID): ResponseEntity<Void> =
+        if (bucket.slettVedlegg(ctx.getFnr(),uuid)) noContent().build() else notFound().build()
 }
