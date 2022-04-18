@@ -9,9 +9,7 @@ import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnaut
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpHeaders.*
 import org.springframework.http.HttpStatus.CREATED
-import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.MediaType.parseMediaType
 import org.springframework.http.ResponseEntity
@@ -56,8 +54,6 @@ class VedleggDevController(private val bucket: GCPVedlegg) {
             } ?: notFound().build()
 
     @DeleteMapping("slett/{fnr}/{uuid}")
-    fun slettVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID): ResponseEntity<Void> {
-        bucket.slettVedlegg(fnr,uuid)
-        return noContent().build()
-    }
+    fun slettVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID): ResponseEntity<Void> =
+         if (bucket.slettVedlegg(fnr,uuid)) noContent().build() else notFound().build()
 }
