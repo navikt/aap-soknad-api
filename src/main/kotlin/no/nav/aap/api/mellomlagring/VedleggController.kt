@@ -10,6 +10,7 @@ import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnaut
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpHeaders.*
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
@@ -31,12 +32,12 @@ import org.springframework.http.ResponseEntity.ok
 class VedleggController(private val bucket: GCPVedlegg, private val ctx: AuthContext) {
 
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
-    fun lagreVedlegg(@RequestPart("vedlegg") file: MultipartFile): ResponseEntity<UUID> {
-        val uuid = UUID.randomUUID()
-        return created(bucket.lagreVedlegg(ctx.getFnr(), uuid,file)).body(uuid)
+    fun lagreVedlegg(@RequestPart("vedlegg") file: MultipartFile): ResponseEntity<Void> {
+        val uuid = bucket.lagreVedlegg(ctx.getFnr(), file)
+        return ResponseEntity.status(CREATED).header(LOCATION,"$uuid").build()
     }
 
-    @GetMapping("/les/{uuid}")
+        @GetMapping("/les/{uuid}")
     fun lesVedlegg(@PathVariable uuid: UUID)  =
         bucket.lesVedlegg(ctx.getFnr(), uuid)
             ?.let { vedlegg ->

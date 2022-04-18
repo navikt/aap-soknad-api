@@ -19,15 +19,16 @@ import java.util.Objects.hash
 @ConditionalOnGCP
 class GCPVedlegg(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøtte: String, private val storage: Storage)  {
 
-        fun lagreVedlegg(fnr: Fødselsnummer, uuid: UUID, vedlegg: MultipartFile) =
+        fun lagreVedlegg(fnr: Fødselsnummer, vedlegg: MultipartFile) =
          with(vedlegg) {
+             val uuid = UUID.randomUUID()
              val doc = "${hash(fnr, uuid)}"
              storage.create(
                      newBuilder(of(bøtte, doc))
                          .setContentType(contentType)
                          .setMetadata(mapOf(FILNAVN to originalFilename, FNR to fnr.fnr))
                          .build(), bytes)
-              URI.create("http://storage.googleapis.com/$bøtte/$doc")
+              uuid
          }
 
     fun lesVedlegg(fnr: Fødselsnummer, uuid: UUID) = storage.get(bøtte, "${hash(fnr, uuid)}", fields(METADATA, CONTENT_TYPE))

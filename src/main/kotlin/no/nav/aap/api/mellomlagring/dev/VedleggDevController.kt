@@ -9,12 +9,13 @@ import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnaut
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpHeaders.*
+import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.MediaType.parseMediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.notFound
-import org.springframework.http.ResponseEntity.ok
+import org.springframework.http.ResponseEntity.*
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -34,16 +35,14 @@ class VedleggDevController(private val bucket: GCPVedlegg) {
 
 
     @PostMapping(value = ["lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
-    fun lagreVedlegg(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") file: MultipartFile): ResponseEntity<UUID> {
-        val uuid = UUID.randomUUID()
-        return ResponseEntity.created(bucket.lagreVedlegg(fnr, uuid, file)).body(uuid)
-    }
+    fun lagreVedlegg(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") file: MultipartFile): ResponseEntity<Void> =
+        status(CREATED).header(LOCATION, "${bucket.lagreVedlegg(fnr, file)}").build()
 
     @GetMapping(path= ["les/{fnr}/{uuid}"])
     fun lesVedlegg(@PathVariable fnr: Fødselsnummer,@PathVariable uuid: UUID) =
         bucket.lesVedlegg(fnr, uuid)
-            ?.let { vedlegg ->
-                with(vedlegg) {
+            ?.let {
+                with(it) {
                     if (fnr.fnr != metadata[FNR]) {
                         throw JwtTokenUnauthorizedException("Dokumentet med id $uuid er ikke eid av $fnr.fnr")
                     }
