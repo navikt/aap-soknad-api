@@ -1,7 +1,7 @@
 package no.nav.aap.api.mellomlagring
 
-import no.nav.aap.api.mellomlagring.GCPVedlegg.Companion.FILNAVN
-import no.nav.aap.api.mellomlagring.GCPVedlegg.Companion.FNR
+import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FILNAVN
+import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FNR
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
@@ -12,7 +12,6 @@ import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.*
 import org.springframework.http.HttpStatus.CREATED
-import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -31,13 +30,15 @@ class VedleggController(private val bucket: GCPVedlegg, private val ctx: AuthCon
 
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
     fun lagreVedlegg(@RequestPart("vedlegg") vedlegg: MultipartFile): ResponseEntity<Void> =
-        status(CREATED).header(LOCATION, "${bucket.lagreVedlegg(ctx.getFnr(), vedlegg)}").build()
+        status(CREATED)
+            .header(LOCATION, "${bucket.lagreVedlegg(ctx.getFnr(), vedlegg)}")
+            .build()
 
         @GetMapping("/les/{uuid}")
     fun lesVedlegg(@PathVariable uuid: UUID)  =
         bucket.lesVedlegg(ctx.getFnr(), uuid)
-            ?.let { vedlegg ->
-                with(vedlegg) {
+            ?.let {
+                with(it) {
                     if (ctx.getFnr().fnr != metadata[FNR]) {
                         throw JwtTokenUnauthorizedException("Dokumentet med id $uuid er ikke eid av ${ctx.getFnr()}")
                     }

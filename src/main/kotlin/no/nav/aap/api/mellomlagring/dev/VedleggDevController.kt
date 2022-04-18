@@ -1,9 +1,9 @@
 package no.nav.aap.api.mellomlagring.dev
 
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.mellomlagring.GCPVedlegg
-import no.nav.aap.api.mellomlagring.GCPVedlegg.Companion.FILNAVN
-import no.nav.aap.api.mellomlagring.GCPVedlegg.Companion.FNR
+import no.nav.aap.api.mellomlagring.Vedlegg
+import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FILNAVN
+import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FNR
 import no.nav.security.token.support.core.api.Unprotected
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.http.CacheControl.noCache
@@ -30,7 +30,7 @@ import java.util.UUID
 @Unprotected
 @RestController
 @RequestMapping(value= ["/dev/vedlegg/"])
-class VedleggDevController(private val bucket: GCPVedlegg) {
+class VedleggDevController(private val bucket: Vedlegg) {
 
 
     @PostMapping(value = ["lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
@@ -48,8 +48,10 @@ class VedleggDevController(private val bucket: GCPVedlegg) {
                     ok()
                         .contentType(parseMediaType(contentType))
                         .cacheControl(noCache().mustRevalidate())
-                        .headers(HttpHeaders().apply {
-                            contentDisposition = attachment().filename(metadata[FILNAVN]!!).build() })
+                        .headers(HttpHeaders()
+                            .apply {
+                                contentDisposition = attachment().filename(metadata[FILNAVN]!!).build()
+                            })
                         .body(getContent())
                 }
             } ?: notFound().build()

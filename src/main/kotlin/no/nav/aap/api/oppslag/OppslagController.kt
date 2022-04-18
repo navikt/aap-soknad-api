@@ -15,9 +15,13 @@ class OppslagController(val pdl: PDLClient,
                         val arbeid: ArbeidClient,
                         val krr: KRRClient) {
 
-    val log = LoggerUtil.getLogger(OppslagController::class.java)
+    val log = LoggerUtil.getLogger(javaClass)
 
     @GetMapping("/soeker")
-     fun søker()  = SøkerInfo(pdl.søkerMedBarn(), behandler.behandlere(), arbeid.arbeidsforhold(), krr.kontaktinfo())
-            .also { log.trace("Søker er $it") }
+     fun søker()  = SøkerInfo(
+            pdl.søkerMedBarn(),
+            behandler.behandlere(),
+            arbeid.arbeidsforhold(),
+            krr.kontaktinfo())
+        .also { log.trace("Søker er $it") }
 }

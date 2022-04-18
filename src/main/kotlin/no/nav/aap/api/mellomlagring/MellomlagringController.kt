@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -34,6 +35,6 @@ class MellomlagringController(private val lager: Mellomlagring, private val ctx:
     @DeleteMapping("/slett/{type}")
     fun slett(@PathVariable type: SkjemaType): ResponseEntity<Void> {
         lager.slett(ctx.getFnr(), type)
-        return ResponseEntity<Void>(NO_CONTENT)
+        return noContent().build()
     }
 }
