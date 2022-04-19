@@ -54,16 +54,16 @@ data class BarnOgInntekt(val barn: Barn, val merEnnIG: Boolean = false)
 enum class RadioValg { JA, NEI, VET_IKKE }
 
 class Utbetaling(val fraArbeidsgiver: Boolean, val stønadstyper: List<AnnenStønad> = emptyList(), val andreUtbetalinger: List<AnnenUtbetaling>) {
-   data  class AnnenUtbetaling(val hvilken: String, val hvem: String, @JvmField val vedlegg: UUID? = null) : VedleggAware {
-       override fun getVedlegg() = vedlegg
+   data  class AnnenUtbetaling(val hvilken: String, val hvem: String, val vedlegg: UUID? = null) : VedleggAware {
+       override fun hentVedlegg() = vedlegg
    }
 
-    data class AnnenStønad(val type: AnnenStønadstype,@JvmField val vedlegg: UUID? = null) : VedleggAware {
-        override fun getVedlegg() = vedlegg
+    data class AnnenStønad(val type: AnnenStønadstype,val vedlegg: UUID? = null) : VedleggAware {
+        override fun hentVedlegg() = vedlegg
     }
 
     interface VedleggAware {
-         fun  getVedlegg(): UUID?
+         fun  hentVedlegg(): UUID?
     }
 
     enum class AnnenStønadstype {

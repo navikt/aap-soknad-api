@@ -23,7 +23,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 @Service
 class StandardSøknadKafkaFormidler(private val formidler: KafkaOperations<String, StandardSøknad>, @Value("#{'\${standard.ny.topic:aap.aap-soknad-sendt-ny.v1}'}") val søknadTopic: String) {
 
-    fun formidle(søknad: StandardSøknad, søker: Søker) {
+    fun formidle(søker: Søker, søknad: StandardSøknad) {
         formidler.send(
                 MessageBuilder
                     .withPayload(søknad)

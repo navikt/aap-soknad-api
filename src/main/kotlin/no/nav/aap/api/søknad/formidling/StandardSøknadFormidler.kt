@@ -37,30 +37,31 @@ class StandardSøknadFormidler(private val joark: JoarkClient,
     private val log = LoggerUtil.getLogger(javaClass)
 
     fun formidle(søknad: StandardSøknad) =
-        with(pdl.søkerUtenBarn()) {
+        with(pdl.søkerMedBarn()) {
             joark.opprettJournalpost(
                     Journalpost(
-                            dokumenter = docs(this, søknad)
-                                .also { log.info("Journalfører ${it.size} dokumenter") },
+                            dokumenter = dokumenterFra(this, søknad),
                             tittel = HOVED.tittel,
                             avsenderMottaker = AvsenderMottaker(fødselsnummer, navn = navn.navn),
                             bruker = Bruker(fødselsnummer)))
                 .also { log.info("Journalført søknad $it OK") }
-            kafka.formidle(søknad, this)
-                .also { log.info("Formidlet søknad til Kakfa OK") }
+            kafka.formidle(this, søknad)
         }
 
-    private fun docs(søker: Søker, søknad: StandardSøknad) =
+    private fun dokumenterFra(søker: Søker, søknad: StandardSøknad) =
         listOf(Dokument(
                 HOVED.tittel, HOVED.kode, listOf(
-                DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL),
-                DokumentVariant(PDFA, pdf.generate(søker, søknad)))
+                jsonDokument(søknad),
+                pdfDokument(søker, søknad))
                 + vedleggFor(søknad.utbetalinger?.stønadstyper, søker.fødselsnummer)
                 + vedleggFor(søknad.utbetalinger?.andreUtbetalinger, søker.fødselsnummer)))
 
+    private fun jsonDokument(søknad: StandardSøknad) = DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL)
+    private fun pdfDokument(søker: Søker, søknad: StandardSøknad) = DokumentVariant(PDFA, pdf.generate(søker, søknad))
+
     private fun vedleggFor(utbetalinger: List<VedleggAware>?, søker: Fødselsnummer) =
         utbetalinger
-            ?.mapNotNull { it.getVedlegg() }
+            ?.mapNotNull { it.hentVedlegg() }
             ?.mapNotNull { bucket.lesVedlegg(søker, it) }
             ?.map { it.dokumentVariant() }
             .orEmpty()
