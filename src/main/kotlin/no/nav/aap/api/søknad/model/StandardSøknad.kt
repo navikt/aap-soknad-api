@@ -21,7 +21,7 @@ data class StandardSøknad(
         val behandlere: List<Behandler>,
         val yrkesskadeType: RadioValg,
         val utbetalinger: Utbetaling?,
-        val barn: List<BarnOgInntekt> = emptyList(),
+        val registrerteBarn: List<BarnOgInntekt> = emptyList(),
         val andreBarn: List<BarnOgInntekt> = emptyList(),
         val tilleggsopplysninger: String?)  {
 
