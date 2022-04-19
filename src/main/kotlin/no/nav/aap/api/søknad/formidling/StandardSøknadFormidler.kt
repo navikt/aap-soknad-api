@@ -9,6 +9,7 @@ import no.nav.aap.api.søknad.joark.JoarkClient
 import no.nav.aap.api.søknad.joark.pdf.PDFGenerator
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
+import no.nav.aap.api.søknad.model.Utbetaling.VedleggAware
 import no.nav.aap.joark.AvsenderMottaker
 import no.nav.aap.joark.Bruker
 import no.nav.aap.joark.Dokument
@@ -21,8 +22,7 @@ import no.nav.aap.joark.VariantFormat.ORIGINAL
 import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import java.util.Base64
-import java.util.Base64.*
+import java.util.Base64.getEncoder
 
 @Component
 class StandardSøknadFormidler(private val joark: JoarkClient,
@@ -57,19 +57,13 @@ class StandardSøknadFormidler(private val joark: JoarkClient,
                 + andreStønaderVedlegg(søknad, søker)
                 + andreUtbetalingerVedlegg(søknad, søker)))
 
-    private fun andreStønaderVedlegg(søknad: StandardSøknad, søker: Søker) =
-        søknad.utbetalinger?.stønadstyper
-            ?.mapNotNull { it.vedlegg }
-            ?.map { bucket.lesVedlegg(søker.fødselsnummer, it) }
-            ?.filterNotNull()
-            ?.map { it.dokumentVariant() }
-            .orEmpty()
+    private fun andreStønaderVedlegg(søknad: StandardSøknad, søker: Søker) = lesVedlegg(søknad.utbetalinger?.stønadstyper,søker)
+    private fun andreUtbetalingerVedlegg(søknad: StandardSøknad, søker: Søker) = lesVedlegg(søknad.utbetalinger?.andreUtbetalinger,søker)
 
-    private fun andreUtbetalingerVedlegg(søknad: StandardSøknad, søker: Søker) =
-        søknad.utbetalinger?.andreUtbetalinger
-            ?.mapNotNull { it.vedlegg }
-            ?.map { bucket.lesVedlegg(søker.fødselsnummer, it) }
-            ?.filterNotNull()
+    private fun lesVedlegg(utbetalinger: List<VedleggAware>?, søker: Søker ) =
+        utbetalinger
+            ?.mapNotNull { it.getVedlegg() }
+            ?.mapNotNull { bucket.lesVedlegg(søker.fødselsnummer, it) }
             ?.map { it.dokumentVariant() }
             .orEmpty()
 
