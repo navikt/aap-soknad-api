@@ -22,6 +22,6 @@ class JoarkClientConfig {
             .build()
 
     @Bean
-    fun joarkHealthIndicator(adapter: JoarkClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {
+    fun joarkHealthIndicator(adapter: JoarkWebClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {
     }
 }

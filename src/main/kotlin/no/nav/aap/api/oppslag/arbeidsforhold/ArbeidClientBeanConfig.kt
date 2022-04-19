@@ -31,6 +31,6 @@ class ArbeidClientBeanConfig {
     }
 
     @Bean
-    fun arbeidsforholdHealthIndicator(a: ArbeidClientAdapter) = object: AbstractPingableHealthIndicator(a){}
+    fun arbeidsforholdHealthIndicator(a: ArbeidWebClientAdapter) = object: AbstractPingableHealthIndicator(a){}
 
 }

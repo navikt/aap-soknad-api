@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 
 @Component
-class ArbeidClientAdapter(
+class ArbeidWebClientAdapter(
         @Qualifier(ARBEIDSFORHOLD) webClient: WebClient,
         private val cf: ArbeidConfig) : AbstractWebClientAdapter(webClient, cf) {
 

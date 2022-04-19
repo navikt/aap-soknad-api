@@ -26,7 +26,7 @@ import org.springframework.http.ResponseEntity.*
 
 
 @ProtectedRestController(value = ["vedlegg"], issuer = IDPORTEN)
-class VedleggController(private val bucket: GCPVedlegg, private val ctx: AuthContext) {
+class VedleggController(private val bucket: Vedlegg, private val ctx: AuthContext) {
 
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
     fun lagreVedlegg(@RequestPart("vedlegg") vedlegg: MultipartFile): ResponseEntity<Void> =
