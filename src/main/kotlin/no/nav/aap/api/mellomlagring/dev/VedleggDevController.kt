@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
@@ -39,7 +40,7 @@ class VedleggDevController(private val bucket: Vedlegg, private val pdf: PDFGene
 
 
     @PostMapping(value = ["generate/{fnr}"],  produces = [APPLICATION_PDF_VALUE])
-    fun pdfGen(@PathVariable fnr: Fødselsnummer,  søker: Søker,søknad: StandardSøknad) =
+    fun pdfGen(@PathVariable fnr: Fødselsnummer,  @RequestParam søker: Søker,@RequestParam søknad: StandardSøknad) =
         ok().body(pdf.generate(søker,søknad))
 
 
