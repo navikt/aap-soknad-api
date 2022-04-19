@@ -49,7 +49,7 @@ class VedleggDevController(private val bucket: Vedlegg, private val pdf: PDFGene
                 .apply {
                     contentDisposition = attachment().filename("pdfgen.pdf").build()
                 })
-            .body(pdf.generate(data)).
+            .body(pdf.generate(data))
 
 
     @PostMapping(value = ["lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
