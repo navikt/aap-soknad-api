@@ -2,7 +2,6 @@ package no.nav.aap.api.søknad.formidling
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.storage.Blob
-import no.nav.aap.api.mellomlagring.GCPVedlegg
 import no.nav.aap.api.mellomlagring.Vedlegg
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.formidling.SkjemaType.HOVED
@@ -23,6 +22,7 @@ import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.util.Base64
+import java.util.Base64.*
 
 @Component
 class StandardSøknadFormidler(private val joark: JoarkClient,
@@ -39,7 +39,8 @@ class StandardSøknadFormidler(private val joark: JoarkClient,
         with(pdl.søkerUtenBarn()) {
             joark.opprettJournalpost(
                     Journalpost(
-                            dokumenter = docs(this, søknad).also { log.info("Journalfører ${it.size} dokumenter") },
+                            dokumenter = docs(this, søknad)
+                                .also { log.info("Journalfører ${it.size} dokumenter") },
                             tittel = HOVED.tittel,
                             avsenderMottaker = AvsenderMottaker(fødselsnummer, navn = navn.navn),
                             bruker = Bruker(fødselsnummer)))
@@ -59,23 +60,19 @@ class StandardSøknadFormidler(private val joark: JoarkClient,
     private fun andreStønaderVedlegg(søknad: StandardSøknad, søker: Søker) =
         søknad.utbetalinger?.stønadstyper
             ?.mapNotNull { it.vedlegg }
-            ?.map {
-                with(bucket.lesVedlegg(søker.fødselsnummer, it)) {
-                    DokumentVariant(of(contentType), encode())
-                }
-            }
+            ?.map { bucket.lesVedlegg(søker.fødselsnummer, it) }
+            ?.filterNotNull()
+            ?.map { it.dokumentVariant() }
             .orEmpty()
 
     private fun andreUtbetalingerVedlegg(søknad: StandardSøknad, søker: Søker) =
         søknad.utbetalinger?.andreUtbetalinger
             ?.mapNotNull { it.vedlegg }
-            ?.map {
-                with(bucket.lesVedlegg(søker.fødselsnummer, it)) {
-                    DokumentVariant(of(contentType), encode())
-                }
-            }
+            ?.map { bucket.lesVedlegg(søker.fødselsnummer, it) }
+            ?.filterNotNull()
+            ?.map { it.dokumentVariant() }
             .orEmpty()
 
-    private fun Blob.encode() = Base64.getEncoder().encodeToString(getContent())
+    private fun Blob.dokumentVariant() = DokumentVariant(of(contentType), getEncoder().encodeToString(getContent()))
 
 }
