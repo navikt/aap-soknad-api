@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.formidling
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.storage.Blob
 import no.nav.aap.api.mellomlagring.GCPVedlegg
+import no.nav.aap.api.mellomlagring.Vedlegg
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.formidling.SkjemaType.HOVED
 import no.nav.aap.api.søknad.joark.JoarkClient
@@ -27,7 +28,7 @@ import java.util.Base64
 class StandardSøknadFormidler(private val joark: JoarkClient,
                               private val pdf: PDFGenerator,
                               private val pdl: PDLClient,
-                              private val bucket: GCPVedlegg,
+                              private val bucket: Vedlegg,
                               private val kafka: StandardSøknadKafkaFormidler) {
 
     @Autowired
@@ -55,23 +56,25 @@ class StandardSøknadFormidler(private val joark: JoarkClient,
                 + andreStønaderVedlegg(søknad, søker)
                 + andreUtbetalingerVedlegg(søknad, søker)))
 
-    private fun andreStønaderVedlegg(søknad: StandardSøknad, søker: Søker) = søknad.utbetalinger?.stønadstyper
-        ?.filterNot { it.vedlegg == null }
-        ?.map {
-            with(bucket.lesVedlegg(søker.fødselsnummer, it.vedlegg!!)) {
-                DokumentVariant(of(contentType), encode())
+    private fun andreStønaderVedlegg(søknad: StandardSøknad, søker: Søker) =
+        søknad.utbetalinger?.stønadstyper
+            ?.mapNotNull { it.vedlegg }
+            ?.map {
+                with(bucket.lesVedlegg(søker.fødselsnummer, it)) {
+                    DokumentVariant(of(contentType), encode())
+                }
             }
-        }
-        .orEmpty()
+            .orEmpty()
 
-    private fun andreUtbetalingerVedlegg(søknad: StandardSøknad, søker: Søker) = søknad.utbetalinger?.andreUtbetalinger
-        ?.filterNot { it.vedlegg == null }
-        ?.map {
-            with(bucket.lesVedlegg(søker.fødselsnummer, it.vedlegg!!)) {
-                DokumentVariant(of(contentType), encode())
+    private fun andreUtbetalingerVedlegg(søknad: StandardSøknad, søker: Søker) =
+        søknad.utbetalinger?.andreUtbetalinger
+            ?.mapNotNull { it.vedlegg }
+            ?.map {
+                with(bucket.lesVedlegg(søker.fødselsnummer, it)) {
+                    DokumentVariant(of(contentType), encode())
+                }
             }
-        }
-        .orEmpty()
+            .orEmpty()
 
     private fun Blob.encode() = Base64.getEncoder().encodeToString(getContent())
 
