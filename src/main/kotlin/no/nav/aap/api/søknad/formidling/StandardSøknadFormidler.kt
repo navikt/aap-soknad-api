@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.formidling
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.storage.Blob
+import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.mellomlagring.Vedlegg
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.formidling.SkjemaType.HOVED
@@ -54,16 +55,13 @@ class StandardSøknadFormidler(private val joark: JoarkClient,
                 HOVED.tittel, HOVED.kode, listOf(
                 DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL),
                 DokumentVariant(PDFA, pdf.generate(søker, søknad)))
-                + andreStønaderVedlegg(søknad, søker)
-                + andreUtbetalingerVedlegg(søknad, søker)))
+                + vedleggFor(søknad.utbetalinger?.stønadstyper, søker.fødselsnummer)
+                + vedleggFor(søknad.utbetalinger?.andreUtbetalinger, søker.fødselsnummer)))
 
-    private fun andreStønaderVedlegg(søknad: StandardSøknad, søker: Søker) = lesVedlegg(søknad.utbetalinger?.stønadstyper,søker)
-    private fun andreUtbetalingerVedlegg(søknad: StandardSøknad, søker: Søker) = lesVedlegg(søknad.utbetalinger?.andreUtbetalinger,søker)
-
-    private fun lesVedlegg(utbetalinger: List<VedleggAware>?, søker: Søker ) =
+    private fun vedleggFor(utbetalinger: List<VedleggAware>?, søker: Fødselsnummer) =
         utbetalinger
             ?.mapNotNull { it.getVedlegg() }
-            ?.mapNotNull { bucket.lesVedlegg(søker.fødselsnummer, it) }
+            ?.mapNotNull { bucket.lesVedlegg(søker, it) }
             ?.map { it.dokumentVariant() }
             .orEmpty()
 
