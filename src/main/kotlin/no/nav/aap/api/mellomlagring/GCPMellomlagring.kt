@@ -4,7 +4,7 @@ import com.google.cloud.storage.BlobId.of
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.søknad.SkjemaType
+import no.nav.aap.api.søknad.formidling.SkjemaType
 import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.springframework.beans.factory.annotation.Value

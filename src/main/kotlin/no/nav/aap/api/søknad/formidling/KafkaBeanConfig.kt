@@ -1,7 +1,8 @@
-package no.nav.aap.api.søknad
+package no.nav.aap.api.søknad.formidling
 
 
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
+import no.nav.aap.api.søknad.formidling.LegacyStandardSøknadKafka
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

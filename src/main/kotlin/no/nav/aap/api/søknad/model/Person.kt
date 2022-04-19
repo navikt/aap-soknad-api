@@ -12,5 +12,5 @@ data class Søker(val navn: Navn,
                  val barn: List<Barn?>)
 
 data class Barn(val fnr: Fødselsnummer,
-                val navn: Navn,
-                val fødseldato: LocalDate?)
+                val navn: Navn? = null,
+                val fødseldato: LocalDate? = null)

@@ -1,10 +1,10 @@
-package no.nav.aap.api.søknad
+package no.nav.aap.api.søknad.formidling
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.storage.Blob
 import no.nav.aap.api.mellomlagring.GCPVedlegg
 import no.nav.aap.api.oppslag.pdl.PDLClient
-import no.nav.aap.api.søknad.SkjemaType.HOVED
+import no.nav.aap.api.søknad.formidling.SkjemaType.HOVED
 import no.nav.aap.api.søknad.joark.JoarkClient
 import no.nav.aap.api.søknad.joark.pdf.PDFGenerator
 import no.nav.aap.api.søknad.model.StandardSøknad

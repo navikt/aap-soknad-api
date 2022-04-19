@@ -13,7 +13,6 @@ import no.nav.aap.api.oppslag.behandler.Behandler.KontaktInformasjon
 import no.nav.aap.api.søknad.model.Barn
 import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Ferie
-import no.nav.aap.api.søknad.model.Inntekt
 import no.nav.aap.api.søknad.model.Medlemskap
 import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.RadioValg.NEI
@@ -35,25 +34,17 @@ import java.time.LocalDate.now
 import java.util.UUID
 
 @JsonTest
-class BeriketTest {
+class SøknadTest {
     @Autowired
     lateinit var json: JacksonTester<StandardSøknad>
     @Autowired
     lateinit var barn: JacksonTester<BarnOgInntekt>
-    @Autowired
-    lateinit var ferie: JacksonTester<Ferie>
-
     @Test
     fun ferie(){
         assertThat(Ferie().valgt).isEqualTo(VET_IKKE)
         assertThat(Ferie(20).valgt).isEqualTo(JA)
         assertThat(Ferie(0).valgt).isEqualTo(NEI)
         assertThat(Ferie(Periode(now(),now().plusDays(1))).valgt).isEqualTo(JA)
-    }
-    @Test
-    fun barn(){
-        val b = BarnOgInntekt(Barn(Fødselsnummer("22222222222"),Navn("A","B","C"),now()),Inntekt(42.1))
-        println(barn.write(b).json)
     }
     @Test
     fun søknad(){
@@ -76,7 +67,7 @@ class BeriketTest {
                                 "Legekontoret",
                                 OrgNummer("888888888"),
                                 Adresse("Legegata",
-                                        null,null,
+                                        "17","A",
                                         PostNummer("2600", "Lillehammer")),
                                 "22222222"))),
                 JA,
@@ -85,12 +76,15 @@ class BeriketTest {
                        listOf(AnnenUtbetaling("hvilken",
                                "hvem"))),
                 listOf(BarnOgInntekt(
-                        Barn(Fødselsnummer("22222222"),
-                                Navn("Et",
-                                        "lite",
-                                        "Barn"),
-                        now().minusYears(14)),
-                        Inntekt(42.5))),
+                        Barn(Fødselsnummer("22222222")),
+                        true)),
+               listOf(BarnOgInntekt(
+                       Barn(Fødselsnummer("33333333333"),
+                               Navn("Et",
+                                       "ekstra",
+                                       "Barn"),
+                               now().minusYears(14)),
+                       true)),
                "Tilegg")
         println(json.write(s).json)
     }

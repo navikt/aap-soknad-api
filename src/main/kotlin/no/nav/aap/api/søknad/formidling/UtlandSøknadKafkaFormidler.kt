@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad
+package no.nav.aap.api.søknad.formidling
 
 import io.micrometer.core.instrument.Metrics.counter
 import io.micrometer.core.instrument.Tags
