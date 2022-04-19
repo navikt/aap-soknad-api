@@ -14,6 +14,7 @@ import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.LOCATION
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.MediaType.parseMediaType
@@ -37,8 +38,8 @@ import java.util.UUID
 class VedleggDevController(private val bucket: Vedlegg, private val pdf: PDFGenerator) {
 
 
-    @PostMapping(value = ["generate/{fnr}"], produces = [APPLICATION_PDF_VALUE])
-    fun pdfGen(@PathVariable fnr: Fødselsnummer, @RequestPart("søker") søker: Søker,@RequestPart("søknad") søknad: StandardSøknad) =
+    @PostMapping(value = ["generate/{fnr}"],  produces = [APPLICATION_PDF_VALUE])
+    fun pdfGen(@PathVariable fnr: Fødselsnummer,  søker: Søker,søknad: StandardSøknad) =
         ok().body(pdf.generate(søker,søknad))
 
 
