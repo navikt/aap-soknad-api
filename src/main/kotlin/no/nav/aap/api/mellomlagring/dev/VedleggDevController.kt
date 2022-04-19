@@ -42,8 +42,8 @@ import java.util.UUID
 class VedleggDevController(private val bucket: Vedlegg, private val pdf: PDFGeneratorAdapter) {
 
 
-    @PostMapping(value = ["generate/{fnr}"],  produces = [APPLICATION_PDF_VALUE])
-    fun pdfGen(@PathVariable fnr: Fødselsnummer, @RequestBody data: StandardPDFData) =
+    @PostMapping(value = ["generate"],  produces = [APPLICATION_PDF_VALUE])
+    fun pdfGen(@RequestBody data: StandardPDFData) =
         ok()
             .headers(HttpHeaders()
                 .apply {
