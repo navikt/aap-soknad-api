@@ -22,14 +22,14 @@ import java.time.LocalDate
 import java.time.LocalDate.now
 
 @Component
-class PDFGeneratorAdapter(@Qualifier(PDFGEN) client: WebClient, val cf: PDFGeneratorConfig, val mapper: ObjectMapper) :
+class PDFGeneratorAdapter(@Qualifier(PDFGEN) client: WebClient,private  val cf: PDFGeneratorConfig, private val mapper: ObjectMapper) :
     AbstractWebClientAdapter(client, cf) {
 
     fun generate(søknad: StandardSøknad, søker: Søker) =
         webClient.post()
             .uri { it.path(cf.standardPath).build() }
             .contentType(APPLICATION_JSON)
-            .bodyValue(søker.pdfData(mapper))
+            .bodyValue(pdfData(søker,søknad))
             .retrieve()
             .bodyToMono<ByteArray>()
             .doOnError { t: Throwable -> log.warn("PDF-generering feiler", t) }
@@ -46,15 +46,17 @@ class PDFGeneratorAdapter(@Qualifier(PDFGEN) client: WebClient, val cf: PDFGener
             .doOnError { t: Throwable -> log.warn("PDF-generering feiler", t) }
             .doOnSuccess {  log.trace("PDF-generering OK")}
             .block()
+
+    private fun pdfData(søker: Søker, søknad: StandardSøknad) = mapper.writeValueAsString(StandardPDFData(søker,søknad))
+     data class StandardPDFData(val søker: Søker, val søknad: StandardSøknad)
+
 }
 
 private fun UtenlandsSøknadKafka.pdfData(m: ObjectMapper) = m.writeValueAsString(UtlandPDFData(søker.fnr, land.land(), søker.navn, periode))
 
-private fun Søker.pdfData(m: ObjectMapper) = m.writeValueAsString(StandardPDFData(fødselsnummer, navn))
 
 private fun CountryCode.land() = toLocale().displayCountry
 
-private data class StandardPDFData(val fødselsnummer: Fødselsnummer, @get:JsonUnwrapped val navn: Navn?)
 
 private data class UtlandPDFData(val fødselsnummer: Fødselsnummer,
                                  val land: String, @get:JsonUnwrapped val navn: Navn?,

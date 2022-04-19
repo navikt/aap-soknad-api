@@ -35,11 +35,9 @@ class StandardSøknadKafkaFormidler(private val formidler: KafkaOperations<Strin
     }
 }
 
-private class StandardFormidlingCallback(val søknad: StandardSøknad, val counter: Counter) :
-    ListenableFutureCallback<SendResult<String, StandardSøknad>> {
+private class StandardFormidlingCallback(val søknad: StandardSøknad, val counter: Counter) : ListenableFutureCallback<SendResult<String, StandardSøknad>> {
     private val secureLog = LoggerUtil.getSecureLogger()
-    val log = LoggerUtil.getLogger(javaClass)
-
+    private val log = LoggerUtil.getLogger(javaClass)
     override fun onSuccess(result: SendResult<String, StandardSøknad>?) {
         counter.increment()
         log.info(CONFIDENTIAL,
