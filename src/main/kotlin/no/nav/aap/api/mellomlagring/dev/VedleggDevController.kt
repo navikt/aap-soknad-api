@@ -44,7 +44,12 @@ class VedleggDevController(private val bucket: Vedlegg, private val pdf: PDFGene
 
     @PostMapping(value = ["generate/{fnr}"],  produces = [APPLICATION_PDF_VALUE])
     fun pdfGen(@PathVariable fnr: Fødselsnummer, @RequestBody data: StandardPDFData) =
-        ok().body(pdf.generate(data))
+        ok()
+            .headers(HttpHeaders()
+                .apply {
+                    contentDisposition = attachment().filename("pdfgen.pdf").build()
+                })
+            .body(pdf.generate(data)).
 
 
     @PostMapping(value = ["lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
