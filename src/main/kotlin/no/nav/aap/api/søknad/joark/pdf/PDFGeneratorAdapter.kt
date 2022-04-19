@@ -25,16 +25,18 @@ import java.time.LocalDate.now
 class PDFGeneratorAdapter(@Qualifier(PDFGEN) client: WebClient,private  val cf: PDFGeneratorConfig, private val mapper: ObjectMapper) :
     AbstractWebClientAdapter(client, cf) {
 
-    fun generate(søknad: StandardSøknad, søker: Søker) =
+    fun generate(data: StandardPDFData) =
         webClient.post()
             .uri { it.path(cf.standardPath).build() }
             .contentType(APPLICATION_JSON)
-            .bodyValue(pdfData(søker,søknad))
+            .bodyValue(data)
             .retrieve()
             .bodyToMono<ByteArray>()
             .doOnError { t: Throwable -> log.warn("PDF-generering feiler", t) }
             .doOnSuccess {  log.trace("PDF-generering OK")}
             .block()
+
+    fun generate(søknad: StandardSøknad, søker: Søker) = generate(StandardPDFData(søker,søknad))
 
     fun generate(søknad: UtenlandsSøknadKafka) =
         webClient.post()

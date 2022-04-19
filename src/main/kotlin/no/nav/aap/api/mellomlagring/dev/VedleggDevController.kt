@@ -5,6 +5,8 @@ import no.nav.aap.api.mellomlagring.Vedlegg
 import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FNR
 import no.nav.aap.api.søknad.joark.pdf.PDFGenerator
+import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorAdapter
+import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorAdapter.StandardPDFData
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.security.token.support.core.api.Unprotected
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestPart
@@ -36,12 +39,12 @@ import java.util.UUID
 @Unprotected
 @RestController
 @RequestMapping(value= ["/dev/vedlegg/"])
-class VedleggDevController(private val bucket: Vedlegg, private val pdf: PDFGenerator) {
+class VedleggDevController(private val bucket: Vedlegg, private val pdf: PDFGeneratorAdapter) {
 
 
     @PostMapping(value = ["generate/{fnr}"],  produces = [APPLICATION_PDF_VALUE])
-    fun pdfGen(@PathVariable fnr: Fødselsnummer,  @RequestParam søker: Søker,@RequestParam søknad: StandardSøknad) =
-        ok().body(pdf.generate(søker,søknad))
+    fun pdfGen(@PathVariable fnr: Fødselsnummer, @RequestBody data: StandardPDFData) =
+        ok().body(pdf.generate(data))
 
 
     @PostMapping(value = ["lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
