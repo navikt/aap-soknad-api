@@ -11,8 +11,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class StandardSøknadFormidler(private val joark: JoarkFormidler, private val pdl: PDLClient, private val kafka: StandardSøknadKafkaFormidler) {
-
-
+    
     fun formidle(søknad: StandardSøknad) =
         with(pdl.søkerMedBarn()) {
             joark.formidle(this, søknad)
