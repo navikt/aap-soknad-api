@@ -2,7 +2,6 @@ package no.nav.aap.api.søknad.formidling
 
 
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
-import no.nav.aap.api.søknad.formidling.LegacyStandardSøknadKafka
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -20,4 +19,5 @@ class KafkaBeanConfig {
 
     @Bean
     fun utenlandsSøknadTemplate(pf: ProducerFactory<String, UtenlandsSøknadKafka>) = KafkaTemplate(pf)
+
 }

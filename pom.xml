@@ -14,7 +14,9 @@
     <name>aap-soknad-api</name>
     <description>aap-soknad-api</description>
     <properties>
+        <brukernotifikasjoner.version>2.5.1</brukernotifikasjoner.version>
         <conditionals.version>3.0.0</conditionals.version>
+        <confluent.version>6.2.0</confluent.version>
         <domain.version>0.0.69</domain.version>
         <gcp.version>0.172.0</gcp.version>
         <graphql.version>1.0.0</graphql.version>
@@ -37,6 +39,10 @@
     </properties>
     <repositories>
         <repository>
+        <id>confluent</id>
+        <url>https://packages.confluent.io/maven/</url>
+    </repository>
+        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -54,8 +60,14 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-avro-serializer</artifactId>
+            <version>${confluent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.navikt</groupId>
+            <artifactId>brukernotifikasjon-schemas</artifactId>
+            <version>${brukernotifikasjoner.version}</version>
         </dependency>
         <dependency>
             <groupId>io.projectreactor</groupId>
