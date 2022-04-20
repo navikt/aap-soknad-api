@@ -10,20 +10,15 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 
-//@Configuration
+@Configuration
 class DittNavKafkaBeanConfig {
     @Bean
     @Qualifier("dittnav")
-    fun dittNavProducerFactory(pf: ProducerFactory<NokkelInput, Any>) =
+    fun dittNavKafkaTemplate(pf: ProducerFactory<Any, Any>) =
         // Clone the PF with a different Serializer
-         DefaultKafkaProducerFactory<NokkelInput, Any>(HashMap(pf.configurationProperties)
+         KafkaTemplate(DefaultKafkaProducerFactory<NokkelInput, Any>(HashMap(pf.configurationProperties)
             .apply {
                 put(KEY_SERIALIZER_CLASS_CONFIG,KafkaAvroSerializer::class.java)
                 put(VALUE_SERIALIZER_CLASS_CONFIG,KafkaAvroSerializer::class.java)
-
-            })
-
-    @Bean
-    @Qualifier("dittnav")
-    fun dittNavTemplate(@Qualifier("dittnav") pf: ProducerFactory<NokkelInput,Any>) = KafkaTemplate(pf)
+            }))
 }
