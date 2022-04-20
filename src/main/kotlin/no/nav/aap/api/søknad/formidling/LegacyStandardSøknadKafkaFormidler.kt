@@ -28,7 +28,7 @@ class LegacyStandardSøknadKafkaFormidler(
         @Value("#{'\${standard.topic:aap.aap-soknad-sendt.v1}'}") val søknadTopic: String) {
 
      fun formidle() {
-         formidle(LegacyStandardSøknadKafka(ctx.getFnr(), pdl.søkerUtenBarn()?.fødseldato))
+         formidle(LegacyStandardSøknadKafka(ctx.getFnr(), pdl.søkerUtenBarn().fødseldato))
      }
     override fun toString() = "$javaClass.simpleName [formidler=$formidler,pdl=$pdl]"
     

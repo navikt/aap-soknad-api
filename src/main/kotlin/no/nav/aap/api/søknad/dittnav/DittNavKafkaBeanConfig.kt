@@ -10,7 +10,7 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 
-@Configuration
+//@Configuration
 class DittNavKafkaBeanConfig {
     @Bean
     @Qualifier("dittnav")
