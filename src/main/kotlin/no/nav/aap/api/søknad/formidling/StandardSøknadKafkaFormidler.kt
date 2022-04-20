@@ -21,9 +21,8 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
-class StandardSøknadKafkaFormidler(private val formidler: KafkaOperations<String, StandardSøknad>, @Value("#{'\${standard.ny.topic:aap.aap-soknad-sendt-ny.v1}'}") val søknadTopic: String) {
-
-    fun formidle(søker: Søker, søknad: StandardSøknad) {
+class StandardSøknadKafkaFormidler(private val formidler: KafkaOperations<String, StandardSøknad>, @Value("#{'\${standard.ny.topic:aap.aap-soknad-sendt-ny.v1}'}") val søknadTopic: String) : SøknadFormidler<Unit> {
+    override fun formidle(søker: Søker, søknad: StandardSøknad) =
         formidler.send(
                 MessageBuilder
                     .withPayload(søknad)
@@ -32,9 +31,8 @@ class StandardSøknadKafkaFormidler(private val formidler: KafkaOperations<Strin
                     .setHeader(NAV_CALL_ID, callId())
                     .build())
             .addCallback(StandardFormidlingCallback(søknad,counter(COUNTER_SØKNAD_MOTTATT)))
-    }
-}
 
+}
 private class StandardFormidlingCallback(val søknad: StandardSøknad, val counter: Counter) : ListenableFutureCallback<SendResult<String, StandardSøknad>> {
     private val secureLog = LoggerUtil.getSecureLogger()
     private val log = LoggerUtil.getLogger(javaClass)

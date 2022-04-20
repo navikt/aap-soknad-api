@@ -1,5 +1,7 @@
 package no.nav.aap.api.oppslag.behandler
 
+import io.swagger.v3.oas.annotations.OpenAPI31
+import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
