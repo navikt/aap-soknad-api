@@ -1,14 +1,18 @@
 package no.nav.aap.api.søknad.model
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Periode
+import no.nav.aap.api.felles.PostNummer
+import no.nav.aap.api.felles.PostNummer.Companion
 import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.RadioValg.NEI
 import no.nav.aap.api.søknad.model.RadioValg.VET_IKKE
 import no.nav.aap.api.søknad.model.SøkerType.STANDARD
+import org.springframework.core.io.ClassPathResource
 import java.time.LocalDate
 import java.util.UUID
 import java.util.Base64
@@ -33,7 +37,27 @@ data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
                       val jobbetSammenhengendeINorgeSiste5: Boolean?,
                       val utenlandsopphold: List<Utenlandsopphold>)
 
-data class Utenlandsopphold(val land: CountryCode, val periode: Periode, val arbeidet: Boolean, val id: String?)
+
+data class PostNummer (val postnr: String,val poststed: String?)  {
+    constructor(postnr: String) : this(postnr, poststeder[postnr] ?: "Ukjent poststed for $postnr")
+
+    companion object{
+        private val poststeder = try {
+            ClassPathResource("postnr.txt").inputStream.bufferedReader()
+                .lines()
+                .map { it.split("\\s+".toRegex()) }
+                .map { it[0] to it[1] }
+                .toList()
+                .associate { it.first to it.second }
+        }
+        catch (e: Exception) {
+            emptyMap()
+        }
+    }
+}
+  class Utenlandsopphold private constructor  (val land: CountryCode, val landNavn: String, val periode: Periode, val arbeidet: Boolean, val id: String?){
+         @JsonCreator constructor(land: CountryCode,periode: Periode, arbeidet: Boolean, id: String?) : this(land,land.toLocale().displayCountry,periode,arbeidet,id)
+ }
 
 data class Ferie(val periode: Periode? = null, val dager: Long? = null)  {
     constructor(dager: Long) : this(null,dager)

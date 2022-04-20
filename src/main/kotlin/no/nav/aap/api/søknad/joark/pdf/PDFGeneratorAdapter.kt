@@ -36,7 +36,7 @@ class PDFGeneratorAdapter(@Qualifier(PDFGEN) client: WebClient,private  val cf: 
             .doOnSuccess {  log.trace("PDF-generering OK")}
             .block()
 
-    fun generate(søknad: StandardSøknad, søker: Søker) = generate(StandardPDFData(søker,søknad))
+    fun generate(søker: Søker, søknad: StandardSøknad) = generate(StandardPDFData(søker,søknad))
 
     fun generate(søknad: UtenlandsSøknadKafka) =
         webClient.post()
@@ -48,13 +48,13 @@ class PDFGeneratorAdapter(@Qualifier(PDFGEN) client: WebClient,private  val cf: 
             .doOnError { t: Throwable -> log.warn("PDF-generering feiler", t) }
             .doOnSuccess {  log.trace("PDF-generering OK")}
             .block()
-
-    private fun pdfData(søker: Søker, søknad: StandardSøknad) = mapper.writeValueAsString(StandardPDFData(søker,søknad))
-     data class StandardPDFData(val søker: Søker, val søknad: StandardSøknad)
-
+    data class StandardPDFData(val søker: Søker, val søknad: StandardSøknad)
 }
 
-private fun UtenlandsSøknadKafka.pdfData(m: ObjectMapper) = m.writeValueAsString(UtlandPDFData(søker.fnr, land.land(), søker.navn, periode))
+private fun StandardSøknad.land() {
+    this.medlemsskap.utenlandsopphold.forEach { print(it.land)}
+}
+    private fun UtenlandsSøknadKafka.pdfData(m: ObjectMapper) = m.writeValueAsString(UtlandPDFData(søker.fnr, land.land(), søker.navn, periode))
 
 
 private fun CountryCode.land() = toLocale().displayCountry

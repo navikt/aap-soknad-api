@@ -15,34 +15,31 @@ import no.nav.aap.joark.AvsenderMottaker
 import no.nav.aap.joark.Bruker
 import no.nav.aap.joark.Dokument
 import no.nav.aap.joark.DokumentVariant
-import no.nav.aap.joark.Filtype
+import no.nav.aap.joark.Filtype.Companion.of
 import no.nav.aap.joark.Filtype.JSON
 import no.nav.aap.joark.Filtype.PDFA
 import no.nav.aap.joark.JoarkResponse
 import no.nav.aap.joark.Journalpost
 import no.nav.aap.joark.VariantFormat.ORIGINAL
-import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.util.*
+import java.util.Base64.getEncoder
 
 @Service
 class JoarkFormidler(private val joark: JoarkClient, private val pdf: PDFGenerator, private val bucket: Vedlegg) : SøknadFormidler<JoarkResponse> {
 
     @Autowired
     private lateinit var mapper: ObjectMapper
-    private val log = LoggerUtil.getLogger(javaClass)
 
-    override fun formidle(søker: Søker, søknad: StandardSøknad)  =
+    override fun formidle(søknad: StandardSøknad, søker: Søker)  =
         joark.opprettJournalpost(Journalpost(
-                dokumenter = dokumenterFra(søker, søknad),
+                dokumenter = dokumenterFra(søknad, søker),
                 tittel = HOVED.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fødselsnummer, navn = søker.navn.navn),
                 bruker = Bruker(søker.fødselsnummer)))
-            .also { log.info("Journalført søknad $it OK") }
-            ?: throw IntegrationException("Fikk ikke arkivert")
+            ?: throw IntegrationException("Fikk ikke arkivert søknad")
 
-    private fun dokumenterFra(søker: Søker, søknad: StandardSøknad) =
+    private fun dokumenterFra(søknad: StandardSøknad, søker: Søker) =
     listOf(Dokument(
             HOVED.tittel,
             HOVED.kode,
@@ -62,6 +59,5 @@ class JoarkFormidler(private val joark: JoarkClient, private val pdf: PDFGenerat
         ?.map { it.dokumentVariant() }
         .orEmpty()
 
-    private fun Blob.dokumentVariant() = DokumentVariant(Filtype.of(contentType), Base64.getEncoder().encodeToString(getContent()))
-
+    private fun Blob.dokumentVariant() = DokumentVariant(of(contentType), getEncoder().encodeToString(getContent()))
 }

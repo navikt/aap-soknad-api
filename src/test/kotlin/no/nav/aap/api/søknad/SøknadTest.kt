@@ -1,5 +1,7 @@
 package no.nav.aap.api.søknad
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.neovisionaries.i18n.CountryCode
 import com.neovisionaries.i18n.CountryCode.SE
 import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
@@ -66,7 +68,7 @@ class SøknadTest {
 
     @Test
     fun søknad(){
-        println(json.write(standardSøknad()).json)
+       println(json.write(standardSøknad()).json)
     }
 
     private fun standardSøknad() = StandardSøknad(
