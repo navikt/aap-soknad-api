@@ -31,7 +31,7 @@ class DittNavMeldingFormidler(private val ctx: AuthContext,
     fun opprettBeskjed(fnr: Fødselsnummer) = send(fnr,cfg.beskjed)
 
     private fun send(fnr: Fødselsnummer, cfg: DittNavTopicConfig) =
-        with(nøkkel(fnr,cfg.grupperingsId)) {
+        with(keyFra(fnr,cfg.grupperingsId)) {
             dittNav.send(ProducerRecord(cfg.topic, this, beskjed(cfg))).addCallback(DittNavCallback(cfg, this))
         }
 
@@ -49,7 +49,7 @@ class DittNavMeldingFormidler(private val ctx: AuthContext,
              .withSmsVarslingstekst("SMS fra NAV") */
             .build()
 
-    private fun nøkkel(fnr: Fødselsnummer, grupperingsId: String) =
+    private fun keyFra(fnr: Fødselsnummer, grupperingsId: String) =
         NokkelInputBuilder()
             .withFodselsnummer(fnr.fnr)
             .withEventId(UUID.randomUUID().toString())
@@ -67,6 +67,4 @@ class DittNavMeldingFormidler(private val ctx: AuthContext,
                 log.warn("Kunne ikke sende melding ${cfg.tekst} med id ${key.getEventId()} på ${cfg.topic}", e)
             }
         }
-
-
 }
