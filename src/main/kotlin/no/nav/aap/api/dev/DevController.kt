@@ -4,7 +4,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.mellomlagring.Vedlegg
 import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FNR
-import no.nav.aap.api.søknad.dittnav.DittNavMeldingProdusent
+import no.nav.aap.api.søknad.dittnav.DittNavMeldingFormidler
 import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorAdapter
 import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorAdapter.StandardPDFData
 import no.nav.security.token.support.core.api.Unprotected
@@ -35,7 +35,7 @@ import java.util.UUID
 @Unprotected
 @RestController
 @RequestMapping(value= ["/dev/vedlegg/"])
-class DevController(private val bucket: Vedlegg, private val dittnav: DittNavMeldingProdusent,private val pdf: PDFGeneratorAdapter) {
+class DevController(private val bucket: Vedlegg, private val dittnav: DittNavMeldingFormidler, private val pdf: PDFGeneratorAdapter) {
 
 
     @PostMapping(value = ["generate"],  produces = [APPLICATION_PDF_VALUE])

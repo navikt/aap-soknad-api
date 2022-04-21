@@ -8,6 +8,6 @@ import java.time.Duration
 
 @ConfigurationProperties(prefix = "dittnav")
 @ConstructorBinding
-class DittNavConfig(val beskjed: DittNavTopics) {
-    data class DittNavTopics(val topic: String, var landingsside: URL, val varighet: Duration )
+class DittNavConfig(val beskjed: DittNavTopicConfig) {
+    data class DittNavTopicConfig(val topic: String, var landingsside: URL, val varighet: Duration, val tekst: String, val grupperingsId: String)
 }

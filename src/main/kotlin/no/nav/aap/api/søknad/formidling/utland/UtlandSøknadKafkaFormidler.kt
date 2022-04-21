@@ -41,7 +41,7 @@ class UtlandSøknadKafkaFormidler(
 }
 
 
-class UtlandFormidlingCallback(val søknad: UtenlandsSøknadKafka) :
+private class UtlandFormidlingCallback(val søknad: UtenlandsSøknadKafka) :
     ListenableFutureCallback<SendResult<String, UtenlandsSøknadKafka>> {
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()
