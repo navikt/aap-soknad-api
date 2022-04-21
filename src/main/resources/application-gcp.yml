@@ -18,8 +18,9 @@ spring:
   kafka:
     bootstrap-servers: ${kafka.brokers}
     properties:
-      schema-registry-uri: ${kafka.schema.registry}
-      schema-registry-user-info: ${kafka.schema.registry.user}:${kafka.schema.registry.password}
+      schema:
+        registry:
+          url: ${kafka.schema.registry}
       endpoint:
         identification:
           algorithm: ''
