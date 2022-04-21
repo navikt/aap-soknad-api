@@ -8,11 +8,9 @@ import no.nav.aap.api.søknad.formidling.SøknadFormidler
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.util.LoggerUtil
-import no.nav.aap.util.MDCUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.KafkaHeaders.MESSAGE_KEY
 import org.springframework.kafka.support.KafkaHeaders.TOPIC
@@ -23,16 +21,22 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
 class StandardSøknadKafkaFormidler(private val formidler: KafkaOperations<String, StandardSøknad>,
-                                   @Value("#{'\${standard.ny.topic:aap.aap-soknad-sendt-ny.v1}'}") val søknadTopic: String) :
-    SøknadFormidler<Unit> {
+                                   private val cfg: StandardSøknadKafkaFormidlingConfig) : SøknadFormidler<Unit> {
+
+    val log = LoggerUtil.getLogger(javaClass)
     override fun formidle(søknad: StandardSøknad, søker: Søker) =
-        formidler.send(
-                MessageBuilder.withPayload(søknad)
-                    .setHeader(MESSAGE_KEY, søker.fødselsnummer.fnr)
-                    .setHeader(TOPIC, søknadTopic)
-                    .setHeader(NAV_CALL_ID, callId())
-                    .build())
-            .addCallback(StandardFormidlingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
+        if (cfg.enabled) {
+            formidler.send(
+                    MessageBuilder.withPayload(søknad)
+                        .setHeader(MESSAGE_KEY, søker.fødselsnummer.fnr)
+                        .setHeader(TOPIC, cfg.topic)
+                        .setHeader(NAV_CALL_ID, callId())
+                        .build())
+                .addCallback(StandardFormidlingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
+        }
+        else {
+         log.info("Formidling til ny VL er ikke aktivert, sett vl.enabled=true for å aktivere")
+        }
 }
 private class StandardFormidlingCallback(val søknad: StandardSøknad, val counter: Counter) : ListenableFutureCallback<SendResult<String, StandardSøknad>> {
     private val secureLog = LoggerUtil.getSecureLogger()
