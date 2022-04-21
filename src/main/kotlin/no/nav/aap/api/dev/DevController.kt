@@ -30,8 +30,9 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import org.springframework.web.util.UriBuilder
+import org.springframework.web.util.UrlPathHelper
 import java.util.UUID
-
 
 
 @Unprotected
@@ -54,12 +55,8 @@ class DevController(private val bucket: Vedlegg, private val dittnav: DittNavFor
 
     fun opprettBeskjed(@PathVariable fnr: Fødselsnummer) {
         dittnav.opprettBeskjed(fnr)
-        var b = ServletUriComponentsBuilder.fromCurrentRequestUri().build()
-        log.info("XXXX er " + b.toUri())
-        b = ServletUriComponentsBuilder.fromCurrentRequest().build();
-        log.info("XXYYYXX er " + b.toUri())
-
-
+        var b = ServletUriComponentsBuilder.fromCurrentRequestUri().removePathExtension()
+        log.info("XXXX er " + b)
     }
 
 

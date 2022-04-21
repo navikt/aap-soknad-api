@@ -2,6 +2,7 @@ package no.nav.aap.api.mellomlagring
 
 import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FNR
+import no.nav.aap.api.mellomlagring.VedleggController.Companion.BASEPATH
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
@@ -25,7 +26,7 @@ import org.springframework.http.MediaType.parseMediaType
 import org.springframework.http.ResponseEntity.*
 
 
-@ProtectedRestController(value = ["vedlegg"], issuer = IDPORTEN)
+@ProtectedRestController(value = [BASEPATH], issuer = IDPORTEN)
 class VedleggController(private val bucket: Vedlegg, private val ctx: AuthContext) {
 
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
@@ -54,4 +55,8 @@ class VedleggController(private val bucket: Vedlegg, private val ctx: AuthContex
     @DeleteMapping("/slett/{uuid}")
     fun slettVedlegg(@PathVariable uuid: UUID): ResponseEntity<Void> =
         if (bucket.slettVedlegg(ctx.getFnr(),uuid)) noContent().build() else notFound().build()
+
+    companion object {
+        const val BASEPATH = "vedlegg"
+    }
 }
