@@ -29,7 +29,7 @@ class UtlandSøknadFormidler(private val joark: JoarkClient,
 
     fun formidle(søknad: UtenlandsSøknad)   {
         val beriketSøknad = søknad.berikSøknad(Søker(ctx.getFnr(), pdl.søkerUtenBarn().navn))
-        joark.opprettJournalpost(Journalpost(
+        joark.journalfør(Journalpost(
                 dokumenter = docs(beriketSøknad),
                 tittel = UTLAND.tittel,
                 avsenderMottaker = AvsenderMottaker(ctx.getFnr(), navn=beriketSøknad.fulltNavn),
@@ -39,5 +39,5 @@ class UtlandSøknadFormidler(private val joark: JoarkClient,
 }
 
 private fun docs(beriketSøknad: UtenlandsSøknadKafka)  =
-    listOf(Dokument(UTLAND.tittel, UTLAND.kode, listOf(DokumentVariant(fysiskDokument = pdfGen.generate(beriketSøknad)))))
+    listOf(Dokument(UTLAND.tittel, UTLAND.kode, listOf(DokumentVariant(fysiskDokument = pdfGen.generateEncoded(beriketSøknad)))))
 }

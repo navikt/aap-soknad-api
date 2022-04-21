@@ -1,3 +1,5 @@
 package no.nav.aap.api.søknad.model
 
-data class Kvittering(val msg: String)
+import java.net.URI
+
+data class Kvittering(val uri: URI)

@@ -9,7 +9,8 @@ interface  Vedlegg {
 
     fun lesVedlegg(fnr: Fødselsnummer, uuid: UUID): Blob?
     fun slettVedlegg(fnr: Fødselsnummer, uuid: UUID): Boolean
-    fun lagreVedlegg(fnr: Fødselsnummer, vedlegg: MultipartFile): UUID?
+    fun lagreVedlegg(fnr: Fødselsnummer, vedlegg: MultipartFile) = lagreDokument(fnr,vedlegg.bytes,vedlegg.contentType,vedlegg.originalFilename)
+    fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) : UUID
     fun key(fnr: Fødselsnummer, uuid: UUID) = "${Objects.hash(fnr, uuid)}"
 
     companion object {

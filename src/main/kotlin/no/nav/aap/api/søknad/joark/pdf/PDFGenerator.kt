@@ -8,6 +8,7 @@ import java.util.Base64.getEncoder
 
 @Component
 class PDFGenerator(val a: PDFGeneratorAdapter) {
-    fun generate(søknad: UtenlandsSøknadKafka) = getEncoder().encodeToString(a.generate(søknad))
-    fun generate(søker: Søker, søknad: StandardSøknad) = getEncoder().encodeToString(a.generate(søker, søknad))
+    fun generateEncoded(søknad: UtenlandsSøknadKafka) = getEncoder().encodeToString(a.generate(søknad))
+    fun generateEncoded(søker: Søker, søknad: StandardSøknad) = getEncoder().encodeToString(a.generate(søker, søknad))
+    fun generate(søker: Søker, søknad: StandardSøknad) = a.generate(søker, søknad)
 }

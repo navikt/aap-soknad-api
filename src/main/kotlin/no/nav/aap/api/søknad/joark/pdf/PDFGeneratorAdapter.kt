@@ -9,6 +9,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
+import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorConfig.Companion.PDFGEN
 import no.nav.aap.api.søknad.model.StandardSøknad
@@ -34,7 +35,7 @@ class PDFGeneratorAdapter(@Qualifier(PDFGEN) client: WebClient,private  val cf: 
             .bodyToMono<ByteArray>()
             .doOnError { t: Throwable -> log.warn("PDF-generering feiler", t) }
             .doOnSuccess {  log.trace("PDF-generering OK")}
-            .block()
+            .block() ?: throw IntegrationException("O bytes i retur fra pdfgen, pussig")
 
     fun generate(søker: Søker, søknad: StandardSøknad) = generate(StandardPDFData(søker,søknad))
 

@@ -4,9 +4,9 @@ import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics.*
 import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_MOTTATT
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.søknad.formidling.SøknadFormidler
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
+import no.nav.aap.joark.JoarkResponse
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
@@ -20,11 +20,11 @@ import org.springframework.stereotype.Service
 import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
-class StandardSøknadKafkaFormidler(private val formidler: KafkaOperations<String, StandardSøknad>,
-                                   private val cfg: StandardSøknadKafkaFormidlingConfig) : SøknadFormidler<Unit> {
+class StandardSøknadVLFormidler(private val formidler: KafkaOperations<String, StandardSøknad>,
+                                private val cfg: StandardSøknadVLFormidlerConfig)  {
 
     val log = LoggerUtil.getLogger(javaClass)
-    override fun formidle(søknad: StandardSøknad, søker: Søker) =
+     fun formidle(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
         if (cfg.enabled) {
             formidler.send(
                     MessageBuilder.withPayload(søknad)

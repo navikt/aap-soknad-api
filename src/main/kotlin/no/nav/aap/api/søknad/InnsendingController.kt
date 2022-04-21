@@ -10,6 +10,8 @@ import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import java.net.URI
 import javax.validation.Valid
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
@@ -19,20 +21,15 @@ class InnsendingController(
         private val standardFormidler: StandardSøknadFormidler) {
 
     @PostMapping("/utland")
-    fun utland(@RequestBody søknad: @Valid UtenlandsSøknad): Kvittering {
-        utenlandsFormidler.formidle(søknad)
-        return Kvittering("OK")
-    }
+    fun utland(@RequestBody søknad: @Valid UtenlandsSøknad) = utenlandsFormidler.formidle(søknad)
 
     @PostMapping("/soknad")
-    fun standard(): Kvittering {
-        legacyFormidler.formidle()
-        return Kvittering("OK")
-    }
+    fun standard() = legacyFormidler.formidle()
+
     @PostMapping("/soknadny")
     fun standardNy(@RequestBody søknad: @Valid StandardSøknad): Kvittering {
-        standardFormidler.formidle(søknad)
-        return Kvittering("OK")
+        val res = standardFormidler.formidle(søknad)
+        return Kvittering(URI.create("http;//www.vg.no"))
     }
 
     override fun toString() = "$javaClass.simpleName [standardFormidler=$standardFormidler,utenlandsFormidler=$utenlandsFormidler]"

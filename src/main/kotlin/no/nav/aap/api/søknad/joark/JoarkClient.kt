@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 class JoarkClient(private val adapter: JoarkWebClientAdapter) {
 
     private val log = LoggerUtil.getLogger(javaClass)
-    fun opprettJournalpost(journalpost: Journalpost) = adapter.opprettJournalpost(journalpost)
+    fun journalfør(journalpost: Journalpost) = adapter.opprettJournalpost(journalpost)
         .also { log.info("Journalført søknad $it OK") }
 
 }
