@@ -25,7 +25,7 @@ class DittNavMeldingProdusent(private val ctx: AuthContext,private val  kafkaOpe
     private val log = LoggerUtil.getLogger(javaClass)
 
     fun opprettBeskjed(msg: String)  {
-        send(msg,nøkkel("AAP-søknad"),cfg.beskjedVarighet,"topic")
+        send(msg,nøkkel("AAP-søknad"),cfg.beskjedVarighet,cfg.topics.beskjed)
     }
 
     private fun send(msg: String, key: NokkelInput, varighet: Duration,topic: String) {
