@@ -1,3 +1,6 @@
+dittnav:
+  topics:
+    beskjed: min-side.aapen-brukernotifikasjon-beskjed-v1
 info:
   nais:
     cluster: ${nais.cluster.name}

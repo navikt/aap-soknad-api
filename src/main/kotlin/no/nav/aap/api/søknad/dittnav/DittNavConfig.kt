@@ -9,5 +9,5 @@ import java.time.Duration
 @ConfigurationProperties(prefix = "dittnav")
 @ConstructorBinding
 class DittNavConfig(val topics: DittNavTopics,  @DefaultValue("90d") val beskjedVarighet: Duration) {
-    data class DittNavTopics(@DefaultValue("min-side.aapen-brukernotifikasjon-beskjed-v1") val beskjed: String)
+    data class DittNavTopics(val beskjed: String)
 }
