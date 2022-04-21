@@ -42,3 +42,7 @@ pdl:
     scope: api://dev-fss.pdl.pdl-api/.default
 joark:
     base-uri: https://aap-fss-proxy.dev-fss-pub.nais.io
+
+dittnav:
+    beskjed:
+        landingsside: https://www.vg.no
