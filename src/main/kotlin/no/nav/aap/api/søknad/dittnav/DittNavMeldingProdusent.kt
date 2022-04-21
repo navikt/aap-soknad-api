@@ -25,7 +25,12 @@ class DittNavMeldingProdusent(private val ctx: AuthContext,private val  kafkaOpe
     private val log = LoggerUtil.getLogger(javaClass)
 
     fun opprettBeskjed(msg: String)  {
-        send(msg,nøkkel("AAP-søknad"),cfg.beskjedVarighet,cfg.topics.beskjed)
+        opprettBeskjed(ctx.getFnr(),msg)
+    }
+
+    fun opprettBeskjed(fnr: Fødselsnummer,  msg: String) {
+        send(msg,nøkkel(fnr,"AAP-søknad"),cfg.beskjedVarighet,cfg.topics.beskjed)
+
     }
 
     private fun send(msg: String, key: NokkelInput, varighet: Duration,topic: String) {
@@ -54,10 +59,10 @@ class DittNavMeldingProdusent(private val ctx: AuthContext,private val  kafkaOpe
              .withSmsVarslingstekst("SMS fra NAV") */
              .build()
 
-    private fun nøkkel(grupperingsId: String?) =
+    private fun nøkkel(fnr: Fødselsnummer, grupperingsId: String?) =
 
          NokkelInputBuilder()
-            .withFodselsnummer(ctx.getFnr().fnr)
+            .withFodselsnummer(fnr.fnr)
             .withEventId(UUID.randomUUID().toString())
             .withGrupperingsId(grupperingsId)
             .withAppnavn(env.getRequiredProperty("nais.app.name"))
