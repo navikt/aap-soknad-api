@@ -47,8 +47,8 @@ class DevController(private val bucket: Vedlegg, private val dittnav: DittNavMel
                 })
             .body(pdf.generate(data))
 
-    @PostMapping(value = ["dittnav/{fnr}"])
-    fun dittnav(@PathVariable fnr: Fødselsnummer, @RequestBody msg: String) = dittnav.opprettBeskjed(fnr,msg)
+    @PostMapping(value = ["dittnav/beskjed/{fnr}"])
+    fun opprettBeskjed(@PathVariable fnr: Fødselsnummer) = dittnav.opprettBeskjed(fnr)
 
     @PostMapping(value = ["lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
     fun lagreVedlegg(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") vedlegg: MultipartFile): ResponseEntity<Void> =
