@@ -1,6 +1,8 @@
 dittnav:
-  topics:
-    beskjed: min-side.aapen-brukernotifikasjon-beskjed-v1
+    beskjed:
+      topic: min-side.aapen-brukernotifikasjon-beskjed-v1
+      landingsside: https://www.vg.no
+      varighet: 90d
 info:
   nais:
     cluster: ${nais.cluster.name}

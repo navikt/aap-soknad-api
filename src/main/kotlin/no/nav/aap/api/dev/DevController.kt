@@ -1,4 +1,4 @@
-package no.nav.aap.api.mellomlagring.dev
+package no.nav.aap.api.dev
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.mellomlagring.Vedlegg
