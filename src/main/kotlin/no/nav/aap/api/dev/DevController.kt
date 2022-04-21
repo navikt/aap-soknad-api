@@ -56,6 +56,10 @@ class DevController(private val bucket: Vedlegg, private val dittnav: DittNavFor
         dittnav.opprettBeskjed(fnr)
         var b = ServletUriComponentsBuilder.fromCurrentRequestUri().build()
         log.info("XXXX er " + b.toUri())
+        b = ServletUriComponentsBuilder.fromCurrentRequest().build();
+        log.info("XXYYYXX er " + b.toUri())
+
+
     }
 
 
