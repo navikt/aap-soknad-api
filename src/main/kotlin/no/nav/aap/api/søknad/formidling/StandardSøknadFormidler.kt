@@ -13,6 +13,6 @@ class StandardSøknadFormidler(private val joark: JoarkFormidler, private val pd
         with(pdl.søkerMedBarn()) {
             joark.formidle(søknad, this)
             kafka.formidle(søknad, this)
-         //   dittnav.opprettBeskjed("Søknad mottatt")
+            dittnav.opprettBeskjed("AAP-søknad mottatt")
         }
 }

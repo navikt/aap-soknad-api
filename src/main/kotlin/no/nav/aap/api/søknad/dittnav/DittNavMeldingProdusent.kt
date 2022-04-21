@@ -24,13 +24,12 @@ import java.util.UUID
 class DittNavMeldingProdusent(private val ctx: AuthContext,private val  kafkaOperations: KafkaOperations<NokkelInput, Any>,private val cfg: DittNavConfig,  private val env: Environment)  {
     private val log = LoggerUtil.getLogger(javaClass)
 
-    fun opprettBeskjed(msg: String)  {
+    fun opprettBeskjed(msg: String)  {  // DEV only
         opprettBeskjed(ctx.getFnr(),msg)
     }
 
     fun opprettBeskjed(fnr: Fødselsnummer,  msg: String) {
         send(msg,nøkkel(fnr,"AAP-søknad"),cfg.beskjedVarighet,cfg.topics.beskjed)
-
     }
 
     private fun send(msg: String, key: NokkelInput, varighet: Duration,topic: String) {
