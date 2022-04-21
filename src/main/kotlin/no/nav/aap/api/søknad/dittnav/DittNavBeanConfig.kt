@@ -11,7 +11,7 @@ import org.springframework.kafka.core.ProducerFactory
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 
 @Configuration
-class DittNavKafkaBeanConfig {
+class DittNavBeanConfig {
     @Bean
     @Qualifier("dittnav")
     fun dittNavKafkaTemplate(pf: ProducerFactory<Any, Any>) =
