@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.dittnav
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
+import no.nav.aap.api.søknad.dittnav.DittNavConfig.DittNavTopics
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
@@ -29,17 +30,17 @@ class DittNavMeldingProdusent(private val ctx: AuthContext,private val  kafkaOpe
     }
 
     fun opprettBeskjed(fnr: Fødselsnummer,  msg: String) {
-        send(msg,nøkkel(fnr,"AAP-søknad"),cfg.beskjedVarighet,cfg.topics.beskjed)
+        send(msg,nøkkel(fnr,"AAP-søknad"),cfg.beskjed)
     }
 
-    private fun send(msg: String, key: NokkelInput, varighet: Duration,topic: String) {
-        kafkaOperations.send(ProducerRecord(topic, key, beskjed(msg,URL("http://www.vg.no"),varighet)))
+    private fun send(msg: String, key: NokkelInput, cfg: DittNavTopics) {
+        kafkaOperations.send(ProducerRecord(cfg.topic, key, beskjed(msg,cfg.landingsside,cfg.varighet)))
             .addCallback(object : ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
                 override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
-                    log.info("Sendte melding $msg med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på $topic")
+                    log.info("Sendte melding $msg med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${cfg.topic}")
                 }
                 override fun onFailure(e: Throwable) {
-                    log.warn("Kunne ikke sende melding $msg med id ${key.getEventId()} på $topic", e)
+                    log.warn("Kunne ikke sende melding $msg med id ${key.getEventId()} på ${cfg.topic}", e)
                 }
             })
     }
