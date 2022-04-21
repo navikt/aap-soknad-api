@@ -46,7 +46,7 @@ class DevController(private val bucket: Vedlegg, private val dittnav: DittNavMel
                     contentDisposition = attachment().filename("pdfgen.pdf").build()
                 })
             .body(pdf.generate(data))
-3
+
     @PostMapping(value = ["dittnav/beskjed/{fnr}"])
     fun opprettBeskjed(@PathVariable fnr: Fødselsnummer) = dittnav.opprettBeskjed(fnr)
 
