@@ -57,7 +57,7 @@ class DevController(private val bucket: Vedlegg, private val dittnav: DittNavFor
 
     fun opprettBeskjed(@PathVariable fnr: Fødselsnummer) {
         dittnav.opprettBeskjed(fnr)
-        var b = ServletUriComponentsBuilder.fromCurrentRequestUri().replacePath(VedleggController.BASEPATH +"/les/" + "123456")
+        var b = ServletUriComponentsBuilder.fromCurrentRequestUri().replacePath(VedleggController.BASEPATH +"/les/" + "123456").build()
         log.info("XXXX er " + b)
     }
 
