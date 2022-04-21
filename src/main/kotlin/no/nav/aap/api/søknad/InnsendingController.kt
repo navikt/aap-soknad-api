@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad
 
+import no.nav.aap.api.mellomlagring.VedleggController.Companion.BASEPATH
 import no.nav.aap.api.søknad.formidling.legacy.LegacyStandardSøknadKafkaFormidler
 import no.nav.aap.api.søknad.formidling.standard.StandardSøknadFormidler
 import no.nav.aap.api.søknad.formidling.utland.UtlandSøknadFormidler
@@ -10,8 +11,7 @@ import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder
-import java.net.URI
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 import javax.validation.Valid
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
@@ -27,10 +27,7 @@ class InnsendingController(
     fun standard() = legacyFormidler.formidle()
 
     @PostMapping("/soknadny")
-    fun standardNy(@RequestBody søknad: @Valid StandardSøknad): Kvittering {
-        val res = standardFormidler.formidle(søknad)
-        return Kvittering(URI.create("http;//www.vg.no"))
-    }
+    fun standardNy(@RequestBody søknad: @Valid StandardSøknad) = Kvittering(fromCurrentRequestUri().replacePath("$BASEPATH/les/${standardFormidler.formidle(søknad)}").build().toUri())
 
     override fun toString() = "$javaClass.simpleName [standardFormidler=$standardFormidler,utenlandsFormidler=$utenlandsFormidler]"
 }
