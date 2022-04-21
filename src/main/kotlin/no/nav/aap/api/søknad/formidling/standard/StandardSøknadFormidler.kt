@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.formidling
+package no.nav.aap.api.søknad.formidling.standard
 
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.dittnav.DittNavMeldingProdusent

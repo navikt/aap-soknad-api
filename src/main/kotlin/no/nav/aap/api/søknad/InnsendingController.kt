@@ -1,8 +1,8 @@
 package no.nav.aap.api.søknad
 
-import no.nav.aap.api.søknad.formidling.LegacyStandardSøknadKafkaFormidler
-import no.nav.aap.api.søknad.formidling.StandardSøknadFormidler
-import no.nav.aap.api.søknad.formidling.UtlandSøknadFormidler
+import no.nav.aap.api.søknad.formidling.legacy.LegacyStandardSøknadKafkaFormidler
+import no.nav.aap.api.søknad.formidling.standard.StandardSøknadFormidler
+import no.nav.aap.api.søknad.formidling.utland.UtlandSøknadFormidler
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.UtenlandsSøknad

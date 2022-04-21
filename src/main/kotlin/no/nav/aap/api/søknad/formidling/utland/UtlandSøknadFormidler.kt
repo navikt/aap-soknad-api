@@ -1,10 +1,11 @@
-package no.nav.aap.api.søknad.formidling
+package no.nav.aap.api.søknad.formidling.utland
 
 import no.nav.aap.api.felles.Søker
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
-import no.nav.aap.api.søknad.formidling.SkjemaType.UTLAND
+import no.nav.aap.api.søknad.SkjemaType.UTLAND
+import no.nav.aap.api.søknad.formidling.UtlandSøknadKafkaFormidler
 import no.nav.aap.api.søknad.joark.JoarkClient
 import no.nav.aap.api.søknad.joark.pdf.PDFGenerator
 import no.nav.aap.api.søknad.model.UtenlandsSøknad

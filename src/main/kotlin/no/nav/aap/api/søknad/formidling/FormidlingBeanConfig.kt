@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.formidling
 
 
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
+import no.nav.aap.api.søknad.formidling.legacy.LegacyStandardSøknadKafka
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -10,7 +11,7 @@ import org.springframework.kafka.core.ProducerFactory
 
 
 @Configuration
-class KafkaBeanConfig {
+class FormidlingBeanConfig {
     @Bean
     fun legacySøknadTemplate(pf: ProducerFactory<String, LegacyStandardSøknadKafka>) = KafkaTemplate(pf)
 
