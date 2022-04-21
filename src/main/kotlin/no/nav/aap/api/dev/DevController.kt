@@ -1,9 +1,11 @@
 package no.nav.aap.api.dev
 
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.mellomlagring.GCPVedlegg
 import no.nav.aap.api.mellomlagring.Vedlegg
 import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FNR
+import no.nav.aap.api.mellomlagring.VedleggController
 import no.nav.aap.api.søknad.dittnav.DittNavFormidler
 import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorAdapter
 import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorAdapter.StandardPDFData
@@ -55,7 +57,7 @@ class DevController(private val bucket: Vedlegg, private val dittnav: DittNavFor
 
     fun opprettBeskjed(@PathVariable fnr: Fødselsnummer) {
         dittnav.opprettBeskjed(fnr)
-        var b = ServletUriComponentsBuilder.fromCurrentRequestUri().removePathExtension()
+        var b = ServletUriComponentsBuilder.fromCurrentRequestUri().replacePath(VedleggController.BASEPATH +"/les/" + "123456")
         log.info("XXXX er " + b)
     }
 
