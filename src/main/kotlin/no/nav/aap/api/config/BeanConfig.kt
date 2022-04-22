@@ -7,7 +7,6 @@ import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
-import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.HeadersToMDCFilter
@@ -56,8 +55,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                     .url("https://www.nav.no")))
             .components( Components()
                 .addSecuritySchemes("bearer-key",
-                         SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
-}
+                         SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
 
     @Bean
     fun configMatcher() = object : ClientConfigurationPropertiesMatcher {}
