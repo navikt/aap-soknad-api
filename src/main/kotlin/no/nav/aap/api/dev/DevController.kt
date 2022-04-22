@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-import java.time.LocalDate
+import java.time.LocalDate.now
 import java.util.*
 
 @Unprotected
@@ -54,7 +54,7 @@ internal class DevController(private val dokumentLager: DokumentLager,
     fun vl(@PathVariable fnr: Fødselsnummer,@RequestBody søknad: StandardSøknad) =
         vl.route(søknad, Søker(Navn("Ole","B","Olsen"),fnr,
                 Adresse("Gata","A","14", PostNummer("2600","Lillehammer")),
-                LocalDate.now(), listOf()),
+                now(), listOf()),
                 JoarkResponse("42",true, listOf()))
 
     @DeleteMapping("mellomlager/{type}/{fnr}")

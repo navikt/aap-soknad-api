@@ -3,9 +3,12 @@ package no.nav.aap.api.config
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.netty.handler.logging.LogLevel.TRACE
+import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
+import io.swagger.v3.oas.models.security.SecurityRequirement
+import io.swagger.v3.oas.models.security.SecurityScheme
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.HeadersToMDCFilter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
@@ -51,6 +54,13 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                 .license(License()
                     .name("MIT")
                     .url("https://www.nav.no")))
+            .components( Components()
+                .addSecuritySchemes("mySecretHeader",  SecurityScheme()
+                    .type(SecurityScheme.Type.OPENIDCONNECT)
+                    .`in`(SecurityScheme.In.HEADER)
+                    .name("missingParam")))
+            .addSecurityItem( SecurityRequirement().addList("mySecretHeader"));
+
     @Bean
     fun configMatcher() = object : ClientConfigurationPropertiesMatcher {}
     @Bean
