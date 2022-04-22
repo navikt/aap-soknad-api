@@ -20,5 +20,6 @@ class OrganisasjonClientBeanConfig {
             .build()
 
     @Bean
-    fun organisasjonHealthIndicator(a: OrganisasjonWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
+    fun organisasjonHealthIndicator(a: OrganisasjonWebClientAdapter) =
+        object : AbstractPingableHealthIndicator(a) {}
 }

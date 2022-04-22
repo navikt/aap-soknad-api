@@ -11,11 +11,7 @@ data class KontaktinformasjonDTO(@JsonAlias("spraak") val målform: Målform? = 
                                  @JsonAlias("epostadresse") val epost: String? = null,
                                  @JsonAlias("mobiltelefonnummer") val mobil: String? = null)
 
-enum class Målform {
-    NB,
-    NN,
-    EN;
-
+enum class Målform { NB, NN, EN;
     companion object {
         fun standard() = NB
     }

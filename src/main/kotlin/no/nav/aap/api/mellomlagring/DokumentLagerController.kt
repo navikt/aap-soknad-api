@@ -43,8 +43,7 @@ internal class DokumentLagerController(private val lager: DokumentLager, private
                     if (ctx.getFnr().fnr != metadata[FNR]) {
                         throw JwtTokenUnauthorizedException("Dokumentet med id $uuid er ikke eid av ${ctx.getFnr()}")
                     }
-                    ok()
-                        .contentType(parseMediaType(contentType))
+                    ok().contentType(parseMediaType(contentType))
                         .cacheControl(noCache().mustRevalidate())
                         .headers(HttpHeaders().apply {
                             contentDisposition = attachment().filename(metadata[FILNAVN]!!).build()

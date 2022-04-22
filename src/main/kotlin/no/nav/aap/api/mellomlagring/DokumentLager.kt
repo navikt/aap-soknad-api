@@ -11,7 +11,6 @@ internal interface DokumentLager {
     fun slettDokument(fnr: Fødselsnummer, uuid: UUID): Boolean
     fun lagreDokument(fnr: Fødselsnummer, vedlegg: MultipartFile) =
         lagreDokument(fnr, vedlegg.bytes, vedlegg.contentType, vedlegg.originalFilename)
-
     fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?): UUID
     fun key(fnr: Fødselsnummer, uuid: UUID) = "${hash(fnr, uuid)}"
 

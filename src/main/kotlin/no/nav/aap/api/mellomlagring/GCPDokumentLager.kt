@@ -23,14 +23,15 @@ internal class GCPDokumentLager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
     val log = LoggerUtil.getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =
         randomUUID().also {
-            storage.create(
-                    newBuilder(of(bøtte, key(fnr, it)))
-                        .setContentType(contentType)
-                        .setMetadata(mapOf(FILNAVN to originalFilename, FNR to fnr.fnr))
-                        .build(), bytes)
+            storage.create(newBuilder(of(bøtte, key(fnr, it)))
+                .setContentType(contentType)
+                .setMetadata(mapOf(FILNAVN to originalFilename, FNR to fnr.fnr))
+                .build(), bytes)
                 .also { log.trace("Lagret vedlegg som ${it.blobId.toGsUtilUri()}") }
         }
-    override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) = storage.get(bøtte, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))
-    override fun slettDokument(fnr: Fødselsnummer, uuid: UUID) = storage.delete(of(bøtte, key(fnr, uuid)))
+    override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
+        storage.get(bøtte, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))
+    override fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
+        storage.delete(of(bøtte, key(fnr, uuid)))
 
 }

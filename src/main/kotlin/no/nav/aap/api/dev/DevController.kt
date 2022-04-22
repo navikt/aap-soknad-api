@@ -1,10 +1,10 @@
 package no.nav.aap.api.dev
 
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.mellomlagring.MellomLager
 import no.nav.aap.api.mellomlagring.DokumentLager
 import no.nav.aap.api.mellomlagring.DokumentLager.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.DokumentLager.Companion.FNR
+import no.nav.aap.api.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.SkjemaType
 import no.nav.aap.api.søknad.dittnav.DittNavFormidler
 import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorWebClientAdapter
@@ -33,24 +33,23 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-import java.util.UUID
+import java.util.*
 
 @Unprotected
 @RestController
 @RequestMapping(value = ["/dev/"])
 @ConditionalOnDevOrLocal
 internal class DevController(private val dokumentLager: DokumentLager,
-                             private val mellomlager: MellomLager,
+                             private val mellomlager: Mellomlager,
                              private val dittnav: DittNavFormidler,
                              private val pdf: PDFGeneratorWebClientAdapter) {
 
     @PostMapping(value = ["pdf/generate"], produces = [APPLICATION_PDF_VALUE])
     fun pdfGen(@RequestBody data: StandardPDFData) =
-        ok()
-            .headers(HttpHeaders()
-                .apply {
-                    contentDisposition = attachment().filename("pdfgen.pdf").build()
-                })
+        ok().headers(HttpHeaders()
+            .apply {
+                contentDisposition = attachment().filename("pdfgen.pdf").build()
+            })
             .body(pdf.generate(data))
 
     @DeleteMapping("mellomlager/{type}/{fnr}")
@@ -61,15 +60,18 @@ internal class DevController(private val dokumentLager: DokumentLager,
         mellomlager.les(fnr, type) ?.let {ok(it)} ?: notFound().build()
     @PostMapping("mellomlager/{type}/{fnr}")
     @ResponseStatus(CREATED)
-    fun mellomlagre(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer, @RequestBody data: String) = mellomlager.lagre(fnr, type, data)
+    fun mellomlagre(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer, @RequestBody data: String) =
+        mellomlager.lagre(fnr, type, data)
 
     @PostMapping(value = ["dittnav/beskjed/{fnr}"])
     @ResponseStatus(CREATED)
-    fun opprettBeskjed(@PathVariable fnr: Fødselsnummer) = dittnav.opprettBeskjed(fnr)
+    fun opprettBeskjed(@PathVariable fnr: Fødselsnummer) =
+        dittnav.opprettBeskjed(fnr)
 
     @PostMapping(value = ["vedlegg/lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
-    fun lagreDokument(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") vedlegg: MultipartFile) = dokumentLager.lagreDokument(fnr, vedlegg)
+    fun lagreDokument(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") vedlegg: MultipartFile) =
+        dokumentLager.lagreDokument(fnr, vedlegg)
 
     @GetMapping(path = ["vedlegg/les/{fnr}/{uuid}"])
     fun lesDokument(@PathVariable fnr: Fødselsnummer, @PathVariable uuid: UUID) =
@@ -79,8 +81,7 @@ internal class DevController(private val dokumentLager: DokumentLager,
                     if (fnr.fnr != metadata[FNR]) {
                         throw JwtTokenUnauthorizedException("Dokumentet med id $uuid er ikke eid av $fnr.fnr")
                     }
-                    ok()
-                        .contentType(parseMediaType(contentType))
+                    ok().contentType(parseMediaType(contentType))
                         .cacheControl(noCache().mustRevalidate())
                         .headers(HttpHeaders()
                             .apply {

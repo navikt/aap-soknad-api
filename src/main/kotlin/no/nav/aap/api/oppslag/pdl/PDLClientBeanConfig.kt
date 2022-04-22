@@ -67,6 +67,7 @@ class PDLClientBeanConfig {
         GraphQLWebClient.newInstance(client, mapper)
 
     @Bean
-    fun pdlHealthIndicator(a: PDLWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
+    fun pdlHealthIndicator(a: PDLWebClientAdapter) =
+        object : AbstractPingableHealthIndicator(a) {}
 
 }

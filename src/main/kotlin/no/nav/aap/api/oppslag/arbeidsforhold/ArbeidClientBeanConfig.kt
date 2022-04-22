@@ -18,10 +18,7 @@ class ArbeidClientBeanConfig {
 
     @Bean
     @Qualifier(ARBEIDSFORHOLD)
-    fun webClientArbeidsforhold(builder: Builder,
-                                cfg: ArbeidConfig,
-                                tokenXFilter: TokenXFilterFunction,
-                                ctx: AuthContext) =
+    fun webClientArbeidsforhold(builder: Builder, cfg: ArbeidConfig, tokenXFilter: TokenXFilterFunction, ctx: AuthContext) =
         builder
             .baseUrl("${cfg.baseUri}")
             .filter(navPersonIdentFunction(ctx))
@@ -33,6 +30,7 @@ class ArbeidClientBeanConfig {
     }
 
     @Bean
-    fun arbeidsforholdHealthIndicator(a: ArbeidWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
+    fun arbeidsforholdHealthIndicator(a: ArbeidWebClientAdapter) =
+        object : AbstractPingableHealthIndicator(a) {}
 
 }

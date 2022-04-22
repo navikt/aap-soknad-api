@@ -31,12 +31,7 @@ data class PDLSøker(val navn: PDLNavn,
     data class PDLForelderBarnRelasjon(val relatertPersonsIdent: String,
                                        val relatertPersonsrolle: PDLRelasjonsRolle,
                                        val minRolleForPerson: PDLRelasjonsRolle) {
-        enum class PDLRelasjonsRolle {
-            BARN,
-            MOR,
-            FAR,
-            MEDMOR
-        }
+        enum class PDLRelasjonsRolle { BARN, MOR, FAR, MEDMOR }
     }
 
     data class PDLFødsel(@JsonProperty("foedselsdato") val fødselsdato: LocalDate?)
@@ -58,19 +53,9 @@ data class PDLBarn(@JsonProperty("foedsel") val fødselsdato: Set<PDLFødsel>,
                    @JsonProperty("doedsfall") val dødsfall: Set<PDLDødsfall>?) {
 
     data class PDLDødsfall(@JsonProperty("doedsdato") val dødsdato: LocalDate)
-
-    enum class PDLAdresseBeskyttelse {
-        STRENGT_FORTROLIG_UTLAND,
-        STRENGT_FORTROLIG,
-        FORTROLIG,
-        UGRADERT
-    }
+    enum class PDLAdresseBeskyttelse { STRENGT_FORTROLIG_UTLAND, STRENGT_FORTROLIG, FORTROLIG, UGRADERT }
 }
 
 data class PDLKjønn(val kjoenn: Kjoenn) {
-    enum class Kjoenn {
-        MANN,
-        KVINNE,
-        UKJENT
-    }
+    enum class Kjoenn { MANN, KVINNE, UKJENT }
 }

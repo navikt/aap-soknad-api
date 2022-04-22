@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseStatus
 
 @ProtectedRestController(value = ["buckets"], issuer = IDPORTEN)
-internal class MellomlagerController(private val lager: MellomLager, private val ctx: AuthContext) {
+internal class MellomlagerController(private val lager: Mellomlager, private val ctx: AuthContext) {
 
     @PostMapping("/lagre/{type}")
     @ResponseStatus(CREATED)
