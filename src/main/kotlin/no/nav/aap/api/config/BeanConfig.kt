@@ -55,11 +55,9 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                     .name("MIT")
                     .url("https://www.nav.no")))
             .components( Components()
-                .addSecuritySchemes("mySecretHeader",  SecurityScheme()
-                    .type(SecurityScheme.Type.OPENIDCONNECT)
-                    .`in`(SecurityScheme.In.HEADER)
-                    .name("missingParam")))
-            .addSecurityItem( SecurityRequirement().addList("mySecretHeader"));
+                .addSecuritySchemes("bearer-key",
+                         SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
+}
 
     @Bean
     fun configMatcher() = object : ClientConfigurationPropertiesMatcher {}
