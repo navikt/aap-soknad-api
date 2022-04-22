@@ -37,7 +37,8 @@ internal class JoarkFormidler(private val joark: JoarkClient, private val pdf: P
             Pair(lagrePDF(this),
             joark.journalfør(journalpostFra(søknad, søker,asPDFVariant())) ?: throw IntegrationException("Kunne ikke journalføre søknad"))
         }
-    private fun lagrePDF(bytes: ByteArray) = vedlegg.lagreDokument(ctx.getFnr(), bytes, APPLICATION_PDF_VALUE, "kvittering.pdf")
+    private fun lagrePDF(bytes: ByteArray) =
+        vedlegg.lagreDokument(ctx.getFnr(), bytes, APPLICATION_PDF_VALUE, "kvittering.pdf")
 
     private fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdfDokument: DokumentVariant) =
         Journalpost(dokumenter = dokumenterFra(søknad, søker,pdfDokument),
@@ -50,13 +51,15 @@ internal class JoarkFormidler(private val joark: JoarkClient, private val pdf: P
                 listOf(jsonDokument(søknad), pdfDokument)
                         + vedleggFor(søknad.utbetalinger?.stønadstyper, søker.fødselsnummer)
                         + vedleggFor(søknad.utbetalinger?.andreUtbetalinger, søker.fødselsnummer)))
-    private fun jsonDokument(søknad: StandardSøknad) = DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL)
+    private fun jsonDokument(søknad: StandardSøknad) =
+        DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL)
 
     private fun vedleggFor(utbetalinger: List<VedleggAware>?, fnr: Fødselsnummer) =
         utbetalinger
             ?.mapNotNull { it.hentVedlegg() }
-            ?.mapNotNull { vedlegg.lesVedlegg(fnr, it) }
+            ?.mapNotNull { vedlegg.lesDokument(fnr, it) }
             ?.map { it.dokumentVariant() }
             .orEmpty()
-    private fun Blob.dokumentVariant() = DokumentVariant(of(contentType), getEncoder().encodeToString(getContent()))
+    private fun Blob.dokumentVariant() =
+        DokumentVariant(of(contentType), getEncoder().encodeToString(getContent()))
 }
