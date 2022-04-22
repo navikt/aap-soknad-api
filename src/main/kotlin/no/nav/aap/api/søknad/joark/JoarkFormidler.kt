@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service
 import java.util.Base64.getEncoder
 
 @Service
-internal class JoarkFormidler(private val joark: JoarkClient, private val pdf: PDFGenerator, private val ctx: AuthContext, private val vedlegg: DokumentLager)  {
+internal class JoarkFormidler(private val joark: JoarkClient, private val pdf: PDFGenerator, private val ctx: AuthContext, private val lager: DokumentLager)  {
 
     @Autowired
     private lateinit var mapper: ObjectMapper
@@ -38,7 +38,7 @@ internal class JoarkFormidler(private val joark: JoarkClient, private val pdf: P
             joark.journalfør(journalpostFra(søknad, søker,asPDFVariant())) ?: throw IntegrationException("Kunne ikke journalføre søknad"))
         }
     private fun lagrePDF(bytes: ByteArray) =
-        vedlegg.lagreDokument(ctx.getFnr(), bytes, APPLICATION_PDF_VALUE, "kvittering.pdf")
+        lager.lagreDokument(ctx.getFnr(), bytes, APPLICATION_PDF_VALUE, "kvittering.pdf")
 
     private fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdfDokument: DokumentVariant) =
         Journalpost(dokumenter = dokumenterFra(søknad, søker,pdfDokument),
@@ -56,8 +56,8 @@ internal class JoarkFormidler(private val joark: JoarkClient, private val pdf: P
 
     private fun vedleggFor(utbetalinger: List<VedleggAware>?, fnr: Fødselsnummer) =
         utbetalinger
-            ?.mapNotNull { it.hentVedlegg() }
-            ?.mapNotNull { vedlegg.lesDokument(fnr, it) }
+            ?.mapNotNull { it.hentVedleggId() }
+            ?.mapNotNull { lager.lesDokument(fnr, it) }
             ?.map { it.dokumentVariant() }
             .orEmpty()
     private fun Blob.dokumentVariant() =

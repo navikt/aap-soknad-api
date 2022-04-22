@@ -95,15 +95,15 @@ class Utbetaling(val fraArbeidsgiver: Boolean,
                  val stønadstyper: List<AnnenStønad> = emptyList(),
                  val andreUtbetalinger: List<AnnenUtbetaling>) {
     data class AnnenUtbetaling(val hvilken: String, val hvem: String, val vedlegg: UUID? = null) : VedleggAware {
-        override fun hentVedlegg() = vedlegg
+        override fun hentVedleggId() = vedlegg
     }
 
     data class AnnenStønad(val type: AnnenStønadstype, val vedlegg: UUID? = null) : VedleggAware {
-        override fun hentVedlegg() = vedlegg
+        override fun hentVedleggId() = vedlegg
     }
 
     interface VedleggAware {
-        fun hentVedlegg(): UUID?
+        fun hentVedleggId(): UUID?
     }
 
     enum class AnnenStønadstype {
