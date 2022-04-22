@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.formidling.legacy
+package no.nav.aap.api.søknad.routing.legacy
 
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics.counter
@@ -21,7 +21,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
-class LegacyStandardSøknadKafkaFormidler(
+class LegacyStandardSøknadKafkaRouter(
         private val ctx: AuthContext,
         private val pdl: PDLClient,
         private val formidler: KafkaOperations<String, LegacyStandardSøknadKafka>,

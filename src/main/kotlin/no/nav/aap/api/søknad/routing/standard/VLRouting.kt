@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.formidling.standard
+package no.nav.aap.api.søknad.routing.standard
 
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.springframework.stereotype.Component

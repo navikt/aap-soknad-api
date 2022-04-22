@@ -1,20 +1,20 @@
-package no.nav.aap.api.søknad.formidling.standard
+package no.nav.aap.api.søknad.routing.standard
 
 import no.nav.aap.api.mellomlagring.DokumentLagerController.Companion.BASEPATH
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.dittnav.DittNavFormidler
-import no.nav.aap.api.søknad.joark.JoarkFormidler
+import no.nav.aap.api.søknad.joark.JoarkRouter
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 
 @Component
-internal class StandardSøknadFormidler(private val joark: JoarkFormidler,
-                                       private val pdl: PDLClient,
-                                       private val dittnav: DittNavFormidler,
-                                       private val vlRouter: VLRouter,
-                                       private val vl: StandardSøknadVLFormidler) {
+internal class StandardSøknadRouter(private val joark: JoarkRouter,
+                                    private val pdl: PDLClient,
+                                    private val dittnav: DittNavFormidler,
+                                    private val vlRouter: VLRouter,
+                                    private val vl: StandardSøknadVLRouter) {
 
     fun formidle(søknad: StandardSøknad) =
         with(pdl.søkerMedBarn()) {

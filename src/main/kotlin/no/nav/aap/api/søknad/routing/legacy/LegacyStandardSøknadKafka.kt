@@ -1,7 +1,7 @@
-package no.nav.aap.api.søknad.formidling.legacy
+package no.nav.aap.api.søknad.routing.legacy
 
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.søknad.formidling.legacy.IdentType.FNR
+import no.nav.aap.api.søknad.routing.legacy.IdentType.FNR
 import java.time.LocalDate
 
 data class LegacyStandardSøknadKafka(val ident: Ident, val fødselsdato: LocalDate?) {

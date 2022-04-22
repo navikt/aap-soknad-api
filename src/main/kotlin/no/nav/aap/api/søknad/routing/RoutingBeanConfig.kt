@@ -1,8 +1,8 @@
-package no.nav.aap.api.søknad.formidling
+package no.nav.aap.api.søknad.routing
 
 
 import no.nav.aap.api.felles.UtenlandsSøknadKafka
-import no.nav.aap.api.søknad.formidling.legacy.LegacyStandardSøknadKafka
+import no.nav.aap.api.søknad.routing.legacy.LegacyStandardSøknadKafka
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -11,7 +11,7 @@ import org.springframework.kafka.core.ProducerFactory
 
 
 @Configuration
-class FormidlingBeanConfig {
+class RoutingBeanConfig {
     @Bean
     fun legacySøknadTemplate(pf: ProducerFactory<String, LegacyStandardSøknadKafka>) = KafkaTemplate(pf)
 

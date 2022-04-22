@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service
 import java.util.Base64.getEncoder
 
 @Service
-internal class JoarkFormidler(private val joark: JoarkClient, private val pdf: PDFGenerator, private val ctx: AuthContext, private val lager: DokumentLager)  {
+internal class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFGenerator, private val ctx: AuthContext, private val lager: DokumentLager)  {
 
     @Autowired
     private lateinit var mapper: ObjectMapper

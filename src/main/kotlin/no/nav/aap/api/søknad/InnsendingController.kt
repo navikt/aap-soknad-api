@@ -1,8 +1,8 @@
 package no.nav.aap.api.søknad
 
-import no.nav.aap.api.søknad.formidling.legacy.LegacyStandardSøknadKafkaFormidler
-import no.nav.aap.api.søknad.formidling.standard.StandardSøknadFormidler
-import no.nav.aap.api.søknad.formidling.utland.UtlandSøknadFormidler
+import no.nav.aap.api.søknad.routing.legacy.LegacyStandardSøknadKafkaRouter
+import no.nav.aap.api.søknad.routing.standard.StandardSøknadRouter
+import no.nav.aap.api.søknad.routing.utland.UtlandSøknadRouter
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtenlandsSøknad
 import no.nav.aap.util.Constants.IDPORTEN
@@ -13,9 +13,9 @@ import javax.validation.Valid
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 internal class InnsendingController(
-        private val legacyFormidler: LegacyStandardSøknadKafkaFormidler,
-        private val utenlandsFormidler: UtlandSøknadFormidler,
-        private val standardFormidler: StandardSøknadFormidler) {
+        private val legacyFormidler: LegacyStandardSøknadKafkaRouter,
+        private val utenlandsFormidler: UtlandSøknadRouter,
+        private val standardFormidler: StandardSøknadRouter) {
 
     @PostMapping("/utland")
     fun utland(@RequestBody søknad: @Valid UtenlandsSøknad) = utenlandsFormidler.formidle(søknad)

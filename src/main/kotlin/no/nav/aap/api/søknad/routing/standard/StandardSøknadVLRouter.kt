@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.formidling.standard
+package no.nav.aap.api.søknad.routing.standard
 
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics.counter
@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service
 import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
-class StandardSøknadVLFormidler(private val formidler: KafkaOperations<String, StandardSøknad>,
-                                private val cfg: StandardSøknadVLFormidlerConfig) {
+class StandardSøknadVLRouter(private val formidler: KafkaOperations<String, StandardSøknad>,
+                             private val cfg: StandardSøknadVLRouterrConfig) {
 
     val log = LoggerUtil.getLogger(javaClass)
     fun formidle(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =

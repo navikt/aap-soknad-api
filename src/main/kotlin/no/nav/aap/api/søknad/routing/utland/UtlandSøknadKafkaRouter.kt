@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.formidling
+package no.nav.aap.api.søknad.routing
 
 import io.micrometer.core.instrument.Metrics.counter
 import io.micrometer.core.instrument.Tags
@@ -21,7 +21,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
-class UtlandSøknadKafkaFormidler(
+class UtlandSøknadKafkaRouter(
         private val formidler: KafkaOperations<String, UtenlandsSøknadKafka>,
         @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String) {
 
