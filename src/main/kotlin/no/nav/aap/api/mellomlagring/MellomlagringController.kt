@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.notFound
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -26,7 +27,7 @@ internal class MellomlagringController(private val lager: Mellomlagring, private
 
     @GetMapping("/les/{type}")
     fun les(@PathVariable type: SkjemaType) =
-        lager.les(ctx.getFnr(), type) ?.let { ResponseEntity.ok(it) } ?: notFound().build()
+        lager.les(ctx.getFnr(), type) ?.let { ok(it) } ?: notFound().build()
 
     @DeleteMapping("/slett/{type}")
     fun slett(@PathVariable type: SkjemaType): ResponseEntity<Void> =

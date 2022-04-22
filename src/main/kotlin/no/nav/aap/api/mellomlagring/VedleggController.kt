@@ -33,7 +33,8 @@ internal class VedleggController(private val bucket: Vedlegg, private val ctx: A
 
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
-    fun lagreVedlegg(@RequestPart("vedlegg") vedlegg: MultipartFile) = bucket.lagreVedlegg(ctx.getFnr(), vedlegg)
+    fun lagreVedlegg(@RequestPart("vedlegg") vedlegg: MultipartFile) =
+        bucket.lagreVedlegg(ctx.getFnr(), vedlegg)
     @GetMapping("/les/{uuid}")
     fun lesVedlegg(@PathVariable uuid: UUID) =
         bucket.lesVedlegg(ctx.getFnr(), uuid)
