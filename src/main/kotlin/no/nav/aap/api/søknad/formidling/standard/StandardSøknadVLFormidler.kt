@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.formidling.standard
 
 import io.micrometer.core.instrument.Counter
-import io.micrometer.core.instrument.Metrics.*
+import io.micrometer.core.instrument.Metrics.counter
 import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_MOTTATT
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.model.StandardSøknad
@@ -21,10 +21,10 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
 class StandardSøknadVLFormidler(private val formidler: KafkaOperations<String, StandardSøknad>,
-                                private val cfg: StandardSøknadVLFormidlerConfig)  {
+                                private val cfg: StandardSøknadVLFormidlerConfig) {
 
     val log = LoggerUtil.getLogger(javaClass)
-     fun formidle(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
+    fun formidle(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
         if (cfg.enabled) {
             formidler.send(
                     MessageBuilder.withPayload(søknad)
@@ -35,10 +35,12 @@ class StandardSøknadVLFormidler(private val formidler: KafkaOperations<String, 
                 .addCallback(StandardFormidlingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
         }
         else {
-         log.info("Formidling til ny VL er ikke aktivert, sett vl.enabled=true for å aktivere")
+            log.info("Formidling til ny VL er ikke aktivert, sett vl.enabled=true for å aktivere")
         }
 }
-private class StandardFormidlingCallback(val søknad: StandardSøknad, val counter: Counter) : ListenableFutureCallback<SendResult<String, StandardSøknad>> {
+
+private class StandardFormidlingCallback(val søknad: StandardSøknad, val counter: Counter) :
+    ListenableFutureCallback<SendResult<String, StandardSøknad>> {
     private val secureLog = LoggerUtil.getSecureLogger()
     private val log = LoggerUtil.getLogger(javaClass)
     override fun onSuccess(result: SendResult<String, StandardSøknad>?) {

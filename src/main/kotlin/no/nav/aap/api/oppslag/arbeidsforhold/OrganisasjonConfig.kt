@@ -12,18 +12,19 @@ import java.net.URI
 
 @ConfigurationProperties(ORGANISASJON)
 @ConstructorBinding
-class OrganisasjonConfig (baseUri: URI,
-                          @DefaultValue(ORGPATH) private val organisasjonPath: String,
-                          @DefaultValue(PINGPATH)   pingPath: String,
-                          @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
+class OrganisasjonConfig(baseUri: URI,
+                         @DefaultValue(ORGPATH) private val organisasjonPath: String,
+                         @DefaultValue(PINGPATH) pingPath: String,
+                         @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
 
     fun orgURI(b: UriBuilder, orgnr: OrgNummer) =
-         b.path(organisasjonPath)
+        b.path(organisasjonPath)
             .queryParam("orgnummer", orgnr.orgnr)
             .build()
 
 
-    override fun toString() = "$javaClass.simpleName [baseUri=$baseUri,  organisasjonPath=$organisasjonPath, pingEndpoint=$pingEndpoint]"
+    override fun toString() =
+        "$javaClass.simpleName [baseUri=$baseUri,  organisasjonPath=$organisasjonPath, pingEndpoint=$pingEndpoint]"
 
     companion object {
         const val ORGANISASJON = "organisasjon"

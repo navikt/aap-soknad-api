@@ -19,18 +19,20 @@ import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 class ArbeidConfig(baseUri: URI,
                    @DefaultValue(PATH) private val path: String,
                    @DefaultValue("true") enabled: Boolean,
-                   @DefaultValue(PINGPATH)  pingPath: String,
+                   @DefaultValue(PINGPATH) pingPath: String,
                    @DefaultValue(FEMÅR) @PeriodFormat(SIMPLE) private val tidTilbake: Period,
-                   @DefaultValue("false")  val sporingsinformasjon: Boolean): AbstractRestConfig(baseUri, pingPath, enabled) {
+                   @DefaultValue("false") val sporingsinformasjon: Boolean) :
+    AbstractRestConfig(baseUri, pingPath, enabled) {
 
     fun arbeidsforholdURI(b: UriBuilder) =
         b.path(path)
-             .queryParam(HISTORIKK, false)
+            .queryParam(HISTORIKK, false)
             .queryParam(SPORINGSINFORMASJON, sporingsinformasjon)
             .queryParam(FOM, LocalDate.now().minus(tidTilbake).format(ISO_LOCAL_DATE))
-             .build()
+            .build()
 
-    override fun toString() = "$javaClass.simpleName [baseUri=$baseUri,  path=$path, pingEndpoint=$pingEndpoint, tidTilbake=$tidTilbake]"
+    override fun toString() =
+        "$javaClass.simpleName [baseUri=$baseUri,  path=$path, pingEndpoint=$pingEndpoint, tidTilbake=$tidTilbake]"
 
     companion object {
         const val PINGPATH = "internal/isAlive"

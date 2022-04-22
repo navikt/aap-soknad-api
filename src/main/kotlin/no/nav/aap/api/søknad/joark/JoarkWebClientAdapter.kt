@@ -11,7 +11,8 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
-class JoarkWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, val cf: JoarkConfig) : AbstractWebClientAdapter(webClient, cf) {
+class JoarkWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, val cf: JoarkConfig) :
+    AbstractWebClientAdapter(webClient, cf) {
 
     fun opprettJournalpost(journalpost: Journalpost) =
         webClient.post()
@@ -21,6 +22,6 @@ class JoarkWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, val cf: Joar
             .retrieve()
             .bodyToMono<JoarkResponse>()
             .doOnError { t: Throwable -> log.warn("Journalføring feilet", t) }
-            .doOnSuccess {  log.trace("Journaført $it OK")}
+            .doOnSuccess { log.trace("Journaført $it OK") }
             .block()
 }

@@ -6,7 +6,8 @@ import java.time.LocalDate
 
 data class LegacyStandardSøknadKafka(val ident: Ident, val fødselsdato: LocalDate?) {
     constructor(fnr: Fødselsnummer, fødselsdato: LocalDate?) : this(Ident(fnr), fødselsdato)
-    val id  = ident.verdi
+
+    val id = ident.verdi
 }
 
 data class Ident(val type: IdentType = FNR, val verdi: String) {

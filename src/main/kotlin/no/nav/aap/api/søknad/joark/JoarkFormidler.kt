@@ -33,41 +33,41 @@ import java.util.Base64.getEncoder
 class JoarkFormidler(private val joark: JoarkClient,
                      private val pdf: PDFGenerator,
                      private val ctx: AuthContext,
-                     private val bucket: Vedlegg) : SøknadFormidler<Pair<UUID, JoarkResponse>> {
+                     private val vedlegg: Vedlegg) : SøknadFormidler<Pair<UUID, JoarkResponse>> {
 
     @Autowired
     private lateinit var mapper: ObjectMapper
 
-    override fun formidle(søknad: StandardSøknad, søker: Søker) = Pair(
-            bucket.lagreDokument(ctx.getFnr(), pdf.generate(søker, søknad), APPLICATION_PDF_VALUE, "kvittering.pdf"), //TODO #1
-            joark.journalfør(journalpostFra(søknad, søker))
-                ?: throw IntegrationException("Kunne ikke journalføre søknad"))
+    override fun formidle(søknad: StandardSøknad, søker: Søker) =
+         with(pdf.generate(søker, søknad)) {
+            Pair(lagreDokument(this),
+            joark.journalfør(journalpostFra(søknad, søker,this.asPDFVariant())) ?: throw IntegrationException("Kunne ikke journalføre søknad"))
+        }
+    private fun lagreDokument(bytes: ByteArray) = vedlegg.lagreDokument(ctx.getFnr(), bytes, APPLICATION_PDF_VALUE, "kvittering.pdf")
 
-    private fun journalpostFra(søknad: StandardSøknad, søker: Søker) = Journalpost(
-            dokumenter = dokumenterFra(søknad, søker),
-            tittel = HOVED.tittel,
-            avsenderMottaker = AvsenderMottaker(søker.fødselsnummer, navn = søker.navn.navn),
-            bruker = Bruker(søker.fødselsnummer))
+    private fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdfDokument: DokumentVariant) =
+        Journalpost(dokumenter = dokumenterFra(søknad, søker,pdfDokument),
+                tittel = HOVED.tittel,
+                avsenderMottaker = AvsenderMottaker(søker.fødselsnummer, navn = søker.navn.navn),
+                bruker = Bruker(søker.fødselsnummer))
 
-    private fun dokumenterFra(søknad: StandardSøknad, søker: Søker) =
-    listOf(Dokument(
-            HOVED.tittel,
-            HOVED.kode,
-            listOf(
-                    jsonDokument(søknad),
-                    pdfDokument(søknad, søker)) // TODO #2
-                    + vedleggFor(søknad.utbetalinger?.stønadstyper, søker.fødselsnummer)
-                    + vedleggFor(søknad.utbetalinger?.andreUtbetalinger, søker.fødselsnummer)))
+    private fun dokumenterFra(søknad: StandardSøknad, søker: Søker,pdfDokument: DokumentVariant) =
+        listOf(Dokument(HOVED.tittel,
+                HOVED.kode,
+                listOf(jsonDokument(søknad), pdfDokument)
+                        + vedleggFor(søknad.utbetalinger?.stønadstyper, søker.fødselsnummer)
+                        + vedleggFor(søknad.utbetalinger?.andreUtbetalinger, søker.fødselsnummer)))
 
     private fun jsonDokument(søknad: StandardSøknad) = DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL)
-    private fun pdfDokument(søknad: StandardSøknad, søker: Søker) = DokumentVariant(PDFA, pdf.generateEncoded(søker, søknad))
+
+    private fun ByteArray.asPDFVariant() = DokumentVariant(PDFA, getEncoder().encodeToString(this))
 
     private fun vedleggFor(utbetalinger: List<VedleggAware>?, fnr: Fødselsnummer) =
-    utbetalinger
-        ?.mapNotNull { it.hentVedlegg() }
-        ?.mapNotNull { bucket.lesVedlegg(fnr, it) }
-        ?.map { it.dokumentVariant() }
-        .orEmpty()
+        utbetalinger
+            ?.mapNotNull { it.hentVedlegg() }
+            ?.mapNotNull { vedlegg.lesVedlegg(fnr, it) }
+            ?.map { it.dokumentVariant() }
+            .orEmpty()
 
     private fun Blob.dokumentVariant() = DokumentVariant(of(contentType), getEncoder().encodeToString(getContent()))
 }

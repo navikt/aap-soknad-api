@@ -27,11 +27,12 @@ class LegacyStandardSøknadKafkaFormidler(
         private val formidler: KafkaOperations<String, LegacyStandardSøknadKafka>,
         @Value("#{'\${standard.topic:aap.aap-soknad-sendt.v1}'}") val søknadTopic: String) {
 
-     fun formidle() {
-         formidle(LegacyStandardSøknadKafka(ctx.getFnr(), pdl.søkerUtenBarn().fødseldato))
-     }
+    fun formidle() {
+        formidle(LegacyStandardSøknadKafka(ctx.getFnr(), pdl.søkerUtenBarn().fødseldato))
+    }
+
     override fun toString() = "$javaClass.simpleName [formidler=$formidler,pdl=$pdl]"
-    
+
     fun formidle(søknad: LegacyStandardSøknadKafka) {
         formidler.send(
                 MessageBuilder
@@ -40,7 +41,7 @@ class LegacyStandardSøknadKafkaFormidler(
                     .setHeader(TOPIC, søknadTopic)
                     .setHeader(NAV_CALL_ID, callId())
                     .build())
-            .addCallback(FormidlingCallback(søknad,counter(COUNTER_SØKNAD_MOTTATT)))
+            .addCallback(FormidlingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
     }
 }
 

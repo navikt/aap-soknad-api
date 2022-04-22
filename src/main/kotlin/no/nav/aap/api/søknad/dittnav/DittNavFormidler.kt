@@ -16,23 +16,25 @@ import org.springframework.stereotype.Service
 import org.springframework.util.concurrent.ListenableFutureCallback
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
-import java.util.UUID
+import java.util.*
 
 
 @Service
 class DittNavFormidler(private val ctx: AuthContext,
-                       private val  dittNav: KafkaOperations<NokkelInput, Any>,
+                       private val dittNav: KafkaOperations<NokkelInput, Any>,
                        private val cfg: DittNavConfig,
-                       private val env: Environment)  {
+                       private val env: Environment) {
 
-    fun opprettBeskjed()  {  // DEV only
+    fun opprettBeskjed() {  // DEV only
         opprettBeskjed(ctx.getFnr())
     }
-    fun opprettBeskjed(fnr: Fødselsnummer) = send(fnr,cfg.beskjed)
+
+    fun opprettBeskjed(fnr: Fødselsnummer) = send(fnr, cfg.beskjed)
 
     private fun send(fnr: Fødselsnummer, cfg: DittNavTopicConfig) =
-        with(keyFra(fnr,cfg.grupperingsId)) {
-            dittNav.send(ProducerRecord(cfg.topic, this, beskjed(cfg))).addCallback(DittNavCallback(cfg, this))
+        with(keyFra(fnr, cfg.grupperingsId)) {
+            dittNav.send(ProducerRecord(cfg.topic, this, beskjed(cfg)))
+                .addCallback(DittNavCallback(cfg, this))
         }
 
     private fun beskjed(cfg: DittNavTopicConfig) =
@@ -57,14 +59,15 @@ class DittNavFormidler(private val ctx: AuthContext,
             .withAppnavn(env.getRequiredProperty("nais.app.name"))
             .withNamespace(env.getRequiredProperty("nais.namespace"))
             .build()
+
     private class DittNavCallback(private val cfg: DittNavTopicConfig, private val key: NokkelInput) :
         ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
         private val log = LoggerUtil.getLogger(javaClass)
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
-                log.info("Sendte melding ${cfg.tekst} med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${cfg.topic}")
-            }
-            override fun onFailure(e: Throwable) {
-                log.warn("Kunne ikke sende melding ${cfg.tekst} med id ${key.getEventId()} på ${cfg.topic}", e)
-            }
+            log.info("Sendte melding ${cfg.tekst} med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${cfg.topic}")
         }
+        override fun onFailure(e: Throwable) {
+            log.warn("Kunne ikke sende melding ${cfg.tekst} med id ${key.getEventId()} på ${cfg.topic}", e)
+        }
+    }
 }

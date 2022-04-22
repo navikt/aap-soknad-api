@@ -14,7 +14,7 @@ class BehandlerConfig(
         @DefaultValue(DEFAULT_URI) baseUri: URI,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
         @DefaultValue(DEFAULT_PATH) private val path: String,
-        @DefaultValue("true")  enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
+        @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
 
     fun path(b: UriBuilder) = b.path(path).build()
 

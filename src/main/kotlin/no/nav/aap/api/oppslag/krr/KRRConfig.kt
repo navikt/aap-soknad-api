@@ -11,14 +11,15 @@ import java.net.URI
 
 @ConfigurationProperties(KRR)
 @ConstructorBinding
-class KRRConfig (@DefaultValue(DEFAULT_URI) baseUri: URI,
-                 @DefaultValue(PINGPATH) pingPath: String,
-                 @DefaultValue(DEFAULT_PERSON_PATH) private val personPath: String,
-                 @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
+class KRRConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
+                @DefaultValue(PINGPATH) pingPath: String,
+                @DefaultValue(DEFAULT_PERSON_PATH) private val personPath: String,
+                @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
 
     fun kontaktUri(b: UriBuilder) = b.path(personPath).build()
 
-    override fun toString() = "$javaClass.simpleName [baseUri=$baseUri,  personPath=$personPath, pingEndpoint=$pingEndpoint]"
+    override fun toString() =
+        "$javaClass.simpleName [baseUri=$baseUri,  personPath=$personPath, pingEndpoint=$pingEndpoint]"
 
     companion object {
         const val KRR = "krr"

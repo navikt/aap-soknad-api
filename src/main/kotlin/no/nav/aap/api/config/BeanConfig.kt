@@ -2,7 +2,6 @@ package no.nav.aap.api.config
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.netty.handler.logging.LogLevel
 import io.netty.handler.logging.LogLevel.TRACE
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
@@ -33,19 +32,15 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
-
-
 @Configuration
 class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String) {
 
     @Bean
-    fun customizer() = Jackson2ObjectMapperBuilderCustomizer {
-        b ->  b.modules(ProblemModule(), JavaTimeModule(), TokenXJacksonModule(), KotlinModule.Builder().build())
+    fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b ->
+        b.modules(ProblemModule(), JavaTimeModule(), TokenXJacksonModule(), KotlinModule.Builder().build())
     }
-
     @Bean
     fun authContext(h: TokenValidationContextHolder) = AuthContext(h)
-
     @Bean
     fun openAPI(p: BuildProperties) =
         OpenAPI()
@@ -56,10 +51,8 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                 .license(License()
                     .name("MIT")
                     .url("https://www.nav.no")))
-
     @Bean
-    fun configMatcher() = object :  ClientConfigurationPropertiesMatcher {}
-
+    fun configMatcher() = object : ClientConfigurationPropertiesMatcher {}
     @Bean
     @Order(HIGHEST_PRECEDENCE + 2)
     fun tokenXFilterFunction(configs: ClientConfigurationProperties,
@@ -80,10 +73,10 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
 
     @Bean
     fun webClientCustomizer(env: Environment) =
-         WebClientCustomizer { b ->
-             b.clientConnector(ReactorClientHttpConnector(client(env)))
-                 .filter(correlatingFilterFunction(applicationName))
-         }
+        WebClientCustomizer { b ->
+            b.clientConnector(ReactorClientHttpConnector(client(env)))
+                .filter(correlatingFilterFunction(applicationName))
+        }
 
     private fun client(env: Environment) =
         if (isDevOrLocal(env))

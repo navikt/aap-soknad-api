@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import reactor.core.scheduler.Schedulers
-import java.util.*
 import java.util.Locale.getDefault
 
 
@@ -16,14 +14,14 @@ import java.util.Locale.getDefault
 class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) : AbstractWebClientAdapter(client, cf) {
 
     fun kontaktInformasjon() =
-         webClient.get()
+        webClient.get()
             .uri(cf::kontaktUri)
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono(KontaktinformasjonDTO::class.java)
-             .doOnSuccess {  log.trace("Kontaktinformasjon er $it")}
-             .doOnError { t: Throwable -> log.warn("Krr oppslag feilet", t) }
+            .doOnSuccess { log.trace("Kontaktinformasjon er $it") }
+            .doOnError { t: Throwable -> log.warn("Krr oppslag feilet", t) }
             .block()
 
-    override fun name()  = capitalize(KRR.lowercase(getDefault()))
+    override fun name() = capitalize(KRR.lowercase(getDefault()))
 }

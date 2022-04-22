@@ -11,11 +11,11 @@ class StandardSøknadFormidler(private val joark: JoarkFormidler,
                               private val pdl: PDLClient,
                               private val dittnav: DittNavFormidler,
                               private val vl: StandardSøknadVLFormidler) {
-    
+
     fun formidle(søknad: StandardSøknad) =
         with(pdl.søkerMedBarn()) {
             val res = joark.formidle(søknad, this)
-            vl.formidle(søknad, this,res.second)
+            vl.formidle(søknad, this, res.second)
             dittnav.opprettBeskjed()
             res.first
         }

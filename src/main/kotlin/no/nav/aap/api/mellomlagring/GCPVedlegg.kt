@@ -12,13 +12,13 @@ import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FNR
 import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.web.multipart.MultipartFile
-import java.util.UUID
+import java.util.*
 import java.util.UUID.randomUUID
 
 
 @ConditionalOnGCP
-class GCPVedlegg(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøtte: String, private val storage: Storage)  : Vedlegg {
+class GCPVedlegg(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøtte: String,
+                 private val storage: Storage) : Vedlegg {
 
     val log = LoggerUtil.getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =
@@ -28,9 +28,12 @@ class GCPVedlegg(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøt
                         .setContentType(contentType)
                         .setMetadata(mapOf(FILNAVN to originalFilename, FNR to fnr.fnr))
                         .build(), bytes)
-                .also { blob -> log.trace("Lagret vedlegg som ${blob.blobId.toGsUtilUri()}") } }
+                .also { blob -> log.trace("Lagret vedlegg som ${blob.blobId.toGsUtilUri()}") }
+        }
 
-    override fun lesVedlegg(fnr: Fødselsnummer, uuid: UUID) = storage.get(bøtte, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))
+    override fun lesVedlegg(fnr: Fødselsnummer, uuid: UUID) =
+        storage.get(bøtte, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))
+
     override fun slettVedlegg(fnr: Fødselsnummer, uuid: UUID) = storage.delete(of(bøtte, key(fnr, uuid)))
 
 

@@ -2,9 +2,9 @@ package no.nav.aap.api.error
 
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
+import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.http.ResponseEntity
-import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException

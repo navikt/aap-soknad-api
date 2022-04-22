@@ -27,17 +27,22 @@ class UtlandSøknadFormidler(private val joark: JoarkClient,
 
     private val log = LoggerUtil.getLogger(javaClass)
 
-    fun formidle(søknad: UtenlandsSøknad)   {
+    fun formidle(søknad: UtenlandsSøknad) {
         val beriketSøknad = søknad.berikSøknad(Søker(ctx.getFnr(), pdl.søkerUtenBarn().navn))
-        joark.journalfør(Journalpost(
-                dokumenter = docs(beriketSøknad),
-                tittel = UTLAND.tittel,
-                avsenderMottaker = AvsenderMottaker(ctx.getFnr(), navn=beriketSøknad.fulltNavn),
-                bruker = Bruker(ctx.getFnr())))
-            .also {  log.info("Journalført $it OK") }
+        joark.journalfør(
+                Journalpost(
+                        dokumenter = docs(beriketSøknad),
+                        tittel = UTLAND.tittel,
+                        avsenderMottaker = AvsenderMottaker(ctx.getFnr(), navn = beriketSøknad.fulltNavn),
+                        bruker = Bruker(ctx.getFnr())))
+            .also { log.info("Journalført $it OK") }
         kafka.formidle(beriketSøknad)
-}
+    }
 
-private fun docs(beriketSøknad: UtenlandsSøknadKafka)  =
-    listOf(Dokument(UTLAND.tittel, UTLAND.kode, listOf(DokumentVariant(fysiskDokument = pdfGen.generateEncoded(beriketSøknad)))))
+    private fun docs(beriketSøknad: UtenlandsSøknadKafka) =
+        listOf(
+                Dokument(
+                        UTLAND.tittel,
+                        UTLAND.kode,
+                        listOf(DokumentVariant(fysiskDokument = pdfGen.generateEncoded(beriketSøknad)))))
 }

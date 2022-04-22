@@ -18,7 +18,7 @@ class OppslagController(val pdl: PDLClient,
     val log = LoggerUtil.getLogger(javaClass)
 
     @GetMapping("/soeker")
-     fun søker()  = SøkerInfo(
+    fun søker() = SøkerInfo(
             pdl.søkerMedBarn(),
             behandler.behandlere(),
             arbeid.arbeidsforhold(),

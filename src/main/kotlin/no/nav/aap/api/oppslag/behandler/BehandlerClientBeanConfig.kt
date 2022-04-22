@@ -14,12 +14,12 @@ class BehandlerClientBeanConfig(@Value("\${spring.application.name}") val applic
 
     @Qualifier(BEHANDLER)
     @Bean
-    fun behandlereWebClient(builder: Builder, cfg: BehandlerConfig,  filter: TokenXFilterFunction) =
+    fun behandlereWebClient(builder: Builder, cfg: BehandlerConfig, filter: TokenXFilterFunction) =
         builder
             .baseUrl("${cfg.baseUri}")
             .filter(filter)
             .build()
 
     @Bean
-    fun behandlerHealthIndicator(a: BehandlerWebClientAdapter) = object: AbstractPingableHealthIndicator(a){}
+    fun behandlerHealthIndicator(a: BehandlerWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 }

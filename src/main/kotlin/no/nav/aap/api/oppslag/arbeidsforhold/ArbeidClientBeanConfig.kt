@@ -18,19 +18,21 @@ class ArbeidClientBeanConfig {
 
     @Bean
     @Qualifier(ARBEIDSFORHOLD)
-    fun webClientArbeidsforhold(builder: Builder, cfg: ArbeidConfig, tokenXFilter: TokenXFilterFunction, ctx: AuthContext) =
-         builder
-             .baseUrl("${cfg.baseUri}")
-             .filter(navPersonIdentFunction(ctx))
-             .filter(tokenXFilter)
+    fun webClientArbeidsforhold(builder: Builder,
+                                cfg: ArbeidConfig,
+                                tokenXFilter: TokenXFilterFunction,
+                                ctx: AuthContext) =
+        builder
+            .baseUrl("${cfg.baseUri}")
+            .filter(navPersonIdentFunction(ctx))
+            .filter(tokenXFilter)
             .build()
-
 
     private fun navPersonIdentFunction(ctx: AuthContext) = generellFilterFunction(NAV_PERSON_IDENT) {
         ctx.getSubject() ?: throw JwtTokenMissingException()
     }
 
     @Bean
-    fun arbeidsforholdHealthIndicator(a: ArbeidWebClientAdapter) = object: AbstractPingableHealthIndicator(a){}
+    fun arbeidsforholdHealthIndicator(a: ArbeidWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 
 }

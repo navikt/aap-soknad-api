@@ -14,7 +14,6 @@ class PDFGeneratorConfig(
         @DefaultValue(STANDARD_PATH) val standardPath: String,
         @DefaultValue("true") enabled: Boolean,
         @DefaultValue(DEFAULT_BASE_URI) baseUri: URI) : AbstractRestConfig(baseUri, pingPath, enabled) {
-
     companion object {
         const val PDFGEN = "PDFGEN"
         private const val DEFAULT_BASE_URI = "http://pdfgen"

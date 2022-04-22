@@ -10,7 +10,6 @@ import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
-import org.apache.logging.log4j.util.Base64Util
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.KafkaHeaders.MESSAGE_KEY
@@ -18,7 +17,6 @@ import org.springframework.kafka.support.KafkaHeaders.TOPIC
 import org.springframework.kafka.support.SendResult
 import org.springframework.messaging.support.MessageBuilder
 import org.springframework.stereotype.Service
-import org.springframework.util.Base64Utils
 import org.springframework.util.concurrent.ListenableFutureCallback
 
 
@@ -40,15 +38,16 @@ class UtlandSøknadKafkaFormidler(
     override fun toString() = "$javaClass.simpleName [kafkaOperations=$formidler]"
 }
 
-
 private class UtlandFormidlingCallback(val søknad: UtenlandsSøknadKafka) :
     ListenableFutureCallback<SendResult<String, UtenlandsSøknadKafka>> {
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()
 
     override fun onSuccess(result: SendResult<String, UtenlandsSøknadKafka>?) {
-        counter(COUNTER_SØKNAD_UTLAND_MOTTATT,
-                Tags.of(TAG_LAND, søknad.land.alpha3,
+        counter(
+                COUNTER_SØKNAD_UTLAND_MOTTATT,
+                Tags.of(
+                        TAG_LAND, søknad.land.alpha3,
                         TAG_VARIGHET, søknad.periode.varighetDager.toString()))
             .increment()
         log.info(

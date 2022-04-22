@@ -33,53 +33,56 @@ class PDLWebClientAdapter(
         private val ctx: AuthContext,
         private val errorHandler: PDLErrorHandler) : AbstractWebClientAdapter(webClient, cfg) {
 
-    fun søker(medBarn: Boolean = false) = ctx.getSubject()?.let {fnr ->
-        søkerOppslag(fnr)?.let {
-            s -> søkerFra(s,fnr,medBarn)
+    fun søker(medBarn: Boolean = false) = ctx.getSubject()?.let { fnr ->
+        søkerOppslag(fnr)?.let { s ->
+            søkerFra(s, fnr, medBarn)
         }
     } ?: throw JwtTokenMissingException()
 
     private fun søkerOppslag(fnr: String) = oppslag({
         userWebClient.post(PERSON_QUERY, idFra(fnr), PDLWrappedSøker::class.java).block()
-            ?.active }, "søker")
+            ?.active
+    }, "søker")
 
     private fun barnOppslag(fnr: String) =
         oppslag({
-            systemWebClient.post(BARN_QUERY, idFra(fnr), PDLBarn::class.java).block() }, "barn")
-            ?.let {
-                barn -> Barn(Fødselsnummer(fnr), navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
-        }
+            systemWebClient.post(BARN_QUERY, idFra(fnr), PDLBarn::class.java).block()
+        }, "barn")
+            ?.let { barn ->
+                Barn(Fødselsnummer(fnr), navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
+            }
 
     private fun fødselsdatoFra(fødsel: Set<PDLFødsel>?) = fødselsdatoFra(fødsel?.firstOrNull())
 
     private fun fødselsdatoFra(fødsel: PDLFødsel?) = fødsel?.fødselsdato
 
-    private fun søkerFra(søker: PDLSøker?, fnr: String, medBarn: Boolean) =  søker?.let { s ->
+    private fun søkerFra(søker: PDLSøker?, fnr: String, medBarn: Boolean) = søker?.let { s ->
         Søker(
-            navnFra(s.navn), fødselsnummerFra(fnr),
-            adresseFra(s.vegadresse),
-            fødselsdatoFra(s.fødsel),
-            barnFra(s.forelderBarnRelasjon, medBarn))
-            .also { log.trace(CONFIDENTIAL,"Søker er $it") }
+                navnFra(s.navn), fødselsnummerFra(fnr),
+                adresseFra(s.vegadresse),
+                fødselsdatoFra(s.fødsel),
+                barnFra(s.forelderBarnRelasjon, medBarn))
+            .also { log.trace(CONFIDENTIAL, "Søker er $it") }
 
     }
 
     private fun fødselsnummerFra(fnr: String) = Fødselsnummer(fnr)
 
-    private fun adresseFra(a: PDLVegadresse?) =  a?.let {
-        Adresse(a.adressenavn,a.husbokstav,a.husnummer, PostNummer(a.postnummer))
-            .also { log.trace(CONFIDENTIAL,"Adresse er $it") }
+    private fun adresseFra(a: PDLVegadresse?) = a?.let {
+        Adresse(a.adressenavn, a.husbokstav, a.husnummer, PostNummer(a.postnummer))
+            .also { log.trace(CONFIDENTIAL, "Adresse er $it") }
     }
 
-    private fun navnFra(n: Set<PDLNavn>)  = navnFra(n.first())
+    private fun navnFra(n: Set<PDLNavn>) = navnFra(n.first())
 
-    private fun navnFra(n: PDLNavn) =  Navn(n.fornavn, n.mellomnavn, n.etternavn)
-        .also { log.trace(CONFIDENTIAL,"Navn er $it") }
+    private fun navnFra(n: PDLNavn) = Navn(n.fornavn, n.mellomnavn, n.etternavn)
+        .also { log.trace(CONFIDENTIAL, "Navn er $it") }
 
     private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) = if (medBarn) r.map {
         barnOppslag(it.relatertPersonsIdent)
-            .also { log.trace(CONFIDENTIAL,"Barn er $it") }
-    } else emptyList()
+            .also { log.trace(CONFIDENTIAL, "Barn er $it") }
+    }
+    else emptyList()
 
     private fun <T> oppslag(oppslag: () -> T, type: String): T {
         return try {
@@ -103,7 +106,8 @@ class PDLWebClientAdapter(
     }
 
 
-    override fun toString() = "${javaClass.simpleName} [webClient=$webClient,graphQLWebClient=$userWebClient,authContext=$ctx,errorHandler=$errorHandler, cfg=$cfg]"
+    override fun toString() =
+        "${javaClass.simpleName} [webClient=$webClient,graphQLWebClient=$userWebClient,authContext=$ctx,errorHandler=$errorHandler, cfg=$cfg]"
 
 
     companion object {

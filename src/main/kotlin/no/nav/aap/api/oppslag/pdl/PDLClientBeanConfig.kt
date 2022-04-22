@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
-import org.springframework.http.HttpHeaders.*
+import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
@@ -23,11 +23,14 @@ import org.springframework.web.reactive.function.client.WebClient.Builder
 
 
 @Configuration
-class PDLClientBeanConfig  {
-    
+class PDLClientBeanConfig {
+
     @Bean
     @Qualifier(PDL_SYSTEM)
-    fun webClientPDLSystem(env: Environment, @Value("\${pdl.base-uri}") baseUri: String, builder: Builder,  @Qualifier(PDL_SYSTEM) aadPDLFilterFunction: ExchangeFilterFunction)  =
+    fun webClientPDLSystem(env: Environment,
+                           @Value("\${pdl.base-uri}") baseUri: String,
+                           builder: Builder,
+                           @Qualifier(PDL_SYSTEM) aadPDLFilterFunction: ExchangeFilterFunction) =
         builder
             .baseUrl(baseUri)
             .filter(temaFilterFunction())
@@ -41,7 +44,8 @@ class PDLClientBeanConfig  {
             next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.systemBearerToken(cfgs)).build())
         }
 
-    private fun OAuth2AccessTokenService.systemBearerToken(cfgs: ClientConfigurationProperties) = getAccessToken(cfgs.registration["client-credentials-pdl"]).accessToken.asBearer()
+    private fun OAuth2AccessTokenService.systemBearerToken(cfgs: ClientConfigurationProperties) =
+        getAccessToken(cfgs.registration["client-credentials-pdl"]).accessToken.asBearer()
 
     @Qualifier(PDL_SYSTEM)
     @Bean
@@ -59,9 +63,10 @@ class PDLClientBeanConfig  {
 
     @Qualifier(PDL_USER)
     @Bean
-    fun graphQlUserWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper): GraphQLWebClient = GraphQLWebClient.newInstance(client, mapper)
+    fun graphQlUserWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper): GraphQLWebClient =
+        GraphQLWebClient.newInstance(client, mapper)
 
     @Bean
-    fun pdlHealthIndicator(a: PDLWebClientAdapter) = object: AbstractPingableHealthIndicator(a){}
+    fun pdlHealthIndicator(a: PDLWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 
 }

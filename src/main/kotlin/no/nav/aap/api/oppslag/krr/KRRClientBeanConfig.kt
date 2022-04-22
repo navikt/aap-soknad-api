@@ -13,7 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
 class KRRClientBeanConfig {
-    
+
     @Qualifier(KRR)
     @Bean
     fun krrWebClient(builder: Builder, cfg: KRRConfig, tokenXFilterFunction: TokenXFilterFunction, ctx: AuthContext) =
@@ -24,5 +24,5 @@ class KRRClientBeanConfig {
             .build()
 
     @Bean
-    fun krrHealthIndicator(a: KRRWebClientAdapter) = object: AbstractPingableHealthIndicator(a){}
+    fun krrHealthIndicator(a: KRRWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 }

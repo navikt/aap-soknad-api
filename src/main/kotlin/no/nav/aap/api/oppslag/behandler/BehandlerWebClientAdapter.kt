@@ -6,13 +6,12 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import reactor.core.scheduler.Schedulers
 
 
 @Component
 class BehandlerWebClientAdapter(
         @Qualifier(BEHANDLER) webClient: WebClient,
-         val cf: BehandlerConfig) : AbstractWebClientAdapter(webClient, cf) {
+        val cf: BehandlerConfig) : AbstractWebClientAdapter(webClient, cf) {
 
     fun behandlere() = webClient
         .get()
@@ -22,7 +21,7 @@ class BehandlerWebClientAdapter(
         .bodyToFlux(BehandlerDTO::class.java)
         .doOnError { t: Throwable -> log.warn("Behandler oppslag feilet", t) }
         .collectList()
-        .doOnSuccess {  log.trace("Behandlere er $it")}
+        .doOnSuccess { log.trace("Behandlere er $it") }
         .block()
         ?.map { it.tilBehandler() }
         .orEmpty()
