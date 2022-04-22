@@ -11,11 +11,9 @@ import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
+import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
-import org.springframework.kafka.support.KafkaHeaders.MESSAGE_KEY
-import org.springframework.kafka.support.KafkaHeaders.TOPIC
 import org.springframework.kafka.support.SendResult
-import org.springframework.messaging.support.MessageBuilder
 import org.springframework.stereotype.Service
 import org.springframework.util.concurrent.ListenableFutureCallback
 
@@ -26,13 +24,10 @@ class StandardSøknadVLFormidler(private val formidler: KafkaOperations<String, 
     val log = LoggerUtil.getLogger(javaClass)
     fun formidle(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
         if (cfg.enabled) {
-            formidler.send(
-                    MessageBuilder.withPayload(søknad)
-                        .setHeader(MESSAGE_KEY, søker.fødselsnummer.fnr)
-                        .setHeader(TOPIC, cfg.topic)
-                        .setHeader(NAV_CALL_ID, callId())
-                        .build())
-                .addCallback(StandardFormidlingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
+            formidler.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
+                .apply {
+                    headers().add(NAV_CALL_ID, callId().toByteArray())
+                }).addCallback(StandardFormidlingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
         }
         else {
             log.info("Formidling til ny VL er ikke aktivert, sett vl.enabled=true for å aktivere")
@@ -45,8 +40,7 @@ private class StandardFormidlingCallback(val søknad: StandardSøknad, val count
     private val log = LoggerUtil.getLogger(javaClass)
     override fun onSuccess(result: SendResult<String, StandardSøknad>?) {
         counter.increment()
-        log.info(
-                CONFIDENTIAL,
+        log.info(CONFIDENTIAL,
                 "Søknad $søknad sent til Kafka på topic {}, partition {} med offset {} OK",
                 result?.recordMetadata?.topic(),
                 result?.recordMetadata?.partition(),

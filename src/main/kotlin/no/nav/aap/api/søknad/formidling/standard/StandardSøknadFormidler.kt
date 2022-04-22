@@ -11,14 +11,17 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromC
 
 @Component
 internal class StandardSøknadFormidler(private val joark: JoarkFormidler,
-                              private val pdl: PDLClient,
-                              private val dittnav: DittNavFormidler,
-                              private val vl: StandardSøknadVLFormidler) {
+                                       private val pdl: PDLClient,
+                                       private val dittnav: DittNavFormidler,
+                                       private val vlRouter: VLRouter,
+                                       private val vl: StandardSøknadVLFormidler) {
 
     fun formidle(søknad: StandardSøknad) =
         with(pdl.søkerMedBarn()) {
             val res = joark.formidle(søknad, this)
-            vl.formidle(søknad, this, res.second)
+            if (vlRouter.skalTilVL(søknad)){
+                vl.formidle(søknad, this, res.second)
+            }
             dittnav.opprettBeskjed()
             Kvittering(fromCurrentRequestUri().replacePath("${BASEPATH}/les/${res.first}").build().toUri())
         }
