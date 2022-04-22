@@ -32,10 +32,12 @@ class DittNavRouter(private val ctx: AuthContext,
     fun opprettBeskjed(fnr: Fødselsnummer) = send(fnr, cfg.beskjed)
 
     private fun send(fnr: Fødselsnummer, cfg: DittNavTopicConfig) =
-        with(keyFra(fnr, cfg.grupperingsId)) {
-            dittNav.send(ProducerRecord(cfg.topic, this, beskjed(cfg)))
-                .addCallback(DittNavCallback(cfg, this))
-        }
+        if (cfg.enabled) {
+            with(keyFra(fnr, cfg.grupperingsId)) {
+                dittNav.send(ProducerRecord(cfg.topic, this, beskjed(cfg)))
+                    .addCallback(DittNavCallback(cfg, this))
+            }
+        } else Unit
 
     private fun beskjed(cfg: DittNavTopicConfig) =
         BeskjedInputBuilder()

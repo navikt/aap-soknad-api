@@ -11,5 +11,6 @@ class DittNavConfig(val beskjed: DittNavTopicConfig) {
                                   var landingsside: URL,
                                   val varighet: Duration,
                                   val tekst: String,
+                                  val enabled: Boolean = true,
                                   val grupperingsId: String)
 }
