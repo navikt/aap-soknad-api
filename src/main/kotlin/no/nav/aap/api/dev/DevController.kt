@@ -44,7 +44,7 @@ internal class DevController(private val vedleggLager: Vedlegg,
                              private val dittnav: DittNavFormidler,
                              private val pdf: PDFGeneratorWebClientAdapter) {
 
-    @PostMapping(value = ["generate"], produces = [APPLICATION_PDF_VALUE])
+    @PostMapping(value = ["pdf/generate"], produces = [APPLICATION_PDF_VALUE])
     fun pdfGen(@RequestBody data: StandardPDFData) =
         ok()
             .headers(HttpHeaders()
@@ -53,12 +53,12 @@ internal class DevController(private val vedleggLager: Vedlegg,
                 })
             .body(pdf.generate(data))
 
-    @DeleteMapping("/lager/{type}/{fnr}")
+    @DeleteMapping("mellomlager/{type}/{fnr}")
     fun slettmellomlager(@PathVariable type: SkjemaType,@PathVariable fnr: Fødselsnummer): ResponseEntity<Void> =
         if (mellomlagring.slett(fnr,type)) noContent().build() else notFound().build()
-    @GetMapping("/lager/{type}/{fnr}")
+    @GetMapping("mellomlager/{type}/{fnr}")
     fun lesmellomlager(@PathVariable type: SkjemaType,@PathVariable fnr: Fødselsnummer) = mellomlagring.les(fnr, type)
-    @PostMapping("/lager/{type}/{fnr}")
+    @PostMapping("mellomlager/{type}/{fnr}")
     @ResponseStatus(CREATED)
     fun mellomlagre(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer, @RequestBody data: String) = mellomlagring.lagre(fnr, type, data)
 
@@ -66,11 +66,11 @@ internal class DevController(private val vedleggLager: Vedlegg,
     @ResponseStatus(CREATED)
     fun opprettBeskjed(@PathVariable fnr: Fødselsnummer) = dittnav.opprettBeskjed(fnr)
 
-    @PostMapping(value = ["lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
+    @PostMapping(value = ["vedlegg/lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
     fun lagreVedlegg(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") vedlegg: MultipartFile) = vedleggLager.lagreVedlegg(fnr, vedlegg)
 
-    @GetMapping(path = ["les/{fnr}/{uuid}"])
+    @GetMapping(path = ["vedlegg/les/{fnr}/{uuid}"])
     fun lesVedlegg(@PathVariable fnr: Fødselsnummer, @PathVariable uuid: UUID) =
         vedleggLager.lesVedlegg(fnr, uuid)
             ?.let {
@@ -89,7 +89,7 @@ internal class DevController(private val vedleggLager: Vedlegg,
                 }
             } ?: notFound().build()
 
-    @DeleteMapping("slett/{fnr}/{uuid}")
+    @DeleteMapping("vedlegg/slett/{fnr}/{uuid}")
     fun slettVedlegg(@PathVariable fnr: Fødselsnummer, @PathVariable uuid: UUID): ResponseEntity<Void> =
         if (vedleggLager.slettVedlegg(fnr, uuid)) noContent().build() else notFound().build()
 }
