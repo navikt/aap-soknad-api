@@ -5,7 +5,6 @@ import no.nav.aap.api.mellomlagring.Mellomlagring
 import no.nav.aap.api.mellomlagring.Vedlegg
 import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FNR
-import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.SkjemaType
 import no.nav.aap.api.søknad.dittnav.DittNavFormidler
 import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorWebClientAdapter
@@ -54,6 +53,9 @@ internal class DevController(private val vedleggLager: Vedlegg,
                 })
             .body(pdf.generate(data))
 
+    @DeleteMapping("/lager/{type}/{fnr}")
+    fun slettmellomlager(@PathVariable type: SkjemaType,@PathVariable fnr: Fødselsnummer): ResponseEntity<Void> =
+        if (mellomlagring.slett(fnr,type)) noContent().build() else notFound().build()
     @GetMapping("/lager/{type}/{fnr}")
     fun lesmellomlager(@PathVariable type: SkjemaType,@PathVariable fnr: Fødselsnummer) = mellomlagring.les(fnr, type)
     @PostMapping("/lager/{type}/{fnr}")
