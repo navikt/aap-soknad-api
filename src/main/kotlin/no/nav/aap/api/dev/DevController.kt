@@ -6,7 +6,7 @@ import no.nav.aap.api.mellomlagring.DokumentLager.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.DokumentLager.Companion.FNR
 import no.nav.aap.api.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.SkjemaType
-import no.nav.aap.api.søknad.dittnav.DittNavFormidler
+import no.nav.aap.api.søknad.dittnav.DittNavRouter
 import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorWebClientAdapter
 import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorWebClientAdapter.StandardPDFData
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
@@ -41,7 +41,7 @@ import java.util.*
 @ConditionalOnDevOrLocal
 internal class DevController(private val dokumentLager: DokumentLager,
                              private val mellomlager: Mellomlager,
-                             private val dittnav: DittNavFormidler,
+                             private val dittnav: DittNavRouter,
                              private val pdf: PDFGeneratorWebClientAdapter) {
 
     @PostMapping(value = ["pdf/generate"], produces = [APPLICATION_PDF_VALUE])

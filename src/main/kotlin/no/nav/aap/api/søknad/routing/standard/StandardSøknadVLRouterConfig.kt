@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 
 @ConfigurationProperties(prefix = "vl")
 @ConstructorBinding
-class StandardSøknadVLRouterrConfig(@DefaultValue(DEFAULT_VL_TOPIC) val topic: String) {
+class StandardSøknadVLRouterConfig(@DefaultValue(DEFAULT_VL_TOPIC) val topic: String) {
 
     companion object {
         private const val DEFAULT_VL_TOPIC = "aap.aap-soknad-sendt-ny.v1"

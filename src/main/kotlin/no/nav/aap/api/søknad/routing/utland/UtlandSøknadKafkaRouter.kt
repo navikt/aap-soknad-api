@@ -22,23 +22,23 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
 class UtlandSøknadKafkaRouter(
-        private val formidler: KafkaOperations<String, UtenlandsSøknadKafka>,
+        private val router: KafkaOperations<String, UtenlandsSøknadKafka>,
         @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") val søknadTopic: String) {
 
-    fun formidle(søknad: UtenlandsSøknadKafka) =
-        formidler.send(
+    fun route(søknad: UtenlandsSøknadKafka) =
+        router.send(
                 MessageBuilder
                     .withPayload(søknad)
                     .setHeader(MESSAGE_KEY, søknad.søker.fnr.fnr)
                     .setHeader(TOPIC, søknadTopic)
                     .setHeader(NAV_CALL_ID, callId())
                     .build())
-            .addCallback(UtlandFormidlingCallback(søknad))
+            .addCallback(UtlandRouterCallback(søknad))
 
-    override fun toString() = "$javaClass.simpleName [kafkaOperations=$formidler]"
+    override fun toString() = "$javaClass.simpleName [kafkaOperations=$router]"
 }
 
-private class UtlandFormidlingCallback(val søknad: UtenlandsSøknadKafka) :
+private class UtlandRouterCallback(val søknad: UtenlandsSøknadKafka) :
     ListenableFutureCallback<SendResult<String, UtenlandsSøknadKafka>> {
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()

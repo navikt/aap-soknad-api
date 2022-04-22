@@ -20,10 +20,10 @@ import java.util.*
 
 
 @Service
-class DittNavFormidler(private val ctx: AuthContext,
-                       private val dittNav: KafkaOperations<NokkelInput, Any>,
-                       private val cfg: DittNavConfig,
-                       private val env: Environment) {
+class DittNavRouter(private val ctx: AuthContext,
+                    private val dittNav: KafkaOperations<NokkelInput, Any>,
+                    private val cfg: DittNavConfig,
+                    private val env: Environment) {
 
     fun opprettBeskjed() {  // DEV only
         opprettBeskjed(ctx.getFnr())

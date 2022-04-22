@@ -32,7 +32,7 @@ internal class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFG
     @Autowired
     private lateinit var mapper: ObjectMapper
 
-     fun formidle(søknad: StandardSøknad, søker: Søker) =
+     fun route(søknad: StandardSøknad, søker: Søker) =
          with(pdf.generate(søker, søknad)) {
             Pair(lagrePDF(this),
             joark.journalfør(journalpostFra(søknad, søker,asPDFVariant())) ?: throw IntegrationException("Kunne ikke journalføre søknad"))

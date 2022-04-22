@@ -24,28 +24,28 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 class LegacyStandardSøknadKafkaRouter(
         private val ctx: AuthContext,
         private val pdl: PDLClient,
-        private val formidler: KafkaOperations<String, LegacyStandardSøknadKafka>,
+        private val router: KafkaOperations<String, LegacyStandardSøknadKafka>,
         @Value("#{'\${standard.topic:aap.aap-soknad-sendt.v1}'}") val søknadTopic: String) {
 
-    fun formidle() {
-        formidle(LegacyStandardSøknadKafka(ctx.getFnr(), pdl.søkerUtenBarn().fødseldato))
+    fun route() {
+        route(LegacyStandardSøknadKafka(ctx.getFnr(), pdl.søkerUtenBarn().fødseldato))
     }
 
-    override fun toString() = "$javaClass.simpleName [formidler=$formidler,pdl=$pdl]"
+    override fun toString() = "$javaClass.simpleName [formidler=$router,pdl=$pdl]"
 
-    fun formidle(søknad: LegacyStandardSøknadKafka) {
-        formidler.send(
+    fun route(søknad: LegacyStandardSøknadKafka) {
+        router.send(
                 MessageBuilder
                     .withPayload(søknad)
                     .setHeader(MESSAGE_KEY, søknad.id)
                     .setHeader(TOPIC, søknadTopic)
                     .setHeader(NAV_CALL_ID, callId())
                     .build())
-            .addCallback(FormidlingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
+            .addCallback(RouterCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
     }
 }
 
-private class FormidlingCallback(val søknad: LegacyStandardSøknadKafka, val counter: Counter) :
+private class RouterCallback(val søknad: LegacyStandardSøknadKafka, val counter: Counter) :
     ListenableFutureCallback<SendResult<String, LegacyStandardSøknadKafka>> {
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()

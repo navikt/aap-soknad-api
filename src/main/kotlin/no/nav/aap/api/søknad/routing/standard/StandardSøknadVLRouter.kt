@@ -18,18 +18,18 @@ import org.springframework.stereotype.Service
 import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
-class StandardSøknadVLRouter(private val formidler: KafkaOperations<String, StandardSøknad>,
-                             private val cfg: StandardSøknadVLRouterrConfig) {
+class StandardSøknadVLRouter(private val router: KafkaOperations<String, StandardSøknad>,
+                             private val cfg: StandardSøknadVLRouterConfig) {
 
     val log = LoggerUtil.getLogger(javaClass)
-    fun formidle(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
-            formidler.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
+    fun route(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
+            router.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
                 .apply {
                     headers().add(NAV_CALL_ID, callId().toByteArray())
-                }).addCallback(StandardFormidlingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
+                }).addCallback(StandardRoutingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
 }
 
-private class StandardFormidlingCallback(val søknad: StandardSøknad, val counter: Counter) :
+private class StandardRoutingCallback(val søknad: StandardSøknad, val counter: Counter) :
     ListenableFutureCallback<SendResult<String, StandardSøknad>> {
     private val secureLog = LoggerUtil.getSecureLogger()
     private val log = LoggerUtil.getLogger(javaClass)

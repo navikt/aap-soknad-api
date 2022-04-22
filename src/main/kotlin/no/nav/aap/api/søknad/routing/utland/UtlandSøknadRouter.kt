@@ -26,7 +26,7 @@ class UtlandSøknadRouter(private val joark: JoarkClient,
                          private val kafka: UtlandSøknadKafkaRouter) {
 
     private val log = LoggerUtil.getLogger(javaClass)
-    fun formidle(søknad: UtenlandsSøknad) =
+    fun route(søknad: UtenlandsSøknad) =
         with(søknad.berikSøknad(Søker(ctx.getFnr(), pdl.søkerUtenBarn().navn))) {
             joark.journalfør(
                     Journalpost(dokumenter = docs(this),
@@ -34,7 +34,7 @@ class UtlandSøknadRouter(private val joark: JoarkClient,
                     avsenderMottaker = AvsenderMottaker(ctx.getFnr(), navn = this.fulltNavn),
                     bruker = Bruker(ctx.getFnr())))
                 .also { log.info("Journalført $it OK") }
-            kafka.formidle(this)
+            kafka.route(this)
         }
     private fun docs(søknad: UtenlandsSøknadKafka) = listOf(Dokument(UTLAND.tittel, UTLAND.kode, listOf(pdfGen.generate(søknad).asPDFVariant())))
 }
