@@ -1,14 +1,19 @@
 package no.nav.aap.api.dev
 
+import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.felles.Navn
+import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.mellomlagring.DokumentLager
 import no.nav.aap.api.mellomlagring.DokumentLager.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.DokumentLager.Companion.FNR
 import no.nav.aap.api.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.SkjemaType
 import no.nav.aap.api.søknad.dittnav.DittNavRouter
-import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorWebClientAdapter
-import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorWebClientAdapter.StandardPDFData
+import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.model.Søker
+import no.nav.aap.api.søknad.routing.standard.StandardSøknadVLRouter
+import no.nav.aap.joark.JoarkResponse
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import no.nav.security.token.support.core.api.Unprotected
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
@@ -16,7 +21,6 @@ import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus.CREATED
-import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.MediaType.parseMediaType
 import org.springframework.http.ResponseEntity
@@ -33,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
+import java.time.LocalDate
 import java.util.*
 
 @Unprotected
@@ -42,15 +47,15 @@ import java.util.*
 internal class DevController(private val dokumentLager: DokumentLager,
                              private val mellomlager: Mellomlager,
                              private val dittnav: DittNavRouter,
-                             private val pdf: PDFGeneratorWebClientAdapter) {
+                             private val vl: StandardSøknadVLRouter) {
 
-    @PostMapping(value = ["pdf/generate"], produces = [APPLICATION_PDF_VALUE])
-    fun pdfGen(@RequestBody data: StandardPDFData) =
-        ok().headers(HttpHeaders()
-            .apply {
-                contentDisposition = attachment().filename("pdfgen.pdf").build()
-            })
-            .body(pdf.generate(data))
+    @PostMapping(value = ["vl/{fnr}"])
+    @ResponseStatus(CREATED)
+    fun vl(@PathVariable fnr: Fødselsnummer,@RequestBody søknad: StandardSøknad) =
+        vl.route(søknad, Søker(Navn("Ole","B","Olsen"),fnr,
+                Adresse("Gata","A","14", PostNummer("2600","Lillehammer")),
+                LocalDate.now(), listOf()),
+                JoarkResponse("42",true, listOf()))
 
     @DeleteMapping("mellomlager/{type}/{fnr}")
     fun slettMellomlagret(@PathVariable type: SkjemaType,@PathVariable fnr: Fødselsnummer): ResponseEntity<Void> =
