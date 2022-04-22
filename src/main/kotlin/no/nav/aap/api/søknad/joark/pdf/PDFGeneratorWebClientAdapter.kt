@@ -23,9 +23,9 @@ import java.time.LocalDate
 import java.time.LocalDate.now
 
 @Component
-class PDFGeneratorAdapter(@Qualifier(PDFGEN) client: WebClient,
-                          private val cf: PDFGeneratorConfig,
-                          private val mapper: ObjectMapper) :
+class PDFGeneratorWebClientAdapter(@Qualifier(PDFGEN) client: WebClient,
+                                   private val cf: PDFGeneratorConfig,
+                                   private val mapper: ObjectMapper) :
     AbstractWebClientAdapter(client, cf) {
 
     fun generate(data: StandardPDFData) =
@@ -50,21 +50,14 @@ class PDFGeneratorAdapter(@Qualifier(PDFGEN) client: WebClient,
             .bodyToMono<ByteArray>()
             .doOnError { t: Throwable -> log.warn("PDF-generering feiler", t) }
             .doOnSuccess { log.trace("PDF-generering OK") }
-            .block()
-
+            .block() ?: throw IntegrationException("O bytes i retur fra pdfgen, pussig")
     data class StandardPDFData(val søker: Søker, val søknad: StandardSøknad)
-}
-
-private fun StandardSøknad.land() {
-    this.medlemsskap.utenlandsopphold.forEach { print(it.land) }
 }
 
 private fun UtenlandsSøknadKafka.pdfData(m: ObjectMapper) =
     m.writeValueAsString(UtlandPDFData(søker.fnr, land.land(), søker.navn, periode))
 
-
 private fun CountryCode.land() = toLocale().displayCountry
-
 
 private data class UtlandPDFData(val fødselsnummer: Fødselsnummer,
                                  val land: String, @get:JsonUnwrapped val navn: Navn?,

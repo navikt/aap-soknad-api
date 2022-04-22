@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.*
 import java.util.Objects.hash
 
-interface Vedlegg {
+internal interface Vedlegg {
     fun lesVedlegg(fnr: Fødselsnummer, uuid: UUID): Blob?
     fun slettVedlegg(fnr: Fødselsnummer, uuid: UUID): Boolean
     fun lagreVedlegg(fnr: Fødselsnummer, vedlegg: MultipartFile) =

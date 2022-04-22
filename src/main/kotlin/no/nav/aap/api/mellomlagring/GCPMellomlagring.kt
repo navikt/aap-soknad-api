@@ -12,7 +12,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.nio.charset.StandardCharsets.UTF_8
 
 @ConditionalOnGCP
-class GCPMellomlagring(@Value("\${mellomlagring.bucket:aap-mellomlagring}") private val bøtte: String,
+internal class GCPMellomlagring(@Value("\${mellomlagring.bucket:aap-mellomlagring}") private val bøtte: String,
                        private val storage: Storage) : Mellomlagring {
 
     val log = LoggerUtil.getLogger(javaClass)

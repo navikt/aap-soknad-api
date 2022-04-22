@@ -12,8 +12,8 @@ import no.nav.aap.api.søknad.model.UtenlandsSøknad
 import no.nav.aap.joark.AvsenderMottaker
 import no.nav.aap.joark.Bruker
 import no.nav.aap.joark.Dokument
-import no.nav.aap.joark.DokumentVariant
 import no.nav.aap.joark.Journalpost
+import no.nav.aap.joark.asPDFVariant
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 import org.springframework.stereotype.Component
@@ -26,23 +26,15 @@ class UtlandSøknadFormidler(private val joark: JoarkClient,
                             private val kafka: UtlandSøknadKafkaFormidler) {
 
     private val log = LoggerUtil.getLogger(javaClass)
-
-    fun formidle(søknad: UtenlandsSøknad) {
-        val beriketSøknad = søknad.berikSøknad(Søker(ctx.getFnr(), pdl.søkerUtenBarn().navn))
-        joark.journalfør(
-                Journalpost(
-                        dokumenter = docs(beriketSøknad),
-                        tittel = UTLAND.tittel,
-                        avsenderMottaker = AvsenderMottaker(ctx.getFnr(), navn = beriketSøknad.fulltNavn),
-                        bruker = Bruker(ctx.getFnr())))
-            .also { log.info("Journalført $it OK") }
-        kafka.formidle(beriketSøknad)
-    }
-
-    private fun docs(beriketSøknad: UtenlandsSøknadKafka) =
-        listOf(
-                Dokument(
-                        UTLAND.tittel,
-                        UTLAND.kode,
-                        listOf(DokumentVariant(fysiskDokument = pdfGen.generateEncoded(beriketSøknad)))))
+    fun formidle(søknad: UtenlandsSøknad) =
+        with(søknad.berikSøknad(Søker(ctx.getFnr(), pdl.søkerUtenBarn().navn))) {
+            joark.journalfør(
+                    Journalpost(dokumenter = docs(this),
+                    tittel = UTLAND.tittel,
+                    avsenderMottaker = AvsenderMottaker(ctx.getFnr(), navn = this.fulltNavn),
+                    bruker = Bruker(ctx.getFnr())))
+                .also { log.info("Journalført $it OK") }
+            kafka.formidle(this)
+        }
+    private fun docs(søknad: UtenlandsSøknadKafka) = listOf(Dokument(UTLAND.tittel, UTLAND.kode, listOf(pdfGen.generate(søknad).asPDFVariant())))
 }

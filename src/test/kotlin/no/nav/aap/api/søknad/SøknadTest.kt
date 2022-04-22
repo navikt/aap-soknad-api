@@ -1,7 +1,5 @@
 package no.nav.aap.api.søknad
 
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.neovisionaries.i18n.CountryCode
 import com.neovisionaries.i18n.CountryCode.SE
 import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
@@ -12,7 +10,7 @@ import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.oppslag.behandler.Behandler.BehandlerType.FASTLEGE
 import no.nav.aap.api.oppslag.behandler.Behandler.KontaktInformasjon
-import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorAdapter.StandardPDFData
+import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorWebClientAdapter.StandardPDFData
 import no.nav.aap.api.søknad.model.Barn
 import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Ferie
@@ -22,7 +20,6 @@ import no.nav.aap.api.søknad.model.RadioValg.NEI
 import no.nav.aap.api.søknad.model.RadioValg.VET_IKKE
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
-import no.nav.aap.api.søknad.model.SøkerType
 import no.nav.aap.api.søknad.model.SøkerType.STANDARD
 import no.nav.aap.api.søknad.model.Utbetaling
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønad

@@ -11,7 +11,6 @@ import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnaut
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpHeaders.LOCATION
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.MediaType.parseMediaType
@@ -19,25 +18,22 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.http.ResponseEntity.status
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestPart
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 
 @ProtectedRestController(value = [BASEPATH], issuer = IDPORTEN)
-class VedleggController(private val bucket: Vedlegg, private val ctx: AuthContext) {
+internal class VedleggController(private val bucket: Vedlegg, private val ctx: AuthContext) {
 
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
-    fun lagreVedlegg(@RequestPart("vedlegg") vedlegg: MultipartFile): ResponseEntity<Void> =
-        status(CREATED)
-            .header(LOCATION, "${bucket.lagreVedlegg(ctx.getFnr(), vedlegg)}")
-            .build()
-
+    @ResponseStatus(CREATED)
+    fun lagreVedlegg(@RequestPart("vedlegg") vedlegg: MultipartFile) = bucket.lagreVedlegg(ctx.getFnr(), vedlegg)
     @GetMapping("/les/{uuid}")
     fun lesVedlegg(@PathVariable uuid: UUID) =
         bucket.lesVedlegg(ctx.getFnr(), uuid)

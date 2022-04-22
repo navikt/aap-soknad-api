@@ -3,9 +3,9 @@ package no.nav.aap.api.søknad
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
-import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
+import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 
 object AuthContextExtension {
-    fun AuthContext.getFnr(issuer: String = IDPORTEN) =
-        getSubject(issuer)?.let { Fødselsnummer(it) } ?: throw JwtTokenUnauthorizedException("Ikke autentisert")
+    fun AuthContext.getFnr(issuer: String = IDPORTEN) = getSubject(issuer)
+        ?.let { Fødselsnummer(it) } ?: throw JwtTokenMissingException("Intet token i context")
 }

@@ -1,13 +1,16 @@
 package no.nav.aap.api.søknad.formidling.standard
 
+import no.nav.aap.api.mellomlagring.VedleggController.Companion.BASEPATH
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.dittnav.DittNavFormidler
 import no.nav.aap.api.søknad.joark.JoarkFormidler
+import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.springframework.stereotype.Component
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 
 @Component
-class StandardSøknadFormidler(private val joark: JoarkFormidler,
+internal class StandardSøknadFormidler(private val joark: JoarkFormidler,
                               private val pdl: PDLClient,
                               private val dittnav: DittNavFormidler,
                               private val vl: StandardSøknadVLFormidler) {
@@ -17,6 +20,6 @@ class StandardSøknadFormidler(private val joark: JoarkFormidler,
             val res = joark.formidle(søknad, this)
             vl.formidle(søknad, this, res.second)
             dittnav.opprettBeskjed()
-            res.first
+            Kvittering(fromCurrentRequestUri().replacePath("${BASEPATH}/les/${res.first}").build().toUri())
         }
 }
