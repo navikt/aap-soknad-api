@@ -57,7 +57,8 @@ internal class DevController(private val vedleggLager: Vedlegg,
     fun slettmellomlager(@PathVariable type: SkjemaType,@PathVariable fnr: Fødselsnummer): ResponseEntity<Void> =
         if (mellomlagring.slett(fnr,type)) noContent().build() else notFound().build()
     @GetMapping("mellomlager/{type}/{fnr}")
-    fun lesmellomlager(@PathVariable type: SkjemaType,@PathVariable fnr: Fødselsnummer) = mellomlagring.les(fnr, type)
+    fun lesmellomlager(@PathVariable type: SkjemaType,@PathVariable fnr: Fødselsnummer) =
+        mellomlagring.les(fnr, type) ?.let {ok(it)} ?: notFound().build()
     @PostMapping("mellomlager/{type}/{fnr}")
     @ResponseStatus(CREATED)
     fun mellomlagre(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer, @RequestBody data: String) = mellomlagring.lagre(fnr, type, data)

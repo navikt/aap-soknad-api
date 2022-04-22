@@ -14,18 +14,19 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.ResponseStatus
 
 @ProtectedRestController(value = ["buckets"], issuer = IDPORTEN)
 internal class MellomlagringController(private val lager: Mellomlagring, private val ctx: AuthContext) {
 
     @PostMapping("/lagre/{type}")
+    @ResponseStatus(CREATED)
     fun lagre(@PathVariable type: SkjemaType, @RequestBody data: String) =
-        with(data) {
-            lager.lagre(ctx.getFnr(), type, this)
-            ResponseEntity<String>(this, CREATED)
-        }
+        lager.lagre(ctx.getFnr(), type, data)
+
     @GetMapping("/les/{type}")
-    fun les(@PathVariable type: SkjemaType) = lager.les(ctx.getFnr(), type)
+    fun les(@PathVariable type: SkjemaType) =
+        lager.les(ctx.getFnr(), type) ?.let { ResponseEntity.ok(it) } ?: notFound().build()
 
     @DeleteMapping("/slett/{type}")
     fun slett(@PathVariable type: SkjemaType): ResponseEntity<Void> =
