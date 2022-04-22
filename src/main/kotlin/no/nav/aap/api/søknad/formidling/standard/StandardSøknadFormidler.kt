@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad.formidling.standard
 
-import no.nav.aap.api.mellomlagring.VedleggController.Companion.BASEPATH
+import no.nav.aap.api.mellomlagring.DokumentLagerController.Companion.BASEPATH
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.dittnav.DittNavFormidler
 import no.nav.aap.api.søknad.joark.JoarkFormidler

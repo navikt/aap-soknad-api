@@ -4,7 +4,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.SkjemaType
 import java.util.Objects.hash
 
-interface Mellomlagring {
+interface MellomLager {
     fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String): String
     fun les(fnr: Fødselsnummer, type: SkjemaType): String?
     fun slett(fnr: Fødselsnummer, type: SkjemaType): Boolean

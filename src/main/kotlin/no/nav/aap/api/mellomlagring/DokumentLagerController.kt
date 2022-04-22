@@ -1,8 +1,8 @@
 package no.nav.aap.api.mellomlagring
 
-import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FILNAVN
-import no.nav.aap.api.mellomlagring.Vedlegg.Companion.FNR
-import no.nav.aap.api.mellomlagring.VedleggController.Companion.BASEPATH
+import no.nav.aap.api.mellomlagring.DokumentLager.Companion.FILNAVN
+import no.nav.aap.api.mellomlagring.DokumentLager.Companion.FNR
+import no.nav.aap.api.mellomlagring.DokumentLagerController.Companion.BASEPATH
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
@@ -29,15 +29,15 @@ import java.util.*
 
 
 @ProtectedRestController(value = [BASEPATH], issuer = IDPORTEN)
-internal class VedleggController(private val bucket: Vedlegg, private val ctx: AuthContext) {
+internal class DokumentLagerController(private val lager: DokumentLager, private val ctx: AuthContext) {
 
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
-    fun lagreVedlegg(@RequestPart("vedlegg") vedlegg: MultipartFile) =
-        bucket.lagreVedlegg(ctx.getFnr(), vedlegg)
+    fun lagreDokument(@RequestPart("vedlegg") vedlegg: MultipartFile) =
+        lager.lagreDokument(ctx.getFnr(), vedlegg)
     @GetMapping("/les/{uuid}")
-    fun lesVedlegg(@PathVariable uuid: UUID) =
-        bucket.lesVedlegg(ctx.getFnr(), uuid)
+    fun lesDokument(@PathVariable uuid: UUID) =
+        lager.lesDokument(ctx.getFnr(), uuid)
             ?.let {
                 with(it) {
                     if (ctx.getFnr().fnr != metadata[FNR]) {
@@ -54,8 +54,8 @@ internal class VedleggController(private val bucket: Vedlegg, private val ctx: A
             } ?: notFound().build()
 
     @DeleteMapping("/slett/{uuid}")
-    fun slettVedlegg(@PathVariable uuid: UUID): ResponseEntity<Void> =
-        if (bucket.slettVedlegg(ctx.getFnr(), uuid)) noContent().build() else notFound().build()
+    fun slettDokument(@PathVariable uuid: UUID): ResponseEntity<Void> =
+        if (lager.slettDokument(ctx.getFnr(), uuid)) noContent().build() else notFound().build()
 
     companion object {
         const val BASEPATH = "vedlegg"

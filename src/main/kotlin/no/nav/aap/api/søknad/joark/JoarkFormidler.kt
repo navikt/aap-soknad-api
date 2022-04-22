@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.storage.Blob
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.mellomlagring.Vedlegg
+import no.nav.aap.api.mellomlagring.DokumentLager
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.SkjemaType.HOVED
 import no.nav.aap.api.søknad.joark.pdf.PDFGenerator
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service
 import java.util.Base64.getEncoder
 
 @Service
-internal class JoarkFormidler(private val joark: JoarkClient, private val pdf: PDFGenerator, private val ctx: AuthContext, private val vedlegg: Vedlegg)  {
+internal class JoarkFormidler(private val joark: JoarkClient, private val pdf: PDFGenerator, private val ctx: AuthContext, private val vedlegg: DokumentLager)  {
 
     @Autowired
     private lateinit var mapper: ObjectMapper

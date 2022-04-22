@@ -6,10 +6,10 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.*
 import java.util.Objects.hash
 
-internal interface Vedlegg {
-    fun lesVedlegg(fnr: Fødselsnummer, uuid: UUID): Blob?
-    fun slettVedlegg(fnr: Fødselsnummer, uuid: UUID): Boolean
-    fun lagreVedlegg(fnr: Fødselsnummer, vedlegg: MultipartFile) =
+internal interface DokumentLager {
+    fun lesDokument(fnr: Fødselsnummer, uuid: UUID): Blob?
+    fun slettDokument(fnr: Fødselsnummer, uuid: UUID): Boolean
+    fun lagreDokument(fnr: Fødselsnummer, vedlegg: MultipartFile) =
         lagreDokument(fnr, vedlegg.bytes, vedlegg.contentType, vedlegg.originalFilename)
 
     fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?): UUID
