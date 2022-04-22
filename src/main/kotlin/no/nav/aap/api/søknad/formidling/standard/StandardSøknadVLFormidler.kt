@@ -23,15 +23,10 @@ class StandardSøknadVLFormidler(private val formidler: KafkaOperations<String, 
 
     val log = LoggerUtil.getLogger(javaClass)
     fun formidle(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
-        if (cfg.enabled) {
             formidler.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
                 .apply {
                     headers().add(NAV_CALL_ID, callId().toByteArray())
                 }).addCallback(StandardFormidlingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
-        }
-        else {
-            log.info("Formidling til ny VL er ikke aktivert, sett vl.enabled=true for å aktivere")
-        }
 }
 
 private class StandardFormidlingCallback(val søknad: StandardSøknad, val counter: Counter) :
