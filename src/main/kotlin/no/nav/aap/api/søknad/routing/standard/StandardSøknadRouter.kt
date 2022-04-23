@@ -2,7 +2,7 @@ package no.nav.aap.api.søknad.routing.standard
 
 import no.nav.aap.api.mellomlagring.DokumentLagerController.Companion.BASEPATH
 import no.nav.aap.api.oppslag.pdl.PDLClient
-import no.nav.aap.api.søknad.SkjemaType
+import no.nav.aap.api.søknad.SkjemaType.HOVED
 import no.nav.aap.api.søknad.dittnav.DittNavRouter
 import no.nav.aap.api.søknad.joark.JoarkRouter
 import no.nav.aap.api.søknad.model.Kvittering
@@ -24,7 +24,7 @@ internal class StandardSøknadRouter(private val joark: JoarkRouter,
             if (vlRouter.skalTilVL(søknad)){
                 vl.route(søknad, this, res.second)
             }
-            dittnav.opprettBeskjed(SkjemaType.HOVED)
+            dittnav.opprettBeskjed(HOVED)
             Kvittering(fromCurrentRequestUri().replacePath("${BASEPATH}/les/${res.first}").build().toUri())
         }
 }

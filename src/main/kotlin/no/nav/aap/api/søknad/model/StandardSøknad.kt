@@ -10,7 +10,6 @@ import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.RadioValg.NEI
 import no.nav.aap.api.søknad.model.RadioValg.VET_IKKE
 import no.nav.aap.api.søknad.model.SøkerType.STANDARD
-import org.springframework.core.io.ClassPathResource
 import java.time.LocalDate
 import java.util.*
 
@@ -34,24 +33,6 @@ data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
                       val jobbetUtenforNorgeFørSyk: Boolean,
                       val jobbetSammenhengendeINorgeSiste5: Boolean?,
                       val utenlandsopphold: List<Utenlandsopphold>)
-
-
-data class PostNummer(val postnr: String, val poststed: String?) {
-    constructor(postnr: String) : this(postnr, poststeder[postnr] ?: "Ukjent poststed for $postnr")
-
-    companion object {
-        private val poststeder = try {
-            ClassPathResource("postnr.txt").inputStream.bufferedReader()
-                .lines()
-                .map { it.split("\\s+".toRegex()) }
-                .map { it[0] to it[1] }
-                .toList()
-                .associate { it.first to it.second }
-        } catch (e: Exception) {
-            emptyMap()
-        }
-    }
-}
 
 class Utenlandsopphold private constructor(val land: CountryCode,
                                            val landNavn: String,
