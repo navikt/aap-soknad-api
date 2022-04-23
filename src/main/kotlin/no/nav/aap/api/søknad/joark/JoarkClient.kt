@@ -9,5 +9,4 @@ class JoarkClient(private val adapter: JoarkWebClientAdapter) {
 
     private val log = LoggerUtil.getLogger(javaClass)
     fun journalfør(journalpost: Journalpost) = adapter.opprettJournalpost(journalpost)
-        .also { log.info("Journalført søknad $it OK") }
 }

@@ -36,13 +36,13 @@ class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFGenerator,
 
      fun route(søknad: StandardSøknad, søker: Søker) =
          with(pdf.generate(søker, søknad)) {
-            Pair(lagrePDF(this), joark.journalfør(journalpostFra(søknad, søker,asPDFVariant())) ?: throw IntegrationException("Kunne ikke journalføre søknad"))
+            Pair(lagrePdf(this), joark.journalfør(journalpostFra(søknad, søker,asPDFVariant())) ?: throw IntegrationException("Kunne ikke journalføre søknad"))
         }
     fun route(søknad: UtlandSøknad, søker: Søker) =
         with(pdf.generate(søker, søknad)) {
-            Pair(lagrePDF(this), joark.journalfør(journalpostFra(søknad, søker,asPDFVariant())) ?: throw IntegrationException("Kunne ikke journalføre søknad"))
+            Pair(lagrePdf(this), joark.journalfør(journalpostFra(søknad, søker,asPDFVariant())) ?: throw IntegrationException("Kunne ikke journalføre søknad"))
         }
-    private fun lagrePDF(bytes: ByteArray) =
+    private fun lagrePdf(bytes: ByteArray) =
         lager.lagreDokument(ctx.getFnr(), bytes, APPLICATION_PDF_VALUE, "kvittering.pdf")
 
     private fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdfDokument: DokumentVariant) =
