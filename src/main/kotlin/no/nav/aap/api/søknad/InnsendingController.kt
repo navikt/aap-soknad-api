@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad
 
 import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.api.søknad.model.UtenlandsSøknad
+import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.api.søknad.routing.legacy.LegacyStandardSøknadKafkaRouter
 import no.nav.aap.api.søknad.routing.standard.StandardSøknadRouter
 import no.nav.aap.api.søknad.routing.utland.UtlandSøknadRouter
@@ -18,7 +18,7 @@ internal class InnsendingController(
         private val standardRouter: StandardSøknadRouter) {
 
     @PostMapping("/utland")
-    fun utland(@RequestBody søknad: @Valid UtenlandsSøknad) = utenlandRouter.route(søknad)
+    fun utland(@RequestBody søknad: @Valid UtlandSøknad) = utenlandRouter.route(søknad)
     @PostMapping("/soknad")
     fun legacy() = legacyRouter.route()
     @PostMapping("/soknadny")

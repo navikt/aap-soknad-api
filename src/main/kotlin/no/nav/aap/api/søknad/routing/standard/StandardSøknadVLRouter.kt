@@ -23,20 +23,20 @@ class StandardSøknadVLRouter(private val router: KafkaOperations<String, Standa
 
     val log = LoggerUtil.getLogger(javaClass)
     fun route(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
-            router.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
-                .apply {
-                    headers().add(NAV_CALL_ID, callId().toByteArray())
-                }).addCallback(StandardRoutingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
+        router.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
+            .apply {
+                headers().add(NAV_CALL_ID, callId().toByteArray())
+            })
+            .addCallback(StandardRoutingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
 }
 
-private class StandardRoutingCallback(val søknad: StandardSøknad, val counter: Counter) :
+private class StandardRoutingCallback(private val søknad: StandardSøknad, private val counter: Counter) :
     ListenableFutureCallback<SendResult<String, StandardSøknad>> {
     private val secureLog = LoggerUtil.getSecureLogger()
     private val log = LoggerUtil.getLogger(javaClass)
     override fun onSuccess(result: SendResult<String, StandardSøknad>?) {
         counter.increment()
-        log.info(CONFIDENTIAL,
-                "Søknad $søknad sent til Kafka på topic {}, partition {} med offset {} OK",
+        log.info(CONFIDENTIAL, "Søknad $søknad sent til Kafka på topic {}, partition {} med offset {} OK",
                 result?.recordMetadata?.topic(),
                 result?.recordMetadata?.partition(),
                 result?.recordMetadata?.offset())

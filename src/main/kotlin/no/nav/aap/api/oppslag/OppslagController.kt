@@ -4,6 +4,7 @@ import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidClient
 import no.nav.aap.api.oppslag.behandler.BehandlerClient
 import no.nav.aap.api.oppslag.krr.KRRClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
+import no.nav.aap.api.søknad.model.SøkerInfo
 import no.nav.aap.util.Constants
 import no.nav.aap.util.LoggerUtil
 import no.nav.security.token.support.spring.ProtectedRestController

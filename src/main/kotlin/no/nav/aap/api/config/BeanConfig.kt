@@ -8,6 +8,7 @@ import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.security.SecurityScheme
+import io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.HeadersToMDCFilter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
@@ -55,17 +56,18 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                     .url("https://www.nav.no")))
             .components( Components()
                 .addSecuritySchemes("bearer-key",
-                         SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
-
+                        SecurityScheme().type(HTTP).
+                        scheme("bearer")
+                            .bearerFormat("JWT")))
     @Bean
-    fun configMatcher() = object : ClientConfigurationPropertiesMatcher {}
+    fun configMatcher() =
+        object : ClientConfigurationPropertiesMatcher {}
     @Bean
     @Order(HIGHEST_PRECEDENCE + 2)
     fun tokenXFilterFunction(configs: ClientConfigurationProperties,
                              service: OAuth2AccessTokenService,
                              matcher: ClientConfigurationPropertiesMatcher,
                              ctx: AuthContext) = TokenXFilterFunction(configs, service, matcher, ctx)
-
     @Bean
     fun startupInfoContributor(ctx: ApplicationContext) = StartupInfoContributor(ctx)
 
@@ -76,14 +78,12 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                 urlPatterns = listOf("/*")
                 setOrder(HIGHEST_PRECEDENCE)
             }
-
     @Bean
     fun webClientCustomizer(env: Environment) =
         WebClientCustomizer { b ->
             b.clientConnector(ReactorClientHttpConnector(client(env)))
                 .filter(correlatingFilterFunction(applicationName))
         }
-
     private fun client(env: Environment) =
         if (isDevOrLocal(env))
             HttpClient.create().wiretap(javaClass.canonicalName, TRACE, TEXTUAL)

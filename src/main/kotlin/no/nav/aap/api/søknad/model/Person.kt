@@ -9,7 +9,7 @@ data class Søker(val navn: Navn,
                  val fødselsnummer: Fødselsnummer,
                  val adresse: Adresse?,
                  val fødseldato: LocalDate?,
-                 val barn: List<Barn?>)
+                 val barn: List<Barn?>? = null)
 
 data class Barn(val fnr: Fødselsnummer,
                 val navn: Navn? = null,

@@ -58,8 +58,8 @@ internal class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFG
         utbetalinger
             ?.mapNotNull { it.hentVedleggId() }
             ?.mapNotNull { lager.lesDokument(fnr, it) }
-            ?.map { it.dokumentVariant() }
+            ?.map { it.asDokumentVariant() }
             .orEmpty()
-    private fun Blob.dokumentVariant() =
+    private fun Blob.asDokumentVariant() =
         DokumentVariant(of(contentType), getEncoder().encodeToString(getContent()))
 }

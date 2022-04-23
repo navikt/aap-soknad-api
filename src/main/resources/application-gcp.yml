@@ -2,7 +2,6 @@ dittnav:
     beskjed:
       topic: min-side.aapen-brukernotifikasjon-beskjed-v1
       varighet: 90d
-      tekst: "AAP-søknad mottatt"
       grupperingsId: "AAP-søknad"
 info:
   nais:

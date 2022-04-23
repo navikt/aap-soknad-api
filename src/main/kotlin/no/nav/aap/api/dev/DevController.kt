@@ -67,17 +67,14 @@ internal class DevController(private val dokumentLager: DokumentLager,
     @ResponseStatus(CREATED)
     fun mellomlagre(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer, @RequestBody data: String) =
         mellomlager.lagre(fnr, type, data)
-
-    @PostMapping(value = ["dittnav/beskjed/{fnr}"])
+    @PostMapping(value = ["dittnav/beskjed/{fnr}/{type}"])
     @ResponseStatus(CREATED)
-    fun opprettBeskjed(@PathVariable fnr: Fødselsnummer) =
-        dittnav.opprettBeskjed(fnr)
-
+    fun opprettBeskjed(@PathVariable fnr: Fødselsnummer,@PathVariable type: SkjemaType) =
+        dittnav.opprettBeskjed(fnr, type)
     @PostMapping(value = ["vedlegg/lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
     fun lagreDokument(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") vedlegg: MultipartFile) =
         dokumentLager.lagreDokument(fnr, vedlegg)
-
     @GetMapping(path = ["vedlegg/les/{fnr}/{uuid}"])
     fun lesDokument(@PathVariable fnr: Fødselsnummer, @PathVariable uuid: UUID) =
         dokumentLager.lesDokument(fnr, uuid)
@@ -95,7 +92,6 @@ internal class DevController(private val dokumentLager: DokumentLager,
                         .body(getContent())
                 }
             } ?: notFound().build()
-
     @DeleteMapping("vedlegg/slett/{fnr}/{uuid}")
     fun slettDokument(@PathVariable fnr: Fødselsnummer, @PathVariable uuid: UUID): ResponseEntity<Void> =
         if (dokumentLager.slettDokument(fnr, uuid)) noContent().build() else notFound().build()

@@ -10,50 +10,37 @@ import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
+import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
-import org.springframework.kafka.support.KafkaHeaders.MESSAGE_KEY
-import org.springframework.kafka.support.KafkaHeaders.TOPIC
 import org.springframework.kafka.support.SendResult
-import org.springframework.messaging.support.MessageBuilder
 import org.springframework.stereotype.Service
 import org.springframework.util.concurrent.ListenableFutureCallback
-
-
 @Service
-class LegacyStandardSøknadKafkaRouter(
-        private val ctx: AuthContext,
-        private val pdl: PDLClient,
-        private val router: KafkaOperations<String, LegacyStandardSøknadKafka>,
-        @Value("#{'\${standard.topic:aap.aap-soknad-sendt.v1}'}") val søknadTopic: String) {
+class LegacyStandardSøknadKafkaRouter(private val ctx: AuthContext,
+                                      private val pdl: PDLClient,
+                                      private val router: KafkaOperations<String, LegacyStandardSøknadKafka>,
+                                      @Value("#{'\${standard.topic:aap.aap-soknad-sendt.v1}'}")  private val søknadTopic: String) {
 
-    fun route() {
-        route(LegacyStandardSøknadKafka(ctx.getFnr(), pdl.søkerUtenBarn().fødseldato))
-    }
-
-    override fun toString() = "$javaClass.simpleName [formidler=$router,pdl=$pdl]"
-
+    fun route() = route(LegacyStandardSøknadKafka(ctx.getFnr(), pdl.søkerUtenBarn().fødseldato))
     fun route(søknad: LegacyStandardSøknadKafka) {
-        router.send(
-                MessageBuilder
-                    .withPayload(søknad)
-                    .setHeader(MESSAGE_KEY, søknad.id)
-                    .setHeader(TOPIC, søknadTopic)
-                    .setHeader(NAV_CALL_ID, callId())
-                    .build())
+        router.send(ProducerRecord(søknadTopic, søknad.id, søknad)
+            .apply {
+                headers().add(NAV_CALL_ID, callId().toByteArray())
+            })
             .addCallback(RouterCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
     }
+    override fun toString() = "$javaClass.simpleName [formidler=$router,pdl=$pdl]"
 }
 
-private class RouterCallback(val søknad: LegacyStandardSøknadKafka, val counter: Counter) :
+private class RouterCallback(private val søknad: LegacyStandardSøknadKafka, private val counter: Counter) :
     ListenableFutureCallback<SendResult<String, LegacyStandardSøknadKafka>> {
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()
 
     override fun onSuccess(result: SendResult<String, LegacyStandardSøknadKafka>?) {
         counter.increment()
-        log.info(
-                "Søknad $søknad sent til Kafka på topic {}, partition {} med offset {} OK",
+        log.info("Søknad $søknad sent til Kafka på topic {}, partition {} med offset {} OK",
                 result?.recordMetadata?.topic(),
                 result?.recordMetadata?.partition(),
                 result?.recordMetadata?.offset())

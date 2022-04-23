@@ -78,7 +78,7 @@ class PDLWebClientAdapter(
     private fun navnFra(n: PDLNavn) = Navn(n.fornavn, n.mellomnavn, n.etternavn)
         .also { log.trace(CONFIDENTIAL, "Navn er $it") }
 
-    private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) = if (medBarn) r.map {
+    private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean): List<Barn?> = if (medBarn) r.map {
         barnOppslag(it.relatertPersonsIdent)
             .also { log.trace(CONFIDENTIAL, "Barn er $it") }
     }
