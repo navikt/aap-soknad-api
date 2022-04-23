@@ -14,15 +14,15 @@ import javax.validation.Valid
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 internal class InnsendingController(
         private val legacyRouter: LegacyStandardSøknadVLRouter,
-        private val utenlandRouter: UtlandSøknadRouter,
+        private val utlandRouter: UtlandSøknadRouter,
         private val standardRouter: StandardSøknadRouter) {
 
     @PostMapping("/utland")
-    fun utland(@RequestBody søknad: @Valid UtlandSøknad) = utenlandRouter.route(søknad)
+    fun utland(@RequestBody søknad: @Valid UtlandSøknad) = utlandRouter.route(søknad)
     @PostMapping("/soknad")
     fun legacy() = legacyRouter.route()
     @PostMapping("/soknadny")
     fun standardNy(@RequestBody søknad: @Valid StandardSøknad) =standardRouter.route(søknad)
     override fun toString() =
-        "$javaClass.simpleName [standardFormidler=$standardRouter,utenlandsFormidler=$utenlandRouter]"
+        "$javaClass.simpleName [standardRouter=$standardRouter,utlandRouter=$utlandRouter]"
 }

@@ -21,7 +21,7 @@ internal class StandardSøknadRouter(private val joark: JoarkRouter,
     fun route(søknad: StandardSøknad) =
         with(pdl.søkerMedBarn()) {
             val res = joark.route(søknad, this)
-            if (vlRouter.skalTilVL(søknad)){
+            if (vlRouter.shouldRoute(søknad)){
                 vl.route(søknad, this, res.second)
             }
             dittnav.opprettBeskjed(STANDARD)

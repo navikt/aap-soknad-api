@@ -6,12 +6,12 @@ import org.springframework.stereotype.Component
 
 @Component
 class BlockingVLRouter :VLRouter {
-    override fun skalTilVL(søknad: StandardSøknad) = false
-    override fun skalTilVL(søknad: UtlandSøknad) = false
+    override fun shouldRoute(søknad: StandardSøknad) = false
+    override fun shouldRoute(søknad: UtlandSøknad) = false
 
 }
 
 interface VLRouter {
-    fun  skalTilVL(søknad: StandardSøknad) : Boolean
-     fun skalTilVL(søknad: UtlandSøknad) : Boolean
+    fun  shouldRoute(søknad: StandardSøknad) : Boolean
+     fun shouldRoute(søknad: UtlandSøknad) : Boolean
 }

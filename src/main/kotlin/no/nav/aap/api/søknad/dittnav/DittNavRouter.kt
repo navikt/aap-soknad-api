@@ -58,7 +58,7 @@ class DittNavRouter(private val ctx: AuthContext,
     private fun keyFra(fnr: Fødselsnummer, grupperingsId: String) =
         NokkelInputBuilder()
             .withFodselsnummer(fnr.fnr)
-            .withEventId(UUID.randomUUID().toString())
+            .withEventId("${UUID.randomUUID()}")
             .withGrupperingsId(grupperingsId)
             .withAppnavn(env.getRequiredProperty("nais.app.name"))
             .withNamespace(env.getRequiredProperty("nais.namespace"))

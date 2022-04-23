@@ -23,7 +23,7 @@ class UtlandSøknadRouter(private val joark: JoarkRouter,
     fun route(søknad: UtlandSøknad) =
         with(pdl.søkerUtenBarn()) {
             val uuid = joark.route(søknad,this).first
-            if (vlRouter.skalTilVL(søknad)) {
+            if (vlRouter.shouldRoute(søknad)) {
                 router.route(UtlandData(this,søknad))
             }
             dittnav.opprettBeskjed(UTLAND)

@@ -6,7 +6,5 @@ import java.time.Duration
 @ConfigurationProperties(prefix = "dittnav")
 @ConstructorBinding
 data class DittNavConfig(val beskjed: TopicConfig) {
-    data class TopicConfig(val topic: String,
-                           val varighet: Duration,
-                           val enabled: Boolean = true)
+    data class TopicConfig(val topic: String, val varighet: Duration, val enabled: Boolean = true)
 }
