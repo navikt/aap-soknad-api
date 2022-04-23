@@ -10,7 +10,7 @@ import java.net.URI
 @ConstructorBinding
 class PDFGeneratorConfig(
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
-        @DefaultValue(DEFAULT_PATH) val path: String,
+        @DefaultValue(DEFAULT_PATH) val utlandPath: String,
         @DefaultValue(STANDARD_PATH) val standardPath: String,
         @DefaultValue("true") enabled: Boolean,
         @DefaultValue(DEFAULT_BASE_URI) baseUri: URI) : AbstractRestConfig(baseUri, pingPath, enabled) {
