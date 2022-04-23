@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service
 import org.springframework.util.concurrent.ListenableFutureCallback
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
-import java.util.UUID
+import java.util.*
 
 @Service
 class DittNavRouter(private val ctx: AuthContext,
@@ -33,11 +33,11 @@ class DittNavRouter(private val ctx: AuthContext,
 
     private fun send(fnr: Fødselsnummer, cfg: TopicConfig,type: SkjemaType) =
         if (cfg.enabled) {
-            with(keyFra(fnr, cfg.grupperingsId)) {
+            with(keyFra(fnr, type.name)) {
                 dittNav.send(ProducerRecord(cfg.topic, this, beskjed(cfg,type)))
-                    .addCallback(DittNavCallback(cfg, this))
+                    .addCallback(DittNavCallback(this))
             }
-        } else Unit
+        } else{ }
 
     private fun beskjed(cfg: TopicConfig, type: SkjemaType) =
         BeskjedInputBuilder()
@@ -63,14 +63,13 @@ class DittNavRouter(private val ctx: AuthContext,
             .withNamespace(env.getRequiredProperty("nais.namespace"))
             .build()
 
-    private class DittNavCallback(private val cfg: TopicConfig, private val key: NokkelInput) :
-        ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
+    private class DittNavCallback(private val key: NokkelInput) : ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
         private val log = LoggerUtil.getLogger(javaClass)
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
-            log.info("Sendte melding  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${cfg.topic}")
+            log.info("Sendte melding  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
         }
         override fun onFailure(e: Throwable) {
-            log.warn("Kunne ikke sende melding  med id ${key.getEventId()} på ${cfg.topic}", e)
+            log.warn("Kunne ikke sende melding  med id ${key.getEventId()}", e)
         }
     }
 }

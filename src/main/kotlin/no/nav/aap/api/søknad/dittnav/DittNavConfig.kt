@@ -10,6 +10,5 @@ data class DittNavConfig(val beskjed: TopicConfig) {
     data class TopicConfig(val topic: String,
                            var landingsside: URL,
                            val varighet: Duration,
-                           val enabled: Boolean = true,
-                           val grupperingsId: String)
+                           val enabled: Boolean = true)
 }
