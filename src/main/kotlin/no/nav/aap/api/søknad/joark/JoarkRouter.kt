@@ -6,7 +6,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.mellomlagring.DokumentLager
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
-import no.nav.aap.api.søknad.model.SkjemaType.HOVED
+import no.nav.aap.api.søknad.model.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.model.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.joark.pdf.PDFGenerator
 import no.nav.aap.api.søknad.model.StandardSøknad
@@ -47,7 +47,7 @@ class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFGenerator,
 
     private fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdfDokument: DokumentVariant) =
         Journalpost(dokumenter = dokumenterFra(søknad, søker,pdfDokument),
-                tittel = HOVED.tittel,
+                tittel = STANDARD.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fødselsnummer,
                         navn = søker.navn.navn),
                 bruker = Bruker(søker.fødselsnummer))
@@ -59,8 +59,8 @@ class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFGenerator,
                         navn = søker.navn.navn),
                 bruker = Bruker(søker.fødselsnummer))
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker,pdfDokument: DokumentVariant) =
-        listOf(Dokument(HOVED.tittel,
-                HOVED.kode,
+        listOf(Dokument(STANDARD.tittel,
+                STANDARD.kode,
                 listOf(jsonDokument(søknad), pdfDokument)
                         + vedleggFor(søknad.utbetalinger?.stønadstyper, søker.fødselsnummer)
                         + vedleggFor(søknad.utbetalinger?.andreUtbetalinger, søker.fødselsnummer)))

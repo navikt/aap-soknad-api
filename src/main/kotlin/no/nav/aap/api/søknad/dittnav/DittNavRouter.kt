@@ -2,8 +2,8 @@ package no.nav.aap.api.søknad.dittnav
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
-import no.nav.aap.api.søknad.model.SkjemaType
 import no.nav.aap.api.søknad.dittnav.DittNavConfig.TopicConfig
+import no.nav.aap.api.søknad.model.SkjemaType
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
@@ -15,6 +15,7 @@ import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
 import org.springframework.stereotype.Service
 import org.springframework.util.concurrent.ListenableFutureCallback
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
 import java.util.*
@@ -44,7 +45,7 @@ class DittNavRouter(private val ctx: AuthContext,
             .withSikkerhetsnivaa(3)
             .withTidspunkt(now(UTC))
             .withSynligFremTil(now(UTC).plus(cfg.varighet))
-            .withLink(cfg.landingsside)
+            .withLink(replaceWith("/aap/${type.name}"))
             .withTekst(type.tittel)
             /* .withEksternVarsling(true)
              .withEpostVarslingstekst("AAP-søknad mottat")
@@ -52,8 +53,8 @@ class DittNavRouter(private val ctx: AuthContext,
              .withPrefererteKanaler()
              .withSmsVarslingstekst("SMS fra NAV") */
             .build()
-
-
+    private fun replaceWith(replacement: String) =
+        fromCurrentRequestUri().replacePath(replacement).build().toUri().toURL()
     private fun keyFra(fnr: Fødselsnummer, grupperingsId: String) =
         NokkelInputBuilder()
             .withFodselsnummer(fnr.fnr)

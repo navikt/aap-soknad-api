@@ -7,5 +7,7 @@ import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 
 object AuthContextExtension {
     fun AuthContext.getFnr(issuer: String = IDPORTEN) = getSubject(issuer)
-        ?.let { Fødselsnummer(it) } ?: throw JwtTokenMissingException("Intet token i context")
+        ?.let {
+            Fødselsnummer(it)
+        } ?: throw JwtTokenMissingException("Intet token i context")
 }
