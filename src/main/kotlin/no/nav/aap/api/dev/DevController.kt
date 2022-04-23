@@ -8,7 +8,7 @@ import no.nav.aap.api.mellomlagring.DokumentLager
 import no.nav.aap.api.mellomlagring.DokumentLager.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.DokumentLager.Companion.FNR
 import no.nav.aap.api.mellomlagring.Mellomlager
-import no.nav.aap.api.søknad.SkjemaType
+import no.nav.aap.api.søknad.model.SkjemaType
 import no.nav.aap.api.søknad.dittnav.DittNavRouter
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
@@ -58,10 +58,10 @@ internal class DevController(private val dokumentLager: DokumentLager,
                 JoarkResponse("42",true, listOf()))
 
     @DeleteMapping("mellomlager/{type}/{fnr}")
-    fun slettMellomlagret(@PathVariable type: SkjemaType,@PathVariable fnr: Fødselsnummer): ResponseEntity<Void> =
+    fun slettMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer): ResponseEntity<Void> =
         if (mellomlager.slett(fnr,type)) noContent().build() else notFound().build()
     @GetMapping("mellomlager/{type}/{fnr}")
-    fun lesmMellomlagret(@PathVariable type: SkjemaType,@PathVariable fnr: Fødselsnummer) =
+    fun lesmMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer) =
         mellomlager.les(fnr, type) ?.let {ok(it)} ?: notFound().build()
     @PostMapping("mellomlager/{type}/{fnr}")
     @ResponseStatus(CREATED)

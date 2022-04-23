@@ -2,7 +2,7 @@ package no.nav.aap.api.søknad.dittnav
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
-import no.nav.aap.api.søknad.SkjemaType
+import no.nav.aap.api.søknad.model.SkjemaType
 import no.nav.aap.api.søknad.dittnav.DittNavConfig.TopicConfig
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil

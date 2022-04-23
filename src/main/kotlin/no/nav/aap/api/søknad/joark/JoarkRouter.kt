@@ -6,8 +6,8 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.mellomlagring.DokumentLager
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
-import no.nav.aap.api.søknad.SkjemaType.HOVED
-import no.nav.aap.api.søknad.SkjemaType.UTLAND
+import no.nav.aap.api.søknad.model.SkjemaType.HOVED
+import no.nav.aap.api.søknad.model.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.joark.pdf.PDFGenerator
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker

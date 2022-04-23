@@ -1,7 +1,7 @@
 package no.nav.aap.api.mellomlagring
 
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.søknad.SkjemaType
+import no.nav.aap.api.søknad.model.SkjemaType
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 
 @ConditionalOnMissingBean(GCPMellomlager::class)

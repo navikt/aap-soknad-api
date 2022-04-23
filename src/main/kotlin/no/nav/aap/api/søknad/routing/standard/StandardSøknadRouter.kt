@@ -2,7 +2,7 @@ package no.nav.aap.api.søknad.routing.standard
 
 import no.nav.aap.api.mellomlagring.DokumentLagerController.Companion.BASEPATH
 import no.nav.aap.api.oppslag.pdl.PDLClient
-import no.nav.aap.api.søknad.SkjemaType.HOVED
+import no.nav.aap.api.søknad.model.SkjemaType.HOVED
 import no.nav.aap.api.søknad.dittnav.DittNavRouter
 import no.nav.aap.api.søknad.joark.JoarkRouter
 import no.nav.aap.api.søknad.model.Kvittering
