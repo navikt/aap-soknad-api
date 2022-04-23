@@ -2,7 +2,7 @@ dittnav:
     beskjed:
       topic: min-side.aapen-brukernotifikasjon-beskjed-v1
       varighet: 90d
-      grupperingsId: "AAP-søknad"
+      
 info:
   nais:
     cluster: ${nais.cluster.name}
