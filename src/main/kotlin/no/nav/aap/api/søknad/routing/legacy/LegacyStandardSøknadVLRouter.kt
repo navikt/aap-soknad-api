@@ -17,10 +17,11 @@ import org.springframework.kafka.support.SendResult
 import org.springframework.stereotype.Service
 import org.springframework.util.concurrent.ListenableFutureCallback
 @Service
-class LegacyStandardSøknadKafkaRouter(private val ctx: AuthContext,
-                                      private val pdl: PDLClient,
-                                      private val router: KafkaOperations<String, LegacyStandardSøknadKafka>,
-                                      @Value("#{'\${standard.topic:aap.aap-soknad-sendt.v1}'}")  private val søknadTopic: String) {
+@Deprecated("Kun for enkel testing")
+class LegacyStandardSøknadVLRouter(private val ctx: AuthContext,
+                                   private val pdl: PDLClient,
+                                   private val router: KafkaOperations<String, LegacyStandardSøknadKafka>,
+                                   @Value("#{'\${standard.topic:aap.aap-soknad-sendt.v1}'}")  private val søknadTopic: String) {
 
     fun route() = route(LegacyStandardSøknadKafka(ctx.getFnr(), pdl.søkerUtenBarn().fødseldato))
     fun route(søknad: LegacyStandardSøknadKafka) {

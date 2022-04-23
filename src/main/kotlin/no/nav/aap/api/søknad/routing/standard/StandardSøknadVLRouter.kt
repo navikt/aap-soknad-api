@@ -28,6 +28,8 @@ class StandardSøknadVLRouter(private val router: KafkaOperations<String, Standa
                 headers().add(NAV_CALL_ID, callId().toByteArray())
             })
             .addCallback(StandardRoutingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
+    override fun toString() = "$javaClass.simpleName [router=$router]"
+
 }
 
 private class StandardRoutingCallback(private val søknad: StandardSøknad, private val counter: Counter) :

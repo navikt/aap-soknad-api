@@ -28,7 +28,7 @@ class UtlandSøknadVLRouter(private val router: KafkaOperations<String, UtlandDa
                 headers().add(NAV_CALL_ID, callId().toByteArray())
             })
             .addCallback(UtlandRouterCallback(søknad))
-    override fun toString() = "$javaClass.simpleName [kafkaOperations=$router]"
+    override fun toString() = "$javaClass.simpleName [router=$router]"
 }
 
 private class UtlandRouterCallback(private val søknad: UtlandData) : ListenableFutureCallback<SendResult<String, UtlandData>> {
@@ -43,6 +43,7 @@ private class UtlandRouterCallback(private val søknad: UtlandData) : Listenable
                 result?.recordMetadata?.topic(),
                 result?.recordMetadata?.partition(),
                 result?.recordMetadata?.offset())
+        secureLog.debug("Søknad $søknad sent til kafka ($result)")
     }
 
     override fun onFailure(e: Throwable) {
