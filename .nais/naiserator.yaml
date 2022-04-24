@@ -32,6 +32,8 @@ spec:
         - application: soknad
     outbound:
       rules:
+        - application: clamav
+          namespace: clamav
         - application: pdfgen
           namespace: aap
           cluster: dev-gcp
