@@ -7,8 +7,8 @@ import com.google.cloud.storage.Storage.BlobField.CONTENT_TYPE
 import com.google.cloud.storage.Storage.BlobField.METADATA
 import com.google.cloud.storage.Storage.BlobGetOption.fields
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.mellomlagring.DokumentLager.Companion.FILNAVN
-import no.nav.aap.api.mellomlagring.DokumentLager.Companion.FNR
+import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FILNAVN
+import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FNR
 import no.nav.aap.api.mellomlagring.virus.VirusScanner
 import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -19,7 +19,7 @@ import java.util.UUID.randomUUID
 
 @ConditionalOnGCP
 internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøtte: String,
-                                private val storage: Storage, private val scanner: VirusScanner) : DokumentLager {
+                                private val storage: Storage, private val scanner: VirusScanner) : Dokumentlager {
 
     val log = LoggerUtil.getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =
@@ -29,7 +29,7 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
                .setContentType(contentType)
                .setMetadata(mapOf(FILNAVN to originalFilename, FNR to fnr.fnr))
                .build(), bytes)
-               .also { log.trace("Lagret vedlegg $originalFilename med uuid $this") }
+               .also { log.trace("Lagret $originalFilename med uuid $this") }
            this
        }
 

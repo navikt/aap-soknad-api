@@ -4,9 +4,9 @@ import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.PostNummer
-import no.nav.aap.api.mellomlagring.DokumentLager
-import no.nav.aap.api.mellomlagring.DokumentLager.Companion.FILNAVN
-import no.nav.aap.api.mellomlagring.DokumentLager.Companion.FNR
+import no.nav.aap.api.mellomlagring.Dokumentlager
+import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FILNAVN
+import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FNR
 import no.nav.aap.api.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.model.SkjemaType
 import no.nav.aap.api.søknad.dittnav.DittNavRouter
@@ -44,7 +44,7 @@ import java.util.*
 @RestController
 @RequestMapping(value = ["/dev/"])
 @ConditionalOnDevOrLocal
-internal class DevController(private val dokumentLager: DokumentLager,
+internal class DevController(private val dokumentLager: Dokumentlager,
                              private val mellomlager: Mellomlager,
                              private val dittnav: DittNavRouter,
                              private val vl: StandardSøknadVLRouter) {

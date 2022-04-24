@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.storage.Blob
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.mellomlagring.DokumentLager
+import no.nav.aap.api.mellomlagring.Dokumentlager
 import no.nav.aap.api.søknad.joark.pdf.PDFClient
 import no.nav.aap.api.søknad.model.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.model.SkjemaType.UTLAND
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service
 import java.util.Base64.getEncoder
 
 @Service
-class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFClient, private val lager: DokumentLager, private val mapper: ObjectMapper)  {
+class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFClient, private val lager: Dokumentlager, private val mapper: ObjectMapper)  {
 
     private val log = LoggerUtil.getLogger(javaClass)
      fun route(søknad: StandardSøknad, søker: Søker) =

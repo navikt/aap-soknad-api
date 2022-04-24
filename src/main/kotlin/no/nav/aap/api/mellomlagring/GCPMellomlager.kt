@@ -21,8 +21,6 @@ internal class GCPMellomlager(@Value("\${mellomlagring.bucket:aap-mellomlagring}
             .setContentType(APPLICATION_JSON_VALUE).build(),
                 value.toByteArray(UTF_8))
             .blobId.toGsUtilUri()
-            .also { log.trace("Mellomlagret som $it") }
-
     override fun les(fnr: Fødselsnummer, type: SkjemaType) =
         storage.get(bøtte, key(fnr, type))?.getContent()?.let { String(it, UTF_8) }
 

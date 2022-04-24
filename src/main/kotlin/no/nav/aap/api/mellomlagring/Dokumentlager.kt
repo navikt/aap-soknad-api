@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.*
 import java.util.Objects.hash
 
-interface DokumentLager {
+interface Dokumentlager {
     fun lesDokument(fnr: Fødselsnummer, uuid: UUID): Blob?
     fun slettDokument(fnr: Fødselsnummer, uuid: UUID): Boolean
     fun lagreDokument(fnr: Fødselsnummer, vedlegg: MultipartFile) =
