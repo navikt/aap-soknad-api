@@ -66,8 +66,10 @@ class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFGenerator,
                         + vedleggFor(søknad.utbetalinger?.andreUtbetalinger, søker.fødselsnummer)
                     .also { log.trace("${it.size} dokumenter ($it)") }))
     private fun dokumenterFra(søknad: UtlandSøknad, søker: Søker,pdfDokument: DokumentVariant) =
-        listOf(Dokument(UTLAND.tittel, UTLAND.kode, listOf(jsonDokument(søknad),pdfDokument)
-            .also { log.trace("${it.size} dokumenter ($it)") }))
+        listOf(Dokument(UTLAND.tittel,
+                UTLAND.kode,
+                listOf(jsonDokument(søknad),pdfDokument)
+                    .also { log.trace("${it.size} dokumenter ($it)") }))
     private fun jsonDokument(søknad: StandardSøknad) =
         DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL)
 
