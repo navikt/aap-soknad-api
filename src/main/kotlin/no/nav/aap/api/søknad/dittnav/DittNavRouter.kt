@@ -39,7 +39,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             .withTidspunkt(now(UTC))
             .withSynligFremTil(now(UTC).plus(cfg.varighet))
             .withLink(replaceWith("/aap/${type.name}"))
-            .withTekst(type.tittel + "mottatt")
+            .withTekst(type.tittel + " mottatt")
             /* .withEksternVarsling(true)
              .withEpostVarslingstekst("AAP-søknad mottat")
              .withEpostVarslingstittel("Tusen takk")
