@@ -26,7 +26,6 @@ class VirusScanWebClientAdapter(@Qualifier("virus") client: WebClient, val cf: V
         }
         log.trace("Scanner {}", name)
         val scanResult =  webClient.get()
-            .uri { b -> b.path(cf.path).build()}
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToFlux(ScanResult::class.java)

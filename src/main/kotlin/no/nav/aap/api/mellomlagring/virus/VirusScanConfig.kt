@@ -9,12 +9,10 @@ import java.net.URI
 @ConfigurationProperties(prefix = "virus")
 @ConstructorBinding
 data class VirusScanConfig(@DefaultValue(BASE_URI) val uri: URI,
-                      @DefaultValue(PATH) val path: String,
-                      @DefaultValue("true") val enabled: Boolean) : AbstractRestConfig(uri, path,enabled) {
+                      @DefaultValue("true") val enabled: Boolean) : AbstractRestConfig(uri, "/",enabled) {
 
     companion object {
         private const val BASE_URI = "http://clamav.clamav.svc.cluster.local"
-        private const val PATH = "scan"
 
     }
 }
