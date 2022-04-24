@@ -10,7 +10,6 @@ import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
 class VirusScanWebClientAdapter(@Qualifier("virus") client: WebClient, val cf: VirusScanConfig) : AbstractWebClientAdapter(client,cf) {
-
     override fun ping()  {
         scan(ByteArray(0), "ping")
     }
