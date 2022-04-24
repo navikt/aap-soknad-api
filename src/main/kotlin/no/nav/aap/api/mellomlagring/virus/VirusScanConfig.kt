@@ -13,7 +13,7 @@ data class VirusScanConfig(@DefaultValue(BASE_URI) val uri: URI,
                       @DefaultValue("true") val enabled: Boolean) : AbstractRestConfig(uri, path,enabled) {
 
     companion object {
-        private const val BASE_URI = "http://clamav.nais.svc.nais.local"
+        private const val BASE_URI = "http://clamav.clamav.svc.cluster.local"
         private const val PATH = "scan"
 
     }
