@@ -44,6 +44,7 @@ class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFGenerator,
         }
     private fun lagrePdf(bytes: ByteArray, fnr: Fødselsnummer) =
         lager.lagreDokument(fnr, bytes, APPLICATION_PDF_VALUE, "kvittering.pdf")
+            .also { "Lagret pdf med uuid $it" }
 
     private fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdfDokument: DokumentVariant) =
         Journalpost(dokumenter = dokumenterFra(søknad, søker,pdfDokument),
