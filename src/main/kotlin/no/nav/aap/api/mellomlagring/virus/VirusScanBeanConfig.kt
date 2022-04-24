@@ -15,8 +15,8 @@ import java.net.URI
 internal class VirusScanBeanConfg {
     @Bean
     @Qualifier("virus")
-    fun webClientVirusScqn(builder: Builder, cfg: VirusScanConfig)  =
-        builder.baseUrl("${cfg.baseUri}").build()
+    fun webClientVirusScqn(b: Builder, cfg: VirusScanConfig)  =
+        b.baseUrl("${cfg.baseUri}").build()
     @Bean
     fun virusHealthIndicator(a: VirusScanWebClientAdapter) =
         object : AbstractPingableHealthIndicator(a) {}
