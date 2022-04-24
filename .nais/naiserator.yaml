@@ -46,7 +46,6 @@ spec:
         - application: isdialogmelding
           namespace: teamsykefravr
           cluster: dev-gcp
-
   tokenx:
     enabled: true
   kafka:

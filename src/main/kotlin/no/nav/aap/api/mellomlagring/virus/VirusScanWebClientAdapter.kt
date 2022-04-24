@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
 class VirusScanWebClientAdapter(@Qualifier("virus") client: WebClient, val cf: VirusScanConfig) : AbstractWebClientAdapter(client,cf) {
@@ -25,13 +26,11 @@ class VirusScanWebClientAdapter(@Qualifier("virus") client: WebClient, val cf: V
             return
         }
         log.trace("Scanner {}", name)
-        val scanResult =  webClient.get()
+        val scanResult =  webClient.put()
+            .bodyValue(bytes)
             .accept(APPLICATION_JSON)
             .retrieve()
-            .bodyToFlux(ScanResult::class.java)
-            .doOnError { t: Throwable -> log.warn("Virussjekk  feilet", t) }
-            .collectList()
-            .doOnSuccess { log.trace("Virussjekk er $it") }
+            .bodyToMono<List<ScanResult>>()
             .block()?.get(0)
         log.trace("Fikk scan result {}", scanResult)
         if (FOUND == scanResult?.result) {
