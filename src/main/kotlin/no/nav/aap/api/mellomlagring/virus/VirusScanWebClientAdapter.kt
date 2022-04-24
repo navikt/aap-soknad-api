@@ -44,6 +44,6 @@ class VirusScanWebClientAdapter(@Qualifier("virus") client: WebClient, val cf: V
 }
 internal enum class Result { FOUND, OK }
 
-internal class AttachmentVirusException(name: String?) : RuntimeException(name)
+class AttachmentVirusException(name: String?) : RuntimeException(name)
 
 internal data class ScanResult  (@JsonAlias("Filename")  val filename: String, @JsonAlias("Result")  val result: Result)
