@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
 import java.util.*
 
 @Component
@@ -19,9 +20,8 @@ class BehandlerWebClientAdapter(
         .uri(cf::path)
         .accept(APPLICATION_JSON)
         .retrieve()
-        .bodyToFlux(BehandlerDTO::class.java)
+        .bodyToMono<List<BehandlerDTO>>()
         .doOnError { t: Throwable -> log.warn("Behandler oppslag feilet", t) }
-        .collectList()
         .doOnSuccess { log.trace("Behandlere er $it") }
         .block()
         ?.map { it.tilBehandler() }

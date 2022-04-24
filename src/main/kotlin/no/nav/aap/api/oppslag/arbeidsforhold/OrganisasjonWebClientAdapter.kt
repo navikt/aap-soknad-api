@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
 import java.util.Locale.getDefault
 
 @Component
@@ -22,13 +23,12 @@ class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON) val client: WebClien
             .uri { b -> cf.orgURI(b, orgnr) }
             .accept(APPLICATION_JSON)
             .retrieve()
-            .bodyToMono(String::class.java)
+            .bodyToMono<String>()
             .doOnError { t: Throwable -> log.warn("Ereg oppslag ${orgnr.orgnr} feilet", t) }
             .doOnSuccess { log.trace("Ereg resultat er $it") }
             .onErrorReturn(orgnr.orgnr)
             .defaultIfEmpty(orgnr.orgnr)
-            .blockOptional()
-            .orElse(orgnr.orgnr)
+            .block() ?: orgnr.orgnr
             .also { log.trace("Ereg orgnavn er $it") }
 
 
