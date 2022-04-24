@@ -21,6 +21,7 @@ import no.nav.aap.joark.Filtype.JSON
 import no.nav.aap.joark.Journalpost
 import no.nav.aap.joark.VariantFormat.ORIGINAL
 import no.nav.aap.joark.asPDFVariant
+import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.stereotype.Service
@@ -29,6 +30,7 @@ import java.util.Base64.getEncoder
 @Service
 class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFGenerator, private val lager: DokumentLager)  {
 
+    private val log = LoggerUtil.getLogger(javaClass)
     @Autowired
     private lateinit var mapper: ObjectMapper
 
@@ -61,9 +63,11 @@ class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFGenerator,
                 STANDARD.kode,
                 listOf(jsonDokument(søknad), pdfDokument)
                         + vedleggFor(søknad.utbetalinger?.stønadstyper, søker.fødselsnummer)
-                        + vedleggFor(søknad.utbetalinger?.andreUtbetalinger, søker.fødselsnummer)))
+                        + vedleggFor(søknad.utbetalinger?.andreUtbetalinger, søker.fødselsnummer)
+                    .also { log.trace("${it.size} dokumenter ($it)") }))
     private fun dokumenterFra(søknad: UtlandSøknad, søker: Søker,pdfDokument: DokumentVariant) =
-        listOf(Dokument(UTLAND.tittel, UTLAND.kode, listOf(jsonDokument(søknad),pdfDokument)))
+        listOf(Dokument(UTLAND.tittel, UTLAND.kode, listOf(jsonDokument(søknad),pdfDokument)
+            .also { log.trace("${it.size} dokumenter ($it)") }))
     private fun jsonDokument(søknad: StandardSøknad) =
         DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL)
 
