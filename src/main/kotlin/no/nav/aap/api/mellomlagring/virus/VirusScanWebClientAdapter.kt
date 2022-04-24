@@ -17,7 +17,7 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
     }
 
     fun scan(bytes: ByteArray, name: String?) : Result {
-        if (skalScanne(bytes, cf)) {
+        if (skalIkkeScanne(bytes, cf)) {
             log.trace("Ingen scanning av (${bytes.size} bytes, enabled=${cf.enabled})")
             return OK
         }
@@ -29,9 +29,11 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
             .retrieve()
             .bodyToMono<List<ScanResult>>()
             .block()
-            ?.single().also { log.trace("Fikk scan result $it") }?.result ?: OK
+            ?.single()
+            .also { log.trace("Fikk scan result $it") }
+            ?.result ?: OK
     }
-    private fun skalScanne(bytes: ByteArray, cf: VirusScanConfig) = bytes.isEmpty() || !cf.isEnabled
+    private fun skalIkkeScanne(bytes: ByteArray, cf: VirusScanConfig) = bytes.isEmpty() || !cf.isEnabled
 }
 
 class AttachmentVirusException(name: String?) : RuntimeException(name)
