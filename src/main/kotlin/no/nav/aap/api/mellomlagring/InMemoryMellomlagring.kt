@@ -8,8 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 class InMemoryMellomlagring : Mellomlager {
     private val store = mutableMapOf<String, String>()
     override fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
-        key(fnr, type)
-            .also { store[this.toString()] = value }
+        key(fnr, type).also { store[it] = value }
 
     override fun les(fnr: Fødselsnummer, type: SkjemaType) =
         store[key(fnr, type)]

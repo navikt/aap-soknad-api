@@ -17,7 +17,7 @@ class VirusScanWebClientAdapter(@Qualifier("virus") client: WebClient, val cf: V
 
     fun scan(bytes: ByteArray, name: String?) : Result {
         if (skalScanne(bytes, cf)) {
-            log.trace("Ingen scanning (${bytes.size}  ${cf.enabled})")
+            log.trace("Ingen scanning av (${bytes.size} bytes, enabled=${cf.enabled})")
             return OK
         }
         log.trace("Scanner {}", name)
