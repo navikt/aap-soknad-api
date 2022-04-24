@@ -52,6 +52,8 @@ class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFGenerator,
                 avsenderMottaker = AvsenderMottaker(søker.fødselsnummer,
                         navn = søker.navn.navn),
                 bruker = Bruker(søker.fødselsnummer))
+            .also { log.trace("Journalpost er $it") })
+
 
     private fun journalpostFra(søknad: UtlandSøknad, søker: Søker,pdfDokument: DokumentVariant)  =
         Journalpost(dokumenter = dokumenterFra(søknad, søker,pdfDokument),
@@ -59,6 +61,8 @@ class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFGenerator,
                 avsenderMottaker = AvsenderMottaker(søker.fødselsnummer,
                         navn = søker.navn.navn),
                 bruker = Bruker(søker.fødselsnummer))
+            .also { log.trace("Journalpost er $it") })
+
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker,pdfDokument: DokumentVariant) =
         listOf(Dokument(STANDARD.tittel,
                 STANDARD.kode,
@@ -66,11 +70,13 @@ class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFGenerator,
                         + vedleggFor(søknad.utbetalinger?.stønadstyper, søker.fødselsnummer)
                         + vedleggFor(søknad.utbetalinger?.andreUtbetalinger, søker.fødselsnummer)
                     .also { log.trace("${it.size} dokumentvarianter ($it)") }))
+            .also { log.trace("Dokument til JOARK $it") }
     private fun dokumenterFra(søknad: UtlandSøknad, søker: Søker,pdfDokument: DokumentVariant) =
         listOf(Dokument(UTLAND.tittel,
                 UTLAND.kode,
                 listOf(jsonDokument(søknad),pdfDokument)
                     .also { log.trace("${it.size} dokumentvarianter ($it)") }))
+            .also { log.trace("Dokument til JOARK $it") }
     private fun jsonDokument(søknad: StandardSøknad) =
         DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL)
 
