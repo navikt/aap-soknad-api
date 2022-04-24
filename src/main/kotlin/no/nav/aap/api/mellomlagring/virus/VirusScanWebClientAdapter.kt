@@ -1,7 +1,7 @@
 package no.nav.aap.api.mellomlagring.virus
 
-import com.fasterxml.jackson.annotation.JsonAlias
 import no.nav.aap.api.mellomlagring.virus.Result.FOUND
+import no.nav.aap.api.mellomlagring.virus.Result.OK
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -16,32 +16,32 @@ class VirusScanWebClientAdapter(@Qualifier("virus") client: WebClient, val cf: V
         scan(ByteArray(0), "ping")
     }
 
-    fun scan(bytes: ByteArray, name: String?) {
+    fun scan(bytes: ByteArray, name: String?) :Result {
         if (bytes.isEmpty()) {
             log.info("Ingen scanning av null bytes")
-            return
+            return OK
         }
         if (!cf.isEnabled) {
             log.warn("Scanning er deaktivert")
-            return
+            return OK
         }
         log.trace("Scanner {}", name)
-        val scanResult =  webClient.put()
+        val scanResult = webClient.put()
             .bodyValue(bytes)
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono<List<ScanResult>>()
-            .block()?.get(0)
+            .block()?.single()
         log.trace("Fikk scan result {}", scanResult)
         if (FOUND == scanResult?.result) {
             log.warn("Fant virus!, status $scanResult")
             throw AttachmentVirusException(name)
         }
         log.trace("Ingen virus i  $name")
+        return OK
     }
 }
-internal enum class Result { FOUND, OK }
+enum class Result { FOUND, OK }
 
 class AttachmentVirusException(name: String?) : RuntimeException(name)
-
-internal data class ScanResult  (@JsonAlias("Filename")  val filename: String, @JsonAlias("Result")  val result: Result)
+internal data class ScanResult(val filename: String, val result: Result)
