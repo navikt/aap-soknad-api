@@ -1,6 +1,7 @@
 package no.nav.aap.api.mellomlagring.virus
 
-import no.nav.aap.api.mellomlagring.virus.Result.OK
+import no.nav.aap.api.mellomlagring.virus.ScanResult.Result
+import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.OK
 import no.nav.aap.api.mellomlagring.virus.VirusScanConfig.Companion.VIRUS
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.beans.factory.annotation.Qualifier
@@ -32,7 +33,8 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
     }
     private fun skalScanne(bytes: ByteArray, cf: VirusScanConfig) = bytes.isEmpty() || !cf.isEnabled
 }
-enum class Result { FOUND, OK }
 
 class AttachmentVirusException(name: String?) : RuntimeException(name)
-internal data class ScanResult(val filename: String, val result: Result)
+data class ScanResult(val filename: String, val result: Result) {
+    enum class Result { FOUND, OK }
+}

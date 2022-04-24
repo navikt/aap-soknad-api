@@ -1,6 +1,6 @@
 package no.nav.aap.api.mellomlagring.virus
 
-import no.nav.aap.api.mellomlagring.virus.Result.OK
+import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.OK
 import org.springframework.stereotype.Component
 
 @Component
