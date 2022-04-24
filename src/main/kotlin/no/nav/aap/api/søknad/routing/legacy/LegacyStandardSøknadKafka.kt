@@ -9,11 +9,10 @@ data class LegacyStandardSøknadKafka(val ident: Ident, val fødselsdato: LocalD
 
     val id = ident.verdi
 }
-
+@Deprecated("Kun for enkel testing")
 data class Ident(val type: IdentType = FNR, val verdi: String) {
     constructor(fnr: Fødselsnummer) : this(FNR, fnr.fnr)
 }
 
-enum class IdentType {
-    FNR
-}
+@Deprecated("Kun for enkel testing")
+enum class IdentType { FNR }

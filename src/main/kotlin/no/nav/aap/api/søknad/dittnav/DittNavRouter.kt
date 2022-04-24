@@ -1,10 +1,8 @@
 package no.nav.aap.api.søknad.dittnav
 
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.dittnav.DittNavConfig.TopicConfig
 import no.nav.aap.api.søknad.model.SkjemaType
-import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
@@ -21,14 +19,9 @@ import java.time.ZoneOffset.UTC
 import java.util.*
 
 @Service
-class DittNavRouter(private val ctx: AuthContext,
-                    private val dittNav: KafkaOperations<NokkelInput, Any>,
+class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val cfg: DittNavConfig,
                     private val env: Environment) {
-
-    fun opprettBeskjed(type: SkjemaType) {  // DEV only
-        opprettBeskjed(ctx.getFnr(), type)
-    }
 
     fun opprettBeskjed(fnr: Fødselsnummer, type: SkjemaType) = send(fnr, cfg.beskjed, type)
 
