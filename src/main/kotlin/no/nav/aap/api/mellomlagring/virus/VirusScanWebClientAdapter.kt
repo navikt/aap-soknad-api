@@ -1,6 +1,6 @@
 package no.nav.aap.api.mellomlagring.virus
 
-import no.nav.aap.api.mellomlagring.virus.ScanResult.Result
+import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.FOUND
 import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.OK
 import no.nav.aap.api.mellomlagring.virus.VirusScanConfig.Companion.VIRUS
 import no.nav.aap.rest.AbstractWebClientAdapter
@@ -13,16 +13,16 @@ import org.springframework.web.reactive.function.client.bodyToMono
 @Component
 class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: VirusScanConfig) : AbstractWebClientAdapter(client,cf) {
     override fun ping()  {
-        scan(ByteArray(0), "ping")
+        harVirus(ByteArray(0), "ping")
     }
 
-    fun scan(bytes: ByteArray, name: String?) : Result {
+    fun harVirus(bytes: ByteArray, name: String?) : Boolean {
         if (skalIkkeScanne(bytes, cf)) {
             log.trace("Ingen scanning av (${bytes.size} bytes, enabled=${cf.enabled})")
-            return OK
+            return false
         }
         log.trace("Scanner {}", name)
-        return webClient
+        return when(webClient
             .put()
             .bodyValue(bytes)
             .accept(APPLICATION_JSON)
@@ -31,7 +31,10 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
             .block()
             ?.single()
             .also { log.trace("Fikk scan result $it") }
-            ?.result ?: OK
+            ?.result)  {
+            OK, null-> false
+            FOUND -> true
+        }
     }
     private fun skalIkkeScanne(bytes: ByteArray, cf: VirusScanConfig) = bytes.isEmpty() || !cf.isEnabled
 }
