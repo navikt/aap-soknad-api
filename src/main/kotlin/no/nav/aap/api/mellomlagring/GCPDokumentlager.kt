@@ -23,14 +23,13 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
 
     val log = LoggerUtil.getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =
-       with(randomUUID()) {
+       randomUUID().apply {
            scanner.scan(bytes,originalFilename)
            storage.create(newBuilder(of(bøtte, key(fnr, this)))
                .setContentType(contentType)
                .setMetadata(mapOf(FILNAVN to originalFilename, FNR to fnr.fnr))
                .build(), bytes)
                .also { log.trace("Lagret $originalFilename med uuid $this") }
-           this
        }
 
     override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
