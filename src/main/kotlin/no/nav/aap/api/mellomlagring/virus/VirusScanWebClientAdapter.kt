@@ -39,7 +39,7 @@ class VirusScanWebClientAdapter(@Qualifier("virus") client: WebClient, val cf: V
             log.warn("Fant virus!, status $scanResult")
             throw AttachmentVirusException(name)
         }
-        log.info("Ingen virus i  $name")
+        log.trace("Ingen virus i  $name")
     }
 }
 internal enum class Result { FOUND, OK }
