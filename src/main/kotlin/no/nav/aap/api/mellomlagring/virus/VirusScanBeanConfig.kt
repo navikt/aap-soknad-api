@@ -1,5 +1,6 @@
 package no.nav.aap.api.mellomlagring.virus
 
+import no.nav.aap.api.mellomlagring.virus.VirusScanConfig.Companion.VIRUS
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.beans.factory.annotation.Qualifier
@@ -14,7 +15,7 @@ import java.net.URI
 @Configuration
 internal class VirusScanBeanConfg {
     @Bean
-    @Qualifier("virus")
+    @Qualifier(VIRUS)
     fun webClientVirusScqn(b: Builder, cfg: VirusScanConfig)  =
         b.baseUrl("${cfg.baseUri}").build()
     @Bean
@@ -27,6 +28,7 @@ data class VirusScanConfig(@DefaultValue(BASE_URI) val uri: URI,
                            @DefaultValue("true") val enabled: Boolean) : AbstractRestConfig(uri, "/",enabled) {
 
     companion object {
+        const val VIRUS = "virus"
         private const val BASE_URI = "http://clamav.clamav.svc.cluster.local/scan"
     }
 }

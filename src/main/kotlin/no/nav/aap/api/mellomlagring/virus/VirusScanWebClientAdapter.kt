@@ -1,6 +1,7 @@
 package no.nav.aap.api.mellomlagring.virus
 
 import no.nav.aap.api.mellomlagring.virus.Result.OK
+import no.nav.aap.api.mellomlagring.virus.VirusScanConfig.Companion.VIRUS
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -9,7 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
-class VirusScanWebClientAdapter(@Qualifier("virus") client: WebClient, val cf: VirusScanConfig) : AbstractWebClientAdapter(client,cf) {
+class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: VirusScanConfig) : AbstractWebClientAdapter(client,cf) {
     override fun ping()  {
         scan(ByteArray(0), "ping")
     }
