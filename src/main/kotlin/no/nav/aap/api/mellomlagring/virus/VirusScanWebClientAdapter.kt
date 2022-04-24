@@ -1,6 +1,5 @@
 package no.nav.aap.api.mellomlagring.virus
 
-import no.nav.aap.api.mellomlagring.virus.Result.FOUND
 import no.nav.aap.api.mellomlagring.virus.Result.OK
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.beans.factory.annotation.Qualifier
@@ -16,25 +15,20 @@ class VirusScanWebClientAdapter(@Qualifier("virus") client: WebClient, val cf: V
         scan(ByteArray(0), "ping")
     }
 
-    fun scan(bytes: ByteArray, name: String?) :Result {
-        if (skalScanne(bytes,cf)){
-            log.trace("Ingen scanning")
+    fun scan(bytes: ByteArray, name: String?) : Result {
+        if (skalScanne(bytes, cf)) {
+            log.trace("Ingen scanning (${bytes.size}  ${cf.enabled})")
             return OK
         }
         log.trace("Scanner {}", name)
-        val scanResult = webClient.put()
+        return webClient
+            .put()
             .bodyValue(bytes)
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono<List<ScanResult>>()
-            .block()?.single()
-        log.trace("Fikk scan result {}", scanResult)
-        if (FOUND == scanResult?.result) {
-            log.warn("Fant virus!, status $scanResult")
-            throw AttachmentVirusException(name)
-        }
-        log.trace("Ingen virus i  $name")
-        return OK
+            .block()
+            ?.single().also { log.trace("Fikk scan result $it") }?.result ?: OK
     }
     private fun skalScanne(bytes: ByteArray, cf: VirusScanConfig) = bytes.isEmpty() || !cf.isEnabled
 }
