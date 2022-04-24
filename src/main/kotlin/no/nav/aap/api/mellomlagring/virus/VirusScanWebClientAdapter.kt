@@ -17,12 +17,8 @@ class VirusScanWebClientAdapter(@Qualifier("virus") client: WebClient, val cf: V
     }
 
     fun scan(bytes: ByteArray, name: String?) :Result {
-        if (bytes.isEmpty()) {
-            log.info("Ingen scanning av null bytes")
-            return OK
-        }
-        if (!cf.isEnabled) {
-            log.warn("Scanning er deaktivert")
+        if (skalScanne(bytes,cf)){
+            log.trace("Ingen scanning")
             return OK
         }
         log.trace("Scanner {}", name)
@@ -40,6 +36,7 @@ class VirusScanWebClientAdapter(@Qualifier("virus") client: WebClient, val cf: V
         log.trace("Ingen virus i  $name")
         return OK
     }
+    private fun skalScanne(bytes: ByteArray, cf: VirusScanConfig) = bytes.isEmpty() || !cf.isEnabled
 }
 enum class Result { FOUND, OK }
 
