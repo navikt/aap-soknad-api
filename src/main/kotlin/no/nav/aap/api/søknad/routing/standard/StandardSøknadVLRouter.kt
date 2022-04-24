@@ -29,7 +29,6 @@ class StandardSøknadVLRouter(private val router: KafkaOperations<String, Standa
             })
             .addCallback(StandardRoutingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
     override fun toString() = "$javaClass.simpleName [router=$router]"
-
 }
 
 private class StandardRoutingCallback(private val søknad: StandardSøknad, private val counter: Counter) :
@@ -38,11 +37,11 @@ private class StandardRoutingCallback(private val søknad: StandardSøknad, priv
     private val log = LoggerUtil.getLogger(javaClass)
     override fun onSuccess(result: SendResult<String, StandardSøknad>?) {
         counter.increment()
-        log.info(CONFIDENTIAL, "Søknad $søknad sent til Kafka på topic {}, partition {} med offset {} OK",
-                result?.recordMetadata?.topic(),
-                result?.recordMetadata?.partition(),
-                result?.recordMetadata?.offset())
-        secureLog.debug("Søknad $søknad sent til kafka ($result)")
+        with(result?.recordMetadata) {
+            log.info(CONFIDENTIAL,
+                    "Søknad $søknad sent til Kafka på topic ${this?.topic()}, partition ${this?.partition()} med offset  ${this?.offset()} OK",
+                    secureLog.debug("Søknad $søknad sent til kafka ($result)"))
+        }
     }
 
     override fun onFailure(e: Throwable) {
