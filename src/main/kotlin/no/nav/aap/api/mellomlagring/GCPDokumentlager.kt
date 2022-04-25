@@ -26,10 +26,12 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
     val log = LoggerUtil.getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =
        randomUUID().apply {
-           val detectedType = Tika().detect(bytes)
-           if (detectedType != contentType) {
-               throw AttachmentVirusException("Detected type $detectedType matcher ikke oppgitt $contentType")
+           with(Tika().detect(bytes)) {
+               if (this != contentType) {
+                   throw AttachmentVirusException("Detected type $this matcher ikke oppgitt $contentType")
+               }
            }
+
            scanner.scan(bytes,originalFilename)
            storage.create(newBuilder(of(bøtte, key(fnr, this)))
                .setContentType(contentType)
