@@ -19,6 +19,6 @@ jobs:
           args: --sarif-file-output=snyk.sarif --org=aap -- -s .github/.m2/settings.xml
           
       - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: snyk.sarif     
