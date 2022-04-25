@@ -12,6 +12,7 @@ import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FNR
 import no.nav.aap.api.mellomlagring.virus.VirusScanner
 import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnGCP
+import org.apache.tika.Tika
 import org.springframework.beans.factory.annotation.Value
 import java.util.*
 import java.util.UUID.randomUUID
@@ -24,6 +25,7 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
     val log = LoggerUtil.getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =
        randomUUID().apply {
+           log.info("Tika detect ${Tika().detect(bytes)}")
            scanner.scan(bytes,originalFilename)
            storage.create(newBuilder(of(bøtte, key(fnr, this)))
                .setContentType(contentType)
