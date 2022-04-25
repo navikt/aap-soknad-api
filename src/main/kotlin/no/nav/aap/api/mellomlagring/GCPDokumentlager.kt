@@ -9,6 +9,7 @@ import com.google.cloud.storage.Storage.BlobGetOption.fields
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FNR
+import no.nav.aap.api.mellomlagring.virus.AttachmentVirusException
 import no.nav.aap.api.mellomlagring.virus.VirusScanner
 import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -25,7 +26,10 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
     val log = LoggerUtil.getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =
        randomUUID().apply {
-           log.info("Tika detect ${Tika().detect(bytes)}")
+           val detectedType = Tika().detect(bytes)
+           if (detectedType != contentType) {
+               throw AttachmentVirusException("Detected type $detectedType matcher ikke oppgitt $contentType")
+           }
            scanner.scan(bytes,originalFilename)
            storage.create(newBuilder(of(bøtte, key(fnr, this)))
                .setContentType(contentType)
