@@ -3,6 +3,10 @@ spring:
     name: soknad-api
   main:
     banner-mode: off
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
   cloud:
     discovery:
       client:
