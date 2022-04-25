@@ -2,7 +2,7 @@ package no.nav.aap.api.mellomlagring
 
 import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FNR
-import no.nav.aap.api.mellomlagring.DokumentLagerController.Companion.BASEPATH
+import no.nav.aap.api.mellomlagring.DokumentlagerController.Companion.BASEPATH
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
@@ -29,7 +29,7 @@ import java.util.*
 
 
 @ProtectedRestController(value = [BASEPATH], issuer = IDPORTEN)
-internal class DokumentLagerController(private val lager: Dokumentlager, private val ctx: AuthContext) {
+internal class DokumentlagerController(private val lager: Dokumentlager, private val ctx: AuthContext) {
 
     @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)

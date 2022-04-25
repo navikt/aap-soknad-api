@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad.routing.utland
 
-import no.nav.aap.api.mellomlagring.DokumentLagerController.Companion.BASEPATH
+import no.nav.aap.api.mellomlagring.DokumentlagerController.Companion.BASEPATH
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.dittnav.DittNavRouter
 import no.nav.aap.api.søknad.joark.JoarkRouter
