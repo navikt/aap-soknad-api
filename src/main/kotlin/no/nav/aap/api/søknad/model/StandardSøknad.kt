@@ -75,16 +75,12 @@ enum class RadioValg {
 class Utbetaling(val fraArbeidsgiver: Boolean,
                  val stønadstyper: List<AnnenStønad> = emptyList(),
                  val andreUtbetalinger: List<AnnenUtbetaling>) {
-    data class AnnenUtbetaling(val hvilken: String, val hvem: String, val vedlegg: UUID? = null) : VedleggAware {
-        override fun hentVedleggId() = vedlegg
-    }
+    data class AnnenUtbetaling(val hvilken: String, val hvem: String, override val vedlegg: UUID? = null) : VedleggAware
 
-    data class AnnenStønad(val type: AnnenStønadstype, val vedlegg: UUID? = null) : VedleggAware {
-        override fun hentVedleggId() = vedlegg
-    }
+    data class AnnenStønad(val type: AnnenStønadstype, override val vedlegg: UUID? = null) : VedleggAware
 
     interface VedleggAware {
-        fun hentVedleggId(): UUID?
+        val vedlegg : UUID?
     }
 
     enum class AnnenStønadstype {

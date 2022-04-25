@@ -81,7 +81,7 @@ class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFClient, pr
 
     private fun vedleggFor(utbetalinger: List<VedleggAware>?, fnr: Fødselsnummer) =
         utbetalinger
-            ?.mapNotNull { it.hentVedleggId() }
+            ?.mapNotNull { it.vedlegg }
             ?.mapNotNull { lager.lesDokument(fnr, it) }
             ?.map { it.asDokumentVariant() }
             .orEmpty()
