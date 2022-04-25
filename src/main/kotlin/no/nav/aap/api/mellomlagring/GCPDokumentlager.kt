@@ -30,7 +30,7 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
     val log = LoggerUtil.getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =
        randomUUID().apply {
-           sjekkType(bytes, contentType)
+           sjekkType(bytes, originalFilename,contentType)
            scanner.scan(bytes,originalFilename)
            storage.create(newBuilder(of(bøtte, key(fnr, this)))
                .setContentType(contentType)
@@ -39,14 +39,14 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
                .also { log.trace("Lagret $originalFilename med uuid $this") }
        }
 
-    private fun sjekkType(bytes: ByteArray, contentType: String?) {
+    private fun sjekkType(bytes: ByteArray, contentType: String?,originalFilename: String?) {
         with(Tika().detect(bytes)) {
             if (this != contentType) {
-                throw AttachmentException("Type $this matcher ikke oppgitt $contentType")
+                throw AttachmentException("Type $this matcher ikke oppgitt $contentType for $originalFilename")
             }
         }
         if(!lovligeTyper.contains(contentType)) {
-            throw AttachmentException("Type $contentType er ikke blant $lovligeTyper")
+            throw AttachmentException("Type $contentType er ikke blant $lovligeTyper for $originalFilename")
         }
     }
 
