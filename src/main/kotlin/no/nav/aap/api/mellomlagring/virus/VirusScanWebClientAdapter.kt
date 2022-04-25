@@ -39,7 +39,7 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
     private fun skalIkkeScanne(bytes: ByteArray, cf: VirusScanConfig) = bytes.isEmpty() || !cf.isEnabled
 }
 
-class AttachmentVirusException(name: String?) : RuntimeException(name)
+class AttachmentException(name: String?) : RuntimeException(name)
 data class ScanResult(val filename: String, val result: Result) {
     enum class Result { FOUND, OK }
 }

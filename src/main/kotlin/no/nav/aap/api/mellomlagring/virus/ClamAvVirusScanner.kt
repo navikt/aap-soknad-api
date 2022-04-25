@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 class ClamAvVirusScanner(private val a: VirusScanWebClientAdapter) : VirusScanner {
     override fun scan(bytes: ByteArray, name: String?) =
         if (a.harVirus(bytes,name)) {
-            throw AttachmentVirusException(name)
+            throw AttachmentException(name)
             } else Unit
 }
 
