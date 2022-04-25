@@ -79,9 +79,7 @@ class Utbetaling(val fraArbeidsgiver: Boolean,
 
     data class AnnenStønad(val type: AnnenStønadstype, override val vedlegg: UUID? = null) : VedleggAware
 
-    interface VedleggAware {
-        val vedlegg : UUID?
-    }
+    interface VedleggAware { val vedlegg : UUID? }
 
     enum class AnnenStønadstype {
         KVALIFISERINGSSTØNAD,

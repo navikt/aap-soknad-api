@@ -33,7 +33,10 @@ class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFClient, pr
      fun route(søknad: StandardSøknad, søker: Søker) =
          with(pdf.generate(søker, søknad)) {
             Pair(lagrePdf(this,søker.fødselsnummer), joark.journalfør(journalpostFra(søknad, søker,asPDFVariant())) ?: throw IntegrationException("Kunne ikke journalføre søknad"))
-        }
+        }.also { slettVedlegg(søknad,søker.fødselsnummer) }
+
+
+
     fun route(søknad: UtlandSøknad, søker: Søker) =
         with(pdf.generate(søker, søknad)) {
             Pair(lagrePdf(this, søker.fødselsnummer), joark.journalfør(journalpostFra(søknad, søker,asPDFVariant())) ?: throw IntegrationException("Kunne ikke journalføre søknad"))
@@ -85,6 +88,15 @@ class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFClient, pr
             ?.mapNotNull { lager.lesDokument(fnr, it) }
             ?.map { it.asDokumentVariant() }
             .orEmpty()
+
+    private fun slettVedlegg(søknad: StandardSøknad, fnr: Fødselsnummer) {
+        slett(søknad.utbetalinger?.stønadstyper,fnr)
+        slett(søknad.utbetalinger?.andreUtbetalinger,fnr)
+    }
+    private fun slett(utbetalinger: List<VedleggAware>?, fnr: Fødselsnummer) =
+        utbetalinger
+            ?.mapNotNull { it.vedlegg }
+            ?.forEach { lager.slettDokument(fnr, it) }
     private fun Blob.asDokumentVariant() =
         DokumentVariant(of(contentType), getEncoder().encodeToString(getContent()))
 }
