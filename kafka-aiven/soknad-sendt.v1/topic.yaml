@@ -1,6 +1,8 @@
 apiVersion: kafka.nais.io/v1
 kind: Topic
 metadata:
+  annotations:
+    kafka.nais.io/removeDataWhenResourceIsDeleted: "true"
   name: aap-soknad-sendt.v1
   namespace: aap
   labels:
