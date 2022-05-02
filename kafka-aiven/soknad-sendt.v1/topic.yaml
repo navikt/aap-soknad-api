@@ -3,7 +3,7 @@ kind: Topic
 metadata:
   annotations:
     kafka.nais.io/removeDataWhenResourceIsDeleted: "true"
-  name: aap-soknad-sendt.v1
+  name: aap-utland-soknad-sendt.v1
   namespace: aap
   labels:
     team: aap
