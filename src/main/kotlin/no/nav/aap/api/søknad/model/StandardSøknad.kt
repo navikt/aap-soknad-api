@@ -15,7 +15,7 @@ import java.util.*
 
 data class StandardSøknad(
         val type: SøkerType = STANDARD,
-        val startdato: LocalDate,
+        val startdato: Startdato,
         val ferie: Ferie,
         val medlemsskap: Medlemskap,
         val behandlere: List<Behandler>,
@@ -27,6 +27,10 @@ data class StandardSøknad(
 
     fun toEncodedJson(mapper: ObjectMapper) = Base64.getEncoder()
         .encodeToString(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this).toByteArray())
+}
+
+data class Startdato(val fom: LocalDate,val hvorfor: HvorforTilbake?, val beskrivelse: String?) {
+    enum class HvorforTilbake { HELSE,FEILINFO }
 }
 
 data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
