@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient
 
 
 @Configuration
-class PdfGeneratorkClientConfig {
+class PDFGeneratorClientConfig {
     @Qualifier(PDFGEN)
     @Bean
     fun webClientPdfGen(builder: WebClient.Builder, cfg: PDFGeneratorConfig) =

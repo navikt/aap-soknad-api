@@ -19,12 +19,13 @@ internal class StandardSøknadRouter(private val joark: JoarkRouter,
                                     private val vl: StandardSøknadVLRouter) {
 
     fun route(søknad: StandardSøknad) =
-        with(pdl.søkerMedBarn()) {
-            val res = joark.route(søknad, this)
-            if (vlRouter.shouldRoute(søknad)){
-                vl.route(søknad, this, res.second)
+        with(pdl.søkerMedBarn())  outer@ {
+            with(joark.route(søknad, this))  {
+                if (vlRouter.shouldRoute(søknad)){
+                    vl.route(søknad, this@outer, second)
+                }
+                dittnav.opprettBeskjed(fødselsnummer,STANDARD)
+                Kvittering(fromCurrentRequestUri().replacePath("${BASEPATH}/les/${first}").build().toUri())
             }
-            dittnav.opprettBeskjed(this.fødselsnummer,STANDARD)
-            Kvittering(fromCurrentRequestUri().replacePath("${BASEPATH}/les/${res.first}").build().toUri())
         }
 }
