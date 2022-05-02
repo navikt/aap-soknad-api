@@ -7,6 +7,9 @@ import no.nav.aap.api.config.Counters.TAG_LAND
 import no.nav.aap.api.config.Counters.TAG_VARIGHET
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorWebClientAdapter.UtlandData
+import no.nav.aap.api.søknad.model.Søker
+import no.nav.aap.api.søknad.model.UtlandSøknad
+import no.nav.aap.joark.JoarkResponse
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
@@ -22,12 +25,14 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 class UtlandSøknadVLRouter(private val router: KafkaOperations<String, UtlandData>,
                            @Value("#{'\${utenlands.topic:aap.utland-soknad-sendt.v1}'}") private val søknadTopic: String) {
 
-    fun route(søknad: UtlandData) =
-        router.send(ProducerRecord(søknadTopic, søknad.fødselsnummer.fnr, søknad)
-            .apply {
+    fun route(søknad: UtlandSøknad,søker: Søker, dokumenter: JoarkResponse) =
+        with(UtlandData(søker,søknad)) {
+            router.send(ProducerRecord(søknadTopic, søker.fødselsnummer.fnr, this)
+                .apply {
                 headers().add(NAV_CALL_ID, callId().toByteArray())
             })
-            .addCallback(UtlandRouterCallback(søknad))
+            .addCallback(UtlandRouterCallback(this))
+        }
     override fun toString() = "$javaClass.simpleName [router=$router]"
 }
 

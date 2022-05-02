@@ -3,7 +3,6 @@ package no.nav.aap.api.søknad.routing.utland
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.dittnav.DittNavRouter
 import no.nav.aap.api.søknad.joark.JoarkRouter
-import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorWebClientAdapter.UtlandData
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.model.UtlandSøknad
@@ -19,12 +18,13 @@ class UtlandSøknadRouter(private val joark: JoarkRouter,
                          private val router: UtlandSøknadVLRouter) {
 
     fun route(søknad: UtlandSøknad) =
-        with(pdl.søkerUtenBarn()) {
-            val uuid = joark.route(søknad,this).first
-            if (vlRouter.shouldRoute(søknad)) {
-                router.route(UtlandData(this,søknad))
+        with(pdl.søkerUtenBarn())outer@ {
+            with(joark.route(søknad,this))  {
+                if (vlRouter.shouldRoute(søknad)) {
+                    router.route(søknad,this@outer,second)
+                }
+                dittnav.opprettBeskjed(fødselsnummer, UTLAND)
+                Kvittering("$first")
             }
-            dittnav.opprettBeskjed(this.fødselsnummer,UTLAND)
-            Kvittering("$uuid")
         }
 }

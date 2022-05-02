@@ -20,10 +20,10 @@ internal class StandardSøknadRouter(private val joark: JoarkRouter,
         with(pdl.søkerMedBarn())  outer@ {
             with(joark.route(søknad, this))  {
                 if (vlRouter.shouldRoute(søknad)){
-                    vl.route(søknad, this@outer, second)
+                    vl.route(søknad, this@outer,second)
                 }
                 dittnav.opprettBeskjed(fødselsnummer,STANDARD)
-                Kvittering("${first}")
+                Kvittering("$first")
             }
         }
 }
