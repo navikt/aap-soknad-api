@@ -20,7 +20,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
 class UtlandSøknadVLRouter(private val router: KafkaOperations<String, UtlandData>,
-                           @Value("#{'\${utenlands.topic:aap.aap-utland-soknad-sendt.v1}'}") private val søknadTopic: String) {
+                           @Value("#{'\${utenlands.topic:aap.utland-soknad-sendt.v1}'}") private val søknadTopic: String) {
 
     fun route(søknad: UtlandData) =
         router.send(ProducerRecord(søknadTopic, søknad.fødselsnummer.fnr, søknad)
