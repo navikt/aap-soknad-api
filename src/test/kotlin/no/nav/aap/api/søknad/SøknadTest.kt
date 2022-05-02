@@ -20,6 +20,8 @@ import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.RadioValg.NEI
 import no.nav.aap.api.søknad.model.RadioValg.VET_IKKE
 import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.model.Startdato
+import no.nav.aap.api.søknad.model.Startdato.HvorforTilbake.HELSE
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.SøkerType.STANDARD
 import no.nav.aap.api.søknad.model.Utbetaling
@@ -73,7 +75,7 @@ class SøknadTest {
 
     private fun standardSøknad() = StandardSøknad(
             STANDARD,
-            now(),
+            Startdato(now(),HELSE,"Noe annet"),
             Ferie(21),
             Medlemskap(true, true, false,
                     listOf(Utenlandsopphold(SE,
