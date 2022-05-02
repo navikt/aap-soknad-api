@@ -52,6 +52,7 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
 
     override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
         storage.get(bøtte, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))
+
     override fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
         storage.delete(of(bøtte, key(fnr, uuid)))
 }

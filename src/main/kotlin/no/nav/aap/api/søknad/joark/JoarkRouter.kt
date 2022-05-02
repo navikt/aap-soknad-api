@@ -35,51 +35,49 @@ class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFClient, pr
             Pair(lagrePdf(this,søker.fødselsnummer), joark.journalfør(journalpostFra(søknad, søker,asPDFVariant())) ?: throw IntegrationException("Kunne ikke journalføre søknad"))
         }.also { slettVedlegg(søknad,søker.fødselsnummer) }
 
-
-
     fun route(søknad: UtlandSøknad, søker: Søker) =
         with(pdf.generate(søker, søknad)) {
             Pair(lagrePdf(this, søker.fødselsnummer), joark.journalfør(journalpostFra(søknad, søker,asPDFVariant())) ?: throw IntegrationException("Kunne ikke journalføre søknad"))
         }
+
     private fun lagrePdf(bytes: ByteArray, fnr: Fødselsnummer) =
         lager.lagreDokument(fnr, bytes, APPLICATION_PDF_VALUE, "kvittering.pdf")
             .also { "Lagret pdf med uuid $it" }
 
-    private fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdfDokument: DokumentVariant) =
-        Journalpost(dokumenter = dokumenterFra(søknad, søker,pdfDokument),
+    private fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
+        Journalpost(dokumenter = dokumenterFra(søknad, søker,pdfVariant),
                 tittel = STANDARD.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fødselsnummer,
                         navn = søker.navn.navn),
                 bruker = Bruker(søker.fødselsnummer))
             .also { log.trace("Journalpost er $it") }
 
-
-    private fun journalpostFra(søknad: UtlandSøknad, søker: Søker,pdfDokument: DokumentVariant)  =
-        Journalpost(dokumenter = dokumenterFra(søknad, søker,pdfDokument),
+    private fun journalpostFra(søknad: UtlandSøknad, søker: Søker,pdfVariant: DokumentVariant)  =
+        Journalpost(dokumenter = dokumenterFra(søknad, søker,pdfVariant),
                 tittel = UTLAND.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fødselsnummer,
                         navn = søker.navn.navn),
                 bruker = Bruker(søker.fødselsnummer))
             .also { log.trace("Journalpost er $it") }
 
-    private fun dokumenterFra(søknad: StandardSøknad, søker: Søker,pdfDokument: DokumentVariant) =
-        listOf(Dokument(STANDARD.tittel,
-                STANDARD.kode,
-                listOf(jsonDokument(søknad), pdfDokument)
+    private fun dokumenterFra(søknad: StandardSøknad, søker: Søker,pdfVariant: DokumentVariant) =
+        listOf(Dokument(STANDARD.tittel, STANDARD.kode,
+                listOf(asJsonVariant(søknad), pdfVariant)
                         + vedleggFor(søknad.utbetalinger?.stønadstyper, søker.fødselsnummer)
                         + vedleggFor(søknad.utbetalinger?.andreUtbetalinger, søker.fødselsnummer)
                     .also { log.trace("${it.size} dokumentvarianter ($it)") }))
             .also { log.trace("Dokument til JOARK $it") }
+
     private fun dokumenterFra(søknad: UtlandSøknad, søker: Søker,pdfDokument: DokumentVariant) =
-        listOf(Dokument(UTLAND.tittel,
-                UTLAND.kode,
-                listOf(jsonDokument(søknad),pdfDokument)
+        listOf(Dokument(UTLAND.tittel, UTLAND.kode,
+                listOf(asJsonVariant(søknad),pdfDokument)
                     .also { log.trace("${it.size} dokumentvarianter ($it)") }))
             .also { log.trace("Dokument til JOARK $it") }
-    private fun jsonDokument(søknad: StandardSøknad) =
+
+    private fun asJsonVariant(søknad: StandardSøknad) =
         DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL)
 
-    private fun jsonDokument(søknad: UtlandSøknad) =
+    private fun asJsonVariant(søknad: UtlandSøknad) =
         DokumentVariant(JSON, søknad.toEncodedJson(mapper), ORIGINAL)
 
     private fun vedleggFor(utbetalinger: List<VedleggAware>?, fnr: Fødselsnummer) =
@@ -90,13 +88,17 @@ class JoarkRouter(private val joark: JoarkClient, private val pdf: PDFClient, pr
             .orEmpty()
 
     private fun slettVedlegg(søknad: StandardSøknad, fnr: Fødselsnummer) {
-        slett(søknad.utbetalinger?.stønadstyper,fnr)
-        slett(søknad.utbetalinger?.andreUtbetalinger,fnr)
+        with(søknad.utbetalinger) {
+            slett(this?.stønadstyper,fnr)
+            slett(this?.andreUtbetalinger,fnr)
+        }
     }
+
     private fun slett(utbetalinger: List<VedleggAware>?, fnr: Fødselsnummer) =
         utbetalinger
             ?.mapNotNull { it.vedlegg }
             ?.forEach { lager.slettDokument(fnr, it) }
+
     private fun Blob.asDokumentVariant() =
         DokumentVariant(of(contentType), getEncoder().encodeToString(getContent()))
 }

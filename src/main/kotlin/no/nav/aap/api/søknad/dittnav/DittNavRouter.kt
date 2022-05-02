@@ -46,8 +46,10 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
              .withPrefererteKanaler()
              .withSmsVarslingstekst("SMS fra NAV") */
             .build()
+
     private fun replaceWith(replacement: String) =
         fromCurrentRequestUri().replacePath(replacement).build().toUri().toURL()
+
     private fun keyFra(fnr: Fødselsnummer, grupperingsId: String) =
         NokkelInputBuilder()
             .withFodselsnummer(fnr.fnr)
@@ -62,6 +64,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
             log.info("Sendte melding  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
         }
+
         override fun onFailure(e: Throwable) {
             log.warn("Kunne ikke sende melding  med id ${key.getEventId()}", e)
         }

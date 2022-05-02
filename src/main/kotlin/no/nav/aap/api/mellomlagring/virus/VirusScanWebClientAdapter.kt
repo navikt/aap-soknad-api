@@ -36,6 +36,7 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
             FOUND -> true
         }
     }
+
     private fun skalIkkeScanne(bytes: ByteArray, cf: VirusScanConfig) = bytes.isEmpty() || !cf.isEnabled
 }
 

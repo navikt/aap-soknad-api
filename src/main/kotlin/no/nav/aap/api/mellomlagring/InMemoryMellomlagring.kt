@@ -12,6 +12,7 @@ class InMemoryMellomlagring : Mellomlager {
 
     override fun les(fnr: Fødselsnummer, type: SkjemaType) =
         store[key(fnr, type)]
+
     override fun slett(fnr: Fødselsnummer, type: SkjemaType) =
         store.remove(key(fnr, type)) != null
 }

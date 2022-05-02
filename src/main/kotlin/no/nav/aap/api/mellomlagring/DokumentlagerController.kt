@@ -35,6 +35,7 @@ internal class DokumentlagerController(private val lager: Dokumentlager, private
     @ResponseStatus(CREATED)
     fun lagreDokument(@RequestPart("vedlegg") vedlegg: MultipartFile) =
         lager.lagreDokument(ctx.getFnr(), vedlegg)
+
     @GetMapping("/les/{uuid}")
     fun lesDokument(@PathVariable uuid: UUID) =
         lager.lesDokument(ctx.getFnr(), uuid)

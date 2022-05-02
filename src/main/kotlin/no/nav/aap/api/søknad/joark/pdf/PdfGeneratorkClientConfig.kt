@@ -4,7 +4,6 @@ import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorConfig.Companion.PDFGEN
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.env.Environment
 import org.springframework.web.reactive.function.client.WebClient
 
 
@@ -12,7 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient
 class PdfGeneratorkClientConfig {
     @Qualifier(PDFGEN)
     @Bean
-    fun webClientPdfGen(builder: WebClient.Builder, cfg: PDFGeneratorConfig, env: Environment) =
+    fun webClientPdfGen(builder: WebClient.Builder, cfg: PDFGeneratorConfig) =
         builder
             .codecs { c -> c.defaultCodecs().maxInMemorySize(50 * 1024 * 1024) }
             .baseUrl("${cfg.baseUri}")

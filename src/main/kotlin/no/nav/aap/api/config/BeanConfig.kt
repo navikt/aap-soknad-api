@@ -42,8 +42,10 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b ->
         b.modules(ProblemModule(), JavaTimeModule(), TokenXJacksonModule(), KotlinModule.Builder().build())
     }
+
     @Bean
     fun authContext(h: TokenValidationContextHolder) = AuthContext(h)
+
     @Bean
     fun openAPI(p: BuildProperties) =
         OpenAPI()
@@ -59,15 +61,18 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                         SecurityScheme().type(HTTP).
                         scheme("bearer")
                             .bearerFormat("JWT")))
+
     @Bean
     fun configMatcher() =
         object : ClientConfigurationPropertiesMatcher {}
+
     @Bean
     @Order(HIGHEST_PRECEDENCE + 2)
     fun tokenXFilterFunction(configs: ClientConfigurationProperties,
                              service: OAuth2AccessTokenService,
                              matcher: ClientConfigurationPropertiesMatcher,
                              ctx: AuthContext) = TokenXFilterFunction(configs, service, matcher, ctx)
+
     @Bean
     fun startupInfoContributor(ctx: ApplicationContext) = StartupInfoContributor(ctx)
 
@@ -78,12 +83,14 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                 urlPatterns = listOf("/*")
                 setOrder(HIGHEST_PRECEDENCE)
             }
+
     @Bean
     fun webClientCustomizer(env: Environment) =
         WebClientCustomizer { b ->
             b.clientConnector(ReactorClientHttpConnector(client(env)))
                 .filter(correlatingFilterFunction(applicationName))
         }
+
     private fun client(env: Environment) =
         if (isDevOrLocal(env))
             HttpClient.create().wiretap(javaClass.canonicalName, TRACE, TEXTUAL)
