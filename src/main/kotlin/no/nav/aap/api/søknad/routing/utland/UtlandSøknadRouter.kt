@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.routing.utland
 
-import no.nav.aap.api.mellomlagring.DokumentlagerController.Companion.BASEPATH
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.dittnav.DittNavRouter
 import no.nav.aap.api.søknad.joark.JoarkRouter
@@ -11,7 +10,6 @@ import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.api.søknad.routing.UtlandSøknadVLRouter
 import no.nav.aap.api.søknad.routing.VLRouter
 import org.springframework.stereotype.Component
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 
 @Component
 class UtlandSøknadRouter(private val joark: JoarkRouter,
@@ -27,6 +25,6 @@ class UtlandSøknadRouter(private val joark: JoarkRouter,
                 router.route(UtlandData(this,søknad))
             }
             dittnav.opprettBeskjed(this.fødselsnummer,UTLAND)
-            Kvittering(fromCurrentRequestUri().replacePath("${BASEPATH}/les/$uuid").build().toUri())
+            Kvittering("$uuid")
         }
 }

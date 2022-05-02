@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.routing.standard
 
-import no.nav.aap.api.mellomlagring.DokumentlagerController.Companion.BASEPATH
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.dittnav.DittNavRouter
 import no.nav.aap.api.søknad.joark.JoarkRouter
@@ -9,7 +8,6 @@ import no.nav.aap.api.søknad.model.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.routing.VLRouter
 import org.springframework.stereotype.Component
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 
 @Component
 internal class StandardSøknadRouter(private val joark: JoarkRouter,
@@ -25,7 +23,7 @@ internal class StandardSøknadRouter(private val joark: JoarkRouter,
                     vl.route(søknad, this@outer, second)
                 }
                 dittnav.opprettBeskjed(fødselsnummer,STANDARD)
-                Kvittering(fromCurrentRequestUri().replacePath("${BASEPATH}/les/${first}").build().toUri())
+                Kvittering("${first}")
             }
         }
 }
