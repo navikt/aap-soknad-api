@@ -14,7 +14,6 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.env.Environment
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
@@ -27,7 +26,7 @@ class PDLClientBeanConfig {
 
     @Bean
     @Qualifier(PDL_SYSTEM)
-    fun pdlSystemWebClient(env: Environment, cfg: PDLConfig, builder: Builder, @Qualifier(PDL_SYSTEM) aadPDLFilterFunction: ExchangeFilterFunction) =
+    fun pdlSystemWebClient(cfg: PDLConfig, builder: Builder, @Qualifier(PDL_SYSTEM) aadPDLFilterFunction: ExchangeFilterFunction) =
         builder
             .baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
