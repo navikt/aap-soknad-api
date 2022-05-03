@@ -2,6 +2,7 @@ package no.nav.aap.api.oppslag.pdl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
+import no.nav.aap.api.oppslag.pdl.PDLConfig.Companion.PDL_CREDENTIALS
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
@@ -11,7 +12,6 @@ import no.nav.aap.util.StringExtensions.asBearer
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
@@ -27,25 +27,22 @@ class PDLClientBeanConfig {
 
     @Bean
     @Qualifier(PDL_SYSTEM)
-    fun webClientPDLSystem(env: Environment,
-                           @Value("\${pdl.base-uri}") baseUri: String,
-                           builder: Builder,
-                           @Qualifier(PDL_SYSTEM) aadPDLFilterFunction: ExchangeFilterFunction) =
+    fun pdlSystemWebClient(env: Environment, cfg: PDLConfig, builder: Builder, @Qualifier(PDL_SYSTEM) aadPDLFilterFunction: ExchangeFilterFunction) =
         builder
-            .baseUrl(baseUri)
+            .baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
             .filter(aadPDLFilterFunction)
             .build()
 
     @Bean
     @Qualifier(PDL_SYSTEM)
-    fun aadPDLClientCredentialFilterFunction(cfgs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
+    fun aadPdlClientCredentialFilterFunction(cfgs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
         ExchangeFilterFunction { req, next ->
             next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.systemBearerToken(cfgs)).build())
         }
 
     private fun OAuth2AccessTokenService.systemBearerToken(cfgs: ClientConfigurationProperties) =
-        getAccessToken(cfgs.registration["client-credentials-pdl"]).accessToken.asBearer()
+        getAccessToken(cfgs.registration[PDL_CREDENTIALS]).accessToken.asBearer()
 
     @Qualifier(PDL_SYSTEM)
     @Bean
@@ -69,5 +66,4 @@ class PDLClientBeanConfig {
     @Bean
     fun pdlHealthIndicator(a: PDLWebClientAdapter) =
         object : AbstractPingableHealthIndicator(a) {}
-
 }

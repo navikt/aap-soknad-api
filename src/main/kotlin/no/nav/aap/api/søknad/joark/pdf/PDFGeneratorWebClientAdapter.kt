@@ -6,7 +6,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorConfig.Companion.PDFGEN
+import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorConfig.Companion.PDF
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
@@ -20,7 +20,7 @@ import java.time.LocalDate
 import java.time.LocalDate.now
 
 @Component
-class PDFGeneratorWebClientAdapter(@Qualifier(PDFGEN) client: WebClient, private val cf: PDFGeneratorConfig, private val mapper: ObjectMapper) : AbstractWebClientAdapter(client, cf) {
+class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient, private val cf: PDFGeneratorConfig, private val mapper: ObjectMapper) : AbstractWebClientAdapter(client, cf) {
     fun generate(søker: Søker, søknad: StandardSøknad) = generate(cf.standardPath,StandardData(søker, søknad))
     fun generate(søker: Søker, søknad: UtlandSøknad) = generate(cf.utlandPath,UtlandData(søker, søknad))
     private fun generate(path: String,data: Any) =

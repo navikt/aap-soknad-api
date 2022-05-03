@@ -50,11 +50,11 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
     private fun replaceWith(replacement: String) =
         fromCurrentRequestUri().replacePath(replacement).build().toUri().toURL()
 
-    private fun keyFra(fnr: Fødselsnummer, grupperingsId: String) =
+    private fun keyFra(fnr: Fødselsnummer, grupperingId: String) =
         NokkelInputBuilder()
             .withFodselsnummer(fnr.fnr)
             .withEventId("${UUID.randomUUID()}")
-            .withGrupperingsId(grupperingsId)
+            .withGrupperingsId(grupperingId)
             .withAppnavn(env.getRequiredProperty("nais.app.name"))
             .withNamespace(env.getRequiredProperty("nais.namespace"))
             .build()
