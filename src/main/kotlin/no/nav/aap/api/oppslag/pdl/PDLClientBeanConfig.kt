@@ -26,9 +26,8 @@ class PDLClientBeanConfig {
 
     @Bean
     @Qualifier(PDL_SYSTEM)
-    fun pdlSystemWebClient(cfg: PDLConfig, builder: Builder, @Qualifier(PDL_SYSTEM) aadPDLFilterFunction: ExchangeFilterFunction) =
-        builder
-            .baseUrl("${cfg.baseUri}")
+    fun pdlSystemWebClient(b: Builder, cfg: PDLConfig, @Qualifier(PDL_SYSTEM) aadPDLFilterFunction: ExchangeFilterFunction) =
+        b.baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
             .filter(aadPDLFilterFunction)
             .build()
@@ -45,21 +44,20 @@ class PDLClientBeanConfig {
 
     @Qualifier(PDL_SYSTEM)
     @Bean
-    fun graphQlSystemWebClient(@Qualifier(PDL_SYSTEM) client: WebClient, mapper: ObjectMapper): GraphQLWebClient =
+    fun graphQlSystemWebClient(@Qualifier(PDL_SYSTEM) client: WebClient, mapper: ObjectMapper)  =
         GraphQLWebClient.newInstance(client, mapper)
 
     @Qualifier(PDL_USER)
     @Bean
-    fun pdlUserWebClient(builder: Builder, cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction) =
-        builder
-            .baseUrl("${cfg.baseUri}")
+    fun pdlUserWebClient(b: Builder, cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction) =
+        b.baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
             .filter(tokenXFilterFunction)
             .build()
 
     @Qualifier(PDL_USER)
     @Bean
-    fun graphQlUserWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper): GraphQLWebClient =
+    fun graphQlUserWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper) =
         GraphQLWebClient.newInstance(client, mapper)
 
     @Bean

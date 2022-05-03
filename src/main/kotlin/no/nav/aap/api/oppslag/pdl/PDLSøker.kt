@@ -19,29 +19,18 @@ data class PDLWrappedSøker(val navn: Set<PDLNavn>,
             } ?: emptyList())
 }
 
-data class PDLNavn(val fornavn: String,
-                   val mellomnavn: String?,
-                   val etternavn: String)
+data class PDLNavn(val fornavn: String, val mellomnavn: String?, val etternavn: String)
 
-data class PDLSøker(val navn: PDLNavn,
-                    val fødsel: PDLFødsel?,
-                    val vegadresse: PDLVegadresse?,
-                    val forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) {
+data class PDLSøker(val navn: PDLNavn, val fødsel: PDLFødsel?, val vegadresse: PDLVegadresse?, val forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) {
 
-    data class PDLForelderBarnRelasjon(val relatertPersonsIdent: String,
-                                       val relatertPersonsrolle: PDLRelasjonsRolle,
-                                       val minRolleForPerson: PDLRelasjonsRolle) {
+    data class PDLForelderBarnRelasjon(val relatertPersonsIdent: String, val relatertPersonsrolle: PDLRelasjonsRolle, val minRolleForPerson: PDLRelasjonsRolle) {
         enum class PDLRelasjonsRolle { BARN, MOR, FAR, MEDMOR }
     }
 
     data class PDLFødsel(@JsonProperty("foedselsdato") val fødselsdato: LocalDate?)
 
     data class PDLBostedadresse(val vegadresse: PDLVegadresse) {
-
-        data class PDLVegadresse(val adressenavn: String,
-                                 val husbokstav: String?,
-                                 val husnummer: String?,
-                                 val postnummer: String)
+        data class PDLVegadresse(val adressenavn: String, val husbokstav: String?, val husnummer: String?, val postnummer: String)
     }
 }
 
