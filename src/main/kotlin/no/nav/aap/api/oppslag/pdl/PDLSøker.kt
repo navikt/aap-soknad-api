@@ -14,7 +14,8 @@ data class PDLWrappedSøker(val navn: Set<PDLNavn>,
                            val bostedsadresse: List<PDLBostedadresse>,
                            val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon>?) {
     val active = PDLSøker(navn.first(), fødsel.firstOrNull(), bostedsadresse.firstOrNull()?.vegadresse,
-            forelderBarnRelasjon?.filter {
+            forelderBarnRelasjon?.
+            filter {
                 it.relatertPersonsrolle == BARN
             } ?: emptyList())
 }

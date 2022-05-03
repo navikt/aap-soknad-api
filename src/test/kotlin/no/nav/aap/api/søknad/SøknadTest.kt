@@ -11,7 +11,6 @@ import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.oppslag.behandler.Behandler.BehandlerType.FASTLEGE
 import no.nav.aap.api.oppslag.behandler.Behandler.KontaktInformasjon
 import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorWebClientAdapter.StandardData
-import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorWebClientAdapter.UtlandData
 import no.nav.aap.api.søknad.model.Barn
 import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Ferie
@@ -29,7 +28,6 @@ import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønad
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.FOSTERHJEMSGODTGJØRELSE
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenUtbetaling
 import no.nav.aap.api.søknad.model.Utenlandsopphold
-import no.nav.aap.api.søknad.model.UtlandSøknad
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,17 +44,13 @@ class SøknadTest {
     @Autowired
     lateinit var std: JacksonTester<StandardData>
     @Autowired
-    lateinit var u: JacksonTester<UtlandData>
+    lateinit var pm: JacksonTester<Periode>
     @Test
     fun ferie(){
         assertThat(Ferie().valgt).isEqualTo(VET_IKKE)
         assertThat(Ferie(20).valgt).isEqualTo(JA)
         assertThat(Ferie(0).valgt).isEqualTo(NEI)
         assertThat(Ferie(Periode(now(),now().plusDays(1))).valgt).isEqualTo(JA)
-    }
-    @Test
-    fun pdf(){
-        println(u.write(UtlandData(søker(), UtlandSøknad(SE, Periode(now(),now().plusDays(1))))).json)
     }
 
     private fun søker(): Søker {

@@ -16,9 +16,8 @@ class KRRClientBeanConfig {
 
     @Qualifier(KRR)
     @Bean
-    fun krrWebClient(builder: Builder, cfg: KRRConfig, tokenXFilterFunction: TokenXFilterFunction, ctx: AuthContext) =
-        builder
-            .baseUrl("${cfg.baseUri}")
+    fun krrWebClient(b: Builder, cfg: KRRConfig, tokenXFilterFunction: TokenXFilterFunction, ctx: AuthContext) =
+        b.baseUrl("${cfg.baseUri}")
             .filter(generellFilterFunction(NAV_PERSON_IDENT) { ctx.getSubject() ?: "Unauthenticated" })
             .filter(tokenXFilterFunction)
             .build()

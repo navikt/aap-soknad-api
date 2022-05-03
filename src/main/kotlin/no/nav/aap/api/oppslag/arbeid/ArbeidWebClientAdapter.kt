@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
 class ArbeidWebClientAdapter(
@@ -18,9 +19,8 @@ class ArbeidWebClientAdapter(
             .uri(cf::arbeidsforholdURI)
             .accept(APPLICATION_JSON)
             .retrieve()
-            .bodyToFlux(ArbeidsforholdDTO::class.java)
+            .bodyToMono<List<ArbeidsforholdDTO>>()
             .doOnError { t: Throwable -> log.warn("Arbeidsforhold oppslag feilet", t) }
-            .collectList()
             .doOnSuccess { log.trace("Arbeidsforhold er $it") }
             .block()
 
