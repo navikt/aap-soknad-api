@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad.model
 
-import no.nav.aap.api.oppslag.arbeidsforhold.Arbeidsforhold
+import no.nav.aap.api.oppslag.arbeid.Arbeidsforhold
 import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.oppslag.krr.KontaktinformasjonDTO
 

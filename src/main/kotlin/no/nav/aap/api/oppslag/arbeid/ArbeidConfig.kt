@@ -1,6 +1,6 @@
-package no.nav.aap.api.oppslag.arbeidsforhold
+package no.nav.aap.api.oppslag.arbeid
 
-import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidConfig.Companion.ARBEIDSFORHOLD
+import no.nav.aap.api.oppslag.arbeid.ArbeidConfig.Companion.ARBEID
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -14,7 +14,7 @@ import java.time.Period
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 
 
-@ConfigurationProperties(ARBEIDSFORHOLD)
+@ConfigurationProperties(ARBEID)
 @ConstructorBinding
 class ArbeidConfig(baseUri: URI,
                    @DefaultValue(PATH) private val path: String,
@@ -36,7 +36,7 @@ class ArbeidConfig(baseUri: URI,
 
     companion object {
         const val PINGPATH = "internal/isAlive"
-        const val ARBEIDSFORHOLD = "arbeidsforhold"
+        const val ARBEID = "arbeidsforhold"
         const val PATH = "api/v1/arbeidstaker/arbeidsforhold"
         const val FOM = "ansettelsesperiodeFom"
         const val FEMÅR = "5y"

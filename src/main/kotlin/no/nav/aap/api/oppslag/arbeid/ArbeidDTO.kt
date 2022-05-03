@@ -1,4 +1,4 @@
-package no.nav.aap.api.oppslag.arbeidsforhold
+package no.nav.aap.api.oppslag.arbeid
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import no.nav.aap.api.felles.OrgNummer

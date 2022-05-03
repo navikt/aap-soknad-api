@@ -1,7 +1,7 @@
-package no.nav.aap.api.oppslag.arbeidsforhold
+package no.nav.aap.api.oppslag.arbeid
 
 import no.nav.aap.api.felles.OrgNummer
-import no.nav.aap.api.oppslag.arbeidsforhold.OrganisasjonConfig.Companion.ORGANISASJON
+import no.nav.aap.api.oppslag.arbeid.OrganisasjonConfig.Companion.ORGANISASJON
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.apache.commons.lang3.StringUtils.capitalize
 import org.springframework.beans.factory.annotation.Qualifier

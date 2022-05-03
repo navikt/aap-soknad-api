@@ -24,7 +24,7 @@ internal class VirusScanBeanConfg {
         object : AbstractPingableHealthIndicator(a) {}
 }
 
-@ConfigurationProperties(prefix = "virus")
+@ConfigurationProperties(VIRUS)
 @ConstructorBinding
 data class VirusScanConfig(@DefaultValue(BASE_URI) val uri: URI,
                            @DefaultValue("true") val enabled: Boolean) : AbstractRestConfig(uri, "/",enabled) {

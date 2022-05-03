@@ -1,4 +1,4 @@
-package no.nav.aap.api.oppslag.arbeidsforhold
+package no.nav.aap.api.oppslag.arbeid
 
 import org.springframework.stereotype.Component
 

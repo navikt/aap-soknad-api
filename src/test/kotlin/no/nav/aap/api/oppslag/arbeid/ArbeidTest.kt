@@ -1,12 +1,11 @@
-package no.nav.aap.api.oppslag.arbeidsforhold
+package no.nav.aap.api.oppslag.arbeid
 
-import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.api.felles.Periode
-import no.nav.aap.api.oppslag.arbeidsforhold.ArbeidsgiverType.Organisasjon
+import no.nav.aap.api.oppslag.arbeid.ArbeidsgiverType.Organisasjon
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
