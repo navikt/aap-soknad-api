@@ -1,8 +1,8 @@
 package no.nav.aap.api.søknad.routing
 
 
-import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorWebClientAdapter.UtlandData
 import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.model.UtlandSøknad
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.KafkaTemplate
@@ -14,5 +14,5 @@ class RoutingBeanConfig {
    @Bean
     fun standardSøknadTemplate(pf: ProducerFactory<String, StandardSøknad>) = KafkaTemplate(pf)
     @Bean
-    fun utenlandsSøknadTemplate(pf: ProducerFactory<String, UtlandData>) = KafkaTemplate(pf)
+    fun utenlandsSøknadTemplate(pf: ProducerFactory<String, UtlandSøknad>) = KafkaTemplate(pf)
 }

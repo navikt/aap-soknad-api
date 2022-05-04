@@ -64,7 +64,7 @@ class SøknadTest {
 
     @Test
     fun søknad(){
-       println(json.write(standardSøknad()).json)
+       println(std.write(StandardData( søker(),standardSøknad())).json)
     }
 
     private fun standardSøknad() = StandardSøknad(
