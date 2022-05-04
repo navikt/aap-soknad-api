@@ -18,7 +18,7 @@
         <brukernotifikasjoner.version>2.5.1</brukernotifikasjoner.version>
         <conditionals.version>3.0.0</conditionals.version>
         <confluent.version>6.2.0</confluent.version>
-        <domain.version>0.0.74</domain.version>
+        <domain.version>0.0.77</domain.version>
         <gcp.version>0.173.0</gcp.version>
         <graphql.version>1.0.0</graphql.version>
         <i18n.version>1.29</i18n.version>

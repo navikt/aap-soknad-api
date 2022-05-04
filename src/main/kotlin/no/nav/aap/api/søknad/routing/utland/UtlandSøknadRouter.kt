@@ -1,10 +1,10 @@
 package no.nav.aap.api.søknad.routing.utland
 
+import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.dittnav.DittNavRouter
 import no.nav.aap.api.søknad.joark.JoarkRouter
 import no.nav.aap.api.søknad.model.Kvittering
-import no.nav.aap.api.søknad.model.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.api.søknad.routing.UtlandSøknadVLRouter
 import no.nav.aap.api.søknad.routing.VLRouter

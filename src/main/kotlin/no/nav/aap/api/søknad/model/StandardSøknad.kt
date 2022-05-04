@@ -10,8 +10,12 @@ import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.RadioValg.NEI
 import no.nav.aap.api.søknad.model.RadioValg.VET_IKKE
 import no.nav.aap.api.søknad.model.SøkerType.STANDARD
+import no.nav.aap.joark.DokumentVariant
+import no.nav.aap.joark.Filtype.JSON
+import no.nav.aap.joark.VariantFormat.ORIGINAL
+import no.nav.aap.util.StringExtensions.toEncodedJson
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 data class StandardSøknad(
         val type: SøkerType = STANDARD,
@@ -23,11 +27,13 @@ data class StandardSøknad(
         val utbetalinger: Utbetaling?,
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
         val andreBarn: List<BarnOgInntekt> = emptyList(),
-        val tilleggsopplysninger: String?) {
+        val tilleggsopplysninger: String?)  {
 
-    fun toEncodedJson(mapper: ObjectMapper) = Base64.getEncoder()
-        .encodeToString(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this).toByteArray())
+    fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, this.toEncodedJson(mapper), ORIGINAL)
+
 }
+
+
 
 data class Startdato(val fom: LocalDate,val hvorfor: HvorforTilbake?, val beskrivelse: String?) {
     enum class HvorforTilbake { HELSE,FEILINFO }

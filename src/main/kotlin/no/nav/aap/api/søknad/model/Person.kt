@@ -1,9 +1,12 @@
 package no.nav.aap.api.søknad.model
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import java.time.LocalDate
+import java.util.*
+import java.util.Base64.*
 
 data class Søker(val navn: Navn,
                  val fødselsnummer: Fødselsnummer,
