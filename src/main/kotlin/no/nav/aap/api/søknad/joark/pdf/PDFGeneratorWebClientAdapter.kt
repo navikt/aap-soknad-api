@@ -22,7 +22,7 @@ import java.time.LocalDate.now
 @Component
 class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient, private val cf: PDFGeneratorConfig, private val mapper: ObjectMapper) : AbstractWebClientAdapter(client, cf) {
     fun generate(søker: Søker, søknad: StandardSøknad) = generate(cf.standardPath,StandardData(søker, søknad))
-    fun generate(søker: Søker, søknad: UtlandSøknad) = generate(cf.utlandPath,UtlandData(søker, søknad))
+    fun generate(søker: Søker, søknad: UtlandSøknad) = generate(cf.utlandPath, UtlandData(søker, søknad))
     private fun generate(path: String,data: Any) =
         webClient.post()
             .uri { it.path(path).build() }
@@ -35,6 +35,6 @@ class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient, private va
             .block() ?: throw IntegrationException("O bytes i retur fra pdfgen, pussig")
     private data class StandardData(val søker: Søker, val søknad: StandardSøknad)
     private data class UtlandData  constructor(val fødselsnummer: Fødselsnummer, val landKode: CountryCode, val land: String, val navn: Navn?, val periode: Periode, val dato: LocalDate = now()) {
-        constructor(søker: Søker, søknad: UtlandSøknad) : this(søker.fødselsnummer,søknad.land,søknad.land.toLocale().displayName,søker.navn,søknad.periode)
+        internal constructor(søker: Søker, søknad: UtlandSøknad) : this(søker.fødselsnummer,søknad.land,søknad.land.toLocale().displayName,søker.navn,søknad.periode)
  }
 }
