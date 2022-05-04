@@ -1,10 +1,10 @@
 package no.nav.aap.api.søknad.routing.standard
 
+import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.dittnav.DittNavRouter
 import no.nav.aap.api.søknad.joark.JoarkRouter
 import no.nav.aap.api.søknad.model.Kvittering
-import no.nav.aap.api.søknad.model.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.routing.VLRouter
 import org.springframework.stereotype.Component
@@ -22,7 +22,7 @@ internal class StandardSøknadRouter(private val joark: JoarkRouter,
                 if (vlRouter.shouldRoute(søknad)){
                     vl.route(søknad, this@outer,second)
                 }
-                dittnav.opprettBeskjed(fødselsnummer,STANDARD)
+                dittnav.opprettBeskjed(fødselsnummer, STANDARD)
                 Kvittering("$first")
             }
         }

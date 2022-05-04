@@ -1,8 +1,8 @@
 package no.nav.aap.api.søknad.dittnav
 
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.dittnav.DittNavConfig.TopicConfig
-import no.nav.aap.api.søknad.model.SkjemaType
 import no.nav.aap.util.LoggerUtil
 import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
