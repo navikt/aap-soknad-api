@@ -6,15 +6,13 @@ import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.support.GenericApplicationContext
-import java.util.Map
 import java.util.function.Supplier
 class MockOAuth2ServerInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     override fun initialize(ctx: ConfigurableApplicationContext) {
         val server = registerMockOAuth2Server(ctx as GenericApplicationContext)
         val baseUrl = server.baseUrl().toString().replace("/$".toRegex(), "")
-        TestPropertyValues.of(Map.of(MOCK_OAUTH_2_SERVER_BASE_URL, baseUrl))
-            .applyTo(ctx)
+        TestPropertyValues.of(MOCK_OAUTH_2_SERVER_BASE_URL, baseUrl).applyTo(ctx)
     }
 
     private fun registerMockOAuth2Server(ctx: GenericApplicationContext): MockOAuth2Server =
