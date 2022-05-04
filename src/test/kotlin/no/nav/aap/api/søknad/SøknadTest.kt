@@ -10,7 +10,6 @@ import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.oppslag.behandler.Behandler.BehandlerType.FASTLEGE
 import no.nav.aap.api.oppslag.behandler.Behandler.KontaktInformasjon
-import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorWebClientAdapter.StandardData
 import no.nav.aap.api.søknad.model.Barn
 import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Ferie
@@ -42,8 +41,6 @@ class SøknadTest {
     @Autowired
     lateinit var json: JacksonTester<StandardSøknad>
     @Autowired
-    lateinit var std: JacksonTester<StandardData>
-    @Autowired
     lateinit var pm: JacksonTester<Periode>
     @Test
     fun ferie(){
@@ -62,10 +59,6 @@ class SøknadTest {
              Navn("Barn","B","Barnsben"), now())))
     }
 
-    @Test
-    fun søknad(){
-       println(std.write(StandardData( søker(),standardSøknad())).json)
-    }
 
     private fun standardSøknad() = StandardSøknad(
             STANDARD,
