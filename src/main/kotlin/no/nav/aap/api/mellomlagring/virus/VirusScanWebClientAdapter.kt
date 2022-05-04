@@ -4,7 +4,6 @@ import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.FOUND
 import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.OK
 import no.nav.aap.api.mellomlagring.virus.VirusScanConfig.Companion.VIRUS
 import no.nav.aap.rest.AbstractWebClientAdapter
-import org.aspectj.weaver.tools.cache.SimpleCacheFactory.path
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
