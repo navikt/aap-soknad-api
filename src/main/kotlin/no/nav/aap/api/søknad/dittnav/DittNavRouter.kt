@@ -16,7 +16,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
-import java.util.*
+import java.util.UUID
 
 @Service
 class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
@@ -31,7 +31,9 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 dittNav.send(ProducerRecord(cfg.topic, this, beskjed(cfg,type)))
                     .addCallback(DittNavCallback(this))
             }
-        } else{ }
+        }
+        else{
+        }
 
     private fun beskjed(cfg: TopicConfig, type: SkjemaType) =
         BeskjedInputBuilder()
