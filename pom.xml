@@ -32,7 +32,7 @@
         <problem.version>0.27.0</problem.version>
         <reactor.version>1.0.1.RELEASE</reactor.version>
         <revision>0.0.1-SNAPSHOT</revision>
-        <sonar.organization>navit</sonar.organization>
+        <sonar.organization>navikt</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.projectKey>navikt_aap-soeknad-api</sonar.projectKey>
         <springdoc.version>1.6.8</springdoc.version>
