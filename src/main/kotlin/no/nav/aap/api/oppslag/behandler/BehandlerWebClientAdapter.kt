@@ -2,13 +2,11 @@ package no.nav.aap.api.oppslag.behandler
 
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLER
 import no.nav.aap.rest.AbstractWebClientAdapter
-import org.apache.commons.lang3.StringUtils.capitalize
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import java.util.*
 
 @Component
 class BehandlerWebClientAdapter(
@@ -27,8 +25,6 @@ class BehandlerWebClientAdapter(
         ?.map { it.tilBehandler() }
         .orEmpty()
         .also { log.trace("Behandlere mappet er $it") }
-
-    override fun name() = capitalize(BEHANDLER.lowercase(Locale.getDefault()))
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cfg]"
 }

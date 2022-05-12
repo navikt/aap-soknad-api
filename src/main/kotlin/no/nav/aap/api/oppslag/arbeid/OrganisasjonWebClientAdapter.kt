@@ -3,14 +3,12 @@ package no.nav.aap.api.oppslag.arbeid
 import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.api.oppslag.arbeid.OrganisasjonConfig.Companion.ORGANISASJON
 import no.nav.aap.rest.AbstractWebClientAdapter
-import org.apache.commons.lang3.StringUtils.capitalize
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import java.util.Locale.getDefault
 
 @Component
 class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON) val client: WebClient, private val cf: OrganisasjonConfig) :
@@ -31,6 +29,4 @@ class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON) val client: WebClien
             .block() ?: orgnr.orgnr
             .also { log.trace("Ereg orgnavn er $it") }
 
-
-    override fun name() = capitalize(ORGANISASJON.lowercase(getDefault()))
 }

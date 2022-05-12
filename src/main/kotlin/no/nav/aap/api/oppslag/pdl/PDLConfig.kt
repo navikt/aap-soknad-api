@@ -18,6 +18,6 @@ class PDLConfig(baseUri: URI,
     companion object {
         const val PDL_CREDENTIALS = "client-credentials-pdl"
         const val PDL = "pdl"
-        const val DEFAULT_PING_PATH = "/"
+        const val DEFAULT_PING_PATH = ""
     }
 }
