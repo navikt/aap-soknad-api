@@ -26,7 +26,7 @@ internal class VirusScanBeanConfg {
 @ConfigurationProperties(VIRUS)
 @ConstructorBinding
 data class VirusScanConfig(@DefaultValue(BASE_URI) val uri: URI,
-                           @DefaultValue("true") val enabled: Boolean) : AbstractRestConfig(uri, "/", VIRUS, enabled) {
+                           @DefaultValue("true") val enabled: Boolean) : AbstractRestConfig(uri, "", VIRUS, enabled) {
 
     companion object {
         const val VIRUS = "virus"
