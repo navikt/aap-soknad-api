@@ -13,7 +13,7 @@ class JoarkConfig(
         @DefaultValue("/joark/aad") val joarkPath: String,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
         @DefaultValue("true") enabled: Boolean,
-        baseUri: URI) : AbstractRestConfig(baseUri, pingPath, enabled) {
+        baseUri: URI) : AbstractRestConfig(baseUri, pingPath, JOARK, enabled) {
 
     override fun toString() =
         "${javaClass.simpleName} [pingPath=$pingPath,joarkPath=$joarkPath,enabled=$isEnabled,baseUri=$baseUri]"

@@ -11,7 +11,7 @@ import java.net.URI
 @ConstructorBinding
 class PDLConfig(baseUri: URI,
                 @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
-                @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
+                @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, PDL, enabled) {
 
     override fun toString() = "$javaClass.simpleName [baseUri=$baseUri, pingEndpoint=$pingEndpoint]"
 

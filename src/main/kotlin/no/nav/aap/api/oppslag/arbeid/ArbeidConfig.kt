@@ -13,7 +13,6 @@ import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 
-
 @ConfigurationProperties(ARBEID)
 @ConstructorBinding
 class ArbeidConfig(baseUri: URI,
@@ -22,7 +21,7 @@ class ArbeidConfig(baseUri: URI,
                    @DefaultValue(PINGPATH) pingPath: String,
                    @DefaultValue(FEMÅR) @PeriodFormat(SIMPLE) private val tidTilbake: Period,
                    @DefaultValue("false") val sporingsinformasjon: Boolean) :
-    AbstractRestConfig(baseUri, pingPath, enabled) {
+    AbstractRestConfig(baseUri, pingPath, ARBEID, enabled) {
 
     fun arbeidsforholdURI(b: UriBuilder) =
         b.path(path)

@@ -14,7 +14,7 @@ class PDFGeneratorConfig(
         @DefaultValue(UTLAND_PATH) val utlandPath: String,
         @DefaultValue(STANDARD_PATH) val standardPath: String,
         @DefaultValue("true") enabled: Boolean,
-        @DefaultValue(DEFAULT_BASE_URI) baseUri: URI) : AbstractRestConfig(baseUri, pingPath, enabled) {
+        @DefaultValue(DEFAULT_BASE_URI) baseUri: URI) : AbstractRestConfig(baseUri, pingPath, PDF, enabled) {
     companion object {
         const val PDF = "pdf"
         private const val DEFAULT_BASE_URI = "http://pdfgen"

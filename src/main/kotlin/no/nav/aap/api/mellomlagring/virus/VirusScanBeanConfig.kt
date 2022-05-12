@@ -16,7 +16,7 @@ import java.net.URI
 internal class VirusScanBeanConfg {
     @Bean
     @Qualifier(VIRUS)
-    fun webClientVirusScqn(b: Builder, cfg: VirusScanConfig)  = b.baseUrl("${cfg.baseUri}").build()
+    fun webClientVirusScqn(b: Builder, cfg: VirusScanConfig) = b.baseUrl("${cfg.baseUri}").build()
 
     @Bean
     fun virusHealthIndicator(a: VirusScanWebClientAdapter) =
@@ -26,7 +26,7 @@ internal class VirusScanBeanConfg {
 @ConfigurationProperties(VIRUS)
 @ConstructorBinding
 data class VirusScanConfig(@DefaultValue(BASE_URI) val uri: URI,
-                           @DefaultValue("true") val enabled: Boolean) : AbstractRestConfig(uri, "/",enabled) {
+                           @DefaultValue("true") val enabled: Boolean) : AbstractRestConfig(uri, "/", VIRUS, enabled) {
 
     companion object {
         const val VIRUS = "virus"

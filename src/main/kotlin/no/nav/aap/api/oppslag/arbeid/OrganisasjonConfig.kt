@@ -9,19 +9,18 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.web.util.UriBuilder
 import java.net.URI
 
-
 @ConfigurationProperties(ORGANISASJON)
 @ConstructorBinding
 class OrganisasjonConfig(baseUri: URI,
                          @DefaultValue(ORGPATH) private val organisasjonPath: String,
                          @DefaultValue(PINGPATH) pingPath: String,
-                         @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
+                         @DefaultValue("true") enabled: Boolean) :
+    AbstractRestConfig(baseUri, pingPath, ORGANISASJON, enabled) {
 
     fun orgURI(b: UriBuilder, orgnr: OrgNummer) =
         b.path(organisasjonPath)
             .queryParam("orgnummer", orgnr.orgnr)
             .build()
-
 
     override fun toString() =
         "$javaClass.simpleName [baseUri=$baseUri,  organisasjonPath=$organisasjonPath, pingEndpoint=$pingEndpoint]"

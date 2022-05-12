@@ -8,13 +8,12 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.web.util.UriBuilder
 import java.net.URI
 
-
 @ConfigurationProperties(KRR)
 @ConstructorBinding
 class KRRConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
                 @DefaultValue(PINGPATH) pingPath: String,
                 @DefaultValue(DEFAULT_PERSON_PATH) private val personPath: String,
-                @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, enabled) {
+                @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, KRR, enabled) {
 
     fun kontaktUri(b: UriBuilder) = b.path(personPath).build()
 
