@@ -22,31 +22,30 @@ import org.springframework.stereotype.Component
 import java.util.*
 import java.util.UUID.randomUUID
 
-
 @ConditionalOnGCP
 internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøtte: String,
                                 private val storage: Storage, private val scanner: VirusScanner) : Dokumentlager {
 
-    val lovligeTyper = setOf(APPLICATION_PDF_VALUE,IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE)
+    val lovligeTyper = setOf(APPLICATION_PDF_VALUE, IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE)
     val log = LoggerUtil.getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =
-       randomUUID().apply {
-           sjekkType(bytes, originalFilename,contentType)
-           scanner.scan(bytes,originalFilename)
-           storage.create(newBuilder(of(bøtte, key(fnr, this)))
-               .setContentType(contentType)
-               .setMetadata(mapOf(FILNAVN to originalFilename, FNR to fnr.fnr))
-               .build(), bytes)
-               .also { log.trace("Lagret $originalFilename med uuid $this") }
-       }
+        randomUUID().apply {
+            sjekkType(bytes, originalFilename, contentType)
+            scanner.scan(bytes, originalFilename)
+            storage.create(newBuilder(of(bøtte, key(fnr, this)))
+                .setContentType(contentType)
+                .setMetadata(mapOf(FILNAVN to originalFilename, FNR to fnr.fnr))
+                .build(), bytes)
+                .also { log.trace("Lagret $originalFilename med uuid $this") }
+        }
 
-    private fun sjekkType(bytes: ByteArray, contentType: String?,originalFilename: String?) {
+    private fun sjekkType(bytes: ByteArray, contentType: String?, originalFilename: String?) {
         with(Tika().detect(bytes)) {
             if (this != contentType) {
                 throw AttachmentException("Type $this matcher ikke oppgitt $contentType for $originalFilename")
             }
         }
-        if(!lovligeTyper.contains(contentType)) {
+        if (!lovligeTyper.contains(contentType)) {
             throw AttachmentException("Type $contentType er ikke blant $lovligeTyper for $originalFilename")
         }
     }
@@ -56,6 +55,7 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
 
     override fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
         storage.delete(of(bøtte, key(fnr, uuid)))
+
     @Component
     internal class TypeSjekker(@Value("#{\${mellomlager.types :{'application/pdf','image/jpeg','image/png'}}}")
                                private val lovligeTyper: Set<String>) {
@@ -70,3 +70,4 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
             }
         }
     }
+}
