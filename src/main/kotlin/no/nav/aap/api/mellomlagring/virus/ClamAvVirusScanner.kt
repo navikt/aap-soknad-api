@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 @Component
 class ClamAvVirusScanner(private val a: VirusScanWebClientAdapter) : VirusScanner {
     override fun scan(bytes: ByteArray, name: String?) =
-        when (a.harVirus(bytes, name).result) {
+        when (a.harVirus(bytes).result) {
             FOUND -> throw AttachmentException("Virus funnet i $name")
             NONE, OK -> Unit
         }

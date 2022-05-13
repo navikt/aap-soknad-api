@@ -15,17 +15,16 @@ import org.springframework.web.reactive.function.client.bodyToMono
 class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: VirusScanConfig) :
     AbstractWebClientAdapter(client, cf) {
     override fun ping() =
-        when (harVirus(PDF, "ping").result) {
+        when (harVirus(PDF).result) {
             NONE -> throw AttachmentException("Uventet ping respons ${NONE.name}")
             FOUND, OK -> Unit
         }
 
-    fun harVirus(bytes: ByteArray, name: String?): ScanResult {
+    fun harVirus(bytes: ByteArray): ScanResult {
         if (skalIkkeScanne(bytes, cf)) {
             log.trace("Ingen scanning av (${bytes.size} bytes, enabled=${cf.enabled})")
-            return ScanResult(name, NONE)
+            return ScanResult(NONE)
         }
-        log.trace("Scanner {}", name)
         return webClient
             .put()
             .bodyValue(bytes)
@@ -34,12 +33,12 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
             .bodyToMono<List<ScanResult>>()
             .doOnError { t: Throwable -> log.warn("Virus-respons feilet, antar likevel OK", t) }
             .doOnSuccess { log.trace("Virus respons OK") }
-            .onErrorReturn(listOf(ScanResult(name, NONE)))
-            .defaultIfEmpty(listOf(ScanResult(name, NONE)))
+            .onErrorReturn(listOf(ScanResult(NONE)))
+            .defaultIfEmpty(listOf(ScanResult(NONE)))
             .block()
             ?.single()
             .also { log.trace("Fikk scan result $it") }
-            ?: ScanResult(name, NONE)
+            ?: ScanResult(NONE)
     }
 
     private fun skalIkkeScanne(bytes: ByteArray, cf: VirusScanConfig) = bytes.isEmpty() || !cf.isEnabled
@@ -50,7 +49,7 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
 }
 
 class AttachmentException(msg: String?) : RuntimeException(msg)
-data class ScanResult(val filename: String? = null, val result: Result) {
+data class ScanResult(val result: Result) {
     enum class Result {
         FOUND,
         OK,
