@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
+import org.springframework.stereotype.Component
 import java.util.*
 import java.util.UUID.randomUUID
 
@@ -55,4 +56,17 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
 
     override fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
         storage.delete(of(bøtte, key(fnr, uuid)))
-}
+    @Component
+    internal class TypeSjekker(@Value("#{\${mellomlager.types :{'application/pdf','image/jpeg','image/png'}}}")
+                               private val lovligeTyper: Set<String>) {
+        private fun sjekkType(bytes: ByteArray, contentType: String?, originalFilename: String?) {
+            with(Tika().detect(bytes)) {
+                if (this != contentType) {
+                    throw AttachmentException("Type $this matcher ikke oppgitt $contentType for $originalFilename")
+                }
+            }
+            if (!lovligeTyper.contains(contentType)) {
+                throw AttachmentException("Type $contentType er ikke blant $lovligeTyper for $originalFilename")
+            }
+        }
+    }
