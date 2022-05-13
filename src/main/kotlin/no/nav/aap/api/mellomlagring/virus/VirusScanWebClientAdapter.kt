@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: VirusScanConfig) :
     AbstractWebClientAdapter(client, cf) {
     override fun ping() {
+        log.trace("pinger")
         if (harVirus(byteArrayOf(0x25, 0x50, 0x44, 0x46, 0x2D), "ping")) {
             log.trace("ping feilet")
             throw AttachmentException("Virus ble funnet")
