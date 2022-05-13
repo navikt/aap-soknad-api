@@ -1,6 +1,7 @@
 package no.nav.aap.api.mellomlagring.virus
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import no.nav.aap.api.mellomlagring.virus.ScanResult.Companion.FEIL
 import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.FOUND
 import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.NONE
 import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.OK
@@ -23,8 +24,9 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
 
     fun harVirus(bytes: ByteArray): ScanResult {
         if (skalIkkeScanne(bytes, cf)) {
-            log.trace("Ingen scanning av (${bytes.size} bytes, enabled=${cf.enabled})")
-            return ScanResult(NONE)
+            return ScanResult(NONE).also {
+                log.trace("Ingen scanning av (${bytes.size} bytes, enabled=${cf.enabled})")
+            }
         }
         return webClient
             .put()
@@ -32,10 +34,10 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono<List<ScanResult>>()
-            .doOnError { t: Throwable -> log.warn("Virus-respons feilet, antar likevel OK", t) }
+            .doOnError { t: Throwable -> log.warn("Virus-respons feilet", t) }
             .doOnSuccess { log.trace("Virus respons OK") }
-            .onErrorReturn(listOf(ScanResult(NONE)))
-            .defaultIfEmpty(listOf(ScanResult(NONE)))
+            .onErrorReturn(FEIL)
+            .defaultIfEmpty(FEIL)
             .block()
             ?.single()
             .also { log.trace("Fikk scan result $it") }
@@ -53,9 +55,14 @@ class AttachmentException(msg: String?) : RuntimeException(msg)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ScanResult(val result: Result) {
+
     enum class Result {
         FOUND,
         OK,
         NONE
+    }
+
+    companion object {
+        val FEIL = listOf(ScanResult(NONE))
     }
 }
