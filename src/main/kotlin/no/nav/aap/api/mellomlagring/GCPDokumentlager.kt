@@ -24,7 +24,9 @@ import java.util.UUID.randomUUID
 
 @ConditionalOnGCP
 internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøtte: String,
-                                private val storage: Storage, private val scanner: VirusScanner) : Dokumentlager {
+                                private val storage: Storage,
+                                private val scanner: VirusScanner,
+                                private val typeSjekker: TypeSjekker) : Dokumentlager {
 
     val lovligeTyper = setOf(APPLICATION_PDF_VALUE, IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE)
     val log = LoggerUtil.getLogger(javaClass)
@@ -59,6 +61,12 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
     @Component
     internal class TypeSjekker(@Value("#{\${mellomlager.types :{'application/pdf','image/jpeg','image/png'}}}")
                                private val lovligeTyper: Set<String>) {
+        val log = LoggerUtil.getLogger(javaClass)
+
+        init {
+            log.info("lovlige typer er $lovligeTyper")
+        }
+
         private fun sjekkType(bytes: ByteArray, contentType: String?, originalFilename: String?) {
             with(Tika().detect(bytes)) {
                 if (this != contentType) {
@@ -69,5 +77,7 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
                 throw AttachmentException("Type $contentType er ikke blant $lovligeTyper for $originalFilename")
             }
         }
+
+        override fun toString() = "TypeSjekker(lovligeTyper=$lovligeTyper)"
     }
 }
