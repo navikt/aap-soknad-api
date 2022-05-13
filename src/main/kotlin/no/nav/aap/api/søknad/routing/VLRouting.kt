@@ -5,7 +5,7 @@ import no.nav.aap.api.søknad.model.UtlandSøknad
 import org.springframework.stereotype.Component
 
 @Component
-class BlockingVLRouter : VLRouter {
+class SimpleVLRouter : VLRouter {
     override fun shouldRoute(søknad: StandardSøknad) = true
     override fun shouldRoute(søknad: UtlandSøknad) = false
 
