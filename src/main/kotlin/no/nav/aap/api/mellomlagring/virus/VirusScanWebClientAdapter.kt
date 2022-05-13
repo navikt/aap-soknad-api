@@ -1,5 +1,6 @@
 package no.nav.aap.api.mellomlagring.virus
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.FOUND
 import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.NONE
 import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.OK
@@ -49,6 +50,8 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
 }
 
 class AttachmentException(msg: String?) : RuntimeException(msg)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class ScanResult(val result: Result) {
     enum class Result {
         FOUND,
