@@ -15,9 +15,6 @@ import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.apache.tika.Tika
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
-import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
-import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.stereotype.Component
 import java.util.*
 import java.util.UUID.randomUUID
@@ -28,11 +25,10 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
                                 private val scanner: VirusScanner,
                                 private val typeSjekker: TypeSjekker) : Dokumentlager {
 
-    val lovligeTyper = setOf(APPLICATION_PDF_VALUE, IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE)
     val log = LoggerUtil.getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =
         randomUUID().apply {
-            sjekkType(bytes, originalFilename, contentType)
+            typeSjekker.sjekkType(bytes, originalFilename, contentType)
             scanner.scan(bytes, originalFilename)
             storage.create(newBuilder(of(bøtte, key(fnr, this)))
                 .setContentType(contentType)
@@ -40,17 +36,6 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
                 .build(), bytes)
                 .also { log.trace("Lagret $originalFilename med uuid $this") }
         }
-
-    private fun sjekkType(bytes: ByteArray, contentType: String?, originalFilename: String?) {
-        with(Tika().detect(bytes)) {
-            if (this != contentType) {
-                throw AttachmentException("Type $this matcher ikke oppgitt $contentType for $originalFilename")
-            }
-        }
-        if (!lovligeTyper.contains(contentType)) {
-            throw AttachmentException("Type $contentType er ikke blant $lovligeTyper for $originalFilename")
-        }
-    }
 
     override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
         storage.get(bøtte, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))
@@ -60,24 +45,21 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
 
     @Component
     internal class TypeSjekker(@Value("#{\${mellomlager.types :{'application/pdf','image/jpeg','image/png'}}}")
-                               private val lovligeTyper: Set<String>) {
-        val log = LoggerUtil.getLogger(javaClass)
+                               private val contentTypes: Set<String>) {
 
-        init {
-            log.info("lovlige typer er $lovligeTyper")
-        }
-
-        private fun sjekkType(bytes: ByteArray, contentType: String?, originalFilename: String?) {
-            with(Tika().detect(bytes)) {
+        fun sjekkType(bytes: ByteArray, contentType: String?, originalFilename: String?) {
+            with(TIKA.detect(bytes)) {
                 if (this != contentType) {
                     throw AttachmentException("Type $this matcher ikke oppgitt $contentType for $originalFilename")
                 }
             }
-            if (!lovligeTyper.contains(contentType)) {
-                throw AttachmentException("Type $contentType er ikke blant $lovligeTyper for $originalFilename")
+            if (!contentTypes.contains(contentType)) {
+                throw AttachmentException("Type $contentType er ikke blant $contentTypes for $originalFilename")
             }
         }
+    }
 
-        override fun toString() = "TypeSjekker(lovligeTyper=$lovligeTyper)"
+    companion object {
+        private val TIKA = Tika()
     }
 }
