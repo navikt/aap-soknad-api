@@ -15,7 +15,8 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
     AbstractWebClientAdapter(client, cf) {
     override fun ping() {
         if (harVirus(byteArrayOf(0x25, 0x50, 0x44, 0x46, 0x2D), "ping")) {
-            throw AttachmentException("Virus ble funnet ")
+            log.trace("ping feilet")
+            throw AttachmentException("Virus ble funnet")
         }
         else {
             log.trace("ping OK")
