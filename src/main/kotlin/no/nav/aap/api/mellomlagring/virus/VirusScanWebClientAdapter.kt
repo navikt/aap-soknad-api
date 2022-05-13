@@ -1,6 +1,7 @@
 package no.nav.aap.api.mellomlagring.virus
 
 import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.FOUND
+import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.NONE
 import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.OK
 import no.nav.aap.api.mellomlagring.virus.VirusScanConfig.Companion.VIRUS
 import no.nav.aap.rest.AbstractWebClientAdapter
@@ -13,24 +14,19 @@ import org.springframework.web.reactive.function.client.bodyToMono
 @Component
 class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: VirusScanConfig) :
     AbstractWebClientAdapter(client, cf) {
-    override fun ping() {
-        log.trace("pinger")
-        if (harVirus(byteArrayOf(0x25, 0x50, 0x44, 0x46, 0x2D), "ping")) {
-            log.trace("ping feilet")
-            throw AttachmentException("Virus ble funnet")
+    override fun ping() =
+        when (harVirus(PDF, "ping").result) {
+            NONE -> throw AttachmentException("Uventet ping respons ${NONE.name}")
+            FOUND, OK -> Unit
         }
-        else {
-            log.trace("ping OK")
-        }
-    }
 
-    fun harVirus(bytes: ByteArray, name: String?): Boolean {
+    fun harVirus(bytes: ByteArray, name: String?): ScanResult {
         if (skalIkkeScanne(bytes, cf)) {
             log.trace("Ingen scanning av (${bytes.size} bytes, enabled=${cf.enabled})")
-            return false
+            return ScanResult(name, NONE)
         }
         log.trace("Scanner {}", name)
-        return when (webClient
+        return webClient
             .put()
             .bodyValue(bytes)
             .accept(APPLICATION_JSON)
@@ -38,24 +34,26 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
             .bodyToMono<List<ScanResult>>()
             .doOnError { t: Throwable -> log.warn("Virus-respons feilet, antar likevel OK", t) }
             .doOnSuccess { log.trace("Virus respons OK") }
-            .onErrorReturn(listOf(ScanResult(name, OK)))
-            .defaultIfEmpty(listOf(ScanResult(name, OK)))
+            .onErrorReturn(listOf(ScanResult(name, NONE)))
+            .defaultIfEmpty(listOf(ScanResult(name, NONE)))
             .block()
             ?.single()
             .also { log.trace("Fikk scan result $it") }
-            ?.result) {
-            OK, null -> false
-            FOUND -> true
-        }
+            ?: ScanResult(name, NONE)
     }
 
     private fun skalIkkeScanne(bytes: ByteArray, cf: VirusScanConfig) = bytes.isEmpty() || !cf.isEnabled
+
+    companion object {
+        private val PDF = byteArrayOf(0x25, 0x50, 0x44, 0x46, 0x2D)
+    }
 }
 
 class AttachmentException(msg: String?) : RuntimeException(msg)
-private data class ScanResult(val filename: String? = null, val result: Result) {
+data class ScanResult(val filename: String? = null, val result: Result) {
     enum class Result {
         FOUND,
-        OK
+        OK,
+        NONE
     }
 }
