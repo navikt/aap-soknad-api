@@ -21,7 +21,7 @@ import java.util.UUID.randomUUID
 
 @ConditionalOnGCP
 internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøtte: String,
-                                private val storage: Storage,
+                                private val lager: Storage,
                                 private val scanner: VirusScanner,
                                 private val typeSjekker: TypeSjekker) : Dokumentlager {
 
@@ -30,7 +30,7 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
         randomUUID().apply {
             typeSjekker.sjekkType(bytes, originalFilename, contentType)
             scanner.scan(bytes, originalFilename)
-            storage.create(newBuilder(of(bøtte, key(fnr, this)))
+            lager.create(newBuilder(of(bøtte, key(fnr, this)))
                 .setContentType(contentType)
                 .setMetadata(mapOf(FILNAVN to originalFilename, FNR to fnr.fnr))
                 .build(), bytes)
@@ -38,10 +38,10 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
         }
 
     override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
-        storage.get(bøtte, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))
+        lager.get(bøtte, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))
 
     override fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
-        storage.delete(of(bøtte, key(fnr, uuid)))
+        lager.delete(of(bøtte, key(fnr, uuid)))
 
     @Component
     internal class TypeSjekker(@Value("#{\${mellomlager.types :{'application/pdf','image/jpeg','image/png'}}}")
