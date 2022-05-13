@@ -17,8 +17,7 @@ internal class GCPMellomlager(@Value("\${mellomlagring.bucket:aap-mellomlagring}
 
     val log = LoggerUtil.getLogger(javaClass)
     override fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
-        storage.create(newBuilder(of(bøtte, key(fnr, type)))
-            .setContentType(APPLICATION_JSON_VALUE).build(),
+        storage.create(newBuilder(of(bøtte, key(fnr, type))).setContentType(APPLICATION_JSON_VALUE).build(),
                 value.toByteArray(UTF_8))
             .blobId.toGsUtilUri()
 
