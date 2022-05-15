@@ -23,7 +23,6 @@ import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 
-
 @Component
 class PDLWebClientAdapter(
         @Qualifier(PDL_USER) private val userWebClient: GraphQLWebClient,
@@ -57,8 +56,8 @@ class PDLWebClientAdapter(
     private fun fødselsdatoFra(fødsel: PDLFødsel?) = fødsel?.fødselsdato
 
     private fun søkerFra(søker: PDLSøker?, fnr: String, medBarn: Boolean) = søker?.let { s ->
-        Søker(
-                navnFra(s.navn), fødselsnummerFra(fnr),
+        Søker(navnFra(s.navn),
+                fødselsnummerFra(fnr),
                 adresseFra(s.vegadresse),
                 fødselsdatoFra(s.fødsel),
                 barnFra(s.forelderBarnRelasjon, medBarn))
@@ -87,9 +86,11 @@ class PDLWebClientAdapter(
     private fun <T> oppslag(oppslag: () -> T, type: String): T {
         return try {
             oppslag.invoke()
-        } catch (e: GraphQLErrorsException) {
+        }
+        catch (e: GraphQLErrorsException) {
             errorHandler.handleError(e)
-        } catch (e: Exception) {
+        }
+        catch (e: Exception) {
             log.warn("PDL oppslag {} feilet med uventet feil", type, e)
             throw e
         }
@@ -105,11 +106,8 @@ class PDLWebClientAdapter(
             .block()
     }
 
-
-
     override fun toString() =
         "${javaClass.simpleName} [webClient=$webClient,graphQLWebClient=$userWebClient,authContext=$ctx,errorHandler=$errorHandler, cfg=$cfg]"
-
 
     companion object {
         private const val IDENT = "ident"
