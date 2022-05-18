@@ -10,6 +10,8 @@ import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.oppslag.behandler.Behandler.BehandlerType.FASTLEGE
 import no.nav.aap.api.oppslag.behandler.Behandler.KontaktInformasjon
+import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
+import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FOSTERFORELDER
 import no.nav.aap.api.søknad.model.Barn
 import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Ferie
@@ -40,29 +42,30 @@ import java.util.*
 class SøknadTest {
     @Autowired
     lateinit var json: JacksonTester<StandardSøknad>
+
     @Autowired
     lateinit var pm: JacksonTester<Periode>
+
     @Test
-    fun ferie(){
+    fun ferie() {
         assertThat(Ferie().valgt).isEqualTo(VET_IKKE)
         assertThat(Ferie(20).valgt).isEqualTo(JA)
         assertThat(Ferie(0).valgt).isEqualTo(NEI)
-        assertThat(Ferie(Periode(now(),now().plusDays(1))).valgt).isEqualTo(JA)
+        assertThat(Ferie(Periode(now(), now().plusDays(1))).valgt).isEqualTo(JA)
     }
 
     private fun søker(): Søker {
-     return Søker(Navn("Ole","B","Olsen"),
-             Fødselsnummer("01010111111"),
-             Adresse("Gata","17","A",
-                     PostNummer("2600","Lillehammer")), now(), listOf(
-             Barn(Fødselsnummer("22222222222"),
-             Navn("Barn","B","Barnsben"), now())))
+        return Søker(Navn("Ole", "B", "Olsen"),
+                Fødselsnummer("01010111111"),
+                Adresse("Gata", "17", "A",
+                        PostNummer("2600", "Lillehammer")), now(), listOf(
+                Barn(Fødselsnummer("22222222222"),
+                        Navn("Barn", "B", "Barnsben"), now())))
     }
-
 
     private fun standardSøknad() = StandardSøknad(
             STANDARD,
-            Startdato(now(),HELSE,"Noe annet"),
+            Startdato(now(), HELSE, "Noe annet"),
             Ferie(21),
             Medlemskap(true, true, false,
                     listOf(Utenlandsopphold(SE,
@@ -76,12 +79,12 @@ class SøknadTest {
                             "22222222"))),
             JA,
             Utbetaling(false, listOf(AnnenStønad(FOSTERHJEMSGODTGJØRELSE, UUID.randomUUID())),
-            listOf(AnnenUtbetaling("hvilken", "hvem"))),
-            listOf(BarnOgInntekt(Barn(Fødselsnummer("22222222")), true)),
-            listOf(BarnOgInntekt(Barn(Fødselsnummer("33333333333"),
-                    Navn("Et", "ekstra", "Barn"), now().minusYears(14)), true)),
+                    listOf(AnnenUtbetaling("hvilken", "hvem"))),
+            listOf(BarnOgInntekt(Fødselsnummer("22222222"), true, false)),
+            listOf(AnnetBarnOgInntekt(Barn(Fødselsnummer("33333333333"),
+                    Navn("Et", "ekstra", "Barn"), now().minusYears(14)), FOSTERFORELDER)),
             "Tilegg")
 
     @SpringBootApplication
-     internal class DummyApplication
+    internal class DummyApplication
 }

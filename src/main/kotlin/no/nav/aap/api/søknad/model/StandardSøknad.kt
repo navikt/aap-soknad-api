@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.neovisionaries.i18n.CountryCode
+import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.søknad.model.RadioValg.JA
@@ -26,7 +27,7 @@ data class StandardSøknad(
         val yrkesskadeType: RadioValg,
         val utbetalinger: Utbetaling?,
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
-        val andreBarn: List<BarnOgInntekt> = emptyList(),
+        val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         val tilleggsopplysninger: String?,
         val andreVedlegg: List<UUID> = emptyList()) {
 
@@ -76,7 +77,16 @@ data class Ferie(val periode: Periode? = null, val dager: Long? = null) {
     }
 }
 
-data class BarnOgInntekt(val barn: Barn, val merEnnIG: Boolean = false, val barnepensjon: Boolean = false)
+data class BarnOgInntekt(val fnr: Fødselsnummer, val merEnnIG: Boolean = false, val barnepensjon: Boolean = false)
+data class AnnetBarnOgInntekt(val barn: Barn,
+                              val relasjon: Relasjon,
+                              val merEnnIG: Boolean = false,
+                              val barnepensjon: Boolean = false) {
+    enum class Relasjon {
+        FOSTERFORELDER,
+        FORELDER
+    }
+}
 
 enum class RadioValg {
     JA,
