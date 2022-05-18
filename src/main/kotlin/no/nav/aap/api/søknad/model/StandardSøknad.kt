@@ -15,7 +15,7 @@ import no.nav.aap.joark.Filtype.JSON
 import no.nav.aap.joark.VariantFormat.ORIGINAL
 import no.nav.aap.util.StringExtensions.toEncodedJson
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 
 data class StandardSøknad(
         val type: SøkerType = STANDARD,
@@ -27,16 +27,18 @@ data class StandardSøknad(
         val utbetalinger: Utbetaling?,
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
         val andreBarn: List<BarnOgInntekt> = emptyList(),
-        val tilleggsopplysninger: String?)  {
+        val tilleggsopplysninger: String?,
+        val andreVedlegg: List<UUID> = emptyList()) {
 
     fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, this.toEncodedJson(mapper), ORIGINAL)
 
 }
 
-
-
-data class Startdato(val fom: LocalDate,val hvorfor: HvorforTilbake?, val beskrivelse: String?) {
-    enum class HvorforTilbake { HELSE,FEILINFO }
+data class Startdato(val fom: LocalDate, val hvorfor: HvorforTilbake?, val beskrivelse: String?) {
+    enum class HvorforTilbake {
+        HELSE,
+        FEILINFO
+    }
 }
 
 data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
@@ -89,7 +91,9 @@ class Utbetaling(val fraArbeidsgiver: Boolean,
 
     data class AnnenStønad(val type: AnnenStønadstype, override val vedlegg: UUID? = null) : VedleggAware
 
-    interface VedleggAware { val vedlegg : UUID? }
+    interface VedleggAware {
+        val vedlegg: UUID?
+    }
 
     enum class AnnenStønadstype {
         KVALIFISERINGSSTØNAD,
