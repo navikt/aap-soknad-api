@@ -8,7 +8,6 @@ import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.springframework.core.env.Environment
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
 import org.springframework.stereotype.Service
@@ -16,23 +15,22 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
-import java.util.UUID
+import java.util.*
 
 @Service
 class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
-                    private val cfg: DittNavConfig,
-                    private val env: Environment) {
+                    private val cfg: DittNavConfig) {
 
     fun opprettBeskjed(fnr: Fødselsnummer, type: SkjemaType) = send(fnr, cfg.beskjed, type)
 
-    private fun send(fnr: Fødselsnummer, cfg: TopicConfig,type: SkjemaType) =
+    private fun send(fnr: Fødselsnummer, cfg: TopicConfig, type: SkjemaType) =
         if (cfg.enabled) {
             with(keyFra(fnr, type.name)) {
-                dittNav.send(ProducerRecord(cfg.topic, this, beskjed(cfg,type)))
+                dittNav.send(ProducerRecord(cfg.topic, this, beskjed(cfg, type)))
                     .addCallback(DittNavCallback(this))
             }
         }
-        else{
+        else {
         }
 
     private fun beskjed(cfg: TopicConfig, type: SkjemaType) =
@@ -61,7 +59,8 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             .withNamespace(env.getRequiredProperty("nais.namespace"))
             .build()
 
-    private class DittNavCallback(private val key: NokkelInput) : ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
+    private class DittNavCallback(private val key: NokkelInput) :
+        ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
         private val log = LoggerUtil.getLogger(javaClass)
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
             log.info("Sendte melding  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
