@@ -6,7 +6,6 @@ import no.nav.aap.rest.AbstractWebClientAdapter.Companion.generellFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.MDCUtil.NAV_PERSON_IDENT
-import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -28,7 +27,7 @@ class ArbeidClientBeanConfig {
             .build()
 
     private fun navPersonIdentFunction(ctx: AuthContext) = generellFilterFunction(NAV_PERSON_IDENT) {
-        ctx.getSubject() ?: throw JwtTokenMissingException()
+        ctx.getSubject() ?: "NO SUBJECT" //throw JwtTokenMissingException()
     }
 
     @Bean
