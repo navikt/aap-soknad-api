@@ -4,10 +4,12 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.dittnav.DittNavConfig.TopicConfig
 import no.nav.aap.util.LoggerUtil
+import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
 import org.springframework.stereotype.Service
@@ -18,8 +20,11 @@ import java.time.ZoneOffset.UTC
 import java.util.*
 
 @Service
+@ConditionalOnGCP
 class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
-                    private val cfg: DittNavConfig) {
+                    private val cfg: DittNavConfig,
+                    @Value("\${nais.app.name") private val app: String,
+                    @Value("\${nais.namespace") private val namespace: String) {
 
     fun opprettBeskjed(fnr: Fødselsnummer, type: SkjemaType) = send(fnr, cfg.beskjed, type)
 
@@ -55,8 +60,8 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             .withFodselsnummer(fnr.fnr)
             .withEventId("${UUID.randomUUID()}")
             .withGrupperingsId(grupperingId)
-            .withAppnavn(env.getRequiredProperty("nais.app.name"))
-            .withNamespace(env.getRequiredProperty("nais.namespace"))
+            .withAppnavn(app)
+            .withNamespace(namespace)
             .build()
 
     private class DittNavCallback(private val key: NokkelInput) :
