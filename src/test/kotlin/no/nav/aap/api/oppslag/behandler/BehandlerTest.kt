@@ -7,7 +7,7 @@ import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.api.oppslag.behandler.Behandler.BehandlerType.FASTLEGE
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -21,7 +21,7 @@ class BehandlerTest {
             "   {\n" +
             "      \"type\":\"FASTLEGE\",\n" +
             "      \"behandlerRef\":\"d182f24b-ebca-4f44-bf86-65901ec6141b\",\n" +
-            "      \"fnr\":\"01010111111\",\n" +
+            "      \"fnr\":\"08089403198\",\n" +
             "      \"fornavn\":\"Unni\",\n" +
             "      \"mellomnavn\":\"\",\n" +
             "      \"etternavn\":\"Larsen\",\n" +
@@ -34,24 +34,25 @@ class BehandlerTest {
             "   }" +
             " ]"
 
-
     @Test
     fun serdeserTest() {
         val o = OrgNummer("976673867")
         serdeser(o)
         val f = BehandlerDTO(
-                FASTLEGE,"123", Fødselsnummer("11111111111"),"Unni", "Mellom","Larsen",
-                OrgNummer("976673867"),"Kontor","Adresse","5300","KLEPPESTØ","61253479")
-        serdeser(f,true)
+                FASTLEGE, "123", Fødselsnummer("08089403198"), "Unni", "Mellom", "Larsen",
+                OrgNummer("976673867"), "Kontor", "Adresse", "5300", "KLEPPESTØ", "61253479")
+        serdeser(f, true)
     }
+
     @Test
     fun serdeserFromJSONTest() {
         mapper.registerKotlinModule()
         val dtos = mapper.readValue(json, object : TypeReference<List<BehandlerDTO>>() {})
-        assertEquals(dtos.size,1)
+        assertEquals(dtos.size, 1)
         val dto = dtos[0]
-        assertThat(dto.fnr).isEqualTo(Fødselsnummer("01010111111"))
+        assertThat(dto.fnr).isEqualTo(Fødselsnummer("08089403198"))
     }
+
     private fun serdeser(a: Any, print: Boolean = false) {
         mapper.registerKotlinModule()
         mapper.registerModule(JavaTimeModule())
