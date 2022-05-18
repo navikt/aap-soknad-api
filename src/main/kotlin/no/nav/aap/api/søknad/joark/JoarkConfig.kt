@@ -19,6 +19,6 @@ class JoarkConfig(
         "${javaClass.simpleName} [pingPath=$pingPath,joarkPath=$joarkPath,enabled=$isEnabled,baseUri=$baseUri]"
 
     companion object {
-        private const val DEFAULT_PING_PATH = "/joark/ping"
+        private const val DEFAULT_PING_PATH = "joark/ping"
     }
 }
