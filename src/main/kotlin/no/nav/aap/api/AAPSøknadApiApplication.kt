@@ -25,12 +25,15 @@ class AAPSøknadApiApplication
 
 fun main(args: Array<String>) {
     runApplication<AAPSøknadApiApplication>(*args) {
-        if (currentCluster().clusterName().contains(DEV)) {
-            setDefaultProperties(mapOf("cluster" to DEV))
+        with(currentCluster().clusterName()) {
+            if (this.contains(DEV)) {
+                setDefaultProperties(mapOf("cluster" to DEV))
+            }
+            if (this.contains(PROD)) {
+                setDefaultProperties(mapOf("cluster" to PROD))
+            }
         }
-        if (currentCluster().clusterName().contains(PROD)) {
-            setDefaultProperties(mapOf("cluster" to PROD))
-        }
+
         setAdditionalProfiles(*profiler())
 
         applicationStartup = BufferingApplicationStartup(4096)
