@@ -8,14 +8,6 @@ query($ident: ID!){
         foedsel {
         foedselsdato
         },
-        foreldreansvar {
-        ansvar
-        ansvarlig
-        ansvarssubjekt
-        folkeregistermetadata {
-        opphoerstidspunkt
-        }
-        },
         forelderBarnRelasjon {
         relatertPersonsIdent
         relatertPersonsRolle
