@@ -10,7 +10,7 @@ import java.net.URI
 @ConfigurationProperties(JOARK)
 @ConstructorBinding
 class JoarkConfig(
-        @DefaultValue("/joark/aad") val joarkPath: String,
+        @DefaultValue(DEFAULT_OPPRETT_PATH) val joarkPath: String,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
         @DefaultValue("true") enabled: Boolean,
         baseUri: URI) : AbstractRestConfig(baseUri, pingPath, JOARK, enabled) {
@@ -19,6 +19,7 @@ class JoarkConfig(
         "${javaClass.simpleName} [pingPath=$pingPath,joarkPath=$joarkPath,enabled=$isEnabled,baseUri=$baseUri]"
 
     companion object {
+        private const val DEFAULT_OPPRETT_PATH = "joark/oppprett"
         private const val DEFAULT_PING_PATH = "joark/ping"
     }
 }

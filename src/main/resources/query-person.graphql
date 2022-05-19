@@ -1,25 +1,33 @@
 query($ident: ID!){
-  hentPerson(ident: $ident) {
-    navn {
-       fornavn
-       mellomnavn
-       etternavn
-    },
-     foedsel {
-      foedselsdato
-    },
-    forelderBarnRelasjon {
-       relatertPersonsIdent
+    hentPerson(ident: $ident) {
+        navn {
+        fornavn
+        mellomnavn
+        etternavn
+        },
+        foedsel {
+        foedselsdato
+        },
+        foreldreansvar {
+        ansvar
+        ansvarlig
+        ansvarssubjekt
+        folkeregistermetadata {
+        opphoerstidspunkt
+        }
+        },
+        forelderBarnRelasjon {
+        relatertPersonsIdent
         relatertPersonsRolle
         minRolleForPerson
-    },
-    bostedsadresse {
-      vegadresse {
-         adressenavn
-         husbokstav
-         husnummer
-         postnummer
-      }
-    }
-  }
+        },
+        bostedsadresse {
+        vegadresse {
+        adressenavn
+        husbokstav
+        husnummer
+        postnummer
+        }
+        }
+}
 }
