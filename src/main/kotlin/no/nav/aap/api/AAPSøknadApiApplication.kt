@@ -3,7 +3,9 @@ package no.nav.aap.api
 import no.nav.boot.conditionals.Cluster.currentCluster
 import no.nav.boot.conditionals.Cluster.profiler
 import no.nav.boot.conditionals.EnvUtil.DEV
+import no.nav.boot.conditionals.EnvUtil.DEV_FSS
 import no.nav.boot.conditionals.EnvUtil.PROD
+import no.nav.boot.conditionals.EnvUtil.PROD_FSS
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -27,10 +29,10 @@ fun main(args: Array<String>) {
     runApplication<AAPSøknadApiApplication>(*args) {
         with(currentCluster().clusterName()) {
             if (this.contains(DEV)) {
-                setDefaultProperties(mapOf("cluster" to DEV))
+                setDefaultProperties(mapOf("onprem" to DEV_FSS))
             }
             if (this.contains(PROD)) {
-                setDefaultProperties(mapOf("cluster" to PROD))
+                setDefaultProperties(mapOf("onprem" to PROD_FSS))
             }
         }
 
