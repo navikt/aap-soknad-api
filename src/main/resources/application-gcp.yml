@@ -60,6 +60,8 @@ no.nav:
                             client-auth-method: private_key_jwt
 
                     aap-fss-proxy:
+                        token-exchange:
+                            audience: ${onprem}:aap:fss-proxy
                         well-known-url: ${token.x.well.known.url}
                         grant-type: urn:ietf:params:oauth:grant-type:token-exchange
                         authentication:
@@ -97,6 +99,8 @@ no.nav:
                             client-auth-method: private_key_jwt
 
                     pdl-api:
+                        token-exchange:
+                            audience: ${onprem}:pdl:pdl-api
                         well-known-url: ${token.x.well.known.url}
                         grant-type: urn:ietf:params:oauth:grant-type:token-exchange
                         authentication:
@@ -107,3 +111,11 @@ no.nav:
                 idporten:
                     discovery-url: ${token.x.well.known.url}
                     accepted-audience: ${token.x.client.id}
+
+organisasjon:
+    base-uri: https://aap-fss-proxy.${onprem}-pub.nais.io
+pdl:
+    base-uri: https://pdl-api.${onprem}-pub.nais.io/graphql
+    scope: api://${onprem}.pdl.pdl-api/.default
+joark:
+    base-uri: https://aap-fss-proxy.${onprem}-pub.nais.io

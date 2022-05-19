@@ -11,15 +11,9 @@ no.nav:
         jwt:
             client:
                 registration:
-                    aap-fss-proxy:
-                        token-exchange:
-                            audience: dev-fss:aap:fss-proxy
                     aareg-services-q1:
                         token-exchange:
-                            audience: dev-fss:arbeidsforhold:aareg-services-nais-q1
-                    pdl-api:
-                        token-exchange:
-                            audience: dev-fss:pdl:pdl-api
+                            audience: ${onprem}:arbeidsforhold:aareg-services-nais-q1
 spring:
     mvc:
         log-request-details: true
@@ -29,10 +23,3 @@ server:
             enabled: false
 arbeidsforhold:
     base-uri: https://aareg-services-q1.dev-fss-pub.nais.io
-organisasjon:
-    base-uri: https://aap-fss-proxy.dev-fss-pub.nais.io
-pdl:
-    base-uri: https://pdl-api.dev-fss-pub.nais.io/graphql
-    scope: api://dev-fss.pdl.pdl-api/.default
-joark:
-    base-uri: https://aap-fss-proxy.dev-fss-pub.nais.io
