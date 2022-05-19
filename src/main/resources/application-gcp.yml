@@ -68,6 +68,8 @@ no.nav:
                             client-auth-method: private_key_jwt
 
                     digdir-krr-proxy:
+                        token-exchange:
+                            audience: ${nais.cluster.name}:team-rocket:digdir-krr-proxy
                         well-known-url: ${token.x.well.known.url}
                         grant-type: urn:ietf:params:oauth:grant-type:token-exchange
                         authentication:
@@ -85,6 +87,8 @@ no.nav:
                             client-auth-method: private_key_jwt
 
                     isdialogmelding:
+                        token-exchange:
+                            audience: ${nais.cluster.name}:teamsykefravr:isdialogmelding
                         well-known-url: ${token.x.well.known.url}
                         grant-type: urn:ietf:params:oauth:grant-type:token-exchange
                         authentication:

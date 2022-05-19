@@ -11,18 +11,12 @@ no.nav:
         jwt:
             client:
                 registration:
-                    digdir-krr-proxy:
-                        token-exchange:
-                            audience: dev-gcp:team-rocket:digdir-krr-proxy
                     aap-fss-proxy:
                         token-exchange:
                             audience: dev-fss:aap:fss-proxy
                     aareg-services-q1:
                         token-exchange:
                             audience: dev-fss:arbeidsforhold:aareg-services-nais-q1
-                    isdialogmelding:
-                        token-exchange:
-                            audience: dev-gcp:teamsykefravr:isdialogmelding
                     pdl-api:
                         token-exchange:
                             audience: dev-fss:pdl:pdl-api
