@@ -1,41 +1,43 @@
 spring:
-  application:
-    name: soknad-api
-  main:
-    banner-mode: off
-  servlet:
-    multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
-  cloud:
-    discovery:
-      client:
-        health-indicator:
-          enabled: false
-  jackson:
-    default-property-inclusion: non_empty
-    mapper:
-      accept-case-insensitive-enums: true
-      accept-case-insensitive-properties: true
-    deserialization:
-      read-unknown-enum-values-using-default-value: true
-      accept-single-value-as-array: true
-      fail-on-unknown-properties: true
-    serialization:
-      write-empty-json-arrays: false
-      fail-on-empty-beans: false
+    application:
+        name: soknad-api
+    main:
+        banner-mode: off
+    servlet:
+        multipart:
+            max-file-size: 100MB
+            max-request-size: 100MB
+    cloud:
+        discovery:
+            client:
+                health-indicator:
+                    enabled: false
+    jackson:
+        default-property-inclusion: non_empty
+        mapper:
+            accept-case-insensitive-enums: true
+            accept-case-insensitive-properties: true
+        deserialization:
+            read-unknown-enum-values-using-default-value: true
+            accept-single-value-as-array: true
+            fail-on-unknown-properties: true
+        serialization:
+            write-empty-json-arrays: false
+            fail-on-empty-beans: false
 management:
-  info:
-    java:
-      enabled: true
-    env:
-      enabled: true
-  health:
-    ping:
-      enabled: false
-    diskspace:
-      enabled: false
+    info:
+        os:
+            enabled: true
+        java:
+            enabled: true
+        env:
+            enabled: true
+    health:
+        ping:
+            enabled: false
+        diskspace:
+            enabled: false
 springdoc:
-  packagesToScan: no.nav.aap
-  swagger-ui:
-    disable-swagger-default-url: true
+    packagesToScan: no.nav.aap
+    swagger-ui:
+        disable-swagger-default-url: true

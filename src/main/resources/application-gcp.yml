@@ -1,105 +1,105 @@
 dittnav:
     beskjed:
-      topic: min-side.aapen-brukernotifikasjon-beskjed-v1
-      varighet: 90d
+        topic: min-side.aapen-brukernotifikasjon-beskjed-v1
+        varighet: 90d
 
 info:
-  nais:
-    cluster: ${nais.cluster.name}
-    image: ${nais.app.image}
-    app: ${nais.app.name}
-    namespace: ${nais.namespace}
+    nais:
+        cluster: ${nais.cluster.name}
+        image: ${nais.app.image}
+        app: ${nais.app.name}
+        namespace: ${nais.namespace}
 management:
-  endpoint:
-    env:
-      additional-keys-to-sanitize: "client-jwk,jwk,jwks"
+    endpoint:
+        env:
+            additional-keys-to-sanitize: "client-jwk,jwk,jwks"
 spring:
-  devtools:
-      restart:
-        enabled=false:
-  kafka:
-    bootstrap-servers: ${kafka.brokers}
-    properties:
-      basic:
-        auth:
-          user:
-            info: ${kafka.schema.registry.user}:${kafka.schema.registry.password}
-          credentials:
-            source: USER_INFO
-      schema:
-        registry:
-          url: ${kafka.schema.registry}
-      endpoint:
-        identification:
-          algorithm: ''
-    security:
-      protocol: SSL
-    ssl:
-      trust-store-location: file:${kafka.truststore.path}
-      trust-store-type: JKS
-      trust-store-password: ${kafka.credstore.password}
-      key-store-location: file:${kafka.keystore.path}
-      key-store-type: PKCS12
-      key-store-password: ${kafka.credstore.password}
-    producer:
-      acks: 1
-      client-id: ${spring.application.name}
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    devtools:
+        restart:
+            enabled=false:
+    kafka:
+        bootstrap-servers: ${kafka.brokers}
+        properties:
+            basic:
+                auth:
+                    user:
+                        info: ${kafka.schema.registry.user}:${kafka.schema.registry.password}
+                    credentials:
+                        source: USER_INFO
+            schema:
+                registry:
+                    url: ${kafka.schema.registry}
+            endpoint:
+                identification:
+                    algorithm: ''
+        security:
+            protocol: SSL
+        ssl:
+            trust-store-location: file:${kafka.truststore.path}
+            trust-store-type: JKS
+            trust-store-password: ${kafka.credstore.password}
+            key-store-location: file:${kafka.keystore.path}
+            key-store-type: PKCS12
+            key-store-password: ${kafka.credstore.password}
+        producer:
+            acks: 1
+            client-id: ${spring.application.name}
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 no.nav:
-  security:
-    jwt:
-      client:
-        registration:
-          aareg-services-q1:
-            well-known-url: ${token.x.well.known.url}
-            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-            authentication:
-              client-id: ${token.x.client.id}
-              client-jwk: ${token.x.private.jwk}
-              client-auth-method: private_key_jwt
+    security:
+        jwt:
+            client:
+                registration:
+                    aareg-services-q1:
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
 
-          aap-fss-proxy:
-            well-known-url: ${token.x.well.known.url}
-            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-            authentication:
-              client-id: ${token.x.client.id}
-              client-jwk: ${token.x.private.jwk}
-              client-auth-method: private_key_jwt
+                    aap-fss-proxy:
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
 
-          digdir-krr-proxy:
-            well-known-url: ${token.x.well.known.url}
-            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-            authentication:
-              client-id: ${token.x.client.id}
-              client-jwk: ${token.x.private.jwk}
-              client-auth-method: private_key_jwt
+                    digdir-krr-proxy:
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
 
-          client-credentials-pdl:
-            token-endpoint-url: ${azure.openid.config.token.endpoint}
-            grant-type: client_credentials
-            scope: ${pdl.scope}
-            authentication:
-              client-id: ${azure.app.client.id}
-              client-jwk: ${azure.app.jwk}
-              client-auth-method: private_key_jwt
+                    client-credentials-pdl:
+                        token-endpoint-url: ${azure.openid.config.token.endpoint}
+                        grant-type: client_credentials
+                        scope: ${pdl.scope}
+                        authentication:
+                            client-id: ${azure.app.client.id}
+                            client-jwk: ${azure.app.jwk}
+                            client-auth-method: private_key_jwt
 
-          isdialogmelding:
-            well-known-url: ${token.x.well.known.url}
-            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-            authentication:
-              client-id: ${token.x.client.id}
-              client-jwk: ${token.x.private.jwk}
-              client-auth-method: private_key_jwt
+                    isdialogmelding:
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
 
-          pdl-api:
-            well-known-url: ${token.x.well.known.url}
-            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-            authentication:
-              client-id: ${token.x.client.id}
-              client-jwk: ${token.x.private.jwk}
-              client-auth-method: private_key_jwt
-      issuer:
-        idporten:
-          discovery-url: ${token.x.well.known.url}
-          accepted-audience: ${token.x.client.id}
+                    pdl-api:
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
+            issuer:
+                idporten:
+                    discovery-url: ${token.x.well.known.url}
+                    accepted-audience: ${token.x.client.id}
