@@ -15,10 +15,9 @@ import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FOSTERFORELDER
 import no.nav.aap.api.søknad.model.Barn
 import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Ferie
+import no.nav.aap.api.søknad.model.Ferie.FerieType.DAGER
 import no.nav.aap.api.søknad.model.Medlemskap
 import no.nav.aap.api.søknad.model.RadioValg.JA
-import no.nav.aap.api.søknad.model.RadioValg.NEI
-import no.nav.aap.api.søknad.model.RadioValg.VET_IKKE
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Startdato
 import no.nav.aap.api.søknad.model.Startdato.HvorforTilbake.HELSE
@@ -29,8 +28,6 @@ import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønad
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.FOSTERHJEMSGODTGJØRELSE
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenUtbetaling
 import no.nav.aap.api.søknad.model.Utenlandsopphold
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.json.JsonTest
@@ -46,14 +43,6 @@ class SøknadTest {
     @Autowired
     lateinit var pm: JacksonTester<Periode>
 
-    @Test
-    fun ferie() {
-        assertThat(Ferie().valgt).isEqualTo(VET_IKKE)
-        assertThat(Ferie(20).valgt).isEqualTo(JA)
-        assertThat(Ferie(0).valgt).isEqualTo(NEI)
-        assertThat(Ferie(Periode(now(), now().plusDays(1))).valgt).isEqualTo(JA)
-    }
-
     private fun søker(): Søker {
         return Søker(Navn("Ole", "B", "Olsen"),
                 Fødselsnummer("01010111111"),
@@ -66,8 +55,8 @@ class SøknadTest {
     private fun standardSøknad() = StandardSøknad(
             STANDARD,
             Startdato(now(), HELSE, "Noe annet"),
-            Ferie(21),
-            Medlemskap(true, true, false,
+            Ferie(DAGER, dager = 20),
+            Medlemskap(true, null, null, null,
                     listOf(Utenlandsopphold(SE,
                             Periode(now(), now().plusDays(2)),
                             true, "11111111"))),

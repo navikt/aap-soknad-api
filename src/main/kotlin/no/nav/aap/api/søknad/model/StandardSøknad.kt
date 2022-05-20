@@ -59,7 +59,14 @@ class Utenlandsopphold private constructor(val land: CountryCode,
             id)
 }
 
-data class Ferie(val skalHaFerie: RadioValg, val periode: Periode? = null, val dager: Long? = null)
+data class Ferie(val ferieType: FerieType, val periode: Periode? = null, val dager: Int? = null) {
+    enum class FerieType {
+        PERIODE,
+        DAGER,
+        NEI,
+        VET_IKKE
+    }
+}
 
 data class BarnOgInntekt(val fnr: Fødselsnummer, val merEnnIG: Boolean = false, val barnepensjon: Boolean = false)
 data class AnnetBarnOgInntekt(val barn: Barn,
