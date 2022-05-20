@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.neovisionaries.i18n.CountryCode
+import io.swagger.v3.oas.annotations.media.Schema
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.Behandler
@@ -48,7 +49,7 @@ data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
                       val utenlandsopphold: List<Utenlandsopphold>)
 
 class Utenlandsopphold private constructor(val land: CountryCode,
-                                           val landNavn: String,
+                                           @Schema(hidden = true) val landNavn: String,
                                            val periode: Periode,
                                            val arbeidet: Boolean,
                                            val id: String?) {
