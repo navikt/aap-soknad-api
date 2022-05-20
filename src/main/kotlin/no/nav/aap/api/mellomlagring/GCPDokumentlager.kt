@@ -47,16 +47,16 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
     internal class TypeSjekker(@Value("#{\${mellomlager.types :{'application/pdf','image/jpeg','image/png'}}}")
                                private val contentTypes: Set<String>) {
 
-        fun sjekkType(bytes: ByteArray, contentType: String?, originalFilename: String?) {
+        fun sjekkType(bytes: ByteArray, contentType: String?, originalFilename: String?) =
             with(TIKA.detect(bytes)) {
                 if (this != contentType) {
                     throw AttachmentException("Type $this matcher ikke oppgitt $contentType for $originalFilename")
                 }
+            }.also {
+                if (!contentTypes.contains(contentType)) {
+                    throw AttachmentException("Type $contentType er ikke blant $contentTypes for $originalFilename")
+                }
             }
-            if (!contentTypes.contains(contentType)) {
-                throw AttachmentException("Type $contentType er ikke blant $contentTypes for $originalFilename")
-            }
-        }
     }
 
     companion object {
