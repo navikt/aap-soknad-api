@@ -1,9 +1,7 @@
 package no.nav.aap.api.søknad.model
 
-import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.neovisionaries.i18n.CountryCode
-import io.swagger.v3.oas.annotations.media.Schema
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.Behandler
@@ -45,18 +43,12 @@ data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
                       val iTilleggArbeidUtenforNorge: Boolean?,
                       val utenlandsopphold: List<Utenlandsopphold>)
 
-class Utenlandsopphold private constructor(val land: CountryCode,
-                                           @Schema(hidden = true) val landNavn: String,
-                                           val periode: Periode,
-                                           val arbeidet: Boolean,
-                                           val id: String?) {
-    @JsonCreator
-    constructor(land: CountryCode, periode: Periode, arbeidet: Boolean, id: String?) : this(
-            land,
-            land.toLocale().displayCountry,
-            periode,
-            arbeidet,
-            id)
+class Utenlandsopphold(val land: CountryCode,
+                       val periode: Periode,
+                       val arbeidet: Boolean,
+                       val id: String?) {
+
+    val landnavn = land.toLocale().displayCountry
 }
 
 data class Ferie(val ferieType: FerieType, val periode: Periode? = null, val dager: Int? = null) {

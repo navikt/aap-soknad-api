@@ -73,7 +73,7 @@ class SøknadTest {
             listOf(AnnetBarnOgInntekt(Barn(Fødselsnummer("33333333333"),
                     Navn("Et", "ekstra", "Barn"), now().minusYears(14)), FOSTERFORELDER)),
             "Tilegg")
-
+    
     @SpringBootApplication
     internal class DummyApplication
 }
