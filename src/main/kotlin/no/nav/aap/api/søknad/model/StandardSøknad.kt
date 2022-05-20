@@ -43,7 +43,7 @@ data class Startdato(val fom: LocalDate, val hvorfor: HvorforTilbake?, val beskr
 }
 
 data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
-                      val jobbetUtenforNorgeFørSyk: Boolean,
+                      val jobbetUtenforNorgeFørSyk: Boolean?,
                       val jobbetSammenhengendeINorgeSiste5: Boolean?,
                       val utenlandsopphold: List<Utenlandsopphold>)
 
