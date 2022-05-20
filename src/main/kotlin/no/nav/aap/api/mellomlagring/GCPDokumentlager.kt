@@ -28,7 +28,7 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
     val log = LoggerUtil.getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =
         randomUUID().apply {
-            typeSjekker.sjekkType(bytes, originalFilename, contentType)
+            typeSjekker.sjekkType(bytes, contentType, originalFilename)
             scanner.scan(bytes, originalFilename)
             lager.create(newBuilder(of(bøtte, key(fnr, this)))
                 .setContentType(contentType)
