@@ -1,4 +1,4 @@
-package no.nav.aap.api.config
+package no.nav.aap.api.dev
 
 import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal

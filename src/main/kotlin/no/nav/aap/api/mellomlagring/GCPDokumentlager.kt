@@ -13,6 +13,7 @@ import no.nav.aap.api.mellomlagring.virus.AttachmentException
 import no.nav.aap.api.mellomlagring.virus.VirusScanner
 import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnGCP
+import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.apache.tika.Tika
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -38,7 +39,12 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
         }
 
     override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.get(bøtte, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))
+        with(lager.get(bøtte, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))) {
+            if (fnr.fnr != metadata[FNR]) {
+                throw JwtTokenUnauthorizedException("Dokumentet med id $uuid er ikke eid av ${fnr.fnr}")
+            }
+            this
+        }
 
     override fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
         lager.delete(of(bøtte, key(fnr, uuid)))

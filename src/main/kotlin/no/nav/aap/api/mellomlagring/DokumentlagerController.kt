@@ -1,13 +1,11 @@
 package no.nav.aap.api.mellomlagring
 
 import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FILNAVN
-import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FNR
 import no.nav.aap.api.mellomlagring.DokumentlagerController.Companion.BASEPATH
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
-import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
@@ -27,7 +25,6 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
-
 @ProtectedRestController(value = [BASEPATH], issuer = IDPORTEN)
 internal class DokumentlagerController(private val lager: Dokumentlager, private val ctx: AuthContext) {
 
@@ -40,17 +37,14 @@ internal class DokumentlagerController(private val lager: Dokumentlager, private
     fun lesDokument(@PathVariable uuid: UUID) =
         lager.lesDokument(ctx.getFnr(), uuid)
             ?.let {
-                with(it) {
-                    if (ctx.getFnr().fnr != metadata[FNR]) {
-                        throw JwtTokenUnauthorizedException("Dokumentet med id $uuid er ikke eid av ${ctx.getFnr()}")
-                    }
-                    ok().contentType(parseMediaType(contentType))
-                        .cacheControl(noCache().mustRevalidate())
-                        .headers(HttpHeaders().apply {
-                            contentDisposition = attachment().filename(metadata[FILNAVN]!!).build()
-                        })
-                        .body(getContent())
-                }
+                ok()
+                    .contentType(parseMediaType(it.contentType))
+                    .cacheControl(noCache().mustRevalidate())
+                    .headers(HttpHeaders().apply {
+                        contentDisposition = attachment().filename(it.metadata[FILNAVN]!!).build()
+                    })
+                    .body(it.getContent())
+
             } ?: notFound().build()
 
     @DeleteMapping("/slett/{uuid}")
