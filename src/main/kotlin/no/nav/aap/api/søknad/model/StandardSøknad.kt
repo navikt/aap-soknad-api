@@ -43,10 +43,10 @@ data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
                       val iTilleggArbeidUtenforNorge: Boolean?,
                       val utenlandsopphold: List<Utenlandsopphold>)
 
-class Utenlandsopphold(val land: CountryCode,
-                       val periode: Periode,
-                       val arbeidet: Boolean,
-                       val id: String?) {
+data class Utenlandsopphold(val land: CountryCode,
+                            val periode: Periode,
+                            val arbeidet: Boolean,
+                            val id: String?) {
 
     val landnavn = land.toLocale().displayCountry
 }
