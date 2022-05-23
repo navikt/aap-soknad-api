@@ -18,7 +18,7 @@ class SafWebClientAdapter(@Qualifier(SAF) client: WebClient, val cf: SafConfig) 
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono<ByteArray>()
-            .doOnSuccess { log.trace("SAF er $it") }
+            .doOnSuccess { log.trace("SAF returnerte ${it.size} bytes") }
             .doOnError { t: Throwable -> log.warn("SAF oppslag feilet", t) }
             .block()
 }
