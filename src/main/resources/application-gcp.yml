@@ -129,5 +129,5 @@ pdl:
     scope: api://${onprem}.pdl.pdl-api/.default
 joark:
     base-uri: https://aap-fss-proxy.${onprem}-pub.nais.io
-safselvbetjening:
+saf:
     base-uri: https://safselvbetjening.${onprem}-pub.nais.io
