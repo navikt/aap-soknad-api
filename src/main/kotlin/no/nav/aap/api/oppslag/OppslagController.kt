@@ -6,6 +6,7 @@ import no.nav.aap.api.oppslag.krr.KRRClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.oppslag.saf.SafClient
 import no.nav.aap.api.søknad.model.SøkerInfo
+import no.nav.aap.joark.DokumentInfoId
 import no.nav.aap.util.Constants
 import no.nav.aap.util.LoggerUtil
 import no.nav.security.token.support.spring.ProtectedRestController
@@ -34,7 +35,7 @@ class OppslagController(val pdl: PDLClient,
         .also { log.trace("Søker er $it") }
 
     @GetMapping("/saf")
-    fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentInfoId: String) =
+    fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentInfoId: DokumentInfoId) =
         saf.dokument(journalpostId, dokumentInfoId)
             ?.let {
                 ResponseEntity.ok()
