@@ -24,6 +24,6 @@ class SafConfig(baseUri: URI,
     companion object {
         const val SAF = "saf"
         private const val PINGPATH = "isAlive"
-        private const val DOKPATH = "rest/hentdokument/\${journalpostId}/\${dokumentInfoId}/\${variantFormat}"
+        private const val DOKPATH = "rest/hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}"
     }
 }
