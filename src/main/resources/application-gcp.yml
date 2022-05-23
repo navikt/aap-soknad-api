@@ -17,6 +17,7 @@ spring:
     devtools:
         restart:
             enabled=false:
+        add-properties: false
     kafka:
         bootstrap-servers: ${kafka.brokers}
         properties:
