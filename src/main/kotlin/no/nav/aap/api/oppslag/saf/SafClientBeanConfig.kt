@@ -13,12 +13,12 @@ class SafClientBeanConfig {
 
     @Qualifier(SAF)
     @Bean
-    fun krrWebClient(b: Builder, cfg: SafConfig, tokenXFilterFunction: TokenXFilterFunction) =
+    fun safWebClient(b: Builder, cfg: SafConfig, tokenXFilterFunction: TokenXFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
             .filter(tokenXFilterFunction)
             .build()
 
     @Bean
-    fun krrHealthIndicator(a: SafWebClientAdapter) =
+    fun safHealthIndicator(a: SafWebClientAdapter) =
         object : AbstractPingableHealthIndicator(a) {}
 }
