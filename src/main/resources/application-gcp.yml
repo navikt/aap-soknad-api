@@ -51,6 +51,15 @@ no.nav:
         jwt:
             client:
                 registration:
+                    safselvbetjening:
+                        token-exchange:
+                            audience: ${onprem}:teamdokumenthandtering:safselvbetjening
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
                     aareg-services-q1:
                         well-known-url: ${token.x.well.known.url}
                         grant-type: urn:ietf:params:oauth:grant-type:token-exchange
@@ -119,3 +128,5 @@ pdl:
     scope: api://${onprem}.pdl.pdl-api/.default
 joark:
     base-uri: https://aap-fss-proxy.${onprem}-pub.nais.io
+safselvbetjening:
+    base-uri: https://safselvbetjening.${onprem}-pub.nais.io

@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics.counter
 import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_MOTTATT
 import no.nav.aap.api.felles.error.IntegrationException
+import no.nav.aap.api.oppslag.saf.SafClient
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.joark.JoarkResponse
@@ -19,15 +20,25 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
 class StandardSøknadVLRouter(private val router: KafkaOperations<String, StandardSøknad>,
-                             private val cfg: StandardSøknadVLRouterConfig) {
+                             private val cfg: StandardSøknadVLRouterConfig, private val saf: SafClient) {
 
     val log = LoggerUtil.getLogger(javaClass)
-    fun route(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
-        router.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
+    fun route(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) {
+        try {
+            log.info("SAF $dokumenter")
+            saf.dokument(dokumenter.journalpostId, dokumenter.dokumenter.first())
+            log.info("SAF OK")
+        }
+        catch (e: Exception) {
+            log.warn("OOPS", e)
+        }
+        return router.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
             .apply {
                 headers().add(NAV_CALL_ID, callId().toByteArray())
             })
             .addCallback(StandardRoutingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
+    }
+
     override fun toString() = "$javaClass.simpleName [router=$router]"
 }
 
