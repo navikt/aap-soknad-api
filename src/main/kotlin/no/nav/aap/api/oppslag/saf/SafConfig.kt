@@ -1,6 +1,5 @@
 package no.nav.aap.api.oppslag.saf
 
-import no.nav.aap.api.oppslag.krr.KRRConfig.Companion.KRR
 import no.nav.aap.api.oppslag.saf.SafConfig.Companion.SAF
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -14,7 +13,7 @@ import java.net.URI
 class SafConfig(baseUri: URI,
                 @DefaultValue(PINGPATH) pingPath: String,
                 @DefaultValue(DOKPATH) private val dokPath: String,
-                @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, KRR, enabled) {
+                @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, SAF, enabled) {
 
     fun dokUri(b: UriBuilder, journalpostId: String, dokumentInfoId: String, variant: String) =
         b.path(dokPath).build(journalpostId, dokumentInfoId, variant)
