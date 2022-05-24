@@ -247,6 +247,7 @@
         </dependency>
     </dependencies>
     <build>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
         <plugins>
             <plugin>
@@ -336,10 +337,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <sourceDirs>
-                        <sourceDir>src/main/kotlin</sourceDir>
-                        <sourceDir>target/generated-sources/apollo/saf</sourceDir>
-                    </sourceDirs>
                     <args>
                         <arg>-Xjsr305=strict</arg>
                     </args>
