@@ -7,4 +7,6 @@ import org.springframework.stereotype.Component
 class SafClient(private val a: SafWebClientAdapter) {
     fun dokument(journalpostId: String, dokumentId: DokumentInfoId) =
         a.dokument(journalpostId, dokumentId.dokumentInfoId)
+
+    fun get() = a.get()
 }

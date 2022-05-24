@@ -25,9 +25,9 @@ class StandardSøknadVLRouter(private val router: KafkaOperations<String, Standa
     val log = LoggerUtil.getLogger(javaClass)
     fun route(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) {
         try {
-            log.info("SAF $dokumenter")
-            saf.dokument(dokumenter.journalpostId, dokumenter.dokumenter.first())
-            log.info("SAF OK")
+            log.info("SAF")
+            val g = saf.get()
+            log.info("SAF OK $g")
         }
         catch (e: Exception) {
             log.warn("OOPS", e)

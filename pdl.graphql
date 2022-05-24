@@ -1,6 +1,6 @@
 # This file was generated based on ".graphqlconfig". Do not edit manually.
 
-    schema {
+schema {
 query: Query
 }
 
@@ -73,9 +73,9 @@ metadata: Metadata!
     " Endring som har blitt utført på opplysningen. F.eks: Opprett -> Korriger -> Korriger"
     type Endring {
     """
-    
-    Opphavet til informasjonen. I NAV blir dette satt i forbindelse med registrering (f.eks: Sykehuskassan).
-     Fra Folkeregisteret får vi opphaven til dems opplysning, altså NAV, UDI, Politiet, Skatteetaten o.l.. Fra Folkeregisteret kan det også være tekniske navn som: DSF_MIGRERING, m.m..
+
+Opphavet til informasjonen. I NAV blir dette satt i forbindelse med registrering (f.eks: Sykehuskassan).
+    Fra Folkeregisteret får vi opphaven til dems opplysning, altså NAV, UDI, Politiet, Skatteetaten o.l.. Fra Folkeregisteret kan det også være tekniske navn som: DSF_MIGRERING, m.m..
     """
 kilde: String!
     " Tidspunktet for registrering."
@@ -142,7 +142,8 @@ status: String!
 folkeregistermetadata: Folkeregistermetadata
 metadata: Metadata!
 minRolleForPerson: ForelderBarnRelasjonRolle
-relatertPersonsIdent: String!
+relatertPersonUtenFolkeregisteridentifikator: RelatertBiPerson
+relatertPersonsIdent: String
 relatertPersonsRolle: ForelderBarnRelasjonRolle!
 }
 
@@ -372,11 +373,11 @@ tilleggsnavn: String
     """
     
     En liste over alle endringer som har blitt utført over tid.
-     Vær obs på at denne kan endre seg og man burde takle at det finnes flere korrigeringer i listen, så dersom man ønsker å kun vise den siste, så må man selv filtrere ut dette.
-     Det kan også ved svært få tilfeller skje at opprett blir fjernet. F.eks ved splitt tilfeller av identer. Dette skal skje i svært få tilfeller. Dersom man ønsker å presentere opprettet tidspunktet, så blir det tidspunktet på den første endringen.
+    Vær obs på at denne kan endre seg og man burde takle at det finnes flere korrigeringer i listen, så dersom man ønsker å kun vise den siste, så må man selv filtrere ut dette.
+    Det kan også ved svært få tilfeller skje at opprett blir fjernet. F.eks ved splitt tilfeller av identer. Dette skal skje i svært få tilfeller. Dersom man ønsker å presentere opprettet tidspunktet, så blir det tidspunktet på den første endringen.
     """
 endringer: [ Endring! ]!
-    """
+               """
     
     Feltet betegner hvorvidt dette er en funksjonelt historisk opplysning, for eksempel en tidligere fraflyttet adresse eller et foreldreansvar som er utløpt fordi barnet har fylt 18 år.
      I de fleste tilfeller kan dette utledes ved å se på de andre feltene i opplysningen. Dette er imidlertid ikke alltid tilfellet, blant annet for foreldreansvar.
@@ -388,8 +389,8 @@ master: String!
     """
     
     I PDL så får alle forekomster av en opplysning en ID som representerer dens unike forekomst.
-     F.eks, så vil en Opprett ha ID X, korriger ID Y (der hvor den spesifiserer at den korrigerer X).
-     Dersom en opplysning ikke er lagret i PDL, så vil denne verdien ikke være utfylt.
+    F.eks, så vil en Opprett ha ID X, korriger ID Y (der hvor den spesifiserer at den korrigerer X).
+    Dersom en opplysning ikke er lagret i PDL, så vil denne verdien ikke være utfylt.
     """
 opplysningsId: String
 }
@@ -486,10 +487,10 @@ historisk: Boolean
     """
     
     liste med feltene og verdiene som ga treff.
-     Merk at for fritekst søk så vil disse kunne referere til hjelpe felter som ikke er synelig i resultatene.
+    Merk at for fritekst søk så vil disse kunne referere til hjelpe felter som ikke er synelig i resultatene.
     """
 matches: [ SearchMatch ]
-    """
+             """
     
     Navn/Sti til opplysningen som ga treff. Merk at dette ikke er feltet som ga treff men opplysningen.
      F.eks. hvis du søker på person.navn.fornavn så vil opplysingen være person.navn.
@@ -498,7 +499,7 @@ opplysning: String
     """
     
     Gitt att opplysningen som ga treff har en opplysningsId så vil den returneres her.
-     alle søk under person skal ha opplysningsId, men søk i identer vil kunne returnere treff uten opplysningsId.
+    alle søk under person skal ha opplysningsId, men søk i identer vil kunne returnere treff uten opplysningsId.
     """
 opplysningsId: String
 }
@@ -506,7 +507,7 @@ opplysningsId: String
     type PersonSearchHit {
     " Infromasjon om hva som ga treff i søke resultatet."
 highlights: [ PersonSearchHighlight ]
-    " forespurte data"
+                " forespurte data"
 identer(historikk:
     Boolean = false): [ IdentInformasjon! ]!
     " forespurte data"
@@ -518,7 +519,7 @@ score: Float
     type PersonSearchResult {
     " treff liste"
 hits: [ PersonSearchHit! ]!
-    " Side nummer for siden som vises"
+          " Side nummer for siden som vises"
 pageNumber: Int
     " Totalt antall treff (øvre grense er satt til 10 000)"
 totalHits: Int
@@ -552,6 +553,7 @@ hentAdresse(matrikkelId:
     ID!): KartverketAdresse
 hentGeografiskTilknytning(ident:
     ID!): GeografiskTilknytning
+hentGeografiskTilknytningBolk(identer: [ ID! ]!): [ hentGeografiskTilknytningBolkResult! ]!
 hentIdenter(grupper: [ IdentGruppe! ], historikk:
                                            Boolean = false, ident:
                                                ID!): Identliste
@@ -714,6 +716,12 @@ type: String
 vergeEllerFullmektig: VergeEllerFullmektig!
 }
 
+    type hentGeografiskTilknytningBolkResult {
+code: String!
+geografiskTilknytning: GeografiskTilknytning
+ident: String!
+}
+
     enum AdressebeskyttelseGradering {
     FORTROLIG
     STRENGT_FORTROLIG
@@ -808,7 +816,8 @@ vergeEllerFullmektig: VergeEllerFullmektig!
     "Format: YYYY-MM-DD (ISO-8601), example: 2017-11-24"
     scalar Date
     
-    "Format: YYYY-MM-DDTHH:mm:SS (ISO-8601), example: 2011-12-03T10:15:30"
+    "Format:
+YYYY-MM-DDTHH:mm:SS (ISO-8601), example: 2011-12-03T10:15:30"
     scalar DateTime
 
     "Long type"
@@ -831,9 +840,9 @@ fieldName: String!
     """
     
     Søk i historiske data
-     true = søker kun i historiske data.
-     false = søker kun i gjeldende data.
-     null = søke i både historiske og gjeldende data.
+    true = søker kun i historiske data.
+    false = søker kun i gjeldende data.
+    null = søke i både historiske og gjeldende data.
     """
 searchHistorical: Boolean
 searchRule: SearchRule!
@@ -847,12 +856,12 @@ resultsPerPage: Int = 10
     """
     
     Liste over felter man ønsker resultatene sortert etter
-     Standard er "score". Score er poengsummen Elasticsearch tildeler hvert resultat.
+    Standard er "score". Score er poengsummen Elasticsearch tildeler hvert resultat.
     """
-    sortBy: [SearchSorting]
+    sortBy: [ SearchSorting ]
 }
 
-input SearchRule {
+    input SearchRule {
     " Brukes til søke etter datoer som kommer etter opgitt dato."
 after: String
     " Brukes til søke etter datoer som kommer før opgitt dato."
@@ -872,13 +881,13 @@ exists: String
     """
     
     Søk fra og med (se fromExcluding for bare fra men ikke med)
-     kan benyttes på tall og dato
+    kan benyttes på tall og dato
     """
 from: String
     """
     
     Søk fra men ikke med oppgitt verdi
-     kan benyttes på tall og dato
+    kan benyttes på tall og dato
     """
 fromExcluding: String
     " Søk som gir treff også for små variasjoner i skrivemåte"
@@ -898,13 +907,13 @@ startsWith: String
     """
     
     Søk til og med (se toExcluding for bare til men ikke med)
-     kan benyttes på tall og dato
+    kan benyttes på tall og dato
     """
 to: String
     """
     
     Søk til men ikke med oppgitt verdi
-     kan benyttes på tall og dato
+    kan benyttes på tall og dato
     """
 toExcluding: String
     " Bruk \"?\" som wildcard for enkelt tegn, og \"*\" som wildcard for 0 eller flere tegn."
@@ -913,6 +922,6 @@ wildcard: String
 
     input SearchSorting {
 direction: Direction!
-    " Feltnavn ikludert sti til ønsket felt (eksepmel: person.navn.fornavn)"
+               " Feltnavn ikludert sti til ønsket felt (eksepmel: person.navn.fornavn)"
 fieldName: String!
 }

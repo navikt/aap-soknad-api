@@ -113,7 +113,7 @@ class PDLWebClientAdapter(
         private const val IDENT = "ident"
         private const val PERSON_QUERY = "query-person.graphql"
         private const val BARN_QUERY = "query-barn.graphql"
-        private fun idFra(fnr: String): Map<String, Any> = java.util.Map.of<String, Any>(IDENT, fnr)
+        private fun idFra(fnr: String) = mapOf(IDENT to fnr)
 
     }
 
