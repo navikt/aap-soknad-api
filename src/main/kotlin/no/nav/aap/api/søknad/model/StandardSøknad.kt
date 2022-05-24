@@ -5,7 +5,8 @@ import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.Behandler
-import no.nav.aap.api.søknad.model.SøkerType.STANDARD
+import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.PENSJON_AFP
+import no.nav.aap.api.søknad.model.Utbetaling.VedleggAware
 import no.nav.aap.joark.DokumentVariant
 import no.nav.aap.joark.Filtype.JSON
 import no.nav.aap.joark.VariantFormat.ORIGINAL
@@ -14,7 +15,7 @@ import java.time.LocalDate
 import java.util.*
 
 data class StandardSøknad(
-        val type: SøkerType = STANDARD,
+        val studier: Studier,
         val startdato: Startdato,
         val ferie: Ferie,
         val medlemsskap: Medlemskap,
@@ -24,9 +25,19 @@ data class StandardSøknad(
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
         val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         val tilleggsopplysninger: String?,
-        val andreVedlegg: List<UUID> = emptyList()) {
+        override val vedlegg: UUID? = null) : VedleggAware {
 
     fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, this.toEncodedJson(mapper), ORIGINAL)
+
+}
+
+data class Studier(val svar: StudieSvar, val kommeTilbake: RadioValg?, override val vedlegg: UUID? = null) :
+    VedleggAware {
+    enum class StudieSvar {
+        JA,
+        NEI,
+        AVBRUTT
+    }
 
 }
 
@@ -60,10 +71,10 @@ data class Ferie(val ferieType: FerieType, val periode: Periode? = null, val dag
     }
 }
 
-data class BarnOgInntekt(val fnr: Fødselsnummer, val merEnnIG: Boolean = false, val barnepensjon: Boolean = false)
+data class BarnOgInntekt(val fnr: Fødselsnummer, val merEnnIG: Boolean? = false, val barnepensjon: Boolean = false)
 data class AnnetBarnOgInntekt(val barn: Barn,
                               val relasjon: Relasjon,
-                              val merEnnIG: Boolean = false,
+                              val merEnnIG: Boolean? = false,
                               val barnepensjon: Boolean = false) {
     enum class Relasjon {
         FOSTERFORELDER,
@@ -79,10 +90,19 @@ enum class RadioValg {
 
 class Utbetaling(val fraArbeidsgiver: Boolean,
                  val stønadstyper: List<AnnenStønad> = emptyList(),
-                 val andreUtbetalinger: List<AnnenUtbetaling>) {
+                 listOf: List<AnnenUtbetaling>) {
     data class AnnenUtbetaling(val hvilken: String, val hvem: String, override val vedlegg: UUID? = null) : VedleggAware
 
-    data class AnnenStønad(val type: AnnenStønadstype, override val vedlegg: UUID? = null) : VedleggAware
+    data class AnnenStønad(val type: AnnenStønadstype,
+                           val hvemUtbetalerAFP: String?,
+                           override val vedlegg: UUID? = null) :
+        VedleggAware {
+        init {
+            if (type != PENSJON_AFP && hvemUtbetalerAFP != null) {
+                throw IllegalStateException("Hvem utbetaler kun for AFP")
+            }
+        }
+    }
 
     interface VedleggAware {
         val vedlegg: UUID?
@@ -93,15 +113,11 @@ class Utbetaling(val fraArbeidsgiver: Boolean,
         ØKONOMISK_SOSIALHJELP,
         INTRODUKSJONSSTØNAD,
         OMSORGSSTØNAD,
-        FOSTERHJEMSGODTGJØRELSE,
+        STIPEND,
+        PENSJON_AFP,
         VERV,
         UTENLANDSK_TRYGD,
         ANNET,
         INGEN
     }
-}
-
-enum class SøkerType {
-    STUDENT,
-    STANDARD
 }

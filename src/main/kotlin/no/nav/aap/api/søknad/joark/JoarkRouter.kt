@@ -10,6 +10,7 @@ import no.nav.aap.api.mellomlagring.Dokumentlager
 import no.nav.aap.api.søknad.joark.pdf.PDFClient
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
+import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønad
 import no.nav.aap.api.søknad.model.Utbetaling.VedleggAware
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.joark.AvsenderMottaker
@@ -22,7 +23,6 @@ import no.nav.aap.joark.asPDFVariant
 import no.nav.aap.util.LoggerUtil
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.stereotype.Service
-import java.util.*
 import java.util.Base64.getEncoder
 
 @Service
@@ -69,11 +69,9 @@ class JoarkRouter(private val joark: JoarkClient,
         with(søker.fødselsnummer) {
             listOf(Dokument(STANDARD,
                     listOf(søknad.asJsonVariant(mapper), pdfVariant)
-                            + vedleggFor(søknad.utbetalinger?.stønadstyper, this)
-                            + vedleggFor(søknad.utbetalinger?.andreUtbetalinger, this)
-                            + andreVedlegg(søknad.andreVedlegg, this)
-                        .also { log.trace("${it.size} dokumentvarianter ($it)") }))
-                .also { log.trace("Dokument til JOARK $it") }
+                            + vedlegg(søknad.utbetalinger?.stønadstyper, this)
+                            + vedlegg(søknad.studier, this)
+                            + vedlegg(søknad, this)))
         }
 
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
@@ -82,22 +80,21 @@ class JoarkRouter(private val joark: JoarkClient,
                     .also { log.trace("${it.size} dokumentvarianter ($it)") }))
             .also { log.trace("Dokument til JOARK $it") }
 
-    private fun vedleggFor(utbetalinger: List<VedleggAware>?, fnr: Fødselsnummer) =
-        utbetalinger
+    private fun vedlegg(andreStønader: List<AnnenStønad>?, fnr: Fødselsnummer) =
+        andreStønader
             ?.mapNotNull { it.vedlegg }
             ?.mapNotNull { lager.lesDokument(fnr, it) }
             ?.map { it.asDokumentVariant() }
             .orEmpty()
 
-    private fun andreVedlegg(andre: List<UUID>, fnr: Fødselsnummer) =
-        andre
-            .mapNotNull { lager.lesDokument(fnr, it) }
-            .map { it.asDokumentVariant() }
+    private fun vedlegg(a: VedleggAware, fnr: Fødselsnummer) =
+        a.vedlegg?.let { uuid ->
+            lager.lesDokument(fnr, uuid)?.asDokumentVariant()?.let { listOf(it) }
+        } ?: listOf()
 
     private fun slettVedlegg(søknad: StandardSøknad, fnr: Fødselsnummer) {
         with(søknad.utbetalinger) {
             slett(this?.stønadstyper, fnr)
-            slett(this?.andreUtbetalinger, fnr)
         }
     }
 

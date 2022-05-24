@@ -17,15 +17,17 @@ import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Ferie
 import no.nav.aap.api.søknad.model.Ferie.FerieType.DAGER
 import no.nav.aap.api.søknad.model.Medlemskap
+import no.nav.aap.api.søknad.model.RadioValg
 import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Startdato
 import no.nav.aap.api.søknad.model.Startdato.HvorforTilbake.HELSE
+import no.nav.aap.api.søknad.model.Studier
+import no.nav.aap.api.søknad.model.Studier.StudieSvar.NEI
 import no.nav.aap.api.søknad.model.Søker
-import no.nav.aap.api.søknad.model.SøkerType.STANDARD
 import no.nav.aap.api.søknad.model.Utbetaling
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønad
-import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.FOSTERHJEMSGODTGJØRELSE
+import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.INTRODUKSJONSSTØNAD
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenUtbetaling
 import no.nav.aap.api.søknad.model.Utenlandsopphold
 import org.springframework.beans.factory.annotation.Autowired
@@ -53,7 +55,7 @@ class SøknadTest {
     }
 
     private fun standardSøknad() = StandardSøknad(
-            STANDARD,
+            Studier(NEI, RadioValg.NEI),
             Startdato(now(), HELSE, "Noe annet"),
             Ferie(DAGER, dager = 20),
             Medlemskap(true, null, null, null,
@@ -67,13 +69,13 @@ class SøknadTest {
                                     PostNummer("2600", "Lillehammer")),
                             "22222222"))),
             JA,
-            Utbetaling(false, listOf(AnnenStønad(FOSTERHJEMSGODTGJØRELSE, UUID.randomUUID())),
+            Utbetaling(false, listOf(AnnenStønad(INTRODUKSJONSSTØNAD, null, UUID.randomUUID())),
                     listOf(AnnenUtbetaling("hvilken", "hvem"))),
             listOf(BarnOgInntekt(Fødselsnummer("22222222"), true, false)),
             listOf(AnnetBarnOgInntekt(Barn(Fødselsnummer("33333333333"),
                     Navn("Et", "ekstra", "Barn"), now().minusYears(14)), FOSTERFORELDER)),
             "Tilegg")
-    
+
     @SpringBootApplication
     internal class DummyApplication
 }
