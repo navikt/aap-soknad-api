@@ -1,6 +1,5 @@
 package no.nav.aap.api.oppslag.saf
 
-import  com.apollographql.apollo3.ApolloClient
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.oppslag.saf.SafConfig.Companion.SAF
@@ -25,10 +24,6 @@ class SafClientBeanConfig {
     @Bean
     fun safHealthIndicator(a: SafWebClientAdapter) =
         object : AbstractPingableHealthIndicator(a) {}
-
-    @Bean
-    fun apolloClient(cfg: SafConfig) = ApolloClient.builder().serverUrl("${cfg.baseUri}")
-        .build()
 
     @Qualifier(SAF)
     @Bean
