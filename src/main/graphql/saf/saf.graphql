@@ -1,0 +1,35 @@
+query FindJournalpost($id: String!) {
+    journalpost(journalpostId: $id) {
+        avsenderMottaker {
+        id
+        }
+        avsenderMottaker {
+        navn
+        }
+        bruker {
+        id
+        type
+        }
+        datoOpprettet
+        dokumenter {
+        dokumentInfoId
+        brevkode
+        dokumentvarianter {
+        variantformat
+        }
+        }
+        journalposttype
+        journalstatus
+        kanal
+        kanalnavn
+        opprettetAvNavn
+        sak {
+        arkivsaksnummer
+        arkivsaksystem
+        }
+        skjerming
+        tema
+        temanavn
+        tittel
+}
+}

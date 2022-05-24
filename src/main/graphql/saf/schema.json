@@ -1,0 +1,3045 @@
+{
+    "__schema": {
+        "queryType": {
+            "name": "Query"
+        },
+        "mutationType": null,
+        "subscriptionType": null,
+        "types": [
+            {
+                "kind": "OBJECT",
+                "name": "Query",
+                "description": " Query roten til SAF GraphQL API.",
+                "fields": [
+                    {
+                        "name": "dokumentoversiktBruker",
+                        "description": " * dokumentoversiktBruker returnerer en liste over alle dokumentene tilknyttet\nen bruker.  Listen er sortert omvendt kronologisk.\n * Det er kun metadata om journalposter med tilhørende dokumenter som\nreturneres. Det fysiske dokumentet kan hentes i saf - REST hentdokument.",
+                        "args": [
+                            {
+                                "name": "brukerId",
+                                "description": "Brukeren man ønsker å få ut dokumentoversikt for.\nHvis argumentet ikke er angitt så returneres en feil.",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "INPUT_OBJECT",
+                                        "name": "BrukerIdInput",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": null
+                            },
+                            {
+                                "name": "etter",
+                                "description": " Peker til resultat etter foerste, brukes til å paginere forover.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "String",
+                                    "ofType": null
+                                },
+                                "defaultValue": null
+                            },
+                            {
+                                "name": "foerste",
+                                "description": " Første **n** resultater, brukes til å paginere forover.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Int",
+                                    "ofType": null
+                                },
+                                "defaultValue": null
+                            },
+                            {
+                                "name": "fraDato",
+                                "description": "Dato for eldste journalpost.\nHvis angitt returneres alle journalposter fra denne datoen.\nHvis null er angitt så hentes alle journalposter.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Date",
+                                    "ofType": null
+                                },
+                                "defaultValue": null
+                            },
+                            {
+                                "name": "journalposttyper",
+                                "description": "Filter for journalposttype.\nHvis en tom liste er angitt som argument hentes alle journalposttyper.",
+                                "type": {
+                                    "kind": "LIST",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "ENUM",
+                                        "name": "Journalposttype",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": "[I, U, N]"
+                            },
+                            {
+                                "name": "journalstatuser",
+                                "description": "Filter for journalstatus.\nHvis en tom liste er angitt som argument hentes alle journalstatuser",
+                                "type": {
+                                    "kind": "LIST",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "ENUM",
+                                        "name": "Journalstatus",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": "[FERDIGSTILT, JOURNALFOERT, EKSPEDERT]"
+                            },
+                            {
+                                "name": "tema",
+                                "description": "Filter for tema.\nHvis en tom liste er angitt som argument hentes journalposter på alle tema.",
+                                "type": {
+                                    "kind": "LIST",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "ENUM",
+                                        "name": "Tema",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": "[]"
+                            }
+                        ],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "Dokumentoversikt",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "dokumentoversiktFagsak",
+                        "description": " * dokumentoversiktFagsak returnerer en liste over alle dokumentene tilknyttet\nen fagsak.  Listen er sortert omvendt kronologisk.\n * Det er kun metadata om journalposter med tilhørende dokumenter som\nreturneres. Det fysiske dokumentet kan hentes i saf - REST hentdokument.",
+                        "args": [
+                            {
+                                "name": "etter",
+                                "description": " Peker til resultat etter foerste, brukes til å paginere forover.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "String",
+                                    "ofType": null
+                                },
+                                "defaultValue": null
+                            },
+                            {
+                                "name": "fagsak",
+                                "description": "Fagsaken man ønsker å få ut dokumentoversikt for.\n Hvis argumentet ikke er angitt så returneres en feil.",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "INPUT_OBJECT",
+                                        "name": "FagsakInput",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": null
+                            },
+                            {
+                                "name": "foerste",
+                                "description": " Første **n** resultater, brukes til å paginere forover.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Int",
+                                    "ofType": null
+                                },
+                                "defaultValue": null
+                            },
+                            {
+                                "name": "fraDato",
+                                "description": "Dato for eldste journalpost.\nHvis angitt returneres alle journalposter fra denne datoen.\nHvis null er angitt så hentes alle journalposter.",
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Date",
+                                    "ofType": null
+                                },
+                                "defaultValue": null
+                            },
+                            {
+                                "name": "journalposttyper",
+                                "description": "Filter for journalposttype.\nHvis en tom liste er angitt som argument hentes alle journalposttyper.\nStandardverdi: `I, U, N`",
+                                "type": {
+                                    "kind": "LIST",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "ENUM",
+                                        "name": "Journalposttype",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": "[I, U, N]"
+                            },
+                            {
+                                "name": "journalstatuser",
+                                "description": "Filter for journalstatus.\nHvis en tom liste er angitt som argument hentes alle journalstatuser.\nStandardverdi: `FERDIGSTILT, JOURNALFOERT, EKSPEDERT`",
+                                "type": {
+                                    "kind": "LIST",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "ENUM",
+                                        "name": "Journalstatus",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": "[FERDIGSTILT, JOURNALFOERT, EKSPEDERT]"
+                            },
+                            {
+                                "name": "tema",
+                                "description": "Filter for tema.\nHvis en tom liste er angitt som argument hentes journalposter på alle tema.",
+                                "type": {
+                                    "kind": "LIST",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "ENUM",
+                                        "name": "Tema",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": "[]"
+                            }
+                        ],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "Dokumentoversikt",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "journalpost",
+                        "description": "* Query returnerer metadata for en journalpost.\n* Fysiske dokumentet tilknyttet journalposten kan hentes i saf - REST hentdokument",
+                        "args": [
+                            {
+                                "name": "journalpostId",
+                                "description": "ID til Journalposten man ønsker å hente detaljer for.\n* Hvis argumentet ikke er angitt så returneres en feil.",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "Journalpost",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "tilknyttedeJournalposter",
+                        "description": " Henter metadata for en dokumentInfo (dokumentbeskrivelse) med tilknyttede journalposter.\n Behovet er å hente journalposter som:\n * Deler samme DokumentInfo (mange-til-mange relasjon via JPDokInfoRel). Dette\nvil typisk være resultat av et dokument som er journalført på flere saker/brukere.\n * Er knyttet sammen via originalJournalpostId. Dette vil typisk være resultat\nav en splitting av et dokument, der det opprettes to nye DokumentInfo med hver\nsin del av originaldokumentet, og DokumentInfo.originalJournalpostId peker\ntilbake på journalposten (med status Utgått) som originaldokumentet lå på.",
+                        "args": [
+                            {
+                                "name": "dokumentInfoId",
+                                "description": "ID til dokumentet man ønsker å hente tilknyttede Journalpost for.\n* Hvis argumentet ikke er angitt så returneres en feil.",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": null
+                            },
+                            {
+                                "name": "tilknytning",
+                                "description": " Typen tilknyttet Journalpost.",
+                                "type": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "ENUM",
+                                        "name": "Tilknytning",
+                                        "ofType": null
+                                    }
+                                },
+                                "defaultValue": null
+                            }
+                        ],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "OBJECT",
+                                    "name": "Journalpost",
+                                    "ofType": null
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "INPUT_OBJECT",
+                "name": "BrukerIdInput",
+                "description": " BrukerIdInput er et argument som identifiserer en aktør eller organisasjon.",
+                "fields": null,
+                "inputFields": [
+                    {
+                        "name": "id",
+                        "description": " Unik identifikator for en aktør eller organisasjon.",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "defaultValue": null
+                    },
+                    {
+                        "name": "type",
+                        "description": " Indikator på hvilken type id som brukes i spørringen.",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "ENUM",
+                                "name": "BrukerIdType",
+                                "ofType": null
+                            }
+                        },
+                        "defaultValue": null
+                    }
+                ],
+                "interfaces": null,
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "SCALAR",
+                "name": "String",
+                "description": "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "BrukerIdType",
+                "description": " Indikator på hvilken type id som brukes i spørringen.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "AKTOERID",
+                        "description": " NAV aktørid for en person.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "FNR",
+                        "description": " Folkeregisterets fødselsnummer eller d-nummer for en person.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "ORGNR",
+                        "description": " Foretaksregisterets organisasjonsnummer for en juridisk person.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "SCALAR",
+                "name": "Int",
+                "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. ",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "SCALAR",
+                "name": "Date",
+                "description": "Identifikasjon av et døgn i kalenderen etter ISO-8601 standarden.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "Journalposttype",
+                "description": " Sier hvorvidt journalposten er et inngående dokument, et utgående dokument eller et notat.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "I",
+                        "description": " **Inngående dokument** - Dokumentasjon som NAV har mottatt fra en ekstern\npart. De fleste inngående dokumenter er søknader, ettersendelser av\ndokumentasjon til sak, eller innsendinger fra arbeidsgivere. Meldinger brukere\nhar sendt til \"Skriv til NAV\" arkiveres også som inngående dokumenter..",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "N",
+                        "description": " **Notat** - Dokumentasjon som NAV har produsert selv, uten at formålet er å\ndistribuere dette ut av NAV. Eksempler på notater er samtalereferater med\nveileder på kontaktsenter og interne forvaltningsnotater.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "U",
+                        "description": " **Unngående dokument** - Dokumentasjon som NAV har produsert og sendt ut til\nen ekstern part. De fleste utgående dokumenter er informasjons- eller\nvedtaksbrev til privatpersoner eller organisasjoner. \"Skriv til NAV\"-meldinger\nsom saksbehandlere har sendt til brukere arkiveres også som utgående dokumenter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "Journalstatus",
+                "description": " * Status på journalposten i arkivet, f.eks. **MOTTATT** eller **JOURNALFOERT**.\nJournalstatusen gir et indikasjon på hvor i journalførings- eller\ndokumentproduksjonsprosessen journalposten befinner seg.\n * Journalposter som er resultat av en feilsituasjon og ikke skal hensyntas for\nsaksbehandlinghar egne koder, som **UTGAAR** eller **AVBRUTT**.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "AVBRUTT",
+                        "description": " Utgående dokumenter og notater kan avbrytes mens de er under arbeid, og ikke\nenda er ferdigstilt. Statusen **AVBRUTT** brukes stort sett ved\nfeilsituasjoner knyttet til vedtaksproduksjon.\n * Statusen kan forekomme for utgående dokumenter og notater.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "EKSPEDERT",
+                        "description": " Dokumentet er sendt til bruker. Statusen benyttes også når dokumentet er\ntilgjengeliggjort for bruker på DittNAV, og bruker er varslet.\n * Statusen kan forekomme for utgående dokumenter og notater.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "FEILREGISTRERT",
+                        "description": " Journalposten har blitt unntatt fra saksbehandling etter at den feilaktig har\nblitt knyttet til en sak. Det er ikke mulig å slette en saksrelasjon, istedet\nsettes saksrelasjonen til feilregistrert.\n * Statusen kan forekomme for alle journalposttyper.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "FERDIGSTILT",
+                        "description": "Journalposten med tilhørende dokumenter er ferdigstilt, og journalen er i prinsippet låst for videre endringer.\n* Tilsvarer statusen **JOURNALFOERT** for inngående dokumenter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "JOURNALFOERT",
+                        "description": " Journalposten er ferdigstilt og ansvaret for videre behandling av forsendelsen er overført til fagsystemet.\n * Journalposter med status **JOURNALFOERT** oppfyller minimumskrav til\nmetadata i arkivet, som for eksempel tema, sak, bruker og avsender.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "MOTTATT",
+                        "description": " Journalposten er mottatt, men ikke journalført. *\"Mottatt\"* er et annet ord\nfor *\"arkivert\"* eller *\"midlertidig journalført\"*\n * Statusen vil kun forekomme for inngående dokumenter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "OPPLASTING_DOKUMENT",
+                        "description": " Midlertidig status på vei mot **MOTTATT**.\n Dersom en journalpost blir stående i status **OPPLASTING_DOKUMENT** over tid,\ntyder dette på at noe har gått feil under opplasting av vedlegg ved arkivering.\n * Statusen kan kun forekomme for inngående dokumenter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "RESERVERT",
+                        "description": " Statusen benyttes bl.a. i forbindelse med brevproduksjon for å reservere\n'plass' i journalen for dokumenter som skal populeres på et senere tidspunkt.\n Tilsvarer statusen **OPPLASTING_DOKUMENT** for inngående dokumenter.\n * Statusen kan forekomme for utgående dokumenter og notater",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "UKJENT",
+                        "description": " Dersom statusfeltet i Joark er tomt, mappes dette til **UKJENT**",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "UKJENT_BRUKER",
+                        "description": " Journalposten har ikke noen kjent bruker.\n ** NB: ** **UKJENT_BRUKER** er ikke en midlertidig status, men benyttes der\ndet ikke er mulig å journalføre fordi man ikke klarer å identifisere brukeren\nforsendelsen gjelder.\n * Statusen kan kun forekomme for inngående dokumenter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "UNDER_ARBEID",
+                        "description": "Journalposten er opprettet i arkivet, men fremdeles under arbeid.\n* Statusen kan forekomme for utgående dokumenter og notater.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "UTGAAR",
+                        "description": " Journalposten er unntatt fra saksbehandling. Status **UTGAAR** brukes stort\nsett ved feilsituasjoner knyttet til skanning eller journalføring.\n * Statusen vil kun forekomme for inngående dokumenter",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "Tema",
+                "description": "Temaet/Fagområdet som en journalpost og tilhørende sak tilhører, f.eks. **FOR** (foreldrepenger).\n* I NAV brukes Tema for å klassifisere journalposter i arkivet med tanke på gjenfinning, tilgangsstyring og bevaringstid.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "AAP",
+                        "description": " Arbeidsavklaringspenger",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "AAR",
+                        "description": " Aa-registeret",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "AGR",
+                        "description": " Ajourhold - Grunnopplysninger",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "BAR",
+                        "description": " Barnetrygd",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "BID",
+                        "description": " Bidrag",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "BIL",
+                        "description": " Bil",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "DAG",
+                        "description": " Dagpenger",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "ENF",
+                        "description": " Enslig forsørger",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "ERS",
+                        "description": " Erstatning",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "FAR",
+                        "description": " Farskap",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "FEI",
+                        "description": " Feilutbetaling",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "FOR",
+                        "description": " Foreldre- og svangerskapspenger",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "FOS",
+                        "description": " Forsikring",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "FUL",
+                        "description": " Fullmakt",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "GEN",
+                        "description": " Generell",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "GRA",
+                        "description": " Gravferdsstønad",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "GRU",
+                        "description": " Grunn- og hjelpestønad",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "HEL",
+                        "description": " Helsetjenester og ortopediske hjelpemidler",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "HJE",
+                        "description": " Hjelpemidler",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "IAR",
+                        "description": " Inkluderende arbeidsliv",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "IND",
+                        "description": " Tiltakspenger",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "KON",
+                        "description": " Kontantstøtte",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "KTR",
+                        "description": " Kontroll",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "MED",
+                        "description": " Medlemskap",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "MOB",
+                        "description": " Mobilitetsfremmende stønad",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "OMS",
+                        "description": " Omsorgspenger, pleiepenger og opplæringspenger",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "OPA",
+                        "description": " Oppfølging - Arbeidsgiver",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "OPP",
+                        "description": " Oppfølging",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "PEN",
+                        "description": " Pensjon",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "PER",
+                        "description": " Permittering og masseoppsigelser",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "REH",
+                        "description": " Rehabilitering",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "REK",
+                        "description": " Rekruttering og stilling",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "RPO",
+                        "description": " Retting av personopplysninger",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "RVE",
+                        "description": " Rettferdsvederlag",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SAA",
+                        "description": " Sanksjon - Arbeidsgiver",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SAK",
+                        "description": " Saksomkostninger",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SAP",
+                        "description": " Sanksjon - Person",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SER",
+                        "description": " Serviceklager",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SIK",
+                        "description": " Sikkerhetstiltak",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "STO",
+                        "description": " Regnskap/utbetaling",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SUP",
+                        "description": " Supplerende stønad",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SYK",
+                        "description": " Sykepenger",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SYM",
+                        "description": " Sykmeldinger",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "TIL",
+                        "description": " Tiltak",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "TRK",
+                        "description": " Trekkhåndtering",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "TRY",
+                        "description": " Trygdeavgift",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "TSO",
+                        "description": " Tilleggsstønad",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "TSR",
+                        "description": " Tilleggsstønad arbeidssøkere",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "UFM",
+                        "description": " Unntak fra medlemskap",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "UFO",
+                        "description": " Uføretrygd",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "UKJ",
+                        "description": " Ukjent",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "VEN",
+                        "description": " Ventelønn",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "YRA",
+                        "description": " Yrkesrettet attføring",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "YRK",
+                        "description": " Yrkesskade / Menerstatning",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "Dokumentoversikt",
+                "description": " Dokumentoversikt er en liste av journalposter som tilfredstiller query kriteriene.",
+                "fields": [
+                    {
+                        "name": "journalposter",
+                        "description": " En liste av journalposter.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "OBJECT",
+                                    "name": "Journalpost",
+                                    "ofType": null
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "sideInfo",
+                        "description": " Informasjon for å hjelpe med paginering.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "SideInfo",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "Journalpost",
+                "description": " Et sett med metadata som er nødvendig for å gjenfinne et dokument i arkivet. En\njournalpost kan ha ett eller flere dokumenter.",
+                "fields": [
+                    {
+                        "name": "avsenderMottaker",
+                        "description": " Personen eller organisasjonen som er avsender eller mottaker av dokumentene i journalposten.",
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "AvsenderMottaker",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "avsenderMottakerId",
+                        "description": " Identifikatoren til parten som er avsender eller mottaker av dokumentene på\njournalposten. Enten fødselsnummer eller organisasjonsnummer.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": true,
+                        "deprecationReason": "Feltet er deprekert og vil bli fjernet i fremtiden. Bruk avsenderMottaker.id i stedet."
+                    },
+                    {
+                        "name": "avsenderMottakerLand",
+                        "description": " Landet forsendelsen er mottatt fra eller sendt til. Feltet skal i\nutgangspunktet kun være populert dersom avsender eller mottaker er en\ninstitusjon med adresse i utlandet.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": true,
+                        "deprecationReason": "Feltet er deprekert og vil bli fjernet i fremtiden. Bruk avsenderMottaker.land i stedet."
+                    },
+                    {
+                        "name": "avsenderMottakerNavn",
+                        "description": " Navnet på personen eller organisasjonen som er avsender eller mottaker av dokumentene på journalposten.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": true,
+                        "deprecationReason": "Feltet er deprekert og vil bli fjernet i fremtiden. Bruk avsenderMottaker.navn i stedet."
+                    },
+                    {
+                        "name": "behandlingstema",
+                        "description": " Detaljering av tema på journalpost og tilhørende sak, f.eks. \"ab0072\".",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "behandlingstemanavn",
+                        "description": " Dekode av behandlingstema, f.eks \"Foreldrepenger ved adopsjon\"",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "bruker",
+                        "description": "* Personen eller organisasjonen som dokumentene i journalposten gjelder.\n* Dersom journalposten er sakstilknyttet, henter SAF bruker fra GSAK/PSAK. Alternativt henter SAF den fra Joark.",
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "Bruker",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "datoOpprettet",
+                        "description": " Datoen journalposten ble opprettet i arkivet. Datoen settes automatisk og kan\nikke overskrives. Selv om hver journalpost har mange datoer (se\n`RelevantDato`) er datoOpprettet å anse som \"fasit\" på journalpostens alder.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "dokumenter",
+                        "description": " Liste over dokumentinfo tilknyttet journalposten.\n * Dokumentene returneres i følgende sorteringsrekkefølge: Hoveddokumentet\nførst, deretter vedleggene i tilfeldig rekkefølge.",
+                        "args": [],
+                        "type": {
+                            "kind": "LIST",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "DokumentInfo",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "journalforendeEnhet",
+                        "description": " NAV-enheten som har journalført forsendelsen. I noen tilfeller brukes\njournalfEnhet til å rute journalføringsoppgaven til korrekt enhet i NAV. I\nslike tilfeller vil journalfEnhet være satt også for ikke-journalførte dokumenter.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "journalfortAvNavn",
+                        "description": " Personen eller systembrukeren i NAV som har journalført forsendelsen.\n * Bruken av feltet varierer, og kan inneholde den ansattes navn eller\nNAV-ident. Dersom forsendelsen er automatisk journalført, kan innholdet være\nf.eks. en servicebruker eller et batchnavn.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "journalpostId",
+                        "description": " Unik identifikator per Journalpost",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "journalposttype",
+                        "description": " Sier hvorvidt journalposten er et inngående dokument, et utgående dokument eller et notat.",
+                        "args": [],
+                        "type": {
+                            "kind": "ENUM",
+                            "name": "Journalposttype",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "journalstatus",
+                        "description": " Status på journalposten i joark, f.eks. MOTTATT eller JOURNALFØRT.\nJournalstatusen gir et indikasjon på hvor i journalførings- eller\ndokumentproduksjonsprosessen journalposten befinner seg.\n * Journalposter som er resultat av en feilsituasjon og ikke skal hensyntas for\nsaksbehandling har egne koder, som UTGAAR eller AVBRUTT.",
+                        "args": [],
+                        "type": {
+                            "kind": "ENUM",
+                            "name": "Journalstatus",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "kanal",
+                        "description": "Kanalen dokumentene ble mottatt i eller sendt ut på f.eks. \"SENTRAL_UTSKRIFT\" eller \"ALTINN\".\n* Dersom journalposten ikke har noen kjent kanal, returneres verdien \"UKJENT\"",
+                        "args": [],
+                        "type": {
+                            "kind": "ENUM",
+                            "name": "Kanal",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "kanalnavn",
+                        "description": " Dekode av `Kanal`, f.eks \"Sentral utskrift\"",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "opprettetAvNavn",
+                        "description": " Personen eller systembrukeren i NAV som har opprettet journalposten.\n * Bruken av feltet varierer, og kan inneholde den ansattes navn eller\nNAV-ident. For inngående dokumenter kan innholdet være f.eks. en servicebruker\neller et batchnavn.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "relevanteDatoer",
+                        "description": " Liste over datoer som kan være relevante for denne journalposten, f.eks.\nDATO_EKSPEDERT. Hvilke relevante datoer som returneres, avhenger av\njournalposttypen.",
+                        "args": [],
+                        "type": {
+                            "kind": "LIST",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "RelevantDato",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "sak",
+                        "description": " Sier hvilken sak journalposten er knyttet til. En journalpost kan maksimalt\nvære knyttet til én sak, men et dokument kan være knyttet til flere\njournalposter og dermed flere saker.",
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "Sak",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "skjerming",
+                        "description": " Utrykker at tilgangen til alle journalpost data for denne journalposten er\nbegrenset, og at dataene ikke skal brukes i ordinær saksbehandling. De eneste\nmulige verdiene er foreløpig null og POL, der POL betyr at behandling av denne\njournalposten er begrenset som følge av personopplysningsloven (GDPR - brukers\nrett til å bli glemt)",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "tema",
+                        "description": " Temaet/Fagområdet som journalposten og tilhørende sak tilhører, f.eks. \"FOR\".\n * For sakstilknyttede journalposter, er det tema på GSAK- eller PSAK-saken som er gjeldende tema.\n * For journalposter som enda ikke har fått sakstilknytning, inneholder joark\ninformasjon om antatt tema for journalposten.",
+                        "args": [],
+                        "type": {
+                            "kind": "ENUM",
+                            "name": "Tema",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "temanavn",
+                        "description": " Dekode av `Tema`, f.eks. \"Foreldrepenger\"",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "tilleggsopplysninger",
+                        "description": " Liste over fagspesifikke metadata som er tilknyttet journalpost.",
+                        "args": [],
+                        "type": {
+                            "kind": "LIST",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "Tilleggsopplysning",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "tittel",
+                        "description": " Beskriver innholdet i journalposten samlet, f.eks. \"Ettersendelse til søknad om foreldrepenger\"",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "AvsenderMottaker",
+                "description": " En person, organisasjon eller annen samhandler som er mottaker eller avsender av dokumentene på en journalpost.",
+                "fields": [
+                    {
+                        "name": "erLikBruker",
+                        "description": " Angir hvorvidt bruker er lik avsender/mottaker av journalposten.\n * Informasjonen er ikke garantert korrekt, da tjenesten sammenlikner\navsenderMottaker med bruker tilknyttet journalposten, ikke bruker tilknyttet saken.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Boolean",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "id",
+                        "description": "Identifikatoren til parten som er avsender eller mottaker av dokumentene på journalposten.\n* Normalt et fødselsnummer eller organisasjonsnummer.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "land",
+                        "description": " Landet forsendelsen er mottatt fra eller sendt til. Feltet brukes kun dersom\navsender / mottaker er en institusjon med adresse i utlandet.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "navn",
+                        "description": " Navnet på personen eller organisasjonen som er avsender eller mottaker av dokumentene på journalposten.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "type",
+                        "description": " Identifikatortypen til parten som er avsender eller mottaker av dokumentene på journalposten.",
+                        "args": [],
+                        "type": {
+                            "kind": "ENUM",
+                            "name": "AvsenderMottakerIdType",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "description": "The `Boolean` scalar type represents `true` or `false`.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "AvsenderMottakerIdType",
+                "description": " Indikator på hvilken type id som brukes i spørringen.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "FNR",
+                        "description": " Folkeregisterets fødselsnummer eller d-nummer for en person.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "HPRNR",
+                        "description": " Helsepersonellregisterets identifikator for leger og annet helsepersonell.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "NULL",
+                        "description": " AvsenderMottakerId er tom",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "ORGNR",
+                        "description": " Foretaksregisterets organisasjonsnummer for en juridisk person.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "UKJENT",
+                        "description": " Ukjent IdType",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "UTL_ORG",
+                        "description": " Unik identifikator for utenlandske institusjoner / organisasjoner.\nIdentifikatorene vedlikeholdes i EUs institusjonskatalog.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "Bruker",
+                "description": " Person eller organisasjon som har et forhold til NAV, f.eks. som mottaker av tjenester eller ytelser.",
+                "fields": [
+                    {
+                        "name": "id",
+                        "description": " Brukerens identifikator. For personbrukere returneres personens aktørID. For\norganisasjonsbrukere returneres et organisasjonsnummer.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "type",
+                        "description": " Angir hvilken type brukeren sin id er.",
+                        "args": [],
+                        "type": {
+                            "kind": "ENUM",
+                            "name": "BrukerIdType",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "description": "Identifikasjon av dato og tidspunkt etter ISO-8601 standarden.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "DokumentInfo",
+                "description": "Metadata tilknyttet et bestemt dokument i Joark (evt til flere varianter av samme dokument).\n* Dokumentinfo viser ikke til den fysiske filen, men til metadata som omhandler alle eventuelle varianter av dokumentet.",
+                "fields": [
+                    {
+                        "name": "brevkode",
+                        "description": " Kode som sier noe om dokumentets innhold og oppbygning.\n * For inngående skjema er brevkoden normalt en NAV-skjemaID f.eks. *\"NAV\n14-05.09\"*. Enkelte vedlegg har en vedleggskode som sier noe om innholdet.\n * For utgående dokumenter sier brevkoden noe om hvilken dokumentmal som er\nbenyttet og hvordan dokumentet skal distribueres.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "datoFerdigstilt",
+                        "description": " Dato dokumentet ble ferdigstilt.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "DateTime",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "dokumentInfoId",
+                        "description": " Unik identifikator per dokumentinfo",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "dokumentstatus",
+                        "description": " Dokumentstatus gir et indikasjon på hvorvidt dokumentet er ferdigstilt eller\nunder arbeid, eventuelt avbrutt. Dersom dokumentet ikke har noen\ndokumentstatus, er dokumentet komplett / ferdigstilt.",
+                        "args": [],
+                        "type": {
+                            "kind": "ENUM",
+                            "name": "Dokumentstatus",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "dokumentvarianter",
+                        "description": " Liste over tilgjengelige varianter av dokumentet.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "OBJECT",
+                                    "name": "Dokumentvariant",
+                                    "ofType": null
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "logiskeVedlegg",
+                        "description": " Liste over andre dokumenter som også befinner seg inne i den fysiske filen som dokumentinfo-objektet peker på.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "OBJECT",
+                                    "name": "LogiskVedlegg",
+                                    "ofType": null
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "originalJournalpostId",
+                        "description": " Et dokumentInfo-objekt kan være gjenbrukt på flere journalposter.\nOriginalJournalpostId peker på den journalposten som dokumentene var knyttet\ntil på arkiveringstidspunktet.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "skjerming",
+                        "description": " Uttrykker at tilgangen til metadata for dette dokumentet er begrenset, og at\ndataene ikke skal brukes i ordinær saksbehandling. De eneste mulige verdiene\ner foreløpig null og POL, der POL betyr at behandling av dette dokumentet er\nbegrenset som følge av personopplysningsloven (GDPR - brukers rett til å bli glemt)",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "tittel",
+                        "description": " Dokumentets tittel, f.eks. *\"Søknad om foreldrepenger ved fødsel\"* eller *\"Legeerklæring\"*.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "Dokumentstatus",
+                "description": " Dokumentstatus gir en indikasjon på hvorvidt dokumentet er ferdigstilt eller\nunder arbeid, eventuelt avbrutt. Dersom dokumentet ikke har noen dokumentstatus,\ner dokumentet komplett / ferdigstilt.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "AVBRUTT",
+                        "description": " Dokumentet ble opprettet, men ble avbrutt under redigering. Benyttes for redigerbare brev.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "FERDIGSTILT",
+                        "description": " Dokumentet er ferdigstilt. Benyttes for redigerbare brev.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "KASSERT",
+                        "description": " Dokumentet er kassert.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "UNDER_REDIGERING",
+                        "description": " Dokumentet er under arbeid. Benyttes for redigerbare brev.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "Dokumentvariant",
+                "description": " En variant av et dokumentet, som er beregnet på et spesielt formål, for eksempel\nlangtidsbevaring eller automatisk saksbehandling.\n * De fleste dokumenter vil kun returneres i variantformat ARKIV. Dersom det\neksisterer andre varianter av dokumentet, vil disse også returneres, gitt at\nsaksbehandler har rettigheter som tilsier at han/hun skal vite at det finnes\nandre varianter.",
+                "fields": [
+                    {
+                        "name": "filnavn",
+                        "description": " Navnet på filen i arkivet. Navnet vil i de fleste tilfeller være autogenerert ved arkivering.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "filuuid",
+                        "description": "Unik identifikator per fil.\n* NB: Feltet skal kun brukes etter avtale med Team Dokument.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": true,
+                        "deprecationReason": "Feltet er deprekert og vil bli fjernet i fremtiden. Feltet skal kun brukes etter avtale med Team Dokument."
+                    },
+                    {
+                        "name": "saksbehandlerHarTilgang",
+                        "description": "Sier hvorvidt saksbehandler som gjør oppslaget vil få tilgang til å åpne denne dokumentvarianten.\n* Dersom verdien er false, vil tilgang bli avslått dersom saksbehandler forsøker å åpne dokumentet.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Boolean",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "skjerming",
+                        "description": " Uttrykker at tilgangen til metadata for dette dokumentet er begrenset, og at\ndataene ikke skal brukes i ordinær saksbehandling. De eneste mulige verdiene\ner foreløpig null og POL, der POL betyr at behandling av dette dokumentet er\nbegrenset som følge av personopplysningsloven (GDPR - brukers rett til å bli glemt)",
+                        "args": [],
+                        "type": {
+                            "kind": "ENUM",
+                            "name": "SkjermingType",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "variantformat",
+                        "description": "Typen variant som returneres. Normalt vil dette være ARKIV.\n* Andre visningsvarianter er SLADDET\n* Et dokument kan ha både en SLADDET og en ARKIV variant, men aldri flere varianter av samme type.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "ENUM",
+                                "name": "Variantformat",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "SkjermingType",
+                "description": " Beskriver hvorfor journalposten eller dokumentet er skjermet. Det kan komme flere verdier enn disse i fremtiden.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "FEIL",
+                        "description": " Indikerer at det har blitt gjort en feil under mottak, journalføring eller\nbrevproduksjon, slik at journalposten eller dokumentene er markert for sletting.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "POL",
+                        "description": " Indikerer at det er fattet et vedtak etter personopplysningsloven (GDPR - brukers rett til å bli glemt).",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "Variantformat",
+                "description": " Typen variant som returneres. Dette er normalt **ARKIV**, men kan også være\n**SLADDET**,**PRODUKSJON**, **PRODUKSJON_DLF** eller **FULLVERSJON**.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "ARKIV",
+                        "description": " Den *\"offisielle\"* versjonen av et dokument, som er beregnet på visning og\nlangtidsbevaring. I de fleste tilfeller er arkivvarianten lik dokumentet\nbrukeren sendte inn eller mottok (digitalt eller på papir).\n * Arkivvarianten er alltid i menneskelesbart format, som PDF, PDF/A eller PNG.\n * Alle dokumenter har en arkivvariant, med mindre bruker har fått innvilget\nvedtak om sletting eller skjerming av opplysninger i arkivet.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "FULLVERSJON",
+                        "description": "Variant av dokument som inneholder spørsmålstekster, hjelpetekster og ubesvarte spørsmål fra søknadsdialogen.\n* Fullversjon genereres for enkelte søknadsskjema fra nav.no, og brukes ved klagebehandling.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "PRODUKSJON",
+                        "description": "Produksjonsvariant i eget proprietært format.\n* Varianten finnes for dokumenter som er produsert i Metaforce eller Brevklient.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "PRODUKSJON_DLF",
+                        "description": "Produksjonsvariant i eget proprietært format.\n* Varianten finnes kun for dokumenter som er produsert i Exstream Live Editor.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SLADDET",
+                        "description": "Dette er en sladdet variant av originaldokumentet.\n* **SLADDET** variant har ikke spesiell tilgangskontroll.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "ORIGINAL",
+                        "description": "Variant av dokumentet i strukturert format, f.eks. XML eller JSON.\n* Originalvarianten er beregnet på maskinell lesning og behandling.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "LogiskVedlegg",
+                "description": " Et dokument som forekommer inne i en fysisk fil med et annet navn og hovedinnhold.\n * Dette skjer hyppig under skanning av papirpost, fordi dokumenter mottatt i\nsamme konvolutt skannes i én operasjon, og ender opp som én fil i Joark.\n * En bruker sender inn en papirsøknad om foreldrepenger, med en legeerklæring\nsom vedlegg. Journalposten vil da ha ett dokument med navn *\"Søknad om\nforeldrepenger ved fødsel\"*, og det logiske vedlegget *\"Legerklæring\"*.",
+                "fields": [
+                    {
+                        "name": "logiskVedleggId",
+                        "description": " Unik identifikator per logisk vedlegg",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "tittel",
+                        "description": " Tittel på det logiske vedlegget, f.eks. *\"Legeerklæring\"*",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "Kanal",
+                "description": "Kanalen dokumentene ble mottatt i eller sendt ut på, f.eks. **SENTRAL_UTSKRIFT** eller **ALTINN**.\n* Dersom journalposten ikke har noen kjent kanal, returneres verdien **UKJENT**",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "ALTINN",
+                        "description": "Forsendelsen er sendt inn via et Altinn-skjema.\n* Brukes for inngående journalposter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "EESSI",
+                        "description": " Forsendelsen er mottatt eller distribuert via applikasjoner som EU har levert\nog som benyttes for utveksling av informasjon med andre EU-land.\n * Brukes for inngående og utgående journalposter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "EIA",
+                        "description": "Forsendelsen er arkivert av applikasjonen EIA.\n* Brukes for inngående journalposter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "EKST_OPPS",
+                        "description": " Dokumentene i journalposten er hentet fra en ekstern kilde, for eksempel\ninformasjon om oppholdstillatelse fra Utlendingsdirektoratet.\n * Brukes for inngående journalposter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "HELSENETTET",
+                        "description": "Forsendelsen er mottatt eller distribuert via Norsk Helsenett, helsesektorens løsning for elektronisk meldingsutveksling.\n* Brukes for inngående og utgående journalposter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "INGEN_DISTRIBUSJON",
+                        "description": "Forsendelsen skal ikke distribueres ut av NAV.\n* Brukes for alle notater og noen utgående journalposter",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "LOKAL_UTSKRIFT",
+                        "description": "Brevet er skrevet ut lokalt og kan være sendt i posten på papir.\n* Brukes for utgående journalposter og notater.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "NAV_NO",
+                        "description": " Forsendelsen er sendt inn digitalt via selvbetjeningsløsninger på nav.no,\neller distribuert digitalt til brukers meldingsboks på nav.no.\n * Brukes for inngående og utgående journalposter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SDP",
+                        "description": "Brevet er sendt via digital post til innbyggere.\n* Brukes for utgående journalposter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SENTRAL_UTSKRIFT",
+                        "description": "Brevet er overført til sentral distribusjon og sendt i posten på papir.\n* Brukes for utgående journalposter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SKAN_NETS",
+                        "description": "Forsendelsen er sendt inn på papir og skannet hos NETS.\n* Brukes for inngående, utgående journalposter og notater.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SKAN_PEN",
+                        "description": "Forsendelsen er sendt inn på papir og skannet på NAVs skanningsenter for pensjon og bidrag.\n* Brukes for inngående journalposter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "TRYGDERETTEN",
+                        "description": "Forsendelen er distribuert via integrasjonspunkt for eFormidling til Trygderetten.\n* Brukes for utgående journalposter.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "UKJENT",
+                        "description": " Forsendelsen har ingen kjent kanal.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "RelevantDato",
+                "description": " Dato som kan være relevant for en journalpost. De ulike journalposttypene\n(inngående, utgående og notat) får returnert ulike relevante datoer.\n * For eksempel er **DATO_EKSPEDERT** kun relevant for utgående dokumenter, og **DATO_REGISTRERT** kun for inngående.",
+                "fields": [
+                    {
+                        "name": "dato",
+                        "description": "ISO-8601 representasjon for en kalenderdato med tid, trunkert til nærmeste sekund. *YYYY-MM-DD'T'hh:mm:ss*.\nEksempel: *2018-01-01T12:00:00*.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "DateTime",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "datotype",
+                        "description": " Markør for hvilken type dato som dato-feltet inneholder.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "ENUM",
+                                "name": "Datotype",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "Datotype",
+                "description": " Beskriver en type dato som kan være relevant for en journalpost, for eksempel\n**DATO_OPPRETTET**. Ulike datotyper returneres for ulike journalstatuser.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "DATO_AVS_RETUR",
+                        "description": "* Tidspunkt som dokumentene i journalposten ble sendt på nytt, grunnet retur av opprinnelig forsendelse.\n* Returneres for utgående journalposter",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "DATO_DOKUMENT",
+                        "description": "* Dato på hoveddokumentet i forsendelsen. Registreres i noen tilfeller manuelt av saksbehandler.\n* Returneres for alle journalposter",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "DATO_EKSPEDERT",
+                        "description": "* Tidspunktet dokumentene på journalposten ble sendt til bruker.\n* Returneres for utgående journalposter",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "DATO_JOURNALFOERT",
+                        "description": "* Tidspunktet journalposten ble journalført (inngående) eller ferdigstilt (utgående).\n* Returneres for alle journalposttyper",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "DATO_OPPRETTET",
+                        "description": " * Tidspunktet journalposten er opprettet i joark. Tidspunktet settes\nautomatisk og kan ikke overskrives. Selv om hver journalpost har mange datoer\n(se relevanteDatoer) er datoOpprettet å anse som \"fasit\" på journalpostens alder.\n * Returneres for alle journalposter",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "DATO_REGISTRERT",
+                        "description": "* Tidspunkt dokumentene i journalposten ble registrert i NAV sine systemer.\n* Returneres for inngående journalposter",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "DATO_SENDT_PRINT",
+                        "description": "* Tidspunktet dokumentene på journalposten ble sendt til print.\n* Returneres for utgående journalposter",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "Sak",
+                "description": "  Peker på både en arkivsak og  en fagsak. Arkivsaken er saksnummeret som\njournalposten journalføres mot i Joark, og identifiseres ved arkivsaksnummer +\narkivsaksystem (GSAK eller PSAK). Fagsaken viser til saken slik denne er\ndefinert i fagsystemene,, og identifiseres ved fagsakId + fagsaksystem.\n * En GSAK-arkivsak som har fagsaksystem **FS22** men ikke noen fagsakId er en\n*\"generell sak\"*. Generelle saker brukes for å journalføre informasjon som ikke\npasser inn på brukerens øvrige fagsaker.\n * Dersom arkivsaksystemet er PSAK, returneres den samme verdien som både arkivsaksnummer og fagsakId.",
+                "fields": [
+                    {
+                        "name": "arkivsaksnummer",
+                        "description": " Saksnummer i enten GSAK eller PSAK",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "arkivsaksystem",
+                        "description": "* Indikerer hvor man kan finne saksparten som dokumentene er journalført mot, samt en peker til selve fagsaken.\n* For pensjons- og uføresaker vil arkivsaksystemet være PSAK. For alle andre sakstyper er arkivsaksystem GSAK.",
+                        "args": [],
+                        "type": {
+                            "kind": "ENUM",
+                            "name": "Arkivsaksystem",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "datoOpprettet",
+                        "description": " Tidspunktet saken i GSAK eller PSAK ble opprettet",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "DateTime",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "fagsakId",
+                        "description": "* Saksnummer i fagsystemet (altså ikke GSAK).\n* Generelle saker i GSAK har ikke fagsakId.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "fagsaksystem",
+                        "description": "* Verdien indikerer hvilket fagsystem (evt nummerserie for fagsaker) som fagsaken befinner seg i.\n* Lovlige verdier finnes i GSAK sitt kodeverk. Generelle saker i GSAK vil ha fagsaksystem **FS22**.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "Arkivsaksystem",
+                "description": " Indikerer hvor man kan finne saksparten som dokumentene er journalført mot, samt\nen peker til selve fagsaken, dersom det finnes en.\n * For pensjons- og uføresaker vil arkivsaksystemet være PSAK. For alle andre sakstyper er arkivsaksystem GSAK.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "GSAK",
+                        "description": " Arkivsaksystem for alle NAV saker unntatt pensjon og uføre.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "PSAK",
+                        "description": " Arkivsaksystem for pensjon og uføre.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "Tilleggsopplysning",
+                "description": " * Fagsystemene som arkiverer kan legge til egne fagspesifikke attributter per journalpost.\n * Disse er representert som et skjemaløst nøkkel-verdi-sett og valideres ikke av\nJoark. Et eksempel på et slikt sett kan være (bucid, 21521).",
+                "fields": [
+                    {
+                        "name": "nokkel",
+                        "description": " Nøkkelen til det fagspesifikke attributtet.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "verdi",
+                        "description": " Verdien til det fagspesifikke attributtet.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "SideInfo",
+                "description": " Informasjon om paginering.",
+                "fields": [
+                    {
+                        "name": "finnesNesteSide",
+                        "description": " True/False verdi for om neste side eksisterer, når man paginerer forover",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Boolean",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "sluttpeker",
+                        "description": " Når man paginerer forover, pekeren for å fortsette.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "INPUT_OBJECT",
+                "name": "FagsakInput",
+                "description": " FagsakInput er et argument som identifiserer en fagsak.",
+                "fields": null,
+                "inputFields": [
+                    {
+                        "name": "fagsakId",
+                        "description": " Unik identifikator for en gitt fagsak.",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "defaultValue": null
+                    },
+                    {
+                        "name": "fagsaksystem",
+                        "description": " Verdi for hvilket fagsystem denne fagsaken tilhører, for eksempel **PP01** for pensjonssaker.",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "defaultValue": null
+                    }
+                ],
+                "interfaces": null,
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "Tilknytning",
+                "description": " Forteller hvordan to eller flere journalposter er relatert til hverandre.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "GJENBRUK",
+                        "description": " Ved tilknytningstype 'Gjenbruk', deler to journalposter samme dokumentInfo og\nunderliggende dokumenter. Dette vil typisk være tilfelle når et inngående\ndokument journalføres på flere saker/brukere.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "__Schema",
+                "description": "A GraphQL Schema defines the capabilities of a GraphQL server. It exposes all available types and directives on the server, as well as the entry points for query, mutation, and subscription operations.",
+                "fields": [
+                    {
+                        "name": "types",
+                        "description": "A list of all types supported by this server.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "__Type",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "queryType",
+                        "description": "The type that query operations will be rooted at.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "__Type",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "mutationType",
+                        "description": "If this server supports mutation, the type that mutation operations will be rooted at.",
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "__Type",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "subscriptionType",
+                        "description": "If this server support subscription, the type that subscription operations will be rooted at.",
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "__Type",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "directives",
+                        "description": "A list of all directives supported by this server.",
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "__Directive",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "__Type",
+                "description": "The fundamental unit of any GraphQL Schema is the type. There are many kinds of types in GraphQL as represented by the `__TypeKind` enum.\n\nDepending on the kind of a type, certain fields describe information about that type. Scalar types provide no information beyond a name and description, while Enum types provide their values. Object and Interface types provide the fields they describe. Abstract types, Union and Interface, provide the Object types possible at runtime. List and NonNull types compose other types.",
+                "fields": [
+                    {
+                        "name": "kind",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "ENUM",
+                                "name": "__TypeKind",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "name",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "description",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "fields",
+                        "description": null,
+                        "args": [
+                            {
+                                "name": "includeDeprecated",
+                                "description": null,
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Boolean",
+                                    "ofType": null
+                                },
+                                "defaultValue": "false"
+                            }
+                        ],
+                        "type": {
+                            "kind": "LIST",
+                            "name": null,
+                            "ofType": {
+                                "kind": "NON_NULL",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "OBJECT",
+                                    "name": "__Field",
+                                    "ofType": null
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "interfaces",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "LIST",
+                            "name": null,
+                            "ofType": {
+                                "kind": "NON_NULL",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "OBJECT",
+                                    "name": "__Type",
+                                    "ofType": null
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "possibleTypes",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "LIST",
+                            "name": null,
+                            "ofType": {
+                                "kind": "NON_NULL",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "OBJECT",
+                                    "name": "__Type",
+                                    "ofType": null
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "enumValues",
+                        "description": null,
+                        "args": [
+                            {
+                                "name": "includeDeprecated",
+                                "description": null,
+                                "type": {
+                                    "kind": "SCALAR",
+                                    "name": "Boolean",
+                                    "ofType": null
+                                },
+                                "defaultValue": "false"
+                            }
+                        ],
+                        "type": {
+                            "kind": "LIST",
+                            "name": null,
+                            "ofType": {
+                                "kind": "NON_NULL",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "OBJECT",
+                                    "name": "__EnumValue",
+                                    "ofType": null
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "inputFields",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "LIST",
+                            "name": null,
+                            "ofType": {
+                                "kind": "NON_NULL",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "OBJECT",
+                                    "name": "__InputValue",
+                                    "ofType": null
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "ofType",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "OBJECT",
+                            "name": "__Type",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "__TypeKind",
+                "description": "An enum describing what kind of type a given `__Type` is.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "SCALAR",
+                        "description": "Indicates this type is a scalar.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "OBJECT",
+                        "description": "Indicates this type is an object. `fields` and `interfaces` are valid fields.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "INTERFACE",
+                        "description": "Indicates this type is an interface. `fields` and `possibleTypes` are valid fields.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "UNION",
+                        "description": "Indicates this type is a union. `possibleTypes` is a valid field.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "ENUM",
+                        "description": "Indicates this type is an enum. `enumValues` is a valid field.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "INPUT_OBJECT",
+                        "description": "Indicates this type is an input object. `inputFields` is a valid field.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "LIST",
+                        "description": "Indicates this type is a list. `ofType` is a valid field.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "NON_NULL",
+                        "description": "Indicates this type is a non-null. `ofType` is a valid field.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "__Field",
+                "description": "Object and Interface types are described by a list of Fields, each of which has a name, potentially a list of arguments, and a return type.",
+                "fields": [
+                    {
+                        "name": "name",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "description",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "args",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "__InputValue",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "type",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "__Type",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "isDeprecated",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Boolean",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "deprecationReason",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "__InputValue",
+                "description": "Arguments provided to Fields or Directives and the input fields of an InputObject are represented as Input Values which describe their type and optionally a default value.",
+                "fields": [
+                    {
+                        "name": "name",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "description",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "type",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "OBJECT",
+                                "name": "__Type",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "defaultValue",
+                        "description": "A GraphQL-formatted string representing the default value for this input value.",
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "__EnumValue",
+                "description": "One possible value for a given Enum. Enum values are unique values, not a placeholder for a string or numeric value. However an Enum value is returned in a JSON response as a string.",
+                "fields": [
+                    {
+                        "name": "name",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "description",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "isDeprecated",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Boolean",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "deprecationReason",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "OBJECT",
+                "name": "__Directive",
+                "description": "A Directive provides a way to describe alternate runtime execution and type validation behavior in a GraphQL document.\n\nIn some cases, you need to provide options to alter GraphQL's execution behavior in ways field arguments will not suffice, such as conditionally including or skipping a field. Directives provide this by describing additional information to the executor.",
+                "fields": [
+                    {
+                        "name": "name",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "description",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "locations",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "ENUM",
+                                        "name": "__DirectiveLocation",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "args",
+                        "description": null,
+                        "args": [],
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "NON_NULL",
+                                    "name": null,
+                                    "ofType": {
+                                        "kind": "OBJECT",
+                                        "name": "__InputValue",
+                                        "ofType": null
+                                    }
+                                }
+                            }
+                        },
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "inputFields": null,
+                "interfaces": [],
+                "enumValues": null,
+                "possibleTypes": null
+            },
+            {
+                "kind": "ENUM",
+                "name": "__DirectiveLocation",
+                "description": "A Directive can be adjacent to many parts of the GraphQL language, a __DirectiveLocation describes one such possible adjacencies.",
+                "fields": null,
+                "inputFields": null,
+                "interfaces": null,
+                "enumValues": [
+                    {
+                        "name": "QUERY",
+                        "description": "Location adjacent to a query operation.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "MUTATION",
+                        "description": "Location adjacent to a mutation operation.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SUBSCRIPTION",
+                        "description": "Location adjacent to a subscription operation.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "FIELD",
+                        "description": "Location adjacent to a field.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "FRAGMENT_DEFINITION",
+                        "description": "Location adjacent to a fragment definition.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "FRAGMENT_SPREAD",
+                        "description": "Location adjacent to a fragment spread.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "INLINE_FRAGMENT",
+                        "description": "Location adjacent to an inline fragment.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "VARIABLE_DEFINITION",
+                        "description": "Location adjacent to a variable definition.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SCHEMA",
+                        "description": "Location adjacent to a schema definition.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "SCALAR",
+                        "description": "Location adjacent to a scalar definition.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "OBJECT",
+                        "description": "Location adjacent to an object type definition.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "FIELD_DEFINITION",
+                        "description": "Location adjacent to a field definition.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "ARGUMENT_DEFINITION",
+                        "description": "Location adjacent to an argument definition.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "INTERFACE",
+                        "description": "Location adjacent to an interface definition.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "UNION",
+                        "description": "Location adjacent to a union definition.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "ENUM",
+                        "description": "Location adjacent to an enum definition.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "ENUM_VALUE",
+                        "description": "Location adjacent to an enum value definition.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "INPUT_OBJECT",
+                        "description": "Location adjacent to an input object type definition.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    },
+                    {
+                        "name": "INPUT_FIELD_DEFINITION",
+                        "description": "Location adjacent to an input object field definition.",
+                        "isDeprecated": false,
+                        "deprecationReason": null
+                    }
+                ],
+                "possibleTypes": null
+            }
+        ],
+        "directives": [
+            {
+                "name": "defer",
+                "description": "This directive allows results to be deferred during execution",
+                "locations": [
+                    "FIELD"
+                ],
+                "args": []
+            },
+            {
+                "name": "skip",
+                "description": "Directs the executor to skip this field or fragment when the `if` argument is true.",
+                "locations": [
+                    "FIELD",
+                    "FRAGMENT_SPREAD",
+                    "INLINE_FRAGMENT"
+                ],
+                "args": [
+                    {
+                        "name": "if",
+                        "description": "Skipped when true.",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Boolean",
+                                "ofType": null
+                            }
+                        },
+                        "defaultValue": null
+                    }
+                ]
+            },
+            {
+                "name": "include",
+                "description": "Directs the executor to include this field or fragment only when the `if` argument is true.",
+                "locations": [
+                    "FIELD",
+                    "FRAGMENT_SPREAD",
+                    "INLINE_FRAGMENT"
+                ],
+                "args": [
+                    {
+                        "name": "if",
+                        "description": "Included when true.",
+                        "type": {
+                            "kind": "NON_NULL",
+                            "name": null,
+                            "ofType": {
+                                "kind": "SCALAR",
+                                "name": "Boolean",
+                                "ofType": null
+                            }
+                        },
+                        "defaultValue": null
+                    }
+                ]
+            },
+            {
+                "name": "deprecated",
+                "description": "Marks an element of a GraphQL schema as no longer supported.",
+                "locations": [
+                    "FIELD_DEFINITION",
+                    "ENUM_VALUE"
+                ],
+                "args": [
+                    {
+                        "name": "reason",
+                        "description": "Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted using the Markdown syntax (as specified by [CommonMark](https://commonmark.org/).",
+                        "type": {
+                            "kind": "SCALAR",
+                            "name": "String",
+                            "ofType": null
+                        },
+                        "defaultValue": "\"No longer supported\""
+                    }
+                ]
+            }
+        ]
+    }
+}

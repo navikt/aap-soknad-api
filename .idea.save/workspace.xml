@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="SCOPE_TYPE" value="3" />
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="bc8e9b3d-9152-43d4-8684-aa5d0661a932" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="KubernetesApiPersistence">
+    <option name="context" value="dev-gcp" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="ProjectId" id="28eKOmguaeXuAyld8Nlp4b7MiUK" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;ignore.preview.features.used&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/janolaveide/Eclipse/aap-soknad-api/src/main/graphql/saf&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.repository.indices&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;cd56171c1f6b8427a0f9daab419fc1cd&quot;
+  }
+}</component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/graphql/saf" />
+      <recent name="$PROJECT_DIR$/src/main/graphql" />
+      <recent name="$PROJECT_DIR$/src/main/kotlin/no/nav/aap/api/oppslag/saf" />
+    </key>
+    <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
+      <recent name="no.nav.aap.api.oppslag.saf" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.SøknadTest.søknad">
+    <configuration name="SøknadTest.søknad" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="soknad" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="no.nav.aap.api.søknad.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="no.nav.aap.api.søknad" />
+      <option name="MAIN_CLASS_NAME" value="no.nav.aap.api.søknad.SøknadTest" />
+      <option name="METHOD_NAME" value="søknad" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AAPSøknadApiApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="soknad" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="no.nav.aap.api.AAPSøknadApiApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.SøknadTest.søknad" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SpringGeneralSettings">
+    <option name="allowAutoConfigurationMode" value="true" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="bc8e9b3d-9152-43d4-8684-aa5d0661a932" name="Changes" comment="" />
+      <created>1651571581555</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1651571581555</updated>
+      <workItem from="1651571582762" duration="57000" />
+      <workItem from="1651571641427" duration="113000" />
+      <workItem from="1651571765825" duration="885000" />
+      <workItem from="1651574521741" duration="280000" />
+      <workItem from="1651574806368" duration="877000" />
+      <workItem from="1651579289218" duration="353000" />
+      <workItem from="1651585161381" duration="18000" />
+      <workItem from="1651679210734" duration="113000" />
+      <workItem from="1651679342309" duration="1736000" />
+      <workItem from="1651681165048" duration="542000" />
+      <workItem from="1651682150323" duration="192000" />
+      <workItem from="1651682460294" duration="465000" />
+      <workItem from="1651683059315" duration="180000" />
+      <workItem from="1651683273908" duration="118000" />
+      <workItem from="1651683487745" duration="268000" />
+      <workItem from="1651683789224" duration="271000" />
+      <workItem from="1651684170390" duration="3032000" />
+      <workItem from="1651687595262" duration="789000" />
+      <workItem from="1651690324475" duration="196000" />
+      <workItem from="1651692086331" duration="1276000" />
+      <workItem from="1651738086859" duration="146000" />
+      <workItem from="1651738425731" duration="20000" />
+      <workItem from="1651824709880" duration="668000" />
+      <workItem from="1651825865578" duration="17000" />
+      <workItem from="1651825938919" duration="36000" />
+      <workItem from="1651826072277" duration="14000" />
+      <workItem from="1651826485748" duration="138000" />
+      <workItem from="1651826820561" duration="495000" />
+      <workItem from="1652183894431" duration="5000" />
+      <workItem from="1652281079036" duration="124000" />
+      <workItem from="1652359081216" duration="6000" />
+      <workItem from="1652359127709" duration="3000" />
+      <workItem from="1652383705151" duration="1712000" />
+      <workItem from="1652385589229" duration="49000" />
+      <workItem from="1652386062300" duration="110000" />
+      <workItem from="1652386178888" duration="34000" />
+      <workItem from="1652386224220" duration="1113000" />
+      <workItem from="1652422988303" duration="4882000" />
+      <workItem from="1652428957418" duration="309000" />
+      <workItem from="1652429343599" duration="1485000" />
+      <workItem from="1652430995610" duration="4944000" />
+      <workItem from="1652686738651" duration="72000" />
+      <workItem from="1652873503332" duration="1047000" />
+      <workItem from="1652876528093" duration="688000" />
+      <workItem from="1652877602972" duration="4231000" />
+      <workItem from="1652889605631" duration="515000" />
+      <workItem from="1652903356278" duration="2161000" />
+      <workItem from="1652944665499" duration="2255000" />
+      <workItem from="1652952549742" duration="1555000" />
+      <workItem from="1652956326660" duration="774000" />
+      <workItem from="1652970374517" duration="381000" />
+      <workItem from="1652971864817" duration="1414000" />
+      <workItem from="1652973667689" duration="662000" />
+      <workItem from="1652974607664" duration="2264000" />
+      <workItem from="1653036790114" duration="4697000" />
+      <workItem from="1653127779632" duration="502000" />
+      <workItem from="1653145872381" duration="44000" />
+      <workItem from="1653145928312" duration="2831000" />
+      <workItem from="1653289908200" duration="1831000" />
+      <workItem from="1653295325511" duration="83000" />
+      <workItem from="1653295440821" duration="1594000" />
+      <workItem from="1653299632024" duration="1557000" />
+      <workItem from="1653301387713" duration="1303000" />
+      <workItem from="1653302769661" duration="2930000" />
+      <workItem from="1653307237687" duration="114000" />
+      <workItem from="1653307713188" duration="710000" />
+      <workItem from="1653309124515" duration="4226000" />
+      <workItem from="1653376675642" duration="929000" />
+      <workItem from="1653377615636" duration="21000" />
+      <workItem from="1653377648403" duration="2087000" />
+      <workItem from="1653380170911" duration="1682000" />
+      <workItem from="1653382091392" duration="66000" />
+      <workItem from="1653382162589" duration="59000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

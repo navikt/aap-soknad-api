@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: no.nav.security:mock-oauth2-server:0.4.7">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/no/nav/security/mock-oauth2-server/0.4.7/mock-oauth2-server-0.4.7.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/no/nav/security/mock-oauth2-server/0.4.7/mock-oauth2-server-0.4.7-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/no/nav/security/mock-oauth2-server/0.4.7/mock-oauth2-server-0.4.7-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -25,6 +25,10 @@ class SafClientBeanConfig {
     fun safHealthIndicator(a: SafWebClientAdapter) =
         object : AbstractPingableHealthIndicator(a) {}
 
+    @Bean
+    fun apolloClient() = ApolloClient.builder().serverUrl(env.safV1Url)
+        .build()
+
     @Qualifier(SAF)
     @Bean
     fun graphQLSafWebClient(@Qualifier(SAF) client: WebClient, mapper: ObjectMapper) =

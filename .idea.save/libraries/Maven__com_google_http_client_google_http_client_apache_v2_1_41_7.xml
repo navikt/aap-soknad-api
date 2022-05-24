@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.google.http-client:google-http-client-apache-v2:1.41.7">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/http-client/google-http-client-apache-v2/1.41.7/google-http-client-apache-v2-1.41.7.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/http-client/google-http-client-apache-v2/1.41.7/google-http-client-apache-v2-1.41.7-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/http-client/google-http-client-apache-v2/1.41.7/google-http-client-apache-v2-1.41.7-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
