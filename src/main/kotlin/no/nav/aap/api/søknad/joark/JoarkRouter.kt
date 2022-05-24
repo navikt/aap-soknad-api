@@ -23,6 +23,7 @@ import no.nav.aap.joark.asPDFVariant
 import no.nav.aap.util.LoggerUtil
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.stereotype.Service
+import java.util.*
 import java.util.Base64.getEncoder
 
 @Service
@@ -93,15 +94,13 @@ class JoarkRouter(private val joark: JoarkClient,
         } ?: listOf()
 
     private fun slettVedlegg(søknad: StandardSøknad, fnr: Fødselsnummer) {
-        with(søknad.utbetalinger) {
-            slett(this?.stønadstyper, fnr)
-        }
+        søknad.utbetalinger?.stønadstyper?.forEach { slett(it.vedlegg, fnr) }
+        slett(søknad.vedlegg, fnr)
+        slett(søknad.studier.vedlegg, fnr)
     }
 
-    private fun slett(utbetalinger: List<VedleggAware>?, fnr: Fødselsnummer) =
-        utbetalinger
-            ?.mapNotNull { it.vedlegg }
-            ?.forEach { lager.slettDokument(fnr, it) }
+    private fun slett(uuid: UUID?, fnr: Fødselsnummer) =
+        uuid?.let { lager.slettDokument(fnr, it) }
 
     private fun Blob.asDokumentVariant() = DokumentVariant(of(contentType), getEncoder().encodeToString(getContent()))
 

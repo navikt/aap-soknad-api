@@ -95,8 +95,7 @@ class Utbetaling(val fraArbeidsgiver: Boolean,
 
     data class AnnenStønad(val type: AnnenStønadstype,
                            val hvemUtbetalerAFP: String?,
-                           override val vedlegg: UUID? = null) :
-        VedleggAware {
+                           val vedlegg: UUID? = null) {
         init {
             if (type != PENSJON_AFP && hvemUtbetalerAFP != null) {
                 throw IllegalStateException("Hvem utbetaler kun for AFP")
