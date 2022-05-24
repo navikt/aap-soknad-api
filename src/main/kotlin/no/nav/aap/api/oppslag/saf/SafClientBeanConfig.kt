@@ -26,7 +26,7 @@ class SafClientBeanConfig {
         object : AbstractPingableHealthIndicator(a) {}
 
     @Bean
-    fun apolloClient() = ApolloClient.builder().serverUrl(env.safV1Url)
+    fun apolloClient(cfg: SafConfig) = ApolloClient.builder().serverUrl("${cfg.baseUri}")
         .build()
 
     @Qualifier(SAF)
