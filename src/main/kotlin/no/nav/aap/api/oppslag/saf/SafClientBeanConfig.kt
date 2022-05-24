@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag.saf
 
+import com.apollographql.apollo.ApolloClient
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.oppslag.saf.SafConfig.Companion.SAF
