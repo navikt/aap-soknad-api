@@ -1,15 +1,22 @@
 {
-  "name": "PDL",
-  "schemaPath": "pdl.graphql",
-  "extensions": {
-    "endpoints": {
-      "PDL GraphQL Endpoint": {
-        "url": "https://pdl-api.dev.intern.nav.no/graphql",
-        "headers": {
-          "user-agent": "JS GraphQL"
-        },
-        "introspect": true
-      }
+    "name": "PDL",
+    "schemaPath": "pdl.graphql",
+    "extensions": {
+        "endpoints": {
+            "PDL GraphQL Endpoint": {
+                "url": "https://pdl-api.dev.intern.nav.no/graphql",
+                "headers": {
+                    "user-agent": "JS GraphQL"
+                },
+                "introspect": true
+            },
+            "SAF GraphQL Endpoint": {
+                "url": "https://navikt.github.io/safselvbetjening/schema.graphqls",
+                "headers": {
+                    "user-agent": "JS GraphQL"
+                },
+                "introspect": true
+            }
+        }
     }
-  }
 }

@@ -8,33 +8,59 @@ import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon.PDLRelasjons
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLFødsel
 import java.time.LocalDate
 
-
 data class PDLWrappedSøker(val navn: Set<PDLNavn>,
                            @JsonProperty("foedsel") val fødsel: Set<PDLFødsel>,
                            val bostedsadresse: List<PDLBostedadresse>,
                            val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon>?) {
     val active = PDLSøker(navn.first(), fødsel.firstOrNull(), bostedsadresse.firstOrNull()?.vegadresse,
-            forelderBarnRelasjon?.
-            filter {
+            forelderBarnRelasjon?.filter {
                 it.relatertPersonsrolle == BARN
             } ?: emptyList())
 }
 
+data class PDLWrappedSøkerForeldreansvar(val navn: Set<PDLNavn>,
+                                         @JsonProperty("foedsel") val fødsel: Set<PDLFødsel>,
+                                         val bostedsadresse: List<PDLBostedadresse>,
+                                         val foreldreansvar: Set<PDLForeldreansvar>?) {
+    val active = PDLSøkerForeldreansvar(navn.first(),
+            fødsel.firstOrNull(),
+            bostedsadresse.firstOrNull()?.vegadresse,
+            foreldreansvar)
+}
+
+data class PDLSøkerForeldreansvar(val navn: PDLNavn,
+                                  val fødsel: PDLFødsel?,
+                                  val vegadresse: PDLVegadresse?,
+                                  val foreldreansvar: Set<PDLForeldreansvar>?)
+
+data class PDLForeldreansvar(val ansvar: String, val ansvarlig: String, val ansvarssubjekt: String)
 data class PDLNavn(val fornavn: String, val mellomnavn: String?, val etternavn: String)
 
-data class PDLSøker(val navn: PDLNavn, val fødsel: PDLFødsel?, val vegadresse: PDLVegadresse?, val forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) {
+data class PDLSøker(val navn: PDLNavn,
+                    val fødsel: PDLFødsel?,
+                    val vegadresse: PDLVegadresse?,
+                    val forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) {
 
-    data class PDLForelderBarnRelasjon(val relatertPersonsIdent: String, val relatertPersonsrolle: PDLRelasjonsRolle, val minRolleForPerson: PDLRelasjonsRolle) {
-        enum class PDLRelasjonsRolle { BARN, MOR, FAR, MEDMOR }
+    data class PDLForelderBarnRelasjon(val relatertPersonsIdent: String,
+                                       val relatertPersonsrolle: PDLRelasjonsRolle,
+                                       val minRolleForPerson: PDLRelasjonsRolle) {
+        enum class PDLRelasjonsRolle {
+            BARN,
+            MOR,
+            FAR,
+            MEDMOR
+        }
     }
 
     data class PDLFødsel(@JsonProperty("foedselsdato") val fødselsdato: LocalDate?)
 
     data class PDLBostedadresse(val vegadresse: PDLVegadresse) {
-        data class PDLVegadresse(val adressenavn: String, val husbokstav: String?, val husnummer: String?, val postnummer: String)
+        data class PDLVegadresse(val adressenavn: String,
+                                 val husbokstav: String?,
+                                 val husnummer: String?,
+                                 val postnummer: String)
     }
 }
-
 
 data class PDLBarn(@JsonProperty("foedsel") val fødselsdato: Set<PDLFødsel>,
                    val navn: Set<PDLNavn>,
@@ -43,9 +69,18 @@ data class PDLBarn(@JsonProperty("foedsel") val fødselsdato: Set<PDLFødsel>,
                    @JsonProperty("doedsfall") val dødsfall: Set<PDLDødsfall>?) {
 
     data class PDLDødsfall(@JsonProperty("doedsdato") val dødsdato: LocalDate)
-    enum class PDLAdresseBeskyttelse { STRENGT_FORTROLIG_UTLAND, STRENGT_FORTROLIG, FORTROLIG, UGRADERT }
+    enum class PDLAdresseBeskyttelse {
+        STRENGT_FORTROLIG_UTLAND,
+        STRENGT_FORTROLIG,
+        FORTROLIG,
+        UGRADERT
+    }
 }
 
 data class PDLKjønn(val kjoenn: Kjoenn) {
-    enum class Kjoenn { MANN, KVINNE, UKJENT }
+    enum class Kjoenn {
+        MANN,
+        KVINNE,
+        UKJENT
+    }
 }

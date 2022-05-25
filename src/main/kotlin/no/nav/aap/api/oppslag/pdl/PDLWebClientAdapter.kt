@@ -38,10 +38,21 @@ class PDLWebClientAdapter(
         }
     } ?: throw JwtTokenMissingException()
 
+    fun søkerForeldreansvar(medBarn: Boolean = false) = ctx.getSubject()?.let { fnr ->
+        foreldreansvarOppslag(fnr)?.let { s ->
+            søkerMedForeldreansvarFra(s, fnr, medBarn)
+        }
+    } ?: throw JwtTokenMissingException()
+
     private fun søkerOppslag(fnr: String) = oppslag({
         userWebClient.post(PERSON_QUERY, idFra(fnr), PDLWrappedSøker::class.java).block()
             ?.active
     }, "søker")
+
+    private fun foreldreansvarOppslag(fnr: String) = oppslag({
+        userWebClient.post(ANSVAR_QUERY, idFra(fnr), PDLWrappedSøkerForeldreansvar::class.java).block()
+            ?.active
+    }, "søkerMedForeldreansvar")
 
     private fun barnOppslag(fnr: String) =
         oppslag({
@@ -65,6 +76,14 @@ class PDLWebClientAdapter(
 
     }
 
+    private fun søkerMedForeldreansvarFra(s: PDLSøkerForeldreansvar, fnr: String, medBarn: Boolean) {
+        Søker(navnFra(s.navn),
+                fødselsnummerFra(fnr),
+                adresseFra(s.vegadresse),
+                fødselsdatoFra(s.fødsel),
+                barnFraForeldreansvar(s.foreldreansvar, medBarn))
+    }
+
     private fun fødselsnummerFra(fnr: String) = Fødselsnummer(fnr)
 
     private fun adresseFra(a: PDLVegadresse?) = a?.let {
@@ -76,6 +95,13 @@ class PDLWebClientAdapter(
 
     private fun navnFra(n: PDLNavn) = Navn(n.fornavn, n.mellomnavn, n.etternavn)
         .also { log.trace(CONFIDENTIAL, "Navn er $it") }
+
+    private fun barnFraForeldreansvar(r: Set<PDLForeldreansvar>?, medBarn: Boolean) =
+        if (medBarn) r?.map {
+            barnOppslag(it.ansvarssubjekt)
+                .also { log.trace(CONFIDENTIAL, "Barn er $it") }
+        } ?: emptyList()
+        else emptyList()
 
     private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean): List<Barn?> = if (medBarn) r.map {
         barnOppslag(it.relatertPersonsIdent)
@@ -111,6 +137,7 @@ class PDLWebClientAdapter(
 
     companion object {
         private const val IDENT = "ident"
+        private const val ANSVAR_QUERY = "query-foreldreansvar.graphql"
         private const val PERSON_QUERY = "query-person.graphql"
         private const val BARN_QUERY = "query-barn.graphql"
         private fun idFra(fnr: String) = mapOf(IDENT to fnr)

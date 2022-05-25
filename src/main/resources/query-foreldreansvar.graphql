@@ -1,0 +1,25 @@
+query($ident: ID!){
+    hentPerson(ident: $ident) {
+        navn {
+        fornavn
+        mellomnavn
+        etternavn
+        },
+        foedsel {
+        foedselsdato
+        },
+        Foreldreansvar {
+        ansvar
+        ansvarlig
+        ansvarssubjekt
+        },
+        bostedsadresse {
+        vegadresse {
+        adressenavn
+        husbokstav
+        husnummer
+        postnummer
+        }
+        }
+}
+}
