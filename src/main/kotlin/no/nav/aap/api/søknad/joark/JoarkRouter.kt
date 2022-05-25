@@ -94,9 +94,11 @@ class JoarkRouter(private val joark: JoarkClient,
         } ?: listOf()
 
     private fun slettVedlegg(søknad: StandardSøknad, fnr: Fødselsnummer) {
-        søknad.utbetalinger?.stønadstyper?.forEach { slett(it.vedlegg, fnr) }
-        slett(søknad.vedlegg, fnr)
-        slett(søknad.studier.vedlegg, fnr)
+        with(søknad) {
+            utbetalinger?.stønadstyper?.forEach { slett(it.vedlegg, fnr) }
+            slett(vedlegg, fnr)
+            slett(studier.vedlegg, fnr)
+        }
     }
 
     private fun slett(uuid: UUID?, fnr: Fødselsnummer) =
