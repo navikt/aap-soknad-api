@@ -91,7 +91,7 @@ class JoarkRouter(private val joark: JoarkClient,
     private fun vedlegg(a: VedleggAware, fnr: Fødselsnummer) =
         a.vedlegg?.let { uuid ->
             lager.lesDokument(fnr, uuid)?.asDokumentVariant()?.let { listOf(it) }
-        } ?: listOf()
+        }.orEmpty()
 
     private fun slettVedlegg(søknad: StandardSøknad, fnr: Fødselsnummer) {
         with(søknad) {
