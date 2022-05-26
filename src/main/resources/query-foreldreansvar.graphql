@@ -8,7 +8,7 @@ query($ident: ID!){
         foedsel {
         foedselsdato
         },
-        Foreldreansvar {
+        foreldreansvar {
         ansvar
         ansvarlig
         ansvarssubjekt
