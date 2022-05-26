@@ -73,16 +73,14 @@ class PDLWebClientAdapter(
                 fødselsdatoFra(s.fødsel),
                 barnFra(s.forelderBarnRelasjon, medBarn))
             .also { log.trace(CONFIDENTIAL, "Søker er $it") }
-
     }
 
-    private fun søkerMedForeldreansvarFra(s: PDLSøkerForeldreansvar, fnr: String, medBarn: Boolean) {
+    private fun søkerMedForeldreansvarFra(s: PDLSøkerForeldreansvar, fnr: String, medBarn: Boolean) =
         Søker(navnFra(s.navn),
                 fødselsnummerFra(fnr),
                 adresseFra(s.vegadresse),
                 fødselsdatoFra(s.fødsel),
                 barnFraForeldreansvar(s.foreldreansvar, medBarn))
-    }
 
     private fun fødselsnummerFra(fnr: String) = Fødselsnummer(fnr)
 
