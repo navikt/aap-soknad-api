@@ -28,8 +28,7 @@ class OppslagController(val pdl: PDLClient,
 
     @GetMapping("/soeker")
     fun søker() = SøkerInfo(
-            pdl.søkerForeldreansvarMedBarn(),
-            // pdl.søkerMedBarn(),
+            pdl.søkerMedBarn(),
             behandler.behandlere(),
             arbeid.arbeidsforhold(),
             krr.kontaktinfo())
