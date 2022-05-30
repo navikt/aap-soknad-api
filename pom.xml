@@ -261,11 +261,6 @@
                             <password>${env.GITHUB_TOKEN}</password>
                         </auth>
                     </to>
-                    <container>
-                        <jvmFlags>
-                            <jvmFlag>--enable-preview</jvmFlag>
-                        </jvmFlags>
-                    </container>
                 </configuration>
             </plugin>
             <plugin>
