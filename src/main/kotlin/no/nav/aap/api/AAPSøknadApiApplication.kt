@@ -29,10 +29,10 @@ fun main(args: Array<String>) {
     runApplication<AAPSøknadApiApplication>(*args) {
         with(currentCluster().clusterName()) {
             if (contains(DEV)) {
-                setDefaultProperties(mapOf("onprem" to DEV_FSS))
+                setDefaultProperties(mapOf("onprem" to DEV_FSS, "nais.env" to DEV))
             }
             if (contains(PROD)) {
-                setDefaultProperties(mapOf("onprem" to PROD_FSS))
+                setDefaultProperties(mapOf("onprem" to PROD_FSS, "nais.env" to PROD))
             }
         }
 
