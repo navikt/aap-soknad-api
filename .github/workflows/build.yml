@@ -1,42 +1,43 @@
 name: Bygg og deploy
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  IMAGE_BASE: ghcr.io/${{ github.repository }}
-  APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    IMAGE_BASE: ghcr.io/${{ github.repository }}
+    APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
 
 jobs:
-  bygg:
-    runs-on: ubuntu-latest
-    steps:
+    bygg:
+        runs-on: ubuntu-latest
+        steps:
 
-      - name: Sjekk ut kode
-        uses: actions/checkout@v3
+            -   name: Sjekk ut kode
+                uses: actions/checkout@v3
 
-      - name: Sett opp Java 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: temurin
-          cache: maven
+            -   name: Sett opp Java 17
+                uses: actions/setup-java@v3
+                with:
+                    java-version: 17
+                    distribution: temurin
+                    cache: maven
 
-      - name: Setter TAG
-        run: echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+            -   name: Setter TAG
+                run: echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
 
-      - name: Setter IMAGE
-        run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
+            -   name: Setter IMAGE
+                run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
 
-      - name: Kompiler og deploy image med jib
-        run: mvn --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
+            -   name: Kompiler og deploy image med jib
+                run: mvn --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
 
-      -   name: Deploy
-          uses: nais/deploy/actions/deploy@master
-          env:
-             APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-             CLUSTER: dev-gcp
-             RESOURCE: .nais/naiserator.yaml,.nais/alerts.yaml
-             VARS: .nais/dev.json
+            -   name: Deploy
+                uses: nais/deploy/actions/deploy@master
+                env:
+                    PRINT_PAYLOAD: true
+                    APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+                    CLUSTER: dev-gcp
+                    RESOURCE: .nais/naiserator.yaml,.nais/alerts.yaml
+                    VARS: .nais/dev.json
