@@ -24,7 +24,7 @@ spring:
             enabled: false
         add-properties: false
     flyway:
-        enabled: true
+        enabled: false
     kafka:
         bootstrap-servers: ${kafka.brokers}
         properties:
