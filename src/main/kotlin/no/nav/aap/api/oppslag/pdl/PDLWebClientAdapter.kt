@@ -38,7 +38,7 @@ class PDLWebClientAdapter(
         }
     } ?: throw JwtTokenMissingException()
 
-    fun søkerForeldreansvar(medBarn: Boolean = false) = ctx.getSubject()?.let { fnr ->
+    fun søkerMedForeldreansvar(medBarn: Boolean = false) = ctx.getSubject()?.let { fnr ->
         foreldreansvarOppslag(fnr)?.let { s ->
             søkerMedForeldreansvarFra(s, fnr, medBarn)
         }

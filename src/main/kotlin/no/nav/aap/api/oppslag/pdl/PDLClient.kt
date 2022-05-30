@@ -4,8 +4,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class PDLClient(private val a: PDLWebClientAdapter) {
-    fun søkerUtenBarn() = a.søkerForeldreansvar(false)
+    fun søkerUtenBarn() = a.søkerMedForeldreansvar(false)
 
-    fun søkerMedBarn() = a.søkerForeldreansvar(true)
+    fun søkerMedBarn() = a.søkerMedForeldreansvar(true)
     override fun toString() = "${javaClass.simpleName} [pdl=$a]"
 }

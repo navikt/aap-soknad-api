@@ -1,79 +1,84 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: "50M"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "90"
-    nais.io/read-only-file-system: "false"
-    nais.io/run-as-user: "1001"
-  name: soknad-api
-  namespace: aap
-  labels:
-    team: aap
+    annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: "50M"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "90"
+        nais.io/read-only-file-system: "false"
+        nais.io/run-as-user: "1001"
+    name: soknad-api
+    namespace: aap
+    labels:
+        team: aap
 spec:
-  secureLogs:
-    enabled: true
-  azure:
-    application:
-      enabled: true
-  envFrom:
-    - secret: srvaap-selvbetjening
-  gcp:
-    buckets:
-      - name: aap-vedlegg
-        cascadingDelete: true
-        lifecycleCondition:
-          age: 1
-      - name: aap-mellomlagring
-        cascadingDelete: true
-        lifecycleCondition:
-          age: 1
-  accessPolicy:
-    inbound:
-      rules:
-        - application: soknad
-    outbound:
-      rules:
-        - application: clamav
-          namespace: clamav
-        - application: pdfgen
-          namespace: aap
-          cluster: dev-gcp
-        - application: fss-proxy
-          namespace: aap
-          cluster: dev-fss
-        - application: digdir-krr-proxy
-          namespace: team-rocket
-          cluster: dev-gcp
-        - application: isdialogmelding
-          namespace: teamsykefravr
-          cluster: dev-gcp
-  tokenx:
-    enabled: true
-  kafka:
-    pool: {{kafka-pool}}
-  port: 8080
-  cpuThresholdPercentage: 50
-  image: {{image}}
-  liveness:
-    path: /actuator/health/liveness
-    initialDelay: 60
-  readiness:
-    path: /actuator/health/readiness
-    initialDelay: 60
-  prometheus:
-    enabled: true
-    path: /actuator/prometheus
-  replicas:
-    min: 2
-    max: 2
+    gcp:
+        sqlInstances:
+            -   type: POSTGRES_14
+                    databases:
+                          - name: soknad-api-{{cluster}}
+    secureLogs:
+        enabled: true
+    azure:
+        application:
+            enabled: true
+    envFrom:
+        -   secret: srvaap-selvbetjening
+    gcp:
+        buckets:
+            -   name: aap-vedlegg
+                cascadingDelete: true
+                lifecycleCondition:
+                    age: 1
+            -   name: aap-mellomlagring
+                cascadingDelete: true
+                lifecycleCondition:
+                    age: 1
+    accessPolicy:
+        inbound:
+            rules:
+                -   application: soknad
+        outbound:
+            rules:
+                -   application: clamav
+                    namespace: clamav
+                -   application: pdfgen
+                    namespace: aap
+                    cluster: dev-gcp
+                -   application: fss-proxy
+                    namespace: aap
+                    cluster: dev-fss
+                -   application: digdir-krr-proxy
+                    namespace: team-rocket
+                    cluster: dev-gcp
+                -   application: isdialogmelding
+                    namespace: teamsykefravr
+                    cluster: dev-gcp
+    tokenx:
+        enabled: true
+    kafka:
+        pool: {{kafka-pool}}
+    port: 8080
     cpuThresholdPercentage: 50
-  ingresses:
-    - {{ingress}}
-  resources:
-    limits:
-      cpu: 1500m
-      memory: 3072Mi
-    requests:
-      cpu: 250m
-      memory: 1536Mi
+    image: {{image}}
+    liveness:
+        path: /actuator/health/liveness
+        initialDelay: 60
+    readiness:
+        path: /actuator/health/readiness
+        initialDelay: 60
+    prometheus:
+        enabled: true
+        path: /actuator/prometheus
+    replicas:
+        min: 2
+        max: 2
+        cpuThresholdPercentage: 50
+    ingresses:
+        - {{ingress}}
+    resources:
+        limits:
+            cpu: 1500m
+            memory: 3072Mi
+        requests:
+            cpu: 250m
+            memory: 1536Mi

@@ -13,7 +13,8 @@ import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.CacheControl
 import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
-import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.notFound
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 
@@ -38,7 +39,7 @@ class OppslagController(val pdl: PDLClient,
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentInfoId: DokumentInfoId) =
         saf.dokument(journalpostId, dokumentInfoId)
             ?.let {
-                ResponseEntity.ok()
+                ok()
                     // .contentType(MediaType.parseMediaType(it.contentType))
                     .cacheControl(CacheControl.noCache().mustRevalidate())
                     .headers(HttpHeaders().apply {
@@ -47,5 +48,5 @@ class OppslagController(val pdl: PDLClient,
                             .build()
                     })
                     .body(it)
-            } ?: ResponseEntity.notFound().build()
+            } ?: notFound().build()
 }
