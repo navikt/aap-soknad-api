@@ -21,7 +21,7 @@ spring:
             username: ${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.username}
             password: ${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.password}
             jdbc-url: jdbc:postgresql://${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.host}:${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.port}/${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.database}
-        driver-class-name: org.postgresql.Driver
+            driver-class-name: org.postgresql.Driver
     devtools:
         restart:
             enabled: false
