@@ -18,10 +18,10 @@ spring:
         hikari:
             connection-test-query: SELECT 1
             maximum-pool-size: 2
-            username: ${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.username}
-            password: ${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.password}
-            jdbc-url: jdbc:postgresql://${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.host}:${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.port}/${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.database}
-        driver-class-name: org.postgresql.Driver
+            jdbc-url: "jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DATABASE}"
+                username: ${DATABASE_USERNAME}
+                password: ${DATABASE_PASSWORD}
+                driver-class-name: org.postgresql.Driver
     devtools:
         restart:
             enabled: false
