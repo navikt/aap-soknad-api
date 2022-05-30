@@ -31,8 +31,12 @@ data class BehandlerDTO(
 }
 
 data class Behandler(val type: BehandlerType, val navn: Navn, val kontaktinformasjon: KontaktInformasjon) {
-    enum class BehandlerType { FASTLEGE }
-    data class KontaktInformasjon(val behandlerRef: String,
+    enum class BehandlerType {
+        FASTLEGE,
+        ANNEN_BEHANDLER
+    }
+
+    data class KontaktInformasjon(val behandlerRef: String?,
                                   val kontor: String?,
                                   val orgnummer: OrgNummer?,
                                   val adresse: Adresse?,
