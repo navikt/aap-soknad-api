@@ -36,7 +36,7 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.projectKey>navikt_aap-soknad-api</sonar.projectKey>
         <springdoc.version>1.6.9</springdoc.version>
-        <token.validation.version>2.0.20</token.validation.version>
+        <token.validation.version>2.0.21</token.validation.version>
     </properties>
     <repositories>
         <repository>
