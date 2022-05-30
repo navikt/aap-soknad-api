@@ -14,14 +14,7 @@ management:
         env:
             additional-keys-to-sanitize: "client-jwk,jwk,jwks"
 spring:
-    datasource:
-        url: jdbc:postgresql://${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.host}:${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.port}/${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.database}
-        hikari:
-            connection-test-query: SELECT 1
-            maximum-pool-size: 2
-            username: ${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.username}
-            password: ${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.password}
-        driver-class-name: org.postgresql.Driver
+       
     devtools:
         restart:
             enabled: false
