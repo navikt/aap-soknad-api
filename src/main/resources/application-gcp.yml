@@ -18,8 +18,10 @@ spring:
         url: ${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.url}
     devtools:
         restart:
-            enabled=false:
+            enabled: false
         add-properties: false
+    flyway:
+        enabled: true
     kafka:
         bootstrap-servers: ${kafka.brokers}
         properties:
