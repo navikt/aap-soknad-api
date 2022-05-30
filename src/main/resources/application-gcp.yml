@@ -15,6 +15,7 @@ management:
             additional-keys-to-sanitize: "client-jwk,jwk,jwks"
 spring:
     datasource:
+        driver-class-name: org.postgresql.Driver
         hikari:
             connection-test-query: SELECT 1
             maximum-pool-size: 2
