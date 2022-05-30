@@ -19,9 +19,9 @@ spring:
             connection-test-query: SELECT 1
             maximum-pool-size: 2
             jdbc-url: "jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DATABASE}"
-                username: ${DATABASE_USERNAME}
-                password: ${DATABASE_PASSWORD}
-                driver-class-name: org.postgresql.Driver
+            username: ${DATABASE_USERNAME}
+            password: ${DATABASE_PASSWORD}
+            driver-class-name: org.postgresql.Driver
     devtools:
         restart:
             enabled: false
