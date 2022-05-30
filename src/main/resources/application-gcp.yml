@@ -19,6 +19,7 @@ spring:
         driver-class-name: org.postgresql.Driver
         username: ${DB_USERNAME}
         password: ${DB_PASSWORD}
+        
         hikari:
             connection-test-query: SELECT 1
             maximum-pool-size: 2
