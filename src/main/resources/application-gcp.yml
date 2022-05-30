@@ -15,7 +15,7 @@ management:
             additional-keys-to-sanitize: "client-jwk,jwk,jwks"
 spring:
     datasource:
-        url: jdbc:postgresql://${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.username}:${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.password}@${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.host}:${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.port}/:${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.database}
+        url: jdbc:postgresql://${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.username}:${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.password}@${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.host}:${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.port}/${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.database}
         hikari:
             connection-test-query: SELECT 1
             maximum-pool-size: 2
