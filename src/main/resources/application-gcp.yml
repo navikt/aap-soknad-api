@@ -14,6 +14,8 @@ management:
         env:
             additional-keys-to-sanitize: "client-jwk,jwk,jwks"
 spring:
+    datasource:
+        url: ${nais.database.${nais.app.name}.${nais.app.name}.dev.url}
     devtools:
         restart:
             enabled=false:

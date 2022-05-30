@@ -28,10 +28,10 @@ class AAPSøknadApiApplication
 fun main(args: Array<String>) {
     runApplication<AAPSøknadApiApplication>(*args) {
         with(currentCluster().clusterName()) {
-            if (this.contains(DEV)) {
+            if (contains(DEV)) {
                 setDefaultProperties(mapOf("onprem" to DEV_FSS))
             }
-            if (this.contains(PROD)) {
+            if (contains(PROD)) {
                 setDefaultProperties(mapOf("onprem" to PROD_FSS))
             }
         }
