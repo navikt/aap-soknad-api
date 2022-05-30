@@ -20,7 +20,7 @@ spec:
         -   secret: srvaap-selvbetjening
     gcp:
         sqlInstances:
-            -   type: POSTGRES_12
+            -   type: POSTGRES_14
                 databases:
                     -   name: soknad-api-{{env}}
                         envVarPrefix: DATABASE
