@@ -15,7 +15,7 @@ management:
             additional-keys-to-sanitize: "client-jwk,jwk,jwks"
 spring:
     datasource:
-        url: ${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.url}
+        url: jdbc:${nais.database.${nais.app.name}.${nais.app.name}.${nais.env}.url}
         hikari:
             connection-test-query: SELECT 1
             maximum-pool-size: 2
