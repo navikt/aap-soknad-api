@@ -19,6 +19,7 @@ spring:
         hikari:
             connection-test-query: SELECT 1
             maximum-pool-size: 2
+        driver-class-name: org.postgresql.Driver
     devtools:
         restart:
             enabled: false
