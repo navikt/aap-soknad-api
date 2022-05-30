@@ -15,10 +15,10 @@ management:
             additional-keys-to-sanitize: "client-jwk,jwk,jwks"
 spring:
     datasource:
-        url: jdbc:postgresql://${database.host}:${database.port}/${database.database}
+        url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DATABASE}
         driver-class-name: org.postgresql.Driver
-        username: ${database.username}
-        password: ${database.password}
+        username: ${DATABASE_USERNAME}
+        password: ${DATABASE_PASSWORD}
         hikari:
             connection-test-query: SELECT 1
             maximum-pool-size: 2
