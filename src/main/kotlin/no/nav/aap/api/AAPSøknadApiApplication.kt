@@ -25,14 +25,16 @@ import org.springframework.retry.annotation.EnableRetry
 @EnableCaching
 class AAPSøknadApiApplication
 
+private const val NAIS_ENV = "nais.env"
+
 fun main(args: Array<String>) {
     runApplication<AAPSøknadApiApplication>(*args) {
         with(currentCluster().clusterName()) {
             if (contains(DEV)) {
-                setDefaultProperties(mapOf("onprem" to DEV_FSS, "nais.env" to DEV))
+                setDefaultProperties(mapOf("onprem" to DEV_FSS, NAIS_ENV to DEV))
             }
             if (contains(PROD)) {
-                setDefaultProperties(mapOf("onprem" to PROD_FSS, "nais.env" to PROD))
+                setDefaultProperties(mapOf("onprem" to PROD_FSS, NAIS_ENV to PROD))
             }
         }
 
