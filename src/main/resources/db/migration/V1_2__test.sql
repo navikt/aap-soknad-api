@@ -1,0 +1,4 @@
+CREATE TABLE TEST1
+(
+    fnr VARCHAR(50)
+);
