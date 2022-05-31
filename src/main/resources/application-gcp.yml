@@ -28,6 +28,8 @@ spring:
         restart:
             enabled: false
         add-properties: false
+        livereload:
+            enabled: false
     flyway:
         enabled: false
     kafka:
