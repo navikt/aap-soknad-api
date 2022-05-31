@@ -18,9 +18,9 @@ spring:
         hibernate:
             ddl-auto: none
     datasource:
-        url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_DATABASE}
-        username: ${DB_USERNAME}
-        password: ${DB_PASSWORD}
+        url: jdbc:postgresql://${db.host}:${db.port}/${db.database}
+        username: ${db.username}
+        password: ${db.password}
         hikari:
             connection-test-query: SELECT 1
             maximum-pool-size: 2
