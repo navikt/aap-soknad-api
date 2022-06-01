@@ -12,6 +12,7 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavMelding, Long>
+interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long>
 
 @Entity
 @Table(name = "dittnavbeskjeder")
@@ -20,4 +21,14 @@ class JPADittNavMelding(
         var fnr: String,
         @CreatedDate var created: LocalDateTime? = null,
         var ref: String? = null,
+        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null)
+
+@Entity
+@Table(name = "dittnavoppgaver")
+@EntityListeners(AuditingEntityListener::class)
+class JPADittNavOppgave(
+        var fnr: String,
+        @CreatedDate var created: LocalDateTime? = null,
+        var ref: String? = null,
+        var done: LocalDateTime? = null,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null)
