@@ -7,7 +7,8 @@ import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.joark.JoarkResponse
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.LoggerUtil.getSecureLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
@@ -15,16 +16,14 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
 class StandardSøknadVLRouter(private val router: KafkaOperations<String, StandardSøknad>,
                              private val cfg: StandardSøknadVLRouterConfig) {
 
-    val log = LoggerUtil.getLogger(javaClass)
+    val log = getLogger(javaClass)
 
-    @Transactional("kafkaTransactionManager")
     fun route(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
         router.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
             .apply {
@@ -37,8 +36,8 @@ class StandardSøknadVLRouter(private val router: KafkaOperations<String, Standa
 
 private class StandardRoutingCallback(private val søknad: StandardSøknad, private val counter: Counter) :
     ListenableFutureCallback<SendResult<String, StandardSøknad>> {
-    private val secureLog = LoggerUtil.getSecureLogger()
-    private val log = LoggerUtil.getLogger(javaClass)
+    private val secureLog = getSecureLogger()
+    private val log = getLogger(javaClass)
     override fun onSuccess(result: SendResult<String, StandardSøknad>?) {
         counter.increment()
         with(result?.recordMetadata) {

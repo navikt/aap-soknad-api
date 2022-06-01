@@ -11,7 +11,7 @@ import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
 import javax.persistence.Table
 
-interface JPADittNavMeldingRepository : JpaRepository<JPADittNavMelding, Long>
+interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavMelding, Long>
 
 @Entity
 @Table(name = "dittnavbeskjeder")

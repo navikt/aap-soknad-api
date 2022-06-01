@@ -18,10 +18,10 @@ class UtlandSøknadRouter(private val joark: JoarkRouter,
                          private val router: UtlandSøknadVLRouter) {
 
     fun route(søknad: UtlandSøknad) =
-        with(pdl.søkerUtenBarn())outer@ {
-            with(joark.route(søknad,this))  {
+        with(pdl.søkerUtenBarn()) outer@{
+            with(joark.route(søknad, this)) {
                 if (vlRouter.shouldRoute(søknad)) {
-                    router.route(søknad,this@outer,second)
+                    router.route(søknad, this@outer, second)
                 }
                 dittnav.opprettBeskjed(fødselsnummer, UTLAND)
                 Kvittering("$first")
