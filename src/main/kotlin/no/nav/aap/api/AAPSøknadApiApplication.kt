@@ -1,5 +1,6 @@
 package no.nav.aap.api
 
+import no.nav.aap.util.Constants.ONPREM
 import no.nav.boot.conditionals.Cluster.currentCluster
 import no.nav.boot.conditionals.Cluster.profiler
 import no.nav.boot.conditionals.EnvUtil.DEV
@@ -16,6 +17,7 @@ import org.springframework.cache.annotation.EnableCaching
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.retry.annotation.EnableRetry
+import org.springframework.transaction.annotation.EnableTransactionManagement
 
 @SpringBootApplication
 @EnableJwtTokenValidation(ignore = ["org.springdoc", "org.springframework"])
@@ -25,6 +27,7 @@ import org.springframework.retry.annotation.EnableRetry
 @EnableKafka
 @EnableCaching
 @EnableJpaAuditing
+@EnableTransactionManagement
 class AAPSøknadApiApplication
 
 private const val NAIS_ENV = "nais.env"
@@ -33,10 +36,10 @@ fun main(args: Array<String>) {
     runApplication<AAPSøknadApiApplication>(*args) {
         with(currentCluster().clusterName()) {
             if (contains(DEV)) {
-                setDefaultProperties(mapOf("onprem" to DEV_FSS, NAIS_ENV to DEV))
+                setDefaultProperties(mapOf(ONPREM to DEV_FSS, NAIS_ENV to DEV))
             }
             if (contains(PROD)) {
-                setDefaultProperties(mapOf("onprem" to PROD_FSS, NAIS_ENV to PROD))
+                setDefaultProperties(mapOf(ONPREM to PROD_FSS, NAIS_ENV to PROD))
             }
         }
 

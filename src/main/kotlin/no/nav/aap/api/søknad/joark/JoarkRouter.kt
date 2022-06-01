@@ -97,7 +97,7 @@ class JoarkRouter(private val joark: JoarkClient,
         with(søknad) {
             utbetalinger?.stønadstyper?.forEach { slett(it.vedlegg, fnr) }
             slett(vedlegg, fnr)
-            slett(studier?.vedlegg, fnr)
+            slett(studier.vedlegg, fnr)
         }
     }
 

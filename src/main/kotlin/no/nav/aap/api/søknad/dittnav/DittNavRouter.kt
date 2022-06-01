@@ -25,7 +25,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val cfg: DittNavConfig,
                     @Value("\${nais.app.name}") private val app: String,
                     @Value("\${nais.namespace}") private val namespace: String,
-                    private val beskjedRepo: JPADittNavMeldingRepository) {
+                    private val meldingRepo: JPADittNavMeldingRepository) {
 
     private val log = LoggerUtil.getLogger(javaClass)
 
@@ -36,11 +36,11 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             with(keyFra(fnr, type.name)) {
                 log.info("Sender til Ditt Nav $this")
                 dittNav.send(ProducerRecord(cfg.topic, this, beskjed(cfg, type)))
-                    .addCallback(DittNavCallback(this, beskjedRepo))
+                    .addCallback(DittNavCallback(this, meldingRepo))
             }
         }
         else {
-            log.info("Sender ikke beskjed til Ditt Nav")
+            log.info("Sender ikke melding til Ditt Nav")
         }
 
     private fun beskjed(cfg: TopicConfig, type: SkjemaType) =
@@ -69,19 +69,13 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             .withNamespace(namespace)
             .build()
 
-    private class DittNavCallback(private val key: NokkelInput, private val beskjedRepo: JPADittNavMeldingRepository) :
+    private class DittNavCallback(private val key: NokkelInput, private val meldingRepo: JPADittNavMeldingRepository) :
         ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
         private val log = LoggerUtil.getLogger(javaClass)
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
-            log.info(" Sendte beskjed til Dit Nav  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            try {
-                log.info("Lagrer info om Ditt Nav beskjed")
-                beskjedRepo.save(JPADittNavMelding(fnr = key.getFodselsnummer(), ref = key.getEventId()))
-                log.info("Lagret info om Ditt Nav beskjed OK")
-            }
-            catch (e: Exception) {
-                log.warn("Ditt Nav beskjed lagring feilet", e)
-            }
+            log.info(" Sendte beskjed til Ditt Nav  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
+            val m = meldingRepo.save(JPADittNavMelding(fnr = key.getFodselsnummer(), ref = key.getEventId()))
+            log.info("Lagret info om oversendelse til Ditt Nav med id ${m.id}")
         }
 
         override fun onFailure(e: Throwable) {

@@ -12,6 +12,7 @@ import org.springframework.kafka.core.ProducerFactory
 
 @Configuration
 class DittNavBeanConfig {
+
     @Bean
     fun dittNavKafkaOperations(pf: ProducerFactory<Any, Any>) =
         // Clone the PF to use Avro serializers
