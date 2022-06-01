@@ -31,7 +31,7 @@ data class StandardSøknad(
 
 }
 
-data class Studier(val svar: StudieSvar, val kommeTilbake: RadioValg?, override val vedlegg: UUID? = null) :
+data class Studier(val svar: StudieSvar?, val kommeTilbake: RadioValg?, override val vedlegg: UUID? = null) :
     VedleggAware {
     enum class StudieSvar {
         JA,
