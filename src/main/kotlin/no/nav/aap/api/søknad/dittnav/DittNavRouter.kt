@@ -30,7 +30,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     private val log = LoggerUtil.getLogger(javaClass)
 
-    @Transactional
+    @Transactional("kafkaTransactionManager")
     fun opprettBeskjed(fnr: Fødselsnummer, type: SkjemaType) = send(fnr, cfg.beskjed, type)
 
     private fun send(fnr: Fødselsnummer, cfg: TopicConfig, type: SkjemaType) =

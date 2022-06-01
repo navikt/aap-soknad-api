@@ -24,7 +24,7 @@ class StandardSøknadVLRouter(private val router: KafkaOperations<String, Standa
 
     val log = LoggerUtil.getLogger(javaClass)
 
-    @Transactional
+    @Transactional("kafkaTransactionManager")
     fun route(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
         router.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
             .apply {
