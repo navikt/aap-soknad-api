@@ -17,7 +17,6 @@ import org.springframework.cache.annotation.EnableCaching
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.retry.annotation.EnableRetry
-import org.springframework.transaction.annotation.EnableTransactionManagement
 
 @SpringBootApplication
 @EnableJwtTokenValidation(ignore = ["org.springdoc", "org.springframework"])
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableKafka
 @EnableCaching
 @EnableJpaAuditing
-@EnableTransactionManagement
 class AAPSøknadApiApplication
 
 private const val NAIS_ENV = "nais.env"
