@@ -39,6 +39,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             }
         }
         else {
+            log.info("Sender ikke beskjed til Ditt Nav")
         }
 
     private fun beskjed(cfg: TopicConfig, type: SkjemaType) =
@@ -72,11 +73,11 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
         private val log = LoggerUtil.getLogger(javaClass)
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
             beskjedRepo.save(JPADittNavMelding(fnr = key.getFodselsnummer(), ref = key.getEventId()))
-            log.info("${beskjedRepo.count()} Sendte melding  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
+            log.info(" Sendte beskjed til Dit Nav  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
         }
 
         override fun onFailure(e: Throwable) {
-            log.warn("Kunne ikke sende melding  med id ${key.getEventId()}", e)
+            log.warn("Kunne ikke sende beskjed til Ditt Nav med id ${key.getEventId()}", e)
         }
     }
 }
