@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.model
 
+import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Fødselsnummer
@@ -31,7 +32,9 @@ data class StandardSøknad(
 
 }
 
-data class Studier(val svar: StudieSvar?, val kommeTilbake: RadioValg?, override val vedlegg: UUID? = null) :
+data class Studier(@JsonAlias("erStudent") val svar: StudieSvar?,
+                   val kommeTilbake: RadioValg?,
+                   override val vedlegg: UUID? = null) :
     VedleggAware {
     enum class StudieSvar {
         JA,
