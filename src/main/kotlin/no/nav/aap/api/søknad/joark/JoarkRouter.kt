@@ -88,8 +88,8 @@ class JoarkRouter(private val joark: JoarkClient,
             ?.map { it.asDokumentVariant() }
             .orEmpty()
 
-    private fun vedlegg(a: VedleggAware, fnr: Fødselsnummer) =
-        a.vedlegg?.let { uuid ->
+    private fun vedlegg(a: VedleggAware?, fnr: Fødselsnummer) =
+        a?.vedlegg?.let { uuid ->
             lager.lesDokument(fnr, uuid)?.asDokumentVariant()?.let { listOf(it) }
         }.orEmpty()
 
@@ -97,7 +97,7 @@ class JoarkRouter(private val joark: JoarkClient,
         with(søknad) {
             utbetalinger?.stønadstyper?.forEach { slett(it.vedlegg, fnr) }
             slett(vedlegg, fnr)
-            slett(studier.vedlegg, fnr)
+            slett(studier?.vedlegg, fnr)
         }
     }
 
