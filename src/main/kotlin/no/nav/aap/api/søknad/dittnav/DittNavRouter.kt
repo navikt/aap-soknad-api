@@ -73,7 +73,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
         ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
         private val log = LoggerUtil.getLogger(javaClass)
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
-            beskjedRepo.save(JPADittNavMelding(fnr = key.getFodselsnummer(), ref = key.getEventId()))
+            //beskjedRepo.save(JPADittNavMelding(fnr = key.getFodselsnummer(), ref = key.getEventId()))
             log.info(" Sendte beskjed til Dit Nav  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
         }
 
