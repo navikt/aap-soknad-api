@@ -33,7 +33,7 @@ data class PDLSøkerForeldreansvar(val navn: PDLNavn,
                                   val vegadresse: PDLVegadresse?,
                                   val foreldreansvar: Set<PDLForeldreansvar>?)
 
-data class PDLForeldreansvar(val ansvar: String, val ansvarlig: String, val ansvarssubjekt: String)
+data class PDLForeldreansvar(val ansvar: String, val ansvarlig: String?, val ansvarssubjekt: String)
 data class PDLNavn(val fornavn: String, val mellomnavn: String?, val etternavn: String)
 
 data class PDLSøker(val navn: PDLNavn,
