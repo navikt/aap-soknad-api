@@ -15,6 +15,6 @@ import javax.persistence.Table
 @EntityListeners(AuditingEntityListener::class)
 class JPADittNavMelding(
         val fnr: String,
-        @CreatedDate val opprettet: LocalDateTime? = null,
+        @CreatedDate val created: LocalDateTime? = null,
         val ref: String? = null,
         @Id @GeneratedValue(strategy = IDENTITY) val id: Long? = null)
