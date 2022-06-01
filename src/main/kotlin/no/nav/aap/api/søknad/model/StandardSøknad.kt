@@ -15,7 +15,7 @@ import java.time.LocalDate
 import java.util.*
 
 data class StandardSøknad(
-        val studier: Studier,
+        val studier: Studier?,
         val startdato: Startdato,
         val ferie: Ferie,
         val medlemsskap: Medlemskap,
