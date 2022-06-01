@@ -1,0 +1,1 @@
+GRANT USAGE ON SCHEMA PUBLIC TO "jan-olav.eide@nav.no";
