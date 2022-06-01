@@ -34,6 +34,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
     private fun send(fnr: Fødselsnummer, cfg: TopicConfig, type: SkjemaType) =
         if (cfg.enabled) {
             with(keyFra(fnr, type.name)) {
+                log.info("Sender til Ditt Nav $this")
                 dittNav.send(ProducerRecord(cfg.topic, this, beskjed(cfg, type)))
                     .addCallback(DittNavCallback(this, beskjedRepo))
             }
