@@ -1,10 +1,10 @@
 dittnav:
     beskjed:
         topic: min-side.aapen-brukernotifikasjon-beskjed-v1
-        varighet: 90d
     oppgave:
         topic: min-side.aapen-brukernotifikasjon-oppgave-v1
-        varighet: 90d
+    done:
+        topic: min-side.aapen-brukernotifikasjon-done-v1
 
 info:
     nais:

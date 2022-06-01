@@ -12,7 +12,9 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavMelding, Long>
-interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long>
+interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
+    fun findByRef(ref: String): JPADittNavOppgave?
+}
 
 @Entity
 @Table(name = "dittnavbeskjeder")

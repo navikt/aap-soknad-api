@@ -7,6 +7,7 @@ import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
+import no.nav.brukernotifikasjon.schemas.builders.DoneInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
@@ -34,7 +35,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     fun opprettBeskjed(fnr: Fødselsnummer, type: SkjemaType) =
         if (cfg.beskjed.enabled) {
-            with(keyFra(fnr, type.name)) {
+            with(nøkkelInput(fnr, type.name, UUID.randomUUID().toString())) {
                 log.info(CONFIDENTIAL, "Sender beskjed til Ditt Nav med key $this")
                 dittNav.send(ProducerRecord(cfg.beskjed.topic,
                         this,
@@ -48,7 +49,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     fun opprettOppgave(fnr: Fødselsnummer, type: SkjemaType, tekst: String) =
         if (cfg.oppgave.enabled) {
-            with(keyFra(fnr, type.name)) {
+            with(nøkkelInput(fnr, type.name, UUID.randomUUID().toString())) {
                 log.info(CONFIDENTIAL, "Sender oppgave til Ditt Nav med key $this")
                 dittNav.send(ProducerRecord(cfg.oppgave.topic, this, oppgave(cfg.oppgave, type, tekst)))
                     .addCallback(DittNavOppgaveCallback(this, oppgaveRepo))
@@ -56,6 +57,18 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
         else {
             log.info("Sender ikke oppgave til Ditt Nav")
+        }
+
+    fun done(fnr: Fødselsnummer, type: SkjemaType, eventId: String) =
+        if (cfg.done.enabled) {
+            with(nøkkelInput(fnr, type.name, eventId)) {
+                log.info(CONFIDENTIAL, "Sender done til Ditt Nav med key $this")
+                dittNav.send(ProducerRecord(cfg.done.topic, this, done()))
+                    .addCallback(DittNavDoneCallback(this, oppgaveRepo))
+            }
+        }
+        else {
+            log.info("Sender ikke done til Ditt Nav")
         }
 
     private fun beskjed(cfg: TopicConfig, type: SkjemaType, tekst: String) =
@@ -76,17 +89,21 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             .withTekst(tekst)
             .build()
 
+    private fun done() =
+        DoneInputBuilder()
+            .withTidspunkt(now(UTC))
+            .build()
+
     private fun replaceWith(replacement: String) =
         fromCurrentRequestUri().replacePath(replacement).build().toUri().toURL()
 
-    private fun keyFra(fnr: Fødselsnummer, grupperingId: String) =
-        NokkelInputBuilder()
-            .withFodselsnummer(fnr.fnr)
-            .withEventId("${UUID.randomUUID()}")
-            .withGrupperingsId(grupperingId)
-            .withAppnavn(app)
-            .withNamespace(namespace)
-            .build()
+    private fun nøkkelInput(fnr: Fødselsnummer, grupperingId: String, eventId: String) = NokkelInputBuilder()
+        .withFodselsnummer(fnr.fnr)
+        .withEventId(eventId)
+        .withGrupperingsId(grupperingId)
+        .withAppnavn(app)
+        .withNamespace(namespace)
+        .build()
 
     private class DittNavBeskjedCallback(private val key: NokkelInput,
                                          private val beskjedRepo: JPADittNavBeskjedRepository) :
@@ -95,8 +112,10 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
             log.info("Sendte beskjed til Ditt Nav  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            val m = beskjedRepo.save(JPADittNavMelding(fnr = key.getFodselsnummer(), ref = key.getEventId()))
-            log.info("Lagret info om beskjed til Ditt Nav i DB med id ${m.id}")
+            beskjedRepo.save(JPADittNavMelding(key.getFodselsnummer(), ref = key.getEventId()))
+                .also {
+                    log.info("Lagret info om beskjed til Ditt Nav i DB med id ${it.id}")
+                }
         }
 
         override fun onFailure(e: Throwable) {
@@ -111,12 +130,35 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
             log.info("Sendte oppgave til Ditt Nav  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            val m = oppgaveRepo.save(JPADittNavOppgave(fnr = key.getFodselsnummer(), ref = key.getEventId()))
-            log.info("Lagret info om oppgave til Ditt Nav i DB med id ${m.id}")
+            oppgaveRepo.save(JPADittNavOppgave(key.getFodselsnummer(), ref = key.getEventId()))
+                .also {
+                    log.info("Lagret info om oppgave til Ditt Nav i DB med id ${it.id}")
+                }
         }
 
         override fun onFailure(e: Throwable) {
             log.warn("Kunne ikke sende oppgave til Ditt Nav med id ${key.getEventId()}", e)
+        }
+    }
+
+    private class DittNavDoneCallback(private val key: NokkelInput,
+                                      private val oppgaveRepo: JPADittNavOppgaveRepository) :
+        ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
+        private val log = LoggerUtil.getLogger(javaClass)
+
+        override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
+            log.info("Sendte done til Ditt Nav  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
+            oppgaveRepo.findByRef(key.getEventId())?.let {
+                it.done = now()
+                oppgaveRepo.save(it)
+                also {
+                    log.info("Oppdatert done timestamp på oppgave i Ditt Nav i DB med ref ${key.getEventId()}")
+                }
+            } ?: log.info("Kunne ikke oppdatere innslag med eventId ${key.getEventId()}")
+        }
+
+        override fun onFailure(e: Throwable) {
+            log.warn("Kunne ikke sende done til Ditt Nav med id ${key.getEventId()}", e)
         }
     }
 }

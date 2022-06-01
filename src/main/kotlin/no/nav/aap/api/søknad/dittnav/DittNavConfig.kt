@@ -7,8 +7,10 @@ import java.time.Duration
 
 @ConfigurationProperties(DITTNAV)
 @ConstructorBinding
-data class DittNavConfig(val beskjed: TopicConfig, val oppgave: TopicConfig) {
-    data class TopicConfig(val topic: String, val varighet: Duration, val enabled: Boolean = true)
+data class DittNavConfig(val beskjed: TopicConfig, val oppgave: TopicConfig, val done: TopicConfig) {
+    data class TopicConfig(val topic: String,
+                           val varighet: Duration = Duration.ofDays(90),
+                           val enabled: Boolean = true)
 
     companion object {
         const val DITTNAV = "dittnav"
