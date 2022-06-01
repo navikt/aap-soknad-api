@@ -13,6 +13,7 @@ import org.springframework.boot.context.metrics.buffering.BufferingApplicationSt
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
 import org.springframework.cache.annotation.EnableCaching
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.retry.annotation.EnableRetry
 
@@ -23,6 +24,7 @@ import org.springframework.retry.annotation.EnableRetry
 @EnableRetry
 @EnableKafka
 @EnableCaching
+@EnableJpaAuditing
 class AAPSøknadApiApplication
 
 private const val NAIS_ENV = "nais.env"

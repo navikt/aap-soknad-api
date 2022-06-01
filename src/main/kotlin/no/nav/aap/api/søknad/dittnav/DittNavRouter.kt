@@ -24,7 +24,10 @@ import java.util.*
 class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val cfg: DittNavConfig,
                     @Value("\${nais.app.name") private val app: String,
-                    @Value("\${nais.namespace") private val namespace: String) {
+                    @Value("\${nais.namespace") private val namespace: String,
+                    private val beskjedRepo: JPADittNavMeldingRepository) {
+
+    private val log = LoggerUtil.getLogger(javaClass)
 
     fun opprettBeskjed(fnr: Fødselsnummer, type: SkjemaType) = send(fnr, cfg.beskjed, type)
 
@@ -32,7 +35,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
         if (cfg.enabled) {
             with(keyFra(fnr, type.name)) {
                 dittNav.send(ProducerRecord(cfg.topic, this, beskjed(cfg, type)))
-                    .addCallback(DittNavCallback(this))
+                    .addCallback(DittNavCallback(this, beskjedRepo))
             }
         }
         else {
@@ -64,11 +67,12 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             .withNamespace(namespace)
             .build()
 
-    private class DittNavCallback(private val key: NokkelInput) :
+    private class DittNavCallback(private val key: NokkelInput, private val beskjedRepo: JPADittNavMeldingRepository) :
         ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
         private val log = LoggerUtil.getLogger(javaClass)
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
-            log.info("Sendte melding  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
+            beskjedRepo.save(JPADittNavMelding(fnr = key.getFodselsnummer(), referanseId = key.getEventId()))
+            log.info("${beskjedRepo.count()} Sendte melding  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
         }
 
         override fun onFailure(e: Throwable) {
