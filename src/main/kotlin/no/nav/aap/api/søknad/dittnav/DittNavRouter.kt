@@ -23,8 +23,8 @@ import java.util.*
 @ConditionalOnGCP
 class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val cfg: DittNavConfig,
-                    @Value("\${nais.app.name") private val app: String,
-                    @Value("\${nais.namespace") private val namespace: String,
+                    @Value("\${nais.app.name}") private val app: String,
+                    @Value("\${nais.namespace}") private val namespace: String,
                     private val beskjedRepo: JPADittNavMeldingRepository) {
 
     private val log = LoggerUtil.getLogger(javaClass)
