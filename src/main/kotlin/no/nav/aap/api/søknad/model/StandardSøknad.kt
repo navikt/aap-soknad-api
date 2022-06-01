@@ -120,6 +120,6 @@ class Utbetaling(val fraArbeidsgiver: Boolean,
         VERV,
         UTENLANDSK_TRYGD,
         ANNET,
-        INGEN
+        NEI
     }
 }
