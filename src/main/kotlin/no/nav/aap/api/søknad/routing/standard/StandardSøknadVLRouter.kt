@@ -15,6 +15,7 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
@@ -23,7 +24,7 @@ class StandardSøknadVLRouter(private val router: KafkaOperations<String, Standa
 
     val log = LoggerUtil.getLogger(javaClass)
 
-    //@Transactional
+    @Transactional
     fun route(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
         router.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
             .apply {
