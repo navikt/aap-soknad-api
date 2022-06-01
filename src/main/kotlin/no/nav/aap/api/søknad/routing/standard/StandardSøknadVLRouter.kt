@@ -16,6 +16,7 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
@@ -23,21 +24,14 @@ class StandardSøknadVLRouter(private val router: KafkaOperations<String, Standa
                              private val cfg: StandardSøknadVLRouterConfig, private val saf: SafClient) {
 
     val log = LoggerUtil.getLogger(javaClass)
-    fun route(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) {
-        try {
-            log.info("SAF")
-            val g = saf.get()
-            log.info("SAF OK $g")
-        }
-        catch (e: Exception) {
-            log.warn("OOPS", e)
-        }
-        return router.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
+
+    @Transactional
+    fun route(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
+        router.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
             .apply {
                 headers().add(NAV_CALL_ID, callId().toByteArray())
             })
             .addCallback(StandardRoutingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
-    }
 
     override fun toString() = "$javaClass.simpleName [router=$router]"
 }

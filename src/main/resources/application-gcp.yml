@@ -58,6 +58,7 @@ spring:
             key-store-password: ${kafka.credstore.password}
         producer:
             acks: 1
+            transaction-id-prefix: tx-
             client-id: ${spring.application.name}
             key-serializer: org.apache.kafka.common.serialization.StringSerializer
             value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
