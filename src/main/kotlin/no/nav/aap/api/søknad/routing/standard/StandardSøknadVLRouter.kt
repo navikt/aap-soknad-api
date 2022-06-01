@@ -4,7 +4,6 @@ import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics.counter
 import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_MOTTATT
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.oppslag.saf.SafClient
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.joark.JoarkResponse
@@ -16,16 +15,15 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Service
 class StandardSøknadVLRouter(private val router: KafkaOperations<String, StandardSøknad>,
-                             private val cfg: StandardSøknadVLRouterConfig, private val saf: SafClient) {
+                             private val cfg: StandardSøknadVLRouterConfig) {
 
     val log = LoggerUtil.getLogger(javaClass)
 
-    @Transactional
+    //@Transactional
     fun route(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
         router.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
             .apply {

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.concurrent.ListenableFutureCallback
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 import java.time.LocalDateTime.now
@@ -30,7 +29,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     private val log = LoggerUtil.getLogger(javaClass)
 
-    @Transactional
+    //@Transactional
     fun opprettBeskjed(fnr: Fødselsnummer, type: SkjemaType) = send(fnr, cfg.beskjed, type)
 
     private fun send(fnr: Fødselsnummer, cfg: TopicConfig, type: SkjemaType) =
