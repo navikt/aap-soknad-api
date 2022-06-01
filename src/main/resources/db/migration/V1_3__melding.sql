@@ -1,7 +1,4 @@
-CREATE TABLE dittnavbeskjeder
+CREATE TABLE TEST1
 (
-    id      SERIAL PRIMARY KEY,
-    fnr     VARCHAR(50),
-    ref     VARCHAR(50),
-    created TIMESTAMP NOT NULL
+    fnr VARCHAR(50)
 );
