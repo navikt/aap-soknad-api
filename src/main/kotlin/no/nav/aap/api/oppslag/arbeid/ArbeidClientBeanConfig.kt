@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
-internal class ArbeidClientBeanConfig {
+class ArbeidClientBeanConfig {
 
     @Bean
     @Qualifier(ARBEID)
@@ -22,12 +22,12 @@ internal class ArbeidClientBeanConfig {
                                 ctx: AuthContext) =
         builder
             .baseUrl("${cfg.baseUri}")
-            .filter(navPersonIdentFunction(ctx.getSubject()))
+            .filter(navPersonIdentFunction(ctx))
             .filter(tokenXFilter)
             .build()
 
-    private fun navPersonIdentFunction(subject: String?) = generellFilterFunction(NAV_PERSON_IDENT) {
-        subject ?: "NO SUBJECT"
+    private fun navPersonIdentFunction(ctx: AuthContext) = generellFilterFunction(NAV_PERSON_IDENT) {
+        ctx.getSubject() ?: "NO SUBJECT"
     }
 
     @Bean
