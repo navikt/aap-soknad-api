@@ -9,7 +9,9 @@ data class ArbeidsforholdDTO(val ansettelsesperiode: AnsettelsesperiodeDTO,
                              val arbeidsavtaler: List<ArbeidsavtaleDTO>,
                              val arbeidsgiver: ArbeidsgiverDTO) {
     fun tilArbeidsforhold(orgNavn: String) =
-        Arbeidsforhold(orgNavn, arbeidsavtaler.map { it.tilAvtale(ansettelsesperiode.periode) })
+        Arbeidsforhold(orgNavn, arbeidsavtaler.map {
+            it.tilAvtale(ansettelsesperiode.periode)
+        })
 }
 
 data class ArbeidsgiverDTO(val type: ArbeidsgiverType, val organisasjonsnummer: OrgNummer)
