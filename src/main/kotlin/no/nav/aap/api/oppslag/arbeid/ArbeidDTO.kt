@@ -12,7 +12,7 @@ data class ArbeidsforholdDTO(val ansettelsesperiode: AnsettelsesperiodeDTO,
         Arbeidsforhold(orgNavn, arbeidsavtaler.map { it.tilAvtale(ansettelsesperiode.periode) })
 }
 
-internal data class ArbeidsgiverDTO(val type: ArbeidsgiverType, val organisasjonsnummer: OrgNummer)
+data class ArbeidsgiverDTO(val type: ArbeidsgiverType, val organisasjonsnummer: OrgNummer)
 
 enum class ArbeidsgiverType {
     Organisasjon,
@@ -20,10 +20,10 @@ enum class ArbeidsgiverType {
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-internal data class AnsettelsesperiodeDTO(val periode: Periode)
+data class AnsettelsesperiodeDTO(val periode: Periode)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-internal data class ArbeidsavtaleDTO(val stillingsprosent: Double, val antallTimerPrUke: Double) {
+data class ArbeidsavtaleDTO(val stillingsprosent: Double, val antallTimerPrUke: Double) {
     fun tilAvtale(p: Periode) = Arbeidsavtale(stillingsprosent, antallTimerPrUke, p)
 }
 
