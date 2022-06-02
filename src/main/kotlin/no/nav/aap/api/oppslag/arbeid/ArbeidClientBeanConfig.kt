@@ -22,12 +22,12 @@ internal class ArbeidClientBeanConfig {
                                 ctx: AuthContext) =
         builder
             .baseUrl("${cfg.baseUri}")
-            .filter(navPersonIdentFunction(ctx))
+            .filter(navPersonIdentFunction(ctx.getSubject()))
             .filter(tokenXFilter)
             .build()
 
-    private fun navPersonIdentFunction(ctx: AuthContext) = generellFilterFunction(NAV_PERSON_IDENT) {
-        ctx.getSubject() ?: "NO SUBJECT"
+    private fun navPersonIdentFunction(subject: String?) = generellFilterFunction(NAV_PERSON_IDENT) {
+        subject ?: "NO SUBJECT"
     }
 
     @Bean
