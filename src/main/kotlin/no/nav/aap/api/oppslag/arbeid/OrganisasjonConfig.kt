@@ -1,33 +1,34 @@
 package no.nav.aap.api.oppslag.arbeid
 
 import no.nav.aap.api.felles.OrgNummer
-import no.nav.aap.api.oppslag.arbeid.OrganisasjonConfig.Companion.ORGANISASJON
 import no.nav.aap.rest.AbstractRestConfig
+import no.nav.aap.util.Constants.ORGANISASJON
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.web.util.UriBuilder
+import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 
 @ConfigurationProperties(ORGANISASJON)
 @ConstructorBinding
 class OrganisasjonConfig(baseUri: URI,
-                         @DefaultValue(ORGPATH) private val organisasjonPath: String,
-                         @DefaultValue(PINGPATH) pingPath: String,
+                         @DefaultValue(V1_ORGANISASJON) private val organisasjonPath: String,
                          @DefaultValue("true") enabled: Boolean) :
-    AbstractRestConfig(baseUri, pingPath, ORGANISASJON, enabled) {
+    AbstractRestConfig(baseUri, pingPath(organisasjonPath), ORGANISASJON, enabled) {
 
-    fun orgURI(b: UriBuilder, orgnr: OrgNummer) =
-        b.path(organisasjonPath)
-            .queryParam("orgnummer", orgnr.orgnr)
-            .build()
+    fun getOrganisasjonURI(b: UriBuilder, orgnr: OrgNummer) = b.path(organisasjonPath).build(orgnr.orgnr)
 
     override fun toString() =
-        "$javaClass.simpleName [baseUri=$baseUri,  organisasjonPath=$organisasjonPath, pingEndpoint=$pingEndpoint]"
+        "${javaClass.simpleName} [organisasjonPath=" + organisasjonPath + ", pingEndpoint=" + pingEndpoint + "]"
 
     companion object {
-        const val ORGANISASJON = "organisasjon"
-        private const val ORGPATH = "organisasjon"
-        private const val PINGPATH = ORGPATH + "/ping"
+        private const val V1_ORGANISASJON = "v1/organisasjon/{orgnr}"
+        private const val TESTORG = "947064649"
+        private fun pingPath(organisasjonPath: String) =
+            UriComponentsBuilder.newInstance()
+                .path(organisasjonPath)
+                .build(TESTORG)
+                .toString()
     }
 }

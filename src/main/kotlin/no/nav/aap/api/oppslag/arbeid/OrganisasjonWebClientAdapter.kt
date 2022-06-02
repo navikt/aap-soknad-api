@@ -1,32 +1,47 @@
 package no.nav.aap.api.oppslag.arbeid
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import no.nav.aap.api.felles.OrgNummer
-import no.nav.aap.api.oppslag.arbeid.OrganisasjonConfig.Companion.ORGANISASJON
 import no.nav.aap.rest.AbstractWebClientAdapter
+import no.nav.aap.util.Constants
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.cache.annotation.Cacheable
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
+import reactor.core.publisher.Mono
 
 @Component
-class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON) val client: WebClient, private val cf: OrganisasjonConfig) :
-    AbstractWebClientAdapter(client, cf) {
+class OrganisasjonWebClientAdapter(@Qualifier(Constants.ORGANISASJON) val client: WebClient,
+                                   private val cf: OrganisasjonConfig) : AbstractWebClientAdapter(client, cf) {
 
-    @Cacheable(cacheNames = ["organisasjon"])
     fun orgNavn(orgnr: OrgNummer) =
         webClient
             .get()
-            .uri { b -> cf.orgURI(b, orgnr) }
+            .uri { b -> cf.getOrganisasjonURI(b, orgnr) }
             .accept(APPLICATION_JSON)
             .retrieve()
-            .bodyToMono<String>()
-            .doOnError { t: Throwable -> log.warn("Ereg oppslag ${orgnr.orgnr} feilet", t) }
-            .doOnSuccess { log.trace("Ereg resultat er $it") }
-            .onErrorReturn(orgnr.orgnr)
+            .onStatus({ obj: HttpStatus -> obj.isError }) { Mono.empty() }
+            .bodyToMono(OrganisasjonDTO::class.java)
+            .doOnError { t: Throwable -> log.warn("Organisasjon oppslag feilet", t) }
+            .doOnSuccess { log.trace("Organisasjon oppslag OK") }
+            .mapNotNull(OrganisasjonDTO::fulltNavn)
             .defaultIfEmpty(orgnr.orgnr)
             .block() ?: orgnr.orgnr
-            .also { log.trace("Ereg orgnavn er $it") }
+            .also { log.trace("Organisasjon oppslag response $it") }
 
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class OrganisasjonDTO(val navn: OrganisasjonNavnDTO) {
+    val fulltNavn = with(navn) {
+        listOfNotNull(navnelinje1, navnelinje2, navnelinje3, navnelinje4, navnelinje5).joinToString(" ")
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class OrganisasjonNavnDTO(val navnelinje1: String?,
+                                   val navnelinje2: String?,
+                                   val navnelinje3: String?,
+                                   val navnelinje4: String?,
+                                   val navnelinje5: String?)
 }
