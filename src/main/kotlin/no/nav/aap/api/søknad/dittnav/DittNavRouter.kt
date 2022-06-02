@@ -7,6 +7,7 @@ import no.nav.aap.api.søknad.dittnav.DittNavCallbacks.DittNavDoneCallback
 import no.nav.aap.api.søknad.dittnav.DittNavCallbacks.DittNavOppgaveCallback
 import no.nav.aap.api.søknad.dittnav.DittNavConfig.TopicConfig
 import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
-import java.util.*
 
 @Service
 @ConditionalOnGCP
@@ -36,7 +36,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     fun opprettBeskjed(fnr: Fødselsnummer, type: SkjemaType) =
         if (cfg.beskjed.enabled) {
-            with(nøkkelInput(fnr, type.name, UUID.randomUUID().toString())) {
+            with(nøkkelInput(fnr, type.name, callId())) {
                 log.info(CONFIDENTIAL, "Sender beskjed til Ditt Nav med key $this")
                 dittNav.send(ProducerRecord(cfg.beskjed.topic,
                         this,
@@ -50,7 +50,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     fun opprettOppgave(fnr: Fødselsnummer, type: SkjemaType, tekst: String) =
         if (cfg.oppgave.enabled) {
-            with(nøkkelInput(fnr, type.name, UUID.randomUUID().toString())) {
+            with(nøkkelInput(fnr, type.name, callId())) {
                 log.info(CONFIDENTIAL, "Sender oppgave til Ditt Nav med key $this")
                 dittNav.send(ProducerRecord(cfg.oppgave.topic, this, oppgave(cfg.oppgave, type, tekst)))
                     .addCallback(DittNavOppgaveCallback(this, oppgaveRepo))
