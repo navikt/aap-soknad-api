@@ -14,15 +14,20 @@ class ArbeidWebClientAdapter(
         private val cf: ArbeidConfig) : AbstractWebClientAdapter(webClient, cf) {
 
     fun arbeidsforhold() =
-        webClient
-            .get()
-            .uri(cf::arbeidsforholdURI)
-            .accept(APPLICATION_JSON)
-            .retrieve()
-            .bodyToMono<List<ArbeidsforholdDTO>>()
-            .doOnError { t: Throwable -> log.warn("Arbeidsforhold oppslag feilet", t) }
-            .doOnSuccess { log.trace("Arbeidsforhold er $it") }
-            .block() ?: listOf()
+        if (cf.isEnabled) {
+            webClient
+                .get()
+                .uri(cf::arbeidsforholdURI)
+                .accept(APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono<List<ArbeidsforholdDTO>>()
+                .doOnError { t: Throwable -> log.warn("Arbeidsforhold oppslag feilet", t) }
+                .doOnSuccess { log.trace("Arbeidsforhold er $it") }
+                .block() ?: listOf()
+        }
+        else {
+            listOf()
+        }
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cf]"
 }

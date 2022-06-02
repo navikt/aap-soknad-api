@@ -16,19 +16,24 @@ class OrganisasjonWebClientAdapter(@Qualifier(Constants.ORGANISASJON) val client
                                    private val cf: OrganisasjonConfig) : AbstractWebClientAdapter(client, cf) {
 
     fun orgNavn(orgnr: OrgNummer) =
-        webClient
-            .get()
-            .uri { b -> cf.getOrganisasjonURI(b, orgnr) }
-            .accept(APPLICATION_JSON)
-            .retrieve()
-            .onStatus({ obj: HttpStatus -> obj.isError }) { Mono.empty() }
-            .bodyToMono(OrganisasjonDTO::class.java)
-            .doOnError { t: Throwable -> log.warn("Organisasjon oppslag feilet", t) }
-            .doOnSuccess { log.trace("Organisasjon oppslag OK") }
-            .mapNotNull(OrganisasjonDTO::fulltNavn)
-            .defaultIfEmpty(orgnr.orgnr)
-            .block() ?: orgnr.orgnr
-            .also { log.trace("Organisasjon oppslag response $it") }
+        if (cf.isEnabled) {
+            webClient
+                .get()
+                .uri { b -> cf.getOrganisasjonURI(b, orgnr) }
+                .accept(APPLICATION_JSON)
+                .retrieve()
+                .onStatus({ obj: HttpStatus -> obj.isError }) { Mono.empty() }
+                .bodyToMono(OrganisasjonDTO::class.java)
+                .doOnError { t: Throwable -> log.warn("Organisasjon oppslag feilet", t) }
+                .doOnSuccess { log.trace("Organisasjon oppslag OK") }
+                .mapNotNull(OrganisasjonDTO::fulltNavn)
+                .defaultIfEmpty(orgnr.orgnr)
+                .block() ?: orgnr.orgnr
+                .also { log.trace("Organisasjon oppslag response $it") }
+        }
+        else {
+            orgnr.orgnr
+        }
 
 }
 
