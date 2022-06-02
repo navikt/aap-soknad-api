@@ -56,7 +56,6 @@ spring:
             client-id: ${spring.application.name}
             key-serializer: org.apache.kafka.common.serialization.StringSerializer
             value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-            transaction-id-prefix: tx-
 no.nav:
     security:
         jwt:
