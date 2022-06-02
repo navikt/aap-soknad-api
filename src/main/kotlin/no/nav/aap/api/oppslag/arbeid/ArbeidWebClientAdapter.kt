@@ -22,7 +22,7 @@ class ArbeidWebClientAdapter(
             .bodyToMono<List<ArbeidsforholdDTO>>()
             .doOnError { t: Throwable -> log.warn("Arbeidsforhold oppslag feilet", t) }
             .doOnSuccess { log.trace("Arbeidsforhold er $it") }
-            .block()
+            .block() ?: listOf()
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cf]"
 }

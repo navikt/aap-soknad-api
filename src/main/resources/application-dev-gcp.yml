@@ -23,7 +23,8 @@ server:
             enabled: false
 arbeidsforhold:
     base-uri: https://aareg-services-q1.dev-fss-pub.nais.io
-
+organisasjon:
+    base-uri: https://ereg-services-q1.dev-fss-pub.nais.io
 
 logging:
     level:

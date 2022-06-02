@@ -33,15 +33,15 @@ class OrganisasjonWebClientAdapter(@Qualifier(Constants.ORGANISASJON) val client
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class OrganisasjonDTO(val navn: OrganisasjonNavnDTO) {
+internal data class OrganisasjonDTO(val navn: OrganisasjonNavnDTO) {
     val fulltNavn = with(navn) {
         listOfNotNull(navnelinje1, navnelinje2, navnelinje3, navnelinje4, navnelinje5).joinToString(" ")
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    data class OrganisasjonNavnDTO(val navnelinje1: String?,
-                                   val navnelinje2: String?,
-                                   val navnelinje3: String?,
-                                   val navnelinje4: String?,
-                                   val navnelinje5: String?)
+    internal data class OrganisasjonNavnDTO(val navnelinje1: String?,
+                                            val navnelinje2: String?,
+                                            val navnelinje3: String?,
+                                            val navnelinje4: String?,
+                                            val navnelinje5: String?)
 }

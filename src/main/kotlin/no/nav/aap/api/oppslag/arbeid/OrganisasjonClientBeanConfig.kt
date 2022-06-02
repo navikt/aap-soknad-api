@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
-class OrganisasjonClientBeanConfig(val cfg: OrganisasjonConfig) {
+internal class OrganisasjonClientBeanConfig(val cfg: OrganisasjonConfig) {
 
     @Bean
     @Qualifier(ORGANISASJON)

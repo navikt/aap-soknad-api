@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
-class ArbeidClientBeanConfig {
+internal class ArbeidClientBeanConfig {
 
     @Bean
     @Qualifier(ARBEID)
@@ -27,7 +27,7 @@ class ArbeidClientBeanConfig {
             .build()
 
     private fun navPersonIdentFunction(ctx: AuthContext) = generellFilterFunction(NAV_PERSON_IDENT) {
-        ctx.getSubject() ?: "NO SUBJECT" //throw JwtTokenMissingException()
+        ctx.getSubject() ?: "NO SUBJECT"
     }
 
     @Bean
