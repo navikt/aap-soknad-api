@@ -8,11 +8,11 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
-internal class OrganisasjonClientBeanConfig(val cfg: OrganisasjonConfig) {
+internal class OrganisasjonClientBeanConfig {
 
     @Bean
     @Qualifier(ORGANISASJON)
-    fun organisasjonWebClient(builder: Builder) =
+    fun organisasjonWebClient(builder: Builder, cfg: OrganisasjonConfig) =
         builder
             .baseUrl("${cfg.baseUri}")
             .build()
