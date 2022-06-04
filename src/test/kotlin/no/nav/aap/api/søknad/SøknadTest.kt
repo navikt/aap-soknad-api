@@ -28,7 +28,7 @@ import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.Utbetaling
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønad
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.INTRODUKSJONSSTØNAD
-import no.nav.aap.api.søknad.model.Utbetaling.AnnenUtbetaling
+import no.nav.aap.api.søknad.model.Utbetaling.EkstraUtbetaling
 import no.nav.aap.api.søknad.model.Utenlandsopphold
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -70,7 +70,7 @@ class SøknadTest {
                             "22222222"))),
             JA,
             Utbetaling(false, listOf(AnnenStønad(INTRODUKSJONSSTØNAD, null, UUID.randomUUID())),
-                    listOf(AnnenUtbetaling("hvilken", "hvem"))),
+                    EkstraUtbetaling("hvilken", "hvem")),
             listOf(BarnOgInntekt(Fødselsnummer("22222222"), true, false)),
             listOf(AnnetBarnOgInntekt(Barn(Fødselsnummer("33333333333"),
                     Navn("Et", "ekstra", "Barn"), now().minusYears(14)), FOSTERFORELDER)),

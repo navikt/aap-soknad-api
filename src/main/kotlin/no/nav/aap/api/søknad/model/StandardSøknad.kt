@@ -93,8 +93,9 @@ enum class RadioValg {
 
 data class Utbetaling(val fraArbeidsgiver: Boolean,
                       val stønadstyper: List<AnnenStønad> = emptyList(),
-                      val andreUtbetalinger: List<AnnenUtbetaling> = emptyList()) {
-    data class AnnenUtbetaling(val hvilken: String, val hvem: String, override val vedlegg: UUID? = null) : VedleggAware
+                      val ekstraUtbetaling: EkstraUtbetaling? = null) {
+    data class EkstraUtbetaling(val hvilken: String, val hvem: String, override val vedlegg: UUID? = null) :
+        VedleggAware
 
     data class AnnenStønad(val type: AnnenStønadstype,
                            val hvemUtbetalerAFP: String?,
