@@ -7,7 +7,7 @@ class ArbeidClient(private val arbeid: ArbeidWebClientAdapter,
                    private val org: OrganisasjonWebClientAdapter) {
     fun arbeidsforhold() =
         arbeid.arbeidsforhold()
-            ?.map {
+            .map {
                 it.tilArbeidsforhold(org.orgNavn(it.arbeidsgiver.organisasjonsnummer))
             }
 }
