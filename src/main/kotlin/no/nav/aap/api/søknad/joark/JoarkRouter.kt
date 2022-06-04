@@ -10,7 +10,6 @@ import no.nav.aap.api.mellomlagring.Dokumentlager
 import no.nav.aap.api.søknad.joark.pdf.PDFClient
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
-import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønad
 import no.nav.aap.api.søknad.model.Utbetaling.VedleggAware
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.joark.AvsenderMottaker
@@ -70,7 +69,7 @@ class JoarkRouter(private val joark: JoarkClient,
         with(søker.fødselsnummer) {
             listOf(Dokument(STANDARD,
                     listOf(søknad.asJsonVariant(mapper), pdfVariant)
-                            + vedlegg(søknad.utbetalinger?.stønadstyper, this)
+                            + vedlegg(søknad.utbetalinger?.ekstraUtbetaling, this)
                             + vedlegg(søknad.studier, this)
                             + vedlegg(søknad, this)))
         }
@@ -81,13 +80,6 @@ class JoarkRouter(private val joark: JoarkClient,
                     .also { log.trace("${it.size} dokumentvarianter ($it)") }))
             .also { log.trace("Dokument til JOARK $it") }
 
-    private fun vedlegg(andreStønader: List<AnnenStønad>?, fnr: Fødselsnummer) =
-        andreStønader
-            ?.mapNotNull { it.vedlegg }
-            ?.mapNotNull { lager.lesDokument(fnr, it) }
-            ?.map { it.asDokumentVariant() }
-            .orEmpty()
-
     private fun vedlegg(a: VedleggAware?, fnr: Fødselsnummer) =
         a?.vedlegg?.let { uuid ->
             lager.lesDokument(fnr, uuid)?.asDokumentVariant()?.let { listOf(it) }
@@ -95,7 +87,7 @@ class JoarkRouter(private val joark: JoarkClient,
 
     private fun slettVedlegg(søknad: StandardSøknad, fnr: Fødselsnummer) {
         with(søknad) {
-            utbetalinger?.stønadstyper?.forEach { slett(it.vedlegg, fnr) }
+            utbetalinger?.ekstraUtbetaling?.let { slett(it.vedlegg, fnr) }
             slett(vedlegg, fnr)
             slett(studier.vedlegg, fnr)
         }
