@@ -35,7 +35,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.boot.test.json.JacksonTester
 import java.time.LocalDate.now
-import java.util.*
 
 @JsonTest
 class SøknadTest {
@@ -69,7 +68,7 @@ class SøknadTest {
                                     PostNummer("2600", "Lillehammer")),
                             "22222222"))),
             JA,
-            Utbetaling(false, listOf(AnnenStønad(INTRODUKSJONSSTØNAD, null, UUID.randomUUID())),
+            Utbetaling(false, listOf(AnnenStønad(INTRODUKSJONSSTØNAD)),
                     EkstraUtbetaling("hvilken", "hvem")),
             listOf(BarnOgInntekt(Fødselsnummer("22222222"), true, false)),
             listOf(AnnetBarnOgInntekt(Barn(Fødselsnummer("33333333333"),
