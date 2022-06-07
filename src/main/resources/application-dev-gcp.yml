@@ -28,9 +28,4 @@ organisasjon:
     base-uri: https://ereg-services-q1.dev-fss-pub.nais.io
     enabled: false
 
-logging:
-    level:
-        org:
-            springframework:
-                transaction:
-                    interceptor: trace
+debug: true
