@@ -118,7 +118,7 @@ data class Utbetaling(val fraArbeidsgiver: Boolean,
         STIPEND,
         AFP,
         VERV,
-        UTENLANDSK_TRYGD,
+        UTLAND,
         ANNET,
         NEI
     }
