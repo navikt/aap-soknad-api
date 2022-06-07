@@ -18,7 +18,7 @@ import javax.persistence.Table
 interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavMelding, Long>
 interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
     @Modifying
-    @Query("update JPADittNavOppgave o set o.done = 1 where o.ref = ?1")
+    @Query("update JPADittNavOppgave o set o.done = true where o.ref = ?1")
     fun done(@Param("ref") ref: String)
 }
 
@@ -39,5 +39,5 @@ class JPADittNavOppgave(
         @CreatedDate var created: LocalDateTime? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
         var ref: String? = null,
-        var done: LocalDateTime? = null,
+        var done: Boolean? = null,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null)
