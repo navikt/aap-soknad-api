@@ -18,7 +18,7 @@ import javax.persistence.Table
 interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavMelding, Long>
 interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
     @Modifying
-    @Query("update dittnavoppgaver oppgaver set oppgaver.isdone = true  where oppgaver.ref =:ref")
+    @Query("update dittnavoppgaver oppgaver set oppgaver.isdone = true  where oppgaver.ref = ?1")
     fun updateDone(@Param("ref") ref: String): Boolean
 }
 
