@@ -6,7 +6,7 @@ import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.Behandler
-import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.PENSJON_AFP
+import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.AFP
 import no.nav.aap.api.søknad.model.Utbetaling.VedleggAware
 import no.nav.aap.joark.DokumentVariant
 import no.nav.aap.joark.Filtype.JSON
@@ -100,7 +100,7 @@ data class Utbetaling(val fraArbeidsgiver: Boolean,
     data class AnnenStønad(val type: AnnenStønadstype,
                            val hvemUtbetalerAFP: String? = null) {
         init {
-            if (type != PENSJON_AFP && hvemUtbetalerAFP != null) {
+            if (type != AFP && hvemUtbetalerAFP != null) {
                 throw IllegalStateException("Hvem utbetaler kun for AFP")
             }
         }
