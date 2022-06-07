@@ -49,7 +49,7 @@ class DittNavCallbacks {
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
             log.info("Sendte done til Ditt Nav  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            val n = oppgaveRepo.updateDone(key.getEventId())
+            val n = oppgaveRepo.done(key.getEventId())
         }
 
         override fun onFailure(e: Throwable) {
