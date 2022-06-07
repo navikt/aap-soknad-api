@@ -4,7 +4,6 @@ import no.nav.aap.util.LoggerUtil
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.springframework.kafka.support.SendResult
 import org.springframework.util.concurrent.ListenableFutureCallback
-import java.time.LocalDateTime
 
 class DittNavCallbacks {
     class DittNavBeskjedCallback(private val key: NokkelInput,
@@ -50,9 +49,7 @@ class DittNavCallbacks {
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
             log.info("Sendte done til Ditt Nav  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            oppgaveRepo.findByRef(key.getEventId())?.let {
-                it.done = LocalDateTime.now()
-                oppgaveRepo.save(it)
+            oppgaveRepo.updateDone(key.getEventId())?.let {
                 also {
                     log.info("Oppdatert done timestamp på oppgave i Ditt Nav i DB med ref ${key.getEventId()}")
                 }
