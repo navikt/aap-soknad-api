@@ -12,6 +12,7 @@ spring:
     jpa:
         hibernate:
             ddl-auto: none
+        show-sql: true
     datasource:
         url: jdbc:postgresql://${db.host}:${db.port}/${db.database}
         username: ${db.username}
