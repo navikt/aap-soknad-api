@@ -19,7 +19,7 @@ interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavMelding, Long>
 interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
     @Modifying
     @Query("update dittnavoppgaver o set o.isdone = true  where o.ref = :ref")
-    fun updateDone(@Param("ref") ref: String): int
+    fun updateDone(@Param("ref") ref: String): Int
 }
 
 @Entity
