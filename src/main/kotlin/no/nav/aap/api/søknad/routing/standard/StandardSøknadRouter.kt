@@ -10,17 +10,17 @@ import no.nav.aap.api.søknad.routing.VLRouter
 import org.springframework.stereotype.Component
 
 @Component
-internal class StandardSøknadRouter(private val joark: JoarkRouter,
-                                    private val pdl: PDLClient,
-                                    private val dittnav: DittNavRouter,
-                                    private val vlRouter: VLRouter,
-                                    private val vl: StandardSøknadVLRouter) {
+class StandardSøknadRouter(private val joark: JoarkRouter,
+                           private val pdl: PDLClient,
+                           private val dittnav: DittNavRouter,
+                           private val vlRouter: VLRouter,
+                           private val vl: StandardSøknadVLRouter) {
 
     fun route(søknad: StandardSøknad) =
-        with(pdl.søkerMedBarn())  outer@ {
-            with(joark.route(søknad, this))  {
-                if (vlRouter.shouldRoute(søknad)){
-                    vl.route(søknad, this@outer,second)
+        with(pdl.søkerMedBarn()) outer@{
+            with(joark.route(søknad, this)) {
+                if (vlRouter.shouldRoute(søknad)) {
+                    vl.route(søknad, this@outer, second)
                 }
                 dittnav.opprettBeskjed(fødselsnummer, STANDARD)
                 Kvittering("$first")

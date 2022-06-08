@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component
 class SimpleVLRouter : VLRouter {
     override fun shouldRoute(søknad: StandardSøknad) = true
     override fun shouldRoute(søknad: UtlandSøknad) = false
-
 }
 
 interface VLRouter {

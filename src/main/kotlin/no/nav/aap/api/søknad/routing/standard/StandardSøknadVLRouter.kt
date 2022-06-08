@@ -15,10 +15,10 @@ import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import org.springframework.util.concurrent.ListenableFutureCallback
 
-@Service
+@Component
 class StandardSøknadVLRouter(private val router: KafkaOperations<String, StandardSøknad>,
                              private val cfg: StandardSøknadVLRouterConfig) {
 

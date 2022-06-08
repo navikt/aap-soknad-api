@@ -16,24 +16,25 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import org.springframework.util.concurrent.ListenableFutureCallback
 
-
-@Service
+@Component
 class UtlandSøknadVLRouter(private val router: KafkaOperations<String, UtlandSøknad>,
                            @Value("#{'\${utenlands.topic:aap.utland-soknad-sendt.v1}'}") private val søknadTopic: String) {
 
-    fun route(søknad: UtlandSøknad,søker: Søker, dokumenter: JoarkResponse) =
-            router.send(ProducerRecord(søknadTopic, søker.fødselsnummer.fnr, søknad)
-                .apply {
+    fun route(søknad: UtlandSøknad, søker: Søker, dokumenter: JoarkResponse) =
+        router.send(ProducerRecord(søknadTopic, søker.fødselsnummer.fnr, søknad)
+            .apply {
                 headers().add(NAV_CALL_ID, callId().toByteArray())
             })
             .addCallback(UtlandRouterCallback(søknad))
+
     override fun toString() = "$javaClass.simpleName [router=$router]"
 }
 
-private class UtlandRouterCallback(private val søknad: UtlandSøknad) : ListenableFutureCallback<SendResult<String, UtlandSøknad>> {
+private class UtlandRouterCallback(private val søknad: UtlandSøknad) :
+    ListenableFutureCallback<SendResult<String, UtlandSøknad>> {
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()
     override fun onSuccess(result: SendResult<String, UtlandSøknad>?) {
