@@ -6,6 +6,7 @@ import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.Behandler
+import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
 import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.AFP
 import no.nav.aap.api.søknad.model.Utbetaling.VedleggAware
@@ -77,8 +78,14 @@ data class Ferie(val ferieType: FerieType, val periode: Periode? = null, val dag
 
 data class BarnOgInntekt(val fnr: Fødselsnummer, val merEnnIG: Boolean? = false, val barnepensjon: Boolean = false)
 data class AnnetBarnOgInntekt(val barn: Barn,
+                              val relasjon: Relasjon = FORELDER,
                               val merEnnIG: Boolean? = false,
-                              val barnepensjon: Boolean = false)
+                              val barnepensjon: Boolean = false) {
+    enum class Relasjon {
+        FOSTERFORELDER,
+        FORELDER
+    }
+}
 
 enum class RadioValg {
     JA,
