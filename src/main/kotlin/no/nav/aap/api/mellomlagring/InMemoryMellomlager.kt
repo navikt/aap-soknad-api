@@ -5,7 +5,7 @@ import no.nav.aap.api.felles.SkjemaType
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 
 @ConditionalOnMissingBean(GCPMellomlager::class)
-class InMemoryMellomlagring : Mellomlager {
+class InMemoryMellomlager : Mellomlager {
     private val store = mutableMapOf<String, String>()
     override fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
         key(fnr, type).also { store[it] = value }
