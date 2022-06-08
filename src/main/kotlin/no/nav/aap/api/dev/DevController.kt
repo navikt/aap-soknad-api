@@ -13,7 +13,6 @@ import no.nav.aap.api.søknad.dittnav.DittNavRouter
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.routing.standard.StandardSøknadVLRouter
-import no.nav.aap.joark.JoarkResponse
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
@@ -51,7 +50,7 @@ internal class DevController(private val dokumentLager: Dokumentlager,
         vl.route(søknad, Søker(Navn("Ole", "B", "Olsen"), fnr,
                 Adresse("Gata", "A", "14", PostNummer("2600", "Lillehammer")),
                 now(), listOf()),
-                JoarkResponse("42", true, listOf()))
+                "42")
 
     @DeleteMapping("mellomlager/{type}/{fnr}")
     fun slettMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer): ResponseEntity<Void> =
