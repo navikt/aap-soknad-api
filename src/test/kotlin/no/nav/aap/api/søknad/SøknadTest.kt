@@ -11,8 +11,6 @@ import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.oppslag.behandler.Behandler.BehandlerType.FASTLEGE
 import no.nav.aap.api.oppslag.behandler.Behandler.KontaktInformasjon
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
-import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FOSTERFORELDER
-import no.nav.aap.api.søknad.model.Barn
 import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Ferie
 import no.nav.aap.api.søknad.model.Ferie.FerieType.DAGER
@@ -25,6 +23,7 @@ import no.nav.aap.api.søknad.model.Startdato.HvorforTilbake.HELSE
 import no.nav.aap.api.søknad.model.Studier
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.NEI
 import no.nav.aap.api.søknad.model.Søker
+import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetaling
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønad
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.INTRODUKSJONSSTØNAD
@@ -72,7 +71,7 @@ class SøknadTest {
                     EkstraUtbetaling("hvilken", "hvem")),
             listOf(BarnOgInntekt(Fødselsnummer("22222222"), true, false)),
             listOf(AnnetBarnOgInntekt(Barn(Fødselsnummer("33333333333"),
-                    Navn("Et", "ekstra", "Barn"), now().minusYears(14)), FOSTERFORELDER)),
+                    Navn("Et", "ekstra", "Barn"), now().minusYears(14)))),
             "Tilegg")
 
     @SpringBootApplication

@@ -77,14 +77,8 @@ data class Ferie(val ferieType: FerieType, val periode: Periode? = null, val dag
 
 data class BarnOgInntekt(val fnr: Fødselsnummer, val merEnnIG: Boolean? = false, val barnepensjon: Boolean = false)
 data class AnnetBarnOgInntekt(val barn: Barn,
-                              val relasjon: Relasjon,
                               val merEnnIG: Boolean? = false,
-                              val barnepensjon: Boolean = false) {
-    enum class Relasjon {
-        FOSTERFORELDER,
-        FORELDER
-    }
-}
+                              val barnepensjon: Boolean = false)
 
 enum class RadioValg {
     JA,
