@@ -6,7 +6,6 @@ import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_MOTTATT
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
-import no.nav.aap.joark.JoarkResponse
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.LoggerUtil.getSecureLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
@@ -24,10 +23,13 @@ class StandardSøknadVLRouter(private val router: KafkaOperations<String, Standa
 
     val log = getLogger(javaClass)
 
-    fun route(søknad: StandardSøknad, søker: Søker, dokumenter: JoarkResponse) =
+    fun route(søknad: StandardSøknad, søker: Søker, journalpostId: String) =
         router.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
             .apply {
-                headers().add(NAV_CALL_ID, callId().toByteArray())
+
+                headers()
+                    .add(NAV_CALL_ID, callId().toByteArray())
+                    .add("journalpostid", journalpostId.toByteArray())
             })
             .addCallback(StandardRoutingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
 
