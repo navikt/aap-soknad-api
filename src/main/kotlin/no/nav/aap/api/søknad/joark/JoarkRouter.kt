@@ -70,6 +70,7 @@ class JoarkRouter(private val joark: JoarkClient,
             listOf(Dokument(STANDARD,
                     listOf(søknad.asJsonVariant(mapper), pdfVariant)
                             + vedlegg(søknad.utbetalinger?.ekstraUtbetaling, this)
+                            + vedlegg(søknad.utbetalinger?.ekstraUtbetaling, this)
                             + vedlegg(søknad.studier, this)
                             + vedlegg(søknad, this)))
         }
@@ -87,6 +88,7 @@ class JoarkRouter(private val joark: JoarkClient,
 
     private fun slettVedlegg(søknad: StandardSøknad, fnr: Fødselsnummer) {
         with(søknad) {
+            utbetalinger?.ekstraUtbetaling?.let { slett(it.vedlegg, fnr) }
             utbetalinger?.ekstraUtbetaling?.let { slett(it.vedlegg, fnr) }
             slett(vedlegg, fnr)
             slett(studier.vedlegg, fnr)

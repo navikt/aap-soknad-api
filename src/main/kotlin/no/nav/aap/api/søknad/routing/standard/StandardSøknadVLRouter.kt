@@ -26,7 +26,6 @@ class StandardSøknadVLRouter(private val router: KafkaOperations<String, Standa
     fun route(søknad: StandardSøknad, søker: Søker, journalpostId: String) =
         router.send(ProducerRecord(cfg.topic, søker.fødselsnummer.fnr, søknad)
             .apply {
-
                 headers()
                     .add(NAV_CALL_ID, callId().toByteArray())
                     .add("journalpostid", journalpostId.toByteArray())
