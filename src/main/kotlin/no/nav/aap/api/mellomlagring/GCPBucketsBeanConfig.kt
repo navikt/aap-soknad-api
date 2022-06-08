@@ -8,10 +8,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.threeten.bp.Duration.ofMillis
 
-
 @Configuration
 @ConditionalOnGCP
-class MellomlagringBeanConfig {
+class GCPBucketsBeanConfig {
 
     @Bean
     fun retrySettings(@Value("\${mellomlagring.timeout:3000}") timeoutMs: Long) =
