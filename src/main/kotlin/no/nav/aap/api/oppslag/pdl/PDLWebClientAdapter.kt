@@ -9,8 +9,8 @@ import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLFødsel
-import no.nav.aap.api.søknad.model.Barn
 import no.nav.aap.api.søknad.model.Søker
+import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.PDL_SYSTEM
