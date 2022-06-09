@@ -47,8 +47,8 @@ data class Studier(@JsonAlias("erStudent") val svar: StudieSvar?,
 
 }
 
-data class Startdato(val fom: LocalDate, val hvorfor: HvorforTilbake?, val beskrivelse: String?) {
-    enum class HvorforTilbake {
+data class Startdato(val fom: LocalDate, val hvorfor: Hvorfor?, val beskrivelse: String?) {
+    enum class Hvorfor {
         HELSE,
         FEILINFO
     }

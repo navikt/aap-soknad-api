@@ -19,7 +19,7 @@ import no.nav.aap.api.søknad.model.RadioValg
 import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Startdato
-import no.nav.aap.api.søknad.model.Startdato.HvorforTilbake.HELSE
+import no.nav.aap.api.søknad.model.Startdato.Hvorfor.HELSE
 import no.nav.aap.api.søknad.model.Studier
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.NEI
 import no.nav.aap.api.søknad.model.Søker
