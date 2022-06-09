@@ -49,7 +49,7 @@ internal class DokumentlagerController(private val lager: Dokumentlager, private
 
     @DeleteMapping("/slett/{uuid}")
     fun slettDokument(@PathVariable uuid: UUID): ResponseEntity<Void> =
-        if (lager.slettDokument(ctx.getFnr(), uuid)) noContent().build() else notFound().build()
+        if (lager.slettDokument(uuid, ctx.getFnr())) noContent().build() else notFound().build()
 
     companion object {
         const val BASEPATH = "vedlegg"

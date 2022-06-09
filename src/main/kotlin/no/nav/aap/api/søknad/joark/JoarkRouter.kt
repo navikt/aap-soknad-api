@@ -10,8 +10,8 @@ import no.nav.aap.api.mellomlagring.Dokumentlager
 import no.nav.aap.api.søknad.joark.pdf.PDFClient
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
-import no.nav.aap.api.søknad.model.Utbetaling.VedleggAware
 import no.nav.aap.api.søknad.model.UtlandSøknad
+import no.nav.aap.api.søknad.model.VedleggAware
 import no.nav.aap.joark.AvsenderMottaker
 import no.nav.aap.joark.Bruker
 import no.nav.aap.joark.Dokument
@@ -82,21 +82,19 @@ class JoarkRouter(private val joark: JoarkClient,
             .also { log.trace("Dokument til JOARK $it") }
 
     private fun vedlegg(a: VedleggAware?, fnr: Fødselsnummer) =
-        a?.vedlegg?.let { uuid ->
-            lager.lesDokument(fnr, uuid)?.asDokumentVariant()?.let { listOf(it) }
-        }.orEmpty()
+        a?.vedlegg?.let { uuid -> lager.lesDokument(fnr, uuid)?.asDokumentVariant()?.let { listOf(it) } }.orEmpty()
 
     private fun slettVedlegg(søknad: StandardSøknad, fnr: Fødselsnummer) {
         with(søknad) {
-            utbetalinger?.ekstraUtbetaling?.let { slett(it.vedlegg, fnr) }
-            utbetalinger?.ekstraUtbetaling?.let { slett(it.vedlegg, fnr) }
+            slett(utbetalinger?.ekstraUtbetaling?.vedlegg, fnr)
+            utbetalinger?.stønadstyper?.forEach { v -> slett(v.vedlegg, fnr) }
             slett(vedlegg, fnr)
             slett(studier.vedlegg, fnr)
         }
     }
 
     private fun slett(uuid: UUID?, fnr: Fødselsnummer) =
-        uuid?.let { lager.slettDokument(fnr, it) }
+        uuid?.let { lager.slettDokument(it, fnr) }
 
     private fun Blob.asDokumentVariant() = DokumentVariant(of(contentType), getEncoder().encodeToString(getContent()))
 

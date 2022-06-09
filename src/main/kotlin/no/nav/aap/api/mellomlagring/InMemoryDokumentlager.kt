@@ -10,7 +10,7 @@ class InMemoryDokumentlager : Dokumentlager {
 
     override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) = null
 
-    override fun slettDokument(fnr: Fødselsnummer, uuid: UUID) = true
+    override fun slettDokument(uuid: UUID, fnr: Fødselsnummer) = true
 
     override fun lagreDokument(fnr: Fødselsnummer,
                                bytes: ByteArray,

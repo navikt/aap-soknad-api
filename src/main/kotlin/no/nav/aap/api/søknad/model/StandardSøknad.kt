@@ -9,7 +9,6 @@ import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
 import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.AFP
-import no.nav.aap.api.søknad.model.Utbetaling.VedleggAware
 import no.nav.aap.joark.DokumentVariant
 import no.nav.aap.joark.Filtype.JSON
 import no.nav.aap.joark.VariantFormat.ORIGINAL
@@ -31,13 +30,15 @@ data class StandardSøknad(
         override val vedlegg: UUID? = null) : VedleggAware {
 
     fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, this.toEncodedJson(mapper), ORIGINAL)
+}
 
+interface VedleggAware {
+    val vedlegg: UUID?
 }
 
 data class Studier(@JsonAlias("erStudent") val svar: StudieSvar?,
                    val kommeTilbake: RadioValg?,
-                   override val vedlegg: UUID? = null) :
-    VedleggAware {
+                   override val vedlegg: UUID? = null) : VedleggAware {
     enum class StudieSvar {
         JA,
         NEI,
@@ -100,16 +101,13 @@ data class Utbetaling(val fraArbeidsgiver: Boolean,
         VedleggAware
 
     data class AnnenStønad(val type: AnnenStønadstype,
-                           val hvemUtbetalerAFP: String? = null, override val vedlegg: UUID? = null) : VedleggAware {
+                           val hvemUtbetalerAFP: String? = null,
+                           override val vedlegg: UUID? = null) : VedleggAware {
         init {
             if (type != AFP && hvemUtbetalerAFP != null) {
                 throw IllegalStateException("Hvem utbetaler kun for AFP")
             }
         }
-    }
-
-    interface VedleggAware {
-        val vedlegg: UUID?
     }
 
     enum class AnnenStønadstype {

@@ -95,5 +95,5 @@ internal class DevController(private val dokumentLager: Dokumentlager,
 
     @DeleteMapping("vedlegg/slett/{fnr}/{uuid}")
     fun slettDokument(@PathVariable fnr: Fødselsnummer, @PathVariable uuid: UUID): ResponseEntity<Void> =
-        if (dokumentLager.slettDokument(fnr, uuid)) noContent().build() else notFound().build()
+        if (dokumentLager.slettDokument(uuid, fnr)) noContent().build() else notFound().build()
 }

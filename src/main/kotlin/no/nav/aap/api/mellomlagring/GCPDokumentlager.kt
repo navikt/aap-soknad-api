@@ -46,7 +46,7 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
             it.also { log.trace("Lest dokument med uuid $uuid") }
         }
 
-    override fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
+    override fun slettDokument(uuid: UUID, fnr: Fødselsnummer) =
         lager.delete(of(bøtte, key(fnr, uuid)))
 
     @Component
