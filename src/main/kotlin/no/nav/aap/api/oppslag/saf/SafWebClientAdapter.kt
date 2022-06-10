@@ -33,8 +33,8 @@ class SafWebClientAdapter(@Qualifier(SAF) client: WebClient,
             .doOnError { t: Throwable -> log.warn("SAF oppslag feilet", t) }
             .block()
 
-    fun getDocument() = oppslag({
+    fun sakerMetadata() = oppslag({
         graphQL.post(SAKER_QUERY, mapOf(IDENT to ctx.getFnr().fnr, TEMA to AAP), MutableMap::class.java).block()
     }, "saker")
-    
+
 }

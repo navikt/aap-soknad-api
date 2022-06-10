@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.dittnav
+package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput

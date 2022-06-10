@@ -19,5 +19,5 @@ class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) 
             .bodyToMono<KontaktinformasjonDTO>()
             .doOnSuccess { log.trace("Kontaktinformasjon er $it") }
             .doOnError { t: Throwable -> log.warn("Krr oppslag feilet", t) }
-            .block()
+            .block().tilKontaktinfo()
 }

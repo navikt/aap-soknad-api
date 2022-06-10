@@ -1,11 +1,11 @@
-package no.nav.aap.api.søknad.dittnav
+package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
-import no.nav.aap.api.søknad.dittnav.DittNavCallbacks.DittNavBeskjedCallback
-import no.nav.aap.api.søknad.dittnav.DittNavCallbacks.DittNavDoneCallback
-import no.nav.aap.api.søknad.dittnav.DittNavCallbacks.DittNavOppgaveCallback
-import no.nav.aap.api.søknad.dittnav.DittNavConfig.TopicConfig
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavBeskjedCallback
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavDoneCallback
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavOppgaveCallback
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavConfig.TopicConfig
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -79,6 +79,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             .withSynligFremTil(now(UTC).plus(cfg.varighet))
             .withLink(replaceWith("/aap/${type.name}"))
             .withTekst(tekst)
+            .withEksternVarsling((cfg.exsternVarsling))
             .build()
 
     private fun oppgave(cfg: TopicConfig, type: SkjemaType, tekst: String) =
@@ -88,6 +89,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             .withSynligFremTil(now(UTC).plus(cfg.varighet))
             .withLink(replaceWith("/aap/${type.name}"))
             .withTekst(tekst)
+            .withEksternVarsling((cfg.exsternVarsling))
             .build()
 
     private fun done() =

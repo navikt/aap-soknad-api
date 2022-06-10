@@ -8,5 +8,5 @@ class SafClient(private val a: SafWebClientAdapter) {
     fun dokument(journalpostId: String, dokumentId: DokumentInfoId) =
         a.dokument(journalpostId, dokumentId.dokumentInfoId)
 
-    fun getDocument() = a.getDocument()
+    fun sakerMetadata() = a.sakerMetadata()
 }

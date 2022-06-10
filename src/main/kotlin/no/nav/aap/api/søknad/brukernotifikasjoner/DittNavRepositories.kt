@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.dittnav
+package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate

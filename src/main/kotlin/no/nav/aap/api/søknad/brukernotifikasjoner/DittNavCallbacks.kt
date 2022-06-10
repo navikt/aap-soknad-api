@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.dittnav
+package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import no.nav.aap.util.LoggerUtil
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput

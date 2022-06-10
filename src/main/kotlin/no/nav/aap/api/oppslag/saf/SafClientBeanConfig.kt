@@ -22,8 +22,7 @@ class SafClientBeanConfig {
             .build()
 
     @Bean
-    fun safHealthIndicator(a: SafWebClientAdapter) =
-        object : AbstractPingableHealthIndicator(a) {}
+    fun safHealthIndicator(a: SafWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 
     @Qualifier(SAF)
     @Bean
