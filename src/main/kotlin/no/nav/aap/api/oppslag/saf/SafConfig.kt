@@ -24,7 +24,7 @@ class SafConfig(baseUri: URI,
     companion object {
         const val SAKER_QUERY = "query-saf.graphql"
         const val SAF = "saf"
-        private const val PINGPATH = "isAlive"
+        private const val PINGPATH = "graphql"
         private const val DOKPATH = "rest/hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}"
     }
 }
