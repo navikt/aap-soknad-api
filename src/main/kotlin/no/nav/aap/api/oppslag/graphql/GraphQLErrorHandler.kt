@@ -1,7 +1,7 @@
-package no.nav.aap.api.oppslag.saf
+package no.nav.aap.api.oppslag.graphql
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 
-interface SafErrorHandler {
+interface GraphQLErrorHandler {
     fun <T> handleError(e: GraphQLErrorsException): T
 }

@@ -1,36 +1,35 @@
 package no.nav.aap.api.oppslag.pdl
 
-import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.PostNummer
+import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLFødsel
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.Søker.Barn
-import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.PDL_SYSTEM
 import no.nav.aap.util.Constants.PDL_USER
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 
 @Component
 class PDLWebClientAdapter(
         @Qualifier(PDL_USER) private val userWebClient: GraphQLWebClient,
-        @Qualifier(PDL_USER) webClient: WebClient,
+        @Qualifier(PDL_USER) client: WebClient,
         @Qualifier(PDL_SYSTEM) private val systemWebClient: GraphQLWebClient,
         cfg: PDLConfig,
         private val ctx: AuthContext,
-        private val errorHandler: PDLErrorHandler) : AbstractWebClientAdapter(webClient, cfg) {
+        private val errorHandler: GraphQLErrorHandler) :
+    AbstractGraphQLAdapter(client, cfg, errorHandler) {
 
     fun søker(medBarn: Boolean = false) = ctx.getSubject()?.let { fnr ->
         søkerOppslag(fnr)?.let { s ->
@@ -107,34 +106,10 @@ class PDLWebClientAdapter(
     }
     else emptyList()
 
-    private fun <T> oppslag(oppslag: () -> T, type: String): T {
-        return try {
-            oppslag.invoke()
-        }
-        catch (e: GraphQLErrorsException) {
-            errorHandler.handleError(e)
-        }
-        catch (e: Exception) {
-            log.warn("PDL oppslag {} feilet med uventet feil", type, e)
-            throw e
-        }
-    }
-
-    override fun ping() {
-        webClient
-            .options()
-            .uri(baseUri)
-            .accept(APPLICATION_JSON, TEXT_PLAIN)
-            .retrieve()
-            .toBodilessEntity()
-            .block()
-    }
-
     override fun toString() =
         "${javaClass.simpleName} [webClient=$webClient,graphQLWebClient=$userWebClient,authContext=$ctx,errorHandler=$errorHandler, cfg=$cfg]"
 
     companion object {
-        private const val IDENT = "ident"
         private const val ANSVAR_QUERY = "query-foreldreansvar.graphql"
         private const val PERSON_QUERY = "query-person.graphql"
         private const val BARN_QUERY = "query-barn.graphql"

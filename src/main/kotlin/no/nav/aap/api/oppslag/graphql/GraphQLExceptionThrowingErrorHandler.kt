@@ -1,6 +1,7 @@
-package no.nav.aap.api.oppslag.pdl
+package no.nav.aap.api.oppslag.saf
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler
 import no.nav.aap.util.LoggerUtil
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -14,13 +15,13 @@ import org.springframework.web.client.HttpClientErrorException.create
 import java.nio.charset.Charset.defaultCharset
 
 @Component
-private class PDLExceptionThrowingErrorHandler : PDLErrorHandler {
+class GraphQLExceptionThrowingErrorHandler : GraphQLErrorHandler {
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLogger = LoggerUtil.getSecureLogger()
 
     override fun <T> handleError(e: GraphQLErrorsException): T {
-        log.warn("PDL feilet, se secure logs for mer detaljer")
-        secureLogger.error("PDL oppslag returnerte ${e.errors.size} feil. ${e.errors}", e)
+        log.warn("GraphQL feilet, se secure logs for mer detaljer")
+        secureLogger.error("GraphQL oppslag returnerte ${e.errors.size} feil. ${e.errors}", e)
         throw e.httpClientException()
     }
 
