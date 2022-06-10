@@ -11,7 +11,7 @@ data class DittNavConfig(val beskjed: TopicConfig, val oppgave: TopicConfig, val
     data class TopicConfig(val topic: String,
                            val varighet: Duration = Duration.ofDays(90),
                            val enabled: Boolean = true,
-                           val sikkerhetsnivå: Int = 3,
+                           val sikkerhetsnivaa: Int = 3,
                            val exsternVarsling: Boolean = false)
 
     companion object {

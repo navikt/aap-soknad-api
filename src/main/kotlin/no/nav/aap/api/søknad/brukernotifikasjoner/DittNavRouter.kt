@@ -74,7 +74,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     private fun beskjed(cfg: TopicConfig, type: SkjemaType, tekst: String) =
         BeskjedInputBuilder()
-            .withSikkerhetsnivaa(cfg.sikkerhetsnivå)
+            .withSikkerhetsnivaa(cfg.sikkerhetsnivaa)
             .withTidspunkt(now(UTC))
             .withSynligFremTil(now(UTC).plus(cfg.varighet))
             .withLink(replaceWith("/aap/${type.name}"))
@@ -84,7 +84,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     private fun oppgave(cfg: TopicConfig, type: SkjemaType, tekst: String) =
         OppgaveInputBuilder()
-            .withSikkerhetsnivaa(cfg.sikkerhetsnivå)
+            .withSikkerhetsnivaa(cfg.sikkerhetsnivaa)
             .withTidspunkt(now(UTC))
             .withSynligFremTil(now(UTC).plus(cfg.varighet))
             .withLink(replaceWith("/aap/${type.name}"))
