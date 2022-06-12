@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 
 @ConfigurationProperties("nais")
 @ConstructorBinding
-class NAISConfig(@DefaultValue("local") val namespace: String/*, val app: NAISApp, val cluster: NAISCluster*/) /*{
+data class NAISConfig(@DefaultValue("local") val namespace: String, val app: NAISApp, val cluster: NAISCluster) {
     data class NAISApp(val name: String, val image: String)
     data class NAISCluster(val name: String)
-}*/
+}
