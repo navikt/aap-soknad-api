@@ -9,12 +9,13 @@ import java.time.Duration
 @ConstructorBinding
 data class DittNavConfig(val beskjed: TopicConfig, val oppgave: TopicConfig, val done: TopicConfig) {
     data class TopicConfig(val topic: String,
-                           val varighet: Duration = Duration.ofDays(90),
+                           val varighet: Duration = DEFAULT_DURATION,
                            val enabled: Boolean = true,
                            val sikkerhetsnivaa: Int = 3,
                            val eksternVarsling: Boolean = false)
 
     companion object {
         const val DITTNAV = "dittnav"
+        private val DEFAULT_DURATION = Duration.ofDays(90)
     }
 }
