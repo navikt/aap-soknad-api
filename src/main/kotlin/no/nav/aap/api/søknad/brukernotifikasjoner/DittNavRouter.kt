@@ -18,7 +18,6 @@ import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal.EPOST
 import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal.SMS
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.stereotype.Service
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
@@ -29,8 +28,6 @@ import java.time.ZoneOffset.UTC
 @ConditionalOnGCP
 class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val cfg: DittNavConfig,
-                    @Value("\${nais.app.name}") private val app: String,
-                    @Value("\${nais.namespace}") private val namespace: String,
                     private val repos: DittNavRepositories) {
 
     private val log = LoggerUtil.getLogger(javaClass)
@@ -107,8 +104,8 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
         .withFodselsnummer(fnr.fnr)
         .withEventId(eventId)
         .withGrupperingsId(grupperingId)
-        .withAppnavn(app)
-        .withNamespace(namespace)
+        .withAppnavn(cfg.app)
+        .withNamespace(cfg.namespace)
         .build()
 
 }
