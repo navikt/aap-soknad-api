@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
+import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import javax.persistence.Entity
 import javax.persistence.EntityListeners
@@ -21,6 +22,9 @@ interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
     @Query("update JPADittNavOppgave o set o.done = true where o.ref = ?1")
     fun done(@Param("ref") ref: String)
 }
+
+@Component
+data class DittNavRepositories(val beskjed: JPADittNavBeskjedRepository, val oppgave: JPADittNavOppgaveRepository)
 
 @Entity
 @Table(name = "dittnavbeskjeder")

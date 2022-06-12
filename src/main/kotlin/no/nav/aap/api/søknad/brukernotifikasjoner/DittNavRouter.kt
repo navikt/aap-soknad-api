@@ -31,8 +31,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val cfg: DittNavConfig,
                     @Value("\${nais.app.name}") private val app: String,
                     @Value("\${nais.namespace}") private val namespace: String,
-                    private val beskjedRepo: JPADittNavBeskjedRepository,
-                    private val oppgaveRepo: JPADittNavOppgaveRepository) {
+                    private val repos: DittNavRepositories) {
 
     private val log = LoggerUtil.getLogger(javaClass)
 
@@ -43,7 +42,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 dittNav.send(ProducerRecord(cfg.beskjed.topic,
                         this,
                         beskjed(cfg.beskjed, type, "Mottatt ${type.tittel}")))
-                    .addCallback(DittNavBeskjedCallback(this, beskjedRepo))
+                    .addCallback(DittNavBeskjedCallback(this, repos.beskjed))
             }
         }
         else {
@@ -55,7 +54,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             with(nøkkelInput(fnr, type.name, callId())) {
                 log.info(CONFIDENTIAL, "Sender oppgave til Ditt Nav med key $this")
                 dittNav.send(ProducerRecord(cfg.oppgave.topic, this, oppgave(cfg.oppgave, type, tekst)))
-                    .addCallback(DittNavOppgaveCallback(this, oppgaveRepo))
+                    .addCallback(DittNavOppgaveCallback(this, repos.oppgave))
             }
         }
         else {
@@ -67,7 +66,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             with(nøkkelInput(fnr, type.name, eventId)) {
                 log.info(CONFIDENTIAL, "Sender done til Ditt Nav med key $this")
                 dittNav.send(ProducerRecord(cfg.done.topic, this, done()))
-                    .addCallback(DittNavDoneCallback(this, oppgaveRepo))
+                    .addCallback(DittNavDoneCallback(this, repos.oppgave))
             }
         }
         else {
