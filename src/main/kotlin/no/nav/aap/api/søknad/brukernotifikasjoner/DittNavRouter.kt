@@ -14,6 +14,8 @@ import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.DoneInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
+import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal.EPOST
+import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal.SMS
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.beans.factory.annotation.Value
@@ -80,6 +82,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             .withLink(replaceWith("/aap/${type.name}"))
             .withTekst(tekst)
             .withEksternVarsling((cfg.exsternVarsling))
+            .withPrefererteKanaler(EPOST, SMS)
             .build()
 
     private fun oppgave(cfg: TopicConfig, type: SkjemaType, tekst: String) =
@@ -90,6 +93,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             .withLink(replaceWith("/aap/${type.name}"))
             .withTekst(tekst)
             .withEksternVarsling((cfg.exsternVarsling))
+            .withPrefererteKanaler(EPOST, SMS)
             .build()
 
     private fun done() =
