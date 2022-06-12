@@ -37,8 +37,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             with(nøkkelInput(fnr, type.name, callId())) {
                 log.info(CONFIDENTIAL, "Sender beskjed til Ditt Nav med key $this")
                 dittNav.send(ProducerRecord(cfg.beskjed.topic,
-                        this,
-                        beskjed(cfg.beskjed, type, "Mottatt ${type.tittel}")))
+                        this, beskjed(cfg.beskjed, type, "Mottatt ${type.tittel}")))
                     .addCallback(DittNavBeskjedCallback(this, repos.beskjed))
             }
         }

@@ -141,7 +141,7 @@ joark:
 saf:
     base-uri: https://safselvbetjening.${onprem}-pub.nais.io
 dittnav:
-    config:
+    nais:
         app: ${nais.app.name}
         namespace: ${nais.namespace}
     beskjed:

@@ -8,13 +8,13 @@ import java.time.Duration
 
 @ConfigurationProperties(DITTNAV)
 @ConstructorBinding
-data class DittNavConfig(@NestedConfigurationProperty val cfg: NAISConfig,
+data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
                          @NestedConfigurationProperty val beskjed: TopicConfig,
                          @NestedConfigurationProperty val oppgave: TopicConfig,
                          @NestedConfigurationProperty val done: TopicConfig) {
 
-    val app = cfg.app
-    val namespace = cfg.namespace
+    val app = nais.app
+    val namespace = nais.namespace
 
     data class TopicConfig(val topic: String,
                            val varighet: Duration = DEFAULT_DURATION,
