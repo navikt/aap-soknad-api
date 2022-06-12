@@ -20,7 +20,7 @@ data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
                            val varighet: Duration = DEFAULT_DURATION,
                            val enabled: Boolean = true,
                            val sikkerhetsnivaa: Int = DEFAULT_LEVEL,
-                           val eksternVarsling: Boolean = false)
+                           val eksternVarsling: Boolean = true)
 
     data class NAISConfig(val namespace: String, val app: String)
 
