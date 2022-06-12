@@ -11,11 +11,12 @@ data class DittNavConfig(val beskjed: TopicConfig, val oppgave: TopicConfig, val
     data class TopicConfig(val topic: String,
                            val varighet: Duration = DEFAULT_DURATION,
                            val enabled: Boolean = true,
-                           val sikkerhetsnivaa: Int = 3,
+                           val sikkerhetsnivaa: Int = DEFAULT_LEVEL,
                            val eksternVarsling: Boolean = false)
 
     companion object {
         const val DITTNAV = "dittnav"
         private val DEFAULT_DURATION = Duration.ofDays(90)
+        private const val DEFAULT_LEVEL = 3
     }
 }
