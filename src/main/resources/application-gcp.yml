@@ -141,6 +141,9 @@ joark:
 saf:
     base-uri: https://safselvbetjening.${onprem}-pub.nais.io
 dittnav:
+    config:
+        app: ${nais.app.name}
+        namespace: ${nais.namespace}
     beskjed:
         topic: min-side.aapen-brukernotifikasjon-beskjed-v1
     oppgave:
