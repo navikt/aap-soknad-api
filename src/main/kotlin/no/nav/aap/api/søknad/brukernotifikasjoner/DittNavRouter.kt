@@ -81,7 +81,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             .withSynligFremTil(now(UTC).plus(cfg.varighet))
             .withLink(replaceWith("/aap/${type.name}"))
             .withTekst(tekst)
-            .withEksternVarsling((cfg.exsternVarsling))
+            .withEksternVarsling((cfg.eksternVarsling))
             .withPrefererteKanaler(EPOST, SMS)
             .build()
 
@@ -92,7 +92,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             .withSynligFremTil(now(UTC).plus(cfg.varighet))
             .withLink(replaceWith("/aap/${type.name}"))
             .withTekst(tekst)
-            .withEksternVarsling((cfg.exsternVarsling))
+            .withEksternVarsling((cfg.eksternVarsling))
             .withPrefererteKanaler(EPOST, SMS)
             .build()
 
