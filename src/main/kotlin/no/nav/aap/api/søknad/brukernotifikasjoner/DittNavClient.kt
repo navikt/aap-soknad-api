@@ -1,8 +1,6 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
-import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
-import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavBeskjedCallback
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavDoneCallback
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavOppgaveCallback
@@ -34,7 +32,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     fun opprettBeskjed(type: SkjemaType, varighet: Duration = cfg.beskjed.varighet) =
         if (cfg.beskjed.enabled) {
-            with(nøkkelInput(ctx.getFnr(), type.name, callId(), "beskjed")) {
+            with(nøkkelInput(type.name, callId(), "beskjed")) {
                 dittNav.send(ProducerRecord(cfg.beskjed.topic,
                         this, beskjed(cfg.beskjed, type, "Mottatt ${type.tittel}", varighet)))
                     .addCallback(DittNavBeskjedCallback(this, repos.beskjed))
@@ -48,7 +46,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     fun opprettOppgave(type: SkjemaType, tekst: String) =
         if (cfg.oppgave.enabled) {
-            with(nøkkelInput(ctx.getFnr(), type.name, callId(), "oppgave")) {
+            with(nøkkelInput(type.name, callId(), "oppgave")) {
                 dittNav.send(ProducerRecord(cfg.oppgave.topic, this, oppgave(cfg.oppgave, type, tekst)))
                     .addCallback(DittNavOppgaveCallback(this, repos.oppgave))
                 eventId
@@ -61,7 +59,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     fun avsluttOppgave(type: SkjemaType, eventId: String) =
         if (cfg.done.enabled) {
-            with(nøkkelInput(ctx.getFnr(), type.name, eventId, "done")) {
+            with(nøkkelInput(type.name, eventId, "done")) {
                 dittNav.send(ProducerRecord(cfg.done.topic, this, avsluttOppgave()))
                     .addCallback(DittNavDoneCallback(this, repos.oppgave))
             }
@@ -104,10 +102,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     private fun replaceWith(replacement: String) =
         fromCurrentRequestUri().replacePath(replacement).build().toUri().toURL()
 
-    private fun nøkkelInput(fnr: Fødselsnummer, grupperingId: String, eventId: String, type: String) =
+    private fun nøkkelInput(grupperingId: String, eventId: String, type: String) =
         with(cfg) {
             NokkelInputBuilder()
-                .withFodselsnummer(fnr.fnr)
+                .withFodselsnummer(ctx.getSubject())
                 .withEventId(eventId)
                 .withGrupperingsId(grupperingId)
                 .withAppnavn(app)
