@@ -64,4 +64,8 @@ class JPASøknad(
         var ref: String? = null,
         var jti: String? = null,
         var gyldigtil: LocalDateTime? = null,
-        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null)
+        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
+    override fun toString() =
+        "JPASøknad(fnr='$fnr', created=$created, updated=$updated, ref=$ref, jti=$jti, gyldigtil=$gyldigtil, id=$id)"
+
+}
