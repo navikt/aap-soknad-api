@@ -121,7 +121,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     fun opprettMellomlagringBeskjed(uuid: String?) {
         uuid?.let {
-            val s = JPASøknad(fnr = ctx.getFnr().fnr, ref = it, jti = ctx.getJti())
+            val s = JPASøknad(fnr = ctx.getFnr().fnr, ref = it, jti = ctx.getJti(), gyldigtil = now().plusDays(1))
             repos.søknader.saveAndFlush(s)
         } ?: log.info("Ingen mellomlagring")
     }
