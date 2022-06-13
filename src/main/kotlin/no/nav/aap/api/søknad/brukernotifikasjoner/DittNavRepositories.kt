@@ -33,6 +33,8 @@ class JPADittNavMelding(
         var fnr: String,
         @CreatedDate var created: LocalDateTime? = null,
         var ref: String? = null,
+        @LastModifiedDate var updated: LocalDateTime? = null,
+        var done: Boolean? = null,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null)
 
 @Entity

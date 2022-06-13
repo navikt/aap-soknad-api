@@ -22,7 +22,7 @@ import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
 
 @ConditionalOnGCP
-class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
+class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val cfg: DittNavConfig,
                     private val repos: DittNavRepositories) {
 
@@ -51,10 +51,10 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
             log.info("Sender ikke oppgave til Ditt Nav")
         }
 
-    fun done(fnr: Fødselsnummer, type: SkjemaType, eventId: String) =
+    fun avsluttOppgave(fnr: Fødselsnummer, type: SkjemaType, eventId: String) =
         if (cfg.done.enabled) {
             with(nøkkelInput(fnr, type.name, eventId, "done")) {
-                dittNav.send(ProducerRecord(cfg.done.topic, this, done()))
+                dittNav.send(ProducerRecord(cfg.done.topic, this, avsluttOppgave()))
                     .addCallback(DittNavDoneCallback(this, repos.oppgave))
             }
         }
@@ -88,7 +88,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .build()
         }
 
-    private fun done() =
+    private fun avsluttOppgave() =
         DoneInputBuilder()
             .withTidspunkt(now(UTC))
             .build()

@@ -5,6 +5,7 @@ import no.nav.aap.api.oppslag.behandler.BehandlerClient
 import no.nav.aap.api.oppslag.krr.KRRClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.oppslag.saf.SafClient
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.model.SøkerInfo
 import no.nav.aap.joark.DokumentInfoId
 import no.nav.aap.util.Constants
@@ -23,7 +24,8 @@ class OppslagController(val pdl: PDLClient,
                         val behandler: BehandlerClient,
                         val arbeid: ArbeidClient,
                         val krr: KRRClient,
-                        val saf: SafClient) {
+                        val saf: SafClient,
+                        val dittNav: DittNavClient) {
 
     val log = LoggerUtil.getLogger(javaClass)
 
@@ -33,7 +35,10 @@ class OppslagController(val pdl: PDLClient,
             behandler.behandlere(),
             arbeid.arbeidsforhold(),
             krr.kontaktinfo())
-        .also { log.trace("Søker er $it") }
+        .also {
+            dittNav.opprettBeskjed()
+            log.trace("Søker er $it")
+        }
 
     @GetMapping("/saf")
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentInfoId: DokumentInfoId) =

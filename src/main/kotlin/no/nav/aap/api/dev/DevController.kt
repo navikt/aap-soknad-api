@@ -9,7 +9,7 @@ import no.nav.aap.api.mellomlagring.Dokumentlager
 import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FNR
 import no.nav.aap.api.mellomlagring.Mellomlager
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavRouter
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.routing.standard.StandardSøknadVLRouter
@@ -41,7 +41,7 @@ import java.util.*
 @ConditionalOnNotProd
 internal class DevController(private val dokumentLager: Dokumentlager,
                              private val mellomlager: Mellomlager,
-                             private val dittnav: DittNavRouter,
+                             private val dittnav: DittNavClient,
                              private val vl: StandardSøknadVLRouter) {
 
     @PostMapping("vl/{fnr}")

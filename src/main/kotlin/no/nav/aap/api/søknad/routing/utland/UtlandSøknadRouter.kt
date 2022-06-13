@@ -2,7 +2,7 @@ package no.nav.aap.api.søknad.routing.utland
 
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavRouter
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.joark.JoarkRouter
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.UtlandSøknad
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 class UtlandSøknadRouter(private val joark: JoarkRouter,
                          private val pdl: PDLClient,
                          private val vlRouter: VLRouter,
-                         private val dittnav: DittNavRouter,
+                         private val dittnav: DittNavClient,
                          private val router: UtlandSøknadVLRouter) {
 
     fun route(søknad: UtlandSøknad) =
