@@ -14,8 +14,6 @@ import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.DoneInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
-import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal.EPOST
-import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal.SMS
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
@@ -70,26 +68,30 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 
     private fun beskjed(cfg: TopicConfig, type: SkjemaType, tekst: String) =
-        BeskjedInputBuilder()
-            .withSikkerhetsnivaa(cfg.sikkerhetsnivaa)
-            .withTidspunkt(now(UTC))
-            .withSynligFremTil(now(UTC).plus(cfg.varighet))
-            .withLink(replaceWith("/aap/${type.name}"))
-            .withTekst(tekst)
-            .withEksternVarsling((cfg.eksternVarsling))
-            .withPrefererteKanaler(EPOST, SMS)
-            .build()
+        with(cfg) {
+            BeskjedInputBuilder()
+                .withSikkerhetsnivaa(sikkerhetsnivaa)
+                .withTidspunkt(now(UTC))
+                .withSynligFremTil(now(UTC).plus(varighet))
+                .withLink(replaceWith("/aap/${type.name}"))
+                .withTekst(tekst)
+                .withEksternVarsling(eksternVarsling)
+                .withPrefererteKanaler(*preferertekanaler.toTypedArray())
+                .build()
+        }
 
     private fun oppgave(cfg: TopicConfig, type: SkjemaType, tekst: String) =
-        OppgaveInputBuilder()
-            .withSikkerhetsnivaa(cfg.sikkerhetsnivaa)
-            .withTidspunkt(now(UTC))
-            .withSynligFremTil(now(UTC).plus(cfg.varighet))
-            .withLink(replaceWith("/aap/${type.name}"))
-            .withTekst(tekst)
-            .withEksternVarsling((cfg.eksternVarsling))
-            .withPrefererteKanaler(EPOST, SMS)
-            .build()
+        with(cfg) {
+            OppgaveInputBuilder()
+                .withSikkerhetsnivaa(sikkerhetsnivaa)
+                .withTidspunkt(now(UTC))
+                .withSynligFremTil(now(UTC).plus(varighet))
+                .withLink(replaceWith("/aap/${type.name}"))
+                .withTekst(tekst)
+                .withEksternVarsling(eksternVarsling)
+                .withPrefererteKanaler(*preferertekanaler.toTypedArray())
+                .build()
+        }
 
     private fun done() =
         DoneInputBuilder()
@@ -99,12 +101,14 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
     private fun replaceWith(replacement: String) =
         fromCurrentRequestUri().replacePath(replacement).build().toUri().toURL()
 
-    private fun nøkkelInput(fnr: Fødselsnummer, grupperingId: String, eventId: String) = NokkelInputBuilder()
-        .withFodselsnummer(fnr.fnr)
-        .withEventId(eventId)
-        .withGrupperingsId(grupperingId)
-        .withAppnavn(cfg.app)
-        .withNamespace(cfg.namespace)
-        .build()
-
+    private fun nøkkelInput(fnr: Fødselsnummer, grupperingId: String, eventId: String) =
+        with(cfg) {
+            NokkelInputBuilder()
+                .withFodselsnummer(fnr.fnr)
+                .withEventId(eventId)
+                .withGrupperingsId(grupperingId)
+                .withAppnavn(app)
+                .withNamespace(namespace)
+                .build()
+        }
 }

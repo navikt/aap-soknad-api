@@ -1,6 +1,9 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavConfig.Companion.DITTNAV
+import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
+import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal.EPOST
+import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal.SMS
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
@@ -19,6 +22,7 @@ data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
     data class TopicConfig(val topic: String,
                            val varighet: Duration = DEFAULT_DURATION,
                            val enabled: Boolean = true,
+                           val preferertekanaler: List<PreferertKanal> = listOf(SMS, EPOST),
                            val sikkerhetsnivaa: Int = DEFAULT_LEVEL,
                            val eksternVarsling: Boolean = true)
 
