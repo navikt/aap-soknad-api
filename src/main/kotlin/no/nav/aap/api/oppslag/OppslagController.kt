@@ -36,7 +36,7 @@ class OppslagController(val pdl: PDLClient,
             arbeid.arbeidsforhold(),
             krr.kontaktinfo())
         .also {
-            dittNav.opprettBeskjed()
+            //dittNav.opprettBeskjed()
             log.trace("Søker er $it")
         }
 
