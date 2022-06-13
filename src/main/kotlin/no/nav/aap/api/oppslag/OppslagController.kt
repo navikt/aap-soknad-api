@@ -11,8 +11,8 @@ import no.nav.aap.joark.DokumentInfoId
 import no.nav.aap.util.Constants
 import no.nav.aap.util.LoggerUtil
 import no.nav.security.token.support.spring.ProtectedRestController
-import org.springframework.http.CacheControl
-import org.springframework.http.ContentDisposition
+import org.springframework.http.CacheControl.noCache
+import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
@@ -46,9 +46,9 @@ class OppslagController(val pdl: PDLClient,
             ?.let {
                 ok()
                     // .contentType(MediaType.parseMediaType(it.contentType))
-                    .cacheControl(CacheControl.noCache().mustRevalidate())
+                    .cacheControl(noCache().mustRevalidate())
                     .headers(HttpHeaders().apply {
-                        contentDisposition = ContentDisposition.attachment()
+                        contentDisposition = attachment()
                             //    .filename(it.metadata[Dokumentlager.FILNAVN]!!)
                             .build()
                     })

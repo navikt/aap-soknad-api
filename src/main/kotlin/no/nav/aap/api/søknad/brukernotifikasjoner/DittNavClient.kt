@@ -44,10 +44,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             null
         }
 
-    fun opprettOppgave(type: SkjemaType, tekst: String) =
+    fun opprettOppgave(type: SkjemaType, tekst: String, varighet: Duration = cfg.oppgave.varighet) =
         if (cfg.oppgave.enabled) {
             with(nøkkelInput(type.name, callId(), "oppgave")) {
-                dittNav.send(ProducerRecord(cfg.oppgave.topic, this, oppgave(cfg.oppgave, type, tekst)))
+                dittNav.send(ProducerRecord(cfg.oppgave.topic, this, oppgave(cfg.oppgave, type, tekst, varighet)))
                     .addCallback(DittNavOppgaveCallback(this, repos.oppgave))
                 eventId
             }
@@ -81,7 +81,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .build()
         }
 
-    private fun oppgave(cfg: TopicConfig, type: SkjemaType, tekst: String) =
+    private fun oppgave(cfg: TopicConfig, type: SkjemaType, tekst: String, varighet: Duration) =
         with(cfg) {
             OppgaveInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
