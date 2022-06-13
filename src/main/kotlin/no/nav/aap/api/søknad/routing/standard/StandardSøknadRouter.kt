@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.routing.standard
 
-import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.joark.JoarkRouter
@@ -22,7 +21,7 @@ class StandardSøknadRouter(private val joark: JoarkRouter,
                 if (vlRouter.shouldRoute(søknad)) {
                     vl.route(søknad, this@outer, second.journalpostId)
                 }
-                dittnav.opprettBeskjed(STANDARD)
+                dittnav.opprettBeskjed()
                 Kvittering("$first")
             }
         }

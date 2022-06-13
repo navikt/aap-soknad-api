@@ -1,12 +1,12 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import no.nav.aap.api.felles.SkjemaType
+import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavBeskjedCallback
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavDoneCallback
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavOppgaveCallback
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavConfig.TopicConfig
 import no.nav.aap.util.AuthContext
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
@@ -28,13 +28,14 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val repos: DittNavRepositories,
                     private val ctx: AuthContext) {
 
-    private val log = LoggerUtil.getLogger(javaClass)
+    private val log = getLogger(javaClass)
 
-    fun opprettBeskjed(type: SkjemaType, varighet: Duration = cfg.beskjed.varighet) =
+    fun opprettBeskjed(type: SkjemaType = STANDARD,
+                       tekst: String = "Mottatt ${type.tittel}",
+                       varighet: Duration = cfg.beskjed.varighet) =
         if (cfg.beskjed.enabled) {
             with(nøkkelInput(type.name, callId(), "beskjed")) {
-                dittNav.send(ProducerRecord(cfg.beskjed.topic,
-                        this, beskjed(cfg.beskjed, type, "Mottatt ${type.tittel}", varighet)))
+                dittNav.send(ProducerRecord(cfg.beskjed.topic, this, beskjed(type, tekst, varighet)))
                     .addCallback(DittNavBeskjedCallback(this, repos.beskjed))
                 eventId
             }
@@ -47,7 +48,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun opprettOppgave(type: SkjemaType, tekst: String, varighet: Duration = cfg.oppgave.varighet) =
         if (cfg.oppgave.enabled) {
             with(nøkkelInput(type.name, callId(), "oppgave")) {
-                dittNav.send(ProducerRecord(cfg.oppgave.topic, this, oppgave(cfg.oppgave, type, tekst, varighet)))
+                dittNav.send(ProducerRecord(cfg.oppgave.topic, this, oppgave(type, tekst, varighet)))
                     .addCallback(DittNavOppgaveCallback(this, repos.oppgave))
                 eventId
             }
@@ -68,8 +69,8 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             log.info("Sender ikke done til Ditt Nav")
         }
 
-    private fun beskjed(cfg: TopicConfig, type: SkjemaType, tekst: String, varighet: Duration) =
-        with(cfg) {
+    private fun beskjed(type: SkjemaType, tekst: String, varighet: Duration) =
+        with(cfg.beskjed) {
             BeskjedInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
                 .withTidspunkt(now(UTC))
@@ -81,8 +82,8 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .build()
         }
 
-    private fun oppgave(cfg: TopicConfig, type: SkjemaType, tekst: String, varighet: Duration) =
-        with(cfg) {
+    private fun oppgave(type: SkjemaType, tekst: String, varighet: Duration) =
+        with(cfg.oppgave) {
             OppgaveInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
                 .withTidspunkt(now(UTC))
