@@ -47,7 +47,6 @@ class OppslagController(val pdl: PDLClient,
                     }
                 dittNav.opprettMellomlagringBeskjed(uuid)
                 log.trace("Opprettet rad OK'")
-
             }
             b?.let {
                 dittNav.run { opprettMellomlagringBeskjed(it.ref) }
