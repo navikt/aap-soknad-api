@@ -47,3 +47,15 @@ class JPADittNavOppgave(
         var ref: String? = null,
         var done: Boolean? = null,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null)
+
+@Entity
+@Table(name = "søknader")
+@EntityListeners(AuditingEntityListener::class)
+class JPASøknader(
+        var fnr: String,
+        @CreatedDate var created: LocalDateTime? = null,
+        @LastModifiedDate var updated: LocalDateTime? = null,
+        var ref: String? = null,
+        var jti: String? = null,
+        var gyldigtil: LocalDateTime? = null,
+        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null)
