@@ -39,7 +39,12 @@ class OppslagController(val pdl: PDLClient,
         .also {
             val b = dittNav.opprettetMellomlagringBeskjed()
             log.trace("Beskjed $b")
-            val uuid = dittNav.opprettBeskjed(tekst = "Du har en påbegynt søknad", varighet = Duration.ofDays(1))
+            b?.let {
+                dittNav.run { opprettMellomlagringBeskjed(it.ref) }
+            }
+            val uuid = dittNav.opprettBeskjed(tekst = "Du har en påbegynt søknad", varighet = Duration.ofDays(1)).also {
+                log.trace("uuid er $it")
+            }
             log.trace("Søker er $it")
         }
 
