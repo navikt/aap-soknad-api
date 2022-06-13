@@ -17,12 +17,10 @@ import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
-import org.springframework.stereotype.Service
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
 
-@Service
 @ConditionalOnGCP
 class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val cfg: DittNavConfig,
@@ -32,8 +30,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     fun opprettBeskjed(fnr: Fødselsnummer, type: SkjemaType) =
         if (cfg.beskjed.enabled) {
-            with(nøkkelInput(fnr, type.name, callId())) {
-                log.info(CONFIDENTIAL, "Sender beskjed til Ditt Nav med key $this")
+            with(nøkkelInput(fnr, type.name, callId(), "beskjed")) {
                 dittNav.send(ProducerRecord(cfg.beskjed.topic,
                         this, beskjed(cfg.beskjed, type, "Mottatt ${type.tittel}")))
                     .addCallback(DittNavBeskjedCallback(this, repos.beskjed))
@@ -45,8 +42,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     fun opprettOppgave(fnr: Fødselsnummer, type: SkjemaType, tekst: String) =
         if (cfg.oppgave.enabled) {
-            with(nøkkelInput(fnr, type.name, callId())) {
-                log.info(CONFIDENTIAL, "Sender oppgave til Ditt Nav med key $this")
+            with(nøkkelInput(fnr, type.name, callId(), "oppgave")) {
                 dittNav.send(ProducerRecord(cfg.oppgave.topic, this, oppgave(cfg.oppgave, type, tekst)))
                     .addCallback(DittNavOppgaveCallback(this, repos.oppgave))
             }
@@ -57,8 +53,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     fun done(fnr: Fødselsnummer, type: SkjemaType, eventId: String) =
         if (cfg.done.enabled) {
-            with(nøkkelInput(fnr, type.name, eventId)) {
-                log.info(CONFIDENTIAL, "Sender done til Ditt Nav med key $this")
+            with(nøkkelInput(fnr, type.name, eventId, "done")) {
                 dittNav.send(ProducerRecord(cfg.done.topic, this, done()))
                     .addCallback(DittNavDoneCallback(this, repos.oppgave))
             }
@@ -101,7 +96,7 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
     private fun replaceWith(replacement: String) =
         fromCurrentRequestUri().replacePath(replacement).build().toUri().toURL()
 
-    private fun nøkkelInput(fnr: Fødselsnummer, grupperingId: String, eventId: String) =
+    private fun nøkkelInput(fnr: Fødselsnummer, grupperingId: String, eventId: String, type: String) =
         with(cfg) {
             NokkelInputBuilder()
                 .withFodselsnummer(fnr.fnr)
@@ -110,5 +105,8 @@ class DittNavRouter(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withAppnavn(app)
                 .withNamespace(namespace)
                 .build()
+                .also {
+                    log.info(CONFIDENTIAL, "Key for Ditt Nav $type er $this")
+                }
         }
 }
