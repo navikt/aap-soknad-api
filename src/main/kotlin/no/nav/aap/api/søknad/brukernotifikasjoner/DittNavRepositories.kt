@@ -16,6 +16,10 @@ import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
 import javax.persistence.Table
 
+interface JPADittNavSøknadRepository : JpaRepository<JPASøknad, Long> {
+    fun getByJtiAndFnr(jti: String, fnr: String): JPASøknad
+}
+
 interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavMelding, Long>
 interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
     @Modifying
@@ -24,7 +28,9 @@ interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
 }
 
 @Component
-data class DittNavRepositories(val beskjed: JPADittNavBeskjedRepository, val oppgave: JPADittNavOppgaveRepository)
+data class DittNavRepositories(val beskjed: JPADittNavBeskjedRepository,
+                               val oppgave: JPADittNavOppgaveRepository,
+                               val søknader: JPADittNavSøknadRepository)
 
 @Entity
 @Table(name = "dittnavbeskjeder")
@@ -51,7 +57,7 @@ class JPADittNavOppgave(
 @Entity
 @Table(name = "søknader")
 @EntityListeners(AuditingEntityListener::class)
-class JPASøknader(
+class JPASøknad(
         var fnr: String,
         @CreatedDate var created: LocalDateTime? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
