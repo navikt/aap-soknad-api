@@ -23,7 +23,7 @@ class UtlandSøknadRouter(private val joark: JoarkRouter,
                 if (vlRouter.shouldRoute(søknad)) {
                     router.route(søknad, this@outer, second)
                 }
-                dittnav.opprettBeskjed(fødselsnummer, UTLAND)
+                dittnav.opprettBeskjed(UTLAND)
                 Kvittering("$first")
             }
         }

@@ -9,7 +9,6 @@ import no.nav.aap.api.mellomlagring.Dokumentlager
 import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FNR
 import no.nav.aap.api.mellomlagring.Mellomlager
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.routing.standard.StandardSøknadVLRouter
@@ -41,7 +40,6 @@ import java.util.*
 @ConditionalOnNotProd
 internal class DevController(private val dokumentLager: Dokumentlager,
                              private val mellomlager: Mellomlager,
-                             private val dittnav: DittNavClient,
                              private val vl: StandardSøknadVLRouter) {
 
     @PostMapping("vl/{fnr}")
@@ -64,11 +62,6 @@ internal class DevController(private val dokumentLager: Dokumentlager,
     @ResponseStatus(CREATED)
     fun mellomlagre(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer, @RequestBody data: String) =
         mellomlager.lagre(fnr, type, data)
-
-    @PostMapping("dittnav/beskjed/{fnr}/{type}")
-    @ResponseStatus(CREATED)
-    fun opprettBeskjed(@PathVariable fnr: Fødselsnummer, @PathVariable type: SkjemaType) =
-        dittnav.opprettBeskjed(fnr, type)
 
     @PostMapping(value = ["vedlegg/lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
