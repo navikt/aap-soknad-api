@@ -17,7 +17,7 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 interface JPADittNavSøknadRepository : JpaRepository<JPASøknad, Long> {
-    fun getByJtiAndFnr(jti: String, fnr: String): JPASøknad
+    fun getByJtiAndFnr(jti: String, fnr: String): JPASøknad?
 }
 
 interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavMelding, Long>
