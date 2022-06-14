@@ -40,9 +40,9 @@ class OppslagController(val pdl: PDLClient,
             log.info("Fjerner gammel mellomlagring")
             dittNav.fjernGamleMellomlagringer()
             log.info("Fjernet gammel mellomlagring OK")
-            val b = dittNav.opprettetMellomlagringBeskjed()
-            log.trace("Mellomlagret rad er $b")
-            if (b == null) {
+            val b = dittNav.harOpprettetMellomlagringBeskjed()
+            log.trace("Har Mellomlagret rad er $b")
+            if (!b) {
                 log.trace("Oppretter rad med info om mellomlagring")
                 val varighet = Duration.ofMinutes(30)
                 val uuid =

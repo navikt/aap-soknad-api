@@ -60,10 +60,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             null
         }
 
-    fun avsluttOppgave(type: SkjemaType, eventId: String) =
+    fun avslutt(type: SkjemaType, eventId: String) =
         if (cfg.done.enabled) {
             with(nøkkelInput(type.name, eventId, "done")) {
-                dittNav.send(ProducerRecord(cfg.done.topic, this, avsluttOppgave()))
+                dittNav.send(ProducerRecord(cfg.done.topic, this, avslutt()))
                     .addCallback(DittNavDoneCallback(this, repos.oppgave))
             }
         }
@@ -97,7 +97,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .build()
         }
 
-    private fun avsluttOppgave() =
+    private fun avslutt() =
         DoneInputBuilder()
             .withTidspunkt(now(UTC))
             .build()
@@ -122,9 +122,12 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     @Transactional
     fun opprettMellomlagringBeskjed(uuid: String?, varighet: Duration) {
         uuid?.let { u ->
-            val s = JPASøknad(fnr = ctx.getFnr().fnr, ref = u, gyldigtil = now().plus(varighet))
-            log.info("Mellomlagrer $s")
-            repos.søknader.saveAndFlush(s).also { log.info("Mellomlagret $it") }
+            val s = JPASøknad(fnr = ctx.getFnr().fnr, ref = u, gyldigtil = now().plus(varighet)).also {
+                log.info("Mellomlagrer $it")
+            }
+            repos.søknader.saveAndFlush(s).also {
+                log.info("Mellomlagret $it")
+            }
         } ?: log.info("Ingen mellomlagring")
     }
 
@@ -132,8 +135,18 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun fjernGamleMellomlagringer() =
         repos.søknader.deleteByGyldigtilBefore(now()).also { log.info("Fjernet $it gamle rader") }
 
-    @Transactional(readOnly = true)
-    fun opprettetMellomlagringBeskjed(): JPASøknad? {
-        return repos.søknader.getByFnr(ctx.getFnr().fnr)
+    @Transactional
+    fun fjernMellomlagringer() {
+        val deleted  = repos.søknader.deleteByFnr(ctx.getFnr().fnr).also { log.info("Fjernet mellomlagring rad") }
+        log.info("Fjernet  mellomlagring $deleted")
+        avslutt(STANDARD,deleted.ref!!)
+
+    }
+
+
+
+        @Transactional(readOnly = true)
+    fun harOpprettetMellomlagringBeskjed() =
+         repos.søknader.getByFnr(ctx.getFnr().fnr) != null
     }
 }
