@@ -30,12 +30,12 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val repos: DittNavRepositories,
                     private val ctx: AuthContext) {
 
-    fun opprettBeskjed() = opprettBeskjed(varighet = cfg.beskjed.varighet)
+    //fun opprettBeskjed() = opprettBeskjed(varighet = cfg.beskjed.varighet)
     fun opprettBeskjed(type: SkjemaType = STANDARD,
                        tekst: String = "Mottatt ${type.tittel}",
-                       varighet: Duration) =
+                       varighet: Duration = cfg.beskjed.varighet) =
         if (cfg.beskjed.enabled) {
-            log.info("CONFIG er $cfg")
+            log.info("CONFIG varighet er $cfg")
             with(nøkkelInput(type.name, callId(), "beskjed")) {
                 dittNav.send(ProducerRecord(cfg.beskjed.topic, this, beskjed(type, tekst, varighet)))
                     .addCallback(DittNavBeskjedCallback(this, repos.beskjed))
