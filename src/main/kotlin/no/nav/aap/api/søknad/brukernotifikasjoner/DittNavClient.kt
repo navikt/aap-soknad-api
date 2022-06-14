@@ -3,7 +3,6 @@ package no.nav.aap.api.søknad.brukernotifikasjoner
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
-import no.nav.aap.api.søknad.AuthContextExtension.getJti
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavBeskjedCallback
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavDoneCallback
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavOppgaveCallback
@@ -121,12 +120,12 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     fun opprettMellomlagringBeskjed(uuid: String?) {
         uuid?.let { u ->
-            val s = JPASøknad(fnr = ctx.getFnr().fnr, ref = u, jti = ctx.getJti(), gyldigtil = now().plusDays(1))
+            val s = JPASøknad(fnr = ctx.getFnr().fnr, ref = u, gyldigtil = now().plusDays(1))
             log.info("Mellomlagrer $s")
             repos.søknader.saveAndFlush(s).also { log.info("Mellomlagret $it") }
         } ?: log.info("Ingen mellomlagring")
     }
 
-    fun opprettetMellomlagringBeskjed() = repos.søknader.getByJtiAndFnr(ctx.getJti(), ctx.getFnr().fnr)
+    fun opprettetMellomlagringBeskjed() = repos.søknader.getByFnr(ctx.getFnr().fnr)
 
 }

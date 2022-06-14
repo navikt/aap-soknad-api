@@ -17,7 +17,7 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 interface JPADittNavSøknadRepository : JpaRepository<JPASøknad, Long> {
-    fun getByJtiAndFnr(jti: String, fnr: String): JPASøknad?
+    fun getByFnr(fnr: String): JPASøknad?
 }
 
 interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavMelding, Long>
@@ -55,17 +55,16 @@ class JPADittNavOppgave(
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null)
 
 @Entity
-@Table(name = "søknader")
+@Table(name = "soknader")
 @EntityListeners(AuditingEntityListener::class)
 class JPASøknad(
         var fnr: String,
         @CreatedDate var created: LocalDateTime? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
         var ref: String? = null,
-        var jti: String? = null,
         var gyldigtil: LocalDateTime? = null,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
-        "JPASøknad(fnr='$fnr', created=$created, updated=$updated, ref=$ref, jti=$jti, gyldigtil=$gyldigtil, id=$id)"
+        "JPASøknad(fnr='$fnr', created=$created, updated=$updated, ref=$ref, gyldigtil=$gyldigtil, id=$id)"
 
 }
