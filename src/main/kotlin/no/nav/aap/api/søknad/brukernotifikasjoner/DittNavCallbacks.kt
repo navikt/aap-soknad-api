@@ -12,15 +12,15 @@ class DittNavCallbacks {
         private val log = LoggerUtil.getLogger(javaClass)
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
-            log.info("Sendte beskjed til Ditt Nav  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            beskjedRepo.save(JPADittNavMelding(key.getFodselsnummer(), ref = key.getEventId()))
+            log.info("Sendte beskjed til Ditt Nav  med id ${key.eventId} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
+            beskjedRepo.save(JPADittNavMelding(key.fodselsnummer, ref = key.eventId))
                 .also {
                     log.info("Lagret info om beskjed til Ditt Nav i DB med id ${it.id}")
                 }
         }
 
         override fun onFailure(e: Throwable) {
-            log.warn("Kunne ikke sende beskjed til Ditt Nav med id ${key.getEventId()}", e)
+            log.warn("Kunne ikke sende beskjed til Ditt Nav med id ${key.eventId}", e)
         }
     }
 
@@ -31,7 +31,7 @@ class DittNavCallbacks {
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
             log.info("Sendte oppgave til Ditt Nav  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            oppgaveRepo.save(JPADittNavOppgave(key.getFodselsnummer(), ref = key.getEventId()))
+            oppgaveRepo.save(JPADittNavOppgave(key.fodselsnummer, ref = key.eventId))
                 .also {
                     log.info("Lagret info om oppgave til Ditt Nav i DB med id ${it.id}")
                 }
@@ -43,17 +43,17 @@ class DittNavCallbacks {
     }
 
     class DittNavDoneCallback(private val key: NokkelInput,
-                              private val oppgaveRepo: JPADittNavOppgaveRepository) :
+                              private val oppgaveRepo: JPADittNavOppgaveRepository?) :
         ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
         private val log = LoggerUtil.getLogger(javaClass)
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
-            log.info("Sendte done til Ditt Nav  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            oppgaveRepo.done(key.getEventId())
+            log.info("Sendte done til Ditt Nav  med id ${key.eventId} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
+            oppgaveRepo?.done(key.eventId)
         }
 
         override fun onFailure(e: Throwable) {
-            log.warn("Kunne ikke sende done til Ditt Nav med id ${key.getEventId()}", e)
+            log.warn("Kunne ikke sende done til Ditt Nav med id ${key.eventId}", e)
         }
     }
 }

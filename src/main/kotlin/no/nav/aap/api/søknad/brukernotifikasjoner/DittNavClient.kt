@@ -30,12 +30,13 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val repos: DittNavRepositories,
                     private val ctx: AuthContext) {
 
-    //fun opprettBeskjed() = opprettBeskjed(varighet = cfg.beskjed.varighet)
+    fun opprettBeskjed(type: SkjemaType = STANDARD) =
+        opprettBeskjed(type = type, varighet = cfg.beskjed.varighet)
+
     fun opprettBeskjed(type: SkjemaType = STANDARD,
                        tekst: String = "Mottatt ${type.tittel}",
-                       varighet: Duration = cfg.beskjed.varighet) =
+                       varighet: Duration) =
         if (cfg.beskjed.enabled) {
-            log.info("CONFIG varighet er $varighet")
             with(nøkkelInput(type.name, callId(), "beskjed")) {
                 dittNav.send(ProducerRecord(cfg.beskjed.topic, this, beskjed(type, tekst, varighet)))
                     .addCallback(DittNavBeskjedCallback(this, repos.beskjed))
@@ -60,7 +61,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             null
         }
 
-    fun avslutt(type: SkjemaType, eventId: String) =
+    fun avsluttOppgave(type: SkjemaType = STANDARD, eventId: String) =
         if (cfg.done.enabled) {
             with(nøkkelInput(type.name, eventId, "done")) {
                 dittNav.send(ProducerRecord(cfg.done.topic, this, avslutt()))
@@ -71,6 +72,18 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             log.info("Sender ikke done til Ditt Nav")
         }
 
+    fun avsluttBeskjed(type: SkjemaType = STANDARD, eventId: String) =
+        if (cfg.done.enabled) {
+            with(nøkkelInput(type.name, eventId, "done")) {
+                dittNav.send(ProducerRecord(cfg.done.topic, this, avslutt()))
+                    .addCallback(DittNavDoneCallback(this, null))
+            }
+        }
+        else {
+            log.info("Sender ikke done til Ditt Nav")
+        }
+
+    // ListenableFutureCallback<SendResult<NokkelInput, Any>?>
     private fun beskjed(type: SkjemaType, tekst: String, varighet: Duration) =
         with(cfg.beskjed) {
             BeskjedInputBuilder()
@@ -132,14 +145,17 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     }
 
     @Transactional
-    fun fjernGamleMellomlagringer() =
+    fun fjernAlleGamleMellomlagringer() =
         repos.søknader.deleteByGyldigtilBefore(now()).also { log.info("Fjernet $it gamle rader") }
 
     @Transactional
-    fun fjernMellomlagringer() {
-        val deleted = repos.søknader.deleteByFnr(ctx.getFnr().fnr).also { log.info("Fjernet mellomlagring rad") }
-        log.info("Fjernet  mellomlagring $deleted")
-        deleted?.firstOrNull()?.let { avslutt(STANDARD, it.ref!!) }
+    fun fjernOgAvsluttMellomlagring() {
+        repos.søknader.deleteByFnr(ctx.getFnr().fnr).also { rows ->
+            rows?.firstOrNull()?.let {
+                log.trace(CONFIDENTIAL, "Fjernet mellomlagring rad $it")
+                avsluttBeskjed(eventId = it.ref!!)
+            }
+        }
     }
 
     @Transactional(readOnly = true)

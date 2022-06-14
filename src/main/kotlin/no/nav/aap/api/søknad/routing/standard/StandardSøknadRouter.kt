@@ -22,7 +22,7 @@ class StandardSøknadRouter(private val joark: JoarkRouter,
                     vl.route(søknad, this@outer, second.journalpostId)
                 }
                 dittnav.opprettBeskjed()
-                dittnav.fjernMellomlagringer()
+                dittnav.fjernOgAvsluttMellomlagring()
                 Kvittering("$first")
             }
         }

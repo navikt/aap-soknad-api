@@ -38,7 +38,7 @@ class OppslagController(val pdl: PDLClient,
             krr.kontaktinfo())
         .also {
             log.info("Fjerner gammel mellomlagring")
-            dittNav.fjernGamleMellomlagringer()
+            dittNav.fjernAlleGamleMellomlagringer()
             log.info("Fjernet gammel mellomlagring OK")
             val b = dittNav.harOpprettetMellomlagringBeskjed()
             log.trace("Har Mellomlagret rad er $b")
