@@ -21,7 +21,7 @@ class BehandlerTest {
     val json = "[\n" +
             "   {\n" +
             "      \"type\":\"FASTLEGE\",\n" +
-            "      \"kategory\":\"LEGE\",\n" +
+            "      \"kategori\":\"LEGE\",\n" +
             "      \"behandlerRef\":\"d182f24b-ebca-4f44-bf86-65901ec6141b\",\n" +
             "      \"fnr\":\"08089403198\",\n" +
             "      \"fornavn\":\"Unni\",\n" +
