@@ -126,6 +126,8 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         } ?: log.info("Ingen mellomlagring")
     }
 
-    fun opprettetMellomlagringBeskjed() = repos.søknader.getByFnr(ctx.getFnr().fnr)
-
+    fun opprettetMellomlagringBeskjed(): JPASøknad? {
+        repos.søknader.deleteByGyldigtilBefore(now()).also { log.info("Fjernet $it gamle rader") }
+        return repos.søknader.getByFnr(ctx.getFnr().fnr)
+    }
 }

@@ -18,6 +18,8 @@ import javax.persistence.Table
 
 interface JPADittNavSøknadRepository : JpaRepository<JPASøknad, Long> {
     fun getByFnr(fnr: String): JPASøknad?
+    fun deleteByGyldigtilBefore(dateTime: LocalDateTime?): Long
+
 }
 
 interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavMelding, Long>
