@@ -42,9 +42,10 @@ class OppslagController(val pdl: PDLClient,
             if (b == null) {
                 log.trace("Oppretter rad med info om mellomlagring")
                 val varighet = Duration.ofMinutes(30)
-                val uuid = dittNav.opprettBeskjed(tekst = "Du har en påbegynt søknad", varighet = varighet).also {
-                    log.trace("uuid for opprettet beskjed om mellomlagring er $it")
-                }
+                val uuid =
+                    dittNav.opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP", varighet = varighet).also {
+                        log.trace("uuid for opprettet beskjed om mellomlagring er $it")
+                    }
                 log.trace("Oppretter rad om mellomlagring ")
                 dittNav.opprettMellomlagringBeskjed(uuid, varighet)
                 log.trace("Opprettet rad om mellomlagring OK")

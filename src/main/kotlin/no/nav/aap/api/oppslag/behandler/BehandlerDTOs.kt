@@ -38,7 +38,7 @@ data class Behandler(val type: BehandlerType,
                      val kontaktinformasjon: KontaktInformasjon) {
     enum class BehandlerType {
         FASTLEGE,
-        ANNEN_BEHANDLER
+        SYKMELDER,
     }
 
     enum class BehandlerKategori {
