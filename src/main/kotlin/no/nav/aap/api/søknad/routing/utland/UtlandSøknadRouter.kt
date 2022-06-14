@@ -25,7 +25,7 @@ class UtlandSøknadRouter(private val joark: JoarkRouter,
                     router.route(søknad, this@outer, second)
                 }
                 dittnav.opprettBeskjed(UTLAND,
-                        tekst = "Vu har mottatt en søknad om ${UTLAND.tittel}",
+                        tekst = "Vi har mottatt en søknad om ${UTLAND.tittel}",
                         Duration.ofDays(90))
                 Kvittering("$first")
             }
