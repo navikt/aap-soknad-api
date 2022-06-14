@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.OrgNummer
+import no.nav.aap.api.oppslag.behandler.Behandler.BehandlerKategori.LEGE
 import no.nav.aap.api.oppslag.behandler.Behandler.BehandlerType.FASTLEGE
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -20,6 +21,7 @@ class BehandlerTest {
     val json = "[\n" +
             "   {\n" +
             "      \"type\":\"FASTLEGE\",\n" +
+            "      \"kategory\":\"LEGE\",\n" +
             "      \"behandlerRef\":\"d182f24b-ebca-4f44-bf86-65901ec6141b\",\n" +
             "      \"fnr\":\"08089403198\",\n" +
             "      \"fornavn\":\"Unni\",\n" +
@@ -39,7 +41,7 @@ class BehandlerTest {
         val o = OrgNummer("976673867")
         serdeser(o)
         val f = BehandlerDTO(
-                FASTLEGE, "123", Fødselsnummer("08089403198"), "Unni", "Mellom", "Larsen",
+                FASTLEGE, LEGE, "123", Fødselsnummer("08089403198"), "Unni", "Mellom", "Larsen",
                 OrgNummer("976673867"), "Kontor", "Adresse", "5300", "KLEPPESTØ", "61253479")
         serdeser(f, true)
     }
