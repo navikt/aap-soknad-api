@@ -18,6 +18,7 @@ import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 import java.time.Duration
 import java.time.LocalDateTime.now
@@ -118,6 +119,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 }
         }
 
+    @Transactional
     fun opprettMellomlagringBeskjed(uuid: String?, varighet: Duration) {
         uuid?.let { u ->
             val s = JPASøknad(fnr = ctx.getFnr().fnr, ref = u, gyldigtil = now().plus(varighet))
@@ -126,9 +128,11 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         } ?: log.info("Ingen mellomlagring")
     }
 
+    @Transactional
     fun fjernGamleMellomlagringer() =
         repos.søknader.deleteByGyldigtilBefore(now()).also { log.info("Fjernet $it gamle rader") }
 
+    @Transactional(readOnly = true)
     fun opprettetMellomlagringBeskjed(): JPASøknad? {
         return repos.søknader.getByFnr(ctx.getFnr().fnr)
     }
