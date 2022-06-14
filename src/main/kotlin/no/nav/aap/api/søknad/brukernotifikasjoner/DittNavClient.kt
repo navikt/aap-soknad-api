@@ -141,7 +141,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun fjernMellomlagringer() {
         val deleted = repos.søknader.deleteByFnr(ctx.getFnr().fnr).also { log.info("Fjernet mellomlagring rad") }
         log.info("Fjernet  mellomlagring $deleted")
-        deleted?.let { avslutt(STANDARD, it.ref!!) }
+        deleted.firstOrNull()?.let { avslutt(STANDARD, it.ref!!) }
     }
 
     @Transactional(readOnly = true)
@@ -149,6 +149,6 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         repos.søknader.getByFnr(ctx.getFnr().fnr) != null
 
     companion object {
-        private val log = getLogger(javaClass)
+        private val log = getLogger(DittNavClient::class.java)
     }
 }
