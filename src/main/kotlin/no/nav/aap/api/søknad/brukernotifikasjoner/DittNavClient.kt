@@ -29,8 +29,9 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val cfg: DittNavConfig,
                     private val repos: DittNavRepositories,
                     private val ctx: AuthContext) {
-
-    private val log = getLogger(javaClass)
+    init {
+        log.info("CONFIG er $cfg")
+    }
 
     fun opprettBeskjed() = opprettBeskjed(varighet = cfg.beskjed.varighet)
     fun opprettBeskjed(type: SkjemaType = STANDARD,
@@ -146,4 +147,8 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     @Transactional(readOnly = true)
     fun harOpprettetMellomlagringBeskjed() =
         repos.søknader.getByFnr(ctx.getFnr().fnr) != null
+
+    companion object {
+        private val log = getLogger(javaClass)
+    }
 }

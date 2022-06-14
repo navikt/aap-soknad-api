@@ -9,6 +9,7 @@ import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.api.søknad.routing.UtlandSøknadVLRouter
 import no.nav.aap.api.søknad.routing.VLRouter
 import org.springframework.stereotype.Component
+import java.time.Duration
 
 @Component
 class UtlandSøknadRouter(private val joark: JoarkRouter,
@@ -23,7 +24,9 @@ class UtlandSøknadRouter(private val joark: JoarkRouter,
                 if (vlRouter.shouldRoute(søknad)) {
                     router.route(søknad, this@outer, second)
                 }
-                dittnav.opprettBeskjed(UTLAND)
+                dittnav.opprettBeskjed(UTLAND,
+                        tekst = "Vu har mottatt en søknad om ${UTLAND.tittel}",
+                        Duration.ofDays(90))
                 Kvittering("$first")
             }
         }

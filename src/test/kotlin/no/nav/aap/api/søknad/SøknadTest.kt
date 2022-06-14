@@ -62,7 +62,7 @@ class SøknadTest {
                             Periode(now(), now().plusDays(2)),
                             true, "11111111"))),
             listOf(Behandler(FASTLEGE, LEGE, Navn("Lege", "A", "Legesen"),
-                    KontaktInformasjon("ref", "Legekontoret",
+                    KontaktInformasjon("Legekontoret",
                             OrgNummer("888888888"),
                             Adresse("Legegata", "17", "A",
                                     PostNummer("2600", "Lillehammer")),
