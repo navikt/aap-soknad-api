@@ -119,6 +119,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 
     fun opprettMellomlagringBeskjed(uuid: String?, varighet: Duration) {
+        repos.søknader.deleteByGyldigtilBefore(now()).also { log.info("Fjernet $it gamle rader") }
         uuid?.let { u ->
             val s = JPASøknad(fnr = ctx.getFnr().fnr, ref = u, gyldigtil = now().plus(varighet))
             log.info("Mellomlagrer $s")
