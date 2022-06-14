@@ -20,6 +20,7 @@ import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import java.time.LocalDate
 
 @Component
 class PDLWebClientAdapter(
@@ -58,7 +59,13 @@ class PDLWebClientAdapter(
             systemWebClient.post(BARN_QUERY, idFra(fnr), PDLBarn::class.java).block()
         }, "barn")
             ?.let { barn ->
-                Barn(Fødselsnummer(fnr), navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
+                val b = Barn(Fødselsnummer(fnr), navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
+                b.fødseldato?.let {
+                    if (it.isBefore(LocalDate.now().minusYears(18))) {
+                        null
+                    }
+                    else b
+                } ?: b
             }
 
     private fun fødselsdatoFra(fødsel: Set<PDLFødsel>?) = fødselsdatoFra(fødsel?.firstOrNull())
