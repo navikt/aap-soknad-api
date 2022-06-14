@@ -35,7 +35,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                        tekst: String = "Mottatt ${type.tittel}",
                        varighet: Duration = cfg.beskjed.varighet) =
         if (cfg.beskjed.enabled) {
-            log.info("CONFIG varighet er $cfg")
+            log.info("CONFIG varighet er $varighet")
             with(nøkkelInput(type.name, callId(), "beskjed")) {
                 dittNav.send(ProducerRecord(cfg.beskjed.topic, this, beskjed(type, tekst, varighet)))
                     .addCallback(DittNavBeskjedCallback(this, repos.beskjed))
