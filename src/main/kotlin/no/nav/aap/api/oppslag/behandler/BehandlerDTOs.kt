@@ -27,7 +27,7 @@ data class BehandlerDTO(
         val telefon: String?) {
 
     fun tilBehandler() = Behandler(type, kategori, Navn(fornavn, mellomnavn, etternavn),
-            KontaktInformasjon(behandlerRef, kontor, orgnummer,
+            KontaktInformasjon(kontor, orgnummer,
                     Adresse(adresse, null, null, PostNummer(postnummer, poststed)),
                     telefon))
 }
@@ -49,8 +49,7 @@ data class Behandler(val type: BehandlerType,
         TANNLEGE
     }
 
-    data class KontaktInformasjon(val behandlerRef: String?,
-                                  val kontor: String?,
+    data class KontaktInformasjon(val kontor: String?,
                                   val orgnummer: OrgNummer?,
                                   val adresse: Adresse?,
                                   var telefon: String?)

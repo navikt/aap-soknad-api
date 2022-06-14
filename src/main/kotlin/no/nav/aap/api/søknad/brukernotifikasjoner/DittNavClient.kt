@@ -32,9 +32,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     private val log = getLogger(javaClass)
 
+    fun opprettBeskjed() = opprettBeskjed(varighet = cfg.beskjed.varighet)
     fun opprettBeskjed(type: SkjemaType = STANDARD,
                        tekst: String = "Mottatt ${type.tittel}",
-                       varighet: Duration = cfg.beskjed.varighet) =
+                       varighet: Duration) =
         if (cfg.beskjed.enabled) {
             with(nøkkelInput(type.name, callId(), "beskjed")) {
                 dittNav.send(ProducerRecord(cfg.beskjed.topic, this, beskjed(type, tekst, varighet)))
