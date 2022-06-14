@@ -19,10 +19,10 @@
     <springProfile name="dev">
         <logger name="org.springframework.data" level="info"/>
         <logger name="org.hibernate" level="trace"/>
-        
+
         <logger name="com.zaxxer.hikari" level="info"/>
         <logger name="org.springframework.boot.flyway" level="info"/>
-        <logger name="reactor.netty.http.client.HttpClient" level="trace"/>
+        <logger name="reactor.netty.http.client.HttpClient" level="info"/>
         <logger name="no.nav.aap" level="trace"/>
         <logger name="no.nav.security" level="info"/>
         <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="trace"/>

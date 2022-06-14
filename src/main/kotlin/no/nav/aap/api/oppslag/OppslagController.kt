@@ -41,17 +41,16 @@ class OppslagController(val pdl: PDLClient,
             log.trace("Beskjed $b")
             if (b == null) {
                 log.trace("Oppretter rad")
-                val uuid =
-                    dittNav.opprettBeskjed(tekst = "Du har en påbegynt søknad", varighet = Duration.ofDays(1)).also {
-                        log.trace("uuid for opprettet beskjed er $it")
-                    }
-                dittNav.opprettMellomlagringBeskjed(uuid)
+                val varighet = Duration.ofDays(1)
+                val uuid = dittNav.opprettBeskjed(tekst = "Du har en påbegynt søknad", varighet = varighet).also {
+                    log.trace("uuid for opprettet beskjed er $it")
+                }
+                dittNav.opprettMellomlagringBeskjed(uuid, varighet)
                 log.trace("Opprettet rad OK'")
             }
-            b?.let {
-                dittNav.run { opprettMellomlagringBeskjed(it.ref) }
+            else {
+                log.trace("rad allerede opprettet")
             }
-
             log.trace("Søker er $it")
         }
 
