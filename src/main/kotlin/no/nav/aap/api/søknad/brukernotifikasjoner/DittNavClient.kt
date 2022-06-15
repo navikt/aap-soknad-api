@@ -32,9 +32,9 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val ctx: AuthContext) {
 
     fun opprettBeskjed(type: SkjemaType = STANDARD, tekst: String = "Vi har mottatt en ${type.tittel}") =
-        opprettBeskjed(type = type, tekst = tekst, varighet = cfg.beskjed.varighet)
+        opprettBeskjed(type, tekst, cfg.beskjed.varighet)
 
-    fun opprettBeskjed(type: SkjemaType = STANDARD, tekst: String, varighet: Duration) =
+    internal fun opprettBeskjed(type: SkjemaType, tekst: String, varighet: Duration) =
         if (cfg.beskjed.enabled) {
             with(nøkkelInput(type.name, callId(), "beskjed")) {
                 dittNav.send(ProducerRecord(cfg.beskjed.topic, this, beskjed(type, tekst, varighet)))
