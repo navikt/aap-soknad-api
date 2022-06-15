@@ -49,7 +49,10 @@ class JPADittNavBeskjed(
         var ref: String? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
         var done: Boolean? = null,
-        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null)
+        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
+    override fun toString(): String =
+        "JPADittNavBeskjed(fnr='$fnr', created=$created, ref=$ref, updated=$updated, done=$done, id=$id)"
+}
 
 @Entity
 @Table(name = "dittnavoppgaver")
@@ -60,7 +63,10 @@ class JPADittNavOppgave(
         @LastModifiedDate var updated: LocalDateTime? = null,
         var ref: String? = null,
         var done: Boolean? = null,
-        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null)
+        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
+    override fun toString() =
+        "JPADittNavOppgave(fnr='$fnr', created=$created, updated=$updated, ref=$ref, done=$done, id=$id)"
+}
 
 @Entity
 @Table(name = "soknader")
