@@ -13,7 +13,7 @@ class DittNavCallbacks {
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
             log.info("Sendte beskjed til Ditt Nav  med id ${key.eventId} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            beskjedRepo.save(JPADittNavMelding(key.fodselsnummer, ref = key.eventId))
+            beskjedRepo.save(JPADittNavBeskjed(key.fodselsnummer, ref = key.eventId))
                 .also {
                     log.info("Lagret info om beskjed til Ditt Nav i DB med id ${it.id}")
                 }
@@ -42,14 +42,29 @@ class DittNavCallbacks {
         }
     }
 
-    class DittNavDoneCallback(private val key: NokkelInput,
-                              private val oppgaveRepo: JPADittNavOppgaveRepository?) :
+    class DittNavOppgaveDoneCallback(private val key: NokkelInput,
+                                     private val oppgaveRepo: JPADittNavOppgaveRepository) :
         ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
         private val log = LoggerUtil.getLogger(javaClass)
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
             log.info("Sendte done til Ditt Nav  med id ${key.eventId} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            oppgaveRepo?.done(key.eventId)
+            oppgaveRepo.done(key.eventId)
+        }
+
+        override fun onFailure(e: Throwable) {
+            log.warn("Kunne ikke sende done til Ditt Nav med id ${key.eventId}", e)
+        }
+    }
+
+    class DittNavBeskjedDoneCallback(private val key: NokkelInput,
+                                     private val beskjedRepo: JPADittNavBeskjedRepository) :
+        ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
+        private val log = LoggerUtil.getLogger(javaClass)
+
+        override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
+            log.info("Sendte done til Ditt Nav  med id ${key.eventId} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
+            beskjedRepo.done(key.eventId)
         }
 
         override fun onFailure(e: Throwable) {

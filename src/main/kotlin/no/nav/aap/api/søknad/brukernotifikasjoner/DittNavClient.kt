@@ -4,8 +4,9 @@ import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavBeskjedCallback
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavDoneCallback
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavBeskjedDoneCallback
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavOppgaveCallback
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavOppgaveDoneCallback
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callId
@@ -64,7 +65,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         if (cfg.done.enabled) {
             with(nøkkelInput(type.name, eventId, "done")) {
                 dittNav.send(ProducerRecord(cfg.done.topic, this, avslutt()))
-                    .addCallback(DittNavDoneCallback(this, repos.oppgave))
+                    .addCallback(DittNavOppgaveDoneCallback(this, repos.oppgave))
             }
         }
         else {
@@ -75,14 +76,13 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         if (cfg.done.enabled) {
             with(nøkkelInput(type.name, eventId, "done")) {
                 dittNav.send(ProducerRecord(cfg.done.topic, this, avslutt()))
-                    .addCallback(DittNavDoneCallback(this, null))
+                    .addCallback(DittNavBeskjedDoneCallback(this, repos.beskjed))
             }
         }
         else {
             log.info("Sender ikke done til Ditt Nav")
         }
 
-    // ListenableFutureCallback<SendResult<NokkelInput, Any>?>
     private fun beskjed(type: SkjemaType, tekst: String, varighet: Duration) =
         with(cfg.beskjed) {
             BeskjedInputBuilder()
@@ -132,10 +132,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
-    fun opprettMellomlagringBeskjed(uuid: String) {
-        uuid?.let { u ->
+    fun opprettMellomlagringBeskjed(id: String) {
+        id?.let { uuid ->
             repos.søknader.saveAndFlush(JPASøknad(fnr = ctx.getFnr().fnr,
-                    ref = u,
+                    ref = uuid,
                     gyldigtil = now().plus(Duration.ofDays(cfg.mellomlagring))))
         }
     }
@@ -152,10 +152,6 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             }
         }
     }
-
-    @Transactional(readOnly = true)
-    internal fun harOpprettetMellomlagringBeskjed() =
-        repos.søknader.getByFnr(ctx.getFnr().fnr) != null
 
     companion object {
         private val log = getLogger(DittNavClient::class.java)
@@ -174,22 +170,5 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             opprettMellomlagringBeskjed(uuid)
             log.trace("Opprettet rad om mellomlagring OK")
         }
-        /*
-    if (!harOpprettetMellomlagringBeskjed()) {
-        log.trace("Oppretter rad med info om mellomlagring")
-        opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
-            log.trace("uuid for opprettet beskjed om mellomlagring er $uuid")
-            opprettMellomlagringBeskjed(uuid)
-            log.trace("Opprettet rad om mellomlagring OK")
-        }
-    }
-    else {
-        fjernOgAvsluttMellomlagring()
-        log.trace("Oppdaterer mellomalgring datostempler")
-        opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
-            log.trace("uuid for opprettet beskjed om mellomlagring er $uuid")
-            opprettMellomlagringBeskjed(uuid)
-            log.trace("Opprettet rad om mellomlagring OK")
-    }*/
     }
 }

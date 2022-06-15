@@ -23,7 +23,12 @@ interface JPADittNavSøknadRepository : JpaRepository<JPASøknad, Long> {
 
 }
 
-interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavMelding, Long>
+interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
+    @Modifying
+    @Query("update JPADittNavBeskjed o set o.done = true where o.ref = ?1")
+    fun done(@Param("ref") ref: String)
+}
+
 interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
     @Modifying
     @Query("update JPADittNavOppgave o set o.done = true where o.ref = ?1")
@@ -38,7 +43,7 @@ data class DittNavRepositories(val beskjed: JPADittNavBeskjedRepository,
 @Entity
 @Table(name = "dittnavbeskjeder")
 @EntityListeners(AuditingEntityListener::class)
-class JPADittNavMelding(
+class JPADittNavBeskjed(
         var fnr: String,
         @CreatedDate var created: LocalDateTime? = null,
         var ref: String? = null,
