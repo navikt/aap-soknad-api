@@ -4,10 +4,10 @@ import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavConfig.Companion.DITTN
 import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
 import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal.EPOST
 import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal.SMS
-import org.apache.kafka.common.config.TopicConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
+import org.springframework.boot.context.properties.bind.DefaultValue
 import java.time.Duration
 
 @ConfigurationProperties(DITTNAV)
@@ -22,7 +22,7 @@ data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
     val namespace = nais.namespace
 
     data class TopicConfig(val topic: String,
-                           val varighet: Duration = DEFAULT_DURATION,
+                           @DefaultValue("PT90D") val varighet: Duration,
                            val enabled: Boolean = true,
                            val preferertekanaler: List<PreferertKanal> = listOf(SMS, EPOST),
                            val sikkerhetsnivaa: Int = DEFAULT_LEVEL,
@@ -32,7 +32,6 @@ data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
 
     companion object {
         const val DITTNAV = "dittnav"
-        private val DEFAULT_DURATION = Duration.ofDays(90)
         private const val DEFAULT_LEVEL = 3
     }
 }
