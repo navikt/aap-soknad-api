@@ -12,11 +12,8 @@ class DittNavCallbacks {
         private val log = LoggerUtil.getLogger(javaClass)
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
-            log.info("Sendte beskjed til Ditt Nav  med id ${key.eventId} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            dittNav.opprettMellomlagringBeskjed(result?.producerRecord?.key()?.eventId!!)
-                .also {
-                    log.info("Lagret info om beskjed til Ditt Nav i DB med id ${it.id}")
-                }
+            log.info("Sendte en beskjed til Ditt Nav  med id ${key.eventId} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
+            dittNav.opprettMellomlagringBeskjed(key.eventId)
         }
 
         override fun onFailure(e: Throwable) {
