@@ -39,7 +39,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         if (cfg.beskjed.enabled) {
             with(nøkkelInput(type.name, callId(), "beskjed")) {
                 dittNav.send(ProducerRecord(cfg.beskjed.topic, this, beskjed(type, tekst, varighet)))
-                    .addCallback(DittNavBeskjedCallback(this, repos.beskjed))
+                    .addCallback(DittNavBeskjedCallback(this, this@DittNavClient))
                 eventId
             }
         }
@@ -129,13 +129,12 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
-    fun opprettMellomlagringBeskjed(id: String) {
-        id?.let { uuid ->
+    fun opprettMellomlagringBeskjed(id: String) =
+        id.let { uuid ->
             repos.søknader.saveAndFlush(JPASøknad(fnr = ctx.getFnr().fnr,
                     ref = uuid,
                     gyldigtil = now().plus(Duration.ofDays(cfg.mellomlagring))))
         }
-    }
 
     @Transactional
     internal fun fjernAlleGamleMellomlagringer() = repos.søknader.deleteByGyldigtilBefore(now())
@@ -164,8 +163,6 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         log.trace("Oppdaterer mellomlagring datostempler")
         opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
             log.trace("uuid for opprettet beskjed om mellomlagring er $uuid")
-            opprettMellomlagringBeskjed(uuid)
-            log.trace("Opprettet rad om mellomlagring OK")
         }
     }
 }

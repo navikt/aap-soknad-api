@@ -7,13 +7,13 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 class DittNavCallbacks {
     class DittNavBeskjedCallback(private val key: NokkelInput,
-                                 private val beskjedRepo: JPADittNavBeskjedRepository) :
+                                 private val dittNav: DittNavClient) :
         ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
         private val log = LoggerUtil.getLogger(javaClass)
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
             log.info("Sendte beskjed til Ditt Nav  med id ${key.eventId} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            beskjedRepo.save(JPADittNavBeskjed(key.fodselsnummer, ref = key.eventId))
+            dittNav.opprettMellomlagringBeskjed(result?.producerRecord?.key()?.eventId!!)
                 .also {
                     log.info("Lagret info om beskjed til Ditt Nav i DB med id ${it.id}")
                 }
