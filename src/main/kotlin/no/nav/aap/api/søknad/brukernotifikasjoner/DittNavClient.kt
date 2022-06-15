@@ -125,10 +125,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withGrupperingsId(grupperingId)
                 .withAppnavn(app)
                 .withNamespace(namespace)
-                .build()
-                .also {
-                    log.info(CONFIDENTIAL, "Key for Ditt Nav $type er $this")
-                }
+                .build().also { log.info(CONFIDENTIAL, "Key for Ditt Nav $type er $it") }
         }
 
     @Transactional
