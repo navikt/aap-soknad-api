@@ -40,7 +40,8 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             with(nøkkelInput(type.name, callId(), "beskjed")) {
                 dittNav.send(ProducerRecord(cfg.beskjed.topic, this, beskjed(type, tekst, varighet)))
                     .addCallback(DittNavBeskjedCallback(this))
-                opprettMellomlagringBeskjed(this.eventId)
+                opprettMellomlagringBeskjed(eventId)
+                repos.beskjed.save(JPADittNavBeskjed(fnr = ctx.getFnr().fnr, ref = eventId))
                 eventId
             }
 
