@@ -136,12 +136,12 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         uuid?.let { u ->
             repos.søknader.saveAndFlush(JPASøknad(fnr = ctx.getFnr().fnr,
                     ref = u,
-                    gyldigtil = now().plus(cfg.beskjed.varighet)))
+                    gyldigtil = now().plus(Duration.ofDays(cfg.mellomlagring))))
         }
     }
 
     @Transactional
-    fun fjernAlleGamleMellomlagringer() = repos.søknader.deleteByGyldigtilBefore(now())
+    internal fun fjernAlleGamleMellomlagringer() = repos.søknader.deleteByGyldigtilBefore(now())
 
     @Transactional
     fun fjernOgAvsluttMellomlagring() {
@@ -154,7 +154,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     }
 
     @Transactional(readOnly = true)
-    fun harOpprettetMellomlagringBeskjed() =
+    internal fun harOpprettetMellomlagringBeskjed() =
         repos.søknader.getByFnr(ctx.getFnr().fnr) != null
 
     companion object {

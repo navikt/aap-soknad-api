@@ -4,6 +4,7 @@ import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavConfig.Companion.DITTN
 import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
 import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal.EPOST
 import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal.SMS
+import org.apache.kafka.common.config.TopicConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
@@ -14,7 +15,8 @@ import java.time.Duration
 data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
                          @NestedConfigurationProperty val beskjed: TopicConfig,
                          @NestedConfigurationProperty val oppgave: TopicConfig,
-                         @NestedConfigurationProperty val done: TopicConfig) {
+                         @NestedConfigurationProperty val done: TopicConfig,
+                         val mellomlagring: Long) {
 
     val app = nais.app
     val namespace = nais.namespace

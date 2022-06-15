@@ -1,5 +1,6 @@
 {
     "ingress": "https://aap-soknad-api.intern.nav.no",
     "kafka-pool": "nav-prod",
+    "mellomlagring-varighet": "1",
     "env": "prod"
 }
