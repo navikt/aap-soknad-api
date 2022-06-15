@@ -133,8 +133,8 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .build().also { log.info(CONFIDENTIAL, "Key for Ditt Nav $type er $it") }
         }
 
-    @Transactional
-    fun opprettMellomlagringBeskjed(id: String) =
+    // @Transactional
+    internal fun opprettMellomlagringBeskjed(id: String) =
         repos.søknader.saveAndFlush(JPASøknad(fnr = ctx.getFnr().fnr,
                 ref = id,
                 gyldigtil = now().plus(Duration.ofDays(cfg.mellomlagring)))).also {
@@ -143,8 +143,8 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     internal fun fjernAlleGamleMellomlagringer() = repos.søknader.deleteByGyldigtilBefore(now())
 
-    @Transactional
-    fun fjernOgAvsluttMellomlagring() {
+    //@Transactional
+    internal fun fjernOgAvsluttMellomlagring() {
         repos.søknader.deleteByFnr(ctx.getFnr().fnr).also { rows ->
             rows?.firstOrNull()?.let {
                 log.trace(CONFIDENTIAL, "Fjernet mellomlagring rad $it")
@@ -160,12 +160,18 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             log.info("Fjernet $it gamle mellomlagringer OK")
         }
         fjernOgAvsluttMellomlagring()
-        log.trace("Oppdaterer mellomlagring datostempler")
+        log.trace("Oppdaterer mellomlagring beskjed og DB")
         opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
             log.trace("uuid for opprettet beskjed om mellomlagring er $uuid")
             opprettMellomlagringBeskjed(uuid)
         }
     }
+
+    @Transactional
+    fun exit() =
+        opprettBeskjed().also {
+            fjernOgAvsluttMellomlagring()
+        }
 
     companion object {
         private val log = getLogger(DittNavClient::class.java)

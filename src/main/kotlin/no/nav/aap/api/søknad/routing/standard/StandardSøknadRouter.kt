@@ -21,8 +21,7 @@ class StandardSøknadRouter(private val joark: JoarkRouter,
                 if (vlRouter.shouldRoute(søknad)) {
                     vl.route(søknad, this@outer, second.journalpostId)
                 }
-                dittnav.opprettBeskjed()
-                dittnav.fjernOgAvsluttMellomlagring()
+                dittnav.exit()
                 Kvittering("$first")
             }
         }
