@@ -39,9 +39,11 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         if (cfg.beskjed.enabled) {
             with(nøkkelInput(type.name, callId(), "beskjed")) {
                 dittNav.send(ProducerRecord(cfg.beskjed.topic, this, beskjed(type, tekst, varighet)))
-                    .addCallback(DittNavBeskjedCallback(this, this@DittNavClient))
+                    .addCallback(DittNavBeskjedCallback(this))
+                opprettMellomlagringBeskjed(this.eventId)
                 eventId
             }
+
         }
         else {
             log.info("Sender ikke beskjed til Ditt Nav")
@@ -52,7 +54,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         if (cfg.oppgave.enabled) {
             with(nøkkelInput(type.name, callId(), "oppgave")) {
                 dittNav.send(ProducerRecord(cfg.oppgave.topic, this, oppgave(type, tekst, varighet)))
-                    .addCallback(DittNavOppgaveCallback(this, repos.oppgave))
+                    .addCallback(DittNavOppgaveCallback(this))
                 eventId
             }
         }
@@ -65,7 +67,9 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         if (cfg.done.enabled) {
             with(nøkkelInput(type.name, eventId, "done")) {
                 dittNav.send(ProducerRecord(cfg.done.topic, this, avslutt()))
-                    .addCallback(DittNavOppgaveDoneCallback(this, repos.oppgave))
+                    .addCallback(DittNavOppgaveDoneCallback(this))
+                repos.oppgave.done(eventId)
+
             }
         }
         else {
@@ -76,7 +80,8 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         if (cfg.done.enabled) {
             with(nøkkelInput(type.name, eventId, "done")) {
                 dittNav.send(ProducerRecord(cfg.done.topic, this, avslutt()))
-                    .addCallback(DittNavBeskjedDoneCallback(this, repos.beskjed))
+                    .addCallback(DittNavBeskjedDoneCallback(this))
+                repos.beskjed.done(eventId)
             }
         }
         else {
@@ -136,7 +141,6 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             log.trace(CONFIDENTIAL, "Opprettet mellomlagring rad OK $it")
         }
 
-    @Transactional
     internal fun fjernAlleGamleMellomlagringer() = repos.søknader.deleteByGyldigtilBefore(now())
 
     @Transactional
@@ -147,10 +151,6 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 avsluttBeskjed(eventId = it.ref!!)
             }
         }
-    }
-
-    companion object {
-        private val log = getLogger(DittNavClient::class.java)
     }
 
     @Transactional
@@ -164,5 +164,9 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
             log.trace("uuid for opprettet beskjed om mellomlagring er $uuid")
         }
+    }
+
+    companion object {
+        private val log = getLogger(DittNavClient::class.java)
     }
 }

@@ -6,69 +6,49 @@ import org.springframework.kafka.support.SendResult
 import org.springframework.util.concurrent.ListenableFutureCallback
 
 class DittNavCallbacks {
-    class DittNavBeskjedCallback(private val key: NokkelInput,
-                                 private val dittNav: DittNavClient) :
+    class DittNavBeskjedCallback(private val key: NokkelInput) :
         ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
         private val log = LoggerUtil.getLogger(javaClass)
 
-        override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
+        override fun onSuccess(result: SendResult<NokkelInput, Any>?) =
             log.info("Sendte en beskjed til Ditt Nav  med id ${key.eventId} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            log.info("Mellomlagrer i DB")
-            dittNav.opprettMellomlagringBeskjed(key.eventId).also {
-                log.info("Mellomlagret i DB $it")
-            }
-        }
 
         override fun onFailure(e: Throwable) {
             log.warn("Kunne ikke sende beskjed til Ditt Nav med id ${key.eventId}", e)
         }
     }
 
-    class DittNavOppgaveCallback(private val key: NokkelInput,
-                                 private val oppgaveRepo: JPADittNavOppgaveRepository) :
+    class DittNavOppgaveCallback(private val key: NokkelInput) :
         ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
         private val log = LoggerUtil.getLogger(javaClass)
 
-        override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
+        override fun onSuccess(result: SendResult<NokkelInput, Any>?) =
             log.info("Sendte oppgave til Ditt Nav  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            oppgaveRepo.save(JPADittNavOppgave(key.fodselsnummer, ref = key.eventId))
-                .also {
-                    log.info("Lagret info om oppgave til Ditt Nav i DB med id ${it.id}")
-                }
-        }
 
-        override fun onFailure(e: Throwable) {
+        override fun onFailure(e: Throwable) =
             log.warn("Kunne ikke sende oppgave til Ditt Nav med id ${key.getEventId()}", e)
-        }
+        
     }
 
-    class DittNavOppgaveDoneCallback(private val key: NokkelInput,
-                                     private val oppgaveRepo: JPADittNavOppgaveRepository) :
+    class DittNavOppgaveDoneCallback(private val key: NokkelInput) :
         ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
         private val log = LoggerUtil.getLogger(javaClass)
 
-        override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
+        override fun onSuccess(result: SendResult<NokkelInput, Any>?) =
             log.info("Sendte done til Ditt Nav  med id ${key.eventId} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            oppgaveRepo.done(key.eventId)
-        }
 
-        override fun onFailure(e: Throwable) {
+        override fun onFailure(e: Throwable) =
             log.warn("Kunne ikke sende done til Ditt Nav med id ${key.eventId}", e)
-        }
     }
 
-    class DittNavBeskjedDoneCallback(private val key: NokkelInput,
-                                     private val beskjedRepo: JPADittNavBeskjedRepository) :
+    class DittNavBeskjedDoneCallback(private val key: NokkelInput) :
         ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
         private val log = LoggerUtil.getLogger(javaClass)
 
-        override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
+        override fun onSuccess(result: SendResult<NokkelInput, Any>?) =
             log.info("Sendte done til Ditt Nav  med id ${key.eventId} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            beskjedRepo.done(key.eventId)
-        }
 
-        override fun onFailure(e: Throwable) {
+        override fun onFailure(e: Throwable) =
             log.warn("Kunne ikke sende done til Ditt Nav med id ${key.eventId}", e)
-        }
     }
 }
