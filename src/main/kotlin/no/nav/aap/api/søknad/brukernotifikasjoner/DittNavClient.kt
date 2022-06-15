@@ -23,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromC
 import java.time.Duration
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
+import java.util.*
 
 @ConditionalOnGCP
 class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
@@ -30,7 +31,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val repos: DittNavRepositories,
                     private val ctx: AuthContext) {
 
-    fun opprettBeskjed(type: SkjemaType = STANDARD) =
+    fun opprettBeskjed(type: SkjemaType = STANDARD, tekst: String) =
         opprettBeskjed(type = type, varighet = cfg.beskjed.varighet)
 
     fun opprettBeskjed(type: SkjemaType = STANDARD,
@@ -45,7 +46,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
         else {
             log.info("Sender ikke beskjed til Ditt Nav")
-            null
+            UUID.randomUUID().toString()
         }
 
     fun opprettOppgave(type: SkjemaType, tekst: String, varighet: Duration = cfg.oppgave.varighet) =
@@ -133,20 +134,16 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
-    fun opprettMellomlagringBeskjed(uuid: String?, varighet: Duration) {
+    fun opprettMellomlagringBeskjed(uuid: String) {
         uuid?.let { u ->
-            val s = JPASøknad(fnr = ctx.getFnr().fnr, ref = u, gyldigtil = now().plus(varighet)).also {
-                log.info("Mellomlagrer $it")
-            }
-            repos.søknader.saveAndFlush(s).also {
-                log.info("Mellomlagret $it")
-            }
-        } ?: log.info("Ingen mellomlagring")
+            repos.søknader.saveAndFlush(JPASøknad(fnr = ctx.getFnr().fnr,
+                    ref = u,
+                    gyldigtil = now().plus(cfg.beskjed.varighet)))
+        }
     }
 
     @Transactional
-    fun fjernAlleGamleMellomlagringer() =
-        repos.søknader.deleteByGyldigtilBefore(now()).also { log.info("Fjernet $it gamle rader") }
+    fun fjernAlleGamleMellomlagringer() = repos.søknader.deleteByGyldigtilBefore(now())
 
     @Transactional
     fun fjernOgAvsluttMellomlagring() {
@@ -164,5 +161,24 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     companion object {
         private val log = getLogger(DittNavClient::class.java)
+    }
+
+    fun init() {
+        log.info("Fjerner gamle mellomlagringer")
+        fjernAlleGamleMellomlagringer().also {
+            log.info("Fjernet $it gamle mellomlagringer OK")
+        }
+
+        if (!harOpprettetMellomlagringBeskjed()) {
+            log.trace("Oppretter rad med info om mellomlagring")
+            opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
+                log.trace("uuid for opprettet beskjed om mellomlagring er $uuid")
+                opprettMellomlagringBeskjed(uuid)
+                log.trace("Opprettet rad om mellomlagring OK")
+            }
+        }
+        else {
+            log.trace("rad om mellomlagring allerede opprettet")
+        }
     }
 }

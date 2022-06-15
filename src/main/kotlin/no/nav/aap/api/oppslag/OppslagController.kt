@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import java.time.Duration
 
 @ProtectedRestController(value = ["/oppslag"], issuer = Constants.IDPORTEN)
 class OppslagController(val pdl: PDLClient,
@@ -37,25 +36,7 @@ class OppslagController(val pdl: PDLClient,
             arbeid.arbeidsforhold(),
             krr.kontaktinfo())
         .also {
-            log.info("Fjerner gammel mellomlagring")
-            dittNav.fjernAlleGamleMellomlagringer()
-            log.info("Fjernet gammel mellomlagring OK")
-            val b = dittNav.harOpprettetMellomlagringBeskjed()
-            log.trace("Har Mellomlagret rad er $b")
-            if (!b) {
-                log.trace("Oppretter rad med info om mellomlagring")
-                val varighet = Duration.ofMinutes(30)
-                val uuid =
-                    dittNav.opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP", varighet = varighet).also {
-                        log.trace("uuid for opprettet beskjed om mellomlagring er $it")
-                    }
-                log.trace("Oppretter rad om mellomlagring ")
-                dittNav.opprettMellomlagringBeskjed(uuid, varighet)
-                log.trace("Opprettet rad om mellomlagring OK")
-            }
-            else {
-                log.trace("rad om mellomlagring allerede opprettet")
-            }
+            dittNav.init()
             log.trace("Søker er $it")
         }
 
