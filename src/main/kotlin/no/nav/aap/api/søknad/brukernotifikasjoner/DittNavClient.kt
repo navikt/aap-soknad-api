@@ -167,16 +167,29 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         fjernAlleGamleMellomlagringer().also {
             log.info("Fjernet $it gamle mellomlagringer OK")
         }
-        if (!harOpprettetMellomlagringBeskjed()) {
-            log.trace("Oppretter rad med info om mellomlagring")
-            opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
-                log.trace("uuid for opprettet beskjed om mellomlagring er $uuid")
-                opprettMellomlagringBeskjed(uuid)
-                log.trace("Opprettet rad om mellomlagring OK")
-            }
+        fjernOgAvsluttMellomlagring()
+        log.trace("Oppdaterer mellomlagring datostempler")
+        opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
+            log.trace("uuid for opprettet beskjed om mellomlagring er $uuid")
+            opprettMellomlagringBeskjed(uuid)
+            log.trace("Opprettet rad om mellomlagring OK")
         }
-        else {
-            log.trace("rad om mellomlagring allerede opprettet")
+        /*
+    if (!harOpprettetMellomlagringBeskjed()) {
+        log.trace("Oppretter rad med info om mellomlagring")
+        opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
+            log.trace("uuid for opprettet beskjed om mellomlagring er $uuid")
+            opprettMellomlagringBeskjed(uuid)
+            log.trace("Opprettet rad om mellomlagring OK")
         }
+    }
+    else {
+        fjernOgAvsluttMellomlagring()
+        log.trace("Oppdaterer mellomalgring datostempler")
+        opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
+            log.trace("uuid for opprettet beskjed om mellomlagring er $uuid")
+            opprettMellomlagringBeskjed(uuid)
+            log.trace("Opprettet rad om mellomlagring OK")
+    }*/
     }
 }
