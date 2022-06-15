@@ -22,7 +22,7 @@ data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
     val namespace = nais.namespace
 
     data class TopicConfig(val topic: String,
-                           @DefaultValue("PT90D") val varighet: Duration,
+                           @DefaultValue("90d") val varighet: Duration,
                            val enabled: Boolean = true,
                            val preferertekanaler: List<PreferertKanal> = listOf(SMS, EPOST),
                            val sikkerhetsnivaa: Int = DEFAULT_LEVEL,
