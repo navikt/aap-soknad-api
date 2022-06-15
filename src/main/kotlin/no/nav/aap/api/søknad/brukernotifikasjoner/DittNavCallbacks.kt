@@ -13,7 +13,10 @@ class DittNavCallbacks {
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) {
             log.info("Sendte en beskjed til Ditt Nav  med id ${key.eventId} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
-            dittNav.opprettMellomlagringBeskjed(key.eventId)
+            log.info("Mellomlagrer i DB")
+            dittNav.opprettMellomlagringBeskjed(key.eventId).also {
+                log.info("Mellomlagret i DB $it")
+            }
         }
 
         override fun onFailure(e: Throwable) {
