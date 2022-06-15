@@ -25,13 +25,13 @@ interface JPADittNavSøknadRepository : JpaRepository<JPASøknad, Long> {
 
 interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
     @Modifying
-    @Query("update JPADittNavBeskjed o set o.done = true where o.ref = ?1")
+    @Query("update JPADittNavBeskjed o set o.done = true, o.updated = current_timestamp where o.ref = :ref")
     fun done(@Param("ref") ref: String)
 }
 
 interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
     @Modifying
-    @Query("update JPADittNavOppgave o set o.done = true where o.ref = ?1")
+    @Query("update JPADittNavOppgave o set o.done = true, o.updated = current_timestamp where o.ref = :ref")
     fun done(@Param("ref") ref: String)
 }
 
