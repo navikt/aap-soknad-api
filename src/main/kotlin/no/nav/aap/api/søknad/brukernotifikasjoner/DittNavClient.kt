@@ -161,12 +161,12 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         private val log = getLogger(DittNavClient::class.java)
     }
 
+    @Transactional
     fun init() {
         log.info("Fjerner gamle mellomlagringer")
         fjernAlleGamleMellomlagringer().also {
             log.info("Fjernet $it gamle mellomlagringer OK")
         }
-
         if (!harOpprettetMellomlagringBeskjed()) {
             log.trace("Oppretter rad med info om mellomlagring")
             opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
