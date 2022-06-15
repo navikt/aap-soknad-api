@@ -130,11 +130,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     @Transactional
     fun opprettMellomlagringBeskjed(id: String) =
-            repos.søknader.saveAndFlush(JPASøknad(fnr = ctx.getFnr().fnr,
-                    ref = uuid,
-                    gyldigtil = now().plus(Duration.ofDays(cfg.mellomlagring)))).also {
-                log.trace(CONFIDENTIAL, "Opprettet mellomlagring rad OK $it")
-            }
+        repos.søknader.saveAndFlush(JPASøknad(fnr = ctx.getFnr().fnr,
+                ref = id,
+                gyldigtil = now().plus(Duration.ofDays(cfg.mellomlagring)))).also {
+            log.trace(CONFIDENTIAL, "Opprettet mellomlagring rad OK $it")
         }
 
     @Transactional
