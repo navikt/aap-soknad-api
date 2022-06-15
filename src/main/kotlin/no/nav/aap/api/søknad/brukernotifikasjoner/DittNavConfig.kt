@@ -22,16 +22,17 @@ data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
     val namespace = nais.namespace
 
     data class TopicConfig(val topic: String,
-                           @DefaultValue("90d") val varighet: Duration,
-                           val enabled: Boolean = true,
+                           @DefaultValue(DEFAULT_VARIGHET) val varighet: Duration,
+                           @DefaultValue("true") val enabled: Boolean,
                            val preferertekanaler: List<PreferertKanal> = listOf(SMS, EPOST),
-                           val sikkerhetsnivaa: Int = DEFAULT_LEVEL,
-                           val eksternVarsling: Boolean = true)
+                           @DefaultValue(DEFAULT_LEVEL) val sikkerhetsnivaa: Int,
+                           @DefaultValue("true") val eksternVarsling: Boolean)
 
     data class NAISConfig(val namespace: String, val app: String)
 
     companion object {
+        const val DEFAULT_VARIGHET = "90d"
         const val DITTNAV = "dittnav"
-        private const val DEFAULT_LEVEL = 3
+        private const val DEFAULT_LEVEL = "3"
     }
 }
