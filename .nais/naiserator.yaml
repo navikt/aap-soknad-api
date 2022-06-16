@@ -28,7 +28,7 @@ spec:
             -   name: aap-vedlegg
                 cascadingDelete: true
                 lifecycleCondition:
-                    age: 1
+                    age: {{vedlegg-varighet}}
             -   name: aap-mellomlagring
                 cascadingDelete: true
                 lifecycleCondition:

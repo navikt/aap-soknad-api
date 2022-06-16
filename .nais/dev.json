@@ -2,6 +2,7 @@
     "tenant": "trygdeetaten.no",
     "ingress": "https://aap-soknad-api.dev.intern.nav.no",
     "kafka-pool": "nav-dev",
-    "mellomlagring-varighet": "1",
+    "mellomlagring-varighet": "3",
+    "vedlegg-varighet": "3",
     "env": "dev"
 }
