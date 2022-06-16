@@ -2,8 +2,6 @@ package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavConfig.Companion.DITTNAV
 import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
-import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal.EPOST
-import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal.SMS
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
@@ -24,14 +22,15 @@ data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
     data class TopicConfig(val topic: String,
                            @DefaultValue(DEFAULT_VARIGHET) val varighet: Duration,
                            @DefaultValue("true") val enabled: Boolean,
-                           val preferertekanaler: List<PreferertKanal> = listOf(SMS, EPOST),
+                           @DefaultValue("{'SMS,EPOST}") val preferertekanaler: List<PreferertKanal>, // = listOf(SMS,
+            //
                            @DefaultValue(DEFAULT_LEVEL) val sikkerhetsnivaa: Int,
                            @DefaultValue("true") val eksternVarsling: Boolean)
 
     data class NAISConfig(val namespace: String, val app: String)
 
     companion object {
-        const val DEFAULT_VARIGHET = "90d"
+        private const val DEFAULT_VARIGHET = "90d"
         const val DITTNAV = "dittnav"
         private const val DEFAULT_LEVEL = "3"
     }
