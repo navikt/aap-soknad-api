@@ -22,8 +22,7 @@ data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
     data class TopicConfig(val topic: String,
                            @DefaultValue(DEFAULT_VARIGHET) val varighet: Duration,
                            @DefaultValue("true") val enabled: Boolean,
-                           @DefaultValue("{'SMS,EPOST}") val preferertekanaler: List<PreferertKanal>, // = listOf(SMS,
-            //
+                           @DefaultValue("{SMS,EPOST}") val preferertekanaler: List<PreferertKanal>,
                            @DefaultValue(DEFAULT_LEVEL) val sikkerhetsnivaa: Int,
                            @DefaultValue("true") val eksternVarsling: Boolean)
 
