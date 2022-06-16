@@ -39,7 +39,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             with(nøkkel(type.name, callId(), "beskjed")) {
                 dittNav.send(ProducerRecord(cfg.beskjed.topic, this, beskjed(type, tekst, varighet)))
                     .addCallback(DittNavBeskjedCallback(this))
-                repos.beskjed.save(JPADittNavBeskjed(fnr = ctx.getFnr().fnr, eventId = eventId))
+                repos.beskjeder.save(JPADittNavBeskjed(eventId = eventId))
                 eventId
             }
 
@@ -54,6 +54,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             with(nøkkel(type.name, callId(), "oppgave")) {
                 dittNav.send(ProducerRecord(cfg.oppgave.topic, this, oppgave(type, tekst, varighet)))
                     .addCallback(DittNavOppgaveCallback(this))
+                repos.oppgaver.save(JPADittNavOppgave(eventId = eventId))
                 eventId
             }
         }
@@ -67,7 +68,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             with(nøkkel(type.name, eventId, "done")) {
                 dittNav.send(ProducerRecord(cfg.done.topic, this, done()))
                     .addCallback(DittNavOppgaveDoneCallback(this))
-                repos.oppgave.done(eventId)
+                repos.oppgaver.done(eventId)
 
             }
         }
@@ -80,7 +81,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             with(nøkkel(type.name, eventId, "done")) {
                 dittNav.send(ProducerRecord(cfg.done.topic, this, done()))
                     .addCallback(DittNavBeskjedDoneCallback(this))
-                repos.beskjed.done(eventId)
+                repos.beskjeder.done(eventId)
             }
         }
         else {
@@ -133,8 +134,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 
     internal fun opprettMellomlagringBeskjed(eventId: String) =
-        repos.søknader.saveAndFlush(JPASøknad(fnr = ctx.getFnr().fnr,
-                eventId = eventId,
+        repos.søknader.saveAndFlush(JPASøknad(eventId = eventId,
                 gyldigtil = now().plus(Duration.ofDays(cfg.mellomlagring)))).also {
             log.trace(CONFIDENTIAL, "Opprettet mellomlagring rad OK $it")
         }
