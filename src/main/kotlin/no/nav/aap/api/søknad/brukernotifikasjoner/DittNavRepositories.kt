@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
+import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -36,15 +37,15 @@ interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
 }
 
 @Component
-data class DittNavRepositories(val beskjed: JPADittNavBeskjedRepository,
-                               val oppgave: JPADittNavOppgaveRepository,
+data class DittNavRepositories(val beskjeder: JPADittNavBeskjedRepository,
+                               val oppgaver: JPADittNavOppgaveRepository,
                                val søknader: JPADittNavSøknadRepository)
 
 @Entity
 @Table(name = "dittnavbeskjeder")
 @EntityListeners(AuditingEntityListener::class)
 class JPADittNavBeskjed(
-        var fnr: String,
+        @CreatedBy var fnr: String? = null,
         @CreatedDate var created: LocalDateTime? = null,
         var eventId: String? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
@@ -58,27 +59,27 @@ class JPADittNavBeskjed(
 @Table(name = "dittnavoppgaver")
 @EntityListeners(AuditingEntityListener::class)
 class JPADittNavOppgave(
-        var fnr: String,
+        @CreatedBy var fnr: String? = null,
         @CreatedDate var created: LocalDateTime? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
         var eventId: String? = null,
         var done: Boolean? = null,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
-        "JPADittNavOppgave(fnr='$fnr', created=$created, updated=$updated, ref=$eventId, done=$done, id=$id)"
+        "JPADittNavOppgave(fnr='$fnr', created=$created, updated=$updated, eventId=$eventId, done=$done, id=$id)"
 }
 
 @Entity
 @Table(name = "soknader")
 @EntityListeners(AuditingEntityListener::class)
 class JPASøknad(
-        var fnr: String,
+        @CreatedBy var fnr: String? = null,
         @CreatedDate var created: LocalDateTime? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
         var eventId: String? = null,
         var gyldigtil: LocalDateTime? = null,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
-        "JPASøknad(fnr='$fnr', created=$created, updated=$updated, ref=$eventId, gyldigtil=$gyldigtil, id=$id)"
+        "JPASøknad(fnr='$fnr', created=$created, updated=$updated, eventId=$eventId, gyldigtil=$gyldigtil, id=$id)"
 
 }
