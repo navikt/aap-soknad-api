@@ -73,12 +73,12 @@ class JPADittNavOppgave(
 @Table(name = "soknader")
 @EntityListeners(AuditingEntityListener::class)
 class JPASøknad(
-        @CreatedBy var fnr: String? = null,
-        @CreatedDate var created: LocalDateTime? = null,
-        @LastModifiedDate var updated: LocalDateTime? = null,
-        var eventid: String,
-        var gyldigtil: LocalDateTime? = null,
-        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
+        @CreatedBy val fnr: String? = null,
+        @CreatedDate val created: LocalDateTime? = null,
+        @LastModifiedDate val updated: LocalDateTime? = null,
+        val eventid: String,
+        val gyldigtil: LocalDateTime? = null,
+        @Id @GeneratedValue(strategy = IDENTITY) val id: Long? = null) {
     override fun toString() =
         "JPASøknad(fnr='$fnr', created=$created, updated=$updated, eventid=$eventid, gyldigtil=$gyldigtil, id=$id)"
 
