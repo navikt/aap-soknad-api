@@ -26,14 +26,14 @@ interface JPADittNavSøknadRepository : JpaRepository<JPASøknad, Long> {
 
 interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
     @Modifying
-    @Query("update JPADittNavBeskjed o set o.done = true, o.updated = current_timestamp where o.eventId = :eventId")
-    fun done(@Param("eventId") eventId: String)
+    @Query("update JPADittNavBeskjed o set o.done = true, o.updated = current_timestamp where o.eventid = :eventid")
+    fun done(@Param("eventid") eventid: String)
 }
 
 interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
     @Modifying
-    @Query("update JPADittNavOppgave o set o.done = true, o.updated = current_timestamp where o.eventId = :eventId")
-    fun done(@Param("eventId") eventId: String)
+    @Query("update JPADittNavOppgave o set o.done = true, o.updated = current_timestamp where o.eventid = :eventid")
+    fun done(@Param("eventid") eventid: String)
 }
 
 @Component
@@ -47,12 +47,12 @@ data class DittNavRepositories(val beskjeder: JPADittNavBeskjedRepository,
 class JPADittNavBeskjed(
         @CreatedBy var fnr: String? = null,
         @CreatedDate var created: LocalDateTime? = null,
-        var eventId: String? = null,
+        var eventid: String? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
         var done: Boolean? = null,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString(): String =
-        "JPADittNavBeskjed(fnr='$fnr', created=$created, eventId=$eventId, updated=$updated, done=$done, id=$id)"
+        "JPADittNavBeskjed(fnr='$fnr', created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
 }
 
 @Entity
@@ -62,11 +62,11 @@ class JPADittNavOppgave(
         @CreatedBy var fnr: String? = null,
         @CreatedDate var created: LocalDateTime? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
-        var eventId: String? = null,
+        var eventid: String? = null,
         var done: Boolean? = null,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
-        "JPADittNavOppgave(fnr='$fnr', created=$created, updated=$updated, eventId=$eventId, done=$done, id=$id)"
+        "JPADittNavOppgave(fnr='$fnr', created=$created, updated=$updated, eventid=$eventid, done=$done, id=$id)"
 }
 
 @Entity
@@ -76,10 +76,10 @@ class JPASøknad(
         @CreatedBy var fnr: String? = null,
         @CreatedDate var created: LocalDateTime? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
-        var eventId: String? = null,
+        var eventid: String? = null,
         var gyldigtil: LocalDateTime? = null,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
-        "JPASøknad(fnr='$fnr', created=$created, updated=$updated, eventId=$eventId, gyldigtil=$gyldigtil, id=$id)"
+        "JPASøknad(fnr='$fnr', created=$created, updated=$updated, eventid=$eventid, gyldigtil=$gyldigtil, id=$id)"
 
 }

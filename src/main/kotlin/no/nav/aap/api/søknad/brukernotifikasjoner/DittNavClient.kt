@@ -39,7 +39,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             with(nøkkel(type.name, callId(), "beskjed")) {
                 dittNav.send(ProducerRecord(cfg.beskjed.topic, this, beskjed(type, tekst, varighet)))
                     .addCallback(DittNavBeskjedCallback(this))
-                repos.beskjeder.save(JPADittNavBeskjed(eventId = eventId))
+                repos.beskjeder.save(JPADittNavBeskjed(eventid = eventId))
                 eventId
             }
 
@@ -54,7 +54,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             with(nøkkel(type.name, callId(), "oppgave")) {
                 dittNav.send(ProducerRecord(cfg.oppgave.topic, this, oppgave(type, tekst, varighet)))
                     .addCallback(DittNavOppgaveCallback(this))
-                repos.oppgaver.save(JPADittNavOppgave(eventId = eventId))
+                repos.oppgaver.save(JPADittNavOppgave(eventid = eventId))
                 eventId
             }
         }
@@ -134,7 +134,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 
     internal fun opprettMellomlagringBeskjed(eventId: String) =
-        repos.søknader.saveAndFlush(JPASøknad(eventId = eventId,
+        repos.søknader.saveAndFlush(JPASøknad(eventid = eventId,
                 gyldigtil = now().plus(Duration.ofDays(cfg.mellomlagring)))).also {
             log.trace(CONFIDENTIAL, "Opprettet mellomlagring rad OK $it")
         }
@@ -146,7 +146,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         repos.søknader.deleteByFnr(ctx.getFnr().fnr).also { rows ->
             rows?.firstOrNull()?.let {
                 log.trace(CONFIDENTIAL, "Fjernet mellomlagring rad $it")
-                avsluttBeskjed(eventId = it.eventId!!)
+                avsluttBeskjed(eventId = it.eventid!!)
             }
         }
     }
