@@ -146,7 +146,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         repos.søknader.deleteByFnr(ctx.getFnr().fnr).also { rows ->
             rows?.firstOrNull()?.let {
                 log.trace(CONFIDENTIAL, "Fjernet mellomlagring rad $it")
-                avsluttBeskjed(eventId = it.eventid!!)
+                avsluttBeskjed(eventId = it.eventid)
             }
         }
     }

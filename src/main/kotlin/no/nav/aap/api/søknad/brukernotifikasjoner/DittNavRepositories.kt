@@ -47,9 +47,9 @@ data class DittNavRepositories(val beskjeder: JPADittNavBeskjedRepository,
 class JPADittNavBeskjed(
         @CreatedBy var fnr: String? = null,
         @CreatedDate var created: LocalDateTime? = null,
-        var eventid: String? = null,
+        var eventid: String,
         @LastModifiedDate var updated: LocalDateTime? = null,
-        var done: Boolean? = null,
+        var done: Boolean = false,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString(): String =
         "JPADittNavBeskjed(fnr='$fnr', created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
@@ -62,8 +62,8 @@ class JPADittNavOppgave(
         @CreatedBy var fnr: String? = null,
         @CreatedDate var created: LocalDateTime? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
-        var eventid: String? = null,
-        var done: Boolean? = null,
+        var eventid: String,
+        var done: Boolean = false,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
         "JPADittNavOppgave(fnr='$fnr', created=$created, updated=$updated, eventid=$eventid, done=$done, id=$id)"
@@ -76,7 +76,7 @@ class JPASøknad(
         @CreatedBy var fnr: String? = null,
         @CreatedDate var created: LocalDateTime? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
-        var eventid: String? = null,
+        var eventid: String,
         var gyldigtil: LocalDateTime? = null,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
