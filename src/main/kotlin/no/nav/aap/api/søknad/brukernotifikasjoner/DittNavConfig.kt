@@ -13,7 +13,7 @@ import java.time.Duration
 data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
                          @NestedConfigurationProperty val beskjed: TopicConfig,
                          @NestedConfigurationProperty val oppgave: TopicConfig,
-                         @NestedConfigurationProperty val done: TopicConfig,
+                         @NestedConfigurationProperty val done: DoneConfig,
                          val mellomlagring: Long) {
 
     val app = nais.app
@@ -25,6 +25,8 @@ data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
                            @DefaultValue("{SMS,EPOST}") val preferertekanaler: List<PreferertKanal>,
                            @DefaultValue(DEFAULT_LEVEL) val sikkerhetsnivaa: Int,
                            @DefaultValue("true") val eksternVarsling: Boolean)
+
+    data class DoneConfig(val topic: String, @DefaultValue("true") val enabled: Boolean)
 
     data class NAISConfig(val namespace: String, val app: String)
 
