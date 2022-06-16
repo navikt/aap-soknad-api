@@ -142,7 +142,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     internal fun fjernAlleGamleMellomlagringer() = repos.søknader.deleteByGyldigtilBefore(now())
 
     //@Transactional
-    internal fun fjernOgAvsluttMellomlagring() {
+    fun fjernOgAvsluttMellomlagring() {
         repos.søknader.deleteByFnr(ctx.getFnr().fnr).also { rows ->
             rows?.firstOrNull()?.let {
                 log.trace(CONFIDENTIAL, "Fjernet mellomlagring rad $it")
@@ -160,7 +160,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         fjernOgAvsluttMellomlagring()
         log.trace("Oppdaterer mellomlagring beskjed og DB")
         opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
-            log.trace("uuid for opprettet beskjed om mellomlagring er $uuid")
+            log.trace("eventid for opprettet beskjed om mellomlagring er $uuid")
             opprettMellomlagringBeskjed(uuid)
         }
     }
