@@ -26,7 +26,7 @@ data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
                            @DefaultValue(DEFAULT_LEVEL) val sikkerhetsnivaa: Int,
                            @DefaultValue("true") val eksternVarsling: Boolean)
 
-    data class DoneConfig(val topic: String, @DefaultValue("true") val enabled: Boolean)
+    data class DoneConfig(val topic: String)
 
     data class NAISConfig(val namespace: String, val app: String)
 

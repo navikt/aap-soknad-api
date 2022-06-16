@@ -24,7 +24,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromC
 import java.time.Duration
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
-import java.util.*
 
 @ConditionalOnGCP
 class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
@@ -40,14 +39,14 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             with(nøkkel(type.name, callId(), "beskjed")) {
                 dittNav.send(ProducerRecord(cfg.beskjed.topic, this, beskjed(type, tekst, varighet)))
                     .addCallback(DittNavBeskjedCallback(this))
-                repos.beskjed.save(JPADittNavBeskjed(fnr = ctx.getFnr().fnr, ref = eventId))
+                repos.beskjed.save(JPADittNavBeskjed(fnr = ctx.getFnr().fnr, eventId = eventId))
                 eventId
             }
 
         }
         else {
             log.info("Sender ikke beskjed til Ditt Nav")
-            UUID.randomUUID().toString()
+            callId()
         }
 
     fun opprettOppgave(type: SkjemaType, tekst: String, varighet: Duration = cfg.oppgave.varighet) =
@@ -60,13 +59,13 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
         else {
             log.info("Sender ikke oppgave til Ditt Nav")
-            null
+            callId()
         }
 
     fun avsluttOppgave(type: SkjemaType = STANDARD, eventId: String) =
-        if (cfg.done.enabled) {
+        if (cfg.oppgave.enabled) {
             with(nøkkel(type.name, eventId, "done")) {
-                dittNav.send(ProducerRecord(cfg.done.topic, this, avslutt()))
+                dittNav.send(ProducerRecord(cfg.done.topic, this, done()))
                     .addCallback(DittNavOppgaveDoneCallback(this))
                 repos.oppgave.done(eventId)
 
@@ -77,15 +76,15 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 
     fun avsluttBeskjed(type: SkjemaType = STANDARD, eventId: String) =
-        if (cfg.done.enabled) {
+        if (cfg.beskjed.enabled) {
             with(nøkkel(type.name, eventId, "done")) {
-                dittNav.send(ProducerRecord(cfg.done.topic, this, avslutt()))
+                dittNav.send(ProducerRecord(cfg.done.topic, this, done()))
                     .addCallback(DittNavBeskjedDoneCallback(this))
                 repos.beskjed.done(eventId)
             }
         }
         else {
-            log.info("Sender ikke done til Ditt Nav")
+            log.info("Sender ikke done til Ditt Nav for beskjed")
         }
 
     private fun beskjed(type: SkjemaType, tekst: String, varighet: Duration) =
@@ -114,7 +113,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .build()
         }
 
-    private fun avslutt() =
+    private fun done() =
         DoneInputBuilder()
             .withTidspunkt(now(UTC))
             .build()
@@ -133,10 +132,9 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .build().also { log.info(CONFIDENTIAL, "Key for Ditt Nav $type er $it") }
         }
 
-    // @Transactional
-    internal fun opprettMellomlagringBeskjed(id: String) =
+    internal fun opprettMellomlagringBeskjed(eventId: String) =
         repos.søknader.saveAndFlush(JPASøknad(fnr = ctx.getFnr().fnr,
-                ref = id,
+                eventId = eventId,
                 gyldigtil = now().plus(Duration.ofDays(cfg.mellomlagring)))).also {
             log.trace(CONFIDENTIAL, "Opprettet mellomlagring rad OK $it")
         }
@@ -148,7 +146,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         repos.søknader.deleteByFnr(ctx.getFnr().fnr).also { rows ->
             rows?.firstOrNull()?.let {
                 log.trace(CONFIDENTIAL, "Fjernet mellomlagring rad $it")
-                avsluttBeskjed(eventId = it.ref!!)
+                avsluttBeskjed(eventId = it.eventId!!)
             }
         }
     }
