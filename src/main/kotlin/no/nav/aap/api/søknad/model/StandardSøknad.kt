@@ -122,9 +122,7 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
                            val hvemUtbetalerAFP: String? = null,
                            override val vedlegg: UUID? = null) : VedleggAware {
         init {
-            if (type != AFP && hvemUtbetalerAFP != null) {
-                throw IllegalStateException("Hvem utbetaler kun for AFP")
-            }
+            require((type == AFP && hvemUtbetalerAFP != null) || (type != AFP && hvemUtbetalerAFP == null))
         }
     }
 
@@ -142,7 +140,7 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
     }
 }
 
-class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.java) {
+internal class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.java) {
     @Throws(IOException::class)
     override fun deserialize(p: JsonParser, ctx: DeserializationContext) =
         Vedlegg(UUID.fromString((p.codec.readTree(p) as TextNode).textValue()))
