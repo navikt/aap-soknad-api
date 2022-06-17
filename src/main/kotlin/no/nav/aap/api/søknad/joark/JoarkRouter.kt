@@ -72,10 +72,10 @@ class JoarkRouter(private val joark: JoarkClient,
                             pdfVariant,
                             vedlegg(søknad.utbetalinger?.ekstraUtbetaling, this),
                             vedlegg(søknad.utbetalinger?.ekstraFraArbeidsgiver, this),
-                            vedlegg(søknad.studier, this))
+                            vedlegg(søknad.studier, this)).filterNotNull()
                             + vedlegg(søknad.andreVedlegg, this)
                             + vedlegg(søknad.utbetalinger?.andreStønader, this)
-                            + vedlegg(søknad.andreBarn, this).filterNotNull())
+                            + vedlegg(søknad.andreBarn, this))
                 .also {
                     log.info("${it.dokumentVarianter.size} dokumentvarianter")
                 })
