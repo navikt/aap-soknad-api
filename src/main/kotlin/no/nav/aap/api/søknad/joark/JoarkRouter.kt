@@ -75,8 +75,10 @@ class JoarkRouter(private val joark: JoarkClient,
                             vedlegg(søknad.studier, this))
                             + vedlegg(søknad.andreVedlegg, this)
                             + vedlegg(søknad.utbetalinger?.andreStønader, this)
-                            + vedlegg(søknad.andreBarn,
-                            this)).also { log.info("${it.dokumentVarianter.size} dokumentvarianter") })
+                            + vedlegg(søknad.andreBarn, this).filterNotNull())
+                .also {
+                    log.info("${it.dokumentVarianter.size} dokumentvarianter")
+                })
                 .also { log.trace("Dokument til JOARK ${it.first()}") }
 
         }
