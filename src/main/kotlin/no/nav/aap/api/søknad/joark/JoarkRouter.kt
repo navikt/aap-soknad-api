@@ -75,7 +75,9 @@ class JoarkRouter(private val joark: JoarkClient,
                             vedlegg(søknad.studier, this))
                             + vedlegg(søknad.andreVedlegg, this)
                             + vedlegg(søknad.utbetalinger?.andreStønader, this)
-                            + vedlegg(søknad.andreBarn, this)))
+                            + vedlegg(søknad.andreBarn,
+                            this)).also { log.info("${it.dokumentVarianter.size} dokumentvarianter") })
+                .also { log.trace("Dokument til JOARK ${it.first()}") }
 
         }
 
@@ -83,7 +85,7 @@ class JoarkRouter(private val joark: JoarkClient,
         listOf(Dokument(UTLAND,
                 listOf(søknad.asJsonVariant(mapper), pdfDokument)
                     .also { log.trace("${it.size} dokumentvarianter ($it)") }))
-            .also { log.trace("Dokument til JOARK $it") }
+            .also { log.trace("Dokument til JOARK ${it.first()}") }
 
     private fun vedlegg(a: List<VedleggAware>?, fnr: Fødselsnummer) =
         a?.map { it -> vedlegg(it, fnr) } ?: listOf()
