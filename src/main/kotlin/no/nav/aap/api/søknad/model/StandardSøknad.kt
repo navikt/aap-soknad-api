@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
@@ -146,5 +145,5 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
 class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.java) {
     @Throws(IOException::class)
     override fun deserialize(p: JsonParser, ctx: DeserializationContext) =
-        Vedlegg(UUID.fromString((p.codec.readTree(p) as JsonNode as TextNode).textValue()))
+        Vedlegg(UUID.fromString((p.codec.readTree(p) as TextNode).textValue()))
 }
