@@ -22,7 +22,6 @@ import no.nav.aap.joark.asPDFVariant
 import no.nav.aap.util.LoggerUtil
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.stereotype.Service
-import java.util.*
 import java.util.Base64.getEncoder
 
 @Service
@@ -68,11 +67,16 @@ class JoarkRouter(private val joark: JoarkClient,
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         with(søker.fødselsnummer) {
             listOf(Dokument(STANDARD,
-                    listOf(søknad.asJsonVariant(mapper), pdfVariant)
-                            + vedlegg(søknad.utbetalinger?.ekstraUtbetaling, this)
-                            + vedlegg(søknad.utbetalinger?.ekstraUtbetaling, this)
-                            + vedlegg(søknad.studier, this)
-                            + vedlegg(søknad, this)))
+                    listOf(
+                            søknad.asJsonVariant(mapper),
+                            pdfVariant,
+                            vedlegg(søknad.utbetalinger?.ekstraUtbetaling, this),
+                            vedlegg(søknad.utbetalinger?.ekstraFraArbeidsgiver, this),
+                            vedlegg(søknad.studier, this))
+                            + vedlegg(søknad.vedlegg, this)
+                            + vedlegg(søknad.utbetalinger?.andreStønader, this)
+                            + vedlegg(søknad.andreBarn, this)))
+
         }
 
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
@@ -81,20 +85,28 @@ class JoarkRouter(private val joark: JoarkClient,
                     .also { log.trace("${it.size} dokumentvarianter ($it)") }))
             .also { log.trace("Dokument til JOARK $it") }
 
-    private fun vedlegg(a: VedleggAware?, fnr: Fødselsnummer) =
-        a?.vedlegg?.let { uuid -> lager.lesDokument(fnr, uuid)?.asDokumentVariant()?.let { listOf(it) } }.orEmpty()
+    private fun vedlegg(a: List<VedleggAware>?, fnr: Fødselsnummer) =
+        a?.map { it -> vedlegg(it, fnr) } ?: listOf()
 
-    private fun slettVedlegg(søknad: StandardSøknad, fnr: Fødselsnummer) {
+    private fun vedlegg(a: VedleggAware?, fnr: Fødselsnummer) =
+        a?.vedlegg?.let { uuid -> lager.lesDokument(fnr, uuid)?.asDokumentVariant() }
+
+    fun slettVedlegg(søknad: StandardSøknad, fnr: Fødselsnummer) {
         with(søknad) {
-            slett(utbetalinger?.ekstraUtbetaling?.vedlegg, fnr)
-            utbetalinger?.andreStønader?.forEach { v -> slett(v.vedlegg, fnr) }
+            slett(utbetalinger?.ekstraFraArbeidsgiver, fnr)
+            slett(utbetalinger?.ekstraUtbetaling, fnr)
+            slett(utbetalinger?.andreStønader, fnr)
             slett(vedlegg, fnr)
-            slett(studier.vedlegg, fnr)
+            slett(studier, fnr)
+            slett(andreBarn, fnr)
         }
     }
 
-    private fun slett(uuid: UUID?, fnr: Fødselsnummer) =
-        uuid?.let { lager.slettDokument(it, fnr) }
+    private fun slett(a: List<VedleggAware>?, fnr: Fødselsnummer) =
+        a?.forEach { slett(it, fnr) }
+
+    private fun slett(a: VedleggAware?, fnr: Fødselsnummer) =
+        a?.vedlegg?.let { lager.slettDokument(it, fnr) }
 
     private fun Blob.asDokumentVariant() = DokumentVariant(of(contentType), getEncoder().encodeToString(getContent()))
 

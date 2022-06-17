@@ -27,7 +27,8 @@ data class StandardSøknad(
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
         val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         val tilleggsopplysninger: String?,
-        override val vedlegg: UUID? = null) : VedleggAware {
+        val vedlegg: List<Vedlegg> = listOf()) {
+    data class Vedlegg(override val vedlegg: UUID? = null) : VedleggAware
 
     fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, this.toEncodedJson(mapper), ORIGINAL)
 }
@@ -36,7 +37,7 @@ interface VedleggAware {
     val vedlegg: UUID?
 }
 
-data class Studier(@JsonAlias("erStudent") val svar: StudieSvar?,
+data class Studier(val erStudent: StudieSvar?,
                    val kommeTilbake: RadioValg?,
                    override val vedlegg: UUID? = null) : VedleggAware {
     enum class StudieSvar {
@@ -81,7 +82,7 @@ data class BarnOgInntekt(val fnr: Fødselsnummer, val merEnnIG: Boolean? = false
 data class AnnetBarnOgInntekt(val barn: Barn,
                               val relasjon: Relasjon = FORELDER,
                               val merEnnIG: Boolean? = false,
-                              val barnepensjon: Boolean = false) {
+                              val barnepensjon: Boolean = false, override val vedlegg: UUID? = null) : VedleggAware {
     enum class Relasjon {
         FOSTERFORELDER,
         FORELDER
@@ -94,9 +95,16 @@ enum class RadioValg {
     VET_IKKE
 }
 
-data class Utbetaling(val fraArbeidsgiver: Boolean,
+data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
                       @JsonAlias("stønadstyper") val andreStønader: List<AnnenStønad> = emptyList(),
                       val ekstraUtbetaling: EkstraUtbetaling? = null) {
+
+    data class FraArbeidsgiver(val fraArbeidsgiver: Boolean, override val vedlegg: UUID? = null) : VedleggAware {
+        init {
+            require((fraArbeidsgiver && vedlegg != null) || (!fraArbeidsgiver && vedlegg == null))
+        }
+    }
+
     data class EkstraUtbetaling(val hvilken: String, val hvem: String, override val vedlegg: UUID? = null) :
         VedleggAware
 

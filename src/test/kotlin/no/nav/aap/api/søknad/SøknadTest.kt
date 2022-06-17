@@ -19,6 +19,7 @@ import no.nav.aap.api.søknad.model.Medlemskap
 import no.nav.aap.api.søknad.model.RadioValg
 import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.model.StandardSøknad.Vedlegg
 import no.nav.aap.api.søknad.model.Startdato
 import no.nav.aap.api.søknad.model.Startdato.Hvorfor.HELSE
 import no.nav.aap.api.søknad.model.Studier
@@ -29,12 +30,15 @@ import no.nav.aap.api.søknad.model.Utbetaling
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønad
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.INTRODUKSJONSSTØNAD
 import no.nav.aap.api.søknad.model.Utbetaling.EkstraUtbetaling
+import no.nav.aap.api.søknad.model.Utbetaling.FraArbeidsgiver
 import no.nav.aap.api.søknad.model.Utenlandsopphold
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.boot.test.json.JacksonTester
 import java.time.LocalDate.now
+import java.util.*
 
 @JsonTest
 class SøknadTest {
@@ -43,6 +47,14 @@ class SøknadTest {
 
     @Autowired
     lateinit var pm: JacksonTester<Periode>
+
+    @Test
+    fun serialize() {
+        val w = json.write(standardSøknad())
+        System.out.println(w.json)
+        val r = json.parse(w.json)
+        System.out.println(r.`object`)
+    }
 
     private fun søker(): Søker {
         return Søker(Navn("Ole", "B", "Olsen"),
@@ -68,12 +80,12 @@ class SøknadTest {
                                     PostNummer("2600", "Lillehammer")),
                             "22222222"))),
             JA,
-            Utbetaling(false, listOf(AnnenStønad(INTRODUKSJONSSTØNAD)),
+            Utbetaling(FraArbeidsgiver(true, UUID.randomUUID()), listOf(AnnenStønad(INTRODUKSJONSSTØNAD)),
                     EkstraUtbetaling("hvilken", "hvem")),
-            listOf(BarnOgInntekt(Fødselsnummer("22222222"), true, false)),
-            listOf(AnnetBarnOgInntekt(Barn(Fødselsnummer("33333333333"),
-                    Navn("Et", "ekstra", "Barn"), now().minusYears(14)))),
-            "Tilegg")
+            listOf(BarnOgInntekt(Fødselsnummer("08089403198"), merEnnIG = true, barnepensjon = false)),
+            listOf(AnnetBarnOgInntekt(Barn(Fødselsnummer("08089403198"),
+                    Navn("Et", "ekstra", "Barn"), now().minusYears(14)), vedlegg = UUID.randomUUID())),
+            "Tilegg", listOf(Vedlegg(UUID.randomUUID()), Vedlegg(UUID.randomUUID())))
 
     @SpringBootApplication
     internal class DummyApplication
