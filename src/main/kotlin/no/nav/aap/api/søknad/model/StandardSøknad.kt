@@ -146,7 +146,5 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
 class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.java) {
     @Throws(IOException::class)
     override fun deserialize(p: JsonParser, ctx: DeserializationContext) =
-        Vedlegg(uuid(p.codec.readTree(p) as JsonNode))
-
-    private fun uuid(rootNode: JsonNode) = UUID.fromString((rootNode as TextNode).textValue())
+        Vedlegg(UUID.fromString((p.codec.readTree(p) as JsonNode as TextNode).textValue()))
 }
