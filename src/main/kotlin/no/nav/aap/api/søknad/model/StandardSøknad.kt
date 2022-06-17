@@ -1,18 +1,27 @@
 package no.nav.aap.api.søknad.model
 
 import com.fasterxml.jackson.annotation.JsonAlias
+import com.fasterxml.jackson.annotation.JsonValue
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import com.fasterxml.jackson.databind.node.TextNode
 import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
+import no.nav.aap.api.søknad.model.StandardSøknad.Vedlegg
 import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.AFP
 import no.nav.aap.joark.DokumentVariant
 import no.nav.aap.joark.Filtype.JSON
 import no.nav.aap.joark.VariantFormat.ORIGINAL
 import no.nav.aap.util.StringExtensions.toEncodedJson
+import java.io.IOException
 import java.time.LocalDate
 import java.util.*
 
@@ -27,8 +36,10 @@ data class StandardSøknad(
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
         val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         val tilleggsopplysninger: String?,
-        val vedlegg: List<Vedlegg> = listOf()) {
-    data class Vedlegg(override val vedlegg: UUID? = null) : VedleggAware
+        val andreVedlegg: List<Vedlegg> = listOf()) {
+
+    @JsonDeserialize(using = VedleggDeserializer::class)
+    data class Vedlegg(@JsonValue override val vedlegg: UUID? = null) : VedleggAware
 
     fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, this.toEncodedJson(mapper), ORIGINAL)
 }
@@ -130,4 +141,12 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
         ANNET,
         NEI
     }
+}
+
+class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.java) {
+    @Throws(IOException::class)
+    override fun deserialize(p: JsonParser, ctx: DeserializationContext) =
+        Vedlegg(uuid(p.codec.readTree(p) as JsonNode))
+
+    private fun uuid(rootNode: JsonNode) = UUID.fromString((rootNode as TextNode).textValue())
 }

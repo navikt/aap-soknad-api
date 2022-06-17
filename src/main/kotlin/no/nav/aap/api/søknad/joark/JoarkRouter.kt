@@ -73,7 +73,7 @@ class JoarkRouter(private val joark: JoarkClient,
                             vedlegg(søknad.utbetalinger?.ekstraUtbetaling, this),
                             vedlegg(søknad.utbetalinger?.ekstraFraArbeidsgiver, this),
                             vedlegg(søknad.studier, this))
-                            + vedlegg(søknad.vedlegg, this)
+                            + vedlegg(søknad.andreVedlegg, this)
                             + vedlegg(søknad.utbetalinger?.andreStønader, this)
                             + vedlegg(søknad.andreBarn, this)))
 
@@ -96,7 +96,7 @@ class JoarkRouter(private val joark: JoarkClient,
             slett(utbetalinger?.ekstraFraArbeidsgiver, fnr)
             slett(utbetalinger?.ekstraUtbetaling, fnr)
             slett(utbetalinger?.andreStønader, fnr)
-            slett(vedlegg, fnr)
+            slett(andreVedlegg, fnr)
             slett(studier, fnr)
             slett(andreBarn, fnr)
         }
