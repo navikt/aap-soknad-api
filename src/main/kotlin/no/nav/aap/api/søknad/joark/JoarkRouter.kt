@@ -72,7 +72,8 @@ class JoarkRouter(private val joark: JoarkClient,
                             pdfVariant,
                             vedlegg(søknad.utbetalinger?.ekstraUtbetaling, this),
                             vedlegg(søknad.utbetalinger?.ekstraFraArbeidsgiver, this),
-                            vedlegg(søknad.studier, this)).filterNotNull()
+                            vedlegg(søknad.studier, this)).also { log.info("Før filter $it") }.filterNotNull()
+                        .also { log.info("Etter filter $it") }
                             + vedlegg(søknad.andreVedlegg, this)
                             + vedlegg(søknad.utbetalinger?.andreStønader, this)
                             + vedlegg(søknad.andreBarn, this))
