@@ -66,35 +66,32 @@ class JoarkRouter(private val joark: JoarkClient,
 
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         with(søker.fødselsnummer) {
-            listOf(Dokument(STANDARD,
-                    listOf(
-                            søknad.asJsonVariant(mapper),
-                            pdfVariant,
-                            vedlegg(søknad.utbetalinger?.ekstraUtbetaling, this),
-                            vedlegg(søknad.utbetalinger?.ekstraFraArbeidsgiver, this),
-                            vedlegg(søknad.studier, this)).also { log.info("Før filter $it") }.filterNotNull()
-                        .also { log.info("Etter filter $it") }
-                            + vedlegg(søknad.andreVedlegg, this)
-                            + vedlegg(søknad.utbetalinger?.andreStønader, this)
-                            + vedlegg(søknad.andreBarn, this))
-                .also {
-                    log.info("${it.dokumentVarianter.size} dokumentvarianter")
-                })
-                .also { log.trace("Dokument til JOARK ${it.first()}") }
-
+            (listOfNotNull(dokumentFra(søknad, pdfVariant),
+                    dokumentFra(søknad.utbetalinger?.ekstraUtbetaling, this),
+                    dokumentFra(søknad.utbetalinger?.ekstraFraArbeidsgiver, this),
+                    dokumentFra(søknad.studier, this))
+                    + dokumentFra(søknad.andreVedlegg, this)
+                    + dokumentFra(søknad.utbetalinger?.andreStønader, this)
+                    + dokumentFra(søknad.andreBarn, this)).also { log.trace("Dokument til JOARK $it") }
         }
+
+    private fun dokumentFra(søknad: StandardSøknad,
+                            pdfVariant: DokumentVariant) =
+        Dokument(STANDARD, listOf(søknad.asJsonVariant(mapper), pdfVariant))
 
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
         listOf(Dokument(UTLAND,
                 listOf(søknad.asJsonVariant(mapper), pdfDokument)
                     .also { log.trace("${it.size} dokumentvarianter ($it)") }))
-            .also { log.trace("Dokument til JOARK ${it.first()}") }
+            .also { log.trace("Dokument til JOARK $it") }
 
-    private fun vedlegg(a: List<VedleggAware>?, fnr: Fødselsnummer) =
-        a?.map { it -> vedlegg(it, fnr) } ?: listOf()
+    private fun dokumentFra(a: List<VedleggAware>?, fnr: Fødselsnummer) =
+        a?.map { it -> dokumentFra(it, fnr) } ?: listOf()
 
-    private fun vedlegg(a: VedleggAware?, fnr: Fødselsnummer) =
-        a?.vedlegg?.let { uuid -> lager.lesDokument(fnr, uuid)?.asDokumentVariant() }
+    private fun dokumentFra(a: VedleggAware?, fnr: Fødselsnummer) =
+        a?.vedlegg?.let { uuid ->
+            lager.lesDokument(fnr, uuid)?.asDokumentVariant()?.let { Dokument(dokumentVariant = it) }
+        }
 
     fun slettVedlegg(søknad: StandardSøknad, fnr: Fødselsnummer) {
         with(søknad) {
