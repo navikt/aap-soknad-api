@@ -33,32 +33,24 @@ class JoarkRouter(private val joark: JoarkClient,
     private val log = LoggerUtil.getLogger(javaClass)
     fun route(søknad: StandardSøknad, søker: Søker) =
         with(pdf.generate(søker, søknad)) {
-            Pair(lagrePdf(this, søker.fødselsnummer),
+            Pair(lagreKvittering(this, søker.fødselsnummer),
                     joark.journalfør(journalpostFra(søknad, søker, asPDFVariant()))
                         ?: throw IntegrationException("Kunne ikke journalføre søknad"))
         }.also { slettVedlegg(søknad, søker.fødselsnummer) }
 
     fun route(søknad: UtlandSøknad, søker: Søker) =
         with(pdf.generate(søker, søknad)) {
-            Pair(lagrePdf(this, søker.fødselsnummer),
+            Pair(lagreKvittering(this, søker.fødselsnummer),
                     joark.journalfør(journalpostFra(søknad, søker, asPDFVariant()))
                         ?: throw IntegrationException("Kunne ikke journalføre søknad"))
         }
 
-    private fun lagrePdf(bytes: ByteArray, fnr: Fødselsnummer) =
+    private fun lagreKvittering(bytes: ByteArray, fnr: Fødselsnummer) =
         lager.lagreDokument(fnr, bytes, APPLICATION_PDF_VALUE, "kvittering.pdf")
 
     private fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         Journalpost(dokumenter = dokumenterFra(søknad, søker, pdfVariant),
                 tittel = STANDARD.tittel,
-                avsenderMottaker = AvsenderMottaker(søker.fødselsnummer,
-                        navn = søker.navn.navn),
-                bruker = Bruker(søker.fødselsnummer))
-            .also { log.trace("Journalpost er $it") }
-
-    private fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdfVariant: DokumentVariant) =
-        Journalpost(dokumenter = dokumenterFra(søknad, pdfVariant),
-                tittel = UTLAND.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fødselsnummer,
                         navn = søker.navn.navn),
                 bruker = Bruker(søker.fødselsnummer))
@@ -83,18 +75,13 @@ class JoarkRouter(private val joark: JoarkClient,
                             pdfVariant: DokumentVariant) =
         Dokument(STANDARD, listOf(søknad.asJsonVariant(mapper), pdfVariant))
 
-    private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
-        listOf(Dokument(UTLAND,
-                listOf(søknad.asJsonVariant(mapper), pdfDokument)
-                    .also { log.trace("${it.size} dokumentvarianter ($it)") }))
-            .also { log.trace("Dokument til JOARK $it") }
-
     private fun dokumenterFra(a: List<VedleggAware>?, fnr: Fødselsnummer) =
-        a?.map { it -> dokumentFra(it, fnr) } ?: listOf()
+        a?.map { it -> dokumentFra(it, fnr) } ?: emptyList()
 
     private fun dokumentFra(a: VedleggAware?, fnr: Fødselsnummer) =
         a?.vedlegg?.let { uuid ->
-            lager.lesDokument(fnr, uuid)?.asDokumentVariant()?.let { Dokument(dokumentVariant = it) }
+            lager.lesDokument(fnr, uuid)?.asDokument()
+                .also { log.trace("Dokument fra $a er $it") }
         }
 
     fun slettVedlegg(søknad: StandardSøknad, fnr: Fødselsnummer) {
@@ -114,6 +101,20 @@ class JoarkRouter(private val joark: JoarkClient,
     private fun slett(a: VedleggAware?, fnr: Fødselsnummer) =
         a?.vedlegg?.let { lager.slettDokument(it, fnr) }
 
-    private fun Blob.asDokumentVariant() = DokumentVariant(of(contentType), getEncoder().encodeToString(getContent()))
+    private fun Blob.asDokument() =
+        Dokument(dokumentVariant = DokumentVariant(of(contentType), getEncoder().encodeToString(getContent())))
 
+    private fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdfVariant: DokumentVariant) =
+        Journalpost(dokumenter = dokumenterFra(søknad, pdfVariant),
+                tittel = UTLAND.tittel,
+                avsenderMottaker = AvsenderMottaker(søker.fødselsnummer,
+                        navn = søker.navn.navn),
+                bruker = Bruker(søker.fødselsnummer))
+            .also { log.trace("Journalpost er $it") }
+
+    private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
+        listOf(Dokument(UTLAND,
+                listOf(søknad.asJsonVariant(mapper), pdfDokument)
+                    .also { log.trace("${it.size} dokumentvarianter ($it)") }))
+            .also { log.trace("Dokument til JOARK $it") }
 }
