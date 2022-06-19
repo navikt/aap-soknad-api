@@ -73,6 +73,7 @@ class JoarkRouter(private val joark: JoarkClient,
                     + dokumentFra(søknad.andreVedlegg, this)
                     + dokumentFra(søknad.utbetalinger?.andreStønader, this)
                     + dokumentFra(søknad.andreBarn, this)).also { log.trace("Dokument til JOARK $it") }
+            
         }
 
     private fun dokumentFra(søknad: StandardSøknad,
