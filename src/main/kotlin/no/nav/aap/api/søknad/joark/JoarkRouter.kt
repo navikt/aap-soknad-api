@@ -66,7 +66,7 @@ class JoarkRouter(private val joark: JoarkClient,
                         + dokumenterFra(andreVedlegg, fødselsnummer)
                         + dokumenterFra(utbetalinger?.andreStønader, fødselsnummer)
                         + dokumenterFra(andreBarn, fødselsnummer)).also {
-                    log.trace("${it.size} dokument(er) til JOARK $it")
+                    log.trace("${it.size} dokument(er) til JOARK:  $it")
                 }
             }
         }
@@ -79,9 +79,11 @@ class JoarkRouter(private val joark: JoarkClient,
         a?.map { it -> dokumentFra(it, fnr) } ?: emptyList()
 
     private fun dokumentFra(a: VedleggAware?, fnr: Fødselsnummer) =
-        a?.vedlegg?.let { uuid ->
-            lager.lesDokument(fnr, uuid)?.asDokument()
-                .also { log.trace("Dokument fra $a er $it") }
+        a?.let { v ->
+            v.vedlegg?.let {
+                lager.lesDokument(fnr, it)?.asDokument(v.tittel)
+                    .also { log.trace("Dokument fra $a er $it") }
+            }
         }
 
     fun slettVedlegg(søknad: StandardSøknad, fnr: Fødselsnummer) {
@@ -101,8 +103,9 @@ class JoarkRouter(private val joark: JoarkClient,
     private fun slett(a: VedleggAware?, fnr: Fødselsnummer) =
         a?.vedlegg?.let { lager.slettDokument(it, fnr) }
 
-    private fun Blob.asDokument() =
-        Dokument(dokumentVariant = DokumentVariant(of(contentType), getEncoder().encodeToString(getContent())))
+    private fun Blob.asDokument(tittel: String) =
+        Dokument(tittel = tittel,
+                dokumentVariant = DokumentVariant(of(contentType), getEncoder().encodeToString(getContent())))
 
     private fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         Journalpost(dokumenter = dokumenterFra(søknad, pdfVariant),

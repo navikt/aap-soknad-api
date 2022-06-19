@@ -35,21 +35,27 @@ data class StandardSøknad(
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
         val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         val tilleggsopplysninger: String?,
-        val andreVedlegg: List<Vedlegg> = listOf()) {
+        val andreVedlegg: List<Vedlegg> = emptyList()) {
 
     @JsonDeserialize(using = VedleggDeserializer::class)
-    data class Vedlegg(@JsonValue override val vedlegg: UUID? = null) : VedleggAware
+    data class Vedlegg(@JsonValue override val vedlegg: UUID? = null) : VedleggAware {
+        override val tittel: String = "Andre vedlegg"
+    }
 
     fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, this.toEncodedJson(mapper), ORIGINAL)
 }
 
 interface VedleggAware {
     val vedlegg: UUID?
+    val tittel: String
+
 }
 
 data class Studier(val erStudent: StudieSvar?,
                    val kommeTilbake: RadioValg?,
                    override val vedlegg: UUID? = null) : VedleggAware {
+    override val tittel: String = "Studier"
+
     enum class StudieSvar {
         JA,
         NEI,
@@ -93,6 +99,8 @@ data class AnnetBarnOgInntekt(val barn: Barn,
                               val relasjon: Relasjon = FORELDER,
                               val merEnnIG: Boolean? = false,
                               val barnepensjon: Boolean = false, override val vedlegg: UUID? = null) : VedleggAware {
+    override val tittel: String = "Annet barns inntekt"
+
     enum class Relasjon {
         FOSTERFORELDER,
         FORELDER
@@ -110,17 +118,23 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
                       val ekstraUtbetaling: EkstraUtbetaling? = null) {
 
     data class FraArbeidsgiver(val fraArbeidsgiver: Boolean, override val vedlegg: UUID? = null) : VedleggAware {
+        override val tittel: String = "Utbetaling fra arbeidsgiver"
+
         init {
             require((fraArbeidsgiver && vedlegg != null) || (!fraArbeidsgiver && vedlegg == null))
         }
     }
 
     data class EkstraUtbetaling(val hvilken: String, val hvem: String, override val vedlegg: UUID? = null) :
-        VedleggAware
+        VedleggAware {
+        override val tittel: String = "Ekstra utbetaling"
+    }
 
     data class AnnenStønad(val type: AnnenStønadstype,
                            val hvemUtbetalerAFP: String? = null,
                            override val vedlegg: UUID? = null) : VedleggAware {
+        override val tittel: String = type.name.lowercase()
+
         init {
             require((type == AFP && hvemUtbetalerAFP != null) || (type != AFP && hvemUtbetalerAFP == null))
         }
