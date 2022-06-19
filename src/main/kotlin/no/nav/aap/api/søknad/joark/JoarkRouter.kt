@@ -65,15 +65,17 @@ class JoarkRouter(private val joark: JoarkClient,
             .also { log.trace("Journalpost er $it") }
 
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
-        with(søknad) {
-            (listOfNotNull(dokumentFra(søknad, pdfVariant),
-                    dokumentFra(utbetalinger?.ekstraUtbetaling, søker.fødselsnummer),
-                    dokumentFra(utbetalinger?.ekstraFraArbeidsgiver, søker.fødselsnummer),
-                    dokumentFra(studier, søker.fødselsnummer))
-                    + dokumentFra(andreVedlegg, søker.fødselsnummer)
-                    + dokumentFra(utbetalinger?.andreStønader, søker.fødselsnummer)
-                    + dokumentFra(andreBarn, søker.fødselsnummer)).also {
-                log.trace("Dokument til JOARK $it")
+        with(søknad) outer@{
+            with(søker) {
+                (listOfNotNull(dokumentFra(this@outer, pdfVariant),
+                        dokumentFra(utbetalinger?.ekstraUtbetaling, fødselsnummer),
+                        dokumentFra(utbetalinger?.ekstraFraArbeidsgiver, fødselsnummer),
+                        dokumentFra(studier, fødselsnummer))
+                        + dokumenterFra(andreVedlegg, fødselsnummer)
+                        + dokumenterFra(utbetalinger?.andreStønader, fødselsnummer)
+                        + dokumenterFra(andreBarn, fødselsnummer)).also {
+                    log.trace("${it.size} dokument(er) til JOARK $it")
+                }
             }
         }
 
@@ -87,7 +89,7 @@ class JoarkRouter(private val joark: JoarkClient,
                     .also { log.trace("${it.size} dokumentvarianter ($it)") }))
             .also { log.trace("Dokument til JOARK $it") }
 
-    private fun dokumentFra(a: List<VedleggAware>?, fnr: Fødselsnummer) =
+    private fun dokumenterFra(a: List<VedleggAware>?, fnr: Fødselsnummer) =
         a?.map { it -> dokumentFra(it, fnr) } ?: listOf()
 
     private fun dokumentFra(a: VedleggAware?, fnr: Fødselsnummer) =
