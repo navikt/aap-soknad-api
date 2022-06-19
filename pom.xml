@@ -24,7 +24,7 @@
         <i18n.version>1.29</i18n.version>
         <java.version>17</java.version>
         <jib.version>3.2.1</jib.version>
-        <kotlinx.coroutines.version>1.6.1-native-mt</kotlinx.coroutines.version>
+        <kotlinx.coroutines.version>1.6.2</kotlinx.coroutines.version>
         <kotlin.version>1.7.0</kotlin.version>
         <logstash.version>7.2</logstash.version>
         <mock-oauth2-server.version>0.3.6</mock-oauth2-server.version>
