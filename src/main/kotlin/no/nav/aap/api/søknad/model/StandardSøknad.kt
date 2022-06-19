@@ -54,7 +54,7 @@ interface VedleggAware {
 data class Studier(val erStudent: StudieSvar?,
                    val kommeTilbake: RadioValg?,
                    override val vedlegg: UUID? = null) : VedleggAware {
-    override val tittel: String = "Studier"
+    override val tittel: String = "Dokumentasjon av studier"
 
     enum class StudieSvar {
         JA,
@@ -99,7 +99,7 @@ data class AnnetBarnOgInntekt(val barn: Barn,
                               val relasjon: Relasjon = FORELDER,
                               val merEnnIG: Boolean? = false,
                               val barnepensjon: Boolean = false, override val vedlegg: UUID? = null) : VedleggAware {
-    override val tittel: String = "Annet barns inntekt"
+    override val tittel: String = "Dokumentasjon av omsorg for (${barn.fødseldato}"
 
     enum class Relasjon {
         FOSTERFORELDER,
@@ -118,7 +118,7 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
                       val ekstraUtbetaling: EkstraUtbetaling? = null) {
 
     data class FraArbeidsgiver(val fraArbeidsgiver: Boolean, override val vedlegg: UUID? = null) : VedleggAware {
-        override val tittel: String = "Utbetaling fra arbeidsgiver"
+        override val tittel: String = "Dokumentasjon av tbetaling fra arbeidsgiver"
 
         init {
             require((fraArbeidsgiver && vedlegg != null) || (!fraArbeidsgiver && vedlegg == null))
@@ -127,13 +127,13 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
 
     data class EkstraUtbetaling(val hvilken: String, val hvem: String, override val vedlegg: UUID? = null) :
         VedleggAware {
-        override val tittel: String = "Ekstra utbetaling"
+        override val tittel: String = "Dokumentasjon av kstra utbetaling"
     }
 
     data class AnnenStønad(val type: AnnenStønadstype,
                            val hvemUtbetalerAFP: String? = null,
                            override val vedlegg: UUID? = null) : VedleggAware {
-        override val tittel: String = type.name.lowercase()
+        override val tittel: String = "Dokumentasjon av ${type.name.lowercase()}"
 
         init {
             require((type == AFP && hvemUtbetalerAFP != null) || (type != AFP && hvemUtbetalerAFP == null))

@@ -80,9 +80,9 @@ class JoarkRouter(private val joark: JoarkClient,
 
     private fun dokumentFra(a: VedleggAware?, fnr: Fødselsnummer) =
         a?.let { v ->
-            v.vedlegg?.let {
-                lager.lesDokument(fnr, it)?.asDokument(v.tittel)
-                    .also { log.trace("Dokument fra $a er $it") }
+            v.vedlegg?.let { uuid ->
+                lager.lesDokument(fnr, uuid)?.asDokument(v.tittel)
+                    .also { doc -> log.trace("Dokument fra $a er $doc") }
             }
         }
 
@@ -101,7 +101,9 @@ class JoarkRouter(private val joark: JoarkClient,
         a?.forEach { slett(it, fnr) }
 
     private fun slett(a: VedleggAware?, fnr: Fødselsnummer) =
-        a?.vedlegg?.let { lager.slettDokument(it, fnr) }
+        a?.vedlegg?.let { uuid ->
+            lager.slettDokument(uuid, fnr).also { log.info("Slettet dokument $uuid ($it)") }
+        }
 
     private fun Blob.asDokument(tittel: String) =
         Dokument(tittel = tittel,
@@ -118,6 +120,6 @@ class JoarkRouter(private val joark: JoarkClient,
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
         listOf(Dokument(UTLAND,
                 listOf(søknad.asJsonVariant(mapper), pdfDokument)
-                    .also { log.trace("${it.size} dokumentvarianter ($it)") }))
+                    .also { log.trace("${it.size} dokumentvariant(er) ($it)") }))
             .also { log.trace("Dokument til JOARK $it") }
 }
