@@ -65,15 +65,16 @@ class JoarkRouter(private val joark: JoarkClient,
             .also { log.trace("Journalpost er $it") }
 
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
-        with(søker.fødselsnummer) {
+        with(søknad) {
             (listOfNotNull(dokumentFra(søknad, pdfVariant),
-                    dokumentFra(søknad.utbetalinger?.ekstraUtbetaling, this),
-                    dokumentFra(søknad.utbetalinger?.ekstraFraArbeidsgiver, this),
-                    dokumentFra(søknad.studier, this))
-                    + dokumentFra(søknad.andreVedlegg, this)
-                    + dokumentFra(søknad.utbetalinger?.andreStønader, this)
-                    + dokumentFra(søknad.andreBarn, this)).also { log.trace("Dokument til JOARK $it") }
-            
+                    dokumentFra(utbetalinger?.ekstraUtbetaling, søker.fødselsnummer),
+                    dokumentFra(utbetalinger?.ekstraFraArbeidsgiver, søker.fødselsnummer),
+                    dokumentFra(studier, søker.fødselsnummer))
+                    + dokumentFra(andreVedlegg, søker.fødselsnummer)
+                    + dokumentFra(utbetalinger?.andreStønader, søker.fødselsnummer)
+                    + dokumentFra(andreBarn, søker.fødselsnummer)).also {
+                log.trace("Dokument til JOARK $it")
+            }
         }
 
     private fun dokumentFra(søknad: StandardSøknad,
