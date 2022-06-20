@@ -35,7 +35,7 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
                 .setContentType(contentType)
                 .setMetadata(mapOf(FILNAVN to originalFilename, FNR to fnr.fnr))
                 .build(), bytes)
-                .also { log.trace("Lagret $originalFilename med uuid $this") }
+                .also { log.trace("Lagret $originalFilename med uuid $this og contentType $contentType") }
         }
 
     override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
