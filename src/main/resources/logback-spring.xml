@@ -17,7 +17,7 @@
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
     <springProfile name="dev">
-        <logger name="org.springframework.transaction" level="trace"/>
+        <logger name="org.springframework.transaction" level="info"/>
         <logger name="org.hibernate" level="info"/>
 
         <logger name="com.zaxxer.hikari" level="info"/>
