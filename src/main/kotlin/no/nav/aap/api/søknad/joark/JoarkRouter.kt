@@ -54,7 +54,7 @@ class JoarkRouter(private val joark: JoarkClient,
                 avsenderMottaker = AvsenderMottaker(søker.fnr,
                         navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
-            .also { log.trace("Journalpost er $it") }
+            .also { log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it") }
 
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         with(søknad) {
@@ -63,7 +63,6 @@ class JoarkRouter(private val joark: JoarkClient,
                         dokumentFra(utbetalinger?.ekstraUtbetaling, fnr),
                         dokumentFra(utbetalinger?.ekstraFraArbeidsgiver, fnr),
                         dokumentFra(studier, fnr))
-                        + dokumentFra(studier, fnr)
                         + dokumenterFra(andreVedlegg, fnr)
                         + dokumenterFra(utbetalinger?.andreStønader, fnr)
                         + dokumenterFra(andreBarn, fnr)).also {
