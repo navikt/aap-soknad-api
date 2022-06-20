@@ -7,6 +7,7 @@ import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.mellomlagring.Dokumentlager
+import no.nav.aap.api.søknad.joark.pdf.Image2PDFConverter
 import no.nav.aap.api.søknad.joark.pdf.PDFClient
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
@@ -16,11 +17,13 @@ import no.nav.aap.joark.AvsenderMottaker
 import no.nav.aap.joark.Bruker
 import no.nav.aap.joark.Dokument
 import no.nav.aap.joark.DokumentVariant
-import no.nav.aap.joark.Filtype.Companion.of
+import no.nav.aap.joark.Filtype.PDFA
 import no.nav.aap.joark.Journalpost
 import no.nav.aap.joark.asPDFVariant
 import no.nav.aap.util.LoggerUtil
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
+import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
+import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.stereotype.Service
 import java.util.Base64.getEncoder
 
@@ -28,6 +31,7 @@ import java.util.Base64.getEncoder
 class JoarkRouter(private val joark: JoarkClient,
                   private val pdf: PDFClient,
                   private val lager: Dokumentlager,
+                  private val pdfConverter: Image2PDFConverter,
                   private val mapper: ObjectMapper) {
 
     private val log = LoggerUtil.getLogger(javaClass)
@@ -80,9 +84,7 @@ class JoarkRouter(private val joark: JoarkClient,
 
     private fun dokumentFra(a: VedleggAware?, fnr: Fødselsnummer) =
         a?.let { v ->
-            log.trace("Leser vedlegg for $v")
             v.vedlegg?.let { uuid ->
-                log.trace("Leser dokument for $uuid")
                 lager.lesDokument(fnr, uuid)?.asDokument(v.tittel)
                     .also { doc -> log.trace("Dokument fra $a er $doc") }
             }
@@ -107,13 +109,14 @@ class JoarkRouter(private val joark: JoarkClient,
             lager.slettDokument(uuid, fnr).also { log.info("Slettet dokument $uuid ($it)") }
         }
 
-    private fun Blob.asDokument(tittel: String): Dokument {
-        log.trace("Blob as document $this")
-        return Dokument(tittel = tittel,
-                dokumentVariant = DokumentVariant(of(contentType),
-                        getEncoder().encodeToString(getContent()))).also { log.trace("Blok konvertert er $it") }
-
-    }
+    private fun Blob.asDokument(tittel: String) =
+        Dokument(tittel = tittel,
+                dokumentVariant = DokumentVariant(PDFA,
+                        getEncoder().encodeToString(when (contentType) {
+                            APPLICATION_PDF_VALUE -> getContent()
+                            IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE -> pdfConverter.convert(getContent())
+                            else -> throw IllegalStateException("UKjent content type $contentType, skal ikke skje")
+                        }))).also { log.trace("Blob konvertert er $it") }
 
     private fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         Journalpost(dokumenter = dokumenterFra(søknad, pdfVariant),

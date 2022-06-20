@@ -24,7 +24,7 @@ import java.io.IOException
 @Component
 class Image2PDFConverter {
 
-    private val LOG: Logger = getLogger(javaClass)
+    private val log: Logger = getLogger(javaClass)
 
     fun convert(res: String): ByteArray {
         return try {
