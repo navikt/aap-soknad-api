@@ -43,7 +43,7 @@ internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") p
             if (fnr.fnr != it.metadata[FNR]) {
                 throw JwtTokenUnauthorizedException("Dokumentet med id $uuid er ikke eid av ${fnr.fnr}")
             }
-            it.also { log.trace("Lest dokument med uuid $uuid") }
+            it.also { log.trace("Lest dokument med uuid $uuid og content type  ${it.contentType}") }
         }
 
     override fun slettDokument(uuid: UUID, fnr: Fødselsnummer) =

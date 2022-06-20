@@ -107,7 +107,8 @@ class JoarkRouter(private val joark: JoarkClient,
 
     private fun Blob.asDokument(tittel: String) =
         Dokument(tittel = tittel,
-                dokumentVariant = DokumentVariant(of(contentType), getEncoder().encodeToString(getContent())))
+                dokumentVariant = DokumentVariant(of(contentType),
+                        getEncoder().encodeToString(getContent()))).also { log.trace("Blok konvertert er $it") }
 
     private fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         Journalpost(dokumenter = dokumenterFra(søknad, pdfVariant),
