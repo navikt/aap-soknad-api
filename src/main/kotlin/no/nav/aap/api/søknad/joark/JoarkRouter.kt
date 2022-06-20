@@ -80,9 +80,9 @@ class JoarkRouter(private val joark: JoarkClient,
 
     private fun dokumentFra(a: VedleggAware?, fnr: Fødselsnummer) =
         a?.let { v ->
-            log.info("Leser vedlegg for $v")
+            log.trace("Leser vedlegg for $v")
             v.vedlegg?.let { uuid ->
-                log.info("Leser dikument for $uuid")
+                log.trace("Leser dokument for $uuid")
                 lager.lesDokument(fnr, uuid)?.asDokument(v.tittel)
                     .also { doc -> log.trace("Dokument fra $a er $doc") }
             }
@@ -108,7 +108,7 @@ class JoarkRouter(private val joark: JoarkClient,
         }
 
     private fun Blob.asDokument(tittel: String): Dokument {
-        log.info("Blob as document $this")
+        log.trace("Blob as document $this")
         return Dokument(tittel = tittel,
                 dokumentVariant = DokumentVariant(of(contentType),
                         getEncoder().encodeToString(getContent()))).also { log.trace("Blok konvertert er $it") }
