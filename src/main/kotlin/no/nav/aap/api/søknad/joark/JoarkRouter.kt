@@ -33,14 +33,14 @@ class JoarkRouter(private val joark: JoarkClient,
     private val log = LoggerUtil.getLogger(javaClass)
     fun route(søknad: StandardSøknad, søker: Søker) =
         with(pdf.generate(søker, søknad)) {
-            Pair(lagreKvittering(this, søker.fødselsnummer),
+            Pair(lagreKvittering(this, søker.fnr),
                     joark.journalfør(journalpostFra(søknad, søker, asPDFVariant()))
                         ?: throw IntegrationException("Kunne ikke journalføre søknad"))
-        }.also { slettVedlegg(søknad, søker.fødselsnummer) }
+        }.also { slettVedlegg(søknad, søker.fnr) }
 
     fun route(søknad: UtlandSøknad, søker: Søker) =
         with(pdf.generate(søker, søknad)) {
-            Pair(lagreKvittering(this, søker.fødselsnummer),
+            Pair(lagreKvittering(this, søker.fnr),
                     joark.journalfør(journalpostFra(søknad, søker, asPDFVariant()))
                         ?: throw IntegrationException("Kunne ikke journalføre søknad"))
         }
@@ -51,21 +51,22 @@ class JoarkRouter(private val joark: JoarkClient,
     private fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         Journalpost(dokumenter = dokumenterFra(søknad, søker, pdfVariant),
                 tittel = STANDARD.tittel,
-                avsenderMottaker = AvsenderMottaker(søker.fødselsnummer,
+                avsenderMottaker = AvsenderMottaker(søker.fnr,
                         navn = søker.navn.navn),
-                bruker = Bruker(søker.fødselsnummer))
+                bruker = Bruker(søker.fnr))
             .also { log.trace("Journalpost er $it") }
 
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
-        with(søknad) outer@{
+        with(søknad) {
             with(søker) {
-                (listOfNotNull(dokumentFra(this@outer, pdfVariant),
-                        dokumentFra(utbetalinger?.ekstraUtbetaling, fødselsnummer),
-                        dokumentFra(utbetalinger?.ekstraFraArbeidsgiver, fødselsnummer),
-                        dokumentFra(studier, fødselsnummer))
-                        + dokumenterFra(andreVedlegg, fødselsnummer)
-                        + dokumenterFra(utbetalinger?.andreStønader, fødselsnummer)
-                        + dokumenterFra(andreBarn, fødselsnummer)).also {
+                (listOfNotNull(dokumentFra(søknad, pdfVariant),
+                        dokumentFra(utbetalinger?.ekstraUtbetaling, fnr),
+                        dokumentFra(utbetalinger?.ekstraFraArbeidsgiver, fnr),
+                        dokumentFra(studier, fnr))
+                        + dokumentFra(studier, fnr)
+                        + dokumenterFra(andreVedlegg, fnr)
+                        + dokumenterFra(utbetalinger?.andreStønader, fnr)
+                        + dokumenterFra(andreBarn, fnr)).also {
                     log.trace("${it.size} dokument(er) til JOARK:  $it")
                 }
             }
@@ -112,9 +113,9 @@ class JoarkRouter(private val joark: JoarkClient,
     private fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         Journalpost(dokumenter = dokumenterFra(søknad, pdfVariant),
                 tittel = UTLAND.tittel,
-                avsenderMottaker = AvsenderMottaker(søker.fødselsnummer,
+                avsenderMottaker = AvsenderMottaker(søker.fnr,
                         navn = søker.navn.navn),
-                bruker = Bruker(søker.fødselsnummer))
+                bruker = Bruker(søker.fnr))
             .also { log.trace("Journalpost er $it") }
 
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =

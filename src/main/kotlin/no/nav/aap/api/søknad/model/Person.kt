@@ -6,7 +6,7 @@ import no.nav.aap.api.felles.Navn
 import java.time.LocalDate
 
 data class Søker(val navn: Navn,
-                 val fødselsnummer: Fødselsnummer,
+                 val fnr: Fødselsnummer,
                  val adresse: Adresse?,
                  val fødseldato: LocalDate?,
                  val barn: List<Barn?>? = null) {

@@ -24,7 +24,7 @@ class UtlandSøknadVLRouter(private val router: KafkaOperations<String, UtlandS�
                            @Value("#{'\${utenlands.topic:aap.utland-soknad-sendt.v1}'}") private val søknadTopic: String) {
 
     fun route(søknad: UtlandSøknad, søker: Søker, dokumenter: JoarkResponse) =
-        router.send(ProducerRecord(søknadTopic, søker.fødselsnummer.fnr, søknad)
+        router.send(ProducerRecord(søknadTopic, søker.fnr.fnr, søknad)
             .apply {
                 headers().add(NAV_CALL_ID, callId().toByteArray())
             })
