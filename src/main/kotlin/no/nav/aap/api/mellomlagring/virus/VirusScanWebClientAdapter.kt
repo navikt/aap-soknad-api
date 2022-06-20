@@ -51,7 +51,7 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
     }
 }
 
-class AttachmentException(msg: String?) : RuntimeException(msg)
+class AttachmentException(msg: String?, cause: Exception? = null) : RuntimeException(msg, cause)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ScanResult(val result: Result) {
