@@ -48,26 +48,23 @@ internal object ImageScaler {
             return image
         }
         var rotatedImage = BufferedImage(image.height, image.width, image.type)
-        val transform = AffineTransform()
-        transform.rotate(Math.toRadians(90.0), (image.height / 2f).toDouble(), (image.height / 2f).toDouble())
-        val op = AffineTransformOp(transform, TYPE_BILINEAR)
-        return op.filter(image, rotatedImage)
-        //return rotatedImage
+        return with(AffineTransform()) {
+            this.rotate(Math.toRadians(90.0), (image.height / 2f).toDouble(), (image.height / 2f).toDouble())
+            AffineTransformOp(this, TYPE_BILINEAR).filter(image, rotatedImage)
+        }
     }
 
     private fun getScaledDimension(imgSize: Dimension, a4: Dimension): Dimension {
         val originalWidth = imgSize.width
         val originalHeight = imgSize.height
-        val a4Width = a4.width
-        val a4Height = a4.height
         var newWidth = originalWidth
         var newHeight = originalHeight
-        if (originalWidth > a4Width) {
-            newWidth = a4Width
+        if (originalWidth > a4.width) {
+            newWidth = a4.width
             newHeight = newWidth * originalHeight / originalWidth
         }
-        if (newHeight > a4Height) {
-            newHeight = a4Height
+        if (newHeight > a4.height) {
+            newHeight = a4.height
             newWidth = newHeight * originalWidth / originalHeight
         }
         return Dimension(newWidth, newHeight)
@@ -78,17 +75,17 @@ internal object ImageScaler {
         val newHeight = newDim.getHeight().toInt()
         val tempImg = origImage.getScaledInstance(newWidth, newHeight, SCALE_SMOOTH)
         val scaledImg = BufferedImage(newWidth, newHeight, TYPE_3BYTE_BGR)
-        val g = scaledImg.graphics as Graphics2D
-        g.drawImage(tempImg, 0, 0, null)
-        g.dispose()
+        (scaledImg.graphics as Graphics2D).apply {
+            drawImage(tempImg, 0, 0, null)
+            dispose()
+        }
         return scaledImg
     }
 
     @Throws(IOException::class)
-    private fun toBytes(img: BufferedImage, format: String): ByteArray {
-        ByteArrayOutputStream().use { baos ->
-            ImageIO.write(img, format, baos)
-            return baos.toByteArray()
+    private fun toBytes(img: BufferedImage, format: String) =
+        with(ByteArrayOutputStream()) {
+            ImageIO.write(img, format, this)
+            this.toByteArray()
         }
-    }
 }

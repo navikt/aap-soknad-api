@@ -1,9 +1,9 @@
 package no.nav.aap.api.joark.pdf
 
-import junit.framework.TestCase.assertTrue
 import no.nav.aap.api.søknad.joark.pdf.ImageScaler.downToA4
 import org.apache.tika.Tika
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
