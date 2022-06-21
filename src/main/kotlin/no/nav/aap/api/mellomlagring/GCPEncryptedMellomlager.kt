@@ -8,7 +8,6 @@ import com.google.cloud.storage.Storage.BlobGetOption.fields
 import com.google.crypto.tink.Aead
 import com.google.crypto.tink.KeyTemplates.get
 import com.google.crypto.tink.KeysetHandle.generateNew
-import com.google.crypto.tink.aead.AeadConfig
 import com.google.crypto.tink.aead.KmsEnvelopeAeadKeyManager.createKeyTemplate
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
@@ -24,13 +23,10 @@ internal class GCPEncryptedMellomlager(@Value("\${mellomlagring.bucket:aap-mello
                                        @Value("\${mellomlagring.bucket.kekuri:gcp-kms://projects/aap-dev-e48b/locations/europe-north1/keyRings/aap-mellomlagring-kms/cryptoKeys/mellomlagring}") private
                                        val kekUri: String,
                                        private val lager: Storage) : Mellomlager {
-    init {
-        AeadConfig.register();
-    }
+    val log = LoggerUtil.getLogger(javaClass)
 
     val aead = generateNew(createKeyTemplate(kekUri, get("AES128_GCM"))).getPrimitive(Aead::class.java)
 
-    val log = LoggerUtil.getLogger(javaClass)
     override fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
         lager.create(newBuilder(of(bøtte, key(fnr, type)))
             .setContentType(APPLICATION_JSON_VALUE).build(),
