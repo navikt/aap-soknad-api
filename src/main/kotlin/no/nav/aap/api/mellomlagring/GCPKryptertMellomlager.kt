@@ -13,7 +13,7 @@ import com.google.crypto.tink.aead.KmsEnvelopeAeadKeyManager.createKeyTemplate
 import com.google.crypto.tink.integration.gcpkms.GcpKmsClient
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Value
@@ -24,11 +24,11 @@ import java.util.*
 
 @ConditionalOnGCP
 @Primary
-internal class GCPEncryptedMellomlager(@Value("\${mellomlagring.bucket:aap-mellomlagring}") private val bøtte: String,
-                                       @Value("\${mellomlagring.bucket.kekuri:gcp-kms://projects/aap-dev-e48b/locations/europe-north1/keyRings/aap-mellomlagring-kms/cryptoKeys/mellomlagring}") private
-                                       val kekUri: String,
-                                       private val lager: Storage) : Mellomlager {
-    val log = LoggerUtil.getLogger(javaClass)
+internal class GCPKryptertMellomlager(@Value("\${mellomlagring.bucket:aap-mellomlagring}") private val bøtte: String,
+                                      @Value("\${mellomlagring.bucket.kekuri:gcp-kms://projects/aap-dev-e48b/locations/europe-north1/keyRings/aap-mellomlagring-kms/cryptoKeys/mellomlagring}") private
+                                      val kekUri: String,
+                                      private val lager: Storage) : Mellomlager {
+    val log = getLogger(javaClass)
 
     init {
         AeadConfig.register();
