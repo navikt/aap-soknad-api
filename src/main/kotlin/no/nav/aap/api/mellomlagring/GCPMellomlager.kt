@@ -13,12 +13,10 @@ import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Primary
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.nio.charset.StandardCharsets.UTF_8
 
 @ConditionalOnGCP
-@Primary
 internal class GCPMellomlager(@Value("\${mellomlagring.bucket:aap-mellomlagring}") private val bøtte: String,
                               private val lager: Storage) : Mellomlager {
 

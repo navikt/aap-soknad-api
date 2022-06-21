@@ -17,11 +17,13 @@ import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Primary
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.nio.charset.StandardCharsets.UTF_8
 import java.util.*
 
 @ConditionalOnGCP
+@Primary
 internal class GCPEncryptedMellomlager(@Value("\${mellomlagring.bucket:aap-mellomlagring}") private val bøtte: String,
                                        @Value("\${mellomlagring.bucket.kekuri:gcp-kms://projects/aap-dev-e48b/locations/europe-north1/keyRings/aap-mellomlagring-kms/cryptoKeys/mellomlagring}") private
                                        val kekUri: String,
