@@ -20,7 +20,7 @@ import no.nav.aap.joark.DokumentVariant
 import no.nav.aap.joark.Filtype.PDFA
 import no.nav.aap.joark.Journalpost
 import no.nav.aap.joark.asPDFVariant
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
@@ -34,7 +34,7 @@ class JoarkRouter(private val joark: JoarkClient,
                   private val pdfConverter: Image2PDFConverter,
                   private val mapper: ObjectMapper) {
 
-    private val log = LoggerUtil.getLogger(javaClass)
+    private val log = getLogger(javaClass)
     fun route(søknad: StandardSøknad, søker: Søker) =
         with(pdf.generate(søker, søknad)) {
             Pair(lagreKvittering(this, søker.fnr),
@@ -62,7 +62,7 @@ class JoarkRouter(private val joark: JoarkClient,
 
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         with(søknad) {
-            mutableListOf(dokumentFra(søknad, pdfVariant),
+            mutableListOf(dokumentFra(this, pdfVariant),
                     dokumentFra(utbetalinger?.ekstraUtbetaling, søker.fnr),
                     dokumentFra(utbetalinger?.ekstraFraArbeidsgiver, søker.fnr),
                     dokumentFra(studier, søker.fnr)).apply {

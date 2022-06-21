@@ -24,4 +24,5 @@ class GCPBucketsBeanConfig {
         .setRetrySettings(retrySettings)
         .build()
         .service
+
 }
