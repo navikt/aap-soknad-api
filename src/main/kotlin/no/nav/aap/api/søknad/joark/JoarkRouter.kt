@@ -69,7 +69,7 @@ class JoarkRouter(private val joark: JoarkClient,
                 addAll(dokumenterFra(andreVedlegg, søker.fnr))
                 addAll(dokumenterFra(utbetalinger?.andreStønader, søker.fnr))
                 addAll(dokumenterFra(andreBarn, søker.fnr))
-            }.also { log.trace("${it.size} dokumenter til JOARK  $it") }
+            }.filterNotNull().also { log.trace("${it.size} dokumenter til JOARK  $it") }
 
         }
 
