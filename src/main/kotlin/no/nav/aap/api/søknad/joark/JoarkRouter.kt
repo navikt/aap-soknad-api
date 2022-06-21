@@ -62,17 +62,15 @@ class JoarkRouter(private val joark: JoarkClient,
 
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         with(søknad) {
-            with(søker) {
-                (listOfNotNull(dokumentFra(søknad, pdfVariant),
-                        dokumentFra(utbetalinger?.ekstraUtbetaling, fnr),
-                        dokumentFra(utbetalinger?.ekstraFraArbeidsgiver, fnr),
-                        dokumentFra(studier, fnr))
-                        + dokumenterFra(andreVedlegg, fnr)
-                        + dokumenterFra(utbetalinger?.andreStønader, fnr)
-                        + dokumenterFra(andreBarn, fnr)).also {
-                    log.trace("${it.size} dokument(er) til JOARK:  $it")
-                }
-            }
+            mutableListOf(dokumentFra(søknad, pdfVariant),
+                    dokumentFra(utbetalinger?.ekstraUtbetaling, søker.fnr),
+                    dokumentFra(utbetalinger?.ekstraFraArbeidsgiver, søker.fnr),
+                    dokumentFra(studier, søker.fnr)).apply {
+                addAll(dokumenterFra(andreVedlegg, søker.fnr))
+                addAll(dokumenterFra(utbetalinger?.andreStønader, søker.fnr))
+                addAll(dokumenterFra(andreBarn, søker.fnr))
+            }.also { log.trace("${it.size} dokumenter til JOARK  $it") }
+
         }
 
     private fun dokumentFra(søknad: StandardSøknad,
