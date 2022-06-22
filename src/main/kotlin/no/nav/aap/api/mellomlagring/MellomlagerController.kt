@@ -7,8 +7,7 @@ import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.HttpStatus.CREATED
-import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.noContent
+import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -33,13 +32,7 @@ internal class MellomlagerController(private val lager: Mellomlager,
         lager.les(ctx.getFnr(), type)?.let { ok(it) } ?: notFound().build()
 
     @DeleteMapping("/slett/{type}")
-    fun slett(@PathVariable type: SkjemaType): ResponseEntity<Void> {
-        return if (lager.slett(ctx.getFnr(), type)) {
-            dittnav.fjernOgAvsluttMellomlagring()
-            noContent().build()
-        }
-        else {
-            notFound().build()
-        }
-    }
+    @ResponseStatus(NO_CONTENT)
+    fun slett(@PathVariable type: SkjemaType) =
+        lager.slett(ctx.getFnr(), type).also { dittnav.fjernOgAvsluttMellomlagring() }
 }
