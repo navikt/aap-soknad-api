@@ -10,10 +10,9 @@ import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.MediaType.parseMediaType
-import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -28,7 +27,7 @@ import java.util.*
 @ProtectedRestController(value = [BASEPATH], issuer = IDPORTEN)
 internal class DokumentlagerController(private val lager: Dokumentlager, private val ctx: AuthContext) {
 
-    @PostMapping(value = ["/lagre"], consumes = [MULTIPART_FORM_DATA_VALUE])
+    @PostMapping("/lagre", consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
     fun lagreDokument(@RequestPart("vedlegg") vedlegg: MultipartFile) =
         lager.lagreDokument(ctx.getFnr(), vedlegg.bytes, vedlegg.contentType, vedlegg.originalFilename)
@@ -48,8 +47,9 @@ internal class DokumentlagerController(private val lager: Dokumentlager, private
             } ?: notFound().build()
 
     @DeleteMapping("/slett/{uuid}")
-    fun slettDokument(@PathVariable uuid: UUID): ResponseEntity<Void> =
-        if (lager.slettDokument(uuid, ctx.getFnr())) noContent().build() else notFound().build()
+    @ResponseStatus(NO_CONTENT)
+    fun slettDokument(@PathVariable uuid: UUID) =
+        lager.slettDokument(uuid, ctx.getFnr())
 
     companion object {
         const val BASEPATH = "vedlegg"

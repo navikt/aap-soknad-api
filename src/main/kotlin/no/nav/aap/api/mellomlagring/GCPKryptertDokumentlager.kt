@@ -6,6 +6,7 @@ import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobField.CONTENT_TYPE
 import com.google.cloud.storage.Storage.BlobField.METADATA
 import com.google.cloud.storage.Storage.BlobGetOption.fields
+import com.google.crypto.tink.Aead
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FNR
@@ -16,17 +17,16 @@ import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.apache.tika.Tika
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 import java.util.*
 import java.util.UUID.randomUUID
 
 @ConditionalOnGCP
-@Primary
-internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøtte: String,
-                                private val lager: Storage,
-                                private val scanner: VirusScanner,
-                                private val typeSjekker: TypeSjekker) : Dokumentlager {
+internal class GCPKryptertDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøtte: String,
+                                        private val lager: Storage,
+                                        private val scanner: VirusScanner,
+                                        private val typeSjekker: TypeSjekker,
+                                        private val aead: Aead) : Dokumentlager {
 
     val log = LoggerUtil.getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =

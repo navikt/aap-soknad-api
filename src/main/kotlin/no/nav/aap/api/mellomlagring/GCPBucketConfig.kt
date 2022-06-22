@@ -6,4 +6,4 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 
 @ConfigurationProperties("mellomlagring")
 @ConstructorBinding
-class MellomlagringConfig(@DefaultValue("aap-mellomlagring") val bucket: String, val kekuri: String)
+class GCPBucketConfig(@DefaultValue("aap-mellomlagring") val bucket: String, val kekuri: String)
