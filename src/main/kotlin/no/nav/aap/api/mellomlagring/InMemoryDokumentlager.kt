@@ -4,7 +4,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import java.util.*
 
-@ConditionalOnMissingBean(GCPMellomlager::class)
+@ConditionalOnMissingBean(GCPKryptertMellomlager::class)
 class InMemoryDokumentlager : Dokumentlager {
     private val store = mutableMapOf<String, String>()
 
