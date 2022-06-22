@@ -20,6 +20,7 @@ import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
+import org.springframework.http.MediaType.TEXT_PLAIN_VALUE
 import org.springframework.http.MediaType.parseMediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
@@ -54,8 +55,8 @@ internal class DevController(private val dokumentLager: Dokumentlager,
     fun slettMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer): ResponseEntity<Void> =
         if (mellomlager.slett(fnr, type)) noContent().build() else notFound().build()
 
-    @GetMapping("mellomlager/{type}/{fnr}")
-    fun lesmMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer) =
+    @GetMapping(name = "mellomlager/{type}/{fnr}", produces = [TEXT_PLAIN_VALUE])
+    fun lesMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer) =
         mellomlager.les(fnr, type)?.let { ok(it) } ?: notFound().build()
 
     @PostMapping("mellomlager/{type}/{fnr}")
