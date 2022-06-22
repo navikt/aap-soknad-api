@@ -104,7 +104,7 @@ class JoarkRouter(private val joark: JoarkClient,
 
     private fun slett(a: VedleggAware?, fnr: Fødselsnummer) =
         a?.vedlegg?.let { uuid ->
-            lager.slettDokument(uuid, fnr).also { log.info("Slettet dokument $uuid ($it)") }
+            lager.slettDokument(uuid, fnr).also { log.info("Slettet dokument $uuid") }
         }
 
     private fun Blob.asDokument(tittel: String) =

@@ -32,6 +32,7 @@ internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
     private val log = getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =
         randomUUID().apply {
+            log.trace("Lagrer $originalFilename kryptert med uuid $this og contentType $contentType")
             typeSjekker.sjekkType(bytes, contentType, originalFilename)
             scanner.scan(bytes, originalFilename)
             lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this)))
