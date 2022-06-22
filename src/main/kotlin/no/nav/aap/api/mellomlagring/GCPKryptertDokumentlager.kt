@@ -12,7 +12,7 @@ import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FNR
 import no.nav.aap.api.mellomlagring.virus.AttachmentException
 import no.nav.aap.api.mellomlagring.virus.VirusScanner
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.apache.tika.Tika
@@ -28,7 +28,7 @@ internal class GCPKryptertDokumentlager(@Value("\${mellomlagring.bucket:aap-vedl
                                         private val typeSjekker: TypeSjekker,
                                         private val aead: Aead) : Dokumentlager {
 
-    val log = LoggerUtil.getLogger(javaClass)
+    private val log = getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =
         randomUUID().apply {
             typeSjekker.sjekkType(bytes, contentType, originalFilename)
