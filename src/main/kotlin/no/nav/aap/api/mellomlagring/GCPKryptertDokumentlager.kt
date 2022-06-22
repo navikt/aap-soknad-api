@@ -15,14 +15,12 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.apache.tika.Tika
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets.UTF_8
 import java.util.*
 import java.util.UUID.randomUUID
 
 @ConditionalOnGCP
-@Primary
 internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
                                         private val lager: Storage,
                                         private val scanner: VirusScanner,

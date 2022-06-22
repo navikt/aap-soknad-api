@@ -16,11 +16,13 @@ import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.apache.tika.Tika
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 import java.util.*
 import java.util.UUID.randomUUID
 
 @ConditionalOnGCP
+@Primary
 internal class GCPDokumentlager(@Value("\${mellomlagring.bucket:aap-vedlegg}") private val bøtte: String,
                                 private val lager: Storage,
                                 private val scanner: VirusScanner,
