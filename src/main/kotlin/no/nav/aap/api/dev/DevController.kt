@@ -19,6 +19,7 @@ import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.MediaType.TEXT_PLAIN_VALUE
 import org.springframework.http.MediaType.parseMediaType
@@ -64,7 +65,7 @@ internal class DevController(private val dokumentLager: Dokumentlager,
     fun mellomlagre(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer, @RequestBody data: String) =
         mellomlager.lagre(fnr, type, data)
 
-    @PostMapping(value = ["vedlegg/lagre/{fnr}"], consumes = [MULTIPART_FORM_DATA_VALUE])
+    @PostMapping("vedlegg/lagre/{fnr}", consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
     fun lagreDokument(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") v: MultipartFile) =
         dokumentLager.lagreDokument(fnr, v.bytes, v.contentType, v.originalFilename)
@@ -88,6 +89,7 @@ internal class DevController(private val dokumentLager: Dokumentlager,
             } ?: notFound().build()
 
     @DeleteMapping("vedlegg/slett/{fnr}/{uuid}")
-    fun slettDokument(@PathVariable fnr: Fødselsnummer, @PathVariable uuid: UUID): ResponseEntity<Void> =
-        if (dokumentLager.slettDokument(uuid, fnr)) noContent().build() else notFound().build()
+    @ResponseStatus(NO_CONTENT)
+    fun slettDokument(@PathVariable fnr: Fødselsnummer, @PathVariable uuid: UUID) =
+        dokumentLager.slettDokument(uuid, fnr)
 }
