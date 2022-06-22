@@ -19,19 +19,19 @@ internal class GCPKryptertMellomlager(private val config: GCPBucketConfig,
     val log = getLogger(javaClass)
 
     override fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
-        lager.create(newBuilder(of(config.bucket, key(fnr, type)))
+        lager.create(newBuilder(of(config.mellomlagring, key(fnr, type)))
             .setContentType(APPLICATION_JSON_VALUE).build(),
                 aead.encrypt(value.toByteArray(UTF_8), fnr.fnr.toByteArray(UTF_8)))
             .blobId.toGsUtilUri()
             .also { log.trace(CONFIDENTIAL, "Lagret $value kryptert for $fnr") }
 
     override fun les(fnr: Fødselsnummer, type: SkjemaType) =
-        lager.get(config.bucket, key(fnr, type))?.let {
+        lager.get(config.mellomlagring, key(fnr, type))?.let {
             String(aead.decrypt(it.getContent(), fnr.fnr.toByteArray(UTF_8))).also {
                 log.trace(CONFIDENTIAL, "Lest $it for $fnr")
             }
         }
 
     override fun slett(fnr: Fødselsnummer, type: SkjemaType) =
-        lager.delete(of(config.bucket, key(fnr, type)))
+        lager.delete(of(config.mellomlagring, key(fnr, type)))
 }
