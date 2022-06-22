@@ -55,11 +55,11 @@ internal class DevController(private val dokumentLager: Dokumentlager,
     fun slettMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer): ResponseEntity<Void> =
         if (mellomlager.slett(fnr, type)) noContent().build() else notFound().build()
 
-    @GetMapping(name = "mellomlager/{type}/{fnr}", produces = [TEXT_PLAIN_VALUE])
+    @GetMapping("mellomlager/{type}/{fnr}")
     fun lesMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer) =
         mellomlager.les(fnr, type)?.let { ok(it) } ?: notFound().build()
 
-    @PostMapping("mellomlager/{type}/{fnr}")
+    @PostMapping("mellomlager/{type}/{fnr}", produces = [TEXT_PLAIN_VALUE])
     @ResponseStatus(CREATED)
     fun mellomlagre(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer, @RequestBody data: String) =
         mellomlager.lagre(fnr, type, data)
