@@ -27,6 +27,8 @@ arbeidsforhold:
 organisasjon:
     base-uri: https://ereg-services-q1.dev-fss-pub.nais.io
     enabled: false
-mellomlagring:
+buckets:
+    vedlegg: aap-vedlegg
+    mellomlagring: aap-mellomlagring
     kekuri: gcp-kms://projects/${gcp.team.project.id}/locations/europe-north1/keyRings/aap-mellomlagring-kms/cryptoKeys/mellomlagring
 debug: false
