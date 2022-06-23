@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.joark.pdf
 
 import no.nav.aap.api.søknad.joark.pdf.ImageScaler.downToA4
-import no.nav.aap.api.søknad.virus.AttachmentException
+import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
@@ -32,8 +32,8 @@ class Image2PDFConverter {
         }
         catch (e: Exception) {
             when (e) {
-                is AttachmentException -> throw e
-                else -> throw AttachmentException("Kunne ikke konvertere vedlegg $res", e)
+                is DokumentException -> throw e
+                else -> throw DokumentException("Kunne ikke konvertere vedlegg $res", e)
             }
         }
     }
@@ -46,9 +46,9 @@ class Image2PDFConverter {
             when (it) {
                 APPLICATION_PDF -> bytes
                 IMAGE_JPEG, IMAGE_PNG -> embed(it.subtype, bytes)
-                else -> throw AttachmentException("Media type $it er ikke støttet")
+                else -> throw DokumentException("Media type $it er ikke støttet")
             }
-        } ?: throw AttachmentException("Kunne ikke bestemme media type")
+        } ?: throw DokumentException("Kunne ikke bestemme media type")
 
     private fun embed(imgType: String, vararg images: ByteArray): ByteArray =
         embed(images.toList(), imgType)
@@ -64,7 +64,7 @@ class Image2PDFConverter {
             }
         }
         catch (e: Exception) {
-            throw AttachmentException("Konvertering av vedlegg feilet", e)
+            throw DokumentException("Konvertering av vedlegg feilet", e)
         }
 
     private fun addPDFPageFromImage(doc: PDDocument, orig: ByteArray, fmt: String) {
@@ -76,7 +76,7 @@ class Image2PDFConverter {
             }
         }
         catch (e: Exception) {
-            throw AttachmentException("Konvertering av vedlegg feilet", e)
+            throw DokumentException("Konvertering av vedlegg feilet", e)
         }
     }
 

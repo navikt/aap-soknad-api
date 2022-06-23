@@ -2,7 +2,7 @@ package no.nav.aap.api.error
 
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.søknad.virus.AttachmentException
+import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
 import no.nav.aap.util.LoggerUtil
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
@@ -30,8 +30,8 @@ class AAPApiExceptionHandler : ProblemHandling {
     fun handleIntegrationException(e: IntegrationException, req: NativeWebRequest): ResponseEntity<Problem> =
         create(UNPROCESSABLE_ENTITY, e, req).also { log.trace(UNPROCESSABLE_ENTITY.name, e) }
 
-    @ExceptionHandler(AttachmentException::class)
-    fun handleVirus(e: AttachmentException, req: NativeWebRequest): ResponseEntity<Problem> =
+    @ExceptionHandler(DokumentException::class)
+    fun handleDokumentException(e: DokumentException, req: NativeWebRequest): ResponseEntity<Problem> =
         create(UNPROCESSABLE_ENTITY, e, req).also { log.trace(UNPROCESSABLE_ENTITY.name, e) }
 
     @ExceptionHandler(StorageException::class)

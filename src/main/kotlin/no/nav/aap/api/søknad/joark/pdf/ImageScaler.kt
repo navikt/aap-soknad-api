@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad.joark.pdf
 
-import no.nav.aap.api.søknad.virus.AttachmentException
+import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
 import org.apache.pdfbox.pdmodel.common.PDRectangle.A4
 import org.slf4j.LoggerFactory
 import java.awt.Dimension
@@ -35,7 +35,7 @@ internal object ImageScaler {
             }
         }
         catch (ex: IOException) {
-            throw AttachmentException("Konvertering av vedlegg feilet", ex)
+            throw DokumentException("Konvertering av vedlegg feilet", ex)
         }
     }
 
