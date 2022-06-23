@@ -9,8 +9,8 @@ import com.google.cloud.storage.Storage.BlobGetOption.fields
 import com.google.crypto.tink.Aead
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig
+import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
-import no.nav.aap.api.søknad.virus.AttachmentException
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.springframework.context.annotation.Primary
@@ -53,12 +53,14 @@ internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
         lager.delete(of(cfg.vedlegg, key(fnr, uuid)))
 
     @Component
-    internal class TypeSjekker(private val cfg: GCPBucketConfig) : DokumentSjekker {
+    internal class ContentTypeSjekker(private val cfg: GCPBucketConfig) : DokumentSjekker {
 
         override fun sjekk(dokument: DokumentInfo) =
-            if (!cfg.typer.contains(dokument.contentType)) {
-                throw AttachmentException("Type ${dokument.contentType} for ${dokument.filnavn} er ikke blant ${cfg.typer}")
+            with(dokument) {
+                if (!cfg.typer.contains(contentType)) {
+                    throw DokumentException("Type $contentType for $filnavn er ikke blant ${cfg.typer}")
+                }
             }
-            else Unit
+
     }
 }

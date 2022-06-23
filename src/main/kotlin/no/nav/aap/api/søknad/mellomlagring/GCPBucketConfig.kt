@@ -16,4 +16,7 @@ class GCPBucketConfig(@DefaultValue("aap-mellomlagring") val mellomlagring: Stri
     companion object {
         const val BUCKETS = "buckets"
     }
+
+    class DokumentException(msg: String?, cause: Exception? = null) : RuntimeException(msg, cause)
+
 }

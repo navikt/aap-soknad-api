@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.virus
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
 import no.nav.aap.api.søknad.virus.ScanResult.Companion.FEIL
 import no.nav.aap.api.søknad.virus.ScanResult.Result.FOUND
 import no.nav.aap.api.søknad.virus.ScanResult.Result.NONE
@@ -18,7 +19,7 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
     AbstractWebClientAdapter(client, cf) {
     override fun ping() =
         when (harVirus(PDF).result) {
-            NONE -> throw AttachmentException("Uventet ping respons ${NONE.name}")
+            NONE -> throw DokumentException("Uventet ping respons ${NONE.name}")
             FOUND, OK -> Unit
         }
 
@@ -50,8 +51,6 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
         private val PDF = byteArrayOf(0x25, 0x50, 0x44, 0x46, 0x2D)
     }
 }
-
-class AttachmentException(msg: String?, cause: Exception? = null) : RuntimeException(msg, cause)
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ScanResult(val result: Result) {
