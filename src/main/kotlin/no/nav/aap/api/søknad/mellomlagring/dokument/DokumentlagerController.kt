@@ -1,8 +1,8 @@
-package no.nav.aap.api.mellomlagring
+package no.nav.aap.api.søknad.mellomlagring.dokument
 
-import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FILNAVN
-import no.nav.aap.api.mellomlagring.DokumentlagerController.Companion.BASEPATH
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
+import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentlagerController.Companion.BASEPATH
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController

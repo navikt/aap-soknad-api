@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.joark.pdf
 
-import no.nav.aap.api.mellomlagring.virus.AttachmentException
 import no.nav.aap.api.søknad.joark.pdf.ImageScaler.downToA4
+import no.nav.aap.api.søknad.virus.AttachmentException
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage

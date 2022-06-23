@@ -1,8 +1,8 @@
-package no.nav.aap.api.mellomlagring.virus
+package no.nav.aap.api.søknad.virus
 
-import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.FOUND
-import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.NONE
-import no.nav.aap.api.mellomlagring.virus.ScanResult.Result.OK
+import no.nav.aap.api.søknad.virus.ScanResult.Result.FOUND
+import no.nav.aap.api.søknad.virus.ScanResult.Result.NONE
+import no.nav.aap.api.søknad.virus.ScanResult.Result.OK
 import org.springframework.stereotype.Component
 
 @Component

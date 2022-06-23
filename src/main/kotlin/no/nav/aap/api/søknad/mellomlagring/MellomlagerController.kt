@@ -1,4 +1,4 @@
-package no.nav.aap.api.mellomlagring
+package no.nav.aap.api.søknad.mellomlagring
 
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr

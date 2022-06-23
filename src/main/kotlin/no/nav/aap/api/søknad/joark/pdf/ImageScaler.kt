@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad.joark.pdf
 
-import no.nav.aap.api.mellomlagring.virus.AttachmentException
+import no.nav.aap.api.søknad.virus.AttachmentException
 import org.apache.pdfbox.pdmodel.common.PDRectangle.A4
 import org.slf4j.LoggerFactory
 import java.awt.Dimension

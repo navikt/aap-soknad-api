@@ -1,4 +1,4 @@
-package no.nav.aap.api.mellomlagring
+package no.nav.aap.api.søknad.mellomlagring
 
 import com.google.cloud.storage.BlobId.of
 import com.google.cloud.storage.BlobInfo.newBuilder

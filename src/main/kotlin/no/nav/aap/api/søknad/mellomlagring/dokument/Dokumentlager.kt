@@ -1,4 +1,4 @@
-package no.nav.aap.api.mellomlagring
+package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import com.google.cloud.storage.Blob
 import no.nav.aap.api.felles.Fødselsnummer

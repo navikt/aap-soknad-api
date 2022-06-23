@@ -1,8 +1,8 @@
 package no.nav.aap.api.joark.pdf
 
 import junit.framework.TestCase.assertEquals
-import no.nav.aap.api.mellomlagring.virus.AttachmentException
 import no.nav.aap.api.søknad.joark.pdf.Image2PDFConverter
+import no.nav.aap.api.søknad.virus.AttachmentException
 import org.apache.tika.Tika
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

@@ -1,6 +1,6 @@
-package no.nav.aap.api.mellomlagring.virus
+package no.nav.aap.api.søknad.virus
 
-import no.nav.aap.api.mellomlagring.virus.VirusScanConfig.Companion.VIRUS
+import no.nav.aap.api.søknad.virus.VirusScanConfig.Companion.VIRUS
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.beans.factory.annotation.Qualifier

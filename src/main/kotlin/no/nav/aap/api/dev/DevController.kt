@@ -5,10 +5,10 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.felles.SkjemaType
-import no.nav.aap.api.mellomlagring.Dokumentlager
-import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FILNAVN
-import no.nav.aap.api.mellomlagring.Dokumentlager.Companion.FNR
-import no.nav.aap.api.mellomlagring.Mellomlager
+import no.nav.aap.api.søknad.mellomlagring.Mellomlager
+import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
+import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
+import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.routing.standard.StandardSøknadVLRouter

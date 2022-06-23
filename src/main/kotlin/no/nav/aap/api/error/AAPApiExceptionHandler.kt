@@ -2,7 +2,7 @@ package no.nav.aap.api.error
 
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.mellomlagring.virus.AttachmentException
+import no.nav.aap.api.søknad.virus.AttachmentException
 import no.nav.aap.util.LoggerUtil
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
