@@ -55,7 +55,7 @@ internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
 
         override fun sjekk(dokument: DokumentInfo) =
             if (!cfg.typer.contains(dokument.contentType)) {
-                throw AttachmentException("Type ${dokument.contentType} er ikke blant ${cfg.typer} for ${dokument.filnavn}")
+                throw AttachmentException("Type ${dokument.contentType} for ${dokument.filnavn} er ikke blant ${cfg.typer}")
             }
             else Unit
     }
