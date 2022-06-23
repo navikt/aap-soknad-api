@@ -17,6 +17,6 @@ interface Dokumentlager {
 }
 
 data class DokumentInfo(val bytes: ByteArray, val contentType: String?, val filnavn: String?) {
-    override fun toString() = "${javaClass.simpleName} [filtype=$filnavn,contentType=$contentType,bytes=${bytes.size} bytes]" }
-
+    override fun toString() =
+        "${javaClass.simpleName} [filtype=$filnavn,contentType=$contentType,bytes=${bytes.size} bytes]"
 }
