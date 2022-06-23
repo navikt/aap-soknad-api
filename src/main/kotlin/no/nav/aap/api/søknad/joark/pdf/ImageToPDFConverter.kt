@@ -11,7 +11,6 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject.createFromByteArr
 import org.apache.tika.Tika
 import org.slf4j.Logger
 import org.springframework.core.io.ClassPathResource
-import org.springframework.core.io.Resource
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_PDF
 import org.springframework.http.MediaType.IMAGE_JPEG
@@ -19,27 +18,13 @@ import org.springframework.http.MediaType.IMAGE_PNG
 import org.springframework.stereotype.Component
 import org.springframework.util.FileCopyUtils.copyToByteArray
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 
 @Component
 class Image2PDFConverter {
 
     private val log: Logger = getLogger(javaClass)
 
-    fun convert(res: String): ByteArray {
-        return try {
-            convert(ClassPathResource(res))
-        }
-        catch (e: Exception) {
-            when (e) {
-                is DokumentException -> throw e
-                else -> throw DokumentException("Kunne ikke konvertere vedlegg $res", e)
-            }
-        }
-    }
-
-    @Throws(IOException::class)
-    fun convert(res: Resource): ByteArray = convert(copyToByteArray(res.inputStream))
+    fun convert(res: String): ByteArray = convert(copyToByteArray(ClassPathResource(res).inputStream))
 
     fun convert(bytes: ByteArray): ByteArray =
         mediaType(bytes)?.let {
