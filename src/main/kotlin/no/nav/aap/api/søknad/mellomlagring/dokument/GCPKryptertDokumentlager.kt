@@ -13,7 +13,6 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FIL
 import no.nav.aap.api.søknad.virus.AttachmentException
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
-import org.apache.tika.Tika
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
@@ -57,18 +56,9 @@ internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
                                private val contentTypes: Set<String>) : DokumentSjekker {
 
         override fun sjekk(dokument: DokumentInfo) =
-            with(TIKA.detect(dokument.bytes)) {
-                if (this != dokument.contentType) {
-                    throw AttachmentException("Type $this matcher ikke oppgitt ${dokument.contentType} for ${dokument.filnavn}")
-                }
-            }.also {
-                if (!contentTypes.contains(dokument.contentType)) {
-                    throw AttachmentException("Type ${dokument.contentType} er ikke blant $contentTypes for ${dokument.filnavn}")
-                }
+            if (!contentTypes.contains(dokument.contentType)) {
+                throw AttachmentException("Type ${dokument.contentType} er ikke blant $contentTypes for ${dokument.filnavn}")
             }
-    }
-
-    companion object {
-        private val TIKA = Tika()
+            else Unit
     }
 }

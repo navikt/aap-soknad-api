@@ -23,12 +23,12 @@ internal class GCPKryptertMellomlager(private val config: GCPBucketConfig,
             .setContentType(APPLICATION_JSON_VALUE).build(),
                 aead.encrypt(value.toByteArray(UTF_8), fnr.fnr.toByteArray(UTF_8)))
             .blobId.toGsUtilUri()
-            .also { log.trace(CONFIDENTIAL, "Lagret $value kryptert for $fnr") }
+            .also { log.trace(CONFIDENTIAL, "Lagret kryptert $value  for $fnr") }
 
     override fun les(fnr: Fødselsnummer, type: SkjemaType) =
         lager.get(config.mellomlagring, key(fnr, type))?.let {
             String(aead.decrypt(it.getContent(), fnr.fnr.toByteArray(UTF_8))).also {
-                log.trace(CONFIDENTIAL, "Lest $it for $fnr")
+                log.trace(CONFIDENTIAL, "Lest kryptert $it for $fnr")
             }
         }
 

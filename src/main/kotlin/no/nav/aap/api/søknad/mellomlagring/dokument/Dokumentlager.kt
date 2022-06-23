@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import no.nav.aap.api.felles.Fødselsnummer
+import org.apache.tika.Tika
 import java.util.*
 import java.util.Objects.hash
 
@@ -21,6 +22,15 @@ interface DokumentSjekker {
 }
 
 data class DokumentInfo(val bytes: ByteArray, val contentType: String?, val filnavn: String?) {
+
+    init {
+        require(TIKA.detect(bytes) == contentType)
+    }
+
+    companion object {
+        private val TIKA = Tika()
+    }
+
     override fun toString() =
         "${javaClass.simpleName} [filnavn=$filnavn,contentType=$contentType,størrelse=${bytes.size} bytes]"
 }
