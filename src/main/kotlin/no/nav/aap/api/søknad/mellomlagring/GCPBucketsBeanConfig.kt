@@ -3,10 +3,10 @@ package no.nav.aap.api.søknad.mellomlagring
 import com.google.api.gax.retrying.RetrySettings
 import com.google.cloud.storage.StorageOptions
 import com.google.crypto.tink.Aead
-import com.google.crypto.tink.KeyTemplates
-import com.google.crypto.tink.KeysetHandle
+import com.google.crypto.tink.KeyTemplates.get
+import com.google.crypto.tink.KeysetHandle.generateNew
 import com.google.crypto.tink.aead.AeadConfig
-import com.google.crypto.tink.aead.KmsEnvelopeAeadKeyManager
+import com.google.crypto.tink.aead.KmsEnvelopeAeadKeyManager.createKeyTemplate
 import com.google.crypto.tink.integration.gcpkms.GcpKmsClient
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.springframework.beans.factory.annotation.Value
@@ -20,13 +20,12 @@ import java.util.*
 class GCPBucketsBeanConfig(val cfg: GCPBucketConfig) {
 
     init {
-        AeadConfig.register();
-        GcpKmsClient.register(Optional.of(cfg.kekuri), Optional.empty());
+        AeadConfig.register()
+        GcpKmsClient.register(Optional.of(cfg.kekuri), Optional.empty())
     }
 
     @Bean
-    fun aead() = KeysetHandle.generateNew(KmsEnvelopeAeadKeyManager.createKeyTemplate(cfg.kekuri,
-            KeyTemplates.get("AES128_GCM"))).getPrimitive(Aead::class.java)
+    fun aead() = generateNew(createKeyTemplate(cfg.kekuri, get("AES128_GCM"))).getPrimitive(Aead::class.java)
 
     @Bean
     fun retrySettings(@Value("\${mellomlagring.timeout:3000}") timeoutMs: Long) =
