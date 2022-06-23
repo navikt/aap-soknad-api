@@ -6,6 +6,7 @@ import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
@@ -65,7 +66,7 @@ internal class DevController(private val dokumentLager: Dokumentlager,
     @PostMapping("vedlegg/lagre/{fnr}", consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
     fun lagreDokument(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") v: MultipartFile) =
-        dokumentLager.lagreDokument(fnr, v.bytes, v.contentType, v.originalFilename)
+        dokumentLager.lagreDokument(fnr, DokumentInfo(v.bytes, v.contentType, v.originalFilename))
 
     @GetMapping("vedlegg/les/{fnr}/{uuid}")
     fun lesDokument(@PathVariable fnr: Fødselsnummer, @PathVariable uuid: UUID) =

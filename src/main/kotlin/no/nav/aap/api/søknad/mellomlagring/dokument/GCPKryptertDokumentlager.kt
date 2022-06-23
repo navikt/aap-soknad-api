@@ -31,16 +31,16 @@ internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
                                         private val aead: Aead) : Dokumentlager {
 
     private val log = getLogger(javaClass)
-    override fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?) =
+    override fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
         randomUUID().apply {
-            log.trace("Lagrer $originalFilename kryptert med uuid $this og contentType $contentType")
-            typeSjekker.sjekkType(bytes, contentType, originalFilename)
-            scanner.scan(bytes, originalFilename)
+            log.trace("Lagrer ${dokument.filnavn} kryptert med uuid $this og contentType ${dokument.contentType}")
+            typeSjekker.sjekkType(dokument)
+            scanner.scan(dokument)
             lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this)))
-                .setContentType(contentType)
-                .setMetadata(mapOf(FILNAVN to originalFilename))
-                .build(), aead.encrypt(bytes, fnr.fnr.toByteArray(UTF_8)))
-                .also { log.trace("Lagret $originalFilename kryptert med uuid $this og contentType $contentType (${bytes.size} bytes") }
+                .setContentType(dokument.contentType)
+                .setMetadata(mapOf(FILNAVN to dokument.filnavn))
+                .build(), aead.encrypt(dokument.bytes, fnr.fnr.toByteArray(UTF_8)))
+                .also { log.trace("Lagret $dokument kryptert med uuid $this") }
         }
 
     override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
@@ -59,14 +59,14 @@ internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
     internal class TypeSjekker(@Value("#{\${mellomlager.types :{'application/pdf','image/jpeg','image/png'}}}")
                                private val contentTypes: Set<String>) {
 
-        fun sjekkType(bytes: ByteArray, contentType: String?, originalFilename: String?) =
-            with(TIKA.detect(bytes)) {
-                if (this != contentType) {
-                    throw AttachmentException("Type $this matcher ikke oppgitt $contentType for $originalFilename")
+        fun sjekkType(dokument: DokumentInfo) =
+            with(TIKA.detect(dokument.bytes)) {
+                if (this != dokument.contentType) {
+                    throw AttachmentException("Type $this matcher ikke oppgitt ${dokument.contentType} for ${dokument.filnavn}")
                 }
             }.also {
-                if (!contentTypes.contains(contentType)) {
-                    throw AttachmentException("Type $contentType er ikke blant $contentTypes for $originalFilename")
+                if (!contentTypes.contains(dokument.contentType)) {
+                    throw AttachmentException("Type ${dokument.contentType} er ikke blant $contentTypes for ${dokument.filnavn}")
                 }
             }
     }

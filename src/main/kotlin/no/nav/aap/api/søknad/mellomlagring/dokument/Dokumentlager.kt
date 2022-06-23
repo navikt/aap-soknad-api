@@ -7,7 +7,7 @@ import java.util.Objects.hash
 interface Dokumentlager {
     fun lesDokument(fnr: Fødselsnummer, uuid: UUID): DokumentInfo?
     fun slettDokument(uuid: UUID, fnr: Fødselsnummer): Boolean
-    fun lagreDokument(fnr: Fødselsnummer, bytes: ByteArray, contentType: String?, originalFilename: String?): UUID
+    fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo): UUID
     fun key(fnr: Fødselsnummer, uuid: UUID) = "${hash(fnr, uuid)}"
 
     companion object {

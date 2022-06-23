@@ -14,7 +14,5 @@ class InMemoryDokumentlager : Dokumentlager {
     override fun slettDokument(uuid: UUID, fnr: Fødselsnummer) = true
 
     override fun lagreDokument(fnr: Fødselsnummer,
-                               bytes: ByteArray,
-                               contentType: String?,
-                               originalFilename: String?) = UUID.randomUUID()
+                               dokument: DokumentInfo) = UUID.randomUUID()
 }

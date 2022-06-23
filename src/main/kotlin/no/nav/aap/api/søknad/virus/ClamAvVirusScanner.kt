@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.virus
 
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.virus.ScanResult.Result.FOUND
 import no.nav.aap.api.søknad.virus.ScanResult.Result.NONE
 import no.nav.aap.api.søknad.virus.ScanResult.Result.OK
@@ -7,13 +8,13 @@ import org.springframework.stereotype.Component
 
 @Component
 class ClamAvVirusScanner(private val a: VirusScanWebClientAdapter) : VirusScanner {
-    override fun scan(bytes: ByteArray, name: String?) =
-        when (a.harVirus(bytes).result) {
-            FOUND -> throw AttachmentException("Virus funnet i $name")
+    override fun scan(dokument: DokumentInfo) =
+        when (a.harVirus(dokument.bytes).result) {
+            FOUND -> throw AttachmentException("Virus funnet i ${dokument.filnavn}")
             NONE, OK -> Unit
         }
 }
 
 interface VirusScanner {
-    fun scan(bytes: ByteArray, name: String?)
+    fun scan(dokument: DokumentInfo)
 }
