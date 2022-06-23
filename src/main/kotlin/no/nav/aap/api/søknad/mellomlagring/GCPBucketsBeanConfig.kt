@@ -9,7 +9,6 @@ import com.google.crypto.tink.aead.AeadConfig
 import com.google.crypto.tink.aead.KmsEnvelopeAeadKeyManager.createKeyTemplate
 import com.google.crypto.tink.integration.gcpkms.GcpKmsClient
 import no.nav.boot.conditionals.ConditionalOnGCP
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.threeten.bp.Duration.ofMillis
@@ -28,9 +27,9 @@ class GCPBucketsBeanConfig(val cfg: GCPBucketConfig) {
     fun aead() = generateNew(createKeyTemplate(cfg.kekuri, get("AES128_GCM"))).getPrimitive(Aead::class.java)
 
     @Bean
-    fun retrySettings(@Value("\${mellomlagring.timeout:3000}") timeoutMs: Long) =
+    fun retrySettings() =
         RetrySettings.newBuilder()
-            .setTotalTimeout(ofMillis(timeoutMs))
+            .setTotalTimeout(ofMillis(cfg.timeout.toMillis()))
             .build()
 
     @Bean
