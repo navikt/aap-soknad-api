@@ -11,7 +11,6 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.api.søknad.virus.AttachmentException
-import no.nav.aap.api.søknad.virus.VirusScanner
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.apache.tika.Tika
@@ -26,16 +25,14 @@ import java.util.UUID.randomUUID
 @Primary
 internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
                                         private val lager: Storage,
-                                        private val scanner: VirusScanner,
-                                        private val typeSjekker: TypeSjekker,
+                                        private val sjekkere: List<DokumentSjekker>,
                                         private val aead: Aead) : Dokumentlager {
 
     private val log = getLogger(javaClass)
     override fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
         randomUUID().apply {
             log.trace("Lagrer ${dokument.filnavn} kryptert med uuid $this og contentType ${dokument.contentType}")
-            typeSjekker.sjekkType(dokument)
-            scanner.scan(dokument)
+            sjekkere.forEach { it.sjekk(dokument) }
             lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this)))
                 .setContentType(dokument.contentType)
                 .setMetadata(mapOf(FILNAVN to dokument.filnavn))
@@ -57,9 +54,9 @@ internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
 
     @Component
     internal class TypeSjekker(@Value("#{\${mellomlager.types :{'application/pdf','image/jpeg','image/png'}}}")
-                               private val contentTypes: Set<String>) {
+                               private val contentTypes: Set<String>) : DokumentSjekker {
 
-        fun sjekkType(dokument: DokumentInfo) =
+        override fun sjekk(dokument: DokumentInfo) =
             with(TIKA.detect(dokument.bytes)) {
                 if (this != dokument.contentType) {
                     throw AttachmentException("Type $this matcher ikke oppgitt ${dokument.contentType} for ${dokument.filnavn}")
