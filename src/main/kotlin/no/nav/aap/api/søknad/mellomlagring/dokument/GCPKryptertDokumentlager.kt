@@ -40,7 +40,7 @@ internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
                 .setContentType(contentType)
                 .setMetadata(mapOf(FILNAVN to originalFilename))
                 .build(), aead.encrypt(bytes, fnr.fnr.toByteArray(UTF_8)))
-                .also { log.trace("Lagret $originalFilename kryptert med uuid $this og contentType $contentType") }
+                .also { log.trace("Lagret $originalFilename kryptert med uuid $this og contentType $contentType (${bytes.size} bytes") }
         }
 
     override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
