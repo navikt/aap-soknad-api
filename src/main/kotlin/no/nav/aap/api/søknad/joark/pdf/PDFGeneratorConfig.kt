@@ -5,11 +5,13 @@ import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
+import org.springframework.util.unit.DataSize
 import java.net.URI
 
 @ConfigurationProperties(PDF)
 @ConstructorBinding
 class PDFGeneratorConfig(
+        @DefaultValue("50Mb") val codecSize: DataSize,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
         @DefaultValue(UTLAND_PATH) val utlandPath: String,
         @DefaultValue(STANDARD_PATH) val standardPath: String,
