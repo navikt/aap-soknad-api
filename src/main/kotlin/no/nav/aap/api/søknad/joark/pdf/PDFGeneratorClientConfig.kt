@@ -12,7 +12,7 @@ class PDFGeneratorClientConfig {
     @Bean
     fun webClientPdfGen(builder: WebClient.Builder, cfg: PDFGeneratorConfig) =
         builder
-            .codecs { it.defaultCodecs().maxInMemorySize(cfg.codecSize.toBytes() as Int) }
+            .codecs { it.defaultCodecs().maxInMemorySize(cfg.codecSize.toBytes().toInt()) }
             .baseUrl("${cfg.baseUri}")
             .build()
 }
