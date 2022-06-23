@@ -39,11 +39,13 @@ internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
         }
 
     override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.get(cfg.vedlegg, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))?.let {
-            DokumentInfo(aead.decrypt(it.getContent(), fnr.fnr.toByteArray(UTF_8)),
-                    it.contentType,
-                    it.metadata[FILNAVN]).also {
-                log.trace("Lest kryptert dokument med uuid $uuid er $it")
+        lager.get(cfg.vedlegg, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))?.let { blob ->
+            with(blob) {
+                DokumentInfo(aead.decrypt(getContent(), fnr.fnr.toByteArray(UTF_8)),
+                        contentType,
+                        metadata[FILNAVN]).also {
+                    log.trace("Lest kryptert dokument med uuid $uuid er $it")
+                }
             }
         }
 
