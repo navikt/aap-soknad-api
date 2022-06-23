@@ -38,7 +38,7 @@
         <sonar.projectKey>navikt_aap-soknad-api</sonar.projectKey>
         <springdoc.version>1.6.9</springdoc.version>
         <tink.version>1.6.1</tink.version>
-        <token.validation.version>2.1.0</token.validation.version>
+        <token.validation.version>2.1.1</token.validation.version>
     </properties>
     <repositories>
         <repository>
