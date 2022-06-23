@@ -11,6 +11,7 @@ import java.time.Duration
 class GCPBucketConfig(@DefaultValue("aap-mellomlagring") val mellomlagring: String,
                       @DefaultValue("aap-vedlegg") val vedlegg: String,
                       @DefaultValue("3000ms") val timeout: Duration,
+                      var typer: List<String>,
                       val kekuri: String) {
     companion object {
         const val BUCKETS = "buckets"

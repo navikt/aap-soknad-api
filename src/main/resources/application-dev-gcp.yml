@@ -30,5 +30,9 @@ organisasjon:
 buckets:
     vedlegg: aap-vedlegg
     mellomlagring: aap-mellomlagring
+    typer:
+        - application/pdf
+        - image/jpeg
+        - image/png
     kekuri: gcp-kms://projects/${gcp.team.project.id}/locations/europe-north1/keyRings/aap-mellomlagring-kms/cryptoKeys/mellomlagring
 debug: false

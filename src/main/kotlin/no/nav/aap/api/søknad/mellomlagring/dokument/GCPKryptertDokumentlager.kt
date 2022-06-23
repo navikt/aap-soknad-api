@@ -13,7 +13,6 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FIL
 import no.nav.aap.api.søknad.virus.AttachmentException
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets.UTF_8
@@ -52,12 +51,11 @@ internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
         lager.delete(of(cfg.vedlegg, key(fnr, uuid)))
 
     @Component
-    internal class TypeSjekker(@Value("#{\${mellomlager.types :{'application/pdf','image/jpeg','image/png'}}}")
-                               private val contentTypes: Set<String>) : DokumentSjekker {
+    internal class TypeSjekker(private val cfg: GCPBucketConfig) : DokumentSjekker {
 
         override fun sjekk(dokument: DokumentInfo) =
-            if (!contentTypes.contains(dokument.contentType)) {
-                throw AttachmentException("Type ${dokument.contentType} er ikke blant $contentTypes for ${dokument.filnavn}")
+            if (!cfg.typer.contains(dokument.contentType)) {
+                throw AttachmentException("Type ${dokument.contentType} er ikke blant ${cfg.typer} for ${dokument.filnavn}")
             }
             else Unit
     }
