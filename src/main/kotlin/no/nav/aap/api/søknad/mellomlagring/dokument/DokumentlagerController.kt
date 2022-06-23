@@ -1,7 +1,6 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
-import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentlagerController.Companion.BASEPATH
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
@@ -37,12 +36,12 @@ internal class DokumentlagerController(private val lager: Dokumentlager, private
         lager.lesDokument(ctx.getFnr(), uuid)
             ?.let {
                 ok()
-                    .contentType(parseMediaType(it.contentType))
+                    .contentType(parseMediaType(it.contentType!!))
                     .cacheControl(noCache().mustRevalidate())
                     .headers(HttpHeaders().apply {
-                        contentDisposition = attachment().filename(it.metadata[FILNAVN]!!).build()
+                        contentDisposition = attachment().filename(it.filnavn!!).build()
                     })
-                    .body(it.getContent())
+                    .body(it.bytes)
 
             } ?: notFound().build()
 

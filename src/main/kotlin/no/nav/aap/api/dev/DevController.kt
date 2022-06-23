@@ -7,14 +7,11 @@ import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
-import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
-import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.routing.standard.StandardSøknadVLRouter
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
-import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
@@ -75,16 +72,13 @@ internal class DevController(private val dokumentLager: Dokumentlager,
         dokumentLager.lesDokument(fnr, uuid)
             ?.let {
                 with(it) {
-                    if (fnr.fnr != metadata[FNR]) {
-                        throw JwtTokenUnauthorizedException("Dokumentet med id $uuid er ikke eid av $fnr.fnr")
-                    }
-                    ok().contentType(parseMediaType(contentType))
+                    ok().contentType(parseMediaType(it.contentType!!))
                         .cacheControl(noCache().mustRevalidate())
                         .headers(HttpHeaders()
                             .apply {
-                                contentDisposition = attachment().filename(metadata[FILNAVN]!!).build()
+                                contentDisposition = attachment().filename(it.filnavn!!).build()
                             })
-                        .body(getContent())
+                        .body(it.bytes)
                 }
             } ?: notFound().build()
 

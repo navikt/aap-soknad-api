@@ -1,13 +1,13 @@
 package no.nav.aap.api.søknad.joark
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.cloud.storage.Blob
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.joark.pdf.Image2PDFConverter
 import no.nav.aap.api.søknad.joark.pdf.PDFClient
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
@@ -107,12 +107,12 @@ class JoarkRouter(private val joark: JoarkClient,
             lager.slettDokument(uuid, fnr).also { log.info("Slettet dokument $uuid") }
         }
 
-    private fun Blob.asDokument(tittel: String) =
+    private fun DokumentInfo.asDokument(tittel: String) =
         Dokument(tittel = tittel,
                 dokumentVariant = DokumentVariant(PDFA,
                         getEncoder().encodeToString(when (contentType) {
-                            APPLICATION_PDF_VALUE -> getContent()
-                            IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE -> pdfConverter.convert(getContent())
+                            APPLICATION_PDF_VALUE -> bytes
+                            IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE -> pdfConverter.convert(bytes)
                             else -> throw IllegalStateException("UKjent content type $contentType, skal ikke skje")
                         }))).also { log.trace("Blob konvertert er $it") }
 
