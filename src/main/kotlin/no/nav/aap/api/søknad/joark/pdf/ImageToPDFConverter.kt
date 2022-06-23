@@ -36,9 +36,6 @@ class Image2PDFConverter {
         } ?: throw DokumentException("Kunne ikke bestemme media type")
 
     private fun embed(imgType: String, vararg images: ByteArray): ByteArray =
-        embed(images.toList(), imgType)
-
-    private fun embed(images: List<ByteArray>, imgType: String) =
         try {
             PDDocument().use { doc ->
                 ByteArrayOutputStream().use { os ->
