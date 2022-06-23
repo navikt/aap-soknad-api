@@ -50,7 +50,7 @@ class JoarkRouter(private val joark: JoarkClient,
         }
 
     private fun lagreKvittering(bytes: ByteArray, fnr: Fødselsnummer) =
-        lager.lagreDokument(fnr, DokumentInfo(bytes, APPLICATION_PDF_VALUE, "kvittering.pdf"))
+        lager.lagreDokument(fnr, DokumentInfo(bytes, "kvittering.pdf"))
 
     private fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         Journalpost(dokumenter = dokumenterFra(søknad, søker, pdfVariant),

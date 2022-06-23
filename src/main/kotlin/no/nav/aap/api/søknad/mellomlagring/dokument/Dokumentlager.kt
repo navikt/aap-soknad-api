@@ -22,6 +22,7 @@ interface DokumentSjekker {
 }
 
 data class DokumentInfo(val bytes: ByteArray, val contentType: String?, val filnavn: String?) {
+    constructor(bytes: ByteArray, filnavn: String?) : this(bytes, TIKA.detect(bytes), filnavn)
 
     init {
         require(TIKA.detect(bytes) == contentType)
