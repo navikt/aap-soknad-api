@@ -7,13 +7,14 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
-import no.nav.aap.api.søknad.model.StandardSøknad.Vedlegg
 import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.AFP
 import no.nav.aap.joark.DokumentVariant
@@ -37,24 +38,23 @@ data class StandardSøknad(
         val tilleggsopplysninger: String?,
         val andreVedlegg: List<Vedlegg> = emptyList()) {
 
-    @JsonDeserialize(using = VedleggDeserializer::class)
-    data class Vedlegg(@JsonValue override val vedlegg: UUID? = null) : VedleggAware {
-        override val tittel: String = "Andre vedlegg"
-    }
-
-    fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, this.toEncodedJson(mapper), ORIGINAL)
+    fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
 }
 
-interface VedleggAware {
-    val vedlegg: UUID?
-    val tittel: String
+@JsonDeserialize(using = VedleggDeserializer::class)
+data class Vedlegg(@JsonValue override val vedlegg: V? = V(tittel = "Andre vedlegg")) : VedleggAware
 
+interface VedleggAware {
+    val vedlegg: V?
+}
+
+data class V(val vedlegg: List<UUID?>? = listOf(), val tittel: String) {
+    constructor(tittel: String) : this(listOf(UUID.randomUUID()), tittel)
 }
 
 data class Studier(val erStudent: StudieSvar?,
                    val kommeTilbake: RadioValg?,
-                   override val vedlegg: UUID? = null) : VedleggAware {
-    override val tittel: String = "Dokumentasjon av studier"
+                   override val vedlegg: V? = V(tittel = "Dokumentasjon av studier")) : VedleggAware {
 
     enum class StudieSvar {
         JA,
@@ -98,8 +98,9 @@ data class BarnOgInntekt(val fnr: Fødselsnummer, val merEnnIG: Boolean? = false
 data class AnnetBarnOgInntekt(val barn: Barn,
                               val relasjon: Relasjon = FORELDER,
                               val merEnnIG: Boolean? = false,
-                              val barnepensjon: Boolean = false, override val vedlegg: UUID? = null) : VedleggAware {
-    override val tittel: String = "Dokumentasjon av omsorg for (${barn.fødseldato}"
+                              val barnepensjon: Boolean = false,
+                              override val vedlegg: V? = V(tittel = "Dokumentasjon av omsorg for (${barn.fødseldato}")) :
+    VedleggAware {
 
     enum class Relasjon {
         FOSTERFORELDER,
@@ -117,23 +118,23 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
                       @JsonAlias("stønadstyper") val andreStønader: List<AnnenStønad> = emptyList(),
                       val ekstraUtbetaling: EkstraUtbetaling? = null) {
 
-    data class FraArbeidsgiver(val fraArbeidsgiver: Boolean, override val vedlegg: UUID? = null) : VedleggAware {
-        override val tittel: String = "Dokumentasjon av tbetaling fra arbeidsgiver"
-
+    data class FraArbeidsgiver(val fraArbeidsgiver: Boolean,
+                               override val vedlegg: V? = V(tittel = "Dokumentasjon av tbetaling fra arbeidsgiver")) :
+        VedleggAware {
         init {
             require((fraArbeidsgiver && vedlegg != null) || (!fraArbeidsgiver && vedlegg == null))
         }
     }
 
-    data class EkstraUtbetaling(val hvilken: String, val hvem: String, override val vedlegg: UUID? = null) :
-        VedleggAware {
-        override val tittel: String = "Dokumentasjon av kstra utbetaling"
-    }
+    data class EkstraUtbetaling(val hvilken: String,
+                                val hvem: String,
+                                override val vedlegg: V? = V(tittel = "Dokumentasjon av kstra utbetaling")) :
+        VedleggAware
 
     data class AnnenStønad(val type: AnnenStønadstype,
                            val hvemUtbetalerAFP: String? = null,
-                           override val vedlegg: UUID? = null) : VedleggAware {
-        override val tittel: String = "Dokumentasjon av ${type.name.lowercase()}"
+                           override val vedlegg: V? = V(tittel = "Dokumentasjon av ${type.name.lowercase()}")) :
+        VedleggAware {
 
         init {
             require((type == AFP && hvemUtbetalerAFP != null) || (type != AFP && hvemUtbetalerAFP == null))
@@ -156,6 +157,14 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
 
 internal class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.java) {
     @Throws(IOException::class)
-    override fun deserialize(p: JsonParser, ctx: DeserializationContext) =
-        Vedlegg(UUID.fromString((p.codec.readTree(p) as TextNode).textValue()))
+    override fun deserialize(p: JsonParser, ctx: DeserializationContext): Vedlegg? {
+        val p = p.codec.readTree(p) as ObjectNode
+        val o = p.get("vedlegg") as ArrayNode
+        val tittel = (p.get("tittel") as TextNode).textValue()
+        val uuids = o.map { (it as TextNode).textValue() }.map { UUID.fromString(it) }
+        var vedlegg = Vedlegg(V(uuids, tittel))
+        //println(vedlegg)
+        return vedlegg
+
+    }
 }
