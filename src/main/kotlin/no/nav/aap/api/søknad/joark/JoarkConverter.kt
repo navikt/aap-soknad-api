@@ -54,14 +54,13 @@ class JoarkConverter(
                 addAll(dokumenterFra(studier, søker.fnr))
                 addAll(dokumenterFra(utbetalinger?.ekstraUtbetaling, søker.fnr))
                 addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, søker.fnr))
-                addAll(dokumenterFra(søknad, søker.fnr))
+                addAll(dokumenterFra(this@with, søker.fnr))
                 addAll(dokumenterFra(utbetalinger?.andreStønader, søker.fnr))
                 addAll(dokumenterFra(andreBarn, søker.fnr))
             }.also { log.trace("${it.size} dokumenter til JOARK  $it") }
         }
 
-    private fun dokumenterFra(søknad: StandardSøknad,
-                              pdfVariant: DokumentVariant) =
+    private fun dokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
         mutableListOf(Dokument(STANDARD, listOf(søknad.asJsonVariant(mapper), pdfVariant)))
 
     private fun dokumenterFra(a: List<VedleggAware?>?, fnr: Fødselsnummer): List<Dokument> =
@@ -71,12 +70,12 @@ class JoarkConverter(
 
     private fun dokumenterFra(a: VedleggAware?, fnr: Fødselsnummer): List<Dokument> =
         a?.let { v ->
-            v.vedlegg?.let { dokumenterFraV(it, fnr) }
+            v.vedlegg?.let { dokumenterFra(it, fnr) }
         } ?: emptyList()
 
-    private fun dokumenterFraV(v: Vedlegg, fnr: Fødselsnummer): List<Dokument> =
+    private fun dokumenterFra(v: Vedlegg, fnr: Fødselsnummer): List<Dokument> =
         v.let { vl ->
-            vl.deler?.mapNotNull { uuid -> dokumentFra(uuid, "TODO", fnr) }
+            vl.deler?.mapNotNull { uuid -> dokumentFra(uuid, v.tittel, fnr) }
         } ?: emptyList()
 
     private fun dokumentFra(uuid: UUID?, tittel: String?, fnr: Fødselsnummer): Dokument? =
