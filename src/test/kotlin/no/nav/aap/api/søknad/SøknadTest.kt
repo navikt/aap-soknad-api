@@ -33,7 +33,6 @@ import no.nav.aap.api.søknad.model.Utbetaling.EkstraUtbetaling
 import no.nav.aap.api.søknad.model.Utbetaling.FraArbeidsgiver
 import no.nav.aap.api.søknad.model.Utenlandsopphold
 import no.nav.aap.api.søknad.model.Vedlegg
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -46,15 +45,27 @@ class SøknadTest {
     @Autowired
     lateinit var mapper: ObjectMapper
 
+    val v2 = """
+        [ "07e35799-4db5-4ba3-81cc-3681dd1dec60" ]
+    """.trimIndent()
+    val v3 = """
+         "07e35799-4db5-4ba3-81cc-3681dd1dec60" 
+    """.trimIndent()
+
     @Test
     fun serialize() {
+        val v = Vedlegg(deler = listOf(UUID.randomUUID()))
+        val vs = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(v)
+        //println(vs)
+        println(mapper.readValue(v3, Vedlegg::class.java))
+/*
         var orig = standardSøknad()
         val s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(orig)
         println(s)
         var ss = mapper.readValue(s, StandardSøknad::class.java)
         println(orig)
         println(ss)
-        assertEquals(orig, ss)
+        assertEquals(orig, ss)*/
     }
 
     private fun søker(): Søker {

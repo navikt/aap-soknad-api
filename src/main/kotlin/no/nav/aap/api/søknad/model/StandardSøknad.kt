@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.model
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.TreeNode
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -152,7 +153,10 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
 internal class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.java) {
     @Throws(IOException::class)
     override fun deserialize(p: JsonParser, ctx: DeserializationContext) =
-        Vedlegg(deler = (p.codec.readTree(p) as ArrayNode).map { (it as TextNode).textValue() }
-            .map { UUID.fromString(it) })
-
+        when (val node = p.codec.readTree(p) as TreeNode) {
+            is ArrayNode -> Vedlegg(deler = node.map { (it as TextNode).textValue() }
+                .map { UUID.fromString(it) })
+            is TextNode -> Vedlegg(deler = listOf(UUID.fromString(node.textValue())))
+            else -> throw IllegalStateException("Ikke-forventet node ${node.javaClass.simpleName}")
+        }
 }
