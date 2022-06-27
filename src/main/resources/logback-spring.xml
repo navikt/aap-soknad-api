@@ -21,8 +21,8 @@
         <logger name="org.hibernate" level="info"/>
 
         <logger name="com.zaxxer.hikari" level="trace"/>
-        <logger name="org.springframework.boot.flyway" level="info"/>
-        <logger name="reactor.netty.http.client.HttpClient" level="trace"/>
+        <logger name="org.springframework.boot.flyway" level="trace"/>
+        <logger name="reactor.netty.http.client.HttpClient" level="info"/>
         <logger name="no.nav.aap" level="trace"/>
         <logger name="no.nav.security" level="info"/>
         <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="trace"/>
