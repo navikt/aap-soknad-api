@@ -10,7 +10,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
-import no.nav.aap.api.søknad.model.V
+import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.api.søknad.model.VedleggAware
 import no.nav.aap.joark.AvsenderMottaker
 import no.nav.aap.joark.Bruker
@@ -54,7 +54,7 @@ class JoarkConverter(
                 addAll(dokumenterFra(studier, søker.fnr))
                 addAll(dokumenterFra(utbetalinger?.ekstraUtbetaling, søker.fnr))
                 addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, søker.fnr))
-                addAll(dokumenterFra(andreVedlegg, søker.fnr))
+                addAll(dokumenterFra(søknad, søker.fnr))
                 addAll(dokumenterFra(utbetalinger?.andreStønader, søker.fnr))
                 addAll(dokumenterFra(andreBarn, søker.fnr))
             }.also { log.trace("${it.size} dokumenter til JOARK  $it") }
@@ -74,19 +74,19 @@ class JoarkConverter(
             v.vedlegg?.let { dokumenterFraV(it, fnr) }
         } ?: emptyList()
 
-    private fun dokumenterFraV(v: V, fnr: Fødselsnummer): List<Dokument> =
+    private fun dokumenterFraV(v: Vedlegg, fnr: Fødselsnummer): List<Dokument> =
         v.let { vl ->
-            vl.vedlegg?.mapNotNull { uuid -> dokumentFra(uuid, v.tittel, fnr) }
+            vl.deler?.mapNotNull { uuid -> dokumentFra(uuid, "TODO", fnr) }
         } ?: emptyList()
 
-    private fun dokumentFra(uuid: UUID?, tittel: String, fnr: Fødselsnummer): Dokument? =
+    private fun dokumentFra(uuid: UUID?, tittel: String?, fnr: Fødselsnummer): Dokument? =
         uuid?.let {
             lager.lesDokument(fnr, it)?.asDokument(tittel).also { doc ->
                 log.trace("Dokument fra $it er $doc")
             }
         }
 
-    private fun DokumentInfo.asDokument(tittel: String) =
+    private fun DokumentInfo.asDokument(tittel: String?) =
         Dokument(tittel = tittel,
                 dokumentVariant = DokumentVariant(PDFA,
                         Base64.getEncoder().encodeToString(when (contentType) {

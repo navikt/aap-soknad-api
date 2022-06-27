@@ -42,7 +42,7 @@ class JoarkRouter(private val joark: JoarkClient,
             slett(utbetalinger?.ekstraFraArbeidsgiver, fnr)
             slett(utbetalinger?.ekstraUtbetaling, fnr)
             slett(utbetalinger?.andreStønader, fnr)
-            slett(andreVedlegg, fnr)
+            slett(this, fnr)
             slett(studier, fnr)
             slett(andreBarn, fnr)
         }
@@ -53,7 +53,7 @@ class JoarkRouter(private val joark: JoarkClient,
 
     private fun slett(a: VedleggAware?, fnr: Fødselsnummer) =
         a?.vedlegg?.let {
-            slettUUIDs(it.vedlegg, fnr)
+            slettUUIDs(it.deler, fnr)
         }
 
     private fun slettUUIDs(uuids: List<UUID?>?, fnr: Fødselsnummer) =
@@ -61,5 +61,4 @@ class JoarkRouter(private val joark: JoarkClient,
 
     private fun slett(uuid: UUID?, fnr: Fødselsnummer) =
         uuid?.let { lager.slettDokument(it, fnr).also { log.info("Slettet dokument $it") } }
-
 }

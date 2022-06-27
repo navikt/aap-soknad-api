@@ -32,15 +32,14 @@ import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.INTRODUKSJONSST
 import no.nav.aap.api.søknad.model.Utbetaling.EkstraUtbetaling
 import no.nav.aap.api.søknad.model.Utbetaling.FraArbeidsgiver
 import no.nav.aap.api.søknad.model.Utenlandsopphold
-import no.nav.aap.api.søknad.model.V
 import no.nav.aap.api.søknad.model.Vedlegg
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import java.time.LocalDate.now
 import java.util.*
-import kotlin.test.assertEquals
 
 @JsonTest
 class SøknadTest {
@@ -51,8 +50,10 @@ class SøknadTest {
     fun serialize() {
         var orig = standardSøknad()
         val s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(orig)
-        print(s)
+        println(s)
         var ss = mapper.readValue(s, StandardSøknad::class.java)
+        println(orig)
+        println(ss)
         assertEquals(orig, ss)
     }
 
@@ -80,15 +81,14 @@ class SøknadTest {
                                     PostNummer("2600", "Lillehammer")),
                             "22222222"))),
             JA,
-            Utbetaling(FraArbeidsgiver(true, V(listOf(UUID.randomUUID(),
-                    UUID.randomUUID()), "ARBEIDSGIVER")), listOf(AnnenStønad(INTRODUKSJONSSTØNAD)),
+            Utbetaling(FraArbeidsgiver(true, Vedlegg(deler = listOf(UUID.randomUUID(),
+                    UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD)),
                     EkstraUtbetaling("hvilken", "hvem")),
             listOf(BarnOgInntekt(Fødselsnummer("08089403198"), merEnnIG = true, barnepensjon = false)),
             listOf(AnnetBarnOgInntekt(Barn(Fødselsnummer("08089403198"),
-                    Navn("Et", "ekstra", "Barn"), now().minusYears(14)), vedlegg = V(tittel = "BARN"))),
-            "Tilegg", listOf(vedlegg("Andre"), vedlegg("Andre")))
-
-    private fun vedlegg(tittel: String) = Vedlegg(V(tittel = tittel))
+                    Navn("Et", "ekstra", "Barn"), now().minusYears(14)))),
+            "Tilegg", Vedlegg(deler = listOf(UUID.randomUUID(),
+            UUID.randomUUID())))
 
     @SpringBootApplication
     internal class DummyApplication
