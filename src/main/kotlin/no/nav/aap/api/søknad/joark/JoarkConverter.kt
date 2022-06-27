@@ -20,7 +20,9 @@ import no.nav.aap.joark.Filtype.PDFA
 import no.nav.aap.joark.Journalpost
 import no.nav.aap.joark.asPDFVariant
 import no.nav.aap.util.LoggerUtil
-import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
+import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
+import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.stereotype.Component
 import java.util.*
 
@@ -57,7 +59,7 @@ class JoarkConverter(
                 addAll(dokumenterFra(this@with, søker.fnr))
                 addAll(dokumenterFra(utbetalinger?.andreStønader, søker.fnr))
                 addAll(dokumenterFra(andreBarn, søker.fnr))
-            }.also { log.trace("${it.size} dokumenter til JOARK  $it") }
+            }.also { log.trace("Sender ${it.size} dokumenter til JOARK  $it") }
         }
 
     private fun dokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
@@ -89,8 +91,8 @@ class JoarkConverter(
         Dokument(tittel = tittel,
                 dokumentVariant = DokumentVariant(PDFA,
                         Base64.getEncoder().encodeToString(when (contentType) {
-                            MediaType.APPLICATION_PDF_VALUE -> bytes
-                            MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE -> pdfConverter.convert(bytes)
+                            APPLICATION_PDF_VALUE -> bytes
+                            IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE -> pdfConverter.convert(bytes)
                             else -> throw IllegalStateException("UKjent content type $contentType, skal ikke skje")
                         }))).also { log.trace("Blob konvertert er $it") }
 
