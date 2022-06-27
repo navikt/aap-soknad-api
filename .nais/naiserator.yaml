@@ -22,7 +22,7 @@ spec:
         sqlInstances:
             -   type: POSTGRES_14
                 databases:
-                    -   name: soknad-api-{{env}}
+                    -   name: aap-soknad-api-{{env}}
                         envVarPrefix: DB
         buckets:
             -   name: aap-vedlegg
