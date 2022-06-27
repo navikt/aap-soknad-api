@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.neovisionaries.i18n.CountryCode.SE
 import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
@@ -19,7 +20,6 @@ import no.nav.aap.api.søknad.model.Medlemskap
 import no.nav.aap.api.søknad.model.RadioValg
 import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.api.søknad.model.StandardSøknad.Vedlegg
 import no.nav.aap.api.søknad.model.Startdato
 import no.nav.aap.api.søknad.model.Startdato.Hvorfor.HELSE
 import no.nav.aap.api.søknad.model.Studier
@@ -32,28 +32,29 @@ import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.INTRODUKSJONSST
 import no.nav.aap.api.søknad.model.Utbetaling.EkstraUtbetaling
 import no.nav.aap.api.søknad.model.Utbetaling.FraArbeidsgiver
 import no.nav.aap.api.søknad.model.Utenlandsopphold
+import no.nav.aap.api.søknad.model.Vedlegg
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.json.JsonTest
-import org.springframework.boot.test.json.JacksonTester
 import java.time.LocalDate.now
 import java.util.*
 
 @JsonTest
 class SøknadTest {
     @Autowired
-    lateinit var json: JacksonTester<StandardSøknad>
-
-    @Autowired
-    lateinit var pm: JacksonTester<Periode>
+    lateinit var mapper: ObjectMapper
 
     @Test
     fun serialize() {
-        val w = json.write(standardSøknad())
-        System.out.println(w.json)
-        val r = json.parse(w.json)
-        System.out.println(r.`object`)
+        var orig = standardSøknad()
+        val s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(orig)
+        println(s)
+        var ss = mapper.readValue(s, StandardSøknad::class.java)
+        println(orig)
+        println(ss)
+        assertEquals(orig, ss)
     }
 
     private fun søker(): Søker {
@@ -65,7 +66,7 @@ class SøknadTest {
                         Navn("Barn", "B", "Barnsben"), now())))
     }
 
-    private fun standardSøknad() = StandardSøknad(
+    fun standardSøknad() = StandardSøknad(
             Studier(NEI, RadioValg.NEI),
             Startdato(now(), HELSE, "Noe annet"),
             Ferie(DAGER, dager = 20),
@@ -80,12 +81,14 @@ class SøknadTest {
                                     PostNummer("2600", "Lillehammer")),
                             "22222222"))),
             JA,
-            Utbetaling(FraArbeidsgiver(true, UUID.randomUUID()), listOf(AnnenStønad(INTRODUKSJONSSTØNAD)),
+            Utbetaling(FraArbeidsgiver(true, Vedlegg(deler = listOf(UUID.randomUUID(),
+                    UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD)),
                     EkstraUtbetaling("hvilken", "hvem")),
             listOf(BarnOgInntekt(Fødselsnummer("08089403198"), merEnnIG = true, barnepensjon = false)),
             listOf(AnnetBarnOgInntekt(Barn(Fødselsnummer("08089403198"),
-                    Navn("Et", "ekstra", "Barn"), now().minusYears(14)), vedlegg = UUID.randomUUID())),
-            "Tilegg", listOf(Vedlegg(UUID.randomUUID()), Vedlegg(UUID.randomUUID())))
+                    Navn("Et", "ekstra", "Barn"), now().minusYears(14)))),
+            "Tilegg", Vedlegg(deler = listOf(UUID.randomUUID(),
+            UUID.randomUUID())))
 
     @SpringBootApplication
     internal class DummyApplication
