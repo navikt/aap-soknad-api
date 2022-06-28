@@ -25,7 +25,7 @@ class Image2PDFConverter {
 
     private fun embed(imgType: String, vararg images: ByteArray) =
         try {
-            log.trace("Slår sammen ${images.size} filer for $imgType")
+            log.trace("Slår sammen ${images.size} fil(er) for $imgType")
             PDDocument().use { doc ->
                 ByteArrayOutputStream().use { os ->
                     images.forEach { addPDFPageFromImage(doc, it, parseMediaType(imgType).subtype) }

@@ -6,6 +6,7 @@ import no.nav.aap.api.søknad.joark.JoarkConverter
 import no.nav.aap.api.søknad.joark.pdf.Image2PDFConverter
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
+import no.nav.aap.joark.Filtype.PDFA
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
@@ -20,6 +21,8 @@ import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.util.StreamUtils.copyToByteArray
+import java.io.FileOutputStream
+import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 @JsonTest
@@ -55,7 +58,14 @@ class JoarkConverterTest {
         val søker = SøknadTest.søker()
         val c = JoarkConverter(mapper, lager, Image2PDFConverter())
         val converted = c.convert(søknad, søker, bytes)
-        converted.dokumenter.forEach { println(it) }
+        converted.dokumenter.forEach { doc ->
+            doc?.dokumentVarianter?.forEach {
+                if (it?.filtype == PDFA.name)
+                    FileOutputStream("${it?.hashCode()}.pdf").use { fos ->
+                        fos.write(Base64.getDecoder().decode(it!!.fysiskDokument))
+                    }
+            }
+        }
     }
 
     private fun bytesFra(navn: String) = copyToByteArray(ClassPathResource(navn).inputStream)
