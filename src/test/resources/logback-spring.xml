@@ -13,20 +13,20 @@
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
     <appender name="stdout"
-        class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
     <springProfile name="dev">
-        <logger name="reactor.netty.http.client.HttpClient" level="trace"/>
-        <logger name="no.nav.aap" level="trace" />
-        <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="trace" />
+        <logger name="reactor.netty.http.client.HttpClient" level="info"/>
+        <logger name="no.nav.aap" level="trace"/>
+        <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="trace"/>
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="secureJson"/>
         </logger>
     </springProfile>
     <springProfile name="local,test">
         <appender name="stdout"
-            class="ch.qos.logback.core.ConsoleAppender">
+                  class="ch.qos.logback.core.ConsoleAppender">
             <layout class="ch.qos.logback.classic.PatternLayout">
                 <Pattern>%d{yyyy-MM-dd HH:mm:ss} %X{Nav-CallId} [%thread] %-5level %logger{70} - %msg%n</Pattern>
             </layout>
@@ -34,10 +34,10 @@
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="stdout"/>
         </logger>
-        <logger name="no.nav.aap" level="trace" />
+        <logger name="no.nav.aap" level="trace"/>
     </springProfile>
     <root level="info">
-        <appender-ref ref="stdout" />
+        <appender-ref ref="stdout"/>
     </root>
     <springProfile name="prod">
         <turboFilter class="ch.qos.logback.classic.turbo.MarkerFilter">
