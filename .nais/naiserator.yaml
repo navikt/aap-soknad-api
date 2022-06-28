@@ -20,10 +20,11 @@ spec:
         -   secret: srvaap-selvbetjening
     gcp:
         sqlInstances:
+            name: aap-soknad-api-{{env}}
             -   type: POSTGRES_14
                 databases:
                     -   name: aap-soknad-api-{{env}}
-                        envVarPrefix: DB
+                            envVarPrefix: DB
         buckets:
             -   name: aap-vedlegg
                 cascadingDelete: true
