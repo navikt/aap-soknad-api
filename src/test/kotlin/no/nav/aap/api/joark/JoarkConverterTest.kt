@@ -43,10 +43,14 @@ class JoarkConverterTest {
 
 
 
+
         `when`(lager.lesDokument(anyObject(), anyObject()))
             .thenReturn(dokinfo)
             .thenReturn(dokinfo1)
+            .thenReturn(dokinfo1)
+            .thenReturn(dokinfo1)
             .thenReturn(dokinfo2)
+
         val søknad = SøknadTest.standardSøknad();
         val søker = SøknadTest.søker()
         val c = JoarkConverter(mapper, lager, Image2PDFConverter())

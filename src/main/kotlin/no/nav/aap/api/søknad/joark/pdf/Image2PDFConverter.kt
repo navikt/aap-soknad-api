@@ -8,13 +8,9 @@ import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.common.PDRectangle.A4
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject.createFromByteArray
-import org.apache.tika.Tika
 import org.slf4j.Logger
 import org.springframework.core.io.ClassPathResource
-import org.springframework.http.MediaType
-import org.springframework.http.MediaType.APPLICATION_PDF
-import org.springframework.http.MediaType.IMAGE_JPEG
-import org.springframework.http.MediaType.IMAGE_PNG
+import org.springframework.http.MediaType.parseMediaType
 import org.springframework.stereotype.Component
 import org.springframework.util.FileCopyUtils.copyToByteArray
 import java.io.ByteArrayOutputStream
@@ -23,30 +19,23 @@ import java.io.ByteArrayOutputStream
 class Image2PDFConverter {
 
     private val log: Logger = getLogger(javaClass)
+    fun convert(imgType: String, images: List<ByteArray>) = embed(imgType, *images.toTypedArray())
+    fun convert(imgType: String, fil: String) = convert(imgType, copyToByteArray(ClassPathResource(fil).inputStream))
+    fun convert(imgType: String, vararg images: ByteArray) = embed(imgType, *images)
 
-    fun convert(res: String): ByteArray = convert(copyToByteArray(ClassPathResource(res).inputStream))
-
-    fun convert(bytes: ByteArray): ByteArray =
-        mediaType(bytes)?.let {
-            when (it) {
-                APPLICATION_PDF -> bytes
-                IMAGE_JPEG, IMAGE_PNG -> embed(it.subtype, bytes)
-                else -> throw DokumentException("Media type $it er ikke støttet")
-            }
-        } ?: throw DokumentException("Kunne ikke bestemme media type")
-
-    private fun embed(imgType: String, vararg images: ByteArray): ByteArray =
+    private fun embed(imgType: String, vararg images: ByteArray) =
         try {
+            log.trace("Slår sammen ${images.size} filer for $imgType")
             PDDocument().use { doc ->
                 ByteArrayOutputStream().use { os ->
-                    images.forEach { addPDFPageFromImage(doc, it, imgType) }
+                    images.forEach { addPDFPageFromImage(doc, it, parseMediaType(imgType).subtype) }
                     doc.save(os)
                     os.toByteArray()
                 }
             }
         }
         catch (e: Exception) {
-            throw DokumentException("Konvertering av vedlegg feilet", e)
+            throw DokumentException("Sammenslåing/konvertering av vedlegg feilet", e)
         }
 
     private fun addPDFPageFromImage(doc: PDDocument, orig: ByteArray, fmt: String) {
@@ -61,8 +50,4 @@ class Image2PDFConverter {
             throw DokumentException("Konvertering av vedlegg feilet", e)
         }
     }
-
-    private fun mediaType(bytes: ByteArray?): MediaType? =
-        bytes?.takeIf(ByteArray::isNotEmpty)?.let { MediaType.valueOf(Tika().detect(it)) }
-
 }

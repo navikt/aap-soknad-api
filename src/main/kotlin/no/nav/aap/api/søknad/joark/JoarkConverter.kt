@@ -24,13 +24,13 @@ import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.stereotype.Component
-import java.util.*
+import java.util.Base64.getEncoder
 
 @Component
 class JoarkConverter(
         private val mapper: ObjectMapper,
         private val lager: Dokumentlager,
-        private val pdfConverter: Image2PDFConverter) {
+        private val converter: Image2PDFConverter) {
 
     private val log = LoggerUtil.getLogger(javaClass)
 
@@ -79,24 +79,33 @@ class JoarkConverter(
 
     private fun dokumenterFra(v: Vedlegg?, fnr: Fødselsnummer, tittel: String?): List<Dokument> =
         v?.let { vl ->
-            vl.deler?.mapNotNull { uuid -> dokumentFra(uuid, tittel, fnr) }
+            val alle = vl.deler?.mapNotNull { it?.let { it1 -> lager.lesDokument(fnr, it1) } } ?: emptyList()
+            var vedlegg = alle.groupBy { it.contentType }
+            val pdfs = vedlegg[APPLICATION_PDF_VALUE] ?: mutableListOf()
+            val jpgs = vedlegg[IMAGE_JPEG_VALUE] ?: emptyList()
+            val pngs = vedlegg[IMAGE_PNG_VALUE] ?: emptyList()
+            pdfs.map { it.asDokument(tittel) }.toMutableList().apply {
+                if (jpgs.isNotEmpty()) {
+                    add(converter.convert(IMAGE_JPEG_VALUE, jpgs.map(DokumentInfo::bytes)).asDokument(tittel))
+                }
+                if (pngs.isNotEmpty()) {
+                    add(converter.convert(IMAGE_PNG_VALUE, pngs.map(DokumentInfo::bytes)).asDokument(tittel))
+                }
+            }
         } ?: emptyList()
 
-    private fun dokumentFra(uuid: UUID?, tittel: String?, fnr: Fødselsnummer): Dokument? =
-        uuid?.let {
-            lager.lesDokument(fnr, it)?.asDokument(tittel).also { doc ->
-                log.trace("Dokument fra $it er $doc")
-            }
+    private fun ByteArray.asDokument(tittel: String?) =
+        Dokument(tittel = tittel,
+                dokumentVariant = DokumentVariant(PDFA,
+                        getEncoder().encodeToString(this))).also {
+            log.trace("DokumentInfo konvertert fra bytes er $it")
         }
 
     private fun DokumentInfo.asDokument(tittel: String?) =
         Dokument(tittel = tittel,
                 dokumentVariant = DokumentVariant(PDFA,
-                        Base64.getEncoder().encodeToString(when (contentType) {
-                            APPLICATION_PDF_VALUE -> bytes
-                            IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE -> pdfConverter.convert(bytes)
-                            else -> throw IllegalStateException("UKjent content type $contentType, skal ikke skje")
-                        }))).also { log.trace("Blob konvertert er $it") }
+                        getEncoder().encodeToString(bytes)))
+            .also { log.trace("DokumentInfo konvertert er $it") }
 
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
         listOf(Dokument(UTLAND,
