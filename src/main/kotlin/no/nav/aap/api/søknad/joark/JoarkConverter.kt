@@ -67,7 +67,7 @@ class JoarkConverter(
     private fun dokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
         mutableListOf(Dokument(STANDARD, listOf(søknad.asJsonVariant(mapper), pdfVariant)))
 
-    private fun dokumenterFra(a: List<VedleggAware?>?, fnr: Fødselsnummer, tittel: String?): List<Dokument> =
+    private fun dokumenterFra(a: List<VedleggAware?>?, fnr: Fødselsnummer, tittel: String?) =
         a?.map { it ->
             dokumenterFra(it?.vedlegg, fnr, tittel)
         }?.flatten() ?: emptyList()
@@ -77,7 +77,7 @@ class JoarkConverter(
             v.vedlegg?.let { dokumenterFra(it, fnr, tittel) }
         } ?: emptyList()
 
-    private fun dokumenterFra(v: Vedlegg?, fnr: Fødselsnummer, tittel: String?): List<Dokument> =
+    private fun dokumenterFra(v: Vedlegg?, fnr: Fødselsnummer, tittel: String?) =
         v?.let { vl ->
             val alle = vl.deler?.mapNotNull { it?.let { it1 -> lager.lesDokument(fnr, it1) } } ?: emptyList()
             var vedlegg = alle.groupBy { it.contentType }
@@ -108,8 +108,10 @@ class JoarkConverter(
             .also { log.trace("DokumentInfo konvertert er $it") }
 
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
-        listOf(Dokument(UTLAND,
-                listOf(søknad.asJsonVariant(mapper), pdfDokument)
-                    .also { log.trace("${it.size} dokumentvariant(er) ($it)") }))
-            .also { log.trace("Dokument til JOARK $it") }
+        listOf(Dokument(UTLAND, listOf(søknad.asJsonVariant(mapper), pdfDokument)
+            .also {
+                log.trace("${it.size} dokumentvariant(er) ($it)")
+            }).also {
+            log.trace("Dokument til JOARK $it")
+        })
 }
