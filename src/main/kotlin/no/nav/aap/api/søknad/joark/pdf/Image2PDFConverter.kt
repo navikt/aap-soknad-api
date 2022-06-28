@@ -28,7 +28,7 @@ class Image2PDFConverter {
             log.trace("Slår sammen ${images.size} fil(er) for $imgType")
             PDDocument().use { doc ->
                 ByteArrayOutputStream().use { os ->
-                    images.forEach { addPDFPageFromImage(doc, it, parseMediaType(imgType).subtype) }
+                    images.forEach { pdfFraBilde(doc, it, parseMediaType(imgType).subtype) }
                     doc.save(os)
                     os.toByteArray()
                 }
@@ -38,16 +38,16 @@ class Image2PDFConverter {
             throw DokumentException("Sammenslåing/konvertering av vedlegg feilet", e)
         }
 
-    private fun addPDFPageFromImage(doc: PDDocument, orig: ByteArray, fmt: String) {
-        val page = PDPage(A4)
-        doc.addPage(page)
-        try {
-            PDPageContentStream(doc, page).use {
-                it.drawImage(createFromByteArray(doc, downToA4(orig, fmt), "img"), A4.lowerLeftX, A4.lowerLeftY)
+    private fun pdfFraBilde(doc: PDDocument, bilde: ByteArray, fmt: String) =
+        PDPage(A4).apply {
+            doc.addPage(this)
+            try {
+                PDPageContentStream(doc, this).use {
+                    it.drawImage(createFromByteArray(doc, downToA4(bilde, fmt), "img"), A4.lowerLeftX, A4.lowerLeftY)
+                }
+            }
+            catch (e: Exception) {
+                throw DokumentException("Konvertering av vedlegg feilet", e)
             }
         }
-        catch (e: Exception) {
-            throw DokumentException("Konvertering av vedlegg feilet", e)
-        }
-    }
 }

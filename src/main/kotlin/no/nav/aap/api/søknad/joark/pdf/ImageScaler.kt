@@ -15,62 +15,58 @@ import java.awt.image.BufferedImage.TYPE_CUSTOM
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import javax.imageio.ImageIO
+import java.lang.Math.toRadians
 import javax.imageio.ImageIO.read
+import javax.imageio.ImageIO.write
 
 internal object ImageScaler {
     private val LOG = LoggerFactory.getLogger(ImageScaler::class.java)
-    fun downToA4(origImage: ByteArray, format: String): ByteArray {
-        return try {
-            var image = read(ByteArrayInputStream(origImage))
-            image = rotatePortrait(image)
-            val pdfPageDim = Dimension(A4.width.toInt(), A4.height.toInt())
-            val origDim = Dimension(image.width, image.height)
-            val newDim = getScaledDimension(origDim, pdfPageDim)
-            if (newDim == origDim) {
-                origImage
-            }
-            else {
-                toBytes(scaleDown(image, newDim), format)
+    fun downToA4(origImage: ByteArray, format: String) =
+        try {
+            with(tilPortrett(read(ByteArrayInputStream(origImage)))) {
+                val origDim = Dimension(width, height)
+                val newDim = skalertDimensjon(origDim, Dimension(A4.width.toInt(), A4.height.toInt()))
+                if (newDim == origDim) {
+                    origImage
+                }
+                else {
+                    bytes(skalerNed(this, newDim), format)
+                }
             }
         }
-        catch (ex: IOException) {
-            throw DokumentException("Konvertering av vedlegg feilet", ex)
+        catch (e: IOException) {
+            throw DokumentException("Konvertering av vedlegg feilet", e)
         }
-    }
 
-    private fun rotatePortrait(image: BufferedImage): BufferedImage {
+    private fun tilPortrett(image: BufferedImage): BufferedImage {
         if (image.height >= image.width) {
             return image
         }
         if (image.type == TYPE_CUSTOM) {
-            LOG.info("Kan ikke rotere bilde med ukjent type")
+            LOG.warn("Kan ikke rotere bilde med ukjent type")
             return image
         }
-        var rotatedImage = BufferedImage(image.height, image.width, image.type)
         return with(AffineTransform()) {
-            this.rotate(Math.toRadians(90.0), (image.height / 2f).toDouble(), (image.height / 2f).toDouble())
-            AffineTransformOp(this, TYPE_BILINEAR).filter(image, rotatedImage)
+            rotate(toRadians(90.0), (image.height / 2f).toDouble(), (image.height / 2f).toDouble())
+            AffineTransformOp(this, TYPE_BILINEAR).filter(image, BufferedImage(image.height, image.width, image.type))
         }
     }
 
-    private fun getScaledDimension(imgSize: Dimension, a4: Dimension): Dimension {
-        val originalWidth = imgSize.width
-        val originalHeight = imgSize.height
-        var newWidth = originalWidth
-        var newHeight = originalHeight
-        if (originalWidth > a4.width) {
-            newWidth = a4.width
-            newHeight = newWidth * originalHeight / originalWidth
+    private fun skalertDimensjon(imgSize: Dimension, a4: Dimension): Dimension {
+        var width = imgSize.width
+        var height = imgSize.height
+        if (imgSize.width > a4.width) {
+            width = a4.width
+            height = width * imgSize.height / imgSize.width
         }
-        if (newHeight > a4.height) {
-            newHeight = a4.height
-            newWidth = newHeight * originalWidth / originalHeight
+        if (height > a4.height) {
+            height = a4.height
+            width = height * imgSize.width / imgSize.height
         }
-        return Dimension(newWidth, newHeight)
+        return Dimension(width, height)
     }
 
-    private fun scaleDown(origImage: BufferedImage, newDim: Dimension): BufferedImage {
+    private fun skalerNed(origImage: BufferedImage, newDim: Dimension): BufferedImage {
         val newWidth = newDim.getWidth().toInt()
         val newHeight = newDim.getHeight().toInt()
         val tempImg = origImage.getScaledInstance(newWidth, newHeight, SCALE_SMOOTH)
@@ -83,9 +79,9 @@ internal object ImageScaler {
     }
 
     @Throws(IOException::class)
-    private fun toBytes(img: BufferedImage, format: String) =
+    private fun bytes(img: BufferedImage, format: String) =
         with(ByteArrayOutputStream()) {
-            ImageIO.write(img, format, this)
-            this.toByteArray()
+            write(img, format, this)
+            toByteArray()
         }
 }
