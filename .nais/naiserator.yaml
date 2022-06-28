@@ -21,7 +21,7 @@ spec:
     gcp:
         sqlInstances:
             -   name: aap-soknad-api-{{env}}
-            -   type: POSTGRES_14
+                type: POSTGRES_14
                 databases:
                     -   name: aap-soknad-api-{{env}}
                         envVarPrefix: DB
