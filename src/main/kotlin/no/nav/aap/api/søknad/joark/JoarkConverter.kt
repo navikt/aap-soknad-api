@@ -59,7 +59,7 @@ class JoarkConverter(
                 addAll(dokumenterFra(this@with, søker.fnr))
                 addAll(dokumenterFra(utbetalinger?.andreStønader, søker.fnr))
                 addAll(dokumenterFra(andreBarn, søker.fnr))
-            }.also { log.trace("Sender ${it.size} dokumenter til JOARK  $it") }
+            }.also { log.trace("Sender ${it.size} dokumenter til JOARK  $it") } //
         }
 
     private fun dokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
