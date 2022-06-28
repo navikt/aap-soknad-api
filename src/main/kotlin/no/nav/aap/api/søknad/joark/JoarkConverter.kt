@@ -66,17 +66,17 @@ class JoarkConverter(
         mutableListOf(Dokument(STANDARD, listOf(søknad.asJsonVariant(mapper), pdfVariant)))
 
     private fun dokumenterFra(a: List<VedleggAware?>?, fnr: Fødselsnummer): List<Dokument> =
-        a?.let { it ->
-            dokumenterFra(it, fnr)
-        } ?: emptyList()
+        a?.map { it ->
+            dokumenterFra(it?.vedlegg, fnr)
+        }?.flatten() ?: emptyList()
 
     private fun dokumenterFra(a: VedleggAware?, fnr: Fødselsnummer): List<Dokument> =
         a?.let { v ->
             v.vedlegg?.let { dokumenterFra(it, fnr) }
         } ?: emptyList()
 
-    private fun dokumenterFra(v: Vedlegg, fnr: Fødselsnummer): List<Dokument> =
-        v.let { vl ->
+    private fun dokumenterFra(v: Vedlegg?, fnr: Fødselsnummer): List<Dokument> =
+        v?.let { vl ->
             vl.deler?.mapNotNull { uuid -> dokumentFra(uuid, v.tittel, fnr) }
         } ?: emptyList()
 
