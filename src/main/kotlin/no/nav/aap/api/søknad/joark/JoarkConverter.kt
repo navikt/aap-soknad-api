@@ -53,31 +53,33 @@ class JoarkConverter(
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         with(søknad) {
             dokumenterFra(this, pdfVariant).apply {
-                addAll(dokumenterFra(studier, søker.fnr))
-                addAll(dokumenterFra(utbetalinger?.ekstraUtbetaling, søker.fnr))
-                addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, søker.fnr))
-                addAll(dokumenterFra(this@with, søker.fnr))
-                addAll(dokumenterFra(utbetalinger?.andreStønader, søker.fnr))
-                addAll(dokumenterFra(andreBarn, søker.fnr))
+                addAll(dokumenterFra(studier, søker.fnr, "Dokumentasjon av studier"))
+                addAll(dokumenterFra(utbetalinger?.ekstraUtbetaling, søker.fnr, "Dokumentasjon av ekstra utbetalinger"))
+                addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver,
+                        søker.fnr,
+                        "Dokumentasjon av ekstra utbetaling fra arbeidsgiver"))
+                addAll(dokumenterFra(this@with, søker.fnr, "Annen dokumentasjon"))
+                addAll(dokumenterFra(utbetalinger?.andreStønader, søker.fnr, "Dokumentasjon av andre stønader"))
+                addAll(dokumenterFra(andreBarn, søker.fnr, "barn"))
             }.also { log.trace("Sender ${it.size} dokumenter til JOARK  $it") } //
         }
 
     private fun dokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
         mutableListOf(Dokument(STANDARD, listOf(søknad.asJsonVariant(mapper), pdfVariant)))
 
-    private fun dokumenterFra(a: List<VedleggAware?>?, fnr: Fødselsnummer): List<Dokument> =
+    private fun dokumenterFra(a: List<VedleggAware?>?, fnr: Fødselsnummer, tittel: String?): List<Dokument> =
         a?.map { it ->
-            dokumenterFra(it?.vedlegg, fnr)
+            dokumenterFra(it?.vedlegg, fnr, tittel)
         }?.flatten() ?: emptyList()
 
-    private fun dokumenterFra(a: VedleggAware?, fnr: Fødselsnummer): List<Dokument> =
+    private fun dokumenterFra(a: VedleggAware?, fnr: Fødselsnummer, tittel: String): List<Dokument> =
         a?.let { v ->
-            v.vedlegg?.let { dokumenterFra(it, fnr) }
+            v.vedlegg?.let { dokumenterFra(it, fnr, tittel) }
         } ?: emptyList()
 
-    private fun dokumenterFra(v: Vedlegg?, fnr: Fødselsnummer): List<Dokument> =
+    private fun dokumenterFra(v: Vedlegg?, fnr: Fødselsnummer, tittel: String?): List<Dokument> =
         v?.let { vl ->
-            vl.deler?.mapNotNull { uuid -> dokumentFra(uuid, v.tittel, fnr) }
+            vl.deler?.mapNotNull { uuid -> dokumentFra(uuid, tittel, fnr) }
         } ?: emptyList()
 
     private fun dokumentFra(uuid: UUID?, tittel: String?, fnr: Fødselsnummer): Dokument? =

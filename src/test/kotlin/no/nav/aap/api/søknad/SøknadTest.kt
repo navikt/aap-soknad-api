@@ -68,38 +68,41 @@ class SøknadTest {
         assertEquals(orig, ss)*/
     }
 
-    private fun søker(): Søker {
-        return Søker(Navn("Ole", "B", "Olsen"),
-                Fødselsnummer("01010111111"),
-                Adresse("Gata", "17", "A",
-                        PostNummer("2600", "Lillehammer")), now(), listOf(
-                Barn(Fødselsnummer("22222222222"),
-                        Navn("Barn", "B", "Barnsben"), now())))
-    }
+    companion object {
 
-    fun standardSøknad() = StandardSøknad(
-            Studier(NEI, RadioValg.NEI),
-            Startdato(now(), HELSE, "Noe annet"),
-            Ferie(DAGER, dager = 20),
-            Medlemskap(true, null, null, null,
-                    listOf(Utenlandsopphold(SE,
-                            Periode(now(), now().plusDays(2)),
-                            true, "11111111"))),
-            listOf(Behandler(FASTLEGE, LEGE, Navn("Lege", "A", "Legesen"),
-                    KontaktInformasjon("Legekontoret",
-                            OrgNummer("888888888"),
-                            Adresse("Legegata", "17", "A",
-                                    PostNummer("2600", "Lillehammer")),
-                            "22222222"))),
-            JA,
-            Utbetaling(FraArbeidsgiver(true, Vedlegg(deler = listOf(UUID.randomUUID(),
-                    UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD)),
-                    EkstraUtbetaling("hvilken", "hvem")),
-            listOf(BarnOgInntekt(Fødselsnummer("08089403198"), merEnnIG = true, barnepensjon = false)),
-            listOf(AnnetBarnOgInntekt(Barn(Fødselsnummer("08089403198"),
-                    Navn("Et", "ekstra", "Barn"), now().minusYears(14)))),
-            "Tilegg", Vedlegg(deler = listOf(UUID.randomUUID(),
-            UUID.randomUUID())))
+        fun søker(): Søker {
+            return Søker(Navn("Ole", "B", "Olsen"),
+                    Fødselsnummer("08089403198"),
+                    Adresse("Gata", "17", "A",
+                            PostNummer("2600", "Lillehammer")), now(), listOf(
+                    Barn(Fødselsnummer("08089405956"),
+                            Navn("Barn", "B", "Barnsben"), now())))
+        }
+
+        fun standardSøknad() = StandardSøknad(
+                Studier(NEI, RadioValg.NEI),
+                Startdato(now(), HELSE, "Noe annet"),
+                Ferie(DAGER, dager = 20),
+                Medlemskap(true, null, null, null,
+                        listOf(Utenlandsopphold(SE,
+                                Periode(now(), now().plusDays(2)),
+                                true, "11111111"))),
+                listOf(Behandler(FASTLEGE, LEGE, Navn("Lege", "A", "Legesen"),
+                        KontaktInformasjon("Legekontoret",
+                                OrgNummer("888888888"),
+                                Adresse("Legegata", "17", "A",
+                                        PostNummer("2600", "Lillehammer")),
+                                "22222222"))),
+                JA,
+                Utbetaling(FraArbeidsgiver(true, Vedlegg(deler = listOf(UUID.randomUUID(),
+                        UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD)),
+                        EkstraUtbetaling("hvilken", "hvem")),
+                listOf(BarnOgInntekt(Fødselsnummer("08089403198"), merEnnIG = true, barnepensjon = false)),
+                listOf(AnnetBarnOgInntekt(Barn(Fødselsnummer("08089403198"),
+                        Navn("Et", "ekstra", "Barn"), now().minusYears(14)))),
+                "Tilegg", Vedlegg(deler = listOf(UUID.randomUUID(),
+                UUID.randomUUID())))
+    }
 
     @SpringBootApplication
     internal class DummyApplication
