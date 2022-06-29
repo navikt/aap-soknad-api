@@ -5,6 +5,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentlagerController.Com
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil
+import no.nav.security.token.support.core.api.Unprotected
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
@@ -30,6 +31,7 @@ internal class DokumentlagerController(private val lager: Dokumentlager, private
 
     @PostMapping("/lagre", consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
+    @Unprotected  // TODO Midlertidig
     fun lagreDokument(@RequestPart("vedlegg") vedlegg: MultipartFile) =
         with(vedlegg) {
             log.trace("Lagrer vedlegg ${bytes.size}")
@@ -55,7 +57,7 @@ internal class DokumentlagerController(private val lager: Dokumentlager, private
     @DeleteMapping("/slett/{uuid}")
     @ResponseStatus(NO_CONTENT)
     fun slettDokument(@PathVariable uuid: UUID) =
-        lager.slettDokument(uuid, ctx.getFnr())
+        lager.slettDokument(ctx.getFnr(), uuid)
 
     companion object {
         const val BASEPATH = "vedlegg"

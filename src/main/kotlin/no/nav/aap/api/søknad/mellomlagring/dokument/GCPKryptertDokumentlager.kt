@@ -49,7 +49,7 @@ internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
             }
         }
 
-    override fun slettDokument(uuid: UUID, fnr: Fødselsnummer) =
+    override fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
         lager.delete(of(cfg.vedlegg, key(fnr, uuid)))
 
     @Component

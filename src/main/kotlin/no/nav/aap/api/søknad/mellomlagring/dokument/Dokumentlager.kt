@@ -10,7 +10,7 @@ import java.util.Objects.hash
 
 interface Dokumentlager {
     fun lesDokument(fnr: Fødselsnummer, uuid: UUID): DokumentInfo?
-    fun slettDokument(uuid: UUID, fnr: Fødselsnummer): Boolean
+    fun slettDokument(fnr: Fødselsnummer, uuid: UUID): Boolean
     fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo): UUID
     fun key(fnr: Fødselsnummer, uuid: UUID) = "${hash(fnr, uuid)}"
 

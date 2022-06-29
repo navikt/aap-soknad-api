@@ -60,5 +60,5 @@ class JoarkRouter(private val joark: JoarkClient,
         uuids?.forEach { slett(it, fnr) }
 
     private fun slett(uuid: UUID?, fnr: Fødselsnummer) =
-        uuid?.let { lager.slettDokument(it, fnr).also { log.info("Slettet dokument $it") } }
+        uuid?.let { lager.slettDokument(fnr, it).also { log.info("Slettet dokument $it") } }
 }
