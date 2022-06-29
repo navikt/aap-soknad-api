@@ -2,6 +2,9 @@ package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import no.nav.aap.api.felles.Fødselsnummer
 import org.apache.tika.Tika
+import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
+import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
+import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import java.util.*
 import java.util.Objects.hash
 
@@ -25,12 +28,20 @@ data class DokumentInfo(val bytes: ByteArray, val contentType: String?, val filn
     constructor(bytes: ByteArray, filnavn: String?) : this(bytes, TIKA.detect(bytes), filnavn)
 
     init {
-        require(TIKA.detect(bytes) == contentType) {
-            "Foventet $contentType men fikk ${TIKA.detect(bytes)} for $filnavn"
+        TIKA.detect(bytes).apply {
+            if (!this.equals(contentType)) {
+                throw UkjentContentTypeException("Foventet $contentType men fikk $this for $filnavn")
+            }
+        }
+        if (!types.contains(contentType)) {
+            throw UkjentContentTypeException("Filtype $contentType er ikek støttet, må være en av $types")
         }
     }
 
+    class UkjentContentTypeException(msg: String) : RuntimeException(msg)
+
     companion object {
+        private val types = listOf(APPLICATION_PDF_VALUE, IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE)
         private val TIKA = Tika()
     }
 

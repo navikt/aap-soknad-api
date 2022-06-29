@@ -3,6 +3,7 @@ package no.nav.aap.api.error
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo.UkjentContentTypeException
 import no.nav.aap.util.LoggerUtil
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
@@ -16,6 +17,7 @@ import org.zalando.problem.Status.BAD_REQUEST
 import org.zalando.problem.Status.NOT_FOUND
 import org.zalando.problem.Status.UNAUTHORIZED
 import org.zalando.problem.Status.UNPROCESSABLE_ENTITY
+import org.zalando.problem.Status.UNSUPPORTED_MEDIA_TYPE
 import org.zalando.problem.spring.web.advice.ProblemHandling
 
 @ControllerAdvice
@@ -33,6 +35,10 @@ class AAPApiExceptionHandler : ProblemHandling {
     @ExceptionHandler(DokumentException::class)
     fun handleDokumentException(e: DokumentException, req: NativeWebRequest): ResponseEntity<Problem> =
         create(UNPROCESSABLE_ENTITY, e, req).also { log.trace(UNPROCESSABLE_ENTITY.name, e) }
+
+    @ExceptionHandler(UkjentContentTypeException::class)
+    fun handleUkjentTypeException(e: UkjentContentTypeException, req: NativeWebRequest): ResponseEntity<Problem> =
+        create(UNSUPPORTED_MEDIA_TYPE, e, req).also { log.trace(UNSUPPORTED_MEDIA_TYPE.name, e) }
 
     @ExceptionHandler(StorageException::class)
     fun handleStorageException(e: StorageException, req: NativeWebRequest): ResponseEntity<Problem> =
