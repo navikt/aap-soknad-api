@@ -7,14 +7,13 @@ import org.springframework.boot.actuate.trace.http.HttpTraceRepository
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.env.Environment
 
 @Configuration
 @ConditionalOnDevOrLocal
 class DevBeanConfig
 
 @Bean
-fun httpTraceRepository(env: Environment): HttpTraceRepository = InMemoryHttpTraceRepository()
+fun httpTraceRepository(): HttpTraceRepository = InMemoryHttpTraceRepository()
 
 @Bean
 fun actuatorIgnoringTraceRequestFilter(repo: HttpTraceRepository, tracer: HttpExchangeTracer) =

@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.joark.pdf
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
 import org.apache.pdfbox.pdmodel.common.PDRectangle.A4
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
 import java.awt.Dimension
 import java.awt.Graphics2D
 import java.awt.geom.AffineTransform
@@ -19,7 +20,8 @@ import java.lang.Math.toRadians
 import javax.imageio.ImageIO.read
 import javax.imageio.ImageIO.write
 
-internal object ImageScaler {
+@Component
+class ImageScaler {
     private val LOG = LoggerFactory.getLogger(ImageScaler::class.java)
     fun downToA4(origImage: ByteArray, format: String) =
         try {

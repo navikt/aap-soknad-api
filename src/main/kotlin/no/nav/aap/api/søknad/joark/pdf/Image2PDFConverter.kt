@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.joark.pdf
 
-import no.nav.aap.api.søknad.joark.pdf.ImageScaler.downToA4
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.apache.pdfbox.pdmodel.PDDocument
@@ -16,7 +15,7 @@ import org.springframework.util.FileCopyUtils.copyToByteArray
 import java.io.ByteArrayOutputStream
 
 @Component
-class Image2PDFConverter {
+class Image2PDFConverter(private val scaler: ImageScaler) {
 
     private val log: Logger = getLogger(javaClass)
     fun convert(imgType: String, images: List<ByteArray>) = embed(imgType, *images.toTypedArray())
@@ -43,7 +42,9 @@ class Image2PDFConverter {
             doc.addPage(this)
             try {
                 PDPageContentStream(doc, this).use {
-                    it.drawImage(createFromByteArray(doc, downToA4(bilde, fmt), "img"), A4.lowerLeftX, A4.lowerLeftY)
+                    it.drawImage(createFromByteArray(doc, scaler.downToA4(bilde, fmt), "img"),
+                            A4.lowerLeftX,
+                            A4.lowerLeftY)
                 }
             }
             catch (e: Exception) {
