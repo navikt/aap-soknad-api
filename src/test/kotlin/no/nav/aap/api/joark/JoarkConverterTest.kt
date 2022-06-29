@@ -62,8 +62,8 @@ class JoarkConverterTest {
         converted.dokumenter.forEach { doc ->
             doc?.dokumentVarianter?.forEach {
                 if (it?.filtype == PDFA.name)
-                    FileOutputStream("${it?.hashCode()}.pdf").use { fos ->
-                        fos.write(Base64.getDecoder().decode(it!!.fysiskDokument))
+                    FileOutputStream("${it.hashCode()}.pdf").use { fos ->
+                        fos.write(Base64.getDecoder().decode(it.fysiskDokument))
                     }
             }
         }

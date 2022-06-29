@@ -18,11 +18,11 @@ import java.io.ByteArrayOutputStream
 class Image2PDFConverter(private val scaler: ImageScaler) {
 
     private val log: Logger = getLogger(javaClass)
-    fun tilPdf(imgType: String, images: List<ByteArray>) = embed(imgType, *images.toTypedArray())
+    fun tilPdf(imgType: String, images: List<ByteArray>) = slåSammen(imgType, *images.toTypedArray())
     fun tilPdf(imgType: String, fil: String) = tilPdf(imgType, copyToByteArray(ClassPathResource(fil).inputStream))
-    fun tilPdf(imgType: String, vararg images: ByteArray) = embed(imgType, *images)
+    fun tilPdf(imgType: String, vararg images: ByteArray) = slåSammen(imgType, *images)
 
-    private fun embed(imgType: String, vararg images: ByteArray) =
+    private fun slåSammen(imgType: String, vararg images: ByteArray) =
         try {
             log.trace("Slår sammen ${images.size} fil(er) for $imgType")
             PDDocument().use { doc ->
@@ -42,7 +42,7 @@ class Image2PDFConverter(private val scaler: ImageScaler) {
             doc.addPage(this)
             try {
                 PDPageContentStream(doc, this).use {
-                    it.drawImage(createFromByteArray(doc, scaler.downToA4(bilde, fmt), "img"),
+                    it.drawImage(createFromByteArray(doc, scaler.tilA4(bilde, fmt), "img"),
                             A4.lowerLeftX,
                             A4.lowerLeftY)
                 }

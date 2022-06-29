@@ -23,7 +23,7 @@ import javax.imageio.ImageIO.write
 @Component
 class ImageScaler {
     private val LOG = LoggerFactory.getLogger(ImageScaler::class.java)
-    fun downToA4(origImage: ByteArray, format: String) =
+    fun tilA4(origImage: ByteArray, format: String) =
         try {
             with(tilPortrett(read(ByteArrayInputStream(origImage)))) {
                 val origDim = Dimension(width, height)
