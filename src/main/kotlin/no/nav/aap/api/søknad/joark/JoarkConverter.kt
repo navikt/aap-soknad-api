@@ -79,8 +79,8 @@ class JoarkConverter(
 
     private fun dokumenterFra(v: Vedlegg?, fnr: Fødselsnummer, tittel: String?) =
         v?.let { vl ->
-            val alle = vl.deler?.mapNotNull { it?.let { it1 -> lager.lesDokument(fnr, it1) } } ?: emptyList()
-            var vedlegg = alle.groupBy { it.contentType }
+            val vedlegg = (vl.deler?.mapNotNull { it?.let { it1 -> lager.lesDokument(fnr, it1) } }
+                ?: emptyList()).groupBy { it.contentType }
             val pdfs = vedlegg[APPLICATION_PDF_VALUE] ?: mutableListOf()
             val jpgs = vedlegg[IMAGE_JPEG_VALUE] ?: emptyList()
             val pngs = vedlegg[IMAGE_PNG_VALUE] ?: emptyList()
