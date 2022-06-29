@@ -20,6 +20,7 @@ spring:
             accept-case-insensitive-enums: true
             accept-case-insensitive-properties: true
         deserialization:
+            accept-empty-array-as-null-object: true
             read-unknown-enum-values-using-default-value: true
             accept-single-value-as-array: true
             fail-on-unknown-properties: true

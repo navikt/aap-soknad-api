@@ -52,20 +52,68 @@ class SøknadTest {
          "07e35799-4db5-4ba3-81cc-3681dd1dec60" 
     """.trimIndent()
 
+    val test = """
+       {
+          "startDato":{
+             "fom":"2022-06-29"
+          },
+          "ferie":{
+             "ferieType":"NEI"
+          },
+          "medlemsskap":{
+             "boddINorgeSammenhengendeSiste5":true,
+             "jobbetUtenforNorgeFørSyk":false,
+             "utenlandsopphold":[
+                
+             ]
+          },
+          "studier":{
+             "erStudent":"NEI"
+          },
+          "behandlere":[
+             
+          ],
+          "yrkesskadeType":"NEI",
+          "utbetalinger":{
+             "ekstraFraArbeidsgiver":{
+                "fraArbeidsgiver":false,
+                "vedlegg":[
+                   
+                ]
+             },
+             "andreStønader":[
+                {
+                   "type":"OMSORGSSTØNAD",
+                   "vedlegg":[
+                      "823a5048-f6c4-464f-aaa1-a7e35846e382",
+                      "e4845982-7033-4e98-97e2-98782b373488",
+                      "e1abc29e-f926-43b9-812d-57260d3ed791"
+                   ]
+                }
+             ]
+          },
+          "registrerteBarn":[
+             {
+                "fnr":"13012064629",
+                "merEnnIG":false,
+                "barnepensjon":false
+             }
+          ],
+          "andreBarn":[
+             
+          ],
+          "andreVedlegg":[
+             
+          ]
+       }
+        
+    """.trimIndent()
+
     @Test
     fun serialize() {
-        val v = Vedlegg(deler = listOf(UUID.randomUUID()))
-        val vs = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(v)
-        //println(vs)
-        println(mapper.readValue(v3, Vedlegg::class.java))
-/*
-        var orig = standardSøknad()
-        val s = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(orig)
-        println(s)
-        var ss = mapper.readValue(s, StandardSøknad::class.java)
-        println(orig)
-        println(ss)
-        assertEquals(orig, ss)*/
+        //println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(standardSøknad()))
+        val ss = mapper.readValue(test, StandardSøknad::class.java)
+        //println(ss)
     }
 
     companion object {
@@ -94,8 +142,9 @@ class SøknadTest {
                                         PostNummer("2600", "Lillehammer")),
                                 "22222222"))),
                 JA,
-                Utbetaling(FraArbeidsgiver(true, Vedlegg(deler = listOf(UUID.randomUUID(),
-                        UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD)),
+                Utbetaling(
+                        FraArbeidsgiver(true, Vedlegg(deler = listOf(UUID.randomUUID(),
+                                UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD)),
                         EkstraUtbetaling("hvilken", "hvem")),
                 listOf(BarnOgInntekt(Fødselsnummer("08089403198"), merEnnIG = true, barnepensjon = false)),
                 listOf(AnnetBarnOgInntekt(Barn(Fødselsnummer("08089403198"),

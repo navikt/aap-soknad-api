@@ -118,7 +118,7 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
                                override val vedlegg: Vedlegg? = null) :
         VedleggAware {
         init {
-            require((fraArbeidsgiver && vedlegg != null) || (!fraArbeidsgiver && vedlegg == null))
+            require((fraArbeidsgiver && vedlegg?.deler?.isNotEmpty() ?: false) || (!fraArbeidsgiver && vedlegg?.deler?.isEmpty() ?: true))
         }
     }
 
