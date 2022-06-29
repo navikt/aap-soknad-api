@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component
 class ClamAvVirusScanner(private val a: VirusScanWebClientAdapter) : DokumentSjekker {
     override fun sjekk(dokument: DokumentInfo) =
         when (a.harVirus(dokument.bytes).result) {
-            FOUND -> throw DokumentException("Virus funnet i ${dokument.filnavn}")
+            FOUND -> throw VirusException("Virus funnet i ${dokument.filnavn}")
             NONE, OK -> Unit
         }
 }
+
+class VirusException(msg: String) : DokumentException(msg)
