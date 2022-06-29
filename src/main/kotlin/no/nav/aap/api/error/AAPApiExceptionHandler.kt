@@ -27,28 +27,40 @@ class AAPApiExceptionHandler : ProblemHandling {
 
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
     fun handleMissingOrExpiredToken(e: java.lang.Exception, req: NativeWebRequest): ResponseEntity<Problem> =
-        create(UNAUTHORIZED, e, req).also { log.trace(UNAUTHORIZED.name, e) }
+        create(e, Problem.builder()
+            .withStatus(UNAUTHORIZED)
+            .withDetail(e.message)
+            .with("callid", callId()).build(), req).also { log.trace(UNAUTHORIZED.name, e) }
 
     @ExceptionHandler(IntegrationException::class)
     fun handleIntegrationException(e: IntegrationException, req: NativeWebRequest): ResponseEntity<Problem> =
-        create(UNPROCESSABLE_ENTITY, e, req).also { log.trace(UNPROCESSABLE_ENTITY.name, e) }
+        create(e, Problem.builder()
+            .withStatus(UNPROCESSABLE_ENTITY)
+            .withDetail(e.message)
+            .with("callid", callId()).build(), req).also { log.trace(UNPROCESSABLE_ENTITY.name, e) }
 
     @ExceptionHandler(DokumentException::class)
     fun handleDokumentException(e: DokumentException, req: NativeWebRequest): ResponseEntity<Problem> =
-        create(UNPROCESSABLE_ENTITY, e, req).also { log.trace(UNPROCESSABLE_ENTITY.name, e) }
+        create(e, Problem.builder()
+            .withStatus(UNPROCESSABLE_ENTITY)
+            .withDetail(e.message)
+            .with("callid", callId()).build(), req).also { log.trace(UNPROCESSABLE_ENTITY.name, e) }
 
     @ExceptionHandler(UkjentContentTypeException::class)
     fun handleUkjentContentTypeException(e: UkjentContentTypeException,
                                          req: NativeWebRequest): ResponseEntity<Problem> =
         create(e, Problem.builder()
             .withStatus(UNSUPPORTED_MEDIA_TYPE)
+            .withDetail(e.message)
             .withTitle(e.message)
             .with("callid", callId()).build(), req).also { log.trace(UNSUPPORTED_MEDIA_TYPE.name, e) }
-    //create(UNSUPPORTED_MEDIA_TYPE, e, req).
 
     @ExceptionHandler(StorageException::class)
     fun handleStorageException(e: StorageException, req: NativeWebRequest): ResponseEntity<Problem> =
-        create(BAD_REQUEST, e, req).also { log.trace(BAD_REQUEST.name, e) }
+        create(e, Problem.builder()
+            .withStatus(BAD_REQUEST)
+            .withDetail(e.message)
+            .with("callid", callId()).build(), req).also { log.trace(BAD_REQUEST.name, e) }
 
     @ExceptionHandler(HttpClientErrorException.NotFound::class)
     fun handleNotFound(e: HttpClientErrorException, req: NativeWebRequest): ResponseEntity<Problem> =
