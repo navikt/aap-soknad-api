@@ -65,8 +65,10 @@ internal class DevController(private val dokumentLager: Dokumentlager,
 
     @PostMapping("vedlegg/lagre/{fnr}", consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
-    fun lagreDokument(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") v: MultipartFile) =
-        dokumentLager.lagreDokument(fnr, DokumentInfo(v.bytes, v.contentType, v.originalFilename))
+    fun lagreDokument(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") vedlegg: MultipartFile) =
+        with(vedlegg) {
+            dokumentLager.lagreDokument(fnr, DokumentInfo(bytes, contentType, originalFilename))
+        }
 
     @GetMapping("vedlegg/les/{fnr}/{uuid}")
     fun lesDokument(@PathVariable fnr: Fødselsnummer, @PathVariable uuid: UUID) =

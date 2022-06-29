@@ -4,6 +4,7 @@ import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentlagerController.Companion.BASEPATH
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
+import no.nav.aap.util.LoggerUtil
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
@@ -25,11 +26,17 @@ import java.util.*
 
 @ProtectedRestController(value = [BASEPATH], issuer = IDPORTEN)
 internal class DokumentlagerController(private val lager: Dokumentlager, private val ctx: AuthContext) {
+    private val log = LoggerUtil.getLogger(javaClass)
 
     @PostMapping("/lagre", consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
     fun lagreDokument(@RequestPart("vedlegg") vedlegg: MultipartFile) =
-        lager.lagreDokument(ctx.getFnr(), DokumentInfo(vedlegg.bytes, vedlegg.contentType, vedlegg.originalFilename))
+        with(vedlegg) {
+            log.trace("Lagrer vedlegg ${bytes.size}")
+            lager.lagreDokument(ctx.getFnr(), DokumentInfo(bytes, contentType, originalFilename)).also {
+                log.trace("Lagret $it OK")
+            }
+        }
 
     @GetMapping("/les/{uuid}")
     fun lesDokument(@PathVariable uuid: UUID) =
