@@ -18,9 +18,9 @@ import java.io.ByteArrayOutputStream
 class Image2PDFConverter(private val scaler: ImageScaler) {
 
     private val log: Logger = getLogger(javaClass)
-    fun convert(imgType: String, images: List<ByteArray>) = embed(imgType, *images.toTypedArray())
-    fun convert(imgType: String, fil: String) = convert(imgType, copyToByteArray(ClassPathResource(fil).inputStream))
-    fun convert(imgType: String, vararg images: ByteArray) = embed(imgType, *images)
+    fun tilPdf(imgType: String, images: List<ByteArray>) = embed(imgType, *images.toTypedArray())
+    fun tilPdf(imgType: String, fil: String) = tilPdf(imgType, copyToByteArray(ClassPathResource(fil).inputStream))
+    fun tilPdf(imgType: String, vararg images: ByteArray) = embed(imgType, *images)
 
     private fun embed(imgType: String, vararg images: ByteArray) =
         try {

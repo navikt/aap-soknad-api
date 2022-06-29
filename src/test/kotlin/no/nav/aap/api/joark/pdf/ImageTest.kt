@@ -19,17 +19,17 @@ class ImageByteArray2PDFConverterTest {
     private fun isPdf(bytes: ByteArray) = APPLICATION_PDF_VALUE == TIKA.detect(bytes)
 
     @Test
-    fun jpg2Pdf() = assertTrue(isPdf(converter.convert(IMAGE_JPEG_VALUE, "pdf/jks.jpg")))
+    fun jpg2Pdf() = assertTrue(isPdf(converter.tilPdf(IMAGE_JPEG_VALUE, "pdf/jks.jpg")))
 
     @Test
-    fun png2Pdf() = assertTrue(isPdf(converter.convert(IMAGE_PNG_VALUE, "pdf/nav-logo.png")))
+    fun png2Pdf() = assertTrue(isPdf(converter.tilPdf(IMAGE_PNG_VALUE, "pdf/nav-logo.png")))
 
     @Test
-    fun gifFeil() = assertThrows<DokumentException> { converter.convert(IMAGE_GIF_VALUE, "pdf/loading.gif") }
+    fun gifFeil() = assertThrows<DokumentException> { converter.tilPdf(IMAGE_GIF_VALUE, "pdf/loading.gif") }
 
     @Test
     fun junkFeil() =
-        assertThrows<DokumentException> { converter.convert(APPLICATION_PDF_VALUE, byteArrayOf(1, 2, 3, 4)) }
+        assertThrows<DokumentException> { converter.tilPdf(APPLICATION_PDF_VALUE, byteArrayOf(1, 2, 3, 4)) }
 
     companion object {
         private val TIKA = Tika()

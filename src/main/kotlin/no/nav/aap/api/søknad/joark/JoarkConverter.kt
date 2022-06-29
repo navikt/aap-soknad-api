@@ -86,10 +86,10 @@ class JoarkConverter(
             val pngs = vedlegg[IMAGE_PNG_VALUE] ?: emptyList()
             pdfs.map { it.asDokument(tittel) }.toMutableList().apply {
                 if (jpgs.isNotEmpty()) {
-                    add(converter.convert(IMAGE_JPEG_VALUE, jpgs.map(DokumentInfo::bytes)).asDokument(tittel))
+                    add(converter.tilPdf(IMAGE_JPEG_VALUE, jpgs.map(DokumentInfo::bytes)).asDokument(tittel))
                 }
                 if (pngs.isNotEmpty()) {
-                    add(converter.convert(IMAGE_PNG_VALUE, pngs.map(DokumentInfo::bytes)).asDokument(tittel))
+                    add(converter.tilPdf(IMAGE_PNG_VALUE, pngs.map(DokumentInfo::bytes)).asDokument(tittel))
                 }
             }
         } ?: emptyList()
