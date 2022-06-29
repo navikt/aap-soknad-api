@@ -52,7 +52,6 @@ class AAPApiExceptionHandler : ProblemHandling {
         create(e, Problem.builder()
             .withStatus(UNSUPPORTED_MEDIA_TYPE)
             .withDetail(e.message)
-            .withTitle(e.message)
             .with("callid", callId()).build(), req).also { log.trace(UNSUPPORTED_MEDIA_TYPE.name, e) }
 
     @ExceptionHandler(StorageException::class)
