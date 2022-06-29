@@ -5,6 +5,7 @@ import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo.UkjentContentTypeException
 import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.MDCUtil.callId
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.http.ResponseEntity
@@ -37,8 +38,13 @@ class AAPApiExceptionHandler : ProblemHandling {
         create(UNPROCESSABLE_ENTITY, e, req).also { log.trace(UNPROCESSABLE_ENTITY.name, e) }
 
     @ExceptionHandler(UkjentContentTypeException::class)
-    fun handleUkjentTypeException(e: UkjentContentTypeException, req: NativeWebRequest): ResponseEntity<Problem> =
-        create(UNSUPPORTED_MEDIA_TYPE, e, req).also { log.trace(UNSUPPORTED_MEDIA_TYPE.name, e) }
+    fun handleUkjentContentTypeException(e: UkjentContentTypeException,
+                                         req: NativeWebRequest): ResponseEntity<Problem> =
+        create(e, Problem.builder()
+            .withStatus(UNSUPPORTED_MEDIA_TYPE)
+            .withTitle(e.message)
+            .with("callid", callId()).build(), req).also { log.trace(UNSUPPORTED_MEDIA_TYPE.name, e) }
+    //create(UNSUPPORTED_MEDIA_TYPE, e, req).
 
     @ExceptionHandler(StorageException::class)
     fun handleStorageException(e: StorageException, req: NativeWebRequest): ResponseEntity<Problem> =

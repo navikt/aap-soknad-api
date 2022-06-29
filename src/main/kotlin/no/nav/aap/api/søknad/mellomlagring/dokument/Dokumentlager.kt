@@ -30,15 +30,15 @@ data class DokumentInfo(val bytes: ByteArray, val contentType: String?, val filn
     init {
         TIKA.detect(bytes).apply {
             if (!this.equals(contentType)) {
-                throw UkjentContentTypeException("Foventet $contentType men fikk $this for $filnavn")
+                throw UkjentContentTypeException(this, "Foventet $contentType men fikk $this for $filnavn")
             }
         }
         if (!types.contains(contentType)) {
-            throw UkjentContentTypeException("Filtype $contentType er ikek støttet, må være en av $types")
+            throw UkjentContentTypeException(msg = "Filtype $contentType er ikek støttet, må være en av $types")
         }
     }
 
-    class UkjentContentTypeException(msg: String) : RuntimeException(msg)
+    class UkjentContentTypeException(type: String? = null, msg: String) : RuntimeException(msg)
 
     companion object {
         private val types = listOf(APPLICATION_PDF_VALUE, IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE)
