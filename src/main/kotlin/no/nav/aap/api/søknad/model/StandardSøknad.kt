@@ -36,7 +36,7 @@ data class StandardSøknad(
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
         val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         val tilleggsopplysninger: String?,
-        @JsonAlias("andreVedlegg") override val vedlegg: Vedlegg? = null) : VedleggAware { //
+        @JsonAlias("andreVedlegg") override val vedlegg: Vedlegg? = null) : VedleggAware {
 
     fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
 }
@@ -115,12 +115,7 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
                       val ekstraUtbetaling: EkstraUtbetaling? = null) {
 
     data class FraArbeidsgiver(val fraArbeidsgiver: Boolean,
-                               override val vedlegg: Vedlegg? = null) :
-        VedleggAware {
-        init {
-            require((fraArbeidsgiver && vedlegg?.deler?.isNotEmpty() ?: false) || (!fraArbeidsgiver && vedlegg?.deler?.isEmpty() ?: true))
-        }
-    }
+                               override val vedlegg: Vedlegg? = null) : VedleggAware
 
     data class EkstraUtbetaling(val hvilken: String,
                                 val hvem: String,
