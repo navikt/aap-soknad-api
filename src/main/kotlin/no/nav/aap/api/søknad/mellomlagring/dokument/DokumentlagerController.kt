@@ -32,9 +32,7 @@ internal class DokumentlagerController(private val lager: Dokumentlager, private
     @ResponseStatus(CREATED)
     fun lagreDokument(@RequestPart("vedlegg") vedlegg: MultipartFile) =
         with(vedlegg) {
-            log.trace("Lagrer vedlegg ${bytes.size}")
             lager.lagreDokument(ctx.getFnr(), DokumentInfo(bytes, contentType, originalFilename)).also {
-                log.trace("Lagret $it OK")
             }
         }
 
