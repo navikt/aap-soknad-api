@@ -19,7 +19,7 @@ import no.nav.aap.joark.DokumentVariant
 import no.nav.aap.joark.Filtype.PDFA
 import no.nav.aap.joark.Journalpost
 import no.nav.aap.joark.asPDFVariant
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
@@ -32,7 +32,7 @@ class JoarkConverter(
         private val lager: Dokumentlager,
         private val converter: Image2PDFConverter) {
 
-    private val log = LoggerUtil.getLogger(javaClass)
+    private val log = getLogger(javaClass)
 
     fun convert(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, pdf.asPDFVariant()),
@@ -40,7 +40,7 @@ class JoarkConverter(
                 avsenderMottaker = AvsenderMottaker(søker.fnr,
                         navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
-            .also { log.trace("Journalpost er $it") }
+            .also { log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it") }
 
     fun convert(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, søker, pdf.asPDFVariant()),
@@ -79,8 +79,13 @@ class JoarkConverter(
 
     private fun dokumenterFra(v: Vedlegg?, fnr: Fødselsnummer, tittel: String?) =
         v?.let { vl ->
-            val vedlegg = (vl.deler?.mapNotNull { it?.let { it1 -> lager.lesDokument(fnr, it1) } }
-                ?: emptyList()).groupBy { it.contentType }
+            val vedlegg = (vl.deler?.mapNotNull {
+                it?.let { uuid ->
+                    lager.lesDokument(fnr, uuid)
+                }
+            } ?: emptyList())
+                .sortedBy { it.createTime }
+                .groupBy { it.contentType }
             val pdfs = vedlegg[APPLICATION_PDF_VALUE] ?: mutableListOf()
             val jpgs = vedlegg[IMAGE_JPEG_VALUE] ?: emptyList()
             val pngs = vedlegg[IMAGE_PNG_VALUE] ?: emptyList()
@@ -98,14 +103,14 @@ class JoarkConverter(
         Dokument(tittel = tittel,
                 dokumentVariant = DokumentVariant(PDFA,
                         getEncoder().encodeToString(this))).also {
-            log.trace("DokumentInfo konvertert fra bytes er $it")
+            log.trace("Dokument konvertert fra bytes er $it")
         }
 
     private fun DokumentInfo.asDokument(tittel: String?) =
         Dokument(tittel = tittel,
                 dokumentVariant = DokumentVariant(PDFA,
                         getEncoder().encodeToString(bytes)))
-            .also { log.trace("DokumentInfo konvertert er $it") }
+            .also { log.trace("Dokument konvertert fra DokumentInfo  er $it") }
 
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
         listOf(Dokument(UTLAND, listOf(søknad.asJsonVariant(mapper), pdfDokument)

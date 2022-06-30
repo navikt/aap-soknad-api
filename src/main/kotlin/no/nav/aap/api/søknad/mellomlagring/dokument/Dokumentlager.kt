@@ -24,8 +24,11 @@ interface DokumentSjekker {
     fun sjekk(dokument: DokumentInfo)
 }
 
-data class DokumentInfo(val bytes: ByteArray, val contentType: String?, val filnavn: String?) {
-    constructor(bytes: ByteArray, filnavn: String?) : this(bytes, TIKA.detect(bytes), filnavn)
+data class DokumentInfo(val bytes: ByteArray,
+                        val contentType: String?,
+                        val filnavn: String?,
+                        val createTime: Long = 0) {
+    constructor(bytes: ByteArray, filnavn: String?) : this(bytes, TIKA.detect(bytes), filnavn, 0)
 
     init {
         TIKA.detect(bytes).apply {
@@ -33,12 +36,12 @@ data class DokumentInfo(val bytes: ByteArray, val contentType: String?, val filn
                 throw UkjentContentTypeException(this, "Foventet $contentType men fikk $this for $filnavn")
             }
         }
-        if (!types.contains(contentType)) {
-            throw UkjentContentTypeException(msg = "Filtype $contentType er ikek støttet, må være en av $types")
+        if (contentType !in types) {
+            throw UkjentContentTypeException(msg = "Filtype $contentType er ikke støttet, må være en av $types")
         }
     }
 
-    class UkjentContentTypeException(type: String? = null, msg: String) : RuntimeException(msg)
+    class UkjentContentTypeException(val type: String? = null, msg: String) : RuntimeException(msg)
 
     companion object {
         private val types = listOf(APPLICATION_PDF_VALUE, IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE)

@@ -24,9 +24,9 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfg: GCPBucketConfig,
             .also { log.trace(CONFIDENTIAL, "Lagret kryptert $value  for $fnr") }
 
     override fun les(fnr: Fødselsnummer, type: SkjemaType) =
-        lager.get(cfg.mellomlagring, key(fnr, type))?.let {
-            String(it.getContent()).also {
-                log.trace(CONFIDENTIAL, "Lest kryptert $it for $fnr")
+        lager.get(cfg.mellomlagring, key(fnr, type))?.let { blob ->
+            String(blob.getContent()).also {
+                log.trace(CONFIDENTIAL, "Lest kryptert verdi $it for $fnr")
             }
         }
 

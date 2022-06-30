@@ -28,23 +28,25 @@ internal class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
 
     override fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
         randomUUID().apply {
-            log.trace("Lagrer ${dokument.filnavn} kryptert med uuid $this og contentType ${dokument.contentType}")
-            sjekkere.forEach { it.sjekk(dokument) }
-            lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this)))
-                .setContentType(dokument.contentType)
-                .setMetadata(mapOf(FILNAVN to dokument.filnavn))
-                .build(), dokument.bytes, kmsKeyName(cfg.kms))
-                .also { log.trace("Lagret $dokument kryptert med uuid $this") }
+            with(dokument) {
+                log.trace("Lagrer $filnavn kryptert med uuid $this og contentType $contentType")
+                sjekkere.forEach { it.sjekk(this) }
+                lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this@apply)))
+                    .setContentType(contentType)
+                    .setMetadata(mapOf(FILNAVN to filnavn))
+                    .build(), bytes, kmsKeyName(cfg.kms))
+                    .also { log.trace("Lagret $dokument kryptert med uuid $this@apply") }
+            }
+
         }
 
     override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
         lager.get(cfg.vedlegg, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))?.let { blob ->
             with(blob) {
-                DokumentInfo(getContent(),
-                        contentType,
-                        metadata[FILNAVN]).also {
-                    log.trace("Lest kryptert dokument med uuid $uuid er $it")
-                }
+                DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
+                    .also {
+                        log.trace("Lest kryptert dokument med uuid $uuid er $it")
+                    }
             }
         }
 
