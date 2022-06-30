@@ -3,7 +3,7 @@ package no.nav.aap.api.søknad.mellomlagring
 import com.google.cloud.storage.BlobId.of
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
-import com.google.cloud.storage.Storage.BlobTargetOption
+import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -19,8 +19,7 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfg: GCPBucketConfig,
 
     override fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
         lager.create(newBuilder(of(cfg.mellomlagring, key(fnr, type)))
-            .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8),
-                BlobTargetOption.kmsKeyName(cfg.kms))
+            .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName(cfg.kms))
             .blobId.toGsUtilUri()
             .also { log.trace(CONFIDENTIAL, "Lagret kryptert $value  for $fnr") }
 
