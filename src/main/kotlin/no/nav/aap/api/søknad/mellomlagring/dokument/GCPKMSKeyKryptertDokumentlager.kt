@@ -6,26 +6,29 @@ import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobField.CONTENT_TYPE
 import com.google.cloud.storage.Storage.BlobField.METADATA
 import com.google.cloud.storage.Storage.BlobGetOption.fields
-import com.google.crypto.tink.Aead
+import com.google.cloud.storage.Storage.BlobTargetOption.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
+import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets.UTF_8
 import java.util.*
 import java.util.UUID.randomUUID
 
 @ConditionalOnGCP
-//@Primary
-internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
-                                        private val lager: Storage,
-                                        private val sjekkere: List<DokumentSjekker>,
-                                        private val aead: Aead) : Dokumentlager {
+@Primary
+internal class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
+                                              private val lager: Storage,
+                                              private val sjekkere: List<DokumentSjekker>) : Dokumentlager {
 
     private val log = getLogger(javaClass)
+    val kmsKeyName: String =
+        "projects/aap-dev-e48b/locations/europe-north1/keyRings/aap-mellomlagring-kms/cryptoKeys/mellomlagring"
+
     override fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
         randomUUID().apply {
             log.trace("Lagrer ${dokument.filnavn} kryptert med uuid $this og contentType ${dokument.contentType}")
@@ -33,7 +36,7 @@ internal class GCPKryptertDokumentlager(private val cfg: GCPBucketConfig,
             lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this)))
                 .setContentType(dokument.contentType)
                 .setMetadata(mapOf(FILNAVN to dokument.filnavn))
-                .build(), aead.encrypt(dokument.bytes, fnr.fnr.toByteArray(UTF_8)))
+                .build(), dokument.bytes, kmsKeyName(kmsKeyName))
                 .also { log.trace("Lagret $dokument kryptert med uuid $this") }
         }
 
