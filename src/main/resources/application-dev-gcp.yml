@@ -28,11 +28,11 @@ organisasjon:
     base-uri: https://ereg-services-q1.dev-fss-pub.nais.io
     enabled: false
 buckets:
+    kms: projects/${gcp.team.project.id}/locations/europe-north1/keyRings/aap-mellomlagring-kms/cryptoKeys/mellomlagring
     vedlegg: aap-vedlegg
     mellomlagring: aap-mellomlagring
     typer:
         - application/pdf
         - image/jpeg
         - image/png
-    kekuri: gcp-kms://projects/${gcp.team.project.id}/locations/europe-north1/keyRings/aap-mellomlagring-kms/cryptoKeys/mellomlagring
 debug: false

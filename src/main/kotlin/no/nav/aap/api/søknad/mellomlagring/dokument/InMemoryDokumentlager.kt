@@ -1,11 +1,11 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
+import no.nav.aap.api.søknad.mellomlagring.GCPKMSKeyKryptertMellomlager
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import java.util.*
 
-@ConditionalOnMissingBean(GCPKryptertMellomlager::class)
+@ConditionalOnMissingBean(GCPKMSKeyKryptertMellomlager::class)
 class InMemoryDokumentlager : Dokumentlager {
     private val store = mutableMapOf<String, String>()
 

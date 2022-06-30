@@ -25,8 +25,6 @@ internal class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
                                               private val sjekkere: List<DokumentSjekker>) : Dokumentlager {
 
     private val log = getLogger(javaClass)
-    val kmsKeyName: String =
-        "projects/aap-dev-e48b/locations/europe-north1/keyRings/aap-mellomlagring-kms/cryptoKeys/mellomlagring"
 
     override fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
         randomUUID().apply {
@@ -35,7 +33,7 @@ internal class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
             lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this)))
                 .setContentType(dokument.contentType)
                 .setMetadata(mapOf(FILNAVN to dokument.filnavn))
-                .build(), dokument.bytes, kmsKeyName(kmsKeyName))
+                .build(), dokument.bytes, kmsKeyName(cfg.kms))
                 .also { log.trace("Lagret $dokument kryptert med uuid $this") }
         }
 
