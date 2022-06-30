@@ -12,8 +12,7 @@ class GCPBucketConfig(@DefaultValue("aap-mellomlagring") val mellomlagring: Stri
                       @DefaultValue("aap-vedlegg") val vedlegg: String,
                       @DefaultValue("3000ms") val timeout: Duration,
                       val kms: String,
-                      var typer: List<String>,
-                      val kekuri: String) {
+                      var typer: List<String>) {
     companion object {
         const val BUCKETS = "buckets"
     }
