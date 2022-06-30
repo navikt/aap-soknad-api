@@ -6,7 +6,7 @@ import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobField.CONTENT_TYPE
 import com.google.cloud.storage.Storage.BlobField.METADATA
 import com.google.cloud.storage.Storage.BlobGetOption.fields
-import com.google.cloud.storage.Storage.BlobTargetOption.*
+import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
@@ -15,7 +15,6 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
-import java.nio.charset.StandardCharsets.UTF_8
 import java.util.*
 import java.util.UUID.randomUUID
 
@@ -43,7 +42,7 @@ internal class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
     override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
         lager.get(cfg.vedlegg, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))?.let { blob ->
             with(blob) {
-                DokumentInfo(aead.decrypt(getContent(), fnr.fnr.toByteArray(UTF_8)),
+                DokumentInfo(getContent(),
                         contentType,
                         metadata[FILNAVN]).also {
                     log.trace("Lest kryptert dokument med uuid $uuid er $it")
