@@ -40,7 +40,7 @@ class StandardSøknadVLRouter(private val router: KafkaOperations<String, Standa
             }
         }
 
-    override fun toString() = "$javaClass.simpleName [router=$router]"
+    override fun toString() = "$javaClass.simpleName [router=$router,cfg=$cfg]"
 }
 
 private class StandardRoutingCallback(private val søknad: StandardSøknad, private val counter: Counter) :

@@ -1,7 +1,6 @@
 package no.nav.aap.api.søknad.joark
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.joark.pdf.Image2PDFConverter
@@ -53,35 +52,34 @@ class JoarkConverter(
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         with(søknad) {
             dokumenterFra(this, pdfVariant).apply {
-                addAll(dokumenterFra(studier, søker.fnr, "Dokumentasjon av studier"))
-                addAll(dokumenterFra(utbetalinger?.ekstraUtbetaling, søker.fnr, "Dokumentasjon av ekstra utbetalinger"))
+                addAll(dokumenterFra(studier, "Dokumentasjon av studier"))
+                addAll(dokumenterFra(utbetalinger?.ekstraUtbetaling, "Dokumentasjon av ekstra utbetalinger"))
                 addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver,
-                        søker.fnr,
                         "Dokumentasjon av ekstra utbetaling fra arbeidsgiver"))
-                addAll(dokumenterFra(this@with, søker.fnr, "Annen dokumentasjon"))
-                addAll(dokumenterFra(utbetalinger?.andreStønader, søker.fnr, "Dokumentasjon av andre stønader"))
-                addAll(dokumenterFra(andreBarn, søker.fnr, "barn"))
+                addAll(dokumenterFra(this@with, "Annen dokumentasjon"))
+                addAll(dokumenterFra(utbetalinger?.andreStønader, "Dokumentasjon av andre stønader"))
+                addAll(dokumenterFra(andreBarn, "barn"))
             }.also { log.trace("Sender ${it.size} dokumenter til JOARK  $it") } //
         }
 
     private fun dokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
         mutableListOf(Dokument(STANDARD, listOf(søknad.asJsonVariant(mapper), pdfVariant)))
 
-    private fun dokumenterFra(a: List<VedleggAware?>?, fnr: Fødselsnummer, tittel: String?) =
+    private fun dokumenterFra(a: List<VedleggAware?>?, tittel: String?) =
         a?.map { it ->
-            dokumenterFra(it?.vedlegg, fnr, tittel)
+            dokumenterFra(it?.vedlegg, tittel)
         }?.flatten() ?: emptyList()
 
-    private fun dokumenterFra(a: VedleggAware?, fnr: Fødselsnummer, tittel: String): List<Dokument> =
+    private fun dokumenterFra(a: VedleggAware?, tittel: String): List<Dokument> =
         a?.let { v ->
-            v.vedlegg?.let { dokumenterFra(it, fnr, tittel) }
+            v.vedlegg?.let { dokumenterFra(it, tittel) }
         } ?: emptyList()
 
-    private fun dokumenterFra(v: Vedlegg?, fnr: Fødselsnummer, tittel: String?) =
+    private fun dokumenterFra(v: Vedlegg?, tittel: String?) =
         v?.let { vl ->
             val vedlegg = (vl.deler?.mapNotNull {
                 it?.let { uuid ->
-                    lager.lesDokument(fnr, uuid)
+                    lager.lesDokument(uuid)
                 }
             } ?: emptyList())
                 .sortedBy { it.createTime }

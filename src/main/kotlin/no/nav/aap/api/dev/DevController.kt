@@ -5,9 +5,9 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.felles.SkjemaType
-import no.nav.aap.api.søknad.mellomlagring.Mellomlager
+import no.nav.aap.api.søknad.mellomlagring.GCPKMSKeyKryptertMellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
-import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
+import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKMSKeyKryptertDokumentlager
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.routing.standard.StandardSøknadVLRouter
@@ -38,8 +38,8 @@ import java.util.*
 
 @UnprotectedRestController(["/dev/"])
 @ConditionalOnNotProd
-internal class DevController(private val dokumentLager: Dokumentlager,
-                             private val mellomlager: Mellomlager,
+internal class DevController(private val dokumentLager: GCPKMSKeyKryptertDokumentlager,
+                             private val mellomlager: GCPKMSKeyKryptertMellomlager,
                              private val vl: StandardSøknadVLRouter) {
 
     @PostMapping("vl/{fnr}")
