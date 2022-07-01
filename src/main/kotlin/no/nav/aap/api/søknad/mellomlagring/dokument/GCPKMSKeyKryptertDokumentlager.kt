@@ -28,15 +28,16 @@ internal class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
     private val log = getLogger(javaClass)
 
     override fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
-        randomUUID().apply {
+        randomUUID().apply uuid@{
             with(dokument) {
                 log.trace("Lagrer $filnavn kryptert med uuid $this og contentType $contentType")
                 sjekkere.forEach { it.sjekk(this) }
-                lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this@apply)))
+                lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this@uuid)))
                     .setContentType(contentType)
                     .setMetadata(mapOf(FILNAVN to filnavn))
-                    .build(), bytes, kmsKeyName(cfg.kms))
-                    .also { log.trace("Lagret $dokument kryptert med uuid $this@apply") }
+                    .build(),
+                        bytes,
+                        kmsKeyName(cfg.kms).also { log.trace("Lagret $this kryptert med uuid $this@uuid") })
             }
 
         }
