@@ -10,6 +10,7 @@ import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.api.søknad.model.VedleggAware
 import no.nav.aap.util.LoggerUtil.getLogger
+import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -35,7 +36,7 @@ class JoarkRouter(private val joark: JoarkClient,
         }
 
     private fun lagreKvittering(bytes: ByteArray, fnr: Fødselsnummer) =
-        lager.lagreDokument(fnr, DokumentInfo(bytes, "kvittering.pdf"))
+        lager.lagreDokument(fnr, DokumentInfo(bytes, APPLICATION_PDF_VALUE, "kvittering.pdf"))
 
     fun slettDokumenter(søknad: StandardSøknad, fnr: Fødselsnummer) {
         with(søknad) {

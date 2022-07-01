@@ -12,6 +12,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
+import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
@@ -35,10 +36,9 @@ internal class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
                 sjekkere.forEach { it.sjekk(this) }
                 lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this@uuid)))
                     .setContentType(contentType)
-                    .setMetadata(mapOf(FILNAVN to filnavn))
+                    .setMetadata(mapOf(FILNAVN to filnavn, FNR to fnr.fnr))
                     .build(),
-                        bytes,
-                        kmsKeyName(cfg.kms).also { log.trace("Lagret $this kryptert med uuid $this@uuid") })
+                        bytes, kmsKeyName(cfg.kms).also { log.trace("Lagret $this kryptert med uuid $this@uuid") })
             }
         }
 

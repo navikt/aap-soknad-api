@@ -3,7 +3,7 @@ package no.nav.aap.api.error
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
-import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo.UkjentContentTypeException
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo.ContentTypeException
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
@@ -46,8 +46,8 @@ class AAPApiExceptionHandler : ProblemHandling {
             .withDetail(e.message)
             .with("callid", callId()).build(), req).also { log.trace(UNPROCESSABLE_ENTITY.name, e) }
 
-    @ExceptionHandler(UkjentContentTypeException::class)
-    fun handleUkjentContentTypeException(e: UkjentContentTypeException,
+    @ExceptionHandler(ContentTypeException::class)
+    fun handleUkjentContentTypeException(e: ContentTypeException,
                                          req: NativeWebRequest): ResponseEntity<Problem> =
         create(e, Problem.builder()
             .withStatus(UNSUPPORTED_MEDIA_TYPE)

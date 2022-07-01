@@ -28,20 +28,18 @@ data class DokumentInfo(val bytes: ByteArray,
                         val contentType: String?,
                         val filnavn: String?,
                         val createTime: Long = 0) {
-    constructor(bytes: ByteArray, filnavn: String?) : this(bytes, TIKA.detect(bytes), filnavn, 0)
-
     init {
         TIKA.detect(bytes).apply {
             if (!this.equals(contentType)) {
-                throw UkjentContentTypeException(this, "Foventet $contentType men fikk $this for $filnavn")
+                throw ContentTypeException(this, "Foventet $contentType men fikk $this for $filnavn")
             }
         }
         if (contentType !in types) {
-            throw UkjentContentTypeException(msg = "Filtype $contentType er ikke støttet, må være en av $types")
+            throw ContentTypeException(msg = "Filtype $contentType er ikke støttet, må være en av $types")
         }
     }
 
-    class UkjentContentTypeException(val type: String? = null, msg: String) : RuntimeException(msg)
+    class ContentTypeException(val type: String? = null, msg: String) : RuntimeException(msg)
 
     companion object {
         private val types = listOf(APPLICATION_PDF_VALUE, IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE)
@@ -49,5 +47,5 @@ data class DokumentInfo(val bytes: ByteArray,
     }
 
     override fun toString() =
-        "${javaClass.simpleName} [filnavn=$filnavn,contentType=$contentType,createTime=$createTime, tørrelse=${bytes.size} bytes]"
+        "${javaClass.simpleName} [filnavn=$filnavn,contentType=$contentType,createTime=$createTime,størrelse=${bytes.size} bytes]"
 }
