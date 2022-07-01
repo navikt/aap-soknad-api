@@ -6,6 +6,7 @@ import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_MOTTATT
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
+import no.nav.aap.api.søknad.routing.VLRouterConfig
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.LoggerUtil.getSecureLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
@@ -19,18 +20,25 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Component
 class StandardSøknadVLRouter(private val router: KafkaOperations<String, StandardSøknad>,
-                             private val cfg: StandardSøknadVLRouterConfig) {
+                             private val cfg: VLRouterConfig) {
 
-    val log = getLogger(javaClass)
+    private val log = getLogger(javaClass)
 
     fun route(søknad: StandardSøknad, søker: Søker, journalpostId: String) =
-        router.send(ProducerRecord(cfg.topic, søker.fnr.fnr, søknad)
-            .apply {
-                headers()
-                    .add(NAV_CALL_ID, callId().toByteArray())
-                    .add("journalpostid", journalpostId.toByteArray())
-            })
-            .addCallback(StandardRoutingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
+        with(cfg.standard) {
+            if (enabled) {
+                router.send(ProducerRecord(topic, søker.fnr.fnr, søknad)
+                    .apply {
+                        headers()
+                            .add(NAV_CALL_ID, callId().toByteArray())
+                            .add("journalpostid", journalpostId.toByteArray())
+                    })
+                    .addCallback(StandardRoutingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
+            }
+            else {
+                log.warn("Ruter ikke utenlandsøknad til VL")
+            }
+        }
 
     override fun toString() = "$javaClass.simpleName [router=$router]"
 }

@@ -74,15 +74,13 @@ internal class DevController(private val dokumentLager: Dokumentlager,
     fun lesDokument(@PathVariable fnr: Fødselsnummer, @PathVariable uuid: UUID) =
         dokumentLager.lesDokument(fnr, uuid)
             ?.let {
-                with(it) {
-                    ok().contentType(parseMediaType(it.contentType!!))
-                        .cacheControl(noCache().mustRevalidate())
-                        .headers(HttpHeaders()
-                            .apply {
-                                contentDisposition = attachment().filename(it.filnavn!!).build()
-                            })
-                        .body(it.bytes)
-                }
+                ok().contentType(parseMediaType(it.contentType!!))
+                    .cacheControl(noCache().mustRevalidate())
+                    .headers(HttpHeaders()
+                        .apply {
+                            contentDisposition = attachment().filename(it.filnavn!!).build()
+                        })
+                    .body(it.bytes)
             } ?: notFound().build()
 
     @DeleteMapping("vedlegg/slett/{fnr}/{uuid}")

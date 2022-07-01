@@ -1,7 +1,6 @@
-package no.nav.aap.api.oppslag.saf
+package no.nav.aap.api.oppslag.graphql
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler
 import no.nav.aap.util.LoggerUtil
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus

@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.routing
+package no.nav.aap.api.søknad.routing.utland
 
 import io.micrometer.core.instrument.Metrics.counter
 import io.micrometer.core.instrument.Tags
@@ -8,12 +8,11 @@ import no.nav.aap.api.config.Counters.TAG_VARIGHET
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
-import no.nav.aap.joark.JoarkResponse
+import no.nav.aap.api.søknad.routing.VLRouterConfig
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
 import org.springframework.stereotype.Component
@@ -21,14 +20,26 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Component
 class UtlandSøknadVLRouter(private val router: KafkaOperations<String, UtlandSøknad>,
-                           @Value("#{'\${utenlands.topic:aap.utland-soknad-sendt.v1}'}") private val søknadTopic: String) {
+                           private val cfg: VLRouterConfig) {
 
-    fun route(søknad: UtlandSøknad, søker: Søker, dokumenter: JoarkResponse) =
-        router.send(ProducerRecord(søknadTopic, søker.fnr.fnr, søknad)
-            .apply {
-                headers().add(NAV_CALL_ID, callId().toByteArray())
-            })
-            .addCallback(UtlandRouterCallback(søknad))
+    private val log = LoggerUtil.getLogger(javaClass)
+
+    fun route(søknad: UtlandSøknad, søker: Søker, journalpostId: String) =
+        with(cfg.utland) {
+            if (enabled) {
+                router.send(ProducerRecord(topic, søker.fnr.fnr, søknad)
+                    .apply {
+                        headers()
+                            .add(NAV_CALL_ID, callId().toByteArray())
+                            .add("journalpostid", journalpostId.toByteArray())
+
+                    })
+                    .addCallback(UtlandRouterCallback(søknad))
+            }
+            else {
+                log.warn("Ruter ikke søknad til VL")
+            }
+        }
 
     override fun toString() = "$javaClass.simpleName [router=$router]"
 }

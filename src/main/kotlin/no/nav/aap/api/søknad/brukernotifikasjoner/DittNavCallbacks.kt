@@ -23,11 +23,11 @@ class DittNavCallbacks {
         private val log = LoggerUtil.getLogger(javaClass)
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) =
-            log.info("Sendte oppgave til Ditt Nav  med id ${key.getEventId()} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
+            log.info("Sendte oppgave til Ditt Nav  med id ${key.eventId} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
 
         override fun onFailure(e: Throwable) =
-            log.warn("Kunne ikke sende oppgave til Ditt Nav med id ${key.getEventId()}", e)
-        
+            log.warn("Kunne ikke sende oppgave til Ditt Nav med id ${key.eventId}", e)
+
     }
 
     class DittNavOppgaveDoneCallback(private val key: NokkelInput) :
