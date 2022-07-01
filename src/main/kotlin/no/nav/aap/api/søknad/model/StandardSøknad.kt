@@ -20,6 +20,7 @@ import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.AFP
 import no.nav.aap.joark.DokumentVariant
 import no.nav.aap.joark.Filtype.JSON
 import no.nav.aap.joark.VariantFormat.ORIGINAL
+import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.StringExtensions.toEncodedJson
 import java.io.IOException
 import java.time.LocalDate
@@ -146,12 +147,18 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
 }
 
 internal class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.java) {
+
+    private val log = LoggerUtil.getLogger(javaClass)
+
     @Throws(IOException::class)
     override fun deserialize(p: JsonParser, ctx: DeserializationContext) =
-        when (val node = p.codec.readTree(p) as TreeNode) {
-            is ArrayNode -> Vedlegg(deler = node.map { (it as TextNode).textValue() }
-                .map { UUID.fromString(it) })
-            is TextNode -> Vedlegg(deler = listOf(UUID.fromString(node.textValue())))
-            else -> throw IllegalStateException("Ikke-forventet node ${node.javaClass.simpleName}")
+        with(p.codec.readTree(p) as TreeNode) {
+            log.trace("Deserialiserer $this")
+            when (this) {
+                is ArrayNode -> Vedlegg(deler = this.map { (it as TextNode).textValue() }
+                    .map { UUID.fromString(it) })
+                is TextNode -> Vedlegg(deler = listOf(UUID.fromString(this.textValue())))
+                else -> throw IllegalStateException("Ikke-forventet node ${this.javaClass.simpleName}")
+            }
         }
 }
