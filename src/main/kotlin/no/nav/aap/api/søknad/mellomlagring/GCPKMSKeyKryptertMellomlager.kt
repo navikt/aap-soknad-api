@@ -31,5 +31,7 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfg: GCPBucketConfig,
         }
 
     override fun slett(fnr: Fødselsnummer, type: SkjemaType) =
-        lager.delete(of(cfg.mellomlagring, key(fnr, type)))
+        lager.delete(of(cfg.mellomlagring, key(fnr, type)).also {
+            log.trace(CONFIDENTIAL, "Slettet ${it.name} for $fnr ")
+        })
 }
