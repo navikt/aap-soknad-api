@@ -21,7 +21,7 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfg: GCPBucketConfig,
         lager.create(newBuilder(of(cfg.mellomlagring, key(fnr, type)))
             .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName(cfg.kms))
             .blobId.toGsUtilUri()
-            .also { log.trace(CONFIDENTIAL, "Lagret kryptert $value  for $fnr") }
+            .also { log.trace(CONFIDENTIAL, "Lagret kryptert  $value for $fnr som $it") }
 
     override fun les(fnr: Fødselsnummer, type: SkjemaType) =
         lager.get(cfg.mellomlagring, key(fnr, type))?.let { blob ->
