@@ -5,6 +5,7 @@ import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobField.CONTENT_TYPE
 import com.google.cloud.storage.Storage.BlobField.METADATA
+import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
 import com.google.cloud.storage.Storage.BlobGetOption.fields
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
@@ -41,7 +42,7 @@ internal class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
         }
 
     override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.get(cfg.vedlegg, key(fnr, uuid), fields(METADATA, CONTENT_TYPE))?.let { blob ->
+        lager.get(cfg.vedlegg, key(fnr, uuid), fields(METADATA, CONTENT_TYPE, TIME_CREATED))?.let { blob ->
             with(blob) {
                 DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
                     .also {
