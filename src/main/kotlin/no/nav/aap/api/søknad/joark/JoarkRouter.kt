@@ -8,11 +8,9 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
-import no.nav.aap.api.søknad.model.VedleggAware
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class JoarkRouter(private val joark: JoarkClient,
@@ -26,7 +24,7 @@ class JoarkRouter(private val joark: JoarkClient,
             Pair(lagreKvittering(this, søker.fnr),
                     joark.journalfør(joarkConverter.convert(søknad, søker, this))
                         ?: throw IntegrationException("Kunne ikke journalføre søknad"))
-        }.also { slettDokumenter(søknad, søker.fnr) }
+        }
 
     fun route(søknad: UtlandSøknad, søker: Søker) =
         with(pdf.generate(søker, søknad)) {
@@ -37,29 +35,4 @@ class JoarkRouter(private val joark: JoarkClient,
 
     private fun lagreKvittering(bytes: ByteArray, fnr: Fødselsnummer) =
         lager.lagreDokument(fnr, DokumentInfo(bytes, APPLICATION_PDF_VALUE, "kvittering.pdf"))
-
-    fun slettDokumenter(søknad: StandardSøknad, fnr: Fødselsnummer) {
-        with(søknad) {
-            slett(utbetalinger?.ekstraFraArbeidsgiver, fnr)
-            slett(utbetalinger?.ekstraUtbetaling, fnr)
-            slett(utbetalinger?.andreStønader, fnr)
-            slett(this, fnr)
-            slett(studier, fnr)
-            slett(andreBarn, fnr)
-        }
-    }
-
-    private fun slett(a: List<VedleggAware>?, fnr: Fødselsnummer) =
-        a?.forEach { slett(it, fnr) }
-
-    private fun slett(a: VedleggAware?, fnr: Fødselsnummer) =
-        a?.vedlegg?.let {
-            slettUUIDs(it.deler, fnr)
-        }
-
-    private fun slettUUIDs(uuids: List<UUID?>?, fnr: Fødselsnummer) =
-        uuids?.forEach { slett(it, fnr) }
-
-    private fun slett(uuid: UUID?, fnr: Fødselsnummer) =
-        uuid?.let { lager.slettDokument(fnr, it).also { log.info("Slettet dokument $it") } }
 }

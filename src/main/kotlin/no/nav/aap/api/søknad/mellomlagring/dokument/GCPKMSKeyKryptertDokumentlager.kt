@@ -13,6 +13,9 @@ import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
+import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.model.VedleggAware
+import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
@@ -25,6 +28,7 @@ import java.util.UUID.randomUUID
 @Primary
 internal class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
                                               private val lager: Storage,
+                                              private val ctx: AuthContext,
                                               private val sjekkere: List<DokumentSjekker>) : Dokumentlager {
 
     private val log = getLogger(javaClass)
@@ -57,6 +61,31 @@ internal class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
             .also {
                 log.trace(CONFIDENTIAL, "Slettet dokument $uuid for $fnr")
             }
+
+    override fun slettDokumenter(fnr: Fødselsnummer, søknad: StandardSøknad) {
+        with(søknad) {
+            slett(utbetalinger?.ekstraFraArbeidsgiver, fnr)
+            slett(utbetalinger?.ekstraUtbetaling, fnr)
+            slett(utbetalinger?.andreStønader, fnr)
+            slett(this, fnr)
+            slett(studier, fnr)
+            slett(andreBarn, fnr)
+        }
+    }
+
+    private fun slett(a: List<VedleggAware>?, fnr: Fødselsnummer) =
+        a?.forEach { slett(it, fnr) }
+
+    private fun slett(a: VedleggAware?, fnr: Fødselsnummer) =
+        a?.vedlegg?.let {
+            slettUUIDs(it.deler, fnr)
+        }
+
+    private fun slettUUIDs(uuids: List<UUID?>?, fnr: Fødselsnummer) =
+        uuids?.forEach { slett(it, fnr) }
+
+    private fun slett(uuid: UUID?, fnr: Fødselsnummer) =
+        uuid?.let { id -> slettDokument(fnr, id).also { log.info("Slettet dokument $id") } }
 
     @Component
     internal class ContentTypeSjekker(private val cfg: GCPBucketConfig) : DokumentSjekker {
