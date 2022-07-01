@@ -142,6 +142,8 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     internal fun fjernAlleGamleMellomlagringer() = repos.søknader.deleteByGyldigtilBefore(now())
 
     //@Transactional
+
+    @Transactional
     fun fjernOgAvsluttMellomlagring() {
         repos.søknader.deleteByFnr(ctx.getFnr().fnr).also { rows ->
             rows?.firstOrNull()?.let {

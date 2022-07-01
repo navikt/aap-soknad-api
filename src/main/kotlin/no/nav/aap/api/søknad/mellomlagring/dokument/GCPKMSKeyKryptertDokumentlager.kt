@@ -39,7 +39,6 @@ internal class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
                         bytes,
                         kmsKeyName(cfg.kms).also { log.trace("Lagret $this kryptert med uuid $this@uuid") })
             }
-
         }
 
     override fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
