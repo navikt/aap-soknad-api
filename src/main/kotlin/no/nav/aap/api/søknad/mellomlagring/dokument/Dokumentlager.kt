@@ -49,5 +49,5 @@ data class DokumentInfo(val bytes: ByteArray,
     }
 
     override fun toString() =
-        "${javaClass.simpleName} [filnavn=$filnavn,contentType=$contentType,størrelse=${bytes.size} bytes]"
+        "${javaClass.simpleName} [filnavn=$filnavn,contentType=$contentType,createTime=$createTime, tørrelse=${bytes.size} bytes]"
 }
