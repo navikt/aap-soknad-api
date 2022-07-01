@@ -67,6 +67,5 @@ internal class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
                     throw DokumentException("Type $contentType for $filnavn er ikke blant ${cfg.typer}")
                 }
             }
-
     }
 }
