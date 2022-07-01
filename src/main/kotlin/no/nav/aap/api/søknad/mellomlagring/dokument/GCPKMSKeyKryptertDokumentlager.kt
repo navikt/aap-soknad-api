@@ -14,6 +14,7 @@ import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 import java.util.*
@@ -30,7 +31,7 @@ internal class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
     override fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
         randomUUID().apply uuid@{
             with(dokument) {
-                log.trace("Lagrer $filnavn kryptert med uuid $this og contentType $contentType")
+                log.trace("Lagrer $filnavn kryptert med uuid $this@uuid  og contentType $contentType")
                 sjekkere.forEach { it.sjekk(this) }
                 lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this@uuid)))
                     .setContentType(contentType)
@@ -46,13 +47,16 @@ internal class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
             with(blob) {
                 DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
                     .also {
-                        log.trace("Lest kryptert dokument med uuid $uuid er $it")
+                        log.trace("Lest kryptert dokument med uuid $uuid som  $it")
                     }
             }
         }
 
     override fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
         lager.delete(of(cfg.vedlegg, key(fnr, uuid)))
+            .also {
+                log.trace(CONFIDENTIAL, "Slettet dokument $uuid for $fnr")
+            }
 
     @Component
     internal class ContentTypeSjekker(private val cfg: GCPBucketConfig) : DokumentSjekker {
