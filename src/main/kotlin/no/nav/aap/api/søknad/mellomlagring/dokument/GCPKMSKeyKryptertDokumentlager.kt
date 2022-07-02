@@ -38,16 +38,19 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
     override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(ctx.getFnr(), dokument)
 
     fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
-        randomUUID().apply uuid@{
+        randomUUID().apply {
             with(dokument) {
                 log.trace("Lagrer $filnavn kryptert med uuid $this@uuid  og contentType $contentType")
                 sjekkere.forEach { it.sjekk(this) }
-                lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this@uuid)))
+                lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this@apply)))
                     .setContentType(contentType)
                     .setMetadata(mapOf(FILNAVN to filnavn, FNR to fnr.fnr))
                     .build(),
-                        bytes, kmsKeyName(cfg.kms).also { log.trace("Lagret $this kryptert med uuid $this@uuid") })
+                        bytes, kmsKeyName(cfg.kms).also {
+                })
             }
+        }.also {
+            log.trace("Lagret $this kryptert med uuid $it")
         }
 
     override fun lesDokument(uuid: UUID) = lesDokument(ctx.getFnr(), uuid)
@@ -74,9 +77,11 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
 
     fun finalize(fnr: Fødselsnummer, søknad: StandardSøknad) {
         with(søknad) {
-            slett(utbetalinger?.ekstraFraArbeidsgiver, fnr)
-            slett(utbetalinger?.ekstraUtbetaling, fnr)
-            slett(utbetalinger?.andreStønader, fnr)
+            with(utbetalinger) {
+                slett(this?.ekstraFraArbeidsgiver, fnr)
+                slett(this?.ekstraUtbetaling, fnr)
+                slett(this?.andreStønader, fnr)
+            }
             slett(this, fnr)
             slett(studier, fnr)
             slett(andreBarn, fnr)
@@ -84,7 +89,9 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
     }
 
     private fun slett(a: List<VedleggAware>?, fnr: Fødselsnummer) =
-        a?.forEach { slett(it, fnr) }
+        a?.forEach {
+            slett(it, fnr)
+        }
 
     private fun slett(a: VedleggAware?, fnr: Fødselsnummer) =
         a?.vedlegg?.let {
@@ -92,25 +99,30 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
         }
 
     private fun slettUUIDs(uuids: List<UUID?>?, fnr: Fødselsnummer) =
-        uuids?.forEach { slett(it, fnr) }
+        uuids?.forEach {
+            slett(it, fnr)
+        }
 
     private fun slett(uuid: UUID?, fnr: Fødselsnummer) =
-        uuid?.let { id -> slettDokument(fnr, id).also { log.info("Slettet dokument $id") } }
+        uuid?.let { id ->
+            slettDokument(fnr, id).also {
+                log.info("Slettet dokument $id")
+            }
+        }
 
     @Component
     class ContentTypeSjekker(private val cfg: GCPBucketConfig) : DokumentSjekker {
 
         override fun sjekk(dokument: DokumentInfo) =
             with(dokument) {
-                if (!cfg.typer.contains(contentType)) {
+                if (contentType !in cfg.typer) {
                     throw DokumentException("Type $contentType for $filnavn er ikke blant ${cfg.typer}")
                 }
-                TIKA.detect(bytes).apply {
-                    if (!this.equals(contentType)) {
-                        throw ContentTypeException(this, "Foventet $contentType men fikk $this for $filnavn")
+                TIKA.detect(bytes).run {
+                    if (!equals(contentType)) {
+                        throw ContentTypeException(this, "Foventet $contentType for $filnavn, men fikk $this")
                     }
                 }
-                Unit
             }
 
         class ContentTypeException(val type: String? = null, msg: String) : RuntimeException(msg)

@@ -111,8 +111,9 @@ class SøknadTest {
 
     @Test
     fun serialize() {
+        // println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(Vedlegg(null)))
         //println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(standardSøknad()))
-        val ss = mapper.readValue(test, StandardSøknad::class.java)
+        // val ss = mapper.readValue(test, StandardSøknad::class.java)
         //println(ss)
     }
 

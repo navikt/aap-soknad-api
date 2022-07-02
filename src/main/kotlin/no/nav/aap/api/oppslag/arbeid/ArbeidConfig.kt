@@ -9,7 +9,7 @@ import org.springframework.boot.convert.PeriodFormat
 import org.springframework.boot.convert.PeriodStyle.SIMPLE
 import org.springframework.web.util.UriBuilder
 import java.net.URI
-import java.time.LocalDate
+import java.time.LocalDate.now
 import java.time.Period
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 
@@ -27,7 +27,7 @@ class ArbeidConfig(baseUri: URI,
         b.path(path)
             .queryParam(HISTORIKK, false)
             .queryParam(SPORINGSINFORMASJON, sporingsinformasjon)
-            .queryParam(FOM, LocalDate.now().minus(tidTilbake).format(ISO_LOCAL_DATE))
+            .queryParam(FOM, now().minus(tidTilbake).format(ISO_LOCAL_DATE))
             .build()
 
     override fun toString() =

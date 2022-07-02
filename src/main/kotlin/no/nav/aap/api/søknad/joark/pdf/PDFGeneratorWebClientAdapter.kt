@@ -32,8 +32,12 @@ class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
             .bodyValue(mapper.writeValueAsString(data))
             .retrieve()
             .bodyToMono<ByteArray>()
-            .doOnError { t: Throwable -> log.warn("PDF-generering mot $path feiler", t) }
-            .doOnSuccess { log.trace("PDF-generering OK") }
+            .doOnError { t: Throwable ->
+                log.warn("PDF-generering mot $path feiler", t)
+            }
+            .doOnSuccess {
+                log.trace("PDF-generering OK")
+            }
             .block() ?: throw IntegrationException("O bytes i retur fra pdfgen, pussig")
 
     private data class StandardData(val søker: Søker, val søknad: StandardSøknad)

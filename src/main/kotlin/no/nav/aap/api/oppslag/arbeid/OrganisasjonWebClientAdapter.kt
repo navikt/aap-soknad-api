@@ -24,12 +24,18 @@ class OrganisasjonWebClientAdapter(@Qualifier(Constants.ORGANISASJON) val client
                 .retrieve()
                 .onStatus({ obj: HttpStatus -> obj.isError }) { Mono.empty() }
                 .bodyToMono(OrganisasjonDTO::class.java)
-                .doOnError { t: Throwable -> log.warn("Organisasjon oppslag feilet", t) }
-                .doOnSuccess { log.trace("Organisasjon oppslag OK") }
+                .doOnError { t: Throwable ->
+                    log.warn("Organisasjon oppslag feilet", t)
+                }
+                .doOnSuccess {
+                    log.trace("Organisasjon oppslag OK")
+                }
                 .mapNotNull(OrganisasjonDTO::fulltNavn)
                 .defaultIfEmpty(orgnr.orgnr)
                 .block() ?: orgnr.orgnr
-                .also { log.trace("Organisasjon oppslag response $it") }
+                .also {
+                    log.trace("Organisasjon oppslag response $it")
+                }
         }
         else {
             orgnr.orgnr

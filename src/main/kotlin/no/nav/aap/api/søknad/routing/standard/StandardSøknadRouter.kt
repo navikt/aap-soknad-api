@@ -28,9 +28,9 @@ class StandardSøknadRouter(private val joarkRouter: JoarkRouter,
 @Component
 class StandardSøknadFinalizer(private val dittnav: DittNavClient,
                               private val dokumentLager: Dokumentlager) {
-    fun finalize(søknad: StandardSøknad, pdf: ByteArray): Kvittering {
-        dokumentLager.finalize(søknad)
-        dittnav.finalize()
-        return Kvittering(dokumentLager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering.pdf")))
-    }
+    fun finalize(søknad: StandardSøknad, pdf: ByteArray) =
+        dokumentLager.finalize(søknad).run {
+            dittnav.finalize()
+            Kvittering(dokumentLager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering.pdf")))
+        }
 }

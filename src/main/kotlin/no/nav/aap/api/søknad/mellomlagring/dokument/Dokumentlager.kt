@@ -19,15 +19,15 @@ interface Dokumentlager {
 
 }
 
-interface DokumentSjekker {
-    fun sjekk(dokument: DokumentInfo)
-}
-
 data class DokumentInfo(val bytes: ByteArray,
                         val contentType: String?,
                         val filnavn: String?,
                         val createTime: Long = 0) {
-    
+
     override fun toString() =
         "${javaClass.simpleName} [filnavn=$filnavn,contentType=$contentType,createTime=$createTime,størrelse=${bytes.size} bytes]"
+}
+
+interface DokumentSjekker {
+    fun sjekk(dokument: DokumentInfo)
 }

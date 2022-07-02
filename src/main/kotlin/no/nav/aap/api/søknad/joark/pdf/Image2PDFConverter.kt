@@ -7,7 +7,6 @@ import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.common.PDRectangle.A4
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject.createFromByteArray
-import org.slf4j.Logger
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType.parseMediaType
 import org.springframework.stereotype.Component
@@ -17,9 +16,11 @@ import java.io.ByteArrayOutputStream
 @Component
 class Image2PDFConverter(private val scaler: ImageScaler) {
 
-    private val log: Logger = getLogger(javaClass)
+    private val log = getLogger(javaClass)
     fun tilPdf(imgType: String, images: List<ByteArray>) = slåSammen(imgType, *images.toTypedArray())
-    fun tilPdf(imgType: String, fil: String) = tilPdf(imgType, copyToByteArray(ClassPathResource(fil).inputStream))
+    fun tilPdf(imgType: String, fil: String) =
+        tilPdf(imgType, copyToByteArray(ClassPathResource(fil).inputStream)) // testing only
+
     fun tilPdf(imgType: String, vararg images: ByteArray) = slåSammen(imgType, *images)
 
     private fun slåSammen(imgType: String, vararg images: ByteArray) =

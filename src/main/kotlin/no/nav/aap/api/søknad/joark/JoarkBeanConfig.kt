@@ -19,7 +19,7 @@ class JoarkBeanConfig {
             .filter(temaFilterFunction())
             .filter(tokenXFilterFunction)
             .build()
+
     @Bean
-    fun joarkHealthIndicator(adapter: JoarkWebClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {
-    }
+    fun joarkHealthIndicator(adapter: JoarkWebClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {}
 }

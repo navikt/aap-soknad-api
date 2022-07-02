@@ -1,8 +1,8 @@
 package no.nav.aap.api.søknad.joark.pdf
 
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
+import no.nav.aap.util.LoggerUtil.getLogger
 import org.apache.pdfbox.pdmodel.common.PDRectangle.A4
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.awt.Dimension
 import java.awt.Graphics2D
@@ -22,7 +22,7 @@ import javax.imageio.ImageIO.write
 
 @Component
 class ImageScaler {
-    private val LOG = LoggerFactory.getLogger(ImageScaler::class.java)
+    private val log = getLogger(javaClass)
     fun tilA4(origImage: ByteArray, format: String) =
         try {
             with(tilPortrett(read(ByteArrayInputStream(origImage)))) {
@@ -45,7 +45,7 @@ class ImageScaler {
             return image
         }
         if (image.type == TYPE_CUSTOM) {
-            LOG.warn("Kan ikke rotere bilde med ukjent type")
+            log.warn("Kan ikke rotere bilde med ukjent type")
             return image
         }
         return with(AffineTransform()) {

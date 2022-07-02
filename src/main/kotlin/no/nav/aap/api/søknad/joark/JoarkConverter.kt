@@ -39,7 +39,9 @@ class JoarkConverter(
                 avsenderMottaker = AvsenderMottaker(søker.fnr,
                         navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
-            .also { log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it") }
+            .also {
+                log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it")
+            }
 
     fun convert(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, søker, pdf.asPDFVariant()),
@@ -47,7 +49,9 @@ class JoarkConverter(
                 avsenderMottaker = AvsenderMottaker(søker.fnr,
                         navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
-            .also { log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it") }
+            .also {
+                log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it")
+            }
 
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         with(søknad) {
@@ -59,7 +63,9 @@ class JoarkConverter(
                 addAll(dokumenterFra(this@with, "Annen dokumentasjon"))
                 addAll(dokumenterFra(utbetalinger?.andreStønader, "Dokumentasjon av andre stønader"))
                 addAll(dokumenterFra(andreBarn, "barn"))
-            }.also { log.trace("Sender ${it.size} dokumenter til JOARK  $it") } //
+            }.also {
+                log.trace("Sender ${it.size} dokumenter til JOARK  $it")
+            }
         }
 
     private fun dokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =

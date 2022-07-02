@@ -42,7 +42,6 @@ fun main(args: Array<String>) {
         }
 
         setAdditionalProfiles(*profiler())
-
         applicationStartup = BufferingApplicationStartup(4096)
     }
 }

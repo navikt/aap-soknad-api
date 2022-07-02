@@ -21,8 +21,12 @@ class ArbeidWebClientAdapter(
                 .accept(APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono<List<ArbeidsforholdDTO>>()
-                .doOnError { t: Throwable -> log.warn("Arbeidsforhold oppslag feilet", t) }
-                .doOnSuccess { log.trace("Arbeidsforhold er $it") }
+                .doOnError { t: Throwable ->
+                    log.warn("Arbeidsforhold oppslag feilet", t)
+                }
+                .doOnSuccess {
+                    log.trace("Arbeidsforhold er $it")
+                }
                 .block() ?: listOf()
         }
         else {

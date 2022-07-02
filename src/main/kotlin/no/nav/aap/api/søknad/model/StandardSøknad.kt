@@ -155,10 +155,10 @@ internal class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.jav
         with(p.codec.readTree(p) as TreeNode) {
             log.trace("Deserialiserer $this")
             when (this) {
-                is ArrayNode -> Vedlegg(deler = this.filterNotNull().map { (it as TextNode).textValue() }
+                is ArrayNode -> Vedlegg(deler = filterNotNull().map { (it as TextNode).textValue() }
                     .map { UUID.fromString(it) })
-                is TextNode -> Vedlegg(deler = listOf(UUID.fromString(this.textValue())))
-                else -> throw IllegalStateException("Ikke-forventet node ${this.javaClass.simpleName}")
+                is TextNode -> Vedlegg(deler = listOf(UUID.fromString(textValue())))
+                else -> throw IllegalStateException("Ikke-forventet node ${javaClass.simpleName}")
             }
         }
 }

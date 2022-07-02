@@ -21,7 +21,7 @@ class UtlandSøknadRouter(private val joarkRouter: JoarkRouter,
     fun route(søknad: UtlandSøknad) =
         with(pdl.søkerUtenBarn()) outer@{
             with(joarkRouter.route(søknad, this)) {
-                vlRouter.route(søknad, this@outer, this.journalpostId)
+                vlRouter.route(søknad, this@outer, journalpostId)
                 dittnav.opprettBeskjed(UTLAND)
                 Kvittering(lager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering.pdf")))
             }

@@ -10,7 +10,4 @@ object AuthContextExtension {
         ?.let {
             Fødselsnummer(it)
         } ?: throw JwtTokenMissingException("Intet token i context")
-
-    fun AuthContext.getJti(issuer: String = IDPORTEN) =
-        getClaim(issuer, "jti") ?: throw JwtTokenMissingException("Intet token i context")
 }

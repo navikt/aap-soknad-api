@@ -23,27 +23,34 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
             FOUND, OK -> Unit
         }
 
-    fun harVirus(bytes: ByteArray): ScanResult {
+    fun harVirus(bytes: ByteArray) =
         if (skalIkkeScanne(bytes, cf)) {
-            return ScanResult(NONE).also {
+            ScanResult(NONE).also {
                 log.trace("Ingen scanning av (${bytes.size} bytes, enabled=${cf.enabled})")
             }
         }
-        return webClient
-            .put()
-            .bodyValue(bytes)
-            .accept(APPLICATION_JSON)
-            .retrieve()
-            .bodyToMono<List<ScanResult>>()
-            .doOnError { t: Throwable -> log.warn("Virus-respons feilet", t) }
-            .doOnSuccess { log.trace("Virus respons OK") }
-            .onErrorReturn(FEIL)
-            .defaultIfEmpty(FEIL)
-            .block()
-            ?.single()
-            .also { log.trace("Fikk scan result $it") }
-            ?: ScanResult(NONE)
-    }
+        else {
+            webClient
+                .put()
+                .bodyValue(bytes)
+                .accept(APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono<List<ScanResult>>()
+                .doOnError { t: Throwable ->
+                    log.warn("Virus-respons feilet", t)
+                }
+                .doOnSuccess {
+                    log.trace("Virus respons OK")
+                }
+                .onErrorReturn(FEIL)
+                .defaultIfEmpty(FEIL)
+                .block()
+                ?.single()
+                .also {
+                    log.trace("Fikk scan result $it")
+                }
+                ?: ScanResult(NONE)
+        }
 
     private fun skalIkkeScanne(bytes: ByteArray, cf: VirusScanConfig) = bytes.isEmpty() || !cf.isEnabled
 
