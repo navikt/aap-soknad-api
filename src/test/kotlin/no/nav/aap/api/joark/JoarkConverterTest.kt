@@ -48,7 +48,7 @@ class JoarkConverterTest {
 
 
 
-        `when`(lager.lesDokument(anyObject(), anyObject()))
+        `when`(lager.lesDokument(anyObject()))
             .thenReturn(dokinfo)
             .thenReturn(dokinfo1)
             .thenReturn(dokinfo1)

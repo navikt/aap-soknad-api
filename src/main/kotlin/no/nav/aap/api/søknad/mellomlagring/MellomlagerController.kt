@@ -1,9 +1,7 @@
 package no.nav.aap.api.søknad.mellomlagring
 
 import no.nav.aap.api.felles.SkjemaType
-import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
-import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.HttpStatus.CREATED
@@ -19,20 +17,19 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @ProtectedRestController(value = ["buckets"], issuer = IDPORTEN)
 internal class MellomlagerController(private val lager: Mellomlager,
-                                     private val dittnav: DittNavClient,
-                                     private val ctx: AuthContext) {
+                                     private val dittnav: DittNavClient) {
 
     @PostMapping("/lagre/{type}")
     @ResponseStatus(CREATED)
     fun lagre(@PathVariable type: SkjemaType, @RequestBody data: String) =
-        lager.lagre(ctx.getFnr(), type, data)
+        lager.lagre(type, data)
 
     @GetMapping("/les/{type}")
     fun les(@PathVariable type: SkjemaType) =
-        lager.les(ctx.getFnr(), type)?.let { ok(it) } ?: notFound().build()
+        lager.les(type)?.let { ok(it) } ?: notFound().build()
 
     @DeleteMapping("/slett/{type}")
     @ResponseStatus(NO_CONTENT)
     fun slett(@PathVariable type: SkjemaType) =
-        lager.slett(ctx.getFnr(), type).also { dittnav.fjernOgAvsluttMellomlagring() }
+        lager.slett(type).also { dittnav.fjernOgAvsluttMellomlagring() }
 }

@@ -43,7 +43,7 @@ class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
                                               val navn: Navn?,
                                               val periode: Periode,
                                               val dato: LocalDate = now()) {
-        internal constructor(søker: Søker, søknad: UtlandSøknad) : this(søker.fnr,
+        constructor(søker: Søker, søknad: UtlandSøknad) : this(søker.fnr,
                 søknad.land,
                 søknad.land.toLocale().displayName,
                 søker.navn,

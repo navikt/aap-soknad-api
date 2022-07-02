@@ -11,13 +11,13 @@ import java.util.*
 class LocalSøknadRouter : Router {
     private val log = LoggerUtil.getLogger(javaClass)
     override fun route(søknad: UtlandSøknad) =
-        Kvittering("${UUID.randomUUID()}")
+        Kvittering(UUID.randomUUID())
             .also {
                 log.info("Dummy-ruting av utenlandssøknad til bakenforliggende systemer")
             }
 
     override fun route(søknad: StandardSøknad) =
-        Kvittering("${UUID.randomUUID()}")
+        Kvittering(UUID.randomUUID())
             .also {
                 log.info("Dummy-ruting av søknad til bakenforliggende systemer")
             }

@@ -31,61 +31,71 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val repos: DittNavRepositories,
                     private val ctx: AuthContext) {
 
+    private val log = getLogger(javaClass)
+
     fun opprettBeskjed(type: SkjemaType = STANDARD, tekst: String = "Vi har mottatt en ${type.tittel}") =
         opprettBeskjed(type, tekst, cfg.beskjed.varighet)
 
     internal fun opprettBeskjed(type: SkjemaType, tekst: String, varighet: Duration) =
-        if (cfg.beskjed.enabled) {
-            with(nøkkel(type.name, callId(), "beskjed")) {
-                dittNav.send(ProducerRecord(cfg.beskjed.topic, this, beskjed(type, tekst, varighet)))
-                    .addCallback(DittNavBeskjedCallback(this))
-                repos.beskjeder.save(JPADittNavBeskjed(eventid = eventId))
-                eventId
-            }
+        with(cfg.beskjed) {
+            if (enabled) {
+                with(nøkkel(type.name, callId(), "beskjed")) {
+                    dittNav.send(ProducerRecord(topic, this, beskjed(type, tekst, varighet)))
+                        .addCallback(DittNavBeskjedCallback(this))
+                    repos.beskjeder.save(JPADittNavBeskjed(eventid = eventId))
+                    eventId
+                }
 
-        }
-        else {
-            log.info("Sender ikke beskjed til Ditt Nav")
-            callId()
+            }
+            else {
+                log.info("Sender ikke beskjed til Ditt Nav")
+                callId()
+            }
         }
 
     fun opprettOppgave(type: SkjemaType, tekst: String, varighet: Duration = cfg.oppgave.varighet) =
-        if (cfg.oppgave.enabled) {
-            with(nøkkel(type.name, callId(), "oppgave")) {
-                dittNav.send(ProducerRecord(cfg.oppgave.topic, this, oppgave(type, tekst, varighet)))
-                    .addCallback(DittNavOppgaveCallback(this))
-                repos.oppgaver.save(JPADittNavOppgave(eventid = eventId))
-                eventId
+        with(cfg.oppgave) {
+            if (enabled) {
+                with(nøkkel(type.name, callId(), "oppgave")) {
+                    dittNav.send(ProducerRecord(topic, this, oppgave(type, tekst, varighet)))
+                        .addCallback(DittNavOppgaveCallback(this))
+                    repos.oppgaver.save(JPADittNavOppgave(eventid = eventId))
+                    eventId
+                }
             }
-        }
-        else {
-            log.info("Sender ikke oppgave til Ditt Nav")
-            callId()
+            else {
+                log.info("Sender ikke oppgave til Ditt Nav")
+                callId()
+            }
         }
 
     fun avsluttOppgave(type: SkjemaType = STANDARD, eventId: String) =
-        if (cfg.oppgave.enabled) {
-            with(nøkkel(type.name, eventId, "done")) {
-                dittNav.send(ProducerRecord(cfg.done.topic, this, done()))
-                    .addCallback(DittNavOppgaveDoneCallback(this))
-                repos.oppgaver.done(eventId)
+        with(cfg) {
+            if (oppgave.enabled) {
+                with(nøkkel(type.name, eventId, "done")) {
+                    dittNav.send(ProducerRecord(done.topic, this, done()))
+                        .addCallback(DittNavOppgaveDoneCallback(this))
+                    repos.oppgaver.done(eventId)
 
+                }
             }
-        }
-        else {
-            log.info("Sender ikke done til Ditt Nav")
+            else {
+                log.info("Sender ikke done til Ditt Nav")
+            }
         }
 
     fun avsluttBeskjed(type: SkjemaType = STANDARD, eventId: String) =
-        if (cfg.beskjed.enabled) {
-            with(nøkkel(type.name, eventId, "done")) {
-                dittNav.send(ProducerRecord(cfg.done.topic, this, done()))
-                    .addCallback(DittNavBeskjedDoneCallback(this))
-                repos.beskjeder.done(eventId)
+        with(cfg) {
+            if (beskjed.enabled) {
+                with(nøkkel(type.name, eventId, "done")) {
+                    dittNav.send(ProducerRecord(done.topic, this, done()))
+                        .addCallback(DittNavBeskjedDoneCallback(this))
+                    repos.beskjeder.done(eventId)
+                }
             }
-        }
-        else {
-            log.info("Sender ikke done til Ditt Nav for beskjed")
+            else {
+                log.info("Sender ikke done til Ditt Nav for beskjed")
+            }
         }
 
     private fun beskjed(type: SkjemaType, tekst: String, varighet: Duration) =
@@ -133,15 +143,13 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .build().also { log.info(CONFIDENTIAL, "Key for Ditt Nav $type er $it") }
         }
 
-    internal fun opprettMellomlagringBeskjed(eventId: String) =
+    private fun opprettMellomlagringBeskjed(eventId: String) =
         repos.søknader.saveAndFlush(JPASøknad(eventid = eventId,
                 gyldigtil = now().plus(Duration.ofDays(cfg.mellomlagring)))).also {
             log.trace(CONFIDENTIAL, "Opprettet mellomlagring rad OK $it")
         }
 
-    internal fun fjernAlleGamleMellomlagringer() = repos.søknader.deleteByGyldigtilBefore(now())
-
-    //@Transactional
+    private fun fjernAlleGamleMellomlagringer() = repos.søknader.deleteByGyldigtilBefore(now())
 
     @Transactional
     fun fjernOgAvsluttMellomlagring() {
@@ -168,12 +176,8 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     }
 
     @Transactional
-    fun exit() =
+    fun finalize() =
         opprettBeskjed().also {
             fjernOgAvsluttMellomlagring()
         }
-
-    companion object {
-        private val log = getLogger(DittNavClient::class.java)
-    }
 }

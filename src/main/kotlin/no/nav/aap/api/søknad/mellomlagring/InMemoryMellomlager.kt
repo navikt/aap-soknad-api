@@ -7,12 +7,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 @ConditionalOnMissingBean(GCPKMSKeyKryptertMellomlager::class)
 class InMemoryMellomlager : Mellomlager {
     private val store = mutableMapOf<String, String>()
-    override fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
-        key(fnr, type).also { store[it] = value }
+    override fun lagre(type: SkjemaType, value: String) =
+        key((Fødselsnummer("08089403198")), type).also { store[it] = value }
 
-    override fun les(fnr: Fødselsnummer, type: SkjemaType) =
-        store[key(fnr, type)]
+    override fun les(type: SkjemaType) =
+        store[key(Fødselsnummer("08089403198"), type)]
 
-    override fun slett(fnr: Fødselsnummer, type: SkjemaType) =
-        store.remove(key(fnr, type)) != null
+    override fun slett(type: SkjemaType) =
+        store.remove(key((Fødselsnummer("08089403198")), type)) != null
 }

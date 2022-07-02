@@ -3,7 +3,7 @@ package no.nav.aap.api.error
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
-import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo.ContentTypeException
+import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKMSKeyKryptertDokumentlager.ContentTypeSjekker.ContentTypeException
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
