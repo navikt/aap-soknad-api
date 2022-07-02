@@ -3,7 +3,9 @@ package no.nav.aap.api.error
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
+import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKMSKeyKryptertDokumentlager.ContentTypeSjekker.ContentTypeException
+import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
@@ -25,7 +27,7 @@ import org.zalando.problem.Status.UNSUPPORTED_MEDIA_TYPE
 import org.zalando.problem.spring.web.advice.ProblemHandling
 
 @ControllerAdvice
-class AAPApiExceptionHandler : ProblemHandling {
+class AAPApiExceptionHandler(private val ctx: AuthContext) : ProblemHandling {
     private val log = getLogger(javaClass)
 
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
@@ -56,6 +58,7 @@ class AAPApiExceptionHandler : ProblemHandling {
         builder()
             .withStatus(status)
             .withDetail(e.message)
+            .with(FNR, ctx.getSubject())
             .with(NAV_CALL_ID, callId()).build().also {
                 log.trace("status.name $it", e)
             }
