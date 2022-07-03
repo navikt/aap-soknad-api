@@ -34,13 +34,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     private val log = getLogger(javaClass)
 
     fun opprettBeskjed(type: SkjemaType = STANDARD, tekst: String = "Vi har mottatt en ${type.tittel}") =
-        opprettBeskjed(type, tekst, cfg.beskjed.varighet)
-
-    internal fun opprettBeskjed(type: SkjemaType, tekst: String, varighet: Duration) =
         with(cfg.beskjed) {
             if (enabled) {
                 with(nøkkel(type.name, callId(), "beskjed")) {
-                    dittNav.send(ProducerRecord(topic, this, beskjed(type, tekst, varighet)))
+                    dittNav.send(ProducerRecord(this@with.topic, this, beskjed(type, tekst)))
                         .addCallback(DittNavBeskjedCallback(this))
                     repos.beskjeder.save(JPADittNavBeskjed(eventid = eventId))
                     eventId
@@ -53,11 +50,11 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-    fun opprettOppgave(type: SkjemaType, tekst: String, varighet: Duration = cfg.oppgave.varighet) =
+    fun opprettOppgave(type: SkjemaType, tekst: String) =
         with(cfg.oppgave) {
             if (enabled) {
                 with(nøkkel(type.name, callId(), "oppgave")) {
-                    dittNav.send(ProducerRecord(topic, this, oppgave(type, tekst, varighet)))
+                    dittNav.send(ProducerRecord(topic, this, oppgave(type, tekst)))
                         .addCallback(DittNavOppgaveCallback(this))
                     repos.oppgaver.save(JPADittNavOppgave(eventid = eventId))
                     eventId
@@ -98,7 +95,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-    private fun beskjed(type: SkjemaType, tekst: String, varighet: Duration) =
+    private fun beskjed(type: SkjemaType, tekst: String) =
         with(cfg.beskjed) {
             BeskjedInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
@@ -111,7 +108,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .build()
         }
 
-    private fun oppgave(type: SkjemaType, tekst: String, varighet: Duration) =
+    private fun oppgave(type: SkjemaType, tekst: String) =
         with(cfg.oppgave) {
             OppgaveInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
@@ -154,9 +151,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     @Transactional
     fun fjernOgAvsluttMellomlagring() {
         repos.søknader.deleteByFnr(ctx.getFnr().fnr).also { rows ->
-            rows?.firstOrNull()?.let {
-                log.trace(CONFIDENTIAL, "Fjernet mellomlagring rad $it")
-                avsluttBeskjed(eventId = it.eventid)
+            rows?.firstOrNull()?.let { jpa ->
+                avsluttBeskjed(eventId = jpa.eventid).also {
+                    log.trace(CONFIDENTIAL, "Fjernet mellomlagring rad ${jpa.eventid}")
+                }
             }
         }
     }
@@ -170,8 +168,9 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         fjernOgAvsluttMellomlagring()
         log.trace("Oppdaterer mellomlagring beskjed og DB")
         opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
-            log.trace("eventid for opprettet beskjed om mellomlagring er $uuid")
-            opprettMellomlagringBeskjed(uuid)
+            opprettMellomlagringBeskjed(uuid).also {
+                log.trace("Eventid for opprettet beskjed om mellomlagring er $uuid")
+            }
         }
     }
 

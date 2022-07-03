@@ -60,6 +60,6 @@ class AAPApiExceptionHandler(private val ctx: AuthContext) : ProblemHandling {
             .withDetail(e.message)
             .with(FNR, ctx.getSubject())
             .with(NAV_CALL_ID, callId()).build().also {
-                log.trace("status.name $it", e)
+                log.trace("status er $it", e)
             }
 }
