@@ -37,7 +37,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         with(cfg.beskjed) {
             if (enabled) {
                 with(nøkkel(type.name, callId(), "beskjed")) {
-                    dittNav.send(ProducerRecord(this@with.topic, this, beskjed(type, tekst)))
+                    dittNav.send(ProducerRecord(topic, this, beskjed(type, tekst)))
                         .addCallback(DittNavBeskjedCallback(this))
                     repos.beskjeder.save(JPADittNavBeskjed(eventid = eventId))
                     eventId
