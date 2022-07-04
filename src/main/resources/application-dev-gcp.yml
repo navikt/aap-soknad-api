@@ -36,7 +36,7 @@ buckets:
     vedlegg:
         navn: aap-vedlegg
         subscription: testsub
-        kms: ${buckets.vedlegg.kms}
+        kms: ${buckets.mellom.kms}
         typer:
             - application/pdf
             - image/jpeg
