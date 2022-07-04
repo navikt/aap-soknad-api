@@ -9,12 +9,12 @@ import org.threeten.bp.Duration.ofMillis
 
 @Configuration
 @ConditionalOnGCP
-class GCPBucketsBeanConfig(val cfg: GCPBucketConfig) {
+class GCPBucketsBeanConfig(val cfg: BucketsConfig) {
 
     @Bean
     fun retrySettings() =
         RetrySettings.newBuilder()
-            .setTotalTimeout(ofMillis(cfg.timeout.toMillis()))
+            .setTotalTimeout(ofMillis(cfg.mellom.timeout.toMillis()))
             .build()
 
     @Bean

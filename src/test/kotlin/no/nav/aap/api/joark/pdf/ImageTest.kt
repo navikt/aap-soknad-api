@@ -2,7 +2,7 @@ package no.nav.aap.api.joark.pdf
 
 import no.nav.aap.api.søknad.joark.pdf.Image2PDFConverter
 import no.nav.aap.api.søknad.joark.pdf.ImageScaler
-import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
+import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import org.apache.tika.Tika
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

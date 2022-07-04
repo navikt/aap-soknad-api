@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad.joark.pdf
 
-import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
+import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.apache.pdfbox.pdmodel.common.PDRectangle.A4
 import org.springframework.stereotype.Component

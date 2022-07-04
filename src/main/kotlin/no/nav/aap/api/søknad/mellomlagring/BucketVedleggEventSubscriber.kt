@@ -5,24 +5,22 @@ import com.google.cloud.pubsub.v1.MessageReceiver
 import com.google.cloud.pubsub.v1.Subscriber
 import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.pubsub.v1.PubsubMessage
+import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.VedleggBucketCfg
 import no.nav.aap.util.LoggerUtil
 import org.springframework.stereotype.Component
 
 @Component
-class BucketEventSubscriber {
+class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
     private val log = LoggerUtil.getLogger(javaClass)
 
     init {
-        log.info("Subscribing to bucket events")
-        subscribe()
-        log.info("Subscribed to bucket events OK")
+        log.info("Abonnerer på events for vedlegg")
+        subscribe(cfgs.vedlegg, cfgs.team)
+        log.info("Abonnerert på events for vedlegg OK $cfgs")
     }
 
-    private fun subscribe() {
-        val projectId = "aap-dev-e48b" // TODO fix
-        val subscriptionId = "testsub"
-        val subscriptionName = ProjectSubscriptionName.of(projectId, subscriptionId)
-
+    private fun subscribe(cfg: VedleggBucketCfg, id: String) {
+        val subscriptionName = ProjectSubscriptionName.of(id, cfg.subscription)
         // Instantiate an asynchronous message receiver.
         val receiver = MessageReceiver { message: PubsubMessage, consumer: AckReplyConsumer ->
             // Handle incoming message, then ack the received message.

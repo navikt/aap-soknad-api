@@ -10,8 +10,8 @@ import com.google.cloud.storage.Storage.BlobGetOption.fields
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
-import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig
-import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
+import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
+import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.api.søknad.model.StandardSøknad
@@ -28,7 +28,7 @@ import java.util.UUID.randomUUID
 
 @ConditionalOnGCP
 @Primary
-class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
+class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
                                      private val lager: Storage,
                                      private val ctx: AuthContext,
                                      private val sjekkere: List<DokumentSjekker>) : Dokumentlager {
@@ -42,10 +42,10 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
             with(dokument) {
                 log.trace("Lagrer $filnavn kryptert med uuid $this@uuid  og contentType $contentType")
                 sjekkere.forEach { it.sjekk(this) }
-                lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this@apply)))
+                lager.create(newBuilder(of(cfg.vedlegg.navn, key(fnr, this@apply)))
                     .setContentType(contentType)
                     .setMetadata(mapOf(FILNAVN to filnavn, "uuid" to "this@apply", FNR to fnr.fnr))
-                    .build(), bytes, kmsKeyName(cfg.kms))
+                    .build(), bytes, kmsKeyName(cfg.vedlegg.kms))
             }
         }.also {
             log.trace("Lagret $this kryptert med uuid $it")
@@ -54,7 +54,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
     override fun lesDokument(uuid: UUID) = lesDokument(ctx.getFnr(), uuid)
 
     fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.get(cfg.vedlegg, key(fnr, uuid), fields(METADATA, CONTENT_TYPE, TIME_CREATED))?.let { blob ->
+        lager.get(cfg.vedlegg.navn, key(fnr, uuid), fields(METADATA, CONTENT_TYPE, TIME_CREATED))?.let { blob ->
             with(blob) {
                 DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
                     .also {
@@ -66,7 +66,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
     override fun slettDokument(uuid: UUID) = slettDokument(ctx.getFnr(), uuid)
 
     fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.delete(of(cfg.vedlegg, key(fnr, uuid)))
+        lager.delete(of(cfg.vedlegg.navn, key(fnr, uuid)))
             .also {
                 log.trace(CONFIDENTIAL, "Slettet dokument $uuid for $fnr")
             }
@@ -109,12 +109,12 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
         }
 
     @Component
-    class ContentTypeSjekker(private val cfg: GCPBucketConfig) : DokumentSjekker {
+    class ContentTypeSjekker(private val cfg: BucketsConfig) : DokumentSjekker {
 
         override fun sjekk(dokument: DokumentInfo) =
             with(dokument) {
-                if (contentType !in cfg.typer) {
-                    throw DokumentException("Type $contentType for $filnavn er ikke blant ${cfg.typer}")
+                if (contentType !in cfg.vedlegg.typer) {
+                    throw DokumentException("Type $contentType for $filnavn er ikke blant ${cfg.vedlegg.typer}")
                 }
                 TIKA.detect(bytes).run {
                     if (!equals(contentType)) {

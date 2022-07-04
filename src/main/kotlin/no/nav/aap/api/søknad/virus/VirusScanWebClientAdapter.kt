@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.virus
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import no.nav.aap.api.søknad.mellomlagring.GCPBucketConfig.DokumentException
+import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.virus.ScanResult.Companion.FEIL
 import no.nav.aap.api.søknad.virus.ScanResult.Result.FOUND
 import no.nav.aap.api.søknad.virus.ScanResult.Result.NONE
