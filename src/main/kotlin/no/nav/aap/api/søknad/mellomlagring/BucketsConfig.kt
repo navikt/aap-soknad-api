@@ -9,7 +9,7 @@ import java.time.Duration
 @ConfigurationProperties(BUCKETS)
 @ConstructorBinding
 data class BucketsConfig(@NestedConfigurationProperty val mellom: MellomBucketCfg,
-                         @NestedConfigurationProperty val vedlegg: VedleggBucketCfg, val team: String) {
+                         @NestedConfigurationProperty val vedlegg: VedleggBucketCfg, val id: String) {
 
     open class MellomBucketCfg(val navn: String,
                                val subscription: String,

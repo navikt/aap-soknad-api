@@ -15,8 +15,8 @@ class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
 
     init {
         log.info("Abonnerer på events for vedlegg")
-        subscribe(cfgs.vedlegg, cfgs.team)
-        log.info("Abonnerert på events for vedlegg OK $cfgs")
+        subscribe(cfgs.vedlegg, cfgs.id)
+        log.info("Abonnerert på events for vedlegg OK ${cfgs.vedlegg} via subscription ${cfgs.vedlegg.subscription}")
     }
 
     private fun subscribe(cfg: VedleggBucketCfg, id: String) {

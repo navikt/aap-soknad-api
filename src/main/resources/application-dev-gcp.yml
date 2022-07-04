@@ -28,7 +28,7 @@ organisasjon:
     base-uri: https://ereg-services-q1.dev-fss-pub.nais.io
     enabled: false
 buckets:
-    team: ${gcp.team.project.id}
+    id: ${gcp.team.project.id}
     vedlegg:
         navn: aap-vedlegg
         subscription: testsub
