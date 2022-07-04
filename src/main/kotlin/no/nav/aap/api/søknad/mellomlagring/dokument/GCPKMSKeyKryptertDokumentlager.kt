@@ -44,10 +44,8 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: GCPBucketConfig,
                 sjekkere.forEach { it.sjekk(this) }
                 lager.create(newBuilder(of(cfg.vedlegg, key(fnr, this@apply)))
                     .setContentType(contentType)
-                    .setMetadata(mapOf(FILNAVN to filnavn, FNR to fnr.fnr))
-                    .build(),
-                        bytes, kmsKeyName(cfg.kms).also {
-                })
+                    .setMetadata(mapOf(FILNAVN to filnavn, "uuid" to "this@apply", FNR to fnr.fnr))
+                    .build(), bytes, kmsKeyName(cfg.kms))
             }
         }.also {
             log.trace("Lagret $this kryptert med uuid $it")
