@@ -7,7 +7,6 @@ import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.pubsub.v1.PubsubMessage
 import no.nav.aap.util.LoggerUtil
 import org.springframework.stereotype.Component
-import java.util.concurrent.TimeoutException
 
 @Component
 class BucketEventSubscriber {
@@ -35,13 +34,13 @@ class BucketEventSubscriber {
             subscriber = Subscriber.newBuilder(subscriptionName, receiver).build()
             // Start the subscriber.
             subscriber.startAsync().awaitRunning()
-            log.info("Listening for messages on %s:\n", subscriptionName.toString())
+            log.info("Listening for messages on $subscriptionName")
             // Allow the subscriber to run for 30s unless an unrecoverable error occurs.
             subscriber.awaitRunning()
 
             //subscriber.awaitTerminated(300, TimeUnit.SECONDS)
         }
-        catch (timeoutException: TimeoutException) {
+        catch (e: Exception) {
             // Shut down the subscriber after 30s. Stop receiving messages.
             subscriber!!.stopAsync()
         }
