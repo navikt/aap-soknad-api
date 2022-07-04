@@ -13,13 +13,13 @@ data class BucketsConfig(@NestedConfigurationProperty val mellom: MellomBucketCf
 
     open class MellomBucketCfg(val navn: String,
                                val subscription: String,
-                               val timeout: Duration,
+                               val timeout: Duration = Duration.ofSeconds(30),
                                val kms: String) {
         override fun toString() =
             "MellomBucketCfg(navn=$navn, subscription=$subscription, timeout=${timeout.toSeconds()}s, kms=$kms)"
     }
 
-    class VedleggBucketCfg(navn: String, subscription: String, timeout: Duration,
+    class VedleggBucketCfg(navn: String, subscription: String, timeout: Duration = Duration.ofSeconds(30),
                            kms: String, val typer: List<String>) : MellomBucketCfg(navn, subscription, timeout, kms) {
         override fun toString() =
             "VedleggBucketCfg(navn=$navn, subscription=$subscription, timeout=${timeout.toSeconds()}s, kms=$kms,typer=$typer)"
