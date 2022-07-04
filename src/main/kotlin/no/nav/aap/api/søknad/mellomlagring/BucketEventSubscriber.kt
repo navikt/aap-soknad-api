@@ -10,14 +10,15 @@ import org.springframework.stereotype.Component
 
 @Component
 class BucketEventSubscriber {
-
-    init {
-        subscribe()
-    }
-
     private val log = LoggerUtil.getLogger(javaClass)
 
-    final fun subscribe() {
+    init {
+        log.info("Subscribing to bucket events")
+        subscribe()
+        log.info("Subscribed to bucket events OK")
+    }
+
+    private fun subscribe() {
         val projectId = "aap-dev-e48b" // TODO fix
         val subscriptionId = "testsub"
         val subscriptionName = ProjectSubscriptionName.of(projectId, subscriptionId)
