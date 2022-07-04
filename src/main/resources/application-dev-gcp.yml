@@ -29,20 +29,21 @@ organisasjon:
     enabled: false
 buckets:
     id: ${gcp.team.project.id}
+    mellom:
+        navn: aap-mellomlagring
+        subscription: TODO
+        timeout: 30s
+        kms: projects/${buckets.id}/locations/europe-north1/keyRings/aap-mellomlagring-kms/cryptoKeys/mellomlagring
     vedlegg:
         navn: aap-vedlegg
         subscription: testsub
-        timeout: 30s
-        kms: projects/${gcp.team.project.id}/locations/europe-north1/keyRings/aap-mellomlagring-kms/cryptoKeys/mellomlagring
+        timeout: ${buckets.vedlegg.timeout}
+        kms: ${buckets.vedlegg.kms}
         typer:
             - application/pdf
             - image/jpeg
             - image/png
-    mellom:
-        navn: aap-mellomlagring
-        subscription: TODO
-        timeout: ${bucket.vedlegg.timeut}
-        kms: ${bucket.vedlegg.kms}
+
 
 
 debug: false
