@@ -11,9 +11,14 @@ import java.util.concurrent.TimeoutException
 
 @Component
 class BucketEventSubscriber {
+
+    init {
+        subscribe()
+    }
+
     private val log = LoggerUtil.getLogger(javaClass)
 
-    fun subscribeAsyncExample() {
+    final fun subscribe() {
         val projectId = "aap-dev-e48b" // TODO fix
         val subscriptionId = "testsub"
         val subscriptionName = ProjectSubscriptionName.of(projectId, subscriptionId)
@@ -33,7 +38,7 @@ class BucketEventSubscriber {
             log.info("Listening for messages on %s:\n", subscriptionName.toString())
             // Allow the subscriber to run for 30s unless an unrecoverable error occurs.
             subscriber.awaitRunning()
-           
+
             //subscriber.awaitTerminated(300, TimeUnit.SECONDS)
         }
         catch (timeoutException: TimeoutException) {
