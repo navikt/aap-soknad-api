@@ -33,9 +33,7 @@ class BucketEventSubscriber {
             log.info("Listening for messages on %s:\n", subscriptionName.toString())
             // Allow the subscriber to run for 30s unless an unrecoverable error occurs.
             subscriber.awaitRunning()
-            while (true) {
-
-            }
+           
             //subscriber.awaitTerminated(300, TimeUnit.SECONDS)
         }
         catch (timeoutException: TimeoutException) {
