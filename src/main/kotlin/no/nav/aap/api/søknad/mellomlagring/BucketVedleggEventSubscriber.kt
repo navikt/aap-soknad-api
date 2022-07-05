@@ -10,7 +10,6 @@ import com.google.pubsub.v1.PushConfig.getDefaultInstance
 import com.google.pubsub.v1.SubscriptionName
 import com.google.pubsub.v1.TopicName
 import no.nav.aap.util.LoggerUtil
-import org.apache.commons.lang3.StringUtils.substringAfterLast
 import org.springframework.stereotype.Component
 
 @Component
@@ -52,14 +51,16 @@ class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
 
     private fun hasSubscriptionOnTopic(): Boolean {
         val subs =
-            TopicAdminClient.create().listTopicSubscriptions(TopicName.of(cfgs.id, cfgs.vedlegg.topic)).iterateAll().map { it.substringAfterLast('/' }
+            TopicAdminClient.create().listTopicSubscriptions(TopicName.of(cfgs.id, cfgs.vedlegg.topic)).iterateAll()
+                .map { it.substringAfterLast('/') }
                 .toList()
         log.info("Sjekker $subs mot ${cfgs.vedlegg.subscription}")
         return true
     }
 
     private fun hasTopic(): Boolean {
-        val topics = TopicAdminClient.create().listTopics(ProjectName.of(cfgs.id)).iterateAll().map { it.name }.map { it.substringAfterLast('/' }
+        val topics = TopicAdminClient.create().listTopics(ProjectName.of(cfgs.id)).iterateAll().map { it.name }
+            .map { it.substringAfterLast('/') }
         log.info("Sjekker $topics mot ${cfgs.vedlegg.topic}")
         return true
     }
