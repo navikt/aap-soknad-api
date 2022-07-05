@@ -29,6 +29,18 @@ class VedleggEventSubscriber(private val storage: Storage, private val cfgs: Buc
         }
 }
 
+@Component
+class MellomlagringEventSubscriber(private val storage: Storage, private val cfgs: BucketsConfig) :
+    AbstractEventSubscriber(storage, cfgs.mellom, cfgs.id) {
+
+    override fun receiver() =
+        MessageReceiver { message, consumer ->
+            log.info("Id: ${message.messageId}")
+            log.info("Data: ${message.attributesMap}")
+            consumer.ack()
+        }
+}
+
 abstract class AbstractEventSubscriber(private val storage: Storage,
                                        private val cfg: MellomBucketCfg,
                                        private val id: String) {
