@@ -49,13 +49,21 @@ class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
             log.info("Created pull subscription $it for ${cfgs.vedlegg}")
         }
 
-    private fun hasSubscriptionOnTopic() =
-        TopicAdminClient.create().listTopicSubscriptions(TopicName.of(cfgs.id, cfgs.vedlegg.topic)).iterateAll()
-            .contains(SubscriptionName.of(cfgs.id, cfgs.vedlegg.subscription).subscription)
+    private fun hasSubscriptionOnTopic(): Boolean {
+        val subs =
+            TopicAdminClient.create().listTopicSubscriptions(TopicName.of(cfgs.id, cfgs.vedlegg.topic)).iterateAll()
+                .toList()
+        val sjekk = SubscriptionName.of(cfgs.id, cfgs.vedlegg.subscription).subscription
+        log.info("Sjekker $subs mot $sjekk")
+        return true
+    }
 
-    private fun hasTopic() =
-        TopicAdminClient.create().listTopics(ProjectName.of(cfgs.id)).iterateAll().map { it.name }
-            .contains(TopicName.of(cfgs.id, cfgs.vedlegg.topic).topic)
+    private fun hasTopic(): Boolean {
+        val topics = TopicAdminClient.create().listTopics(ProjectName.of(cfgs.id)).iterateAll().map { it.name }
+        val sjekk = TopicName.of(cfgs.id, cfgs.vedlegg.topic).topic
+        log.info("Sjekker $topics mot $sjekk")
+        return true
+    }
 
     private fun subscribe() {
         val subscriptionName = ProjectSubscriptionName.of(cfgs.id, cfgs.vedlegg.subscription)
