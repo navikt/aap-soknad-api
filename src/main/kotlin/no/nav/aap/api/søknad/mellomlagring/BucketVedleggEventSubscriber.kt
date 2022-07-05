@@ -54,7 +54,7 @@ class BucketVedleggEventSubscriber(private val storage: Storage, private val cfg
     }
 
     fun createNotification() {
-        val t = TopicName.of(cfgs.id, cfgs.vedlegg.topic).topic
+        val t = TopicName.newBuilder().setProject(cfgs.id).setTopic(cfgs.vedlegg.topic).build().topic
         log.info("TOPIC $t")
         val notificationInfo = NotificationInfo.newBuilder(t)
             .setEventTypes(*EventType.values())
@@ -65,7 +65,8 @@ class BucketVedleggEventSubscriber(private val storage: Storage, private val cfg
     }
 
     fun hasNotification() =
-        cfgs.vedlegg.topic == storage.listNotifications(cfgs.vedlegg.navn).map { it.topic }
+        cfgs.vedlegg.topic == storage.listNotifications(cfgs.vedlegg.navn)
+            .map { it.topic }
             .map { it -> it.substringAfterLast('/') }.firstOrNull()
 
     private fun createTopic() = TopicAdminClient.create().createTopic(TopicName.of(cfgs.id, cfgs.vedlegg.topic))
@@ -78,21 +79,16 @@ class BucketVedleggEventSubscriber(private val storage: Storage, private val cfg
             log.info("Created pull subscription $it for ${cfgs.vedlegg}")
         }
 
-    private fun hasSubscriptionOnTopic(): Boolean {
-        val subs =
-            TopicAdminClient.create().listTopicSubscriptions(TopicName.of(cfgs.id, cfgs.vedlegg.topic)).iterateAll()
-                .map { it.substringAfterLast('/') }
-                .toList()
-        log.info("Sjekker $subs mot ${cfgs.vedlegg.subscription}")
-        return subs.contains(cfgs.vedlegg.subscription)
-    }
-
-    private fun hasTopic(): Boolean {
-        val topics = TopicAdminClient.create().listTopics(ProjectName.of(cfgs.id)).iterateAll().map { it.name }
+    private fun hasSubscriptionOnTopic() =
+        TopicAdminClient.create().listTopicSubscriptions(TopicName.of(cfgs.id, cfgs.vedlegg.topic)).iterateAll()
             .map { it.substringAfterLast('/') }
-        log.info("Sjekker $topics mot ${cfgs.vedlegg.topic}")
-        return topics.contains(cfgs.vedlegg.topic)
-    }
+            .contains(cfgs.vedlegg.subscription)
+
+    private fun hasTopic() =
+        TopicAdminClient.create().listTopics(ProjectName.of(cfgs.id)).iterateAll()
+            .map { it.name }
+            .map { it.substringAfterLast('/') }
+            .contains(cfgs.vedlegg.topic)
 
     private fun subscribe() {
         val subscriptionName = ProjectSubscriptionName.of(cfgs.id, cfgs.vedlegg.subscription)
