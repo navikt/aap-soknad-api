@@ -4,6 +4,9 @@ import com.google.cloud.pubsub.v1.MessageReceiver
 import com.google.cloud.pubsub.v1.Subscriber
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient
 import com.google.cloud.pubsub.v1.TopicAdminClient
+import com.google.cloud.storage.NotificationInfo
+import com.google.cloud.storage.NotificationInfo.EventType
+import com.google.cloud.storage.NotificationInfo.PayloadFormat.JSON_API_V1
 import com.google.cloud.storage.Storage
 import com.google.pubsub.v1.ProjectName
 import com.google.pubsub.v1.ProjectSubscriptionName
@@ -29,18 +32,35 @@ class BucketVedleggEventSubscriber(private val storage: Storage, private val cfg
         }
         if (!hasSubscriptionOnTopic()) {
             createSubscription().also {
-                log.info("Created subscription $it for ${cfgs.vedlegg}")
+                log.info("Lagd subscription $it for ${cfgs.vedlegg}")
             }
         }
         else {
             log.info("Subscription ${cfgs.vedlegg.subscription} finnes allerede for ${cfgs.vedlegg.topic}")
         }
-        if (hasNotification()) {
+        if (!hasNotification()) {
+            createNotification().also {
+                log.info("Lagd notifikasjon $it for ${cfgs.vedlegg.navn}")
+            }
+        }
+        else {
+            createNotification() // TEST
             log.info("${cfgs.vedlegg.navn} har allerede en notifikasjon på ${cfgs.vedlegg.topic}")
+
         }
         subscribe().also {
             log.info("Abonnerert på events for vedlegg OK ${cfgs.vedlegg} via subscription ${cfgs.vedlegg.subscription}")
         }
+    }
+
+    fun createNotification() {
+        val notificationInfo = NotificationInfo.newBuilder(cfgs.vedlegg.navn)
+            .setTopic(TopicName.of(cfgs.id, cfgs.vedlegg.topic).topic)
+            .setEventTypes(*EventType.values())
+            .setPayloadFormat(JSON_API_V1)
+            .build();
+        log.info("Notification info $notificationInfo")
+        // val notification = storage.createNotification(cfgs.vedlegg.navn, notificationInfo);
     }
 
     fun hasNotification() =
