@@ -1,11 +1,13 @@
 package no.nav.aap.api.søknad.mellomlagring
 
-import com.google.cloud.pubsub.v1.AckReplyConsumer
 import com.google.cloud.pubsub.v1.MessageReceiver
 import com.google.cloud.pubsub.v1.Subscriber
+import com.google.cloud.pubsub.v1.SubscriptionAdminClient
+import com.google.cloud.pubsub.v1.TopicAdminClient
 import com.google.pubsub.v1.ProjectSubscriptionName
-import com.google.pubsub.v1.PubsubMessage
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.VedleggBucketCfg
+import com.google.pubsub.v1.PushConfig.getDefaultInstance
+import com.google.pubsub.v1.SubscriptionName
+import com.google.pubsub.v1.TopicName
 import no.nav.aap.util.LoggerUtil
 import org.springframework.stereotype.Component
 
@@ -15,33 +17,52 @@ class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
 
     init {
         log.info("Abonnerer på events for vedlegg")
-        subscribe(cfgs.vedlegg, cfgs.id)
-        log.info("Abonnerert på events for vedlegg OK ${cfgs.vedlegg} via subscription ${cfgs.vedlegg.subscription}")
+        if (!hasTopic()) {
+            createTopic()
+        }
+        else {
+            log.info("Topic ${cfgs.vedlegg.topic} finnes allerede for ${cfgs.id}")
+        }
+        if (!hasSubscription()) {
+            createSubscription()
+        }
+        else {
+            log.info("Subscription ${cfgs.vedlegg.subscription} finnes allerede for ${cfgs.id}")
+        }
+        subscribe().also {
+            log.info("Abonnerert på events for vedlegg OK ${cfgs.vedlegg} via subscription ${cfgs.vedlegg.subscription}")
+        }
     }
 
-    private fun subscribe(cfg: VedleggBucketCfg, id: String) {
-        val subscriptionName = ProjectSubscriptionName.of(id, cfg.subscription)
-        // Instantiate an asynchronous message receiver.
-        val receiver = MessageReceiver { message: PubsubMessage, consumer: AckReplyConsumer ->
-            // Handle incoming message, then ack the received message.
+    private fun createTopic() = TopicAdminClient.create().createTopic(TopicName.of(cfgs.id, cfgs.vedlegg.topic))
+        .also { log.info("Created topic $it for ${cfgs.vedlegg}") }
+
+    private fun createSubscription() =
+        SubscriptionAdminClient.create().createSubscription(SubscriptionName.of(cfgs.id, cfgs.vedlegg.subscription),
+                TopicName.of(cfgs.id, cfgs.vedlegg.topic),
+                getDefaultInstance(),
+                10).also {
+            log.info("Created pull subscription $it for ${cfgs.vedlegg}")
+        }
+
+    private fun hasSubscription() =
+        SubscriptionAdminClient.create().listSubscriptions(cfgs.id).iterateAll().map { it -> it.name }
+            .contains(cfgs.vedlegg.subscription)
+
+    private fun hasTopic() =
+        TopicAdminClient.create().listTopics(cfgs.id).iterateAll().map { it -> it.name }
+            .contains(cfgs.vedlegg.topic)
+
+    private fun subscribe() {
+        val subscriptionName = ProjectSubscriptionName.of(cfgs.id, cfgs.vedlegg.subscription)
+        val receiver = MessageReceiver { message, consumer ->
             log.info("Id: ${message.messageId}")
             log.info("Data: ${message.attributesMap}")
             consumer.ack()
         }
-        var subscriber: Subscriber? = null
-        try {
-            subscriber = Subscriber.newBuilder(subscriptionName, receiver).build()
-            // Start the subscriber.
-            subscriber.startAsync().awaitRunning()
-            log.info("Listening for messages on $subscriptionName")
-            // Allow the subscriber to run for 30s unless an unrecoverable error occurs.
-            subscriber.awaitRunning()
-
-            //subscriber.awaitTerminated(300, TimeUnit.SECONDS)
-        }
-        catch (e: Exception) {
-            // Shut down the subscriber after 30s. Stop receiving messages.
-            subscriber!!.stopAsync()
+        Subscriber.newBuilder(subscriptionName, receiver).build().apply {
+            startAsync().awaitRunning()
+            awaitRunning()
         }
     }
 }
