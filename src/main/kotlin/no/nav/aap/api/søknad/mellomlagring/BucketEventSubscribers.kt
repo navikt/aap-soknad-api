@@ -29,7 +29,7 @@ class VedleggEventSubscriber(private val storage: Storage, private val cfgs: Buc
         }
 }
 
-@Component
+//@Component
 class MellomlagringEventSubscriber(private val storage: Storage, private val cfgs: BucketsConfig) :
     AbstractEventSubscriber(storage, cfgs.mellom, cfgs.id) {
 
