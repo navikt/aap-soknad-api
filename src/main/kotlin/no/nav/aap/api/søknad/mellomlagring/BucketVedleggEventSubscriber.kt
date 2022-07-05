@@ -4,6 +4,7 @@ import com.google.cloud.pubsub.v1.MessageReceiver
 import com.google.cloud.pubsub.v1.Subscriber
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient
 import com.google.cloud.pubsub.v1.TopicAdminClient
+import com.google.cloud.storage.Storage
 import com.google.pubsub.v1.ProjectName
 import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.pubsub.v1.PushConfig.getDefaultInstance
@@ -13,7 +14,7 @@ import no.nav.aap.util.LoggerUtil
 import org.springframework.stereotype.Component
 
 @Component
-class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
+class BucketVedleggEventSubscriber(private val storage: Storage, private val cfgs: BucketsConfig) {
     private val log = LoggerUtil.getLogger(javaClass)
 
     init {
@@ -34,9 +35,14 @@ class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
         else {
             log.info("Subscription ${cfgs.vedlegg.subscription} finnes allerede for ${cfgs.vedlegg.topic}")
         }
+        listNotifications()
         subscribe().also {
             log.info("Abonnerert på events for vedlegg OK ${cfgs.vedlegg} via subscription ${cfgs.vedlegg.subscription}")
         }
+    }
+
+    fun listNotifications() {
+        storage.listNotifications(cfgs.vedlegg.navn).forEach { log.info("Notifikasjon $it for ${cfgs.vedlegg.navn}") }
     }
 
     private fun createTopic() = TopicAdminClient.create().createTopic(TopicName.of(cfgs.id, cfgs.vedlegg.topic))
