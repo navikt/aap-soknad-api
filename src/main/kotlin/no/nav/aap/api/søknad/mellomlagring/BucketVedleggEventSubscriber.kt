@@ -55,14 +55,14 @@ class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
                 .map { it.substringAfterLast('/') }
                 .toList()
         log.info("Sjekker $subs mot ${cfgs.vedlegg.subscription}")
-        return true
+        return subs.contains(cfgs.vedlegg.subscription)
     }
 
     private fun hasTopic(): Boolean {
         val topics = TopicAdminClient.create().listTopics(ProjectName.of(cfgs.id)).iterateAll().map { it.name }
             .map { it.substringAfterLast('/') }
         log.info("Sjekker $topics mot ${cfgs.vedlegg.topic}")
-        return true
+        return topics.contains(cfgs.vedlegg.topic)
     }
 
     private fun subscribe() {
