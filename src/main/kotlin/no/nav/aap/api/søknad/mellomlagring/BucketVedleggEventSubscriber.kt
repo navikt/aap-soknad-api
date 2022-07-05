@@ -23,7 +23,7 @@ class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
         else {
             log.info("Topic ${cfgs.vedlegg.topic} finnes allerede for ${cfgs.id}")
         }
-        if (!hasSubscription()) {
+        if (!hasSubscriptionOnTopic()) {
             createSubscription()
         }
         else {
@@ -45,12 +45,12 @@ class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
             log.info("Created pull subscription $it for ${cfgs.vedlegg}")
         }
 
-    private fun hasSubscription() =
-        SubscriptionAdminClient.create().listSubscriptions(cfgs.id).iterateAll().map { it -> it.name }
+    private fun hasSubscriptionOnTopic() =
+        TopicAdminClient.create().listTopicSubscriptions(ProjectName.of(cfgs.id).iterateAll().map { it -> it.name }
             .contains(cfgs.vedlegg.subscription)
 
     private fun hasTopic() =
-        TopicAdminClient.create().listTopics(cfgs.id).iterateAll().map { it -> it.name }
+        TopicAdminClient.create().listTopics(ProjectName.of(cfgs.id).iterateAll().map { it -> it.name }
             .contains(cfgs.vedlegg.topic)
 
     private fun subscribe() {
