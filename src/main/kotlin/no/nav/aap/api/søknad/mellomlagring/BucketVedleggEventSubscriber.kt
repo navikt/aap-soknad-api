@@ -49,9 +49,14 @@ class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
             log.info("Created pull subscription $it for ${cfgs.vedlegg}")
         }
 
-    private fun hasSubscriptionOnTopic() =
-        TopicAdminClient.create().listTopicSubscriptions(TopicName.of(cfgs.id, cfgs.vedlegg.topic)).iterateAll()
-            .contains(cfgs.vedlegg.subscription)
+    private fun hasSubscriptionOnTopic(): Boolean {
+        val subs =
+            TopicAdminClient.create().listTopicSubscriptions(TopicName.of(cfgs.id, cfgs.vedlegg.topic)).iterateAll()
+                .toList()
+        log.info("SUBS er $subs")
+        return true
+        //    .contains(cfgs.vedlegg.subscription)
+    }
 
     private fun hasTopic(): Boolean {
         val topics = TopicAdminClient.create().listTopics(ProjectName.of(cfgs.id)).iterateAll().toList()
