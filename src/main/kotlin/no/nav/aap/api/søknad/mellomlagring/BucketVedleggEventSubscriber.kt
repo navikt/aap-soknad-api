@@ -54,7 +54,7 @@ class BucketVedleggEventSubscriber(private val storage: Storage, private val cfg
     }
 
     fun createNotification() {
-        val t = TopicName.newBuilder().setProject(cfgs.id).setTopic(cfgs.vedlegg.topic).build().topic
+        val t = TopicName.of(cfgs.id, cfgs.vedlegg.topic).toString()
         log.info("TOPIC $t")
         val notificationInfo = NotificationInfo.newBuilder(t)
             .setEventTypes(*EventType.values())
