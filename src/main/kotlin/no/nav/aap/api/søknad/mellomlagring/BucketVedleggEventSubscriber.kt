@@ -13,93 +13,105 @@ import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.pubsub.v1.PushConfig.getDefaultInstance
 import com.google.pubsub.v1.SubscriptionName
 import com.google.pubsub.v1.TopicName
+import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.MellomBucketCfg
 import no.nav.aap.util.LoggerUtil
 import org.springframework.stereotype.Component
 
 @Component
-class BucketVedleggEventSubscriber(private val storage: Storage, private val cfgs: BucketsConfig) {
-    private val log = LoggerUtil.getLogger(javaClass)
+class VedleggEventSubscriber(private val storage: Storage, private val cfgs: BucketsConfig) :
+    AbstractEventSubscriber(storage, cfgs.vedlegg, cfgs.id) {
 
-    init {
-        log.info("Abonnerer på events for vedlegg")
-        if (!hasTopic()) {
-            createTopic().also {
-                log.info("Created topic $it for ${cfgs.vedlegg}")
-            }
-        }
-        else {
-            log.info("Topic ${cfgs.vedlegg.topic} finnes allerede i ${cfgs.id}")
-        }
-        if (!hasSubscriptionOnTopic()) {
-            createSubscription().also {
-                log.info("Lagd subscription $it for ${cfgs.vedlegg}")
-            }
-        }
-        else {
-            log.info("Subscription ${cfgs.vedlegg.subscription} finnes allerede for ${cfgs.vedlegg.topic}")
-        }
-        if (!hasNotification()) {
-            createNotification().also {
-                log.info("Lagd notifikasjon $it for ${cfgs.vedlegg.navn}")
-            }
-        }
-        else {
-            log.info("${cfgs.vedlegg.navn} har allerede en notifikasjon på ${cfgs.vedlegg.topic}")
-            createNotification() // TEST
-
-        }
-        subscribe().also {
-            log.info("Abonnerert på events for vedlegg OK ${cfgs.vedlegg} via subscription ${cfgs.vedlegg.subscription}")
-        }
-    }
-
-    fun createNotification() {
-        val t = TopicName.of(cfgs.id, cfgs.vedlegg.topic).toString()
-        log.info("TOPIC $t")
-        val notificationInfo = NotificationInfo.newBuilder(t)
-            .setEventTypes(*EventType.values())
-            .setPayloadFormat(JSON_API_V1)
-            .build();
-        log.info("Notification info $notificationInfo")
-        // val notification = storage.createNotification(cfgs.vedlegg.navn, notificationInfo);
-    }
-
-    fun hasNotification() =
-        cfgs.vedlegg.topic == storage.listNotifications(cfgs.vedlegg.navn)
-            .map { it.topic }
-            .map { it -> it.substringAfterLast('/') }.firstOrNull()
-
-    private fun createTopic() = TopicAdminClient.create().createTopic(TopicName.of(cfgs.id, cfgs.vedlegg.topic))
-
-    private fun createSubscription() =
-        SubscriptionAdminClient.create().createSubscription(SubscriptionName.of(cfgs.id, cfgs.vedlegg.subscription),
-                TopicName.of(cfgs.id, cfgs.vedlegg.topic),
-                getDefaultInstance(),
-                10).also {
-            log.info("Created pull subscription $it for ${cfgs.vedlegg}")
-        }
-
-    private fun hasSubscriptionOnTopic() =
-        TopicAdminClient.create().listTopicSubscriptions(TopicName.of(cfgs.id, cfgs.vedlegg.topic)).iterateAll()
-            .map { it.substringAfterLast('/') }
-            .contains(cfgs.vedlegg.subscription)
-
-    private fun hasTopic() =
-        TopicAdminClient.create().listTopics(ProjectName.of(cfgs.id)).iterateAll()
-            .map { it.name }
-            .map { it.substringAfterLast('/') }
-            .contains(cfgs.vedlegg.topic)
-
-    private fun subscribe() {
-        val subscriptionName = ProjectSubscriptionName.of(cfgs.id, cfgs.vedlegg.subscription)
-        val receiver = MessageReceiver { message, consumer ->
+    override fun receiver() =
+        MessageReceiver { message, consumer ->
             log.info("Id: ${message.messageId}")
             log.info("Data: ${message.attributesMap}")
             consumer.ack()
         }
-        Subscriber.newBuilder(subscriptionName, receiver).build().apply {
+}
+
+abstract class AbstractEventSubscriber(private val storage: Storage,
+                                       private val cfg: MellomBucketCfg,
+                                       private val id: String) {
+
+    protected val log = LoggerUtil.getLogger(javaClass)
+    abstract fun receiver(): MessageReceiver
+
+    init {
+        log.info("Abonnerer på events for $cfg")
+        if (!hasTopic()) {
+            createTopic().also {
+                log.info("Lagd topic $it for $cfg")
+            }
+        }
+        else {
+            log.info("Topic ${cfg.topic} finnes allerede i prosjekt  $id")
+        }
+        if (!hasSubscriptionOnTopic()) {
+            createSubscription().also {
+                log.info("Lagd subscription $it for $cfg")
+            }
+        }
+        else {
+            log.info("Subscription ${cfg.subscription} finnes allerede for ${cfg.topic}")
+        }
+        if (!hasNotification()) {
+            createNotification().also {
+                log.info("Lagd notifikasjon $it for ${cfg.navn}")
+            }
+        }
+        else {
+            log.info("${cfg.navn} har allerede en notifikasjon på ${cfg.topic}")
+
+        }
+        subscribe().also {
+            log.info("Abonnerert på events $it for $cfg via subscription ${cfg.subscription}")
+        }
+    }
+
+    private fun subscribe() =
+        Subscriber.newBuilder(ProjectSubscriptionName.of(id, cfg.subscription), receiver()).build().apply {
             startAsync().awaitRunning()
             awaitRunning()
         }
-    }
+
+    private fun createNotification() =
+        with(cfg) {
+            storage.createNotification(navn,
+                    NotificationInfo.newBuilder(TopicName.of(id, topic).toString())
+                        .setEventTypes(*EventType.values())
+                        .setPayloadFormat(JSON_API_V1)
+                        .build());
+        }
+
+    private fun hasNotification() =
+        cfg.topic == storage.listNotifications(cfg.navn)
+            .map { it.topic }
+            .map { it.substringAfterLast('/') }.firstOrNull()
+
+    private fun createTopic() = TopicAdminClient.create().createTopic(TopicName.of(id, cfg.topic))
+
+    private fun createSubscription() =
+        with(cfg) {
+            SubscriptionAdminClient.create().createSubscription(SubscriptionName.of(id, subscription),
+                    TopicName.of(id, topic),
+                    getDefaultInstance(),
+                    10).also {
+                log.info("Lagd pull subscription $it for $cfg")
+            }
+        }
+
+    private fun hasSubscriptionOnTopic() =
+        with(cfg) {
+            TopicAdminClient.create().listTopicSubscriptions(TopicName.of(id, topic))
+                .iterateAll()
+                .map { it.substringAfterLast('/') }
+                .contains(subscription)
+        }
+
+    private fun hasTopic() =
+        TopicAdminClient.create().listTopics(ProjectName.of(id))
+            .iterateAll()
+            .map { it.name }
+            .map { it.substringAfterLast('/') }
+            .contains(cfg.topic)
 }
