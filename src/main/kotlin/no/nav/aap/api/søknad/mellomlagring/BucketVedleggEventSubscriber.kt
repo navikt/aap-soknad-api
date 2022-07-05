@@ -54,7 +54,8 @@ class BucketVedleggEventSubscriber(private val storage: Storage, private val cfg
     }
 
     fun createNotification() {
-        val notificationInfo = NotificationInfo.newBuilder(TopicName.of(cfgs.id, cfgs.vedlegg.topic).topic)
+        log.info("TOPIC ${TopicName.of(cfgs.id, cfgs.vedlegg.topic).topic}")
+        val notificationInfo = NotificationInfo.newBuilder(t)
             .setEventTypes(*EventType.values())
             .setPayloadFormat(JSON_API_V1)
             .build();
