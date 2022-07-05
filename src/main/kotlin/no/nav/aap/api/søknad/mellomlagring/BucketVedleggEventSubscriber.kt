@@ -35,15 +35,17 @@ class BucketVedleggEventSubscriber(private val storage: Storage, private val cfg
         else {
             log.info("Subscription ${cfgs.vedlegg.subscription} finnes allerede for ${cfgs.vedlegg.topic}")
         }
-        listNotifications()
+        if (hasNotification()) {
+            log.info("${cfgs.vedlegg.navn} har allerede en notifikasjon på ${cfgs.vedlegg.topic}")
+        }
         subscribe().also {
             log.info("Abonnerert på events for vedlegg OK ${cfgs.vedlegg} via subscription ${cfgs.vedlegg.subscription}")
         }
     }
 
-    fun listNotifications() {
-        storage.listNotifications(cfgs.vedlegg.navn).forEach { log.info("Notifikasjon $it for ${cfgs.vedlegg.navn}") }
-    }
+    fun hasNotification() =
+        cfgs.vedlegg.topic == storage.listNotifications(cfgs.vedlegg.navn).map { it.topic }
+            .map { it -> it.substringAfterLast('/') }.firstOrNull()
 
     private fun createTopic() = TopicAdminClient.create().createTopic(TopicName.of(cfgs.id, cfgs.vedlegg.topic))
 
