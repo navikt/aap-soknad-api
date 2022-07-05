@@ -51,11 +51,11 @@ class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
 
     private fun hasSubscriptionOnTopic() =
         TopicAdminClient.create().listTopicSubscriptions(TopicName.of(cfgs.id, cfgs.vedlegg.topic)).iterateAll()
-            .contains(cfgs.vedlegg.subscription)
+            .contains(SubscriptionName.of(cfgs.id, cfgs.vedlegg.subscription).subscription)
 
     private fun hasTopic() =
-        TopicAdminClient.create().listTopics(ProjectName.of(cfgs.id)).iterateAll().toList().map { it.name }
-            .contains(cfgs.vedlegg.topic)
+        TopicAdminClient.create().listTopics(ProjectName.of(cfgs.id)).iterateAll().map { it.name }
+            .contains(TopicName.of(cfgs.id, cfgs.vedlegg.topic).topic)
 
     private fun subscribe() {
         val subscriptionName = ProjectSubscriptionName.of(cfgs.id, cfgs.vedlegg.subscription)

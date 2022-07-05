@@ -31,13 +31,13 @@ buckets:
     id: ${gcp.team.project.id}
     mellom:
         navn: aap-mellomlagring
-        subscription: projects/${buckets.id}/subscriptions/mellomsub
-        topic: projects/${buckets.id}/topics/mellomtopic
+        subscription: subscriptions/mellomsub
+        topic: mellomtopic
         kms: projects/${buckets.id}/locations/europe-north1/keyRings/aap-mellomlagring-kms/cryptoKeys/mellomlagring
     vedlegg:
         navn: aap-vedlegg
-        subscription: projects/${buckets.id}/subscriptions/testsub
-        topic: projects/${buckets.id}/topics/testtopic
+        subscription: subscriptions/testsub
+        topic: testtopic
         kms: ${buckets.mellom.kms}
         typer:
             - application/pdf
