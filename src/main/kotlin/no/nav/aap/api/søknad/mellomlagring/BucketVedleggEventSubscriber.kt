@@ -44,8 +44,8 @@ class BucketVedleggEventSubscriber(private val storage: Storage, private val cfg
             }
         }
         else {
-            createNotification() // TEST
             log.info("${cfgs.vedlegg.navn} har allerede en notifikasjon på ${cfgs.vedlegg.topic}")
+            createNotification() // TEST
 
         }
         subscribe().also {
@@ -54,8 +54,7 @@ class BucketVedleggEventSubscriber(private val storage: Storage, private val cfg
     }
 
     fun createNotification() {
-        val notificationInfo = NotificationInfo.newBuilder(cfgs.vedlegg.navn)
-            .setTopic(TopicName.of(cfgs.id, cfgs.vedlegg.topic).topic)
+        val notificationInfo = NotificationInfo.newBuilder(TopicName.of(cfgs.id, cfgs.vedlegg.topic).topic)
             .setEventTypes(*EventType.values())
             .setPayloadFormat(JSON_API_V1)
             .build();
