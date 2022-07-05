@@ -4,6 +4,7 @@ import com.google.cloud.pubsub.v1.MessageReceiver
 import com.google.cloud.pubsub.v1.Subscriber
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient
 import com.google.cloud.pubsub.v1.TopicAdminClient
+import com.google.pubsub.v1.ProjectName
 import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.pubsub.v1.PushConfig.getDefaultInstance
 import com.google.pubsub.v1.SubscriptionName
@@ -18,16 +19,20 @@ class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
     init {
         log.info("Abonnerer på events for vedlegg")
         if (!hasTopic()) {
-            createTopic()
+            createTopic().also {
+                log.info("Created topic $it for ${cfgs.vedlegg}")
+            }
         }
         else {
-            log.info("Topic ${cfgs.vedlegg.topic} finnes allerede for ${cfgs.id}")
+            log.info("Topic ${cfgs.vedlegg.topic} finnes allerede i ${cfgs.id}")
         }
         if (!hasSubscriptionOnTopic()) {
-            createSubscription()
+            createSubscription().also {
+                log.info("Created subscription $it for ${cfgs.vedlegg}")
+            }
         }
         else {
-            log.info("Subscription ${cfgs.vedlegg.subscription} finnes allerede for ${cfgs.id}")
+            log.info("Subscription ${cfgs.vedlegg.subscription} finnes allerede for ${cfgs.vedlegg.topic}")
         }
         subscribe().also {
             log.info("Abonnerert på events for vedlegg OK ${cfgs.vedlegg} via subscription ${cfgs.vedlegg.subscription}")
@@ -35,7 +40,6 @@ class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
     }
 
     private fun createTopic() = TopicAdminClient.create().createTopic(TopicName.of(cfgs.id, cfgs.vedlegg.topic))
-        .also { log.info("Created topic $it for ${cfgs.vedlegg}") }
 
     private fun createSubscription() =
         SubscriptionAdminClient.create().createSubscription(SubscriptionName.of(cfgs.id, cfgs.vedlegg.subscription),
@@ -46,11 +50,11 @@ class BucketVedleggEventSubscriber(private val cfgs: BucketsConfig) {
         }
 
     private fun hasSubscriptionOnTopic() =
-        TopicAdminClient.create().listTopicSubscriptions(ProjectName.of(cfgs.id).iterateAll().map { it -> it.name }
+        TopicAdminClient.create().listTopicSubscriptions(TopicName.of(cfgs.id, cfgs.vedlegg.topic)).iterateAll()
             .contains(cfgs.vedlegg.subscription)
 
     private fun hasTopic() =
-        TopicAdminClient.create().listTopics(ProjectName.of(cfgs.id).iterateAll().map { it -> it.name }
+        TopicAdminClient.create().listTopics(ProjectName.of(cfgs.id)).iterateAll().map { it -> it.name }
             .contains(cfgs.vedlegg.topic)
 
     private fun subscribe() {
