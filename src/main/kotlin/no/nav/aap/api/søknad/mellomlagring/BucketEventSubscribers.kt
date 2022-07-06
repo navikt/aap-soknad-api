@@ -45,8 +45,6 @@ class MellomlagringEventSubscriber(private val storage: Storage, private val cfg
         }
 }
 
-private const val c = '/'
-
 abstract class AbstractEventSubscriber(private val storage: Storage,
                                        private val cfg: BucketCfg,
                                        private val id: String) {
@@ -56,9 +54,6 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
 
     init {
         with(cfg) {
-            setPolicyForServiceAccount().also {
-                log.info("Satt policy pubsub.publisher på topic  $topic for ${storage.getServiceAccount(id).email} OK")
-            }
 
             log.info("Abonnerer på events")
             if (!hasTopic()) {
@@ -76,6 +71,10 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
             }
             else {
                 log.info("Subscription $subscription finnes allerede for $topic")
+            }
+
+            setPolicyForServiceAccount().also {
+                log.info("Satt policy pubsub.publisher på topic  $topic for ${storage.getServiceAccount(id).email} OK")
             }
             if (!hasNotification()) {
                 createNotification().also {
