@@ -111,7 +111,7 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
                         .setRole("roles/pubsub.publisher")
                         .addMembers("serviceAccount:${storage.getServiceAccount(projectId).email}")
                         .build()).build())
-                    .build()).also { log.info("Ny policy er $it") }
+                    .build()).also { log.trace("Ny policy er $it") }
             }
         }
 
