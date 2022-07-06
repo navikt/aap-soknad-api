@@ -156,8 +156,8 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
             log.info("Updated policy er$setIamPolicyRequest")
             log.info("Updated policy request er$updatedPolicy")
 
-            //val newPolicy: Policy = topicAdminClient.setIamPolicy(setIamPolicyRequest)
-            //println("New topic policy: $newPolicy")
+            val newPolicy = topicAdminClient.setIamPolicy(setIamPolicyRequest)
+            log.info("New policy er$newPolicy")
         }
     }
 
