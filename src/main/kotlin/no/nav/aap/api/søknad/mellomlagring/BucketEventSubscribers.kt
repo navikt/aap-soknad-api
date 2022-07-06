@@ -45,6 +45,8 @@ class MellomlagringEventSubscriber(private val storage: Storage, private val cfg
         }
 }
 
+private const val c = '/'
+
 abstract class AbstractEventSubscriber(private val storage: Storage,
                                        private val cfg: BucketCfg,
                                        private val id: String) {
@@ -53,45 +55,47 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
     abstract fun receiver(): MessageReceiver
 
     init {
-        log.info("Sjekker policy for ${cfg.topic}")
-        policyTest()
-        log.info("Sjekket policy for ${cfg.topic} OK")
+        with(cfg) {
+            setPolicyForServiceAccount().also {
+                log.info("Satt policy pubsub.publisher på topic  $topic for ${storage.getServiceAccount(id).email} OK")
+            }
 
-        log.info("Abonnerer på events for $cfg")
-        if (!hasTopic()) {
-            createTopic().also {
-                log.info("Lagd topic $it for $cfg")
+            log.info("Abonnerer på events")
+            if (!hasTopic()) {
+                createTopic().also {
+                    log.info("Lagd topic $it")
+                }
             }
-        }
-        else {
-            log.info("Topic ${cfg.topic} finnes allerede i prosjekt  $id")
-        }
-        if (!hasSubscriptionOnTopic()) {
-            createSubscription().also {
-                log.info("Lagd subscription $it for $cfg")
+            else {
+                log.info("Topic $topic finnes allerede i  $id")
             }
-        }
-        else {
-            log.info("Subscription ${cfg.subscription} finnes allerede for ${cfg.topic}")
-        }
-        if (!hasNotification()) {
-            createNotification().also {
-                log.info("Lagd notifikasjon $it for ${cfg.navn}")
+            if (!hasSubscriptionOnTopic()) {
+                createSubscription().also {
+                    log.info("Lagd subscription $it")
+                }
             }
-        }
-        else {
-            log.info("${cfg.navn} har allerede en notifikasjon på ${cfg.topic}")
+            else {
+                log.info("Subscription $subscription finnes allerede for $topic")
+            }
+            if (!hasNotification()) {
+                createNotification().also {
+                    log.info("Lagd notifikasjon $it for topic $navn")
+                }
+            }
+            else {
+                log.info("$navn har allerede en notifikasjon på $topic")
 
-        }
-        subscribe().also {
-            log.info("Abonnerert på events $it for $cfg via subscription ${cfg.subscription}")
+            }
+            subscribe().also {
+                log.info("Abonnerert på events  via subscription $subscription")
+            }
         }
     }
 
     private fun subscribe() =
         Subscriber.newBuilder(ProjectSubscriptionName.of(id, cfg.subscription), receiver()).build().apply {
             startAsync().awaitRunning()
-            awaitRunning()
+            awaitRunning()  // TODO sjekk dette
         }
 
     private fun createNotification() =
@@ -104,62 +108,60 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
         }
 
     private fun hasNotification() =
-        cfg.topic == storage.listNotifications(cfg.navn)
-            .map { it.topic }
-            .map { it.substringAfterLast('/') }.firstOrNull()
+        with(cfg) {
+            topic == storage.listNotifications(navn)
+                .map { it.topic }
+                .map { it.substringAfterLast('/') }
+                .firstOrNull()
+        }
 
-    private fun createTopic() = TopicAdminClient.create().createTopic(TopicName.of(id, cfg.topic))
+    private fun createTopic() =
+        TopicAdminClient.create().use { client ->
+            client.createTopic(TopicName.of(id, cfg.topic))
+        }
 
     private fun createSubscription() =
         with(cfg) {
-            SubscriptionAdminClient.create().createSubscription(SubscriptionName.of(id, subscription),
-                    TopicName.of(id, topic),
-                    getDefaultInstance(),
-                    10).also {
-                log.info("Lagd pull subscription $it for $cfg")
+            SubscriptionAdminClient.create().use { client ->
+                client.createSubscription(SubscriptionName.of(id, subscription),
+                        TopicName.of(id, topic),
+                        getDefaultInstance(),
+                        10).also {
+                    log.info("Lagd pull subscription $it for $cfg")
+                }
             }
         }
 
     private fun hasSubscriptionOnTopic() =
         with(cfg) {
-            TopicAdminClient.create().listTopicSubscriptions(TopicName.of(id, topic))
-                .iterateAll()
-                .map { it.substringAfterLast('/') }
-                .contains(subscription)
+            TopicAdminClient.create().use { client ->
+                client.listTopicSubscriptions(TopicName.of(id, topic))
+                    .iterateAll()
+                    .map { it.substringAfterLast('/') }
+                    .contains(subscription)
+            }
         }
 
     private fun hasTopic() =
-        TopicAdminClient.create().listTopics(ProjectName.of(id))
-            .iterateAll()
-            .map { it.name }
-            .map { it.substringAfterLast('/') }
-            .contains(cfg.topic)
-
-    fun policyTest() {
-        TopicAdminClient.create().use { topicAdminClient ->
-            val topicName = TopicName.of(id, cfg.topic)
-            val getIamPolicyRequest = GetIamPolicyRequest.newBuilder().setResource(topicName.toString()).build()
-            val oldPolicy = topicAdminClient.getIamPolicy(getIamPolicyRequest)
-            log.info("Old policy er$oldPolicy")
-
-            // Create new role -> members binding
-            val binding =
-                Binding.newBuilder().setRole("roles/pubsub.publisher")
-                    .addMembers("serviceAccount:" + storage.getServiceAccount(id).email)
-                    .build()
-
-            // Add new binding to updated policy
-            val updatedPolicy = Policy.newBuilder(oldPolicy).addBindings(binding).build()
-            val setIamPolicyRequest = SetIamPolicyRequest.newBuilder()
-                .setResource(topicName.toString())
-                .setPolicy(updatedPolicy)
-                .build()
-            log.info("Updated policy er$setIamPolicyRequest")
-            log.info("Updated policy request er$updatedPolicy")
-
-            val newPolicy = topicAdminClient.setIamPolicy(setIamPolicyRequest)
-            log.info("New policy er$newPolicy")
+        TopicAdminClient.create().use { client ->
+            client.listTopics(ProjectName.of(id))
+                .iterateAll()
+                .map { it.name }
+                .map { it.substringAfterLast('/') }
+                .contains(cfg.topic)
         }
-    }
 
+    fun setPolicyForServiceAccount() =
+        TopicAdminClient.create().use { client ->
+            with(TopicName.of(id, cfg.topic)) {
+                client.setIamPolicy(SetIamPolicyRequest.newBuilder()
+                    .setResource(this.toString())
+                    .setPolicy(Policy.newBuilder(client.getIamPolicy(GetIamPolicyRequest.newBuilder()
+                        .setResource(this.toString()).build())).addBindings(Binding.newBuilder()
+                        .setRole("roles/pubsub.publisher")
+                        .addMembers("serviceAccount:${storage.getServiceAccount(id).email}")
+                        .build()).build())
+                    .build()).also { log.info("Ny policy er$it") }
+            }
+        }
 }
