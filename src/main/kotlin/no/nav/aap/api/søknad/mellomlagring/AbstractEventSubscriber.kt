@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.mellomlagring
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.pubsub.v1.MessageReceiver
 import com.google.cloud.pubsub.v1.Subscriber
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient
@@ -20,7 +21,8 @@ import com.google.pubsub.v1.TopicName
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.BucketCfg
 import no.nav.aap.util.LoggerUtil
 
-abstract class AbstractEventSubscriber(private val storage: Storage,
+abstract class AbstractEventSubscriber(protected val mapper: ObjectMapper,
+                                       private val storage: Storage,
                                        private val cfg: BucketCfg,
                                        private val projectId: String) {
 
