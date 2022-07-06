@@ -8,6 +8,10 @@ import com.google.cloud.storage.NotificationInfo
 import com.google.cloud.storage.NotificationInfo.EventType
 import com.google.cloud.storage.NotificationInfo.PayloadFormat.JSON_API_V1
 import com.google.cloud.storage.Storage
+import com.google.iam.v1.Binding
+import com.google.iam.v1.GetIamPolicyRequest
+import com.google.iam.v1.Policy
+import com.google.iam.v1.SetIamPolicyRequest
 import com.google.pubsub.v1.ProjectName
 import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.pubsub.v1.PushConfig.getDefaultInstance
@@ -49,6 +53,10 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
     abstract fun receiver(): MessageReceiver
 
     init {
+        log.info("Sjekker policy for ${cfg.topic}")
+        policyTest()
+        log.info("Sjekket policy for ${cfg.topic} OK")
+
         log.info("Abonnerer på events for $cfg")
         if (!hasTopic()) {
             createTopic().also {
@@ -126,4 +134,31 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
             .map { it.name }
             .map { it.substringAfterLast('/') }
             .contains(cfg.topic)
+
+    fun policyTest() {
+        TopicAdminClient.create().use { topicAdminClient ->
+            val topicName = TopicName.of(id, cfg.topic)
+            val getIamPolicyRequest = GetIamPolicyRequest.newBuilder().setResource(topicName.toString()).build()
+            val oldPolicy = topicAdminClient.getIamPolicy(getIamPolicyRequest)
+            log.info("Old policy er$oldPolicy")
+
+            // Create new role -> members binding
+            val binding =
+                Binding.newBuilder().setRole("roles/pubsub.publisher").addMembers(storage.getServiceAccount(id).email)
+                    .build()
+
+            // Add new binding to updated policy
+            val updatedPolicy = Policy.newBuilder(oldPolicy).addBindings(binding).build()
+            val setIamPolicyRequest = SetIamPolicyRequest.newBuilder()
+                .setResource(topicName.toString())
+                .setPolicy(updatedPolicy)
+                .build()
+            log.info("Updated policy er$setIamPolicyRequest")
+            log.info("Updated policy request er$updatedPolicy")
+
+            //val newPolicy: Policy = topicAdminClient.setIamPolicy(setIamPolicyRequest)
+            //println("New topic policy: $newPolicy")
+        }
+    }
+
 }
