@@ -53,60 +53,56 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
     abstract fun receiver(): MessageReceiver
 
     init {
-        with(cfg) {
+        init(cfg)
+        abonner()
+    }
 
-            log.info("Abonnerer på events")
-            if (!hasTopic()) {
-                createTopic().also {
-                    log.info("Lagd topic $it")
-                }
+    private fun init(cfg: BucketCfg) =
+        with(cfg) {
+            if (!harTopic()) {
+                lagTopic()
             }
             else {
-                log.info("Topic $topic finnes allerede i  $id")
+                log.info("Topic $topic finnes allerede i $id")
             }
-            if (!hasSubscriptionOnTopic()) {
-                createSubscription().also {
-                    log.info("Lagd subscription $it")
-                }
+            if (!harSubscription()) {
+                lagSubscription()
             }
             else {
                 log.info("Subscription $subscription finnes allerede for $topic")
             }
 
-            setPolicyForServiceAccount().also {
-                log.info("Satt policy pubsub.publisher på topic  $topic for ${storage.getServiceAccount(id).email} OK")
-            }
-            if (!hasNotification()) {
-                createNotification().also {
-                    log.info("Lagd notifikasjon $it for topic $navn")
-                }
+            setPolicy()  //Idempotent
+
+            if (!harNotifikasjon()) {
+                lagNotifikasjon()
             }
             else {
                 log.info("$navn har allerede en notifikasjon på $topic")
-
-            }
-            subscribe().also {
-                log.info("Abonnerert på events  via subscription $subscription")
             }
         }
-    }
 
-    private fun subscribe() =
+    private fun abonner() =
         Subscriber.newBuilder(ProjectSubscriptionName.of(id, cfg.subscription), receiver()).build().apply {
             startAsync().awaitRunning()
-            awaitRunning()  // TODO sjekk dette
+            awaitRunning() // TODO sjekk dette
+                .also {
+                    log.info("Abonnerert på events  via subscriber $this.'")
+                }
         }
 
-    private fun createNotification() =
+    private fun lagNotifikasjon() =
         with(cfg) {
             storage.createNotification(navn,
                     NotificationInfo.newBuilder(TopicName.of(id, topic).toString())
                         .setEventTypes(*EventType.values())
                         .setPayloadFormat(JSON_API_V1)
-                        .build());
+                        .build()).also {
+                log.info("Lagd notifikasjon ${it.notificationId} for topic ${it.topic}")
+            }
         }
 
-    private fun hasNotification() =
+    private fun harNotifikasjon() =
         with(cfg) {
             topic == storage.listNotifications(navn)
                 .map { it.topic }
@@ -114,24 +110,26 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
                 .firstOrNull()
         }
 
-    private fun createTopic() =
+    private fun lagTopic() =
         TopicAdminClient.create().use { client ->
-            client.createTopic(TopicName.of(id, cfg.topic))
+            client.createTopic(TopicName.of(id, cfg.topic)).also {
+                log.info("Lagd topic ${it.name}")
+            }
         }
 
-    private fun createSubscription() =
+    private fun lagSubscription() =
         with(cfg) {
             SubscriptionAdminClient.create().use { client ->
                 client.createSubscription(SubscriptionName.of(id, subscription),
                         TopicName.of(id, topic),
                         getDefaultInstance(),
                         10).also {
-                    log.info("Lagd pull subscription $it for $cfg")
+                    log.info("Lagd pull subscription ${it.name}")
                 }
             }
         }
 
-    private fun hasSubscriptionOnTopic() =
+    private fun harSubscription() =
         with(cfg) {
             TopicAdminClient.create().use { client ->
                 client.listTopicSubscriptions(TopicName.of(id, topic))
@@ -141,7 +139,7 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
             }
         }
 
-    private fun hasTopic() =
+    private fun harTopic() =
         TopicAdminClient.create().use { client ->
             client.listTopics(ProjectName.of(id))
                 .iterateAll()
@@ -150,7 +148,7 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
                 .contains(cfg.topic)
         }
 
-    fun setPolicyForServiceAccount() =
+    fun setPolicy() =
         TopicAdminClient.create().use { client ->
             with(TopicName.of(id, cfg.topic)) {
                 client.setIamPolicy(SetIamPolicyRequest.newBuilder()
@@ -160,7 +158,7 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
                         .setRole("roles/pubsub.publisher")
                         .addMembers("serviceAccount:${storage.getServiceAccount(id).email}")
                         .build()).build())
-                    .build()).also { log.info("Ny policy er$it") }
+                    .build()).also { log.info("Ny policy er $it") }
             }
         }
 }
