@@ -49,8 +49,7 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper,
                             log.trace("Delete pga avslutt eller timeout")
                         }
                     }
-                    "OBJECT_ARCHIVE" -> log.trace("Archive")
-                    else -> log.trace("UKjent event type $this")
+                    else -> log.trace("Event type $this")
                 }
             }
 
