@@ -144,7 +144,8 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
 
             // Create new role -> members binding
             val binding =
-                Binding.newBuilder().setRole("roles/pubsub.publisher").addMembers(storage.getServiceAccount(id).email)
+                Binding.newBuilder().setRole("roles/pubsub.publisher")
+                    .addMembers("serviceAccount:" + storage.getServiceAccount(id).email)
                     .build()
 
             // Add new binding to updated policy
