@@ -24,6 +24,8 @@ class MellomlagringEventSubscriber(private val storage: Storage, private val cfg
         MessageReceiver { message, consumer ->
             log.info("Id: ${message.messageId}")  // do stuff
             log.info("Data: ${message.attributesMap}")
+            log.info("Resource representation: ${message.data.toStringUtf8()}")
+
             consumer.ack()
         }
 }
