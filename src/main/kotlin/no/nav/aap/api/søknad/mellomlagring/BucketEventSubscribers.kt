@@ -17,7 +17,7 @@ import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.pubsub.v1.PushConfig.getDefaultInstance
 import com.google.pubsub.v1.SubscriptionName
 import com.google.pubsub.v1.TopicName
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.MellomBucketCfg
+import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.BucketCfg
 import no.nav.aap.util.LoggerUtil
 import org.springframework.stereotype.Component
 
@@ -33,7 +33,7 @@ class VedleggEventSubscriber(private val storage: Storage, private val cfgs: Buc
         }
 }
 
-//@Component
+@Component
 class MellomlagringEventSubscriber(private val storage: Storage, private val cfgs: BucketsConfig) :
     AbstractEventSubscriber(storage, cfgs.mellom, cfgs.id) {
 
@@ -46,7 +46,7 @@ class MellomlagringEventSubscriber(private val storage: Storage, private val cfg
 }
 
 abstract class AbstractEventSubscriber(private val storage: Storage,
-                                       private val cfg: MellomBucketCfg,
+                                       private val cfg: BucketCfg,
                                        private val id: String) {
 
     protected val log = LoggerUtil.getLogger(javaClass)

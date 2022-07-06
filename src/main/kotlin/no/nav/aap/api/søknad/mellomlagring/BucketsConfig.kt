@@ -8,14 +8,14 @@ import java.time.Duration
 
 @ConfigurationProperties(BUCKETS)
 @ConstructorBinding
-data class BucketsConfig(@NestedConfigurationProperty val mellom: MellomBucketCfg,
+data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
                          @NestedConfigurationProperty val vedlegg: VedleggBucketCfg, val id: String) {
 
-    open class MellomBucketCfg(val navn: String,
-                               val subscription: String,
-                               val topic: String,
-                               val timeout: Duration = Duration.ofSeconds(30),
-                               val kms: String) {
+    open class BucketCfg(val navn: String,
+                         val subscription: String,
+                         val topic: String,
+                         val timeout: Duration = Duration.ofSeconds(30),
+                         val kms: String) {
         override fun toString() =
             "MellomBucketCfg(navn=$navn, subscription=$subscription, timeout=${timeout.toSeconds()}s, kms=$kms)"
     }
@@ -25,7 +25,7 @@ data class BucketsConfig(@NestedConfigurationProperty val mellom: MellomBucketCf
                            topic: String,
                            timeout: Duration = Duration.ofSeconds(30),
                            kms: String,
-                           val typer: List<String>) : MellomBucketCfg(navn, subscription, topic, timeout, kms) {
+                           val typer: List<String>) : BucketCfg(navn, subscription, topic, timeout, kms) {
         override fun toString() =
             "VedleggBucketCfg(navn=$navn, subscription=$subscription, timeout=${timeout.toSeconds()}s, kms=$kms,typer=$typer)"
     }
