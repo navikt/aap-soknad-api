@@ -22,7 +22,7 @@ import no.nav.aap.util.LoggerUtil
 
 abstract class AbstractEventSubscriber(private val storage: Storage,
                                        private val cfg: BucketCfg,
-                                       private val id: String) {
+                                       private val projectId: String) {
 
     protected val log = LoggerUtil.getLogger(javaClass)
     abstract fun receiver(): MessageReceiver
@@ -38,7 +38,7 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
                 lagTopic()
             }
             else {
-                log.info("Topic $topic finnes allerede i $id")
+                log.info("Topic $topic finnes allerede i $projectId")
             }
             if (!harSubscription()) {
                 lagSubscription()
@@ -58,7 +58,7 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
         }
 
     private fun abonner() =
-        Subscriber.newBuilder(ProjectSubscriptionName.of(id, cfg.subscription), receiver()).build().apply {
+        Subscriber.newBuilder(ProjectSubscriptionName.of(projectId, cfg.subscription), receiver()).build().apply {
             startAsync().awaitRunning()
             awaitRunning() // TODO sjekk dette
                 .also {
@@ -69,7 +69,7 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
     private fun lagNotifikasjon() =
         with(cfg) {
             storage.createNotification(navn,
-                    NotificationInfo.newBuilder(TopicName.of(id, topic).toString())
+                    NotificationInfo.newBuilder(TopicName.of(projectId, topic).toString())
                         .setEventTypes(*EventType.values())
                         .setPayloadFormat(JSON_API_V1)
                         .build()).also {
@@ -87,7 +87,7 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
 
     private fun lagTopic() =
         TopicAdminClient.create().use { client ->
-            client.createTopic(TopicName.of(id, cfg.topic)).also {
+            client.createTopic(TopicName.of(projectId, cfg.topic)).also {
                 log.info("Lagd topic ${it.name}")
             }
         }
@@ -95,8 +95,8 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
     private fun lagSubscription() =
         with(cfg) {
             SubscriptionAdminClient.create().use { client ->
-                client.createSubscription(SubscriptionName.of(id, subscription),
-                        TopicName.of(id, topic),
+                client.createSubscription(SubscriptionName.of(projectId, subscription),
+                        TopicName.of(projectId, topic),
                         PushConfig.getDefaultInstance(),
                         10).also {
                     log.info("Lagd pull subscription ${it.name}")
@@ -107,7 +107,7 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
     private fun harSubscription() =
         with(cfg) {
             TopicAdminClient.create().use { client ->
-                client.listTopicSubscriptions(TopicName.of(id, topic))
+                client.listTopicSubscriptions(TopicName.of(projectId, topic))
                     .iterateAll()
                     .map { it.substringAfterLast('/') }
                     .contains(subscription)
@@ -116,7 +116,7 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
 
     private fun harTopic() =
         TopicAdminClient.create().use { client ->
-            client.listTopics(ProjectName.of(id))
+            client.listTopics(ProjectName.of(projectId))
                 .iterateAll()
                 .map { it.name }
                 .map { it.substringAfterLast('/') }
@@ -125,13 +125,13 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
 
     private fun setPolicy() =
         TopicAdminClient.create().use { client ->
-            with(TopicName.of(id, cfg.topic)) {
+            with(TopicName.of(projectId, cfg.topic)) {
                 client.setIamPolicy(SetIamPolicyRequest.newBuilder()
                     .setResource(this.toString())
                     .setPolicy(Policy.newBuilder(client.getIamPolicy(GetIamPolicyRequest.newBuilder()
                         .setResource(this.toString()).build())).addBindings(Binding.newBuilder()
                         .setRole("roles/pubsub.publisher")
-                        .addMembers("serviceAccount:${storage.getServiceAccount(id).email}")
+                        .addMembers("serviceAccount:${storage.getServiceAccount(projectId).email}")
                         .build()).build())
                     .build()).also { log.info("Ny policy er $it") }
             }
