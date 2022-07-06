@@ -31,7 +31,7 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper,
             log.info("Data: ${message.attributesMap}")
             val resource = mapper.readValue(message.data.toStringUtf8(), Map::class.java)
             log.info("Resource representation: $resource")
-            with(resource["eventType"]) {
+            with(message.attributesMap["eventType"]) {
                 when (this) {
                     "OBJECT_FINALIZE" -> {
                         if (message.containsAttributes("overwroteGeneration")) {
