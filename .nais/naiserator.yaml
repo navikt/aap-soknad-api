@@ -42,10 +42,12 @@ spec:
             -   name: aap-vedlegg
                 cascadingDelete: true
                 lifecycleCondition:
+                    numNewerVersions: 1
                     age: {{vedlegg-varighet}}
             -   name: aap-mellomlagring
                 cascadingDelete: true
                 lifecycleCondition:
+                    numNewerVersions: 1
                     age: {{mellomlagring-varighet}}
     accessPolicy:
         inbound:
