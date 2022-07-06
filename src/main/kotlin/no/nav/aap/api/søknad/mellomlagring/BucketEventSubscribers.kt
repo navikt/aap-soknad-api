@@ -31,6 +31,29 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper,
             log.info("Data: ${message.attributesMap}")
             val resource = mapper.readValue(message.data.toStringUtf8(), Map::class.java)
             log.info("Resource representation: $resource")
+            with(resource["eventType"]) {
+                when (this) {
+                    "OBJECT_FINALIZE" -> {
+                        if (message.containsAttributes("overwroteGeneration")) {
+                            log.trace("Oppdatert mellomlagring")
+                        }
+                        else {
+                            log.trace("Førstegangs mellomlagring")
+                        }
+                    }
+                    "OBJECT_DELETE" -> {
+                        if (message.containsAttributes("overwrittenByGeneration")) {
+                            log.trace("Delete pga opppdatert mellomlagring")
+                        }
+                        else {
+                            log.trace("Delete pga avslutt eller timeout")
+                        }
+                    }
+                    "OBJECT_ARCHIVE" -> log.trace("Archive")
+                    else -> log.trace("UKjent event type $this")
+                }
+            }
+
             consumer.ack()
         }
 }
