@@ -8,6 +8,10 @@ import com.google.cloud.storage.NotificationInfo
 import com.google.cloud.storage.NotificationInfo.EventType
 import com.google.cloud.storage.NotificationInfo.PayloadFormat.JSON_API_V1
 import com.google.cloud.storage.Storage
+import com.google.iam.v1.Binding
+import com.google.iam.v1.GetIamPolicyRequest
+import com.google.iam.v1.Policy
+import com.google.iam.v1.SetIamPolicyRequest
 import com.google.pubsub.v1.ProjectName
 import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.pubsub.v1.PushConfig.getDefaultInstance
@@ -15,7 +19,6 @@ import com.google.pubsub.v1.SubscriptionName
 import com.google.pubsub.v1.TopicName
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.BucketCfg
 import no.nav.aap.util.LoggerUtil
-import java.security.Policy.setPolicy
 
 abstract class AbstractEventSubscriber(private val storage: Storage,
                                        private val cfg: BucketCfg,
@@ -95,6 +98,20 @@ abstract class AbstractEventSubscriber(private val storage: Storage,
                         .setPayloadFormat(JSON_API_V1)
                         .build()).also {
                 log.trace("Lagd notifikasjon ${it.notificationId} for topic ${it.topic}")
+            }
+        }
+
+    private fun setPolicy() =
+        TopicAdminClient.create().use { client ->
+            with(TopicName.of(projectId, cfg.topic)) {
+                client.setIamPolicy(SetIamPolicyRequest.newBuilder()
+                    .setResource(this.toString())
+                    .setPolicy(Policy.newBuilder(client.getIamPolicy(GetIamPolicyRequest.newBuilder()
+                        .setResource(this.toString()).build())).addBindings(Binding.newBuilder()
+                        .setRole("roles/pubsub.publisher")
+                        .addMembers("serviceAccount:${storage.getServiceAccount(projectId).email}")
+                        .build()).build())
+                    .build()).also { log.info("Ny policy er $it") }
             }
         }
 
