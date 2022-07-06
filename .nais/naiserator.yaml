@@ -19,6 +19,19 @@ spec:
     envFrom:
         -   secret: srvaap-selvbetjening
     gcp:
+        permissions:
+            -   resource:
+                    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+                    kind: Project
+                role: roles/cloudkms.cryptoKeyEncrypter
+            -   resource:
+                    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+                    kind: Project
+                role: roles/cloudkms.cryptoKeyDecrypter
+            -   resource:
+                    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+                    kind: Project
+                role: roles/cloudsql.client
         sqlInstances:
             -   name: aap-soknad-api-{{env}}
                 type: POSTGRES_14
