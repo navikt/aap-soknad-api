@@ -22,7 +22,7 @@ class MellomlagringEventSubscriber(private val storage: Storage, private val cfg
 
     override fun receiver() =
         MessageReceiver { message, consumer ->
-            log.info("Id: ${message.messageId}")
+            log.info("Id: ${message.messageId}")  // do stuff
             log.info("Data: ${message.attributesMap}")
             consumer.ack()
         }
