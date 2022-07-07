@@ -40,7 +40,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 with(nøkkel(type.name, eventId, fnr, "beskjed")) {
                     dittNav.send(ProducerRecord(topic, this, beskjed(type, tekst)))
                         .addCallback(DittNavBeskjedCallback(this))
-                    repos.beskjeder.save(JPADittNavBeskjed(eventid = eventId))
+                    repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr, eventid = eventId))
                     eventId
                 }
 
@@ -58,7 +58,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 with(nøkkel(type.name, callId(), fnr, "oppgave")) {
                     dittNav.send(ProducerRecord(topic, this, oppgave(type, tekst)))
                         .addCallback(DittNavOppgaveCallback(this))
-                    repos.oppgaver.save(JPADittNavOppgave(eventid = eventId))
+                    repos.oppgaver.save(JPADittNavOppgave(fnr = fnr, eventid = eventId))
                     eventId
                 }
             }

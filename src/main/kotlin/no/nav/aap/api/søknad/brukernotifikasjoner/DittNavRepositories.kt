@@ -45,12 +45,12 @@ data class DittNavRepositories(val beskjeder: JPADittNavBeskjedRepository,
 @Table(name = "dittnavbeskjeder")
 @EntityListeners(AuditingEntityListener::class)
 class JPADittNavBeskjed(
-        @CreatedBy var fnr: String? = null,
-        @CreatedDate var created: LocalDateTime? = null,
-        var eventid: String,
-        @LastModifiedDate var updated: LocalDateTime? = null,
-        var done: Boolean = false,
-        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
+        /*@CreatedBy */var fnr: String? = null,
+                       @CreatedDate var created: LocalDateTime? = null,
+                       var eventid: String,
+                       @LastModifiedDate var updated: LocalDateTime? = null,
+                       var done: Boolean = false,
+                       @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString(): String =
         "JPADittNavBeskjed(fnr='$fnr', created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
 }
@@ -59,12 +59,12 @@ class JPADittNavBeskjed(
 @Table(name = "dittnavoppgaver")
 @EntityListeners(AuditingEntityListener::class)
 class JPADittNavOppgave(
-        @CreatedBy var fnr: String? = null,
-        @CreatedDate var created: LocalDateTime? = null,
-        @LastModifiedDate var updated: LocalDateTime? = null,
-        var eventid: String,
-        var done: Boolean = false,
-        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
+        /*@CreatedBy*/ var fnr: String? = null,
+                       @CreatedDate var created: LocalDateTime? = null,
+                       @LastModifiedDate var updated: LocalDateTime? = null,
+                       var eventid: String,
+                       var done: Boolean = false,
+                       @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
         "JPADittNavOppgave(fnr='$fnr', created=$created, updated=$updated, eventid=$eventid, done=$done, id=$id)"
 }
