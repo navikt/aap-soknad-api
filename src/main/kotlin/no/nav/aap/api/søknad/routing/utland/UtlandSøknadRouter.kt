@@ -22,7 +22,7 @@ class UtlandSøknadRouter(private val joarkRouter: JoarkRouter,
         with(pdl.søkerUtenBarn()) outer@{
             with(joarkRouter.route(søknad, this)) {
                 vlRouter.route(søknad, this@outer, journalpostId)
-                dittnav.opprettBeskjed(UTLAND)
+                dittnav.opprettBeskjed(UTLAND, tekst = "Vi har mottatt en søknad om AAP (utland)")
                 Kvittering(lager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering.pdf")))
             }
         }

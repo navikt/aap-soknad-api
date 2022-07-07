@@ -35,7 +35,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     fun opprettBeskjed(type: SkjemaType = STANDARD,
                        eventId: String = callId(),
-                       tekst: String = "Vi har mottatt en ${type.tittel}") =
+                       tekst: String) =
         with(cfg.beskjed) {
             if (enabled) {
                 with(nøkkel(type.name, eventId, "beskjed")) {
@@ -178,7 +178,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     @Transactional
     fun finalize() =
-        opprettBeskjed().also {
+        opprettBeskjed(STANDARD, tekst = "Vi har mottatt en søknad om AAP").also {
             // fjernOgAvsluttMellomlagring()  // TODO
         }
 }

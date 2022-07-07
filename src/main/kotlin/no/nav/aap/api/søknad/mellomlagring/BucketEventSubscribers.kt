@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.mellomlagring
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.pubsub.v1.MessageReceiver
 import com.google.cloud.storage.Storage
+import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.boot.conditionals.ConditionalOnGCP
 
@@ -41,9 +42,13 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
                             log.trace("Oppdatert mellomlagring")
                         }
                         else {
-                            val uuid = (resource["metadata"] as Map<String, String>)["uuid"]
                             log.trace("Førstegangs mellomlagring")
-                            log.info("Oppretter beskjed med UUID $uuid")
+                            resource["metadata"]?.let { it as Map<String, String> }?.run {
+                                this["uuid"]?.let {
+                                    log.info("Oppretter beskjed med UUID $it")
+                                    dittNav.opprettBeskjed(STANDARD, it, "Du har en påbegynt søknad")
+                                } ?: log.warn("Ingen uuid i metadata")
+                            } ?: log.warn("Ingen metadata")
                         }
                     }
                     "OBJECT_DELETE" -> {
@@ -52,9 +57,15 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
                         }
                         else {
                             log.trace("Delete pga avslutt eller timeout")
+                            resource["metadata"]?.let { it as Map<String, String> }?.run {
+                                this["uuid"]?.let {
+                                    log.info("Avslutter beskjed med UUID $it")
+                                    dittNav.avsluttBeskjed(STANDARD, it)
+                                } ?: log.warn("Ingen uuid i metadata")
+                            } ?: log.warn("Ingen metadata")
                         }
                     }
-                    else -> log.trace("Event type ${this["eventType"]}")
+                    else -> log.trace("Event type ${this["eventType"]} ikke håndtert")
                 }
             }
 
