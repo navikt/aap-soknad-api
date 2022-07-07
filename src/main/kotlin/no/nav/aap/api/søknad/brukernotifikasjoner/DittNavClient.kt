@@ -177,6 +177,6 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     @Transactional
     fun finalize() =
         opprettBeskjed().also {
-            fjernOgAvsluttMellomlagring()
+            // fjernOgAvsluttMellomlagring()  // TODO
         }
 }

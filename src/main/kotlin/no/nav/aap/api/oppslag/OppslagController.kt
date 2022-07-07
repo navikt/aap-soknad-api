@@ -36,7 +36,7 @@ class OppslagController(val pdl: PDLClient,
             arbeid.arbeidsforhold(),
             krr.kontaktinfo())
         .also {
-            dittNav.init()
+            //    dittNav.init() TODO
             log.trace("Søker er $it")
         }
 

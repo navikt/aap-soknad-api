@@ -14,6 +14,7 @@ import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.nio.charset.StandardCharsets.UTF_8
+import java.util.*
 
 @ConditionalOnGCP
 internal class GCPKMSKeyKryptertMellomlager(private val cfg: BucketsConfig,
@@ -25,7 +26,7 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfg: BucketsConfig,
 
     fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
         lager.create(newBuilder(of(cfg.mellom.navn, key(fnr, type)))
-            .setMetadata(mapOf("skjemaType" to type.name, FNR to fnr.fnr))
+            .setMetadata(mapOf("skjemaType" to type.name, FNR to fnr.fnr, "uuid" to "${UUID.randomUUID()}"))
             .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName(cfg.mellom.kms))
             .blobId.toGsUtilUri()
             .also {
