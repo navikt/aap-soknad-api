@@ -1,8 +1,10 @@
 package no.nav.aap.api.søknad.routing.standard
 
+import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.joark.JoarkRouter
+import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.Kvittering
@@ -27,10 +29,11 @@ class StandardSøknadRouter(private val joarkRouter: JoarkRouter,
 
 @Component
 class StandardSøknadFinalizer(private val dittnav: DittNavClient,
-                              private val dokumentLager: Dokumentlager) {
+                              private val dokumentLager: Dokumentlager,
+                              private val mellomlager: Mellomlager) {
     fun finalize(søknad: StandardSøknad, pdf: ByteArray) =
         dokumentLager.finalize(søknad).run {
-            //dittnav.finalize()
+            mellomlager.slett(STANDARD)
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering.pdf")))
         }
 }
