@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
-import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -73,12 +72,12 @@ class JPADittNavOppgave(
 @Table(name = "soknader")
 @EntityListeners(AuditingEntityListener::class)
 class JPASøknad(
-        @CreatedBy var fnr: String? = null,
-        @CreatedDate var created: LocalDateTime? = null,
-        @LastModifiedDate var updated: LocalDateTime? = null,
-        var eventid: String,
-        var gyldigtil: LocalDateTime? = null,
-        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
+        /*@CreatedBy*/ var fnr: String? = null,
+                       @CreatedDate var created: LocalDateTime? = null,
+                       @LastModifiedDate var updated: LocalDateTime? = null,
+                       var eventid: String,
+                       var gyldigtil: LocalDateTime? = null,
+                       @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
         "JPASøknad(fnr='$fnr', created=$created, updated=$updated, eventid=$eventid, gyldigtil=$gyldigtil, id=$id)"
 

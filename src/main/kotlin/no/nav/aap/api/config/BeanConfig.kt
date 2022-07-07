@@ -42,7 +42,7 @@ import java.util.*
 @Configuration
 class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String) {
 
-    @Bean
+    //@Bean
     fun auditorProvider(ctx: AuthContext) = AuditorAware { Optional.of(ctx.getFnr().fnr) }
 
     @Bean
