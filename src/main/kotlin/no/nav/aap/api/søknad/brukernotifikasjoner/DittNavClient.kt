@@ -105,7 +105,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
                 .withTidspunkt(now(UTC))
                 .withSynligFremTil(now(UTC).plus(varighet))
-                .withLink(replaceWith("/aap/${type.name}"))
+                //.withLink(replaceWith("/aap/${type.name}"))  TODO
                 .withTekst(tekst)
                 .withEksternVarsling(eksternVarsling)
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
@@ -118,7 +118,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
                 .withTidspunkt(now(UTC))
                 .withSynligFremTil(now(UTC).plus(varighet))
-                .withLink(replaceWith("/aap/${type.name}"))
+                //  .withLink(replaceWith("/aap/${type.name}")) TODO
                 .withTekst(tekst)
                 .withEksternVarsling(eksternVarsling)
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
