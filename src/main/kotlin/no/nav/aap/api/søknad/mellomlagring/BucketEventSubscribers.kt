@@ -41,7 +41,7 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
                             log.trace("Oppdatert mellomlagring")
                         }
                         else {
-                            val uuid = (this["metadata"] as Map<String, String>)["uuid"]
+                            val uuid = (resource["metadata"] as Map<String, String>)["uuid"]
                             log.trace("Førstegangs mellomlagring")
                             log.info("Oppretter beskjed med UUID $uuid")
                         }
