@@ -140,4 +140,13 @@ abstract class AbstractEventSubscriber(protected val mapper: ObjectMapper,
                 }
             }
         }
+
+    companion object {
+        const val EVENT_TYPE = "eventType"
+        const val OVERWROTEGENERATION = "overwroteGeneration"
+        const val OVERWRITTEBBYGENERATION = "overwrittenByGeneration"
+        const val SKJEMATYPE = "skjemaType"
+        const val UUID_ = "uuid"
+        const val METADATA = "metadata"
+    }
 }

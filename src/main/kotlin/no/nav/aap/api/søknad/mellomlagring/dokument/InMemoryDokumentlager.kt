@@ -11,7 +11,7 @@ class InMemoryDokumentlager : Dokumentlager {
     override fun lesDokument(uuid: UUID) = null
 
     override fun slettDokument(uuid: UUID) = true
-    override fun finalize(søknad: StandardSøknad) {
+    override fun slettDokumenter(søknad: StandardSøknad) {
         TODO("Not yet implemented")
     }
 

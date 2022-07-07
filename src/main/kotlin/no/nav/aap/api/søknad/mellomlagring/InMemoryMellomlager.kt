@@ -8,11 +8,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 class InMemoryMellomlager : Mellomlager {
     private val store = mutableMapOf<String, String>()
     override fun lagre(type: SkjemaType, value: String) =
-        key((Fødselsnummer("08089403198")), type).also { store[it] = value }
+        navn((Fødselsnummer("08089403198")), type).also { store[it] = value }
 
     override fun les(type: SkjemaType) =
-        store[key(Fødselsnummer("08089403198"), type)]
+        store[navn(Fødselsnummer("08089403198"), type)]
 
     override fun slett(type: SkjemaType) =
-        store.remove(key((Fødselsnummer("08089403198")), type)) != null
+        store.remove(navn((Fødselsnummer("08089403198")), type)) != null
 }

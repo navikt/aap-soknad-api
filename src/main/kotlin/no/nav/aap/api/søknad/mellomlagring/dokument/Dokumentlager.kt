@@ -8,9 +8,9 @@ import java.util.Objects.hash
 interface Dokumentlager {
     fun lesDokument(uuid: UUID): DokumentInfo?
     fun slettDokument(uuid: UUID): Boolean
-    fun finalize(søknad: StandardSøknad)
+    fun slettDokumenter(søknad: StandardSøknad)
     fun lagreDokument(dokument: DokumentInfo): UUID
-    fun key(fnr: Fødselsnummer, uuid: UUID) = "${hash(fnr, uuid)}"
+    fun mavn(fnr: Fødselsnummer, uuid: UUID) = "${hash(fnr, uuid)}"
 
     companion object {
         const val FILNAVN = "filnavn"

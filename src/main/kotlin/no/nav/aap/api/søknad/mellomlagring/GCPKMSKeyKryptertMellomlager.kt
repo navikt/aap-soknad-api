@@ -10,11 +10,11 @@ import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.nio.charset.StandardCharsets.UTF_8
-import java.util.*
 
 @ConditionalOnGCP
 internal class GCPKMSKeyKryptertMellomlager(private val cfg: BucketsConfig,
@@ -25,8 +25,8 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfg: BucketsConfig,
     override fun lagre(type: SkjemaType, value: String) = lagre(ctx.getFnr(), type, value)
 
     fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
-        lager.create(newBuilder(of(cfg.mellom.navn, key(fnr, type)))
-            .setMetadata(mapOf("skjemaType" to type.name, FNR to fnr.fnr, "uuid" to "${UUID.randomUUID()}"))
+        lager.create(newBuilder(of(cfg.mellom.navn, navn(fnr, type)))
+            .setMetadata(mapOf("skjemaType" to type.name, FNR to fnr.fnr, "uuid" to callId()))
             .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName(cfg.mellom.kms))
             .blobId.toGsUtilUri()
             .also {
@@ -36,7 +36,7 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfg: BucketsConfig,
     override fun les(type: SkjemaType) = les(ctx.getFnr(), type)
 
     fun les(fnr: Fødselsnummer, type: SkjemaType) =
-        lager.get(cfg.mellom.navn, key(fnr, type))?.let { blob ->
+        lager.get(cfg.mellom.navn, navn(fnr, type))?.let { blob ->
             String(blob.getContent()).also {
                 log.trace(CONFIDENTIAL, "Lest kryptert verdi $it for $fnr")
             }
@@ -45,7 +45,7 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfg: BucketsConfig,
     override fun slett(type: SkjemaType) = slett(ctx.getFnr(), type)
 
     fun slett(fnr: Fødselsnummer, type: SkjemaType) =
-        lager.delete(of(cfg.mellom.navn, key(fnr, type)).also {
+        lager.delete(of(cfg.mellom.navn, navn(fnr, type)).also {
             log.trace(CONFIDENTIAL, "Slettet ${it.name} for $fnr ")
         })
 }

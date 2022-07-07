@@ -2,10 +2,16 @@ package no.nav.aap.api.søknad.mellomlagring
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.pubsub.v1.MessageReceiver
+import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
+import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
+import com.google.cloud.storage.NotificationInfo.EventType.valueOf
 import com.google.cloud.storage.Storage
-import no.nav.aap.api.felles.SkjemaType.STANDARD
+import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
+import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.boot.conditionals.ConditionalOnGCP
+import java.util.*
 
 @ConditionalOnGCP
 class VedleggEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
@@ -31,47 +37,58 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
 
     override fun receiver() =
         MessageReceiver { message, consumer ->
-            log.info("Id: ${message.messageId}")  // do stuff
-            log.info("Data: ${message.attributesMap}")
-            val resource = mapper.readValue(message.data.toStringUtf8(), Map::class.java)
-            log.info("Resource representation: $resource")
-            with(message.attributesMap) {
-                when (this["eventType"]) {
-                    "OBJECT_FINALIZE" -> {
-                        if (message.containsAttributes("overwroteGeneration")) {
+            with(message) {
+                log.info("Id: $messageId")  // do stuff
+                log.info("Data: $attributesMap")
+                val resource = mapper.readValue(data.toStringUtf8(), Map::class.java).also {
+                    log.info("Resource representation: $it")
+                }
+                when (typeFra(attributesMap[EVENT_TYPE])) {
+                    OBJECT_FINALIZE -> {
+                        if (containsAttributes(OVERWROTEGENERATION)) {
                             log.trace("Oppdatert mellomlagring")
                         }
                         else {
                             log.trace("Førstegangs mellomlagring")
-                            resource["metadata"]?.let { it as Map<String, String> }?.run {
-                                this["uuid"]?.let {
-                                    log.info("Oppretter beskjed med UUID $it")
-                                    dittNav.opprettBeskjed(STANDARD,
-                                            it,
-                                            fnr = this["fnr"]!!,
-                                            "Du har en påbegynt søknad")
-                                } ?: log.warn("Ingen uuid i metadata")
-                            } ?: log.warn("Ingen metadata")
+                            metadataFra(resource)?.let {
+                                with(it) {
+                                    log.info("Oppretter beskjed med UUID $uuid")
+                                    dittNav.opprettBeskjed(type, uuid, fnr, "Du har en påbegynt søknad om AAP")
+                                }
+                            }
                         }
                     }
-                    "OBJECT_DELETE" -> {
-                        if (message.containsAttributes("overwrittenByGeneration")) {
+                    OBJECT_DELETE -> {
+                        if (containsAttributes(OVERWRITTEBBYGENERATION)) {
                             log.trace("Delete pga opppdatert mellomlagring")
                         }
                         else {
                             log.trace("Delete pga avslutt eller timeout")
-                            resource["metadata"]?.let { it as Map<String, String> }?.run {
-                                this["uuid"]?.let {
-                                    log.info("Avslutter beskjed med UUID $it")
-                                    dittNav.avsluttBeskjed(STANDARD, fnr = this["fnr"]!!, it)
-                                } ?: log.warn("Ingen uuid i metadata")
-                            } ?: log.warn("Ingen metadata")
+                            metadataFra(resource)?.let {
+                                with(it) {
+                                    log.info("Avslutter beskjed med UUID $uuid")
+                                    dittNav.avsluttBeskjed(type, fnr, uuid)
+                                }
+                            }
                         }
                     }
-                    else -> log.trace("Event type ${this["eventType"]} ikke håndtert")
+                    else -> log.trace("Event type ${attributesMap[EVENT_TYPE]} ikke håndtert")
                 }
             }
-
             consumer.ack()
         }
+
+    private fun typeFra(type: String?) = type?.let { valueOf(it) }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun metadataFra(resource: Map<*, *>) =
+        resource[METADATA]?.let { map -> map as Map<String, String> }?.let { metadata ->
+            val uuid = metadata[UUID_]?.let { UUID.fromString(it) }
+            val fnr = metadata[FNR]?.let { Fødselsnummer(it) }
+            val type = metadata[SKJEMATYPE]?.let { SkjemaType.valueOf(it) }
+            if (uuid != null && fnr != null && type != null) Metadata(type, fnr, uuid)
+            else null
+        }
+
+    private data class Metadata(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID)
 }

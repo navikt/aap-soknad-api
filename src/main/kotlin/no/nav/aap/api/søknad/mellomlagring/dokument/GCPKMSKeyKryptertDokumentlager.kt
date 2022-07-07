@@ -42,7 +42,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
             with(dokument) {
                 log.trace("Lagrer $filnavn kryptert med uuid $this@uuid  og contentType $contentType")
                 sjekkere.forEach { it.sjekk(this) }
-                lager.create(newBuilder(of(cfg.vedlegg.navn, key(fnr, this@apply)))
+                lager.create(newBuilder(of(cfg.vedlegg.navn, mavn(fnr, this@apply)))
                     .setContentType(contentType)
                     .setMetadata(mapOf(FILNAVN to filnavn, "uuid" to "this@apply", FNR to fnr.fnr))
                     .build(), bytes, kmsKeyName(cfg.vedlegg.kms))
@@ -54,7 +54,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     override fun lesDokument(uuid: UUID) = lesDokument(ctx.getFnr(), uuid)
 
     fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.get(cfg.vedlegg.navn, key(fnr, uuid), fields(METADATA, CONTENT_TYPE, TIME_CREATED))?.let { blob ->
+        lager.get(cfg.vedlegg.navn, mavn(fnr, uuid), fields(METADATA, CONTENT_TYPE, TIME_CREATED))?.let { blob ->
             with(blob) {
                 DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
                     .also {
@@ -66,42 +66,43 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     override fun slettDokument(uuid: UUID) = slettDokument(ctx.getFnr(), uuid)
 
     fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.delete(of(cfg.vedlegg.navn, key(fnr, uuid)))
+        lager.delete(of(cfg.vedlegg.navn, mavn(fnr, uuid)))
             .also {
                 log.trace(CONFIDENTIAL, "Slettet dokument $uuid for $fnr")
             }
 
-    override fun finalize(søknad: StandardSøknad) = finalize(ctx.getFnr(), søknad)
+    override fun slettDokumenter(søknad: StandardSøknad) =
+        slettDokumenter(ctx.getFnr(), søknad)
 
-    fun finalize(fnr: Fødselsnummer, søknad: StandardSøknad) {
+    fun slettDokumenter(fnr: Fødselsnummer, søknad: StandardSøknad) {
         with(søknad) {
             with(utbetalinger) {
-                slett(this?.ekstraFraArbeidsgiver, fnr)
-                slett(this?.ekstraUtbetaling, fnr)
-                slett(this?.andreStønader, fnr)
+                slettDokumenter(this?.ekstraFraArbeidsgiver, fnr)
+                slettDokumenter(this?.ekstraUtbetaling, fnr)
+                slettDokumenter(this?.andreStønader, fnr)
             }
-            slett(this, fnr)
-            slett(studier, fnr)
-            slett(andreBarn, fnr)
+            slettDokumenter(this, fnr)
+            slettDokumenter(studier, fnr)
+            slettDokumenter(andreBarn, fnr)
         }
     }
 
-    private fun slett(a: List<VedleggAware>?, fnr: Fødselsnummer) =
+    private fun slettDokumenter(a: List<VedleggAware>?, fnr: Fødselsnummer) =
         a?.forEach {
-            slett(it, fnr)
+            slettDokumenter(it, fnr)
         }
 
-    private fun slett(a: VedleggAware?, fnr: Fødselsnummer) =
+    private fun slettDokumenter(a: VedleggAware?, fnr: Fødselsnummer) =
         a?.vedlegg?.let {
             slettUUIDs(it.deler, fnr)
         }
 
     private fun slettUUIDs(uuids: List<UUID?>?, fnr: Fødselsnummer) =
         uuids?.forEach {
-            slett(it, fnr)
+            slettDokumenter(it, fnr)
         }
 
-    private fun slett(uuid: UUID?, fnr: Fødselsnummer) =
+    private fun slettDokumenter(uuid: UUID?, fnr: Fødselsnummer) =
         uuid?.let { id ->
             slettDokument(fnr, id).also {
                 log.info("Slettet dokument $id")

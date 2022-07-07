@@ -1,9 +1,6 @@
 package no.nav.aap.api.søknad.mellomlagring
 
 import no.nav.aap.api.felles.SkjemaType
-import no.nav.aap.api.søknad.AuthContextExtension.getFnr
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
-import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.HttpStatus.CREATED
@@ -18,9 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseStatus
 
 @ProtectedRestController(value = ["buckets"], issuer = IDPORTEN)
-internal class MellomlagerController(private val lager: Mellomlager,
-                                     private val dittnav: DittNavClient,
-                                     private val ctx: AuthContext) {
+internal class MellomlagerController(private val lager: Mellomlager) {
 
     @PostMapping("/lagre/{type}")
     @ResponseStatus(CREATED)
@@ -33,6 +28,5 @@ internal class MellomlagerController(private val lager: Mellomlager,
 
     @DeleteMapping("/slett/{type}")
     @ResponseStatus(NO_CONTENT)
-    fun slett(@PathVariable type: SkjemaType) =
-        lager.slett(type).also { dittnav.fjernOgAvsluttMellomlagring(ctx.getFnr().fnr) }
+    fun slett(@PathVariable type: SkjemaType) = lager.slett(type)
 }
