@@ -30,7 +30,7 @@ class StandardSøknadFinalizer(private val dittnav: DittNavClient,
                               private val dokumentLager: Dokumentlager) {
     fun finalize(søknad: StandardSøknad, pdf: ByteArray) =
         dokumentLager.finalize(søknad).run {
-            dittnav.finalize()
+            //dittnav.finalize()
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering.pdf")))
         }
 }

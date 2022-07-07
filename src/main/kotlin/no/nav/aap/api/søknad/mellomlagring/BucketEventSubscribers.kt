@@ -46,7 +46,10 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
                             resource["metadata"]?.let { it as Map<String, String> }?.run {
                                 this["uuid"]?.let {
                                     log.info("Oppretter beskjed med UUID $it")
-                                    dittNav.opprettBeskjed(STANDARD, it, "Du har en påbegynt søknad")
+                                    dittNav.opprettBeskjed(STANDARD,
+                                            it,
+                                            fnr = this["fnr"]!!,
+                                            "Du har en påbegynt søknad")
                                 } ?: log.warn("Ingen uuid i metadata")
                             } ?: log.warn("Ingen metadata")
                         }
@@ -60,7 +63,7 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
                             resource["metadata"]?.let { it as Map<String, String> }?.run {
                                 this["uuid"]?.let {
                                     log.info("Avslutter beskjed med UUID $it")
-                                    dittNav.avsluttBeskjed(STANDARD, it)
+                                    dittNav.avsluttBeskjed(STANDARD, fnr = this["fnr"]!!, it)
                                 } ?: log.warn("Ingen uuid i metadata")
                             } ?: log.warn("Ingen metadata")
                         }

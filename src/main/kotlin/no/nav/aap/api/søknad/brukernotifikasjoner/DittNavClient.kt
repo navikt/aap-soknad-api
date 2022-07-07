@@ -2,12 +2,10 @@ package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
-import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavBeskjedCallback
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavBeskjedDoneCallback
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavOppgaveCallback
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavOppgaveDoneCallback
-import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -28,17 +26,17 @@ import java.time.ZoneOffset.UTC
 @ConditionalOnGCP
 class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val cfg: DittNavConfig,
-                    private val repos: DittNavRepositories,
-                    private val ctx: AuthContext) {
+                    private val repos: DittNavRepositories) {
 
     private val log = getLogger(javaClass)
 
     fun opprettBeskjed(type: SkjemaType = STANDARD,
                        eventId: String = callId(),
+                       fnr: String,
                        tekst: String) =
         with(cfg.beskjed) {
             if (enabled) {
-                with(nøkkel(type.name, eventId, "beskjed")) {
+                with(nøkkel(type.name, eventId, fnr, "beskjed")) {
                     dittNav.send(ProducerRecord(topic, this, beskjed(type, tekst)))
                         .addCallback(DittNavBeskjedCallback(this))
                     repos.beskjeder.save(JPADittNavBeskjed(eventid = eventId))
@@ -52,10 +50,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-    fun opprettOppgave(type: SkjemaType, tekst: String) =
+    fun opprettOppgave(type: SkjemaType, fnr: String, tekst: String) =
         with(cfg.oppgave) {
             if (enabled) {
-                with(nøkkel(type.name, callId(), "oppgave")) {
+                with(nøkkel(type.name, callId(), fnr, "oppgave")) {
                     dittNav.send(ProducerRecord(topic, this, oppgave(type, tekst)))
                         .addCallback(DittNavOppgaveCallback(this))
                     repos.oppgaver.save(JPADittNavOppgave(eventid = eventId))
@@ -68,10 +66,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-    fun avsluttOppgave(type: SkjemaType = STANDARD, eventId: String) =
+    fun avsluttOppgave(type: SkjemaType = STANDARD, fnr: String, eventId: String) =
         with(cfg) {
             if (oppgave.enabled) {
-                with(nøkkel(type.name, eventId, "done")) {
+                with(nøkkel(type.name, eventId, fnr, "done")) {
                     dittNav.send(ProducerRecord(done.topic, this, done()))
                         .addCallback(DittNavOppgaveDoneCallback(this))
                     repos.oppgaver.done(eventId)
@@ -83,10 +81,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-    fun avsluttBeskjed(type: SkjemaType = STANDARD, eventId: String) =
+    fun avsluttBeskjed(type: SkjemaType = STANDARD, fnr: String, eventId: String) =
         with(cfg) {
             if (beskjed.enabled) {
-                with(nøkkel(type.name, eventId, "done")) {
+                with(nøkkel(type.name, eventId, fnr, "done")) {
                     dittNav.send(ProducerRecord(done.topic, this, done()))
                         .addCallback(DittNavBeskjedDoneCallback(this))
                     repos.beskjeder.done(eventId)
@@ -131,10 +129,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     private fun replaceWith(replacement: String) =
         fromCurrentRequestUri().replacePath(replacement).build().toUri().toURL()
 
-    private fun nøkkel(grupperingId: String, eventId: String, type: String) =
+    private fun nøkkel(grupperingId: String, eventId: String, fnr: String, type: String) =
         with(cfg) {
             NokkelInputBuilder()
-                .withFodselsnummer(ctx.getSubject())
+                .withFodselsnummer(fnr)
                 .withEventId(eventId)
                 .withGrupperingsId(grupperingId)
                 .withAppnavn(app)
@@ -151,34 +149,34 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     private fun fjernAlleGamleMellomlagringer() = repos.søknader.deleteByGyldigtilBefore(now())
 
     @Transactional
-    fun fjernOgAvsluttMellomlagring() {
-        repos.søknader.deleteByFnr(ctx.getFnr().fnr).also { rows ->
+    fun fjernOgAvsluttMellomlagring(fnr: String) {
+        repos.søknader.deleteByFnr(fnr)/*.also { rows ->
             rows?.firstOrNull()?.let { jpa ->
-                avsluttBeskjed(eventId = jpa.eventid).also {
+                avsluttBeskjed(eventId = jpa.eventid, fnr = fnr).also {
                     log.trace(CONFIDENTIAL, "Fjernet mellomlagring rad ${jpa.eventid}")
                 }
-            }
-        }
+            }*/
     }
-
-    @Transactional
-    fun init() {
-        log.info("Fjerner gamle mellomlagringer")
-        fjernAlleGamleMellomlagringer().also {
-            log.info("Fjernet $it gamle mellomlagringer OK")
-        }
-        fjernOgAvsluttMellomlagring()
-        log.trace("Oppdaterer mellomlagring beskjed og DB")
-        opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
-            opprettMellomlagringBeskjed(uuid).also {
-                log.trace("Eventid for opprettet beskjed om mellomlagring er $uuid")
-            }
-        }
-    }
-
-    @Transactional
-    fun finalize() =
-        opprettBeskjed(STANDARD, tekst = "Vi har mottatt en søknad om AAP").also {
-            // fjernOgAvsluttMellomlagring()  // TODO
-        }
 }
+
+//@Transactional
+fun init() = Unit
+/*
+log.info("Fjerner gamle mellomlagringer")
+fjernAlleGamleMellomlagringer().also {
+    log.info("Fjernet $it gamle mellomlagringer OK")
+}
+ fjernOgAvsluttMellomlagring() // TODO
+log.trace("Oppdaterer mellomlagring beskjed og DB")
+opprettBeskjed(tekst = "Du har en påbegynt søknad om AAP").also { uuid ->
+    opprettMellomlagringBeskjed(uuid).also {
+        log.trace("Eventid for opprettet beskjed om mellomlagring er $uuid")
+    }
+}*/
+
+
+//@Transactional
+fun finalize() = Unit  // TODO
+//  opprettBeskjed(STANDARD, tekst = "Vi har mottatt en søknad om AAP").also {
+// fjernOgAvsluttMellomlagring()  // TODO
+// }

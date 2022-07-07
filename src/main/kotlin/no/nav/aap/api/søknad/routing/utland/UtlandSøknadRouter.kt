@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.routing.utland
 
-import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.joark.JoarkRouter
@@ -22,7 +21,7 @@ class UtlandSøknadRouter(private val joarkRouter: JoarkRouter,
         with(pdl.søkerUtenBarn()) outer@{
             with(joarkRouter.route(søknad, this)) {
                 vlRouter.route(søknad, this@outer, journalpostId)
-                dittnav.opprettBeskjed(UTLAND, tekst = "Vi har mottatt en søknad om AAP (utland)")
+                //dittnav.opprettBeskjed(UTLAND, tekst = "Vi har mottatt en søknad om AAP (utland)")
                 Kvittering(lager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering.pdf")))
             }
         }
