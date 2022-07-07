@@ -17,7 +17,7 @@
     <properties>
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
         <conditionals.version>3.0.2</conditionals.version>
-        <confluent.version>7.1.2</confluent.version>
+        <confluent.version>7.2.0</confluent.version>
         <domain.version>0.0.91</domain.version>
         <gcp.version>0.175.0</gcp.version>
         <gcp.libraries.version>25.4.0</gcp.libraries.version>
