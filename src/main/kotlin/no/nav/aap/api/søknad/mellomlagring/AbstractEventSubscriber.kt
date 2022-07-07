@@ -18,10 +18,12 @@ import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.pubsub.v1.PushConfig.getDefaultInstance
 import com.google.pubsub.v1.SubscriptionName
 import com.google.pubsub.v1.TopicName
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.BucketCfg
 import no.nav.aap.util.LoggerUtil
 
 abstract class AbstractEventSubscriber(protected val mapper: ObjectMapper,
+                                       protected val dittNav: DittNavClient,
                                        private val storage: Storage,
                                        private val cfg: BucketCfg,
                                        private val projectId: String) {

@@ -33,10 +33,12 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     private val log = getLogger(javaClass)
 
-    fun opprettBeskjed(type: SkjemaType = STANDARD, tekst: String = "Vi har mottatt en ${type.tittel}") =
+    fun opprettBeskjed(type: SkjemaType = STANDARD,
+                       eventId: String = callId(),
+                       tekst: String = "Vi har mottatt en ${type.tittel}") =
         with(cfg.beskjed) {
             if (enabled) {
-                with(nøkkel(type.name, callId(), "beskjed")) {
+                with(nøkkel(type.name, eventId, "beskjed")) {
                     dittNav.send(ProducerRecord(topic, this, beskjed(type, tekst)))
                         .addCallback(DittNavBeskjedCallback(this))
                     repos.beskjeder.save(JPADittNavBeskjed(eventid = eventId))
