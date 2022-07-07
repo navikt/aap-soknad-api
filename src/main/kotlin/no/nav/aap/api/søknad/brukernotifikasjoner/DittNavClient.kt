@@ -30,6 +30,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     private val log = getLogger(javaClass)
 
+    @Transactional
     fun opprettBeskjed(type: SkjemaType = STANDARD,
                        eventId: String = callId(),
                        fnr: String,
@@ -50,6 +51,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             }
         }
 
+    @Transactional
     fun opprettOppgave(type: SkjemaType, fnr: String, tekst: String) =
         with(cfg.oppgave) {
             if (enabled) {
@@ -66,6 +68,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             }
         }
 
+    @Transactional
     fun avsluttOppgave(type: SkjemaType = STANDARD, fnr: String, eventId: String) =
         with(cfg) {
             if (oppgave.enabled) {
@@ -81,6 +84,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             }
         }
 
+    @Transactional
     fun avsluttBeskjed(type: SkjemaType = STANDARD, fnr: String, eventId: String) =
         with(cfg) {
             if (beskjed.enabled) {
