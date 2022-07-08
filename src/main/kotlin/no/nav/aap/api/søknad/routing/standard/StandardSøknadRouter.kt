@@ -17,23 +17,23 @@ import java.util.*
 @Component
 class StandardSøknadRouter(private val joarkRouter: JoarkRouter,
                            private val pdl: PDLClient,
-                           private val finalizer: StandardSøknadFinalizer,
+                           private val finalizer: StandardSøknadAvslutter,
                            private val vlRouter: StandardSøknadVLRouter) {
 
     fun route(søknad: StandardSøknad) =
         with(pdl.søkerMedBarn()) outer@{
             with(joarkRouter.route(søknad, this)) {
                 vlRouter.route(søknad, this@outer, journalpostId)
-                finalizer.finalize(søknad, this@outer.fnr, pdf)
+                finalizer.avslutt(søknad, this@outer.fnr, pdf)
             }
         }
 }
 
 @Component
-class StandardSøknadFinalizer(private val dittnav: DittNavClient,
+class StandardSøknadAvslutter(private val dittnav: DittNavClient,
                               private val dokumentLager: Dokumentlager,
                               private val mellomlager: Mellomlager) {
-    fun finalize(søknad: StandardSøknad, fnr: Fødselsnummer, pdf: ByteArray) =
+    fun avslutt(søknad: StandardSøknad, fnr: Fødselsnummer, pdf: ByteArray) =
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett(STANDARD)
             dittnav.opprettBeskjed(STANDARD, UUID.randomUUID(), fnr, "Vi har mottatt ${STANDARD.tittel}")
