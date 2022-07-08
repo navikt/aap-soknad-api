@@ -16,17 +16,13 @@ import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
 import javax.persistence.Table
 
-interface JPADittNavSøknadRepository : JpaRepository<JPASøknad, Long> {
-    fun getByFnr(fnr: String): JPASøknad?
-    fun deleteByGyldigtilBefore(dateTime: LocalDateTime?): Long
-    fun deleteByFnr(fnr: String?): List<JPASøknad>?
-
-}
+interface JPADittNavSøknadRepository : JpaRepository<JPASøknad, Long>
 
 interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
     @Modifying
     @Query("update JPADittNavBeskjed o set o.done = true, o.updated = current_timestamp where o.eventid = :eventid")
     fun done(@Param("eventid") eventid: String)
+    fun getEventidByFnr(@Param("fnr") fnr: String): String?
 }
 
 interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
