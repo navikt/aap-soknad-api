@@ -42,9 +42,10 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
             with(dokument) {
                 log.trace("Lagrer $filnavn kryptert, med uuid $this@uuid  og contentType $contentType")
                 sjekkere.forEach { it.sjekk(this) }
-                lager.create(newBuilder(of(cfg.vedlegg.navn, "$this@apply"/*navn(fnr, this@apply)*/))
+                lager.create(newBuilder(of(cfg.vedlegg.navn, this@apply.toString()
+                        /**avn(fnr, this@apply)*/))
                     .setContentType(contentType)
-                    .setMetadata(mapOf(FILNAVN to filnavn, "uuid" to "this@apply", FNR to fnr.fnr))
+                    .setMetadata(mapOf(FILNAVN to filnavn, "uuid" to this@apply.toString(), FNR to fnr.fnr))
                     .build(), bytes, kmsKeyName(cfg.vedlegg.kms))
             }
         }.also {
@@ -54,7 +55,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     override fun lesDokument(uuid: UUID) = lesDokument(ctx.getFnr(), uuid)
 
     fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.get(cfg.vedlegg.navn, "$uuid",/*navn(fnr, uuid),*/ fields(METADATA, CONTENT_TYPE, TIME_CREATED))
+        lager.get(cfg.vedlegg.navn, uuid.toString(),/*navn(fnr, uuid),*/ fields(METADATA, CONTENT_TYPE, TIME_CREATED))
             ?.let { blob ->
                 with(blob) {
                     DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
