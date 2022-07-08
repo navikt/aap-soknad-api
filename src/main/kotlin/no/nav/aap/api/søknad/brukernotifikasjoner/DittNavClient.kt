@@ -35,13 +35,16 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun opprettBeskjed(type: SkjemaType = STANDARD,
                        eventId: UUID,
                        fnr: Fødselsnummer,
-                       tekst: String) =
+                       tekst: String,
+                       mellomlager: Boolean) =
         with(cfg.beskjed) {
             if (enabled) {
                 with(nøkkel(type.name, "$eventId", fnr, "beskjed")) {
                     dittNav.send(ProducerRecord(topic, this, beskjed(type, tekst)))
                         .addCallback(DittNavBeskjedCallback(this))
-                    repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr, eventid = "$eventId"))
+                    repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
+                            eventid = "$eventId",
+                            mellomlager = mellomlager))
                     eventId
                 }
 

@@ -23,8 +23,8 @@ interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
     @Query("update JPADittNavBeskjed o set o.done = true, o.updated = current_timestamp where o.eventid = :eventid")
     fun done(@Param("eventid") eventid: String)
 
-    @Query("select b.eventid from JPADittNavBeskjed b  where b.fnr = :fnr and b.done  = false")
-    fun getEventIdForFnr(@Param("fnr") fnr: String): String?
+    @Query("select b.eventid from JPADittNavBeskjed b  where b.fnr = :fnr and b.done = false and b.mellomlager  = true")
+    fun getMellomlagretEventIdForFnr(@Param("fnr") fnr: String): String?
 }
 
 interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
@@ -42,12 +42,13 @@ data class DittNavRepositories(val beskjeder: JPADittNavBeskjedRepository,
 @Table(name = "dittnavbeskjeder")
 @EntityListeners(AuditingEntityListener::class)
 class JPADittNavBeskjed(
-        /*@CreatedBy */var fnr: String? = null,
-                       @CreatedDate var created: LocalDateTime? = null,
-                       var eventid: String,
-                       @LastModifiedDate var updated: LocalDateTime? = null,
-                       var done: Boolean = false,
-                       @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
+        var fnr: String? = null,
+        @CreatedDate var created: LocalDateTime? = null,
+        var eventid: String,
+        @LastModifiedDate var updated: LocalDateTime? = null,
+        var done: Boolean = false,
+        var mellomlager: Boolean,
+        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString(): String =
         "JPADittNavBeskjed(fnr='$fnr', created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
 }
@@ -56,12 +57,12 @@ class JPADittNavBeskjed(
 @Table(name = "dittnavoppgaver")
 @EntityListeners(AuditingEntityListener::class)
 class JPADittNavOppgave(
-        /*@CreatedBy*/ var fnr: String? = null,
-                       @CreatedDate var created: LocalDateTime? = null,
-                       @LastModifiedDate var updated: LocalDateTime? = null,
-                       var eventid: String,
-                       var done: Boolean = false,
-                       @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
+        var fnr: String? = null,
+        @CreatedDate var created: LocalDateTime? = null,
+        @LastModifiedDate var updated: LocalDateTime? = null,
+        var eventid: String,
+        var done: Boolean = false,
+        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
         "JPADittNavOppgave(fnr='$fnr', created=$created, updated=$updated, eventid=$eventid, done=$done, id=$id)"
 }
@@ -70,12 +71,12 @@ class JPADittNavOppgave(
 @Table(name = "soknader")
 @EntityListeners(AuditingEntityListener::class)
 class JPASøknad(
-        /*@CreatedBy*/ var fnr: String? = null,
-                       @CreatedDate var created: LocalDateTime? = null,
-                       @LastModifiedDate var updated: LocalDateTime? = null,
-                       var eventid: String,
-                       var gyldigtil: LocalDateTime? = null,
-                       @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
+        var fnr: String? = null,
+        @CreatedDate var created: LocalDateTime? = null,
+        @LastModifiedDate var updated: LocalDateTime? = null,
+        var eventid: String,
+        var gyldigtil: LocalDateTime? = null,
+        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
         "JPASøknad(fnr='$fnr', created=$created, updated=$updated, eventid=$eventid, gyldigtil=$gyldigtil, id=$id)"
 

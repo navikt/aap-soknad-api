@@ -36,7 +36,7 @@ class StandardSøknadAvslutter(private val dittnav: DittNavClient,
     fun avsluttSøknad(søknad: StandardSøknad, fnr: Fødselsnummer, pdf: ByteArray) =
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett(STANDARD)
-            dittnav.opprettBeskjed(STANDARD, UUID.randomUUID(), fnr, "Vi har mottatt ${STANDARD.tittel}")
+            dittnav.opprettBeskjed(STANDARD, UUID.randomUUID(), fnr, "Vi har mottatt ${STANDARD.tittel}", false)
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering.pdf")))
         }
 }
