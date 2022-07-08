@@ -57,7 +57,7 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
                             metadataFra(resource)?.let {
                                 with(it) {
                                     log.trace("Oppretter beskjed med UUID $uuid")
-                                    dittNav.opprettBeskjed(type, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
+                                    dittNav.opprettBeskjed(type, fnr, uuid, "Du har en påbegynt ${type.tittel}", true)
                                 }
                             } ?: log.warn("Fant ikke forventet metadata i $resource")
                         }
