@@ -22,7 +22,7 @@ interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
     @Modifying
     @Query("update JPADittNavBeskjed o set o.done = true, o.updated = current_timestamp where o.eventid = :eventid")
     fun done(@Param("eventid") eventid: String)
-    fun getEventidByFnrAndDoneFalse(@Param("fnr") fnr: String): String?
+    fun getEventidByFnrAndDoneFalseOOrderByCreated(@Param("fnr") fnr: String): List<String>?
 }
 
 interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
