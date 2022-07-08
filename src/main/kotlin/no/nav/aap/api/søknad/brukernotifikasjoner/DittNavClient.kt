@@ -36,7 +36,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                        eventId: UUID,
                        fnr: Fødselsnummer,
                        tekst: String,
-                       mellomlager: Boolean) =
+                       mellomlager: Boolean = false) =
         with(cfg.beskjed) {
             if (enabled) {
                 with(nøkkel(type.name, "$eventId", fnr, "beskjed")) {

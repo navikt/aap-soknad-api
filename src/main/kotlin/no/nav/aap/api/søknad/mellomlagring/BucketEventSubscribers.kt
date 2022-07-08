@@ -43,9 +43,9 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
     override fun receiver() =
         MessageReceiver { message, consumer ->
             with(message) {
-                log.info("Data: $attributesMap")
+                log.trace("Data: $attributesMap")
                 val resource = mapper.readValue(data.toStringUtf8(), Map::class.java).also {
-                    log.info("Resource representation: $it")
+                    log.trace("Resource representation: $it")
                 }
                 when (typeFra(attributesMap[EVENT_TYPE])) {
                     OBJECT_FINALIZE -> {
@@ -56,7 +56,7 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
                             log.trace("Førstegangs mellomlagring")
                             metadataFra(resource)?.let {
                                 with(it) {
-                                    log.info("Oppretter beskjed med UUID $uuid")
+                                    log.trace("Oppretter beskjed med UUID $uuid")
                                     dittNav.opprettBeskjed(type, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
                                 }
                             } ?: log.warn("Fant ikke forventet metadata i $resource")
@@ -72,7 +72,7 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
                                 with(metadata) {
                                     repo.getMellomlagretEventIdForFnr(fnr.fnr)?.let {
                                         val eventId = UUID.fromString(it)
-                                        log.info("Avslutter beskjed med UUID $eventId")
+                                        log.trace("Avslutter beskjed med UUID $eventId")
                                         dittNav.avsluttBeskjed(type, fnr, eventId)
                                     } ?: log.warn("Fant ikke uuid for opprinnelig melding")
                                 }
