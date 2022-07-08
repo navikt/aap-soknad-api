@@ -57,7 +57,7 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
                             metadataFra(resource)?.let {
                                 with(it) {
                                     log.info("Oppretter beskjed med UUID $uuid")
-                                    dittNav.opprettBeskjed(type, uuid, fnr, "Du har en påbegynt søknad om AAP")
+                                    dittNav.opprettBeskjed(type, uuid, fnr, "Du har en påbegynt ${type.tittel}")
                                 }
                             } ?: log.warn("Fant ikke forventet metadata i $resource")
                         }
@@ -70,13 +70,11 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
                             log.trace("Delete pga avslutt eller timeout")
                             metadataFra(resource)?.let { metadata ->
                                 with(metadata) {
-                                    val l = repo.getEventIdForFnr(fnr.fnr)
-                                    log.info("Fikk eventid $l")
-                                    l?.let {
+                                    repo.getEventIdForFnr(fnr.fnr)?.let {
                                         val eventId = UUID.fromString(it)
                                         log.info("Avslutter beskjed med UUID $eventId")
                                         dittNav.avsluttBeskjed(type, fnr, eventId)
-                                    } ?: log.warn("Fant ikke uuid for melding")
+                                    } ?: log.warn("Fant ikke uuid for opprinnelig melding")
                                 }
                             } ?: log.warn("Fant ikke forventet metadata i $resource")
                         }

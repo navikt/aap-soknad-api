@@ -40,9 +40,9 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
         randomUUID().apply {
             with(dokument) {
-                log.trace("Lagrer $filnavn kryptert med uuid $this@uuid  og contentType $contentType")
+                log.trace("Lagrer $filnavn kryptert, med uuid $this@uuid  og contentType $contentType")
                 sjekkere.forEach { it.sjekk(this) }
-                lager.create(newBuilder(of(cfg.vedlegg.navn, mavn(fnr, this@apply)))
+                lager.create(newBuilder(of(cfg.vedlegg.navn, "$this@apply"/*navn(fnr, this@apply)*/))
                     .setContentType(contentType)
                     .setMetadata(mapOf(FILNAVN to filnavn, "uuid" to "this@apply", FNR to fnr.fnr))
                     .build(), bytes, kmsKeyName(cfg.vedlegg.kms))
@@ -54,19 +54,20 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     override fun lesDokument(uuid: UUID) = lesDokument(ctx.getFnr(), uuid)
 
     fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.get(cfg.vedlegg.navn, mavn(fnr, uuid), fields(METADATA, CONTENT_TYPE, TIME_CREATED))?.let { blob ->
-            with(blob) {
-                DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
-                    .also {
-                        log.trace("Lest kryptert dokument med uuid $uuid som  $it")
-                    }
+        lager.get(cfg.vedlegg.navn, "$uuid",/*navn(fnr, uuid),*/ fields(METADATA, CONTENT_TYPE, TIME_CREATED))
+            ?.let { blob ->
+                with(blob) {
+                    DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
+                        .also {
+                            log.trace("Lest kryptert dokument med uuid $uuid som  $it")
+                        }
+                }
             }
-        }
 
     override fun slettDokument(uuid: UUID) = slettDokument(ctx.getFnr(), uuid)
 
     fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.delete(of(cfg.vedlegg.navn, mavn(fnr, uuid)))
+        lager.delete(of(cfg.vedlegg.navn, "$uuid"/*navn(fnr, uuid)*/))
             .also {
                 log.trace(CONFIDENTIAL, "Slettet dokument $uuid for $fnr")
             }
@@ -104,9 +105,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
 
     private fun slettDokumenter(uuid: UUID?, fnr: Fødselsnummer) =
         uuid?.let { id ->
-            slettDokument(fnr, id).also {
-                log.info("Slettet dokument $id")
-            }
+            slettDokument(fnr, id)
         }
 
     @Component

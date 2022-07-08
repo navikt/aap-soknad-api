@@ -77,7 +77,6 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     dittNav.send(ProducerRecord(done.topic, this, done()))
                         .addCallback(DittNavOppgaveDoneCallback(this))
                     repos.oppgaver.done("$eventId")
-
                 }
             }
             else {

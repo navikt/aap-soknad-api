@@ -6,7 +6,8 @@ import com.google.cloud.pubsub.v1.Subscriber
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient
 import com.google.cloud.pubsub.v1.TopicAdminClient
 import com.google.cloud.storage.NotificationInfo
-import com.google.cloud.storage.NotificationInfo.EventType
+import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
+import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import com.google.cloud.storage.NotificationInfo.PayloadFormat.JSON_API_V1
 import com.google.cloud.storage.Storage
 import com.google.iam.v1.Binding
@@ -98,7 +99,7 @@ abstract class AbstractEventSubscriber(protected val mapper: ObjectMapper,
         with(cfg) {
             storage.createNotification(navn,
                     NotificationInfo.newBuilder(TopicName.of(projectId, topic).toString())
-                        .setEventTypes(*EventType.values())
+                        .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
                         .setPayloadFormat(JSON_API_V1)
                         .build()).also {
                 log.trace("Lagd notifikasjon ${it.notificationId} for topic ${it.topic}")

@@ -10,7 +10,7 @@ interface Dokumentlager {
     fun slettDokument(uuid: UUID): Boolean
     fun slettDokumenter(søknad: StandardSøknad)
     fun lagreDokument(dokument: DokumentInfo): UUID
-    fun mavn(fnr: Fødselsnummer, uuid: UUID) = "${hash(fnr, uuid)}"
+    fun navn(fnr: Fødselsnummer, uuid: UUID) = "${hash(fnr, uuid)}"
 
     companion object {
         const val FILNAVN = "filnavn"
