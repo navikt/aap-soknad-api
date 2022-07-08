@@ -33,8 +33,8 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     @Transactional
     fun opprettBeskjed(type: SkjemaType = STANDARD,
-                       fnr: Fødselsnummer,
                        eventId: UUID,
+                       fnr: Fødselsnummer,
                        tekst: String,
                        mellomlager: Boolean = false) =
         with(cfg.beskjed) {
@@ -56,13 +56,13 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
-    fun opprettOppgave(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID, tekst: String) =
+    fun opprettOppgave(type: SkjemaType, fnr: Fødselsnummer, tekst: String) =
         with(cfg.oppgave) {
             if (enabled) {
-                with(nøkkel(type.name, "$eventId", fnr, "oppgave")) {
+                with(nøkkel(type.name, callId(), fnr, "oppgave")) {
                     dittNav.send(ProducerRecord(topic, this, oppgave(type, tekst)))
                         .addCallback(DittNavOppgaveCallback(this))
-                    repos.oppgaver.save(JPADittNavOppgave(fnr = fnr.fnr, eventid = "$eventId"))
+                    repos.oppgaver.save(JPADittNavOppgave(fnr = fnr.fnr, eventid = eventId))
                     eventId
                 }
             }
@@ -78,7 +78,8 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (oppgave.enabled) {
                 with(nøkkel(type.name, "$eventId", fnr, "done")) {
                     dittNav.send(ProducerRecord(done.topic, this, done()))
-                        .addCallback(DittNavOppgaveDoneCallback(this, repos.oppgaver))
+                        .addCallback(DittNavOppgaveDoneCallback(this))
+                    repos.oppgaver.done("$eventId")
                 }
             }
             else {
@@ -86,12 +87,14 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             }
         }
 
+    @Transactional
     fun avsluttBeskjed(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
         with(cfg) {
             if (beskjed.enabled) {
                 with(nøkkel(type.name, "$eventId", fnr, "done")) {
                     dittNav.send(ProducerRecord(done.topic, this, done()))
-                        .addCallback(DittNavBeskjedDoneCallback(this, repos.beskjeder))
+                        .addCallback(DittNavBeskjedDoneCallback(this))
+                    repos.beskjeder.done("$eventId")
                 }
             }
             else {
