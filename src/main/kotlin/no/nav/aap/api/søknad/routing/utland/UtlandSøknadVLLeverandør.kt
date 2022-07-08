@@ -8,7 +8,7 @@ import no.nav.aap.api.config.Counters.TAG_VARIGHET
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
-import no.nav.aap.api.søknad.routing.VLRouterConfig
+import no.nav.aap.api.søknad.routing.VLLeveranseConfig
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
@@ -19,8 +19,8 @@ import org.springframework.stereotype.Component
 import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Component
-class UtlandSøknadVLRouter(private val router: KafkaOperations<String, UtlandSøknad>,
-                           private val cfg: VLRouterConfig) {
+class UtlandSøknadVLLeverandør(private val router: KafkaOperations<String, UtlandSøknad>,
+                               private val cfg: VLLeveranseConfig) {
 
     private val log = LoggerUtil.getLogger(javaClass)
 
@@ -34,7 +34,7 @@ class UtlandSøknadVLRouter(private val router: KafkaOperations<String, UtlandS�
                             .add("journalpostid", journalpostId.toByteArray())
 
                     })
-                    .addCallback(UtlandRouterCallback(søknad))
+                    .addCallback(UtlandLeverandørCallback(søknad))
             }
             else {
                 log.warn("Ruter ikke søknad til VL")
@@ -44,7 +44,7 @@ class UtlandSøknadVLRouter(private val router: KafkaOperations<String, UtlandS�
     override fun toString() = "$javaClass.simpleName [router=$router]"
 }
 
-private class UtlandRouterCallback(private val søknad: UtlandSøknad) :
+private class UtlandLeverandørCallback(private val søknad: UtlandSøknad) :
     ListenableFutureCallback<SendResult<String, UtlandSøknad>> {
     private val log = LoggerUtil.getLogger(javaClass)
     private val secureLog = LoggerUtil.getSecureLogger()

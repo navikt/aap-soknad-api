@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty
 
 @ConfigurationProperties(prefix = "vl")
 @ConstructorBinding
-class VLRouterConfig(
+class VLLeveranseConfig(
         @NestedConfigurationProperty val standard: VLTopicConfig = VLTopicConfig(DEFAULT_VL_TOPIC, true),
         @NestedConfigurationProperty val utland: VLTopicConfig = VLTopicConfig(DEFAULT_VL_UTLAND_TOPIC, true)) {
 

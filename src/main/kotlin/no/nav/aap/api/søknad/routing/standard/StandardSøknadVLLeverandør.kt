@@ -6,7 +6,7 @@ import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_MOTTATT
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
-import no.nav.aap.api.søknad.routing.VLRouterConfig
+import no.nav.aap.api.søknad.routing.VLLeveranseConfig
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.LoggerUtil.getSecureLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
@@ -19,12 +19,12 @@ import org.springframework.stereotype.Component
 import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Component
-class StandardSøknadVLRouter(private val router: KafkaOperations<String, StandardSøknad>,
-                             private val cfg: VLRouterConfig) {
+class StandardSøknadVLLeverandør(private val router: KafkaOperations<String, StandardSøknad>,
+                                 private val cfg: VLLeveranseConfig) {
 
     private val log = getLogger(javaClass)
 
-    fun route(søknad: StandardSøknad, søker: Søker, journalpostId: String) =
+    fun leverSøknad(søknad: StandardSøknad, søker: Søker, journalpostId: String) =
         with(cfg.standard) {
             if (enabled) {
                 router.send(ProducerRecord(topic, søker.fnr.fnr, søknad)
@@ -33,7 +33,7 @@ class StandardSøknadVLRouter(private val router: KafkaOperations<String, Standa
                             .add(NAV_CALL_ID, callId().toByteArray())
                             .add("journalpostid", journalpostId.toByteArray())
                     })
-                    .addCallback(StandardRoutingCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
+                    .addCallback(StandardSøknadLeverandørCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
             }
             else {
                 log.warn("Ruter ikke utenlandsøknad til VL")
@@ -43,7 +43,7 @@ class StandardSøknadVLRouter(private val router: KafkaOperations<String, Standa
     override fun toString() = "$javaClass.simpleName [router=$router,cfg=$cfg]"
 }
 
-private class StandardRoutingCallback(private val søknad: StandardSøknad, private val counter: Counter) :
+private class StandardSøknadLeverandørCallback(private val søknad: StandardSøknad, private val counter: Counter) :
     ListenableFutureCallback<SendResult<String, StandardSøknad>> {
     private val secureLog = getSecureLogger()
     private val log = getLogger(javaClass)

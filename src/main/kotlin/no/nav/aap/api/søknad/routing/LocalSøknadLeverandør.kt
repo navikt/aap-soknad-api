@@ -7,16 +7,16 @@ import no.nav.aap.util.LoggerUtil
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import java.util.*
 
-@ConditionalOnMissingBean(SøknadRouter::class)
-class LocalSøknadRouter : Router {
+@ConditionalOnMissingBean(SøknadLeverandør::class)
+class LocalSøknadLeverandør : Router {
     private val log = LoggerUtil.getLogger(javaClass)
-    override fun route(søknad: UtlandSøknad) =
+    override fun leverSøknad(søknad: UtlandSøknad) =
         Kvittering(UUID.randomUUID())
             .also {
                 log.info("Dummy-ruting av utenlandssøknad til bakenforliggende systemer")
             }
 
-    override fun route(søknad: StandardSøknad) =
+    override fun leverSøknad(søknad: StandardSøknad) =
         Kvittering(UUID.randomUUID())
             .also {
                 log.info("Dummy-ruting av søknad til bakenforliggende systemer")

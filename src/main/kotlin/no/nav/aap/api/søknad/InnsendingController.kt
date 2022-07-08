@@ -16,10 +16,10 @@ internal class InnsendingController(private val router: Router) {
 
     @PostMapping("/utland")
     @ResponseStatus(CREATED)
-    fun utland(@RequestBody søknad: @Valid UtlandSøknad) = router.route(søknad)
+    fun utland(@RequestBody søknad: @Valid UtlandSøknad) = router.leverSøknad(søknad)
 
     @PostMapping("/soknad")
     @ResponseStatus(CREATED)
-    fun soknad(@RequestBody søknad: @Valid StandardSøknad) = router.route(søknad)
+    fun soknad(@RequestBody søknad: @Valid StandardSøknad) = router.leverSøknad(søknad)
     override fun toString() = "$javaClass.simpleName [router=$router]"
 }

@@ -4,7 +4,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
-import no.nav.aap.api.søknad.joark.JoarkRouter
+import no.nav.aap.api.søknad.joark.JoarkLeverandør
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
@@ -15,16 +15,16 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class StandardSøknadRouter(private val joarkRouter: JoarkRouter,
-                           private val pdl: PDLClient,
-                           private val finalizer: StandardSøknadAvslutter,
-                           private val vlRouter: StandardSøknadVLRouter) {
+class StandardSøknadLeverandør(private val joark: JoarkLeverandør,
+                               private val pdl: PDLClient,
+                               private val avslutter: StandardSøknadAvslutter,
+                               private val vl: StandardSøknadVLLeverandør) {
 
-    fun route(søknad: StandardSøknad) =
+    fun leverSøknad(søknad: StandardSøknad) =
         with(pdl.søkerMedBarn()) outer@{
-            with(joarkRouter.route(søknad, this)) {
-                vlRouter.route(søknad, this@outer, journalpostId)
-                finalizer.avslutt(søknad, this@outer.fnr, pdf)
+            with(joark.leverSøknad(søknad, this)) {
+                vl.leverSøknad(søknad, this@outer, journalpostId)
+                avslutter.avsluttSøknad(søknad, this@outer.fnr, pdf)
             }
         }
 }
@@ -33,7 +33,7 @@ class StandardSøknadRouter(private val joarkRouter: JoarkRouter,
 class StandardSøknadAvslutter(private val dittnav: DittNavClient,
                               private val dokumentLager: Dokumentlager,
                               private val mellomlager: Mellomlager) {
-    fun avslutt(søknad: StandardSøknad, fnr: Fødselsnummer, pdf: ByteArray) =
+    fun avsluttSøknad(søknad: StandardSøknad, fnr: Fødselsnummer, pdf: ByteArray) =
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett(STANDARD)
             dittnav.opprettBeskjed(STANDARD, UUID.randomUUID(), fnr, "Vi har mottatt ${STANDARD.tittel}")

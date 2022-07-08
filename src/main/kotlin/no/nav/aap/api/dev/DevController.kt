@@ -10,7 +10,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKMSKeyKryptertDokumentlager
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
-import no.nav.aap.api.søknad.routing.standard.StandardSøknadVLRouter
+import no.nav.aap.api.søknad.routing.standard.StandardSøknadVLLeverandør
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
 import org.springframework.http.CacheControl.noCache
@@ -40,12 +40,12 @@ import java.util.*
 @ConditionalOnNotProd
 internal class DevController(private val dokumentLager: GCPKMSKeyKryptertDokumentlager,
                              private val mellomlager: GCPKMSKeyKryptertMellomlager,
-                             private val vl: StandardSøknadVLRouter) {
+                             private val vl: StandardSøknadVLLeverandør) {
 
     @PostMapping("vl/{fnr}")
     @ResponseStatus(CREATED)
     fun vl(@PathVariable fnr: Fødselsnummer, @RequestBody søknad: StandardSøknad) =
-        vl.route(søknad, Søker(Navn("Ole", "B", "Olsen"), fnr,
+        vl.leverSøknad(søknad, Søker(Navn("Ole", "B", "Olsen"), fnr,
                 Adresse("Gata", "A", "14", PostNummer("2600", "Lillehammer")),
                 now(), listOf()),
                 "42")
