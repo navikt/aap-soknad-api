@@ -13,8 +13,7 @@ import java.time.Duration
 data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
                          @NestedConfigurationProperty val beskjed: TopicConfig,
                          @NestedConfigurationProperty val oppgave: TopicConfig,
-                         @NestedConfigurationProperty val done: DoneConfig,
-                         val mellomlagring: Long) {
+                         @NestedConfigurationProperty val done: DoneConfig) {
 
     val app = nais.app
     val namespace = nais.namespace
