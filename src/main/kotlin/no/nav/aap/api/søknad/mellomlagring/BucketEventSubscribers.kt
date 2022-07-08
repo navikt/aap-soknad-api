@@ -70,7 +70,7 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
                             log.trace("Delete pga avslutt eller timeout")
                             metadataFra(resource)?.let { metadata ->
                                 with(metadata) {
-                                    repo.getEventidByFnrAndNotDone(fnr.fnr)?.let {
+                                    repo.getEventidByFnrAndDoneFalse(fnr.fnr)?.let {
                                         val eventId = UUID.fromString(it)
                                         log.info("Avslutter beskjed med UUID $eventId")
                                         dittNav.avsluttBeskjed(type, fnr, eventId)
