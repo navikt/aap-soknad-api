@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.routing.standard
 
+import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
@@ -11,6 +12,7 @@ import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.stereotype.Component
+import java.util.*
 
 @Component
 class StandardSøknadRouter(private val joarkRouter: JoarkRouter,
@@ -22,7 +24,7 @@ class StandardSøknadRouter(private val joarkRouter: JoarkRouter,
         with(pdl.søkerMedBarn()) outer@{
             with(joarkRouter.route(søknad, this)) {
                 vlRouter.route(søknad, this@outer, journalpostId)
-                finalizer.finalize(søknad, pdf)
+                finalizer.finalize(søknad, this@outer.fnr, pdf)
             }
         }
 }
@@ -31,9 +33,10 @@ class StandardSøknadRouter(private val joarkRouter: JoarkRouter,
 class StandardSøknadFinalizer(private val dittnav: DittNavClient,
                               private val dokumentLager: Dokumentlager,
                               private val mellomlager: Mellomlager) {
-    fun finalize(søknad: StandardSøknad, pdf: ByteArray) =
+    fun finalize(søknad: StandardSøknad, fnr: Fødselsnummer, pdf: ByteArray) =
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett(STANDARD)
+            dittnav.opprettBeskjed(STANDARD, UUID.randomUUID(), fnr, "Vi har mottatt ${STANDARD.tittel}")
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering.pdf")))
         }
 }
