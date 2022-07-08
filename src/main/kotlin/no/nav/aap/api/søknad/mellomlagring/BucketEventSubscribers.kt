@@ -54,8 +54,8 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
                         }
                         else {
                             log.trace("Førstegangs mellomlagring")
-                            metadataFra(resource)?.let {
-                                with(it) {
+                            metadataFra(resource)?.let { metadata ->
+                                with(metadata) {
                                     log.trace("Oppretter beskjed med UUID $uuid")
                                     dittNav.opprettBeskjed(type, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
                                 }
@@ -64,17 +64,18 @@ class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
                     }
                     OBJECT_DELETE -> {
                         if (containsAttributes(OVERWRITTEBBYGENERATION)) {
-                            log.trace("Delete pga opppdatert mellomlagring")
+                            log.trace("Sletting pga opppdatert mellomlagring")
                         }
                         else {
                             log.trace("Delete pga avslutt eller timeout")
                             metadataFra(resource)?.let { metadata ->
                                 with(metadata) {
-                                    repo.getMellomlagretEventIdForFnr(fnr.fnr)?.let {
-                                        val eventId = UUID.fromString(it)
-                                        log.trace("Avslutter beskjed med UUID $eventId")
-                                        dittNav.avsluttBeskjed(type, fnr, eventId)
-                                    } ?: log.warn("Fant ikke uuid for opprinnelig melding")
+                                    repo.getMellomlagretEventIdForFnr(fnr.fnr)?.let { eventId ->
+                                        UUID.fromString(eventId).also {
+                                            log.trace("Avslutter beskjed med UUID $it")
+                                            dittNav.avsluttBeskjed(type, fnr, it)
+                                        }
+                                    } ?: log.warn("Fant ikke uuid for opprinnelig notifikasjon")
                                 }
                             } ?: log.warn("Fant ikke forventet metadata i $resource")
                         }

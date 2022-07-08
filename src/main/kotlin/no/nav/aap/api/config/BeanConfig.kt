@@ -9,7 +9,6 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP
-import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.HeadersToMDCFilter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
@@ -32,18 +31,13 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
-import org.springframework.data.domain.AuditorAware
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
-import java.util.*
 
 @Configuration
 class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String) {
-
-    //@Bean
-    fun auditorProvider(ctx: AuthContext) = AuditorAware { Optional.of(ctx.getFnr().fnr) }
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b ->

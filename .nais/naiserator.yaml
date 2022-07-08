@@ -98,6 +98,3 @@ spec:
         requests:
             cpu: 250m
             memory: 1536Mi
-    env:
-        -   name: MELLOMLAGRING_VARIGHET
-            value: '{{mellomlagring-varighet}}'
