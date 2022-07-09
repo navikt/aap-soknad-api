@@ -53,8 +53,8 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
 
     fun lagKeyRing(id: String) {
         KeyManagementServiceClient.create().use { client ->
-            val keyRing = KeyRing.newBuilder().build()
-            log.info("Lager snart keyring ${keyRing.name}")
+            val ring = KeyRing.newBuilder().build()
+            log.info("Lager snart keyring $ring")
             // client.createKeyRing(LocationName.of(cfg.id, REGION), id, keyRing).also {
             //     log.info("Lagd keyring $it.name")
             // }
