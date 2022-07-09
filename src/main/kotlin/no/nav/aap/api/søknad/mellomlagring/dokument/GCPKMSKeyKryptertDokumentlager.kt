@@ -39,23 +39,23 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     private val log = getLogger(javaClass)
 
     init {
-        log.info("jalla ${hasKeyring("jalla")}")
-        // lagKeyRing("jalla")
+        if (!hasKeyring()) {
+            log.info("${cfg.ring} finnes ikke")
+        }
+        else {
+            log.info("${cfg.ring} finnes")
+        }
     }
 
-    fun hasKeyring(ring: String) {
+    private final fun hasKeyring() =
         KeyManagementServiceClient.create().use { client ->
             client.listKeyRings(LocationName.of(cfg.id, REGION)).iterateAll()
-                .also {
-                    log.info("sjekker keyring ${it.toList()}")
-                }
                 .map {
                     it.name
                 }.map {
                     it.substringAfterLast('/')
-                }.contains(ring)
+                }.contains(cfg.ring)
         }
-    }
 
     fun lagKeyRing(id: String) {
         KeyManagementServiceClient.create().use { client ->
