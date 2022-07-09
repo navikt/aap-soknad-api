@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import com.google.cloud.kms.v1.KeyManagementServiceClient
+import com.google.cloud.kms.v1.KeyRing
 import com.google.cloud.kms.v1.LocationName
 import com.google.cloud.storage.BlobId.of
 import com.google.cloud.storage.BlobInfo.newBuilder
@@ -39,13 +40,24 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
 
     init {
         listKeyrings()
+        lagKeyRing("jalla")
     }
 
     fun listKeyrings() {
         KeyManagementServiceClient.create().use { client ->
-            client.listKeyRings(LocationName.of(cfg.id, "europe-north1")).iterateAll().forEach {
+            client.listKeyRings(LocationName.of(cfg.id, REGION)).iterateAll().forEach {
                 log.info("Keyring ${it.name}")
             }
+        }
+    }
+
+    fun lagKeyRing(id: String) {
+        KeyManagementServiceClient.create().use { client ->
+            val keyRing = KeyRing.newBuilder().build()
+            log.info("Lager snart keyring $keyRing.name")
+            // client.createKeyRing(LocationName.of(cfg.id, REGION), id, keyRing).also {
+            //     log.info("Lagd keyring $it.name")
+            // }
         }
     }
 
@@ -56,8 +68,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
             with(dokument) {
                 log.trace("Lagrer $filnavn kryptert, med uuid $this@uuid  og contentType $contentType")
                 sjekkere.forEach { it.sjekk(this) }
-                lager.create(newBuilder(of(cfg.vedlegg.navn, this@apply.toString()
-                        /**avn(fnr, this@apply)*/))
+                lager.create(newBuilder(of(cfg.vedlegg.navn, this@apply.toString()))
                     .setContentType(contentType)
                     .setMetadata(mapOf(FILNAVN to filnavn, "uuid" to this@apply.toString(), FNR to fnr.fnr))
                     .build(), bytes, kmsKeyName(cfg.vedlegg.kms))
@@ -69,7 +80,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     override fun lesDokument(uuid: UUID) = lesDokument(ctx.getFnr(), uuid)
 
     fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.get(cfg.vedlegg.navn, uuid.toString(),/*navn(fnr, uuid),*/ fields(METADATA, CONTENT_TYPE, TIME_CREATED))
+        lager.get(cfg.vedlegg.navn, uuid.toString(), fields(METADATA, CONTENT_TYPE, TIME_CREATED))
             ?.let { blob ->
                 with(blob) {
                     DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
@@ -123,8 +134,12 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
             slettDokument(fnr, id)
         }
 
+    companion object {
+        private const val REGION = "europe-north1"
+    }
+
     @Component
-    class ContentTypeSjekker(private val cfg: BucketsConfig) : DokumentSjekker {
+    class ContentTypeDokumentSjekker(private val cfg: BucketsConfig) : DokumentSjekker {
 
         override fun sjekk(dokument: DokumentInfo) =
             with(dokument) {
@@ -142,6 +157,5 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
         companion object {
             private val TIKA = Tika()
         }
-
     }
 }
