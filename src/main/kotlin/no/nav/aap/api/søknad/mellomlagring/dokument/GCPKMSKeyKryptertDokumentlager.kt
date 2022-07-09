@@ -14,6 +14,7 @@ import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
+import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.REGION
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
@@ -137,10 +138,6 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
         uuid?.let { id ->
             slettDokument(fnr, id)
         }
-
-    companion object {
-        private const val REGION = "europe-north1"
-    }
 
     @Component
     class ContentTypeDokumentSjekker(private val cfg: BucketsConfig) : DokumentSjekker {

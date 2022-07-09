@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
 
 internal class ImageScalerTest {
+
     @Test
     @Throws(Exception::class)
     fun imgSmallerThanA4RemainsUnchanged() =

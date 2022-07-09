@@ -4,14 +4,14 @@ import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.BUCKETS
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
-import org.springframework.boot.context.properties.bind.DefaultValue
 import java.time.Duration
 
 @ConfigurationProperties(BUCKETS)
 @ConstructorBinding
 data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
                          @NestedConfigurationProperty val vedlegg: VedleggBucketCfg,
-                         @DefaultValue("aap-keyring") val ring: String,
+                         val ring: String,
+                         val key: String,
                          val id: String) {
 
     open class BucketCfg(val navn: String,
@@ -34,6 +34,7 @@ data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
     }
 
     companion object {
+        const val REGION = "europe-north1"
         const val BUCKETS = "buckets"
     }
 }

@@ -29,6 +29,8 @@ organisasjon:
     enabled: false
 buckets:
     id: ${gcp.team.project.id}
+    ring: ${spring.application.name}-ring
+    key: ${buckets.ring}-key
     mellom:
         navn: ${mellomlagring.navn}
         subscription: ${buckets.mellom.navn}-subscription
