@@ -21,7 +21,7 @@ spec:
     gcp:
         permissions:
             -   resource:
-                    apiVersion: kms.cnrm.cloud.google.com/v1beta1
+                    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
                     kind: Project
                 role: roles/cloudkms.admin
             -   resource:
