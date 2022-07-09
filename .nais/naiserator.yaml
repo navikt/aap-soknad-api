@@ -39,12 +39,12 @@ spec:
                     -   name: aap-soknad-api-{{env}}
                         envVarPrefix: DB
         buckets:
-            -   name: aap-vedlegg
+            -   name: {{vedlegg-navn}}
                 cascadingDelete: true
                 lifecycleCondition:
                     numNewerVersions: 1
                     age: {{vedlegg-varighet}}
-            -   name: aap-mellomlagring
+            -   name: {{mellomlagring-navn}}
                 cascadingDelete: true
                 lifecycleCondition:
                     numNewerVersions: 1
@@ -98,3 +98,8 @@ spec:
         requests:
             cpu: 250m
             memory: 1536Mi
+    env:
+        -   name: MELLOMLAGRING_NAVN
+            value: '{{mellomlagring-navn}}'
+        -   name: MELLOMLAGRING_VEDLEGG
+            value: '{{mellomlagring-vedlegg}}'
