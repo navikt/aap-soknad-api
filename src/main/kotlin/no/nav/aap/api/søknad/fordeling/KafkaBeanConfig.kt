@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.routing
+package no.nav.aap.api.søknad.fordeling
 
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad

@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.joark
 
+import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.joark.JoarkResponse
 import no.nav.aap.joark.Journalpost
 import no.nav.aap.rest.AbstractWebClientAdapter
@@ -27,5 +28,5 @@ class JoarkWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, val cf: Joar
             .doOnSuccess {
                 log.trace("Journaført $it OK")
             }
-            .block()
+            .block() ?: throw IntegrationException("Null respons fra JOARK")
 }

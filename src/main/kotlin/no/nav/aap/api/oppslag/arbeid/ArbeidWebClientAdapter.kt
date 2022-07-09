@@ -27,7 +27,7 @@ class ArbeidWebClientAdapter(
                 .doOnSuccess {
                     log.trace("Arbeidsforhold er $it")
                 }
-                .block() ?: listOf()
+                .block().orEmpty()
         }
         else {
             listOf()

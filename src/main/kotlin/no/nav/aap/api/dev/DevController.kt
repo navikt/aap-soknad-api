@@ -5,12 +5,12 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.felles.SkjemaType
+import no.nav.aap.api.søknad.fordeling.standard.StandardSøknadVLFordeler
 import no.nav.aap.api.søknad.mellomlagring.GCPKMSKeyKryptertMellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKMSKeyKryptertDokumentlager
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
-import no.nav.aap.api.søknad.routing.standard.StandardSøknadVLLeverandør
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
 import org.springframework.http.CacheControl.noCache
@@ -40,12 +40,12 @@ import java.util.*
 @ConditionalOnNotProd
 internal class DevController(private val dokumentLager: GCPKMSKeyKryptertDokumentlager,
                              private val mellomlager: GCPKMSKeyKryptertMellomlager,
-                             private val vl: StandardSøknadVLLeverandør) {
+                             private val vl: StandardSøknadVLFordeler) {
 
     @PostMapping("vl/{fnr}")
     @ResponseStatus(CREATED)
     fun vl(@PathVariable fnr: Fødselsnummer, @RequestBody søknad: StandardSøknad) =
-        vl.leverSøknad(søknad, Søker(Navn("Ole", "B", "Olsen"), fnr,
+        vl.fordel(søknad, Søker(Navn("Ole", "B", "Olsen"), fnr,
                 Adresse("Gata", "A", "14", PostNummer("2600", "Lillehammer")),
                 now(), listOf()),
                 "42")

@@ -1,10 +1,10 @@
-package no.nav.aap.api.søknad.routing.standard
+package no.nav.aap.api.søknad.fordeling.standard
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
-import no.nav.aap.api.søknad.joark.JoarkLeverandør
+import no.nav.aap.api.søknad.joark.JoarkFordeler
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
@@ -15,15 +15,15 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class StandardSøknadLeverandør(private val joark: JoarkLeverandør,
-                               private val pdl: PDLClient,
-                               private val avslutter: StandardSøknadAvslutter,
-                               private val vl: StandardSøknadVLLeverandør) {
+class StandardSøknaFordeler(private val joark: JoarkFordeler,
+                            private val pdl: PDLClient,
+                            private val avslutter: StandardSøknadAvslutter,
+                            private val vl: StandardSøknadVLFordeler) {
 
-    fun leverSøknad(søknad: StandardSøknad) =
+    fun fordel(søknad: StandardSøknad) =
         with(pdl.søkerMedBarn()) outer@{
-            with(joark.leverSøknad(søknad, this)) {
-                vl.leverSøknad(søknad, this@outer, journalpostId)
+            with(joark.fordel(søknad, this)) {
+                vl.fordel(søknad, this@outer, journalpostId)
                 avslutter.avsluttSøknad(søknad, this@outer.fnr, pdf)
             }
         }

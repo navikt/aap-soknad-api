@@ -1,8 +1,8 @@
 package no.nav.aap.api.søknad
 
+import no.nav.aap.api.søknad.fordeling.Router
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
-import no.nav.aap.api.søknad.routing.Router
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.HttpStatus.CREATED
@@ -16,10 +16,10 @@ internal class InnsendingController(private val router: Router) {
 
     @PostMapping("/utland")
     @ResponseStatus(CREATED)
-    fun utland(@RequestBody søknad: @Valid UtlandSøknad) = router.leverSøknad(søknad)
+    fun utland(@RequestBody søknad: @Valid UtlandSøknad) = router.fordel(søknad)
 
     @PostMapping("/soknad")
     @ResponseStatus(CREATED)
-    fun soknad(@RequestBody søknad: @Valid StandardSøknad) = router.leverSøknad(søknad)
+    fun soknad(@RequestBody søknad: @Valid StandardSøknad) = router.fordel(søknad)
     override fun toString() = "$javaClass.simpleName [router=$router]"
 }

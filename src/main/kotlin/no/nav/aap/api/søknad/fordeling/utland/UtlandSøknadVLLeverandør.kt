@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.routing.utland
+package no.nav.aap.api.søknad.fordeling.utland
 
 import io.micrometer.core.instrument.Metrics.counter
 import io.micrometer.core.instrument.Tags
@@ -6,9 +6,9 @@ import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_UTLAND_MOTTATT
 import no.nav.aap.api.config.Counters.TAG_LAND
 import no.nav.aap.api.config.Counters.TAG_VARIGHET
 import no.nav.aap.api.felles.error.IntegrationException
+import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
-import no.nav.aap.api.søknad.routing.VLLeveranseConfig
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
@@ -20,7 +20,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Component
 class UtlandSøknadVLLeverandør(private val router: KafkaOperations<String, UtlandSøknad>,
-                               private val cfg: VLLeveranseConfig) {
+                               private val cfg: VLFordelingConfig) {
 
     private val log = LoggerUtil.getLogger(javaClass)
 

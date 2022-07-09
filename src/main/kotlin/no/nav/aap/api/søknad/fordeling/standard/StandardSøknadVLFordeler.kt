@@ -1,12 +1,12 @@
-package no.nav.aap.api.søknad.routing.standard
+package no.nav.aap.api.søknad.fordeling.standard
 
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Metrics.counter
 import no.nav.aap.api.config.Counters.COUNTER_SØKNAD_MOTTATT
 import no.nav.aap.api.felles.error.IntegrationException
+import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
-import no.nav.aap.api.søknad.routing.VLLeveranseConfig
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.LoggerUtil.getSecureLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
@@ -19,12 +19,12 @@ import org.springframework.stereotype.Component
 import org.springframework.util.concurrent.ListenableFutureCallback
 
 @Component
-class StandardSøknadVLLeverandør(private val router: KafkaOperations<String, StandardSøknad>,
-                                 private val cfg: VLLeveranseConfig) {
+class StandardSøknadVLFordeler(private val router: KafkaOperations<String, StandardSøknad>,
+                               private val cfg: VLFordelingConfig) {
 
     private val log = getLogger(javaClass)
 
-    fun leverSøknad(søknad: StandardSøknad, søker: Søker, journalpostId: String) =
+    fun fordel(søknad: StandardSøknad, søker: Søker, journalpostId: String) =
         with(cfg.standard) {
             if (enabled) {
                 router.send(ProducerRecord(topic, søker.fnr.fnr, søknad)
@@ -33,7 +33,7 @@ class StandardSøknadVLLeverandør(private val router: KafkaOperations<String, S
                             .add(NAV_CALL_ID, callId().toByteArray())
                             .add("journalpostid", journalpostId.toByteArray())
                     })
-                    .addCallback(StandardSøknadLeverandørCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
+                    .addCallback(StandardSøknadFordelerCallback(søknad, counter(COUNTER_SØKNAD_MOTTATT)))
             }
             else {
                 log.warn("Ruter ikke utenlandsøknad til VL")
@@ -43,7 +43,7 @@ class StandardSøknadVLLeverandør(private val router: KafkaOperations<String, S
     override fun toString() = "$javaClass.simpleName [router=$router,cfg=$cfg]"
 }
 
-private class StandardSøknadLeverandørCallback(private val søknad: StandardSøknad, private val counter: Counter) :
+private class StandardSøknadFordelerCallback(private val søknad: StandardSøknad, private val counter: Counter) :
     ListenableFutureCallback<SendResult<String, StandardSøknad>> {
     private val secureLog = getSecureLogger()
     private val log = getLogger(javaClass)

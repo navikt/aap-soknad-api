@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.routing
+package no.nav.aap.api.søknad.fordeling
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty
 
 @ConfigurationProperties(prefix = "vl")
 @ConstructorBinding
-class VLLeveranseConfig(
+class VLFordelingConfig(
         @NestedConfigurationProperty val standard: VLTopicConfig = VLTopicConfig(DEFAULT_VL_TOPIC, true),
         @NestedConfigurationProperty val utland: VLTopicConfig = VLTopicConfig(DEFAULT_VL_UTLAND_TOPIC, true)) {
 

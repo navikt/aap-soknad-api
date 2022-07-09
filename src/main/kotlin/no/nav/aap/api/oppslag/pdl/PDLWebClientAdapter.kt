@@ -107,11 +107,12 @@ class PDLWebClientAdapter(
         } ?: emptyList()
         else emptyList()
 
-    private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean): List<Barn?> = if (medBarn) r.map {
-        barnOppslag(it.relatertPersonsIdent)
-            .also { b -> log.trace(CONFIDENTIAL, "Barn er $b") }
-    }
-    else emptyList()
+    private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean): List<Barn?> =
+        if (medBarn) r.map {
+            barnOppslag(it.relatertPersonsIdent)
+                .also { b -> log.trace(CONFIDENTIAL, "Barn er $b") }
+        }
+        else emptyList()
 
     override fun toString() =
         "${javaClass.simpleName} [webClient=$webClient,graphQLWebClient=$userWebClient,authContext=$ctx,errorHandler=$errorHandler, cfg=$cfg]"
