@@ -46,7 +46,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     fun listKeyrings() {
         KeyManagementServiceClient.create().use { client ->
             client.listKeyRings(LocationName.of(cfg.id, REGION)).iterateAll().forEach {
-                log.info("Keyring ${it.name}")
+                log.info("keyring ${it.name}")
             }
         }
     }
@@ -54,7 +54,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     fun lagKeyRing(id: String) {
         KeyManagementServiceClient.create().use { client ->
             val keyRing = KeyRing.newBuilder().build()
-            log.info("Lager snart keyring $keyRing.name")
+            log.info("Lager snart keyring ${keyRing.name}")
             // client.createKeyRing(LocationName.of(cfg.id, REGION), id, keyRing).also {
             //     log.info("Lagd keyring $it.name")
             // }
