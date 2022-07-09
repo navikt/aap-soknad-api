@@ -1,7 +1,5 @@
 info:
     nais:
-        host: ${nais.host}
-        team: ${nais.team}
         clientid: ${nais.client.id}
         project: ${gcp.team.project.id}
         cluster: ${nais.cluster.name}
@@ -146,7 +144,6 @@ joark:
 saf:
     base-uri: https://safselvbetjening.${onprem}-pub.nais.io
 dittnav:
-    mellomlagring: ${mellomlagring.varighet}
     nais:
         app: ${nais.app.name}
         namespace: ${nais.namespace}
