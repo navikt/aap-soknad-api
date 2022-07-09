@@ -5,7 +5,6 @@ import no.nav.aap.api.oppslag.behandler.BehandlerClient
 import no.nav.aap.api.oppslag.krr.KRRClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.oppslag.saf.SafClient
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.model.SøkerInfo
 import no.nav.aap.joark.DokumentInfoId
 import no.nav.aap.util.Constants
@@ -24,8 +23,7 @@ class OppslagController(val pdl: PDLClient,
                         val behandler: BehandlerClient,
                         val arbeid: ArbeidClient,
                         val krr: KRRClient,
-                        val saf: SafClient,
-                        val dittNav: DittNavClient) {
+                        val saf: SafClient) {
 
     val log = LoggerUtil.getLogger(javaClass)
 
@@ -36,7 +34,6 @@ class OppslagController(val pdl: PDLClient,
             arbeid.arbeidsforhold(),
             krr.kontaktinfo())
         .also {
-            //    dittNav.init() TODO
             log.trace("Søker er $it")
         }
 

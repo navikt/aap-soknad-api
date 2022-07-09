@@ -112,8 +112,7 @@ class JoarkConverter(
 
     private fun DokumentInfo.asDokument(tittel: String?) =
         Dokument(tittel = tittel,
-                dokumentVariant = DokumentVariant(PDFA,
-                        getEncoder().encodeToString(bytes)))
+                dokumentVariant = DokumentVariant(PDFA, getEncoder().encodeToString(bytes)))
             .also { log.trace("Dokument konvertert fra DokumentInfo  er $it") }
 
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =

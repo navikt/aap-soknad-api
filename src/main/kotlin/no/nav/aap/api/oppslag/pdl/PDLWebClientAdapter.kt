@@ -103,13 +103,13 @@ class PDLWebClientAdapter(
     private fun barnFraForeldreansvar(r: Set<PDLForeldreansvar>?, medBarn: Boolean) =
         if (medBarn) r?.map {
             barnOppslag(it.ansvarssubjekt)
-                .also { log.trace(CONFIDENTIAL, "Barn er $it") }
+                .also { b -> log.trace(CONFIDENTIAL, "Barn er $b") }
         } ?: emptyList()
         else emptyList()
 
     private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean): List<Barn?> = if (medBarn) r.map {
         barnOppslag(it.relatertPersonsIdent)
-            .also { log.trace(CONFIDENTIAL, "Barn er $it") }
+            .also { b -> log.trace(CONFIDENTIAL, "Barn er $b") }
     }
     else emptyList()
 

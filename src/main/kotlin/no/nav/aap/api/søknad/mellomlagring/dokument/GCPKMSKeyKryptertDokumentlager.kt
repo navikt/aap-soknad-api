@@ -68,7 +68,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     override fun slettDokument(uuid: UUID) = slettDokument(ctx.getFnr(), uuid)
 
     fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.delete(of(cfg.vedlegg.navn, "$uuid"/*navn(fnr, uuid)*/))
+        lager.delete(of(cfg.vedlegg.navn, "$uuid"))
             .also {
                 log.trace(CONFIDENTIAL, "Slettet dokument $uuid for $fnr")
             }

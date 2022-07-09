@@ -17,8 +17,8 @@ import java.util.*
 
 @ConditionalOnGCP
 class VedleggEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
-                             private val storage: Storage,
-                             private val cfgs: BucketsConfig) :
+                             storage: Storage,
+                             cfgs: BucketsConfig) :
     AbstractEventSubscriber(mapper, client, storage, cfgs.vedlegg, cfgs.id) {
 
     override fun receiver() =
@@ -34,9 +34,9 @@ class VedleggEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
 @Suppress("BlockingMethodInNonBlockingContext")
 @ConditionalOnGCP
 class MellomlagringEventSubscriber(mapper: ObjectMapper, client: DittNavClient,
-                                   private val storage: Storage,
+                                   storage: Storage,
                                    private val repo: JPADittNavBeskjedRepository,
-                                   private val cfgs: BucketsConfig) :
+                                   cfgs: BucketsConfig) :
     AbstractEventSubscriber(mapper, client, storage, cfgs.mellom, cfgs.id) {
 
     @Transactional

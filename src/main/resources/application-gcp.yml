@@ -1,5 +1,9 @@
 info:
     nais:
+        host: ${nais.host}
+        team: ${nais.team}
+        clientid: ${nais.client.id}
+        project: ${gcp.team.project.id}
         cluster: ${nais.cluster.name}
         image: ${nais.app.image}
         app: ${nais.app.name}

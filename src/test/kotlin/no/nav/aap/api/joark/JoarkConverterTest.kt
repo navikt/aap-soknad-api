@@ -55,7 +55,7 @@ class JoarkConverterTest {
             .thenReturn(dokinfo1)
             .thenReturn(dokinfo2)
 
-        val søknad = SøknadTest.standardSøknad();
+        val søknad = SøknadTest.standardSøknad()
         val søker = SøknadTest.søker()
         val c = JoarkConverter(mapper, lager, Image2PDFConverter(ImageScaler()))
         val converted = c.convert(søknad, søker, bytes)

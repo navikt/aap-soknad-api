@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
-import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.springframework.kafka.support.SendResult
@@ -44,7 +43,7 @@ class DittNavCallbacks {
 
     class DittNavBeskjedDoneCallback(private val key: NokkelInput) :
         ListenableFutureCallback<SendResult<NokkelInput, Any>?> {
-        private val log = LoggerUtil.getLogger(javaClass)
+        private val log = getLogger(javaClass)
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) =
             log.info("Sendte done til Ditt Nav  med id ${key.eventId} og offset ${result?.recordMetadata?.offset()} på ${result?.recordMetadata?.topic()}")
