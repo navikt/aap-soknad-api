@@ -10,7 +10,9 @@ import java.time.Duration
 @ConfigurationProperties(BUCKETS)
 @ConstructorBinding
 data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
-                         @NestedConfigurationProperty val vedlegg: VedleggBucketCfg,@DefaultValue("aap-keyring") val ring, val id: String) {
+                         @NestedConfigurationProperty val vedlegg: VedleggBucketCfg,
+                         @DefaultValue("aap-keyring") val ring: String,
+                         val id: String) {
 
     open class BucketCfg(val navn: String,
                          val subscription: String,
