@@ -4,12 +4,13 @@ import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.BUCKETS
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
+import org.springframework.boot.context.properties.bind.DefaultValue
 import java.time.Duration
 
 @ConfigurationProperties(BUCKETS)
 @ConstructorBinding
 data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
-                         @NestedConfigurationProperty val vedlegg: VedleggBucketCfg, val id: String) {
+                         @NestedConfigurationProperty val vedlegg: VedleggBucketCfg,@DefaultValue("aap-keyring") val ring, val id: String) {
 
     open class BucketCfg(val navn: String,
                          val subscription: String,
