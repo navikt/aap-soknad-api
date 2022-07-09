@@ -47,7 +47,6 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
                 log.info("Keyring ${it.name}"}
             }
         }
-    }
 
     override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(ctx.getFnr(), dokument)
 
