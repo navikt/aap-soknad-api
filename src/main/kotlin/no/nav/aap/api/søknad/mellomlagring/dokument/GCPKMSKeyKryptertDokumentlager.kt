@@ -44,9 +44,10 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     fun listKeyrings() {
         KeyManagementServiceClient.create().use { client ->
             client.listKeyRings(LocationName.of(cfg.id, "europe-north1")).iterateAll().forEach {
-                log.info("Keyring ${it.name}"}
+                log.info("Keyring ${it.name}")
             }
         }
+    }
 
     override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(ctx.getFnr(), dokument)
 
