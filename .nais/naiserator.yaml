@@ -98,4 +98,4 @@ spec:
         -   name: MELLOMLAGRING_NAVN
             value: '{{mellomlagring-navn}}'
         -   name: VEDLEGG_NAVN
-            value: '{{mellomlagring-vedlegg}}'
+            value: '{{vedlegg-navn}}'
