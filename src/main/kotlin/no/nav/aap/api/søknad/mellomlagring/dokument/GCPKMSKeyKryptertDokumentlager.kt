@@ -38,7 +38,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     private val log = getLogger(javaClass)
 
     init {
-        //listKeyrings()
+        listKeyrings()
     }
 
     fun listKeyrings() {
