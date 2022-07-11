@@ -1,5 +1,9 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
+import com.google.cloud.kms.v1.CryptoKey
+import com.google.cloud.kms.v1.CryptoKey.CryptoKeyPurpose.ENCRYPT_DECRYPT
+import com.google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionAlgorithm.GOOGLE_SYMMETRIC_ENCRYPTION
+import com.google.cloud.kms.v1.CryptoKeyVersionTemplate
 import com.google.cloud.kms.v1.KeyManagementServiceClient
 import com.google.cloud.kms.v1.KeyRing
 import com.google.cloud.kms.v1.KeyRingName
@@ -41,25 +45,26 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     private val log = getLogger(javaClass)
 
     init {
-        val ring = keyring()
+        listRings()
+        lagKey()
     }
 
-    private final fun keyring() =
+    private final fun listRings() =
         with(cfg) {
             KeyManagementServiceClient.create().use { client ->
-
                 client.listKeyRings(LocationName.of(id, REGION)).iterateAll()
-                    .map { KeyRing.newBuilder().setName(it.name).build() }
-                    .map { KeyRingName.parse(it.name) }
-                    .forEach { log.info("Ring ${it.keyRing}") }
+                    .forEach {
+                        log.info("Lister for ring ${it.name}")
+                        listKeys(it.name)
+                    }
             }
         }
 
-    private final fun keys(ringName: String) =
+    private final fun listKeys(ringName: String) =
         with(cfg) {
             KeyManagementServiceClient.create().use { client ->
                 client.listCryptoKeys(ringName).iterateAll()
-                    .also { log.info("Key $it") }
+                    .also { log.info("name $ringName, Key $it") }
             }
         }
 
@@ -71,6 +76,22 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
                 }
             }
         }
+
+    fun lagKey() {
+        KeyManagementServiceClient.create().use { client ->
+            val keyRingName = KeyRingName.of(cfg.id, LocationName.of(cfg.id, REGION).location, cfg.kms.ring)
+            log.trace("Create key fra keyring $keyRingName")
+            val key = CryptoKey.newBuilder()
+                .setPurpose(ENCRYPT_DECRYPT)
+                .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
+                    .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
+                .build()
+            log.trace("Lag snart key $key")
+
+            //val createdKey = client.createCryptoKey(keyRingName, cfg.kms.key, key)
+            // System.out.printf("Created symmetric key %s%n", createdKey.name)
+        }
+    }
 
     override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(ctx.getFnr(), dokument)
 
