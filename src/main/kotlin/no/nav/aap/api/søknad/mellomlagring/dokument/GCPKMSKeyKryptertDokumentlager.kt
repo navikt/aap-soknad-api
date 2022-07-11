@@ -45,25 +45,28 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     private val log = getLogger(javaClass)
 
     init {
-        listRings()
+        log.info("Has ring ${hasRing()}")
         lagKey()
     }
 
-    private final fun listRings() =
+    private final fun hasRing() =
         with(cfg) {
             KeyManagementServiceClient.create().use { client ->
                 client.listKeyRings(LocationName.of(id, REGION)).iterateAll()
-
-                    .forEach {
-                        val name = KeyRingName.of(cfg.id, LocationName.of(id, REGION).location, kms.ring).toString()
-                        log.info("Sjekker $name mot ${it.name}")
-                        if (it.name == name) {
-                            log.info("Match ${it.name}")
-                        }
-                        listKeys(it.name)
-                    }
+                    .map { it.name }
+                    .contains("${ringName()}")
+                /*
+            .forEach {
+                log.info("Sjekker ${ringName()} mot ${it.name}")
+                if (it.name == "${ringName()}") {
+                    log.info("Match ${it.name}")
+                }
+                listKeys(it.name)
+            }*/
             }
         }
+
+    private fun ringName() = KeyRingName.of(cfg.id, LocationName.of(cfg.id, REGION).location, cfg.kms.ring)
 
     private final fun listKeys(ringName: String) =
         with(cfg) {
@@ -87,7 +90,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     fun lagKey() {
         KeyManagementServiceClient.create().use { client ->
             with(cfg) {
-                val keyRingName = KeyRingName.of(cfg.id, LocationName.of(id, REGION).location, kms.ring)
+                val keyRingName = ringName()
                 log.trace("Create key fra keyring $keyRingName")
                 val key = CryptoKey.newBuilder()
                     .setPurpose(ENCRYPT_DECRYPT)
