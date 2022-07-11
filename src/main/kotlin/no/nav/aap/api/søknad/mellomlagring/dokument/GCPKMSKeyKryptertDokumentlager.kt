@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import com.google.cloud.kms.v1.KeyManagementServiceClient
 import com.google.cloud.kms.v1.KeyRing
+import com.google.cloud.kms.v1.KeyRingName
 import com.google.cloud.kms.v1.LocationName
 import com.google.cloud.storage.BlobId.of
 import com.google.cloud.storage.BlobInfo.newBuilder
@@ -40,31 +41,26 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     private val log = getLogger(javaClass)
 
     init {
-        if (!hasKeyring()) {
-            log.info("${cfg.ring} finnes ikke")
-        }
-        else {
-            log.info("${cfg.ring} finnes")
-        }
+        val ring = keyring()?.let {
+            log.info("Keyring $it finnes")
+        } ?: lagKeyRing()
+        log.info("Keyring er $ring")
     }
 
-    private final fun hasKeyring() =
-        KeyManagementServiceClient.create().use { client ->
-            client.listKeyRings(LocationName.of(cfg.id, REGION)).iterateAll()
-                .map {
-                    it.name
-                }.map {
-                    it.substringAfterLast('/')
-                }.contains(cfg.ring)
+    private final fun keyring() =
+        with(cfg) {
+            KeyManagementServiceClient.create().use { client ->
+                client.listKeyRings(LocationName.of(id, REGION)).iterateAll()
+                    .firstOrNull { r -> r.equals(KeyRingName.of(id, REGION, kms.ring).keyRing) }
+            }
         }
 
-    fun lagKeyRing(id: String) {
+    fun lagKeyRing(): KeyRing =
         KeyManagementServiceClient.create().use { client ->
-            client.createKeyRing(LocationName.of(cfg.id, REGION), id, KeyRing.newBuilder().build()).also {
+            client.createKeyRing(LocationName.of(cfg.id, REGION), cfg.id, KeyRing.newBuilder().build()).also {
                 log.info("Lagd keyring $it")
             }
         }
-    }
 
     override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(ctx.getFnr(), dokument)
 

@@ -10,9 +10,10 @@ import java.time.Duration
 @ConstructorBinding
 data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
                          @NestedConfigurationProperty val vedlegg: VedleggBucketCfg,
-                         val ring: String,
-                         val key: String,
-                         val id: String) {
+                         val id: String,
+                         val kms: KeyConfig) {
+
+    data class KeyConfig(val ring: String, val key: String)
 
     open class BucketCfg(val navn: String,
                          val subscription: String,
