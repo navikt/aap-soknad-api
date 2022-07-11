@@ -47,13 +47,13 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
 
     init {
         if (harRing()) {
-            log.info("${ringNavn()} finnes allerede")
+            log.info("KeyRing ${ringNavn()} finnes allerede")
         }
         else {
             lagRing()
         }
         if (harNøkkel()) {
-            log.info("${nøkkelNavn()} finnes allerede")
+            log.info("CryptoKey ${nøkkelNavn()} finnes allerede")
         }
         else {
             lagNøkkel()
@@ -99,7 +99,6 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
         KeyManagementServiceClient.create().use { client ->
             with(cfg) {
                 val keyRingName = ringNavn()
-                log.trace("Create key fra keyring $keyRingName")
                 val key = CryptoKey.newBuilder()
                     .setPurpose(ENCRYPT_DECRYPT)
                     .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
