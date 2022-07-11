@@ -106,6 +106,6 @@ class GCPInitiBean(private val cfg: BucketsConfig) : InitializingBean {
 
     private val log = LoggerUtil.getLogger(javaClass)
     override fun afterPropertiesSet() {
-        log.info("INIT BEAB %cfg")
+        log.info("INIT BEAB $cfg")
     }
 }
