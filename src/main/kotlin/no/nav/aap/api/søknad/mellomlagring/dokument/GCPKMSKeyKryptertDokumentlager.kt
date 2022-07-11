@@ -2,7 +2,6 @@ package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import com.google.cloud.kms.v1.KeyManagementServiceClient
 import com.google.cloud.kms.v1.KeyRing
-import com.google.cloud.kms.v1.KeyRingName
 import com.google.cloud.kms.v1.LocationName
 import com.google.cloud.storage.BlobId.of
 import com.google.cloud.storage.BlobInfo.newBuilder
@@ -41,17 +40,22 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     private val log = getLogger(javaClass)
 
     init {
-        val ring = keyring()?.let {
-            log.info("Keyring $it finnes")
-        } ?: lagKeyRing().also { log.info("Lagd keyring er $it") }
+        val ring = keyring()
     }
 
     private final fun keyring() =
         with(cfg) {
             KeyManagementServiceClient.create().use { client ->
                 client.listKeyRings(LocationName.of(id, REGION)).iterateAll()
-                    .firstOrNull { r -> r.equals(KeyRingName.of(id, REGION, kms.ring).keyRing) }
                     .also { log.info("Ring $it") }
+            }
+        }
+
+    private final fun keys(ringName: String) =
+        with(cfg) {
+            KeyManagementServiceClient.create().use { client ->
+                client.listCryptoKeys(ringName).iterateAll()
+                    .also { log.info("Key $it") }
             }
         }
 
