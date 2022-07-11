@@ -54,7 +54,6 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
             KeyManagementServiceClient.create().use { client ->
                 client.listKeyRings(LocationName.of(id, REGION)).iterateAll()
                     .forEach {
-                        log.info("Lister for ring ${it.name}")
                         listKeys(it.name)
                     }
             }
@@ -65,7 +64,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
             KeyManagementServiceClient.create().use { client ->
                 client.listCryptoKeys(ringName).iterateAll()
                     .forEach {
-                        log.info("Ring  $ringName, Key: $it")
+                        log.info("Ring  $ringName, Key: ${it.name}")
                     }
             }
         }
@@ -88,7 +87,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
                 .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
                     .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
                 .build()
-            log.trace("Lag snart key $key")
+            log.trace("Lag snart key $key med navn ${cfg.kms.key}")
 
             //val createdKey = client.createCryptoKey(keyRingName, cfg.kms.key, key)
             // System.out.printf("Created symmetric key %s%n", createdKey.name)
