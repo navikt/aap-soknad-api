@@ -19,7 +19,7 @@ data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
     open class BucketCfg(val navn: String,
                          val subscription: String,
                          val topic: String,
-                         val timeout: Duration = Duration.ofSeconds(30),
+                         @DefaultValue("30s") val timeout: Duration,
                          val kms: String) {
         override fun toString() =
             "MellomBucketCfg(navn=$navn, subscription=$subscription, timeout=${timeout.toSeconds()}s, kms=$kms)"
