@@ -17,7 +17,7 @@ data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
 
     data class KeyConfig(val ring: String = "aap-mellomlagring-kms",
                          val nøkkel: String = "aap-mellomlagring-kms-key",
-                         @Value("#\${spring.application.name} + kms")  val jalla)
+                         @Value("#\${spring.application.name} + kms") val jalla: String)
 
     open class BucketCfg(val navn: String,
                          val subscription: String,
