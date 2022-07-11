@@ -37,6 +37,15 @@ abstract class AbstractEventSubscriber(protected val mapper: ObjectMapper,
         abonner()
     }
 
+    private fun abonner() =
+        Subscriber.newBuilder(ProjectSubscriptionName.of(projectId, cfg.subscription), receiver()).build().apply {
+            startAsync().awaitRunning()
+            awaitRunning() // TODO sjekk dette
+                .also {
+                    log.trace("Abonnerert på events  via subscriber $this.'")
+                }
+        }
+
     private fun init(cfg: BucketCfg) =
         with(cfg) {
             if (!harTopic()) {
@@ -60,15 +69,6 @@ abstract class AbstractEventSubscriber(protected val mapper: ObjectMapper,
             else {
                 log.trace("$navn har allerede en notifikasjon på $topic")
             }
-        }
-
-    private fun abonner() =
-        Subscriber.newBuilder(ProjectSubscriptionName.of(projectId, cfg.subscription), receiver()).build().apply {
-            startAsync().awaitRunning()
-            awaitRunning() // TODO sjekk dette
-                .also {
-                    log.trace("Abonnerert på events  via subscriber $this.'")
-                }
         }
 
     private fun harTopic() =

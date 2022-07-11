@@ -44,74 +44,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
                                      private val sjekkere: List<DokumentSjekker>) : Dokumentlager {
 
     private val log = getLogger(javaClass)
-
-    init {
-        if (harRing()) {
-            log.info("KeyRing ${ringNavn()} finnes allerede")
-        }
-        else {
-            lagRing()
-        }
-        if (harNøkkel()) {
-            log.info("CryptoKey ${nøkkelNavn()} finnes allerede")
-        }
-        else {
-            lagNøkkel()
-        }
-    }
-
-    private final fun harRing() =
-        KeyManagementServiceClient.create().use { client ->
-            client.listKeyRings(LocationName.of(cfg.id, REGION)).iterateAll()
-                .map { it.name }
-                .contains("${ringNavn()}")
-        }
-
-    private fun ringNavn() =
-        with(cfg) {
-            KeyRingName.of(id, LocationName.of(id, REGION).location, kms.ring)
-        }
-
-    private fun nøkkelNavn() =
-        with(cfg) {
-            CryptoKeyName.of(id, LocationName.of(id, REGION).location, kms.ring, kms.key)
-        }
-
-    private final fun harNøkkel() =
-        with(cfg) {
-            KeyManagementServiceClient.create().use { client ->
-                client.listCryptoKeys(ringNavn()).iterateAll()
-                    .map { it.name }
-                    .contains("${nøkkelNavn()}")
-            }
-        }
-
-    fun lagRing(): KeyRing =
-        with(cfg) {
-            KeyManagementServiceClient.create().use { client ->
-                client.createKeyRing(LocationName.of(cfg.id, REGION), kms.ring, KeyRing.newBuilder().build()).also {
-                    log.info("Lagd keyring ${it.name}")
-                }
-            }
-        }
-
-    fun lagNøkkel() {
-        KeyManagementServiceClient.create().use { client ->
-            with(cfg) {
-                val keyRingName = ringNavn()
-                val key = CryptoKey.newBuilder()
-                    .setPurpose(ENCRYPT_DECRYPT)
-                    .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
-                        .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
-                    .build()
-                log.trace("Lag snart key ${nøkkelNavn()}")
-
-                //val createdKey = client.createCryptoKey(keyRingName, cfg.kms.key, key)
-                // System.out.printf("Created symmetric key %s%n", createdKey.name)
-            }
-        }
-    }
-
+    
     override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(ctx.getFnr(), dokument)
 
     fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
