@@ -70,7 +70,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
 
     private fun keyName() =
         with(cfg) {
-            CryptoKeyName.of(id, LocationName.of(id, REGION).location, kms.ring)
+            CryptoKeyName.of(id, LocationName.of(id, REGION).location, kms.ring, kms.key)
         }
 
     private final fun listKeys(ringName: KeyRingName) =
