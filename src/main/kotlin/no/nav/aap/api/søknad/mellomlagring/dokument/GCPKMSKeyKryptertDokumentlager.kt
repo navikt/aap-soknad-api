@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import com.google.cloud.kms.v1.CryptoKey
 import com.google.cloud.kms.v1.CryptoKey.CryptoKeyPurpose.ENCRYPT_DECRYPT
+import com.google.cloud.kms.v1.CryptoKeyName
 import com.google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionAlgorithm.GOOGLE_SYMMETRIC_ENCRYPTION
 import com.google.cloud.kms.v1.CryptoKeyVersionTemplate
 import com.google.cloud.kms.v1.KeyManagementServiceClient
@@ -45,44 +46,50 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     private val log = getLogger(javaClass)
 
     init {
-        log.info("Has ring ${hasRing()}")
+        if (hasRing()) {
+            log.info("${ringName()} finnes allerede")
+        }
+        else {
+            lagRing()
+        }
+        listKeys(ringName())
         lagKey()
     }
 
     private final fun hasRing() =
-        with(cfg) {
-            KeyManagementServiceClient.create().use { client ->
-                client.listKeyRings(LocationName.of(id, REGION)).iterateAll()
-                    .map { it.name }
-                    .contains("${ringName()}")
-                /*
-            .forEach {
-                log.info("Sjekker ${ringName()} mot ${it.name}")
-                if (it.name == "${ringName()}") {
-                    log.info("Match ${it.name}")
-                }
-                listKeys(it.name)
-            }*/
-            }
+        KeyManagementServiceClient.create().use { client ->
+            client.listKeyRings(LocationName.of(cfg.id, REGION)).iterateAll()
+                .map { it.name }
+                .contains("${ringName()}")
         }
 
-    private fun ringName() = KeyRingName.of(cfg.id, LocationName.of(cfg.id, REGION).location, cfg.kms.ring)
+    private fun ringName() =
+        with(cfg) {
+            KeyRingName.of(id, LocationName.of(id, REGION).location, kms.ring)
+        }
 
-    private final fun listKeys(ringName: String) =
+    private fun keyName() =
+        with(cfg) {
+            CryptoKeyName.of(id, LocationName.of(id, REGION).location, kms.ring)
+        }
+
+    private final fun listKeys(ringName: KeyRingName) =
         with(cfg) {
             KeyManagementServiceClient.create().use { client ->
                 client.listCryptoKeys(ringName).iterateAll()
                     .forEach {
+                        val name = keyName()
+                        log.info("Sjekker $name mot ${it.name}")
                         log.info("Ring  $ringName, Key: ${it.name}")
                     }
             }
         }
 
-    fun lagKeyRing(): KeyRing =
+    fun lagRing(): KeyRing =
         with(cfg) {
             KeyManagementServiceClient.create().use { client ->
                 client.createKeyRing(LocationName.of(cfg.id, REGION), kms.ring, KeyRing.newBuilder().build()).also {
-                    log.info("Lagd keyring $it")
+                    log.info("Lagd keyring ${it.name}")
                 }
             }
         }
