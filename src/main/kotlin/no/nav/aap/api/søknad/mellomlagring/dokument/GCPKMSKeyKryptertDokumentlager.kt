@@ -55,8 +55,8 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
                 client.listKeyRings(LocationName.of(id, REGION)).iterateAll()
 
                     .forEach {
-                        val name = KeyRingName.of(cfg.id, LocationName.of(id, REGION).location, kms.ring).keyRing
-                        log.info("Sjekker $name mot  ${it.name}")
+                        val name = KeyRingName.of(cfg.id, LocationName.of(id, REGION).location, kms.ring).toString()
+                        log.info("Sjekker $name mot ${it.name}")
                         if (it.name == name) {
                             log.info("Match ${it.name}")
                         }
