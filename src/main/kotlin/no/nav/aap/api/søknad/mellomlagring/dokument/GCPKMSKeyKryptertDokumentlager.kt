@@ -46,7 +46,9 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     private final fun keyring() =
         with(cfg) {
             KeyManagementServiceClient.create().use { client ->
-                client.listKeyRings(LocationName.of(id, REGION)).iterateAll().forEach { log.info("Ring $it") }
+
+                client.listKeyRings(LocationName.of(id, REGION)).iterateAll()
+                    .map { KeyRing.newBuilder().setName(it.name).build() }.forEach { log.info("Ring $it") }
             }
         }
 
