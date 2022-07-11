@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import com.google.cloud.kms.v1.KeyManagementServiceClient
 import com.google.cloud.kms.v1.KeyRing
+import com.google.cloud.kms.v1.KeyRingName
 import com.google.cloud.kms.v1.LocationName
 import com.google.cloud.storage.BlobId.of
 import com.google.cloud.storage.BlobInfo.newBuilder
@@ -48,7 +49,9 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
             KeyManagementServiceClient.create().use { client ->
 
                 client.listKeyRings(LocationName.of(id, REGION)).iterateAll()
-                    .map { KeyRing.newBuilder().setName(it.name).build() }.forEach { log.info("Ring $it") }
+                    .map { KeyRing.newBuilder().setName(it.name).build() }
+                    .map { KeyRingName.parse(it) }
+                    .forEach { log.info("Ring ${it.keyRing}") }
             }
         }
 
