@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.mellomlagring
 
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.BUCKETS
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
@@ -14,7 +15,9 @@ data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
                          val id: String,
                          @DefaultValue val kms: KeyConfig) {
 
-    data class KeyConfig(val ring: String = "aap-mellomlagring-kms", val nøkkel: String = "aap-mellomlagring-kms-key")
+    data class KeyConfig(val ring: String = "aap-mellomlagring-kms",
+                         val nøkkel: String = "aap-mellomlagring-kms-key",
+                         @Value("#\${spring.application.name} + kms")  val jalla)
 
     open class BucketCfg(val navn: String,
                          val subscription: String,
