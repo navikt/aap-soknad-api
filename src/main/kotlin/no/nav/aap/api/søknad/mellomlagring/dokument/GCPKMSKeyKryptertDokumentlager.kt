@@ -50,7 +50,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
 
                 client.listKeyRings(LocationName.of(id, REGION)).iterateAll()
                     .map { KeyRing.newBuilder().setName(it.name).build() }
-                    .map { KeyRingName.parse(it) }
+                    .map { KeyRingName.parse(it.name) }
                     .forEach { log.info("Ring ${it.keyRing}") }
             }
         }
