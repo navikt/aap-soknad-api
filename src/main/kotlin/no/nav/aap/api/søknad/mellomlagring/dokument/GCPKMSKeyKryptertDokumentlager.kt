@@ -53,7 +53,11 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
         with(cfg) {
             KeyManagementServiceClient.create().use { client ->
                 client.listKeyRings(LocationName.of(id, REGION)).iterateAll()
+
                     .forEach {
+                        if (it.name == KeyRingName.of(cfg.id, LocationName.of(id, REGION).location, kms.ring).keyRing) {
+                            log.info("Match ${it.name}")
+                        }
                         listKeys(it.name)
                     }
             }
