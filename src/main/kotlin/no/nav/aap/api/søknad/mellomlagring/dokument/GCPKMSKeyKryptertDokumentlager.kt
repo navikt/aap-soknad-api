@@ -64,7 +64,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
         with(cfg) {
             KeyManagementServiceClient.create().use { client ->
                 client.listCryptoKeys(ringName).iterateAll()
-                    .also { log.info("name $ringName, Key $it") }
+                    .also { cryptoKeys -> log.info("name $ringName, Keys: ${cryptoKeys.forEach { log.info("key: $it") }}") }
             }
         }
 
