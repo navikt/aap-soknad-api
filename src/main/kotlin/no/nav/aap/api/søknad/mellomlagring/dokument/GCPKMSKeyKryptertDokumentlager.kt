@@ -46,42 +46,43 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     private val log = getLogger(javaClass)
 
     init {
-        if (hasRing()) {
-            log.info("${ringName()} finnes allerede")
+        if (harRing()) {
+            log.info("${ringNavn()} finnes allerede")
         }
         else {
             lagRing()
         }
-        listKeys(ringName())
-        lagKey()
+        if (harNøkkel()) {
+            log.info("${nøkkelNavn()} finnes allerede")
+        }
+        else {
+            lagNøkkel()
+        }
     }
 
-    private final fun hasRing() =
+    private final fun harRing() =
         KeyManagementServiceClient.create().use { client ->
             client.listKeyRings(LocationName.of(cfg.id, REGION)).iterateAll()
                 .map { it.name }
-                .contains("${ringName()}")
+                .contains("${ringNavn()}")
         }
 
-    private fun ringName() =
+    private fun ringNavn() =
         with(cfg) {
             KeyRingName.of(id, LocationName.of(id, REGION).location, kms.ring)
         }
 
-    private fun keyName() =
+    private fun nøkkelNavn() =
         with(cfg) {
             CryptoKeyName.of(id, LocationName.of(id, REGION).location, kms.ring, kms.key)
         }
 
-    private final fun listKeys(ringName: KeyRingName) =
+    private final fun harNøkkel() =
         with(cfg) {
             KeyManagementServiceClient.create().use { client ->
-                client.listCryptoKeys(ringName).iterateAll()
-                    .forEach {
-                        val name = keyName()
-                        log.info("Sjekker $name mot ${it.name}")
-                        log.info("Ring  $ringName, Key: ${it.name}")
-                    }
+                client.listCryptoKeys(ringNavn()).iterateAll()
+                    .map { it.name }
+                    .contains("${nøkkelNavn()}")
             }
         }
 
@@ -94,17 +95,17 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
             }
         }
 
-    fun lagKey() {
+    fun lagNøkkel() {
         KeyManagementServiceClient.create().use { client ->
             with(cfg) {
-                val keyRingName = ringName()
+                val keyRingName = ringNavn()
                 log.trace("Create key fra keyring $keyRingName")
                 val key = CryptoKey.newBuilder()
                     .setPurpose(ENCRYPT_DECRYPT)
                     .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
                         .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
                     .build()
-                log.trace("Lag snart key fra ring ${keyRingName.keyRing} med  navn ${kms.key}")
+                log.trace("Lag snart key ${nøkkelNavn()}")
 
                 //val createdKey = client.createCryptoKey(keyRingName, cfg.kms.key, key)
                 // System.out.printf("Created symmetric key %s%n", createdKey.name)
