@@ -29,9 +29,6 @@ organisasjon:
     enabled: false
 buckets:
     id: ${gcp.team.project.id}
-    kms:
-        ring: aap-mellomlagring-kms
-        key: ${buckets.kms.ring}-key
     mellom:
         navn: ${mellomlagring.navn}
         subscription: ${buckets.mellom.navn}-subscription
