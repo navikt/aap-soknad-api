@@ -4,6 +4,7 @@ import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.BUCKETS
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
+import org.springframework.boot.context.properties.bind.DefaultValue
 import java.time.Duration
 
 @ConfigurationProperties(BUCKETS)
@@ -11,9 +12,9 @@ import java.time.Duration
 data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
                          @NestedConfigurationProperty val vedlegg: VedleggBucketCfg,
                          val id: String,
-                         val kms: KeyConfig) {
+                         @DefaultValue val kms: KeyConfig) {
 
-    data class KeyConfig(val ring: String, val key: String)
+    data class KeyConfig(val ring: String = "aap-mellomlagring-kms", val key: String = "aap-mellomlagring-kms-key")
 
     open class BucketCfg(val navn: String,
                          val subscription: String,
