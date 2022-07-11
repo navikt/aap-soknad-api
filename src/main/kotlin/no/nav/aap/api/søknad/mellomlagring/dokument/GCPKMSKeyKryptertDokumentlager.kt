@@ -43,8 +43,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
     init {
         val ring = keyring()?.let {
             log.info("Keyring $it finnes")
-        } ?: lagKeyRing()
-        log.info("Keyring er $ring")
+        } ?: lagKeyRing().also { log.info("Lagd keyring er $it") }
     }
 
     private final fun keyring() =
@@ -52,13 +51,16 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
             KeyManagementServiceClient.create().use { client ->
                 client.listKeyRings(LocationName.of(id, REGION)).iterateAll()
                     .firstOrNull { r -> r.equals(KeyRingName.of(id, REGION, kms.ring).keyRing) }
+                    .also { log.info("Ring $it") }
             }
         }
 
     fun lagKeyRing(): KeyRing =
-        KeyManagementServiceClient.create().use { client ->
-            client.createKeyRing(LocationName.of(cfg.id, REGION), cfg.id, KeyRing.newBuilder().build()).also {
-                log.info("Lagd keyring $it")
+        with(cfg) {
+            KeyManagementServiceClient.create().use { client ->
+                client.createKeyRing(LocationName.of(cfg.id, REGION), kms.ring, KeyRing.newBuilder().build()).also {
+                    log.info("Lagd keyring $it")
+                }
             }
         }
 
