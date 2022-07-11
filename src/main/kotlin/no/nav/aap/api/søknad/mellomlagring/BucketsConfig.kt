@@ -14,12 +14,12 @@ data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
                          val id: String,
                          @DefaultValue val kms: KeyConfig) {
 
-    data class KeyConfig(val ring: String = "aap-mellomlagring-kms", val key: String = "aap-mellomlagring-kms-key")
+    data class KeyConfig(val ring: String = "aap-mellomlagring-kms", val nøkkel: String = "aap-mellomlagring-kms-key")
 
     open class BucketCfg(val navn: String,
                          val subscription: String,
                          val topic: String,
-                         @DefaultValue("30s") val timeout: Duration,
+                         @DefaultValue(DEFAULT_TIMEOUT) val timeout: Duration,
                          val kms: String) {
         override fun toString() =
             "MellomBucketCfg(navn=$navn, subscription=$subscription, timeout=${timeout.toSeconds()}s, kms=$kms)"
@@ -28,7 +28,7 @@ data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
     class VedleggBucketCfg(navn: String,
                            subscription: String,
                            topic: String,
-                           timeout: Duration = Duration.ofSeconds(30),
+                           @DefaultValue(DEFAULT_TIMEOUT) timeout: Duration,
                            kms: String,
                            val typer: List<String>) : BucketCfg(navn, subscription, topic, timeout, kms) {
         override fun toString() =
@@ -36,6 +36,7 @@ data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
     }
 
     companion object {
+        const val DEFAULT_TIMEOUT = "30s"
         const val REGION = "europe-north1"
         const val BUCKETS = "buckets"
     }

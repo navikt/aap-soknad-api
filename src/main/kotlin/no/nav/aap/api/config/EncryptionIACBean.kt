@@ -48,7 +48,7 @@ class EncryptionIACBean(private val cfgs: BucketsConfig) : InitializingBean {
 
     private fun nøkkelNavn() =
         with(cfgs) {
-            CryptoKeyName.of(id, LocationName.of(id, REGION).location, kms.ring, kms.key)
+            CryptoKeyName.of(id, LocationName.of(id, REGION).location, kms.ring, kms.nøkkel)
         }
 
     private final fun harNøkkel() =
@@ -70,7 +70,7 @@ class EncryptionIACBean(private val cfgs: BucketsConfig) : InitializingBean {
     fun lagNøkkel() {
         KeyManagementServiceClient.create().use { client ->
             with(cfgs) {
-                client.createCryptoKey(ringNavn(), kms.key, CryptoKey.newBuilder()
+                client.createCryptoKey(ringNavn(), kms.nøkkel, CryptoKey.newBuilder()
                     .setPurpose(ENCRYPT_DECRYPT)
                     .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
                         .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
