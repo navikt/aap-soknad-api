@@ -80,17 +80,19 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
 
     fun lagKey() {
         KeyManagementServiceClient.create().use { client ->
-            val keyRingName = KeyRingName.of(cfg.id, LocationName.of(cfg.id, REGION).location, cfg.kms.ring)
-            log.trace("Create key fra keyring $keyRingName")
-            val key = CryptoKey.newBuilder()
-                .setPurpose(ENCRYPT_DECRYPT)
-                .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
-                    .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
-                .build()
-            log.trace("Lag snart key $key med navn ${cfg.kms.key}")
+            with(cfg) {
+                val keyRingName = KeyRingName.of(cfg.id, LocationName.of(id, REGION).location, kms.ring)
+                log.trace("Create key fra keyring $keyRingName")
+                val key = CryptoKey.newBuilder()
+                    .setPurpose(ENCRYPT_DECRYPT)
+                    .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
+                        .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
+                    .build()
+                log.trace("Lag snart key fra ring ${keyRingName.keyRing} med  navn ${kms.key}")
 
-            //val createdKey = client.createCryptoKey(keyRingName, cfg.kms.key, key)
-            // System.out.printf("Created symmetric key %s%n", createdKey.name)
+                //val createdKey = client.createCryptoKey(keyRingName, cfg.kms.key, key)
+                // System.out.printf("Created symmetric key %s%n", createdKey.name)
+            }
         }
     }
 
