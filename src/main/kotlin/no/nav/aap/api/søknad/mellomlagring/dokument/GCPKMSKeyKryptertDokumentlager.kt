@@ -1,14 +1,5 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
-import com.google.cloud.kms.v1.CryptoKey
-import com.google.cloud.kms.v1.CryptoKey.CryptoKeyPurpose.ENCRYPT_DECRYPT
-import com.google.cloud.kms.v1.CryptoKeyName
-import com.google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionAlgorithm.GOOGLE_SYMMETRIC_ENCRYPTION
-import com.google.cloud.kms.v1.CryptoKeyVersionTemplate
-import com.google.cloud.kms.v1.KeyManagementServiceClient
-import com.google.cloud.kms.v1.KeyRing
-import com.google.cloud.kms.v1.KeyRingName
-import com.google.cloud.kms.v1.LocationName
 import com.google.cloud.storage.BlobId.of
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
@@ -20,7 +11,6 @@ import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.REGION
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
@@ -44,7 +34,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
                                      private val sjekkere: List<DokumentSjekker>) : Dokumentlager {
 
     private val log = getLogger(javaClass)
-    
+
     override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(ctx.getFnr(), dokument)
 
     fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
@@ -55,7 +45,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
                 lager.create(newBuilder(of(cfg.vedlegg.navn, this@apply.toString()))
                     .setContentType(contentType)
                     .setMetadata(mapOf(FILNAVN to filnavn, "uuid" to this@apply.toString(), FNR to fnr.fnr))
-                    .build(), bytes, kmsKeyName(cfg.vedlegg.kms))
+                    .build(), bytes, kmsKeyName(cfg.kryptoKey))
             }
         }.also {
             log.trace("Lagret $this kryptert med uuid $it")
