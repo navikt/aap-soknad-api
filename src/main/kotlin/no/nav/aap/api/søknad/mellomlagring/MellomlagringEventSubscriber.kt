@@ -34,12 +34,12 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
     }
 
     private fun abonner(cfg: BucketCfg) =
-        Subscriber.newBuilder(ProjectSubscriptionName.of(cfgs.id, cfg.subscription), receiver()).build().apply {
-            startAsync().awaitRunning()
-            awaitRunning() // TODO sjekk dette
-                .also {
-                    log.trace("Abonnerert på events  via subscriber $this.'")
-                }
+        with(ProjectSubscriptionName.of(cfgs.id, cfg.subscription)) {
+            log.trace("Abonnererer på events  via subscription $this")
+            Subscriber.newBuilder(this, receiver()).build().apply {
+                startAsync().awaitRunning()
+                awaitRunning() // TODO sjekk dette
+            }
         }
 
     @Transactional
