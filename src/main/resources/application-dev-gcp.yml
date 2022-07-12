@@ -33,12 +33,8 @@ buckets:
         navn: ${mellomlagring.navn}
         subscription: ${buckets.mellom.navn}-subscription
         topic: ${buckets.mellom.navn}-topic
-        kms: projects/${buckets.id}/locations/europe-north1/keyRings/aap-mellomlagring-kms/cryptoKeys/mellomlagring
     vedlegg:
         navn: ${vedlegg.navn}
-        subscription: ${buckets.vedlegg.navn}-subscription
-        topic: ${buckets.vedlegg.navn}-topic
-        kms: ${buckets.mellom.kms}
         typer:
             - application/pdf
             - image/jpeg

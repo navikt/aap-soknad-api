@@ -7,7 +7,8 @@ import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
-import no.nav.aap.api.søknad.mellomlagring.AbstractEventSubscriber.Companion.UUID_
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Companion.SKJEMATYPE
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -18,7 +19,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.nio.charset.StandardCharsets.UTF_8
 
 @ConditionalOnGCP
-internal class GCPKMSKeyKryptertMellomlager(private val cfg: BucketsConfig,
+internal class GCPKMSKeyKryptertMellomlager(private val cfgs: BucketsConfig,
                                             private val lager: Storage,
                                             private val ctx: AuthContext) : Mellomlager {
     val log = getLogger(javaClass)
@@ -26,9 +27,9 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfg: BucketsConfig,
     override fun lagre(type: SkjemaType, value: String) = lagre(ctx.getFnr(), type, value)
 
     fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
-        lager.create(newBuilder(of(cfg.mellom.navn, navn(fnr, type)))
-            .setMetadata(mapOf("skjemaType" to type.name, FNR to fnr.fnr, UUID_ to callId()))
-            .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName(cfg.mellom.kms))
+        lager.create(newBuilder(of(cfgs.mellom.navn, navn(fnr, type)))
+            .setMetadata(mapOf(SKJEMATYPE to type.name, FNR to fnr.fnr, UUID_ to callId()))
+            .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName(cfgs.kryptoKey))
             .blobId.toGsUtilUri()
             .also {
                 log.trace(CONFIDENTIAL, "Lagret kryptert  $value for $fnr som $it")
@@ -37,7 +38,7 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfg: BucketsConfig,
     override fun les(type: SkjemaType) = les(ctx.getFnr(), type)
 
     fun les(fnr: Fødselsnummer, type: SkjemaType) =
-        lager.get(cfg.mellom.navn, navn(fnr, type))?.let { blob ->
+        lager.get(cfgs.mellom.navn, navn(fnr, type))?.let { blob ->
             String(blob.getContent()).also {
                 log.trace(CONFIDENTIAL, "Lest kryptert verdi $it for $fnr")
             }
@@ -46,7 +47,7 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfg: BucketsConfig,
     override fun slett(type: SkjemaType) = slett(ctx.getFnr(), type)
 
     fun slett(fnr: Fødselsnummer, type: SkjemaType) =
-        lager.delete(of(cfg.mellom.navn, navn(fnr, type)).also {
+        lager.delete(of(cfgs.mellom.navn, navn(fnr, type)).also {
             log.trace(CONFIDENTIAL, "Slettet ${it.name} for $fnr ")
         })
 }

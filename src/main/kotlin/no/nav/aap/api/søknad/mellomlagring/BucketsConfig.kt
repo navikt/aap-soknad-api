@@ -15,7 +15,7 @@ data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
                          @NestedConfigurationProperty val vedlegg: VedleggBucketCfg,
                          val id: String,
                          @DefaultValue val kms: KeyConfig) {
-    val xxx = CryptoKeyName.of(id, LocationName.of(id, REGION).location, kms.ring, kms.nøkkel).toString()
+    val kryptoKey = CryptoKeyName.of(id, LocationName.of(id, REGION).location, kms.ring, kms.nøkkel).toString()
 
     data class KeyConfig(val ring: String = "aap-mellomlagring-kms",
                          val nøkkel: String = "aap-mellomlagring-kms-key") {
@@ -25,20 +25,16 @@ data class BucketsConfig(@NestedConfigurationProperty val mellom: BucketCfg,
     open class BucketCfg(val navn: String,
                          val subscription: String,
                          val topic: String,
-                         @DefaultValue(DEFAULT_TIMEOUT) val timeout: Duration,
-                         val kms: String) {
+                         @DefaultValue(DEFAULT_TIMEOUT) val timeout: Duration) {
         override fun toString() =
-            "MellomBucketCfg(navn=$navn, subscription=$subscription, timeout=${timeout.toSeconds()}s, kms=$kms)"
+            "MellomBucketCfg(navn=$navn, subscription=$subscription, timeout=${timeout.toSeconds()}s)"
     }
 
-    class VedleggBucketCfg(navn: String,
-                           subscription: String,
-                           topic: String,
-                           @DefaultValue(DEFAULT_TIMEOUT) timeout: Duration,
-                           kms: String,
-                           val typer: List<String>) : BucketCfg(navn, subscription, topic, timeout, kms) {
+    class VedleggBucketCfg(val navn: String,
+                           @DefaultValue(DEFAULT_TIMEOUT) val timeout: Duration,
+                           val typer: List<String>) {
         override fun toString() =
-            "VedleggBucketCfg(navn=$navn, subscription=$subscription, timeout=${timeout.toSeconds()}s, kms=$kms,typer=$typer)"
+            "VedleggBucketCfg(navn=$navn,  timeout=${timeout.toSeconds()}s, typer=$typer)"
     }
 
     companion object {
