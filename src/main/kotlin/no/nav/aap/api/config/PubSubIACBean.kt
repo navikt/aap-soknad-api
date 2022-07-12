@@ -19,6 +19,9 @@ import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.BucketCfg
 import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.InitializingBean
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
+import org.springframework.boot.actuate.endpoint.annotation.Selector
 import org.springframework.stereotype.Component
 
 @Component
@@ -124,4 +127,18 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
                 }
             }
         }
+
+    @Component
+    @Endpoint(id = "iac")
+    class IACEndpoint {
+        @ReadOperation
+        fun iacOpeeration(): String {
+            return "OK"
+        }
+
+        @ReadOperation
+        fun customEndPointByName(@Selector name: String?): String {
+            return "iac"
+        }
+    }
 }
