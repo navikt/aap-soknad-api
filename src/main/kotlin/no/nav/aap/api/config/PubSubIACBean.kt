@@ -106,7 +106,9 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
             }
         }
 
-    internal fun listTopics(cfg: BucketCfg) =
+    private fun listTMellomlagerTopics() = listTopics(cfgs.mellom)
+
+    fun listTopics(cfg: BucketCfg) =
         TopicAdminClient.create().use { client ->
             client.listTopics(ProjectName.of(cfgs.id))
                 .iterateAll()
@@ -139,7 +141,7 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
     @Endpoint(id = "iac")
     class IACEndpoint(private val iac: PubSubIACBean) {
         @ReadOperation
-        fun iacOpeeration() = iac.listTopics()
+        fun iacOpeeration() = iac.listTMellomlagerTopics()
 
         @ReadOperation
         fun customEndPointByName(@Selector name: String) = "iac"
