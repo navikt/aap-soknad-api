@@ -141,7 +141,7 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
     @Endpoint(id = "iac")
     class IACEndpoint(private val iac: PubSubIACBean) {
         @ReadOperation
-        fun iacOpeeration() = iac.listMellomlagerTopics()
+        fun iacOpeeration() = mapOf("topics" to iac.listMellomlagerTopics())
 
         @ReadOperation
         fun customEndPointByName(@Selector name: String) = "iac"
