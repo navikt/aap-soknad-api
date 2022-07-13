@@ -114,6 +114,7 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
     fun listNotifikasjoner(cfg: BucketCfg) =
         with(cfg) {
             storage.listNotifications(navn)
+                .map { it.topic }
         }
 
     fun listTopics(cfg: BucketCfg) =
