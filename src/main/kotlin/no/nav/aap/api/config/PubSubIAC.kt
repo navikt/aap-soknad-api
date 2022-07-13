@@ -95,7 +95,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                         .setRole("roles/pubsub.publisher")
                         .addMembers("serviceAccount:${storage.getServiceAccount(cfgs.id).email}")
                         .build()).build())
-                    .build()).also { log.trace("Ny policy er $it") }
+                    .build()).also { log.trace("Ny policy er ${it.bindingsList}") }
             }
         }
 
