@@ -16,7 +16,7 @@ import com.google.pubsub.v1.PushConfig
 import com.google.pubsub.v1.SubscriptionName
 import com.google.pubsub.v1.TopicName
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.BucketCfg
+import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.MellomlagringBucketConfig
 import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
@@ -32,56 +32,56 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
         init(cfgs.mellom)
     }
 
-    private fun init(cfg: BucketCfg) =
+    private fun init(cfg: MellomlagringBucketConfig) =
         with(cfg) {
-            if (!harTopic(cfg)) {
-                lagTopic(cfg)
+            if (!harTopic(this)) {
+                lagTopic(this)
             }
             else {
-                log.trace("Topic (${topicName(cfg)}) finnes allerede i ${projectName()}")
+                log.trace("Topic (${topicName(this)}) finnes allerede i ${projectName()}")
             }
-            if (!harSubscription(cfg)) {
-                lagSubscription(cfg)
+            if (!harSubscription(this)) {
+                lagSubscription(this)
             }
             else {
-                log.trace("Subscription (${subscriptionName(cfg)}) finnes allerede for topic (${
+                log.trace("Subscription (${subscriptionName(this)}) finnes allerede for topic (${
                     topicName(cfg)
                 }")
             }
 
-            setPubSubAdminPolicyForBucketServiceAccountOnTopic(topicFullName(cfg))  //Idempotent
+            setPubSubAdminPolicyForBucketServiceAccountOnTopic(topicFullName(this))  //Idempotent
 
-            if (!harNotifikasjon(cfg)) {
-                lagNotifikasjon(cfg)
+            if (!harNotifikasjon(this)) {
+                lagNotifikasjon(this)
             }
             else {
-                log.trace("$navn ${notificationName(cfg)} har allerede en notifikasjon på (${topicName(cfg)})")
+                log.trace("$navn har allerede en notifikasjon på (${topicName(this)})")
             }
         }
 
-    private fun harTopic(cfg: BucketCfg) =
+    private fun harTopic(cfg: MellomlagringBucketConfig) =
         TopicAdminClient.create().use { client ->
             client.listTopics(projectName())
                 .iterateAll()
                 .map { it.name }
                 .map { it.substringAfterLast('/') }
-                .contains(cfg.topic)
+                .contains(cfg.subscription.topic)
         }
 
-    private fun lagTopic(cfg: BucketCfg) =
+    private fun lagTopic(cfg: MellomlagringBucketConfig) =
         TopicAdminClient.create().use { client ->
             client.createTopic(topicName(cfg)).also {
                 log.trace("Lagd topic ${it.name}")
             }
         }
 
-    private fun harNotifikasjon(cfg: BucketCfg) =
-        cfg.topic == storage.listNotifications(cfg.navn)
+    private fun harNotifikasjon(cfg: MellomlagringBucketConfig) =
+        cfg.subscription.topic == storage.listNotifications(cfg.navn)
             .map { it.topic }
             .map { it.substringAfterLast('/') }
             .firstOrNull()
 
-    private fun lagNotifikasjon(cfg: BucketCfg) =
+    private fun lagNotifikasjon(cfg: MellomlagringBucketConfig) =
         storage.createNotification(cfg.navn,
                 NotificationInfo.newBuilder(topicFullName(cfg))
                     .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
@@ -106,13 +106,13 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
 
     private fun listNellomlagerotifikasjoner() = listNotifikasjoner(cfgs.mellom)
 
-    private fun listNotifikasjoner(cfg: BucketCfg) =
+    private fun listNotifikasjoner(cfg: MellomlagringBucketConfig) =
         storage.listNotifications(cfg.navn)
             .map { it.topic }
 
     private fun listMellomlagerTopics() = listTopics(cfgs.mellom)
 
-    fun listTopics(cfg: BucketCfg) =
+    fun listTopics(cfg: MellomlagringBucketConfig) =
         TopicAdminClient.create().use { client ->
             client.listTopics(projectName())
                 .iterateAll()
@@ -121,21 +121,21 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
 
     private fun listMellomlagerSubscriptions() = listSubscriptions(cfgs.mellom)
 
-    private fun listSubscriptions(cfg: BucketCfg) =
+    private fun listSubscriptions(cfg: MellomlagringBucketConfig) =
         TopicAdminClient.create().use { client ->
             client.listTopicSubscriptions(topicName(cfg))
                 .iterateAll()
         }
 
-    private fun harSubscription(cfg: BucketCfg) =
+    private fun harSubscription(cfg: MellomlagringBucketConfig) =
         TopicAdminClient.create().use { client ->
             client.listTopicSubscriptions(topicName(cfg))
                 .iterateAll()
                 .map { it.substringAfterLast('/') }
-                .contains(cfg.subscription)
+                .contains(cfg.subscription.navn)
         }
 
-    private fun lagSubscription(cfg: BucketCfg) =
+    private fun lagSubscription(cfg: MellomlagringBucketConfig) =
         SubscriptionAdminClient.create().use { client ->
             client.createSubscription(subscriptionName(cfg),
                     topicName(cfg),
@@ -145,11 +145,10 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
             }
         }
 
-    private fun notificationName(cfg: BucketCfg) = NotificationInfo.of(topicFullName(cfg))
-    private fun subscriptionName(cfg: BucketCfg) = SubscriptionName.of(cfgs.id, cfg.subscription)
+    private fun subscriptionName(cfg: MellomlagringBucketConfig) = SubscriptionName.of(cfgs.id, cfg.subscription.navn)
     private fun projectName() = ProjectName.of(cfgs.id)
-    private fun topicName(cfg: BucketCfg) = TopicName.of(cfgs.id, cfg.topic)
-    private fun topicFullName(cfg: BucketCfg) = topicName(cfg).toString()
+    private fun topicName(cfg: MellomlagringBucketConfig) = TopicName.of(cfgs.id, cfg.subscription.topic)
+    private fun topicFullName(cfg: MellomlagringBucketConfig) = topicName(cfg).toString()
 
     @Component
     @Endpoint(id = "iac")

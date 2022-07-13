@@ -13,7 +13,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.JPADittNavBeskjedRepository
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.BucketCfg
+import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.MellomlagringBucketConfig
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -33,8 +33,8 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
         abonner(cfgs.mellom)
     }
 
-    private fun abonner(cfg: BucketCfg) =
-        with(ProjectSubscriptionName.of(cfgs.id, cfg.subscription)) {
+    private fun abonner(cfg: MellomlagringBucketConfig) =
+        with(ProjectSubscriptionName.of(cfgs.id, cfg.subscription.navn)) {
             log.trace("Abonnererer på events  via subscription $this")
             Subscriber.newBuilder(this, receiver()).build().apply {
                 startAsync().awaitRunning()

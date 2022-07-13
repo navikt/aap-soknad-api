@@ -31,8 +31,6 @@ buckets:
     id: ${gcp.team.project.id}
     mellom:
         navn: ${mellomlagring.navn}
-        subscription: ${buckets.mellom.navn}-subscription
-        topic: ${buckets.mellom.navn}-topic
     vedlegg:
         navn: ${vedlegg.navn}
         typer:
