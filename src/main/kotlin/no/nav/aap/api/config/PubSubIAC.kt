@@ -25,7 +25,7 @@ import org.springframework.boot.actuate.endpoint.annotation.Selector
 import org.springframework.stereotype.Component
 
 @Component
-class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storage) : InitializingBean {
+class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) : InitializingBean {
 
     private val log = LoggerUtil.getLogger(javaClass)
     override fun afterPropertiesSet() {
@@ -145,7 +145,7 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
             }
         }
 
-    private fun notificationName(cfg: BucketCfg) = NotificationInfo.of(cfg.topic)
+    private fun notificationName(cfg: BucketCfg) = NotificationInfo.of(topicFullName(cfg))
     private fun subscriptionName(cfg: BucketCfg) = SubscriptionName.of(cfgs.id, cfg.subscription)
     private fun projectName() = ProjectName.of(cfgs.id)
     private fun topicName(cfg: BucketCfg) = TopicName.of(cfgs.id, cfg.topic)
@@ -153,7 +153,7 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
 
     @Component
     @Endpoint(id = "iac")
-    class IACEndpoint(private val iac: PubSubIACBean) {
+    class IACEndpoint(private val iac: PubSubIAC) {
         @ReadOperation
         fun iacOpeeration() =
             mapOf("topics" to iac.listMellomlagerTopics(),

@@ -16,7 +16,7 @@ import org.springframework.beans.factory.InitializingBean
 import org.springframework.stereotype.Component
 
 @Component
-class EncryptionIACBean(private val cfgs: BucketsConfig) : InitializingBean {
+class EncryptionIAC(private val cfgs: BucketsConfig) : InitializingBean {
 
     private val log = LoggerUtil.getLogger(javaClass)
     override fun afterPropertiesSet() {

@@ -9,6 +9,9 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
+import java.util.*
+import javax.persistence.AttributeConverter
+import javax.persistence.Converter
 import javax.persistence.Entity
 import javax.persistence.EntityListeners
 import javax.persistence.GeneratedValue
@@ -79,5 +82,11 @@ class JPASøknad(
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
         "JPASøknad(fnr='$fnr', created=$created, updated=$updated, eventid=$eventid, gyldigtil=$gyldigtil, id=$id)"
+}
+
+@Converter(autoApply = true)
+class UuidConverter : AttributeConverter<UUID, String> {
+    override fun convertToDatabaseColumn(entityValue: UUID?) = entityValue?.let(UUID::toString)
+    override fun convertToEntityAttribute(databaseValue: String?) = databaseValue?.let(UUID::fromString)
 
 }
