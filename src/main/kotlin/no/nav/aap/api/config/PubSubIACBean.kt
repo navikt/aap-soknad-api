@@ -38,28 +38,30 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
                 lagTopic(cfg)
             }
             else {
-                log.trace("Topic $topic finnes allerede i ${cfgs.id}")
+                log.trace("Topic $topic (${topicName(cfg)}) finnes allerede i ${cfgs.id}")
             }
             if (!harSubscription(cfg)) {
                 lagSubscription(cfg)
             }
             else {
-                log.trace("Subscription $subscription finnes allerede for $topic")
+                log.trace("Subscription $subscription (${subscriptionName(cfg)}) finnes allerede for $topic (${
+                    topicName(cfg)
+                }")
             }
 
-            setPolicy(cfg)  //Idempotent
+            setPubSubAdminPolicyForBucketServiceAccountOnTopic(topicFullName(cfg))  //Idempotent
 
             if (!harNotifikasjon(cfg)) {
                 lagNotifikasjon(cfg)
             }
             else {
-                log.trace("$navn har allerede en notifikasjon på $topic")
+                log.trace("$navn har allerede en notifikasjon på $topic (${topicName()})")
             }
         }
 
     private fun harTopic(cfg: BucketCfg) =
         TopicAdminClient.create().use { client ->
-            client.listTopics(ProjectName.of(cfgs.id))
+            client.listTopics(projectName())
                 .iterateAll()
                 .map { it.name }
                 .map { it.substringAfterLast('/') }
@@ -68,7 +70,7 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
 
     private fun lagTopic(cfg: BucketCfg) =
         TopicAdminClient.create().use { client ->
-            client.createTopic(TopicName.of(cfgs.id, cfg.topic)).also {
+            client.createTopic(topicName(cfg)).also {
                 log.trace("Lagd topic ${it.name}")
             }
         }
@@ -84,21 +86,21 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
     private fun lagNotifikasjon(cfg: BucketCfg) =
         with(cfg) {
             storage.createNotification(navn,
-                    NotificationInfo.newBuilder(TopicName.of(cfgs.id, topic).toString())
+                    NotificationInfo.newBuilder(topicFullName(this))
                         .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
                         .setPayloadFormat(JSON_API_V1)
                         .build()).also {
-                log.trace("Lagd notifikasjon ${it.notificationId} for topic ${it.topic}")
+                log.trace("Lagd notifikasjon ${it.notificationId} for topic ${it.topic} (${topicName()})")
             }
         }
 
-    private fun setPolicy(cfg: BucketCfg) =
+    private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic(topic: String) =
         TopicAdminClient.create().use { client ->
-            with(TopicName.of(cfgs.id, cfg.topic)) {
+            with(topic) {
                 client.setIamPolicy(SetIamPolicyRequest.newBuilder()
-                    .setResource(this.toString())
+                    .setResource(this)
                     .setPolicy(Policy.newBuilder(client.getIamPolicy(GetIamPolicyRequest.newBuilder()
-                        .setResource(this.toString()).build())).addBindings(Binding.newBuilder()
+                        .setResource(this).build())).addBindings(Binding.newBuilder()
                         .setRole("roles/pubsub.publisher")
                         .addMembers("serviceAccount:${storage.getServiceAccount(cfgs.id).email}")
                         .build()).build())
@@ -106,20 +108,19 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
             }
         }
 
-    private fun listMellomlagerTopics() = listTopics(cfgs.mellom)
     private fun listNellomlagerotifikasjoner() = listNotifikasjoner(cfgs.mellom)
 
-    private
-
-    fun listNotifikasjoner(cfg: BucketCfg) =
+    private fun listNotifikasjoner(cfg: BucketCfg) =
         with(cfg) {
             storage.listNotifications(navn)
                 .map { it.topic }
         }
 
+    private fun listMellomlagerTopics() = listTopics(cfgs.mellom)
+
     fun listTopics(cfg: BucketCfg) =
         TopicAdminClient.create().use { client ->
-            client.listTopics(ProjectName.of(cfgs.id))
+            client.listTopics(projectName())
                 .iterateAll()
                 .map { it.name }
         }
@@ -127,34 +128,34 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
     private fun listMellomlagerSubscriptions() = listSubscriptions(cfgs.mellom)
 
     private fun listSubscriptions(cfg: BucketCfg) =
-        with(cfg) {
-            TopicAdminClient.create().use { client ->
-                client.listTopicSubscriptions(TopicName.of(cfgs.id, topic))
-                    .iterateAll()
-            }
+        TopicAdminClient.create().use { client ->
+            client.listTopicSubscriptions(topicName(cfg))
+                .iterateAll()
         }
 
     private fun harSubscription(cfg: BucketCfg) =
-        with(cfg) {
-            TopicAdminClient.create().use { client ->
-                client.listTopicSubscriptions(TopicName.of(cfgs.id, topic))
-                    .iterateAll()
-                    .map { it.substringAfterLast('/') }
-                    .contains(subscription)
-            }
+        TopicAdminClient.create().use { client ->
+            client.listTopicSubscriptions(topicName(cfg))
+                .iterateAll()
+                .map { it.substringAfterLast('/') }
+                .contains(cfg.subscription)
         }
 
     private fun lagSubscription(cfg: BucketCfg) =
-        with(cfg) {
-            SubscriptionAdminClient.create().use { client ->
-                client.createSubscription(SubscriptionName.of(cfgs.id, subscription),
-                        TopicName.of(cfgs.id, topic),
-                        PushConfig.getDefaultInstance(),
-                        10).also {
-                    log.trace("Lagd pull subscription ${it.name}")
-                }
+        SubscriptionAdminClient.create().use { client ->
+            client.createSubscription(subscriptionName(cfg),
+                    topicName(cfg),
+                    PushConfig.getDefaultInstance(),
+                    10).also {
+                log.trace("Lagd pull subscription ${it.name}")
             }
+
         }
+
+    private fun subscriptionName(cfg: BucketCfg) = SubscriptionName.of(cfgs.id, cfg.subscription)
+    private fun projectName() = ProjectName.of(cfgs.id)
+    private fun topicName(cfg: BucketCfg) = TopicName.of(cfgs.id, cfg.topic)
+    private fun topicFullName(cfg: BucketCfg) = topicName(cfg).toString()
 
     @Component
     @Endpoint(id = "iac")
