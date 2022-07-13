@@ -60,24 +60,19 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
         }
 
     private fun harTopic(cfg: MellomlagringBucketConfig) =
-        TopicAdminClient.create().use { client ->
-            client.listTopics(projectName())
-                .iterateAll()
-                .map { it.name }
-                .map { it.substringAfterLast('/') }
-                .contains(cfg.subscription.topic)
-        }
+        listTopics(cfg)
+            .map { it.substringAfterLast('/') }
+            .contains(cfg.subscription.topic)
 
     private fun lagTopic(cfg: MellomlagringBucketConfig) =
-        TopicAdminClient.create().use { client ->
-            client.createTopic(topicName(cfg)).also {
+        TopicAdminClient.create().use { c ->
+            c.createTopic(topicName(cfg)).also {
                 log.trace("Lagd topic ${it.name}")
             }
         }
 
     private fun harNotifikasjon(cfg: MellomlagringBucketConfig) =
-        cfg.subscription.topic == storage.listNotifications(cfg.navn)
-            .map { it.topic }
+        cfg.subscription.topic == listNotifikasjoner(cfg)
             .map { it.substringAfterLast('/') }
             .firstOrNull()
 
@@ -91,11 +86,11 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
         }
 
     private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic(topic: String) =
-        TopicAdminClient.create().use { client ->
+        TopicAdminClient.create().use { c ->
             with(topic) {
-                client.setIamPolicy(SetIamPolicyRequest.newBuilder()
+                c.setIamPolicy(SetIamPolicyRequest.newBuilder()
                     .setResource(this)
-                    .setPolicy(Policy.newBuilder(client.getIamPolicy(GetIamPolicyRequest.newBuilder()
+                    .setPolicy(Policy.newBuilder(c.getIamPolicy(GetIamPolicyRequest.newBuilder()
                         .setResource(this).build())).addBindings(Binding.newBuilder()
                         .setRole("roles/pubsub.publisher")
                         .addMembers("serviceAccount:${storage.getServiceAccount(cfgs.id).email}")
@@ -113,8 +108,8 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
     private fun listMellomlagerTopics() = listTopics(cfgs.mellom)
 
     fun listTopics(cfg: MellomlagringBucketConfig) =
-        TopicAdminClient.create().use { client ->
-            client.listTopics(projectName())
+        TopicAdminClient.create().use { c ->
+            c.listTopics(projectName())
                 .iterateAll()
                 .map { it.name }
         }
@@ -122,22 +117,19 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
     private fun listMellomlagerSubscriptions() = listSubscriptions(cfgs.mellom)
 
     private fun listSubscriptions(cfg: MellomlagringBucketConfig) =
-        TopicAdminClient.create().use { client ->
-            client.listTopicSubscriptions(topicName(cfg))
+        TopicAdminClient.create().use { c ->
+            c.listTopicSubscriptions(topicName(cfg))
                 .iterateAll()
         }
 
     private fun harSubscription(cfg: MellomlagringBucketConfig) =
-        TopicAdminClient.create().use { client ->
-            client.listTopicSubscriptions(topicName(cfg))
-                .iterateAll()
-                .map { it.substringAfterLast('/') }
-                .contains(cfg.subscription.navn)
-        }
+        listSubscriptions(cfg)
+            .map { it.substringAfterLast('/') }
+            .contains(cfg.subscription.navn)
 
     private fun lagSubscription(cfg: MellomlagringBucketConfig) =
-        SubscriptionAdminClient.create().use { client ->
-            client.createSubscription(subscriptionName(cfg),
+        SubscriptionAdminClient.create().use { c ->
+            c.createSubscription(subscriptionName(cfg),
                     topicName(cfg),
                     PushConfig.getDefaultInstance(),
                     10).also {
