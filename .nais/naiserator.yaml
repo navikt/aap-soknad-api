@@ -43,12 +43,11 @@ spec:
                 cascadingDelete: true
                 lifecycleCondition:
                     numNewerVersions: 0
-                    withState: ANY
                     age: {{vedlegg-varighet}}
             -   name: {{mellomlagring-navn}}
                 cascadingDelete: true
                 lifecycleCondition:
-                    numNewerVersions: 1
+                    numNewerVersions: 0
                     age: {{mellomlagring-varighet}}
     accessPolicy:
         inbound:
