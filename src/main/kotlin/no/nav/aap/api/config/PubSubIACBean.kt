@@ -55,7 +55,7 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
                 lagNotifikasjon(cfg)
             }
             else {
-                log.trace("$navn har allerede en notifikasjon på $topic (${topicName()})")
+                log.trace("$navn har allerede en notifikasjon på $topic (${topicName(cfg)})")
             }
         }
 
@@ -76,22 +76,18 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
         }
 
     private fun harNotifikasjon(cfg: BucketCfg) =
-        with(cfg) {
-            topic == storage.listNotifications(navn)
-                .map { it.topic }
-                .map { it.substringAfterLast('/') }
-                .firstOrNull()
-        }
+        cfg.topic == storage.listNotifications(cfg.navn)
+            .map { it.topic }
+            .map { it.substringAfterLast('/') }
+            .firstOrNull()
 
     private fun lagNotifikasjon(cfg: BucketCfg) =
-        with(cfg) {
-            storage.createNotification(navn,
-                    NotificationInfo.newBuilder(topicFullName(this))
-                        .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
-                        .setPayloadFormat(JSON_API_V1)
-                        .build()).also {
-                log.trace("Lagd notifikasjon ${it.notificationId} for topic ${it.topic} (${topicName()})")
-            }
+        storage.createNotification(cfg.navn,
+                NotificationInfo.newBuilder(topicFullName(cfg))
+                    .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
+                    .setPayloadFormat(JSON_API_V1)
+                    .build()).also {
+            log.trace("Lagd notifikasjon ${it.notificationId} for topic ${it.topic} (${topicName(cfg)})")
         }
 
     private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic(topic: String) =
@@ -111,10 +107,8 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
     private fun listNellomlagerotifikasjoner() = listNotifikasjoner(cfgs.mellom)
 
     private fun listNotifikasjoner(cfg: BucketCfg) =
-        with(cfg) {
-            storage.listNotifications(navn)
-                .map { it.topic }
-        }
+        storage.listNotifications(cfg.navn)
+            .map { it.topic }
 
     private fun listMellomlagerTopics() = listTopics(cfgs.mellom)
 
@@ -149,7 +143,6 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
                     10).also {
                 log.trace("Lagd pull subscription ${it.name}")
             }
-
         }
 
     private fun subscriptionName(cfg: BucketCfg) = SubscriptionName.of(cfgs.id, cfg.subscription)
