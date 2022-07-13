@@ -36,20 +36,14 @@ class EncryptionIAC(private val cfgs: BucketsConfig) : InitializingBean {
 
     private final fun harRing() =
         KeyManagementServiceClient.create().use { client ->
-            client.listKeyRings(LocationName.of(cfgs.id, REGION)).iterateAll()
+            client.listKeyRings(locationNavn()).iterateAll()
                 .map { it.name }
                 .contains("${ringNavn()}")
         }
 
-    private fun ringNavn() =
-        with(cfgs) {
-            KeyRingName.of(id, LocationName.of(id, REGION).location, kms.ring)
-        }
-
-    private fun nøkkelNavn() =
-        with(cfgs) {
-            CryptoKeyName.of(id, LocationName.of(id, REGION).location, kms.ring, kms.nøkkel)
-        }
+    private fun locationNavn() = LocationName.of(cfgs.id, REGION)
+    private fun ringNavn() = KeyRingName.of(cfgs.id, locationNavn().location, cfgs.kms.ring)
+    private fun nøkkelNavn() = CryptoKeyName.of(cfgs.id, locationNavn().location, cfgs.kms.ring, cfgs.kms.nøkkel)
 
     private final fun harNøkkel() =
         KeyManagementServiceClient.create().use { client ->
@@ -59,24 +53,20 @@ class EncryptionIAC(private val cfgs: BucketsConfig) : InitializingBean {
         }
 
     fun lagRing(): KeyRing =
-        with(cfgs) {
-            KeyManagementServiceClient.create().use { client ->
-                client.createKeyRing(LocationName.of(id, REGION), kms.ring, KeyRing.newBuilder().build()).also {
-                    log.info("Lagd keyring ${it.name}")
-                }
+        KeyManagementServiceClient.create().use { client ->
+            client.createKeyRing(locationNavn(), cfgs.kms.ring, KeyRing.newBuilder().build()).also {
+                log.info("Lagd keyring ${it.name}")
             }
         }
 
     fun lagNøkkel() {
         KeyManagementServiceClient.create().use { client ->
-            with(cfgs) {
-                client.createCryptoKey(ringNavn(), kms.nøkkel, CryptoKey.newBuilder()
-                    .setPurpose(ENCRYPT_DECRYPT)
-                    .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
-                        .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
-                    .build()).also {
-                    log.info("Lagd nøkkel $it")
-                }
+            client.createCryptoKey(ringNavn(), cfgs.kms.nøkkel, CryptoKey.newBuilder()
+                .setPurpose(ENCRYPT_DECRYPT)
+                .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
+                    .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
+                .build()).also {
+                log.info("Lagd nøkkel $it")
             }
         }
     }

@@ -3,7 +3,6 @@ package no.nav.aap.api.søknad.mellomlagring
 import com.google.cloud.kms.v1.CryptoKeyName
 import com.google.cloud.kms.v1.LocationName
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.BUCKETS
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
@@ -16,9 +15,9 @@ data class BucketsConfig(@NestedConfigurationProperty val mellom: MellomlagringB
                          @NestedConfigurationProperty val vedlegg: VedleggBucketConfig,
                          val id: String,
                          @NestedConfigurationProperty @DefaultValue val kms: KeyConfig) {
-    @Value("\${spring.application.name}")
-    lateinit var name: String
-    val kryptoKey = CryptoKeyName.of(id, LocationName.of(id, REGION).location, kms.ring, kms.nøkkel).toString()
+    val kryptoKey = with(kms) {
+        CryptoKeyName.of(id, LocationName.of(id, REGION).location, ring, nøkkel).toString()
+    }
 
     data class KeyConfig(val ring: String = "aap-mellomlagring-kms",
                          val nøkkel: String = "aap-mellomlagring-kms-key")

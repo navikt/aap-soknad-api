@@ -104,7 +104,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
             }
         }
 
-    private fun listNellomlagerotifikasjoner() = listNotifikasjoner(cfgs.mellom)
+    private fun listNellomlagerNotifikasjoner() = listNotifikasjoner(cfgs.mellom)
 
     private fun listNotifikasjoner(cfg: MellomlagringBucketConfig) =
         storage.listNotifications(cfg.navn)
@@ -154,10 +154,12 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
     @Endpoint(id = "iac")
     class IACEndpoint(private val iac: PubSubIAC) {
         @ReadOperation
-        fun iacOpeeration() =
-            mapOf("topics" to iac.listMellomlagerTopics(),
-                    "subscriptions" to iac.listMellomlagerSubscriptions(),
-                    "notifications" to iac.listNellomlagerotifikasjoner())
+        fun iacOperation() =
+            with(iac) {
+                mapOf("topics" to listMellomlagerTopics(),
+                        "subscriptions" to listMellomlagerSubscriptions(),
+                        "notifications" to listNellomlagerNotifikasjoner())
+            }
 
         @ReadOperation
         fun customEndPointByName(@Selector name: String) = "iac"
