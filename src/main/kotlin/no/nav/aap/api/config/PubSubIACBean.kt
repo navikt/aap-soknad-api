@@ -38,13 +38,13 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
                 lagTopic(cfg)
             }
             else {
-                log.trace("Topic $topic (${topicName(cfg)}) finnes allerede i ${cfgs.id}")
+                log.trace("Topic (${topicName(cfg)}) finnes allerede i ${projectName()}")
             }
             if (!harSubscription(cfg)) {
                 lagSubscription(cfg)
             }
             else {
-                log.trace("Subscription $subscription (${subscriptionName(cfg)}) finnes allerede for $topic (${
+                log.trace("Subscription (${subscriptionName(cfg)}) finnes allerede for topic (${
                     topicName(cfg)
                 }")
             }
@@ -55,7 +55,7 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
                 lagNotifikasjon(cfg)
             }
             else {
-                log.trace("$navn har allerede en notifikasjon på $topic (${topicName(cfg)})")
+                log.trace("$navn ${notificationName(cfg)} har allerede en notifikasjon på (${topicName(cfg)})")
             }
         }
 
@@ -87,7 +87,7 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
                     .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
                     .setPayloadFormat(JSON_API_V1)
                     .build()).also {
-            log.trace("Lagd notifikasjon ${it.notificationId} for topic ${it.topic} (${topicName(cfg)})")
+            log.trace("Lagd notifikasjon ${it.notificationId} for topic (${topicName(cfg)})")
         }
 
     private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic(topic: String) =
@@ -145,6 +145,7 @@ class PubSubIACBean(private val cfgs: BucketsConfig, private val storage: Storag
             }
         }
 
+    private fun notificationName(cfg: BucketCfg) = NotificationInfo.of(cfg.topic)
     private fun subscriptionName(cfg: BucketCfg) = SubscriptionName.of(cfgs.id, cfg.subscription)
     private fun projectName() = ProjectName.of(cfgs.id)
     private fun topicName(cfg: BucketCfg) = TopicName.of(cfgs.id, cfg.topic)
