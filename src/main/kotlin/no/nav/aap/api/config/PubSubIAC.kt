@@ -154,6 +154,14 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
             }
 
         @ReadOperation
-        fun customEndPointByName(@Selector name: String) = "iac"
+        fun iacByName(@Selector name: String) =
+            with(iac) {
+                when (name) {
+                    "topics" -> mapOf("topics" to listMellomlagerTopics())
+                    "subscriptions" -> mapOf("subscriptions" to listMellomlagerSubscriptions())
+                    "notifications" -> mapOf("notifications" to listNellomlagerNotifikasjoner())
+                    else -> iacOperation()
+                }
+            }
     }
 }
