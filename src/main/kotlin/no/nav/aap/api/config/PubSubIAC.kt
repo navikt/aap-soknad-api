@@ -38,13 +38,13 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                 lagTopic(this)
             }
             else {
-                log.trace("Topic (${topicName(this)}) finnes allerede i ${projectName()}")
+                log.trace("Topic ${topicName(this)} finnes allerede i ${projectName()}")
             }
             if (!harSubscription(this)) {
                 lagSubscription(this)
             }
             else {
-                log.trace("Subscription (${subscriptionName(this)}) finnes allerede for topic (${
+                log.trace("Subscription ${subscriptionName(this)} finnes allerede for topic (${
                     topicName(cfg)
                 }")
             }
@@ -55,7 +55,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                 lagNotifikasjon(this)
             }
             else {
-                log.trace("$navn har allerede en notifikasjon på (${topicName(this)})")
+                log.trace("$navn har allerede en notifikasjon på ${topicName(this)}")
             }
         }
 
@@ -82,7 +82,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                     .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
                     .setPayloadFormat(JSON_API_V1)
                     .build()).also {
-            log.trace("Lagd notifikasjon ${it.notificationId} for topic (${topicName(cfg)})")
+            log.trace("Lagd notifikasjon $it.notificationId}for topic ${topicName(cfg)}")
         }
 
     private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic(topic: String) =
