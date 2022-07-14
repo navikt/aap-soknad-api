@@ -110,6 +110,7 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
             val fnr = meta[FNR]?.let { Fødselsnummer(it) }
             val type = meta[SKJEMATYPE]?.let { SkjemaType.valueOf(it) }
             if (uuid != null && fnr != null && type != null) {
+
                 Metadata(type, fnr, uuid)
             }
             else null
