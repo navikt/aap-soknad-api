@@ -45,7 +45,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
                 lager.create(newBuilder(of(cfg.vedlegg.navn, this@apply.toString()))
                     .setContentType(contentType)
                     .setMetadata(mapOf(FILNAVN to filnavn, "uuid" to this@apply.toString(), FNR to fnr.fnr))
-                    .build(), bytes, kmsKeyName(cfg.kryptoKey))
+                    .build(), bytes, kmsKeyName(cfg.nøkkelNavn))
             }
         }.also {
             log.trace("Lagret $this kryptert med uuid $it")

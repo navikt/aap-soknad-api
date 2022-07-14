@@ -1,7 +1,11 @@
 package no.nav.aap.api.søknad.mellomlagring
 
 import com.google.cloud.kms.v1.CryptoKeyName
+import com.google.cloud.kms.v1.KeyRingName
 import com.google.cloud.kms.v1.LocationName
+import com.google.pubsub.v1.ProjectName
+import com.google.pubsub.v1.SubscriptionName
+import com.google.pubsub.v1.TopicName
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.BUCKETS
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -14,10 +18,15 @@ import java.time.Duration
 data class BucketsConfig(val id: String,
                          @NestedConfigurationProperty val mellom: MellomlagringBucketConfig,
                          @NestedConfigurationProperty val vedlegg: VedleggBucketConfig,
-                         @NestedConfigurationProperty @DefaultValue val kms: KeyConfig) {
-    val kryptoKey = with(kms) {
-        CryptoKeyName.of(id, LocationName.of(id, REGION).location, ring, key).toString()
-    }
+                         @NestedConfigurationProperty val kms: KeyConfig) {
+
+    val locationNavn = LocationName.of(id, REGION)
+    val projectName = ProjectName.of(id)
+    val ringNavn = KeyRingName.of(id, locationNavn.location, kms.ring)
+    val topicName = TopicName.of(id, mellom.subscription.topic)
+    val subscriptionName = SubscriptionName.of(id, mellom.subscription.navn)
+    val topicFullName = topicName.toString()
+    val nøkkelNavn = CryptoKeyName.of(id, locationNavn.location, kms.ring, kms.key).toString()
 
     data class KeyConfig(val ring: String, val key: String)
 
