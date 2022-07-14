@@ -27,17 +27,4 @@ arbeidsforhold:
 organisasjon:
     base-uri: https://ereg-services-q1.dev-fss-pub.nais.io
     enabled: false
-buckets:
-    id: ${gcp.team.project.id}
-    mellom:
-        navn: ${mellomlagring.navn}
-    vedlegg:
-        navn: ${vedlegg.navn}
-        typer:
-            - application/pdf
-            - image/jpeg
-            - image/png
-
-
-
 debug: false

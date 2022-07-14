@@ -1,6 +1,6 @@
 {
     "tenant": "trygdeetaten.no",
-    "mellomlagring-navn": "aap-mellomlagring",
+    "mellomlagring-navn": "aap-mellomlagring-dev",
     "vedlegg-navn": "aap-vedlegg",
     "ingress": "https://aap-soknad-api.dev.intern.nav.no",
     "kafka-pool": "nav-dev",

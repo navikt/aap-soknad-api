@@ -153,3 +153,19 @@ dittnav:
         topic: min-side.aapen-brukernotifikasjon-oppgave-v1
     done:
         topic: min-side.aapen-brukernotifikasjon-done-v1
+buckets:
+    id: ${gcp.team.project.id}
+    kms:
+        ring: ${mellomlagring.navn}-kms
+        key: ${mellomlagring.navn}-kmskey
+    mellom:
+        navn: ${mellomlagring.navn}
+        subscription:
+            navn: ${mellomlagring.navn}-subscription
+            topic: ${mellomlagring.navn}-topic
+    vedlegg:
+        navn: ${vedlegg.navn}
+        typer:
+            - application/pdf
+            - image/jpeg
+            - image/png

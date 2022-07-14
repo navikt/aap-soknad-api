@@ -11,23 +11,21 @@ import java.time.Duration
 
 @ConfigurationProperties(BUCKETS)
 @ConstructorBinding
-data class BucketsConfig(@NestedConfigurationProperty val mellom: MellomlagringBucketConfig,
+data class BucketsConfig(val id: String,
+                         @NestedConfigurationProperty val mellom: MellomlagringBucketConfig,
                          @NestedConfigurationProperty val vedlegg: VedleggBucketConfig,
-                         val id: String,
                          @NestedConfigurationProperty @DefaultValue val kms: KeyConfig) {
     val kryptoKey = with(kms) {
         CryptoKeyName.of(id, LocationName.of(id, REGION).location, ring, nøkkel).toString()
     }
 
-    data class KeyConfig(val ring: String = "aap-mellomlagring-kms",
-                         val nøkkel: String = "aap-mellomlagring-kms-key")
+    data class KeyConfig(val ring: String, val nøkkel: String)
 
     data class MellomlagringBucketConfig(val navn: String,
-                                         @NestedConfigurationProperty @DefaultValue val subscription: SubscriptionConfig,
+                                         @NestedConfigurationProperty val subscription: SubscriptionConfig,
                                          @DefaultValue(DEFAULT_TIMEOUT) val timeout: Duration) {
 
-        data class SubscriptionConfig(val navn: String = "aap-mellomlagring-subscription",
-                                      val topic: String = "aap-mellomlagring-topic")
+        data class SubscriptionConfig(val navn: String, val topic: String)
     }
 
     data class VedleggBucketConfig(val navn: String,
