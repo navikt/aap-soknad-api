@@ -29,7 +29,7 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfgs: BucketsConfig,
     fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
         lager.create(newBuilder(of(cfgs.mellom.navn, navn(fnr, type)))
             .setMetadata(mapOf(SKJEMATYPE to type.name, FNR to fnr.fnr, UUID_ to callId()))
-            .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName(cfgs.kryptoKey))
+            .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName(cfgs.nøkkelNavn))
             .blobId.toGsUtilUri()
             .also {
                 log.trace(CONFIDENTIAL, "Lagret kryptert  $value for $fnr som $it")
