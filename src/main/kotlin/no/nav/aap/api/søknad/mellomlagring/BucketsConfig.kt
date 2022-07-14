@@ -16,10 +16,10 @@ data class BucketsConfig(val id: String,
                          @NestedConfigurationProperty val vedlegg: VedleggBucketConfig,
                          @NestedConfigurationProperty @DefaultValue val kms: KeyConfig) {
     val kryptoKey = with(kms) {
-        CryptoKeyName.of(id, LocationName.of(id, REGION).location, ring, nøkkel).toString()
+        CryptoKeyName.of(id, LocationName.of(id, REGION).location, ring, key).toString()
     }
 
-    data class KeyConfig(val ring: String, val nøkkel: String)
+    data class KeyConfig(val ring: String, val key: String)
 
     data class MellomlagringBucketConfig(val navn: String,
                                          @NestedConfigurationProperty val subscription: SubscriptionConfig,

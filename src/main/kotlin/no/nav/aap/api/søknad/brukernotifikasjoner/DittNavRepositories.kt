@@ -47,7 +47,7 @@ data class DittNavRepositories(val beskjeder: JPADittNavBeskjedRepository,
 class JPADittNavBeskjed(
         var fnr: String? = null,
         @CreatedDate var created: LocalDateTime? = null,
-        var eventid: String,
+        var eventid: UUID,
         @LastModifiedDate var updated: LocalDateTime? = null,
         var done: Boolean = false,
         var mellomlager: Boolean,
@@ -63,7 +63,7 @@ class JPADittNavOppgave(
         var fnr: String? = null,
         @CreatedDate var created: LocalDateTime? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
-        var eventid: String,
+        var eventid: UUID,
         var done: Boolean = false,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
@@ -77,7 +77,7 @@ class JPASøknad(
         var fnr: String? = null,
         @CreatedDate var created: LocalDateTime? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
-        var eventid: String,
+        var eventid: UUID,
         var gyldigtil: LocalDateTime? = null,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
@@ -88,5 +88,4 @@ class JPASøknad(
 class UuidConverter : AttributeConverter<UUID, String> {
     override fun convertToDatabaseColumn(entityValue: UUID?) = entityValue?.let(UUID::toString)
     override fun convertToEntityAttribute(databaseValue: String?) = databaseValue?.let(UUID::fromString)
-
 }
