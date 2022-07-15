@@ -79,7 +79,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 with(nøkkel(type.name, eventId, fnr, "done")) {
                     dittNav.send(ProducerRecord(done.topic, this, done()))
                         .addCallback(DittNavOppgaveDoneCallback(this))
-                    repos.oppgaver.done("$eventId")
+                    repos.oppgaver.done(eventId)
                 }
             }
             else {
@@ -94,7 +94,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 with(nøkkel(type.name, eventId, fnr, "done")) {
                     dittNav.send(ProducerRecord(done.topic, this, done()))
                         .addCallback(DittNavBeskjedDoneCallback(this))
-                    repos.beskjeder.done("$eventId")
+                    repos.beskjeder.done(eventId)
                 }
             }
             else {
