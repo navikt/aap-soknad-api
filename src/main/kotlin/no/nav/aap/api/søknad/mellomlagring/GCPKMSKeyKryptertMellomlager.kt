@@ -3,7 +3,6 @@ package no.nav.aap.api.søknad.mellomlagring
 import com.google.cloud.storage.BlobId.of
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
-import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
@@ -27,9 +26,12 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfgs: BucketsConfig,
     override fun lagre(type: SkjemaType, value: String) = lagre(ctx.getFnr(), type, value)
 
     fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
-        lager.create(newBuilder(of(cfgs.mellom.navn, navn(fnr, type)))
-            .setMetadata(mapOf(SKJEMATYPE to type.name, FNR to fnr.fnr, UUID_ to callId()))
-            .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName(cfgs.nøkkelNavn))
+        lager.create(
+                newBuilder(of(cfgs.mellom.navn, navn(fnr, type)))
+                    .setMetadata(mapOf(SKJEMATYPE to type.name, FNR to fnr.fnr, UUID_ to callId()))
+                    .setContentType(APPLICATION_JSON_VALUE).build(),
+                value.toByteArray(UTF_8), /*kmsKeyName(cfgs.nøkkelNavn)*/
+                    )
             .blobId.toGsUtilUri()
             .also {
                 log.trace(CONFIDENTIAL, "Lagret kryptert  $value for $fnr som $it")
