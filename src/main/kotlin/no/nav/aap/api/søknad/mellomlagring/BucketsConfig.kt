@@ -26,7 +26,8 @@ data class BucketsConfig(val id: String,
     val topicName = TopicName.of(id, mellom.subscription.topic)
     val subscriptionName = SubscriptionName.of(id, mellom.subscription.navn)
     val topicFullName = topicName.toString()
-    val nøkkelNavn = CryptoKeyName.of(id, locationNavn.location, kms.ring, kms.key).toString()
+    val nøkkel = CryptoKeyName.of(id, locationNavn.location, kms.ring, kms.key)
+    val nøkkelNavn = nøkkel.toString()
 
     data class KeyConfig(val ring: String, val key: String)
 

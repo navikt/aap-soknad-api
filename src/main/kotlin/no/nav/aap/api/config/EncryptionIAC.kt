@@ -6,13 +6,15 @@ import com.google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionAlgorithm.GOOGLE
 import com.google.cloud.kms.v1.CryptoKeyVersionTemplate
 import com.google.cloud.kms.v1.KeyManagementServiceClient
 import com.google.cloud.kms.v1.KeyRing
+import com.google.cloud.storage.Storage
+import com.google.iam.v1.Binding
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
 import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.stereotype.Component
 
 @Component
-class EncryptionIAC(private val cfgs: BucketsConfig) : InitializingBean {
+class EncryptionIAC(private val cfgs: BucketsConfig, private val storage: Storage) : InitializingBean {
 
     private val log = LoggerUtil.getLogger(javaClass)
     override fun afterPropertiesSet() {
@@ -28,6 +30,7 @@ class EncryptionIAC(private val cfgs: BucketsConfig) : InitializingBean {
         else {
             lagNøkkel()
         }
+        setKeyAksessForBucketServiceAccount()
     }
 
     fun listRinger() =
@@ -66,6 +69,17 @@ class EncryptionIAC(private val cfgs: BucketsConfig) : InitializingBean {
                 .build()).also {
                 log.info("Lagd nøkkel $it")
             }
+        }
+    }
+
+    fun setKeyAksessForBucketServiceAccount() {
+        KeyManagementServiceClient.create().use { client ->
+            client.setIamPolicy(cfgs.nøkkel,
+                    client.getIamPolicy(cfgs.nøkkel).toBuilder().addBindings(Binding.newBuilder()
+                        .setRole("roles/cloudkms.cryptoKeyEncrypterDecrypter")
+                        .addMembers("serviceAccount:${storage.getServiceAccount(cfgs.id).email}")
+                        .build()).build())
+                .also { log.trace("Ny policy er ${it.bindingsList}") }
         }
     }
 }
