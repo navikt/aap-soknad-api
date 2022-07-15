@@ -86,7 +86,6 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                     .setPolicy(Policy.newBuilder(c.getIamPolicy(GetIamPolicyRequest.newBuilder()
                         .setResource(this).build())).addBindings(Binding.newBuilder()
                         .setRole("roles/pubsub.publisher")
-                        .setRole("roles/cloudkms.cryptoKeyEncrypterDecrypter")
                         .addMembers("serviceAccount:${storage.getServiceAccount(cfgs.id).email}")
                         .build()).build())
                     .build()).also { log.trace("Ny policy er ${it.bindingsList}") }
