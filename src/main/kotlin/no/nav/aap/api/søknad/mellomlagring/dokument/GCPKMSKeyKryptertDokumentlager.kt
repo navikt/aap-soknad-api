@@ -7,7 +7,6 @@ import com.google.cloud.storage.Storage.BlobField.CONTENT_TYPE
 import com.google.cloud.storage.Storage.BlobField.METADATA
 import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
 import com.google.cloud.storage.Storage.BlobGetOption.fields
-import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
@@ -42,10 +41,13 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
             with(dokument) {
                 log.trace("Lagrer $filnavn kryptert, med uuid $this@uuid  og contentType $contentType")
                 sjekkere.forEach { it.sjekk(this) }
-                lager.create(newBuilder(of(cfg.vedlegg.navn, this@apply.toString()))
-                    .setContentType(contentType)
-                    .setMetadata(mapOf(FILNAVN to filnavn, "uuid" to this@apply.toString(), FNR to fnr.fnr))
-                    .build(), bytes, kmsKeyName(cfg.nøkkelNavn))
+                lager.create(
+                        newBuilder(of(cfg.vedlegg.navn, this@apply.toString()))
+                            .setContentType(contentType)
+                            .setMetadata(mapOf(FILNAVN to filnavn, "uuid" to this@apply.toString(), FNR to fnr.fnr))
+                            .build(),
+                        bytes, /*kmsKeyName(cfg.nøkkelNavn)*/
+                            )
             }
         }.also {
             log.trace("Lagret $this kryptert med uuid $it")
