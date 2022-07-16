@@ -148,15 +148,14 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
 
         @ReadOperation
         fun iacByName(@Selector name: String) =
-             when (name) {
+            when (name) {
                 "topics" -> mapOf("topics" to iac.listTopics())
                 "subscriptions" -> mapOf("subscriptions" to iac.listSubscriptions())
                 "notifications" -> mapOf("notifications" to iac.listTopicForNotifikasjoner())
-                 "ring" -> mapOf("ring" to env.listRinger())
-                 "key" -> mapOf("key" to env.listNøkler())
-                 else -> iacOperation()
+                "ring" -> mapOf("ring" to env.listRinger())
+                "key" -> mapOf("key" to env.listNøkler())
+                else -> iacOperation()
             }
 
-        }
     }
 }
