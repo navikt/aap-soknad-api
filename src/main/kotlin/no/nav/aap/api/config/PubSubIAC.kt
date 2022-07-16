@@ -136,7 +136,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
             with(iac) {
                 mapOf("topics" to listTopics(),
                         "subscriptions" to listSubscriptions(),
-                        "notifications" to listNotifikasjoner())
+                        "notifications" to listTopicForNotifikasjoner())
             }
 
         @ReadOperation
@@ -145,7 +145,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                 when (name) {
                     "topics" -> mapOf("topics" to listTopics())
                     "subscriptions" -> mapOf("subscriptions" to listSubscriptions())
-                    "notifications" -> mapOf("notifications" to listNotifikasjoner())
+                    "notifications" -> mapOf("notifications" to listTopicForNotifikasjoner())
                     else -> iacOperation()
                 }
             }
