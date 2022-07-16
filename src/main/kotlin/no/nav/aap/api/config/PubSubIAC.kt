@@ -138,7 +138,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                 mutableMapOf("bucket" to mellom.navn,
                         "topic" to topicFullName,
                         "subscription" to subscriptionName.toString(),
-                        "notification" to iac.listTopicForNotifikasjoner())
+                        "notification" to iac.listTopicForNotifikasjoner().first())
                     .apply {
                         putAll(mapOf("ring" to ringNavn,
                                 "nøkkel" to nøkkelNavn))
