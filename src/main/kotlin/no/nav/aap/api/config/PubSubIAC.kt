@@ -24,36 +24,39 @@ import org.springframework.stereotype.Component
 class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) : InitializingBean {
 
     private val log = LoggerUtil.getLogger(javaClass)
-    override fun afterPropertiesSet() {
-        init()
-    }
+    override fun afterPropertiesSet() = init()
 
     private fun init() {
-        if (!harTopic()) {
-            lagTopic()
-        }
-        else {
-            log.trace("Topics ${cfgs.topicName} finnes allerede i ${cfgs.projectName}")
-        }
-        if (!harSubscription()) {
-            lagSubscription()
-        }
-        else {
-            log.trace("Subscription ${cfgs.subscriptionName} finnes allerede for topic ${cfgs.topicName}")
-        }
+        with(cfgs) {
+            if (!harTopic()) {
+                lagTopic()
+            }
+            else {
+                log.trace("Topics $topicName finnes allerede i $projectName")
+            }
+            if (!harSubscription()) {
+                lagSubscription()
+            }
+            else {
+                log.trace("Subscription $subscriptionName finnes allerede for topic $topicName")
+            }
 
-        setPubSubAdminPolicyForBucketServiceAccountOnTopic(cfgs.topicFullName)  //Idempotent
 
-        if (!harNotifikasjon()) {
-            lagNotifikasjon()
-        }
-        else {
-            log.trace("${cfgs.mellom.navn} har allerede en notifikasjon på ${cfgs.topicName}")
+            if (!harNotifikasjon()) {
+                lagNotifikasjon()
+            }
+            else {
+                log.trace("${mellom.navn} har allerede en notifikasjon på $topicName")
+            }
+            setPubSubAdminPolicyForBucketServiceAccountOnTopic(topicFullName)  //Idempotent
         }
     }
 
     private fun harTopic() =
         listTopics()
+            .also {
+                log.info("X Topic $it")
+            }
             .map { it.substringAfterLast('/') }
             .contains(cfgs.mellom.subscription.topic)
 
@@ -65,7 +68,9 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
         }
 
     private fun harNotifikasjon() =
-        cfgs.mellom.subscription.topic == listNotifikasjoner()
+        cfgs.mellom.subscription.topic == listNotifikasjoner().also {
+            log.info("X Notifikasjon $it")
+        }
             .map { it.substringAfterLast('/') }
             .firstOrNull()
 
@@ -92,8 +97,6 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
             }
         }
 
-    private fun listNellomlagerNotifikasjoner() = listNotifikasjoner()
-
     private fun listNotifikasjoner() =
         storage.listNotifications(cfgs.mellom.navn)
             .map { it.topic }
@@ -113,6 +116,9 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
 
     private fun harSubscription() =
         listSubscriptions()
+            .also {
+                log.info("X Subscription $it")
+            }
             .map { it.substringAfterLast('/') }
             .contains(cfgs.mellom.subscription.navn)
 
@@ -134,7 +140,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
             with(iac) {
                 mapOf("topics" to listTopics(),
                         "subscriptions" to listSubscriptions(),
-                        "notifications" to listNellomlagerNotifikasjoner())
+                        "notifications" to listNotifikasjoner())
             }
 
         @ReadOperation
@@ -143,7 +149,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                 when (name) {
                     "topics" -> mapOf("topics" to listTopics())
                     "subscriptions" -> mapOf("subscriptions" to listSubscriptions())
-                    "notifications" -> mapOf("notifications" to listNellomlagerNotifikasjoner())
+                    "notifications" -> mapOf("notifications" to listNotifikasjoner())
                     else -> iacOperation()
                 }
             }

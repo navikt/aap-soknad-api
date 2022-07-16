@@ -22,7 +22,8 @@ data class BucketsConfig(val id: String,
 
     val locationNavn = LocationName.of(id, REGION)
     val projectName = ProjectName.of(id)
-    val ringNavn = KeyRingName.of(id, locationNavn.location, kms.ring)
+    val ring = KeyRingName.of(id, locationNavn.location, kms.ring)
+    val ringNavn = ring.toString()
     val topicName = TopicName.of(id, mellom.subscription.topic)
     val subscriptionName = SubscriptionName.of(id, mellom.subscription.navn)
     val topicFullName = topicName.toString()

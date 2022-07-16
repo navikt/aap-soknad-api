@@ -17,21 +17,22 @@ import org.springframework.stereotype.Component
 class EncryptionIAC(private val cfgs: BucketsConfig, private val storage: Storage) : InitializingBean {
 
     private val log = LoggerUtil.getLogger(javaClass)
-    override fun afterPropertiesSet() {
-        if (harRing()) {
-            log.info("KeyRing ${cfgs.ringNavn} finnes allerede")
+    override fun afterPropertiesSet() =
+        with(cfgs) {
+            if (harRing()) {
+                log.info("KeyRing $ring finnes allerede")
+            }
+            else {
+                lagRing()
+            }
+            if (harNøkkel()) {
+                log.info("CryptoKey $cfgs finnes allerede")
+            }
+            else {
+                lagNøkkel()
+            }
+            setKeyAksessForBucketServiceAccount()
         }
-        else {
-            lagRing()
-        }
-        if (harNøkkel()) {
-            log.info("CryptoKey ${cfgs.nøkkelNavn} finnes allerede")
-        }
-        else {
-            lagNøkkel()
-        }
-        setKeyAksessForBucketServiceAccount()
-    }
 
     fun listRinger() =
         KeyManagementServiceClient.create().use { client ->
@@ -41,11 +42,11 @@ class EncryptionIAC(private val cfgs: BucketsConfig, private val storage: Storag
     private final fun harRing() =
         listRinger()
             .map { it.name }
-            .contains(cfgs.ringNavn.toString())
+            .contains(cfgs.ringNavn)
 
     final fun listNøkler() =
         KeyManagementServiceClient.create().use { client ->
-            client.listCryptoKeys(cfgs.ringNavn).iterateAll()
+            client.listCryptoKeys(cfgs.ring).iterateAll()
         }
 
     private final fun harNøkkel() =
@@ -54,32 +55,39 @@ class EncryptionIAC(private val cfgs: BucketsConfig, private val storage: Storag
             .contains(cfgs.nøkkelNavn)
 
     fun lagRing(): KeyRing =
-        KeyManagementServiceClient.create().use { client ->
-            client.createKeyRing(cfgs.locationNavn, cfgs.kms.ring, KeyRing.newBuilder().build()).also {
-                log.info("Lagd keyring ${it.name}")
+        with(cfgs) {
+            KeyManagementServiceClient.create().use { client ->
+                client.createKeyRing(locationNavn, kms.ring, KeyRing.newBuilder().build()).also {
+                    log.info("Lagd keyring ${it.name}")
+                }
             }
         }
 
     fun lagNøkkel() {
-        KeyManagementServiceClient.create().use { client ->
-            client.createCryptoKey(cfgs.ringNavn, cfgs.kms.key, CryptoKey.newBuilder()
-                .setPurpose(ENCRYPT_DECRYPT)
-                .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
-                    .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
-                .build()).also {
-                log.info("Lagd nøkkel $it")
+        with(cfgs) {
+            KeyManagementServiceClient.create().use { client ->
+                client.createCryptoKey(ring, kms.key, CryptoKey.newBuilder()
+                    .setPurpose(ENCRYPT_DECRYPT)
+                    .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
+                        .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
+                    .build()).also {
+                    log.info("Lagd nøkkel $it")
+                }
             }
         }
     }
 
     fun setKeyAksessForBucketServiceAccount() {
-        KeyManagementServiceClient.create().use { client ->
-            client.setIamPolicy(cfgs.nøkkel,
-                    client.getIamPolicy(cfgs.nøkkel).toBuilder().addBindings(Binding.newBuilder()
-                        .setRole("roles/cloudkms.cryptoKeyEncrypterDecrypter")
-                        .addMembers("serviceAccount:${storage.getServiceAccount(cfgs.id).email}")
-                        .build()).build())
-                .also { log.trace("Ny policy er ${it.bindingsList}") }
+        with(cfgs) {
+            KeyManagementServiceClient.create().use { client ->
+                client.setIamPolicy(nøkkel,
+                        client.getIamPolicy(nøkkel).toBuilder().addBindings(Binding.newBuilder()
+                            .setRole("roles/cloudkms.cryptoKeyEncrypterDecrypter")
+                            .addMembers("serviceAccount:${storage.getServiceAccount(id).email}")
+                            .build()).build())
+                    .also { log.trace("Ny policy er ${it.bindingsList}") }
+            }
         }
+
     }
 }
