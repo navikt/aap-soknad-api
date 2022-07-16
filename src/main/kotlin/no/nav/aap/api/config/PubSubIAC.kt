@@ -135,7 +135,8 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
         @ReadOperation
         fun iacOperation() =
             with(iac) {
-                mutableMapOf("topic" to listTopics(),
+                mutableMapOf("bucket" to cfgs.mellom.navn,
+                        "topic" to listTopics(),
                         "subscription" to listSubscriptions(),
                         "notification" to listTopicForNotifikasjoner())
             }.apply {
