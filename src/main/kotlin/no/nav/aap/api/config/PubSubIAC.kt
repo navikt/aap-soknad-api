@@ -69,12 +69,14 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
             .firstOrNull()
 
     private fun lagNotifikasjon() =
-        storage.createNotification(cfgs.mellom.navn,
-                NotificationInfo.newBuilder(cfgs.topicFullName)
-                    .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
-                    .setPayloadFormat(JSON_API_V1)
-                    .build()).also {
-            log.trace("Lagd notifikasjon ${it.notificationId} for topic ${cfgs.topicFullName}")
+        with(cfgs) {
+            storage.createNotification(mellom.navn,
+                    NotificationInfo.newBuilder(topicFullName)
+                        .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
+                        .setPayloadFormat(JSON_API_V1)
+                        .build()).also {
+                log.trace("Lagd notifikasjon ${it.notificationId} for topic $topicFullName")
+            }
         }
 
     private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic(topic: String) =
@@ -92,10 +94,10 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
         }
 
     private fun listTopicForNotifikasjoner() =
-        storage.listNotifications(cfgs.mellom.navn)
-            .map { it.topic }.also {
-                log.info("X Notifikasjon topic $it vs ${cfgs.topicName.topic}")
-            }
+        with(cfgs) {
+            storage.listNotifications(mellom.navn)
+                .map { it.topic }
+        }
 
     fun listTopics() =
         TopicAdminClient.create().use { c ->
@@ -111,20 +113,20 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
         }
 
     private fun harSubscription() =
-        listSubscriptions()
-            .also {
-                log.info("X Subscription $it vs ${cfgs.subscriptionName}")
-            }
-            .map { it.substringAfterLast('/') }
-            .contains(cfgs.mellom.subscription.navn)
+        with(cfgs) {
+            listSubscriptions()
+                .map { it.substringAfterLast('/') }
+                .contains(mellom.subscription.navn)
+        }
 
     private fun lagSubscription() =
-        SubscriptionAdminClient.create().use { c ->
-            c.createSubscription(cfgs.subscriptionName,
-                    cfgs.topicName,
-                    PushConfig.getDefaultInstance(),
-                    10).also {
-                log.trace("Lagd pull subscription ${it.name}")
+        with(cfgs) {
+            SubscriptionAdminClient.create().use { c ->
+                c.createSubscription(subscriptionName, topicName,
+                        PushConfig.getDefaultInstance(),
+                        10).also {
+                    log.trace("Lagd pull subscription ${it.name}")
+                }
             }
         }
 
