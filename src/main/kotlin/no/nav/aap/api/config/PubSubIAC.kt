@@ -63,9 +63,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
         }
 
     private fun harNotifikasjon() =
-        cfgs.mellom.subscription.topic == listTopicForNotifikasjoner()
-            .map { it.substringAfterLast('/') }
-            .firstOrNull()
+        cfgs.mellom.subscription.topic == listTopicForNotifikasjon().substringAfterLast('/')
 
     private fun lagNotifikasjon() =
         with(cfgs) {
@@ -92,10 +90,12 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
             }
         }
 
-    private fun listTopicForNotifikasjoner() =
+    private fun listTopicForNotifikasjon() =
         with(cfgs) {
             storage.listNotifications(mellom.navn)
-                .map { it.topic }
+                .map { it.topic }.first().also {
+                    log.trace("X Topic er $it vs ${cfgs.topicFullName}")
+                }
         }
 
     fun listTopics() =
@@ -138,7 +138,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                 mutableMapOf("bucket" to mellom.navn,
                         "topic" to topicFullName,
                         "subscription" to subscriptionName.toString(),
-                        "notification" to iac.listTopicForNotifikasjoner().first())
+                        "notification" to iac.listTopicForNotifikasjon())
                     .apply {
                         putAll(mapOf("ring" to ringNavn,
                                 "nøkkel" to nøkkelNavn))
