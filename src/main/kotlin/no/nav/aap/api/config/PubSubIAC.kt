@@ -65,7 +65,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
 
     private fun harNotifikasjon() =
         cfgs.mellom.subscription.topic == listTopicForNotifikasjoner()
-            .map { it.substringAfterLast('/') }.
+            .map { it.substringAfterLast('/') }
             .firstOrNull()
 
     private fun lagNotifikasjon() =
