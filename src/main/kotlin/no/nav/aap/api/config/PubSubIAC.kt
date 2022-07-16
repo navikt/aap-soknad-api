@@ -132,7 +132,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
 
     @Component
     @Endpoint(id = "iac")
-    class IACEndpoint(private val iac: PubSubIAC, private val enc: EncryptionIAC,private val cfgs: BucketsConfig) {
+    class IACEndpoint(private val iac: PubSubIAC, private val enc: EncryptionIAC, private val cfgs: BucketsConfig) {
         @ReadOperation
         fun iacOperation() =
             with(iac) {
@@ -142,7 +142,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
             }.apply {
                 putAll(with(enc) {
                     mapOf("ring" to listRinger().map { it.name }.filter { it.contains(cfgs.ringNavn) },
-                            "nøkkel" to listNøkler().map { it.name) })
+                            "nøkkel" to listNøkler().map { it.name })
                 })
             }
 
