@@ -141,8 +141,8 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                         "notifications" to listTopicForNotifikasjoner())
             }.apply {
                 putAll(with(env) {
-                    mapOf("ring" to listRinger().map { it.name },
-                            "nøkler" to listNøkler().map { it.toString() })
+                    mapOf("ring" to listRinger().map { it.name }.filter { it.contains(cfgs.nøkkelNavn) },
+                            "nøkkel" to listNøkler().map { it.name) })
                 })
             }
 
@@ -153,7 +153,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                 "subscriptions" -> mapOf("subscriptions" to iac.listSubscriptions())
                 "notifications" -> mapOf("notifications" to iac.listTopicForNotifikasjoner())
                 "ring" -> mapOf("ring" to env.listRinger())
-                "key" -> mapOf("key" to env.listNøkler())
+                "nøkkel" -> mapOf("key" to env.listNøkler().map { it.name })
                 else -> iacOperation()
             }
 
