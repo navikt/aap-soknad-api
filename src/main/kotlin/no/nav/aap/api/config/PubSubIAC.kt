@@ -131,18 +131,18 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
 
     @Component
     @Endpoint(id = "iac")
-    class IACEndpoint(private val iac: PubSubIAC, private val enc: EncryptionIAC, private val cfgs: BucketsConfig) {
+    class IACEndpoint(private val iac: PubSubIAC, private val cfgs: BucketsConfig) {
         @ReadOperation
         fun iacOperation() =
-            with(cfgs){
+            with(cfgs) {
                 mutableMapOf("bucket" to mellom.navn,
                         "topic" to topicFullName,
                         "subscription" to subscriptionName.toString(),
                         "notification" to iac.listTopicForNotifikasjoner())
-            .apply {
-                putAll(mapOf("ring" to ringNavn
-                            "nøkkel" to nøkkelNavn
-                )
+                    .apply {
+                        putAll(mapOf("ring" to ringNavn,
+                                "nøkkel" to nøkkelNavn))
+                    }
             }
     }
 }
