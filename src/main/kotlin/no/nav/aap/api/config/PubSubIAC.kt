@@ -64,10 +64,8 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
         }
 
     private fun harNotifikasjon() =
-        cfgs.mellom.subscription.topic == listTopicForNotifikasjoner().also {
-            log.info("X Notifikasjon $it vs ${cfgs.topicName.topic}")
-        }
-            .map { it.substringAfterLast('/') }
+        cfgs.mellom.subscription.topic == listTopicForNotifikasjoner()
+            .map { it.substringAfterLast('/') }.
             .firstOrNull()
 
     private fun lagNotifikasjon() =
@@ -95,7 +93,9 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
 
     private fun listTopicForNotifikasjoner() =
         storage.listNotifications(cfgs.mellom.navn)
-            .map { it.topic }
+            .map { it.topic }.also {
+                log.info("X Notifikasjon topic $it vs ${cfgs.topicName.topic}")
+            }
 
     fun listTopics() =
         TopicAdminClient.create().use { c ->
