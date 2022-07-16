@@ -69,7 +69,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
 
     private fun harNotifikasjon() =
         cfgs.mellom.subscription.topic == listNotifikasjoner().also {
-            log.info("X Notifikasjon $it")
+            log.info("X Notifikasjon $it ${cfgs.topicName}")
         }
             .map { it.substringAfterLast('/') }
             .firstOrNull()
@@ -117,7 +117,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
     private fun harSubscription() =
         listSubscriptions()
             .also {
-                log.info("X Subscription $it")
+                log.info("X Subscription $it ${cfgs.subscriptionName}")
             }
             .map { it.substringAfterLast('/') }
             .contains(cfgs.mellom.subscription.navn)
