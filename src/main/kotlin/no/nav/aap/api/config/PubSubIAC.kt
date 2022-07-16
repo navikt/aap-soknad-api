@@ -17,7 +17,6 @@ import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
-import org.springframework.boot.actuate.endpoint.annotation.Selector
 import org.springframework.stereotype.Component
 
 @Component
@@ -136,26 +135,17 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
         @ReadOperation
         fun iacOperation() =
             with(iac) {
-                mutableMapOf("topics" to listTopics(),
-                        "subscriptions" to listSubscriptions(),
-                        "notifications" to listTopicForNotifikasjoner())
+                mutableMapOf("topic" to listTopics(),
+                        "subscription" to listSubscriptions(),
+                        "notification" to listTopicForNotifikasjoner())
             }.apply {
                 putAll(with(enc) {
-                    mapOf("ring" to listRinger().map { it.name }.filter { it.contains(cfgs.ringNavn) },
-                            "nøkkel" to listNøkler().map { it.name })
+                    mapOf("ring" to listRinger()
+                        .map { it.name }
+                        .filter { it.contains(cfgs.ringNavn) },
+                            "nøkkel" to listNøkler()
+                                .map { it.name })
                 })
             }
-
-        @ReadOperation
-        fun iacByName(@Selector name: String) =
-            when (name) {
-                "topics" -> mapOf("topics" to iac.listTopics())
-                "subscriptions" -> mapOf("subscriptions" to iac.listSubscriptions())
-                "notifications" -> mapOf("notifications" to iac.listTopicForNotifikasjoner())
-                "ring" -> mapOf("ring" to enc.listRinger())
-                "nøkkel" -> mapOf("key" to enc.listNøkler().map { it.name })
-                else -> iacOperation()
-            }
-
     }
 }
