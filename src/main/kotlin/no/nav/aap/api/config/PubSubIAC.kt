@@ -134,16 +134,17 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
     @Endpoint(id = "iac")
     class IACEndpoint(private val iac: PubSubIAC, private val env: EncryptionIAC) {
         @ReadOperation
-        fun iacOperation() {
+        fun iacOperation(): MutableMap<String, Iterable<String>> {
             val pubsub = with(iac) {
                 mutableMapOf("topics" to listTopics(),
                         "subscriptions" to listSubscriptions(),
                         "notifications" to listTopicForNotifikasjoner())
             }
 
-            return pubsub.putAll(with(env) {
+            pubsub.putAll(with(env) {
                 mapOf("ring" to listRinger().map { it.name }, "nøkler" to listNøkler().map { it.toString() })
             })
+            return pubsub
         }
 
         @ReadOperation
