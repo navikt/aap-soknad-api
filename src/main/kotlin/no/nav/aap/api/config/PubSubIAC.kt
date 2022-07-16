@@ -132,7 +132,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
 
     @Component
     @Endpoint(id = "iac")
-    class IACEndpoint(private val iac: PubSubIAC, private val env: EncryptionIAC) {
+    class IACEndpoint(private val iac: PubSubIAC, private val enc: EncryptionIAC,private val cfgs: BucketsConfig) {
         @ReadOperation
         fun iacOperation() =
             with(iac) {
@@ -140,8 +140,8 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                         "subscriptions" to listSubscriptions(),
                         "notifications" to listTopicForNotifikasjoner())
             }.apply {
-                putAll(with(env) {
-                    mapOf("ring" to listRinger().map { it.name }.filter { it.contains(cfgs.nøkkelNavn) },
+                putAll(with(enc) {
+                    mapOf("ring" to listRinger().map { it.name }.filter { it.contains(cfgs.ringNavn) },
                             "nøkkel" to listNøkler().map { it.name) })
                 })
             }
@@ -152,8 +152,8 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                 "topics" -> mapOf("topics" to iac.listTopics())
                 "subscriptions" -> mapOf("subscriptions" to iac.listSubscriptions())
                 "notifications" -> mapOf("notifications" to iac.listTopicForNotifikasjoner())
-                "ring" -> mapOf("ring" to env.listRinger())
-                "nøkkel" -> mapOf("key" to env.listNøkler().map { it.name })
+                "ring" -> mapOf("ring" to enc.listRinger())
+                "nøkkel" -> mapOf("key" to enc.listNøkler().map { it.name })
                 else -> iacOperation()
             }
 
