@@ -16,8 +16,7 @@ class ArbeidClientBeanConfig {
 
     @Bean
     @Qualifier(ARBEID)
-    fun webClientArbeidsforhold(builder: Builder,
-                                cfg: ArbeidConfig,
+    fun webClientArbeidsforhold(builder: Builder, cfg: ArbeidConfig,
                                 tokenXFilter: TokenXFilterFunction,
                                 ctx: AuthContext) =
         builder

@@ -31,13 +31,13 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                 lagTopic()
             }
             else {
-                log.trace("Topics $topicName finnes allerede i $projectName")
+                log.trace("Topics $topic finnes allerede i $project")
             }
             if (!harSubscription()) {
                 lagSubscription()
             }
             else {
-                log.trace("Subscription $subscriptionName finnes allerede for topic $topicName")
+                log.trace("Subscription $subscription finnes allerede for topic $topic")
             }
 
 
@@ -45,34 +45,34 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                 lagNotifikasjon()
             }
             else {
-                log.trace("${mellom.navn} har allerede en notifikasjon på $topicName")
+                log.trace("$mellomBøtte har allerede en notifikasjon på $topic")
             }
-            setPubSubAdminPolicyForBucketServiceAccountOnTopic(topicFullName)  //Idempotent
+            setPubSubAdminPolicyForBucketServiceAccountOnTopic(topicNavn)  //Idempotent
         }
     }
 
     private fun harTopic() =
         listTopics()
-            .contains(cfgs.topicFullName)
+            .contains(cfgs.topicNavn)
 
     private fun lagTopic() =
         TopicAdminClient.create().use { c ->
-            c.createTopic(cfgs.topicName).also {
+            c.createTopic(cfgs.topic).also {
                 log.trace("Lagd topic ${it.name}")
             }
         }
 
     private fun harNotifikasjon() =
-        cfgs.mellom.subscription.topic == listTopicForNotifikasjon().substringAfterLast('/')
+        cfgs.topicNavn == listTopicForNotifikasjon().substringAfterLast('/')
 
     private fun lagNotifikasjon() =
         with(cfgs) {
-            storage.createNotification(mellom.navn,
-                    NotificationInfo.newBuilder(topicFullName)
+            storage.createNotification(mellomBøtte,
+                    NotificationInfo.newBuilder(topicNavn)
                         .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
                         .setPayloadFormat(JSON_API_V1)
                         .build()).also {
-                log.trace("Lagd notifikasjon ${it.notificationId} for topic $topicFullName")
+                log.trace("Lagd notifikasjon ${it.notificationId} for topic $topicNavn")
             }
         }
 
@@ -84,30 +84,30 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                     .setPolicy(Policy.newBuilder(c.getIamPolicy(GetIamPolicyRequest.newBuilder()
                         .setResource(this).build())).addBindings(Binding.newBuilder()
                         .setRole("roles/pubsub.publisher")
-                        .addMembers("serviceAccount:${storage.getServiceAccount(cfgs.id).email}")
+                        .addMembers("serviceAccount:${storage.getServiceAccount(cfgs.project.project).email}")
                         .build()).build())
-                    .build()).also { log.trace("Ny policy er ${it.bindingsList}") }
+                    .build()).also { log.trace("Policy på $topic er ${it.bindingsList}") }
             }
         }
 
     private fun listTopicForNotifikasjon() =
         with(cfgs) {
-            storage.listNotifications(mellom.navn)
+            storage.listNotifications(mellomBøtte)
                 .map { it.topic }.first().also {
-                    log.trace("X Topic er $it vs ${cfgs.topicFullName}")
+                    log.trace("X Topic er $it vs ${cfgs.topicNavn}")
                 }
         }
 
     fun listTopics() =
         TopicAdminClient.create().use { c ->
-            c.listTopics(cfgs.projectName)
+            c.listTopics(cfgs.project)
                 .iterateAll()
                 .map { it.name }
         }
 
     private fun listSubscriptions() =
         TopicAdminClient.create().use { c ->
-            c.listTopicSubscriptions(cfgs.topicName)
+            c.listTopicSubscriptions(cfgs.topic)
                 .iterateAll()
         }
 
@@ -115,13 +115,13 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
         with(cfgs) {
             listSubscriptions()
                 .map { it.substringAfterLast('/') }
-                .contains(mellom.subscription.navn)
+                .contains(subscription.subscription)
         }
 
     private fun lagSubscription() =
         with(cfgs) {
             SubscriptionAdminClient.create().use { c ->
-                c.createSubscription(subscriptionName, topicName,
+                c.createSubscription(subscription, topic,
                         PushConfig.getDefaultInstance(),
                         10).also {
                     log.trace("Lagd pull subscription ${it.name}")
@@ -135,9 +135,9 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
         @ReadOperation
         fun iacOperation() =
             with(cfgs) {
-                mutableMapOf("bucket" to mellom.navn,
-                        "topic" to topicFullName,
-                        "subscription" to subscriptionName.toString(),
+                mutableMapOf("bucket" to mellomBøtte,
+                        "topic" to topicNavn,
+                        "subscription" to subscription.toString(),
                         "notification" to iac.listTopicForNotifikasjon())
                     .apply {
                         putAll(mapOf("ring" to ringNavn,

@@ -11,12 +11,10 @@ import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException.NotFound
 import org.springframework.web.context.request.NativeWebRequest
-import org.zalando.problem.Problem
 import org.zalando.problem.Problem.builder
 import org.zalando.problem.Status
 import org.zalando.problem.Status.BAD_REQUEST
@@ -31,27 +29,24 @@ class AAPApiExceptionHandler(private val ctx: AuthContext) : ProblemHandling {
     private val log = getLogger(javaClass)
 
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
-    fun handleMissingOrExpiredToken(e: RuntimeException, req: NativeWebRequest): ResponseEntity<Problem> =
-        handle(e, UNAUTHORIZED, req)
+    fun handleMissingOrExpiredToken(e: RuntimeException, req: NativeWebRequest) = handle(e, UNAUTHORIZED, req)
 
     @ExceptionHandler(IntegrationException::class)
-    fun handleIntegrationException(e: IntegrationException, req: NativeWebRequest): ResponseEntity<Problem> =
+    fun handleIntegrationException(e: IntegrationException, req: NativeWebRequest) =
         handle(e, UNPROCESSABLE_ENTITY, req)
 
     @ExceptionHandler(DokumentException::class)
-    fun handleDokumentException(e: DokumentException, req: NativeWebRequest): ResponseEntity<Problem> =
-        handle(e, UNPROCESSABLE_ENTITY, req)
+    fun handleDokumentException(e: DokumentException, req: NativeWebRequest) = handle(e, UNPROCESSABLE_ENTITY, req)
 
     @ExceptionHandler(ContentTypeException::class)
-    fun handleUkjentContentTypeException(e: ContentTypeException, req: NativeWebRequest): ResponseEntity<Problem> =
+    fun handleUkjentContentTypeException(e: ContentTypeException, req: NativeWebRequest) =
         handle(e, UNSUPPORTED_MEDIA_TYPE, req)
 
     @ExceptionHandler(StorageException::class)
-    fun handleStorageException(e: StorageException, req: NativeWebRequest): ResponseEntity<Problem> =
-        handle(e, BAD_REQUEST, req)
+    fun handleStorageException(e: StorageException, req: NativeWebRequest) = handle(e, BAD_REQUEST, req)
 
     @ExceptionHandler(NotFound::class)
-    fun handleNotFound(e: NotFound, req: NativeWebRequest): ResponseEntity<Problem> = handle(e, NOT_FOUND, req)
+    fun handleNotFound(e: NotFound, req: NativeWebRequest) = handle(e, NOT_FOUND, req)
 
     fun handle(e: RuntimeException, status: Status, req: NativeWebRequest) = create(e, problemFra(e, status), req)
     private fun problemFra(e: RuntimeException, status: Status) =

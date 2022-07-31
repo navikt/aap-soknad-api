@@ -7,13 +7,11 @@ import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import com.google.cloud.storage.NotificationInfo.EventType.valueOf
 import com.google.protobuf.ByteString
-import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.pubsub.v1.PubsubMessage
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.JPADittNavBeskjedRepository
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.MellomlagringBucketConfig
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -25,17 +23,17 @@ import java.util.*
 class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
                                    private val dittNav: DittNavClient,
                                    private val repo: JPADittNavBeskjedRepository,
-                                   private val cfgs: BucketsConfig) {
+                                   private val cfg: BucketsConfig) {
 
     private val log = getLogger(javaClass)
 
     init {
-        abonner(cfgs.mellom)
+        abonner()
     }
 
-    private fun abonner(cfg: MellomlagringBucketConfig) =
-        with(ProjectSubscriptionName.of(cfgs.id, cfg.subscription.navn)) {
-            log.trace("Abonnererer på events  via subscription $this")
+    private fun abonner() =
+        with(cfg.projectSubscription) {
+            log.trace("Abonnererer på hendelser via $subscription")
             Subscriber.newBuilder(this, receiver()).build().apply {
                 startAsync().awaitRunning()
                 awaitRunning() // TODO sjekk dette
@@ -52,9 +50,11 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
                     OBJECT_FINALIZE -> {
                         håndterOpprettet(metadata, msg)
                     }
+
                     OBJECT_DELETE -> {
                         håndterSlettet(metadata, msg)
                     }
+
                     else -> log.trace("Event type ${attributesMap[EVENT_TYPE]} ikke håndtert")
                 }
             }

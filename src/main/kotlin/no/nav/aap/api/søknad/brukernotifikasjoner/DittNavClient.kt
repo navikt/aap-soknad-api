@@ -3,10 +3,6 @@ package no.nav.aap.api.søknad.brukernotifikasjoner
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavBeskjedCallback
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavBeskjedDoneCallback
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavOppgaveCallback
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavCallbacks.DittNavOppgaveDoneCallback
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -41,13 +37,12 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (enabled) {
                 with(nøkkel(type.name, eventId, fnr, "beskjed")) {
                     dittNav.send(ProducerRecord(topic, this, beskjed(type, tekst)))
-                        .addCallback(DittNavBeskjedCallback(this))
+                        .addCallback(DittNavSendCallback("opprett beskjed"))
                     repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
                             eventid = eventId,
                             mellomlager = mellomlager))
                     eventId
                 }
-
             }
             else {
                 log.info("Sender ikke beskjed til Ditt Nav")
@@ -61,7 +56,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (enabled) {
                 with(nøkkel(type.name, UUID.fromString(callId()), fnr, "oppgave")) {
                     dittNav.send(ProducerRecord(topic, this, oppgave(type, tekst)))
-                        .addCallback(DittNavOppgaveCallback(this))
+                        .addCallback(DittNavSendCallback("opprett oppgave"))
                     repos.oppgaver.save(JPADittNavOppgave(fnr = fnr.fnr, eventid = UUID.fromString(eventId)))
                     eventId
                 }
@@ -78,7 +73,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (oppgave.enabled) {
                 with(nøkkel(type.name, eventId, fnr, "done")) {
                     dittNav.send(ProducerRecord(done.topic, this, done()))
-                        .addCallback(DittNavOppgaveDoneCallback(this))
+                        .addCallback(DittNavSendCallback("avslutt oppgave"))
                     repos.oppgaver.done(eventId)
                 }
             }
@@ -93,7 +88,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (beskjed.enabled) {
                 with(nøkkel(type.name, eventId, fnr, "done")) {
                     dittNav.send(ProducerRecord(done.topic, this, done()))
-                        .addCallback(DittNavBeskjedDoneCallback(this))
+                        .addCallback(DittNavSendCallback("avslutt beskjed"))
                     repos.beskjeder.done(eventId)
                 }
             }

@@ -4,6 +4,7 @@ import com.google.cloud.kms.v1.CryptoKeyName
 import com.google.cloud.kms.v1.KeyRingName
 import com.google.cloud.kms.v1.LocationName
 import com.google.pubsub.v1.ProjectName
+import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.pubsub.v1.SubscriptionName
 import com.google.pubsub.v1.TopicName
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.BUCKETS
@@ -15,22 +16,26 @@ import java.time.Duration
 
 @ConfigurationProperties(BUCKETS)
 @ConstructorBinding
-data class BucketsConfig(val id: String,
-                         @NestedConfigurationProperty val mellom: MellomlagringBucketConfig,
-                         @NestedConfigurationProperty val vedlegg: VedleggBucketConfig,
-                         @NestedConfigurationProperty val kms: KeyConfig) {
+data class BucketsConfig(private val id: String,
+                         @NestedConfigurationProperty private val mellom: MellomlagringBucketConfig,
+                         @NestedConfigurationProperty private val vedlegg: VedleggBucketConfig,
+                         @NestedConfigurationProperty private val kms: KeyConfig) {
 
-    val locationNavn = LocationName.of(id, REGION)
-    val projectName = ProjectName.of(id)
-    val ring = KeyRingName.of(id, locationNavn.location, kms.ring)
+    val projectSubscription = ProjectSubscriptionName.of(id, mellom.subscription.navn)
+    val location = LocationName.of(id, REGION)
+    val project = ProjectName.of(id)
+    val ring = KeyRingName.of(id, location.location, kms.ring)
     val ringNavn = ring.toString()
-    val topicName = TopicName.of(id, mellom.subscription.topic)
-    val subscriptionName = SubscriptionName.of(id, mellom.subscription.navn)
-    val topicFullName = topicName.toString()
-    val nøkkel = CryptoKeyName.of(id, locationNavn.location, kms.ring, kms.key)
+    val topic = TopicName.of(id, mellom.subscription.topic)
+    val topicNavn = topic.toString()
+    val subscription = SubscriptionName.of(id, mellom.subscription.navn)
+    val nøkkel = CryptoKeyName.of(id, location.location, kms.ring, kms.key)
     val nøkkelNavn = nøkkel.toString()
+    val mellomBøtte = mellom.navn
+    val vedleggBøtte = vedlegg.navn
+    val vedleggTyper = vedlegg.typer
 
-    data class KeyConfig(val ring: String, val key: String)
+    data class KeyConfig(internal val ring: String, internal val key: String)
 
     data class MellomlagringBucketConfig(val navn: String,
                                          @NestedConfigurationProperty val subscription: SubscriptionConfig,
@@ -41,8 +46,7 @@ data class BucketsConfig(val id: String,
 
     data class VedleggBucketConfig(val navn: String,
                                    @DefaultValue(DEFAULT_TIMEOUT) val timeout: Duration,
-                                   val typer: List<String>) {
-    }
+                                   val typer: List<String>)
 
     companion object {
         const val DEFAULT_TIMEOUT = "30s"
