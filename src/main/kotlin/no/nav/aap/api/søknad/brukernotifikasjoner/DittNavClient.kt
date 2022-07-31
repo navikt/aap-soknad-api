@@ -45,7 +45,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 }
             }
             else {
-                log.info("Sender ikke beskjed til Ditt Nav")
+                log.info("Sender ikke opprett beskjed til Ditt Nav")
                 callId()
             }
         }
@@ -62,7 +62,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 }
             }
             else {
-                log.info("Sender ikke oppgave til Ditt Nav")
+                log.info("Sender ikke opprett oppgave til Ditt Nav")
                 callId()
             }
         }

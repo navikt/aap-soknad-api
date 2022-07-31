@@ -21,6 +21,7 @@ data class BucketsConfig(private val id: String,
                          @NestedConfigurationProperty private val vedlegg: VedleggBucketConfig,
                          @NestedConfigurationProperty private val kms: KeyConfig) {
 
+    val timeoutMs = mellom.timeout.toMillis()
     val projectSubscription = ProjectSubscriptionName.of(id, mellom.subscription.navn)
     val location = LocationName.of(id, REGION)
     val project = ProjectName.of(id)

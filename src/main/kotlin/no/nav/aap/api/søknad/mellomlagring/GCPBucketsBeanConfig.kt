@@ -14,7 +14,7 @@ class GCPBucketsBeanConfig(val cfg: BucketsConfig) {
     @Bean
     fun retrySettings() =
         RetrySettings.newBuilder()
-            .setTotalTimeout(ofMillis(cfg.mellom.timeout.toMillis()))
+            .setTotalTimeout(ofMillis(cfg.timeoutMs))
             .build()
 
     @Bean
