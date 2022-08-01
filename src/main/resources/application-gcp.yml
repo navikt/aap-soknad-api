@@ -165,8 +165,8 @@ buckets:
     mellom:
         navn: ${mellomlagring.navn}
         subscription:
-            navn: ${mellomlagring.navn}-subscription1
-            topic: ${mellomlagring.navn}-topic1
+            navn: ${mellomlagring.navn}-subscription2
+            topic: ${mellomlagring.navn}-topic2
     vedlegg:
         navn: ${vedlegg.navn}
         typer:
