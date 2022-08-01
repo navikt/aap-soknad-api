@@ -48,7 +48,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
             else {
                 log.trace("$mellomBøtte har allerede en notifikasjon på ${mellom.subscription.topic}")
             }
-            setPubSubAdminPolicyForBucketServiceAccountOnTopic(mellom.subscription.topic)  //Idempotent
+            setPubSubAdminPolicyForBucketServiceAccountOnTopic()  //Idempotent
         }
     }
 
