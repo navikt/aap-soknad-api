@@ -62,7 +62,9 @@ class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, pr
         }
 
     private fun harNotifikasjon(topic: String) =
-        listTopicForNotifikasjon().find { it.substringAfterLast('/') == topic } != null
+        storage.listNotifications(cfg.mellom.navn)
+            .map { it.topic }
+            .find { it.substringAfterLast('/') == topic } != null
 
     private fun lagNotifikasjon(navn: String) =
         with(cfg) {
@@ -92,10 +94,6 @@ class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, pr
             }
         }
 
-    private fun listTopicForNotifikasjon() =
-        storage.listNotifications(cfg.mellom.navn)
-            .map { it.topic }
-
     private fun harSubscription(navn: String) =
         admin.getSubscription(navn) != null
 
@@ -110,12 +108,12 @@ class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, pr
 
     @Component
     @Endpoint(id = "iac")
-    class IACEndpoint(private val iac: PubSubIAC, private val cfg: BucketsConfig) {
+    class IACEndpoint(private val storage: Storage, private val cfg: BucketsConfig) {
         @ReadOperation
         fun iacOperation() =
             with(cfg) {
                 mutableMapOf("bøtte" to mellom,
-                        "notification" to iac.listTopicForNotifikasjon(),
+                        "notification" to storage.listNotifications(mellom.navn),
                         "nøkkel" to nøkkelNavn,
                         "ring" to ringNavn)
             }
