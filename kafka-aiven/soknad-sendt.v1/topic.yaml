@@ -12,10 +12,10 @@ spec:
     config:
   {{#each config as |value key|}}
     {{key}}: {{value}}
-    {{/each}}
+  {{/each}}
     acl:
   {{#each acl}}
         -   team: {{team}}
     application: {{application}}
     access: {{access}}
-    {{/each}}
+  {{/each}}
