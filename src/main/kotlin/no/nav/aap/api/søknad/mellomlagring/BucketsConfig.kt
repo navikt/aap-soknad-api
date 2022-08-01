@@ -17,7 +17,7 @@ import java.time.Duration
 @ConfigurationProperties(BUCKETS)
 @ConstructorBinding
 data class BucketsConfig(private val id: String,
-                         @NestedConfigurationProperty private val mellom: MellomlagringBucketConfig,
+                         @NestedConfigurationProperty val mellom: MellomlagringBucketConfig,
                          @NestedConfigurationProperty private val vedlegg: VedleggBucketConfig,
                          @NestedConfigurationProperty private val kms: KeyConfig) {
 

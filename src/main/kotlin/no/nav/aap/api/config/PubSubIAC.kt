@@ -30,13 +30,13 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
     private fun init() {
         with(cfgs) {
             if (!harTopic()) {
-                lagTopic()
+                lagTopic1()
             }
             else {
                 log.trace("Topics $topic finnes allerede i $project")
             }
             if (!harSubscription()) {
-                lagSubscription()
+                lagSubscription1()
             }
             else {
                 log.trace("Subscription $subscription finnes allerede for topic $topic")
@@ -65,7 +65,9 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
         }
 
     private fun lagTopic1() =
-        admin.createTopic(cfgs.topicNavn)
+        admin.createTopic(cfgs.topicNavn).also {
+            log.trace("Lagd topic ${it.name}")
+        }
 
     private fun harNotifikasjon() =
         cfgs.topicNavn == listTopicForNotifikasjon().substringAfterLast('/')
@@ -132,6 +134,14 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
                     log.trace("Lagd pull subscription ${it.name}")
                 }
             }
+        }
+
+    private fun lagSubscription1() =
+        with(cfgs.mellom.subscription) {
+            admin.createSubscription(navn, topic)
+                .also {
+                    log.trace("Lagd pull subscription ${it.name}")
+                }
         }
 
     @Component
