@@ -64,9 +64,10 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
 
     private fun lagNotifikasjon() =
         with(cfgs) {
-            log.info("Lager notifikasjon")
+            val i = NotificationInfo.of(mellom.subscription.topic)
+            log.info("Lager notifikasjon $i på topic  ${mellom.subscription.topic}")
             storage.createNotification(mellomBøtte,
-                    NotificationInfo.newBuilder(mellom.subscription.topic)
+                    NotificationInfo.newBuilder(i.toString())
                         .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
                         .setPayloadFormat(JSON_API_V1)
                         .build()).also {
