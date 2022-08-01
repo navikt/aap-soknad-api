@@ -24,6 +24,15 @@ jobs:
                     distribution: temurin
                     cache: maven
 
+            -   name: Install cosign
+                uses: sigstore/cosign-installer@main
+                with:
+                    cosign-release: 'v1.3.1'
+
+            -   name: Verify distroless base image
+                run: |
+                    cosign verify --key distroless.pub gcr.io/distroless/java17
+                    
             -   name: Setter TAG
                 run: echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
 
