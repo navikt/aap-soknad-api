@@ -65,7 +65,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
 
     private fun lagNotifikasjon() =
         with(cfgs) {
-            val i = TopicName.of(id, mellom.subscription.topic)
+            val i = TopicName.of(id, mellom.subscription.topic).toString()
             log.info("Lager en notifikasjon $i på topic  ${mellom.subscription.topic}")
             storage.createNotification(mellomBøtte,
                     NotificationInfo.newBuilder(TopicName.of(id, mellom.subscription.topic).toString())
