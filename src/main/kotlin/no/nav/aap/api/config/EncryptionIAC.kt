@@ -83,7 +83,7 @@ class EncryptionIAC(private val cfgs: BucketsConfig, private val storage: Storag
                 client.setIamPolicy(nøkkel,
                         client.getIamPolicy(nøkkel).toBuilder().addBindings(Binding.newBuilder()
                             .setRole("roles/cloudkms.cryptoKeyEncrypterDecrypter")
-                            .addMembers("serviceAccount:${storage.getServiceAccount(project.project).email}")
+                            .addMembers("serviceAccount:${storage.getServiceAccount(id).email}")
                             .build()).build())
                     .also { log.trace("Ny policy er ${it.bindingsList}") }
             }
