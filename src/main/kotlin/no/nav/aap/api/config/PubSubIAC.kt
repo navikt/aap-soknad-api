@@ -117,7 +117,6 @@ class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, pr
                 mutableMapOf("bøtte" to mellom,
                         "notification" to iac.listTopicForNotifikasjon(),
                         "kms" to kms)
-                    }
             }
     }
 }
