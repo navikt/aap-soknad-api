@@ -11,6 +11,9 @@ management:
         env:
             additional-keys-to-sanitize: "client-jwk,jwk,jwks"
 spring:
+    cloud:
+        gcp:
+            project-id: ${gcp.team.project.id}
     jpa:
         hibernate:
             ddl-auto: none
@@ -153,6 +156,7 @@ dittnav:
         topic: min-side.aapen-brukernotifikasjon-oppgave-v1
     done:
         topic: min-side.aapen-brukernotifikasjon-done-v1
+
 buckets:
     id: ${gcp.team.project.id}
     kms:

@@ -2,6 +2,7 @@ package no.nav.aap.api.config
 
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient
 import com.google.cloud.pubsub.v1.TopicAdminClient
+import com.google.cloud.spring.pubsub.PubSubAdmin
 import com.google.cloud.storage.NotificationInfo
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
@@ -20,7 +21,8 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
 import org.springframework.stereotype.Component
 
 @Component
-class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) : InitializingBean {
+class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, private val admin: PubSubAdmin) :
+    InitializingBean {
 
     private val log = LoggerUtil.getLogger(javaClass)
     override fun afterPropertiesSet() = init()
@@ -61,6 +63,9 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage) :
                 log.trace("Lagd topic ${it.name}")
             }
         }
+
+    private fun lagTopic1() =
+        admin.createTopic(cfgs.topicNavn)
 
     private fun harNotifikasjon() =
         cfgs.topicNavn == listTopicForNotifikasjon().substringAfterLast('/')
