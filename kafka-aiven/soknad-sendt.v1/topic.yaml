@@ -15,7 +15,7 @@ spec:
   {{/each}}
     acl:
   {{#each acl}}
-        -   team: {{team}}
-    application: {{application}}
-    access: {{access}}
+    - team: {{team}}
+      application: {{application}}
+      access: {{access}}
   {{/each}}
