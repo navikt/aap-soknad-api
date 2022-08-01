@@ -28,7 +28,6 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
 
     private fun init() {
         with(cfgs) {
-            setPubSubAdminPolicyForBucketServiceAccountOnTopic()  //Idempotent
 
             if (!harTopic()) {
                 lagTopic()
@@ -50,6 +49,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
             else {
                 log.trace("$mellomBøtte har allerede en notifikasjon på ${mellom.subscription.topic}")
             }
+            setPubSubAdminPolicyForBucketServiceAccountOnTopic()  //Idempotent
         }
     }
 
