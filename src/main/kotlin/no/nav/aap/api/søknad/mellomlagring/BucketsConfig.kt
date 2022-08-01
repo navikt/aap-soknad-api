@@ -16,7 +16,7 @@ import java.time.Duration
 data class BucketsConfig(val project: String,
                          @NestedConfigurationProperty val mellom: MellomlagringBucketConfig,
                          @NestedConfigurationProperty private val vedlegg: VedleggBucketConfig,
-                         @NestedConfigurationProperty private val kms: KeyConfig) {
+                         @NestedConfigurationProperty val kms: KeyConfig) {
 
     val timeoutMs = mellom.timeout.toMillis()
     val projectSubscription = ProjectSubscriptionName.of(project, mellom.subscription.navn)
