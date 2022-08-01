@@ -3,10 +3,6 @@ package no.nav.aap.api.søknad.mellomlagring
 import com.google.cloud.kms.v1.CryptoKeyName
 import com.google.cloud.kms.v1.KeyRingName
 import com.google.cloud.kms.v1.LocationName
-import com.google.pubsub.v1.ProjectName
-import com.google.pubsub.v1.ProjectSubscriptionName
-import com.google.pubsub.v1.SubscriptionName
-import com.google.pubsub.v1.TopicName
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.BUCKETS
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -16,20 +12,15 @@ import java.time.Duration
 
 @ConfigurationProperties(BUCKETS)
 @ConstructorBinding
-data class BucketsConfig(private val id: String,
+data class BucketsConfig(val id: String,
                          @NestedConfigurationProperty val mellom: MellomlagringBucketConfig,
                          @NestedConfigurationProperty private val vedlegg: VedleggBucketConfig,
                          @NestedConfigurationProperty private val kms: KeyConfig) {
 
     val timeoutMs = mellom.timeout.toMillis()
-    val projectSubscription = ProjectSubscriptionName.of(id, mellom.subscription.navn)
     val location = LocationName.of(id, REGION)
-    val project = ProjectName.of(id)
     val ring = KeyRingName.of(id, location.location, kms.ring)
     val ringNavn = ring.toString()
-    val topic = TopicName.of(id, mellom.subscription.topic)
-    val topicNavn = topic.toString()
-    val subscription = SubscriptionName.of(id, mellom.subscription.navn)
     val nøkkel = CryptoKeyName.of(id, location.location, kms.ring, kms.key)
     val nøkkelNavn = nøkkel.toString()
     val mellomBøtte = mellom.navn
