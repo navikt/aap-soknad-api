@@ -66,7 +66,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
     private fun lagNotifikasjon() =
         with(cfgs) {
             val i = TopicName.of(id, mellom.subscription.topic).toString()
-            log.info("Lager en notifikasjon $i på topic  ${mellom.subscription.topic}")
+            log.info("Lager en notifikasjon på topic $i")
             storage.createNotification(mellomBøtte,
                     NotificationInfo.newBuilder(TopicName.of(id, mellom.subscription.topic).toString())
                         .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
@@ -76,9 +76,10 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
             }
         }
 
-    private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic(topic: String) =
+    private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic() =
         TopicAdminClient.create().use { c ->
-            with(topic) {
+            with(TopicName.of(cfgs.id, cfgs.mellom.subscription.topic).toString()) {
+                log.info("Setter policy pubsub.publisher for $this")
                 c.setIamPolicy(SetIamPolicyRequest.newBuilder()
                     .setResource(this)
                     .setPolicy(Policy.newBuilder(c.getIamPolicy(GetIamPolicyRequest.newBuilder()
@@ -86,7 +87,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
                         .setRole("roles/pubsub.publisher")
                         .addMembers("serviceAccount:${storage.getServiceAccount(cfgs.id).email}")
                         .build()).build())
-                    .build()).also { log.trace("Policy på $topic er ${it.bindingsList}") }
+                    .build()).also { log.trace("Policy er ${it.bindingsList}") }
             }
         }
 
