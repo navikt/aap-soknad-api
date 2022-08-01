@@ -29,13 +29,13 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
 
     private fun init() {
         with(cfgs) {
-            if (!harTopic()) {
+            if (!harTopic1()) {
                 lagTopic1()
             }
             else {
-                log.trace("Topics $topic finnes allerede i $project")
+                log.trace("Topic $topic finnes allerede i $project")
             }
-            if (!harSubscription()) {
+            if (!harSubscription1()) {
                 lagSubscription1()
             }
             else {
@@ -56,6 +56,9 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
     private fun harTopic() =
         listTopics()
             .contains(cfgs.topicNavn)
+
+    private fun harTopic1() =
+        admin.getTopic(cfgs.topicNavn) != null
 
     private fun lagTopic() =
         TopicAdminClient.create().use { c ->
@@ -124,6 +127,9 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
                 .map { it.substringAfterLast('/') }
                 .contains(subscription.subscription)
         }
+
+    private fun harSubscription1() =
+        admin.getSubscription(cfgs.mellom.subscription.navn) != null
 
     private fun lagSubscription() =
         with(cfgs) {
