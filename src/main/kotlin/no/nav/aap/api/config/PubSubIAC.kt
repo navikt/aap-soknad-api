@@ -2,7 +2,6 @@ package no.nav.aap.api.config
 
 import com.google.cloud.pubsub.v1.TopicAdminClient
 import com.google.cloud.spring.pubsub.PubSubAdmin
-import com.google.cloud.spring.pubsub.support.PubSubTopicUtils
 import com.google.cloud.storage.NotificationInfo
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
@@ -65,8 +64,9 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
 
     private fun lagNotifikasjon() =
         with(cfgs) {
+            log.info("Lager notifikasjon")
             storage.createNotification(mellomBøtte,
-                    NotificationInfo.newBuilder(PubSubTopicUtils.toTopicName(mellom.subscription.topic, id).toString())
+                    NotificationInfo.newBuilder(mellom.subscription.topic)
                         .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
                         .setPayloadFormat(JSON_API_V1)
                         .build()).also {
@@ -99,6 +99,7 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
 
     private fun lagSubscription() =
         with(cfgs.mellom.subscription) {
+            log.info("Lager subscription")
             admin.createSubscription(navn, topic)
                 .also {
                     log.trace("Lagd pull subscription ${it.name}")
