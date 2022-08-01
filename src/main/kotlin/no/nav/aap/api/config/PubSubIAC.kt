@@ -11,6 +11,7 @@ import com.google.iam.v1.Binding
 import com.google.iam.v1.GetIamPolicyRequest
 import com.google.iam.v1.Policy
 import com.google.iam.v1.SetIamPolicyRequest
+import com.google.pubsub.v1.TopicName
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
 import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.InitializingBean
@@ -64,10 +65,10 @@ class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, p
 
     private fun lagNotifikasjon() =
         with(cfgs) {
-            val i = NotificationInfo.of(mellom.subscription.topic)
-            log.info("Lager notifikasjon $i på topic  ${mellom.subscription.topic}")
+            val i = TopicName.of(id, mellom.subscription.topic)
+            log.info("Lager en notifikasjon $i på topic  ${mellom.subscription.topic}")
             storage.createNotification(mellomBøtte,
-                    NotificationInfo.newBuilder(i.toString())
+                    NotificationInfo.newBuilder(TopicName.of(id, mellom.subscription.topic).toString())
                         .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
                         .setPayloadFormat(JSON_API_V1)
                         .build()).also {
