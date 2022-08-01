@@ -77,9 +77,9 @@ class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, pr
             }
         }
 
-    private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic(navn: String) =
+    private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic(topic: String) =
         TopicAdminClient.create().use { c ->
-            with(TopicName.of(cfg.project, navn).toString()) {
+            with(TopicName.of(cfg.project, topic).toString()) {
                 log.info("Setter policy pubsub.publisher for $this")
                 c.setIamPolicy(SetIamPolicyRequest.newBuilder()
                     .setResource(this)

@@ -3,7 +3,6 @@ package no.nav.aap.api.søknad.mellomlagring
 import com.google.cloud.kms.v1.CryptoKeyName
 import com.google.cloud.kms.v1.KeyRingName
 import com.google.cloud.kms.v1.LocationName
-import com.google.pubsub.v1.ProjectSubscriptionName
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.BUCKETS
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -16,7 +15,6 @@ data class BucketsConfig(val project: String,
                          @NestedConfigurationProperty val vedlegg: VedleggBucketConfig,
                          @NestedConfigurationProperty val kms: KeyConfig) {
 
-    val projectSubscription = ProjectSubscriptionName.of(project, mellom.subscription.navn)
     val location = LocationName.of(project, REGION)
     val ring = KeyRingName.of(project, location.location, kms.ring)
     val ringNavn = ring.toString()

@@ -7,6 +7,7 @@ import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import com.google.cloud.storage.NotificationInfo.EventType.valueOf
 import com.google.protobuf.ByteString
+import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.pubsub.v1.PubsubMessage
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
@@ -32,7 +33,7 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
     }
 
     private fun abonner() =
-        with(cfg.projectSubscription) {
+        with(ProjectSubscriptionName.of(cfg.project, cfg.mellom.subscription.navn)) {
             log.trace("Abonnererer på hendelser via $subscription")
             Subscriber.newBuilder(this, receiver()).build().apply {
                 startAsync().awaitRunning()
