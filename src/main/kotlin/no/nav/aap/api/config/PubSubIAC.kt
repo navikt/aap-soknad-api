@@ -48,7 +48,7 @@ class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, pr
                 lagNotifikasjon(topic)
             }
             else {
-                log.trace("${cfg.mellomBøtte} har allerede en notifikasjon på $topic")
+                log.trace("${cfg.mellom.navn} har allerede en notifikasjon på $topic")
             }
         }
     }
@@ -68,7 +68,7 @@ class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, pr
         with(cfg) {
             val topic = TopicName.of(project, navn).toString()
             log.info("Lager en notifikasjon på topic $topic")
-            storage.createNotification(mellomBøtte,
+            storage.createNotification(mellom.navn,
                     NotificationInfo.newBuilder(topic)
                         .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
                         .setPayloadFormat(JSON_API_V1)
@@ -93,7 +93,7 @@ class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, pr
         }
 
     private fun listTopicForNotifikasjon() =
-        storage.listNotifications(cfg.mellomBøtte)
+        storage.listNotifications(cfg.mellom.navn)
             .map { it.topic }
 
     private fun harSubscription(navn: String) =

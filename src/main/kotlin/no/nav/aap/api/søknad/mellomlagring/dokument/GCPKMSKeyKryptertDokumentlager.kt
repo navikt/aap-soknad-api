@@ -28,7 +28,7 @@ import java.util.UUID.randomUUID
 
 @ConditionalOnGCP
 @Primary
-class GCPKMSKeyKryptertDokumentlager(private val cfgs: BucketsConfig,
+class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
                                      private val lager: Storage,
                                      private val ctx: AuthContext,
                                      private val sjekkere: List<DokumentSjekker>) : Dokumentlager {
@@ -42,10 +42,10 @@ class GCPKMSKeyKryptertDokumentlager(private val cfgs: BucketsConfig,
             with(dokument) {
                 log.trace("Lagrer $filnavn kryptert, med uuid $this@uuid  og contentType $contentType")
                 sjekkere.forEach { it.sjekk(this) }
-                lager.create(newBuilder(of(cfgs.vedleggBøtte, this@apply.toString()))
+                lager.create(newBuilder(of(cfg.vedlegg.navn, this@apply.toString()))
                     .setContentType(contentType)
                     .setMetadata(mapOf(FILNAVN to filnavn, "uuid" to this@apply.toString(), FNR to fnr.fnr))
-                    .build(), bytes, kmsKeyName(cfgs.nøkkelNavn))
+                    .build(), bytes, kmsKeyName(cfg.nøkkelNavn))
             }
         }.also {
             log.trace("Lagret $this kryptert med uuid $it")
@@ -54,7 +54,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfgs: BucketsConfig,
     override fun lesDokument(uuid: UUID) = lesDokument(ctx.getFnr(), uuid)
 
     fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.get(cfgs.vedleggBøtte, uuid.toString(), fields(METADATA, CONTENT_TYPE, TIME_CREATED))
+        lager.get(cfg.vedlegg.navn, uuid.toString(), fields(METADATA, CONTENT_TYPE, TIME_CREATED))
             ?.let { blob ->
                 with(blob) {
                     DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
@@ -67,7 +67,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfgs: BucketsConfig,
     override fun slettDokument(uuid: UUID) = slettDokument(ctx.getFnr(), uuid)
 
     fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.delete(of(cfgs.vedleggBøtte, "$uuid"))
+        lager.delete(of(cfg.vedlegg.navn, "$uuid"))
             .also {
                 log.trace(CONFIDENTIAL, "Slettet dokument $uuid for $fnr")
             }
@@ -113,8 +113,8 @@ class GCPKMSKeyKryptertDokumentlager(private val cfgs: BucketsConfig,
 
         override fun sjekk(dokument: DokumentInfo) =
             with(dokument) {
-                if (contentType !in cfg.vedleggTyper) {
-                    throw DokumentException("Type $contentType for $filnavn er ikke blant ${cfg.vedleggTyper}")
+                if (contentType !in cfg.vedlegg.typer) {
+                    throw DokumentException("Type $contentType for $filnavn er ikke blant ${cfg.vedlegg.typer}")
                 }
                 TIKA.detect(bytes).run {
                     if (!equals(contentType)) {
