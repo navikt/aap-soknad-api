@@ -23,6 +23,10 @@ spec:
             -   resource:
                     apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
                     kind: Project
+                role: roles/pubsub.publisher
+            -   resource:
+                    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+                    kind: Project
                 role: roles/cloudkms.admin
             -   resource:
                     apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
