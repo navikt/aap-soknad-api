@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.brukernotifikasjoner
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
+import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -14,6 +15,9 @@ import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
+import org.springframework.kafka.core.KafkaProducerException
+import org.springframework.kafka.core.KafkaSendCallback
+import org.springframework.kafka.support.SendResult
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequestUri
 import java.time.LocalDateTime.now
@@ -141,4 +145,16 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withNamespace(namespace)
                 .build().also { log.info(CONFIDENTIAL, "Key for Ditt Nav $type er $it") }
         }
+
+    private class DittNavSendCallback(private val msg: String) : KafkaSendCallback<NokkelInput, Any> {
+        private val log = getLogger(javaClass)
+
+        override fun onSuccess(result: SendResult<NokkelInput, Any>?) =
+            with(result) {
+                log.info("Sendte $msg til Ditt Nav med id ${this?.producerRecord?.key()?.eventId}   og offset ${this?.recordMetadata?.offset()} på ${this?.recordMetadata?.topic()}")
+            }
+
+        override fun onFailure(e: KafkaProducerException) =
+            throw IntegrationException(msg = "Kunne ikke sende $msg til Ditt Nav", cause = e)
+    }
 }
