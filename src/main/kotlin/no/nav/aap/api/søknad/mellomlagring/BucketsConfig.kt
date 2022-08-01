@@ -13,17 +13,17 @@ import java.time.Duration
 
 @ConfigurationProperties(BUCKETS)
 @ConstructorBinding
-data class BucketsConfig(val id: String,
+data class BucketsConfig(val project: String,
                          @NestedConfigurationProperty val mellom: MellomlagringBucketConfig,
                          @NestedConfigurationProperty private val vedlegg: VedleggBucketConfig,
                          @NestedConfigurationProperty private val kms: KeyConfig) {
 
     val timeoutMs = mellom.timeout.toMillis()
-    val projectSubscription = ProjectSubscriptionName.of(id, mellom.subscription.navn)
-    val location = LocationName.of(id, REGION)
-    val ring = KeyRingName.of(id, location.location, kms.ring)
+    val projectSubscription = ProjectSubscriptionName.of(project, mellom.subscription.navn)
+    val location = LocationName.of(project, REGION)
+    val ring = KeyRingName.of(project, location.location, kms.ring)
     val ringNavn = ring.toString()
-    val nøkkel = CryptoKeyName.of(id, location.location, kms.ring, kms.key)
+    val nøkkel = CryptoKeyName.of(project, location.location, kms.ring, kms.key)
     val nøkkelNavn = nøkkel.toString()
     val mellomBøtte = mellom.navn
     val vedleggBøtte = vedlegg.navn

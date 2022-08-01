@@ -13,6 +13,7 @@ import com.google.iam.v1.Policy
 import com.google.iam.v1.SetIamPolicyRequest
 import com.google.pubsub.v1.TopicName
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
+import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.MellomlagringBucketConfig.SubscriptionConfig
 import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
@@ -20,89 +21,87 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
 import org.springframework.stereotype.Component
 
 @Component
-class PubSubIAC(private val cfgs: BucketsConfig, private val storage: Storage, private val admin: PubSubAdmin) :
+class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, private val admin: PubSubAdmin) :
     InitializingBean {
 
     private val log = LoggerUtil.getLogger(javaClass)
     override fun afterPropertiesSet() = init()
 
     private fun init() {
-        with(cfgs) {
+        with(cfg.mellom.subscription) {
 
-            if (!harTopic()) {
-                lagTopic()
+            if (!harTopic(topic)) {
+                lagTopic(topic)
             }
             else {
-                log.trace("Topic ${mellom.subscription.topic} finnes allerede i $id")
+                log.trace("Topic $topic finnes allerede i ${cfg.project}")
             }
-            if (!harSubscription()) {
-                lagSubscription()
+            if (!harSubscription(navn)) {
+                lagSubscription(this)
             }
             else {
-                log.trace("Subscription ${mellom.subscription.navn} finnes allerede for topic ${mellom.subscription.topic}")
+                log.trace("Subscription $navn finnes allerede for topic $topic")
             }
-            setPubSubAdminPolicyForBucketServiceAccountOnTopic()  //Idempotent
 
-            if (!harNotifikasjon()) {
-                lagNotifikasjon()
+            if (!harNotifikasjon(topic)) {
+                setPubSubAdminPolicyForBucketServiceAccountOnTopic(topic)
+                lagNotifikasjon(topic)
             }
             else {
-                log.trace("$mellomBøtte har allerede en notifikasjon på ${mellom.subscription.topic}")
+                log.trace("${cfg.mellomBøtte} har allerede en notifikasjon på $topic")
             }
         }
     }
 
-    private fun harTopic() =
-        admin.getTopic(cfgs.mellom.subscription.topic) != null
+    private fun harTopic(topic: String) =
+        admin.getTopic(topic) != null
 
-    private fun lagTopic() =
-        admin.createTopic(cfgs.mellom.subscription.topic).also {
+    private fun lagTopic(topic: String) =
+        admin.createTopic(topic).also {
             log.trace("Lagd topic ${it.name}")
         }
 
-    private fun harNotifikasjon() =
-        listTopicForNotifikasjon().find { it.substringAfterLast('/') == cfgs.mellom.subscription.topic } != null
+    private fun harNotifikasjon(topic: String) =
+        listTopicForNotifikasjon().find { it.substringAfterLast('/') == topic } != null
 
-    private fun lagNotifikasjon() =
-        with(cfgs) {
-            val i = TopicName.of(id, mellom.subscription.topic).toString()
-            log.info("Lager en notifikasjon på topic $i")
+    private fun lagNotifikasjon(navn: String) =
+        with(cfg) {
+            val topic = TopicName.of(project, navn).toString()
+            log.info("Lager en notifikasjon på topic $topic")
             storage.createNotification(mellomBøtte,
-                    NotificationInfo.newBuilder(TopicName.of(id, mellom.subscription.topic).toString())
+                    NotificationInfo.newBuilder(topic)
                         .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
                         .setPayloadFormat(JSON_API_V1)
                         .build()).also {
-                log.trace("Lagd notifikasjon ${it.notificationId} for topic ${mellom.subscription.topic}")
+                log.trace("Lagd notifikasjon ${it.notificationId} for topic $topic")
             }
         }
 
-    private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic() =
+    private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic(navn: String) =
         TopicAdminClient.create().use { c ->
-            with(TopicName.of(cfgs.id, cfgs.mellom.subscription.topic).toString()) {
+            with(TopicName.of(cfg.project, navn).toString()) {
                 log.info("Setter policy pubsub.publisher for $this")
                 c.setIamPolicy(SetIamPolicyRequest.newBuilder()
                     .setResource(this)
                     .setPolicy(Policy.newBuilder(c.getIamPolicy(GetIamPolicyRequest.newBuilder()
                         .setResource(this).build())).addBindings(Binding.newBuilder()
                         .setRole("roles/pubsub.publisher")
-                        .addMembers("serviceAccount:${storage.getServiceAccount(cfgs.id).email}")
+                        .addMembers("serviceAccount:${storage.getServiceAccount(cfg.project).email}")
                         .build()).build())
                     .build()).also { log.trace("Policy er ${it.bindingsList}") }
             }
         }
 
     private fun listTopicForNotifikasjon() =
-        with(cfgs) {
-            storage.listNotifications(mellomBøtte)
-                .map { it.topic }
-        }
+        storage.listNotifications(cfg.mellomBøtte)
+            .map { it.topic }
 
-    private fun harSubscription() =
-        admin.getSubscription(cfgs.mellom.subscription.navn) != null
+    private fun harSubscription(navn: String) =
+        admin.getSubscription(navn) != null
 
-    private fun lagSubscription() =
-        with(cfgs.mellom.subscription) {
-            log.info("Lager subscription")
+    private fun lagSubscription(cfg: SubscriptionConfig) =
+        with(cfg) {
+            log.info("Lager pull subscription $navn for $topic")
             admin.createSubscription(navn, topic)
                 .also {
                     log.trace("Lagd pull subscription ${it.name}")

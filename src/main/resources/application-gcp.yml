@@ -158,7 +158,7 @@ dittnav:
         topic: min-side.aapen-brukernotifikasjon-done-v1
 
 buckets:
-    id: ${gcp.team.project.id}
+    project: ${gcp.team.project.id}
     kms:
         ring: ${mellomlagring.navn}-kms
         key: ${mellomlagring.navn}-kmskey
