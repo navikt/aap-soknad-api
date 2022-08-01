@@ -11,11 +11,11 @@ spec:
     pool: {{pool}}
     config:
   {{ #each config as |value key|}}
-    {{key }}: {{value}}
+    {{key}}: {{value}}
     {{/each}}
     acl:
   {{ #each acl}}
-        -   team: {{team }}
+        -   team: {{team}}
     application: {{application}}
     access: {{access}}
     {{/each}}
