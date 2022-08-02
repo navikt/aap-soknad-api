@@ -6,6 +6,7 @@ import no.nav.aap.api.søknad.fordeling.VLFordelingConfig.VLTopicConfig
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.core.KafkaProducerException
@@ -26,7 +27,7 @@ class SøknadVLFordeler(private val fordeler: KafkaOperations<String, Any>) {
                         headers()
                             .add(NAV_CALL_ID, callId().toByteArray())
                             .add("journalpostid", journalpostId.toByteArray())
-                    }).addCallback(FordelingCallback("søknad til VL"))
+                    }).addCallback(FordelingCallback("søknad til VL med journalpost $journalpostId"))
             }
             else {
                 log.warn("Fordeler ikke søknad til VL")
@@ -41,7 +42,8 @@ internal class FordelingCallback(private val msg: String) : KafkaSendCallback<St
 
     override fun onSuccess(result: SendResult<String, Any>?) =
         with(result) {
-            log.info("Fordelte $msg med key ${this?.producerRecord?.key()} og offset ${this?.recordMetadata?.offset()} på ${this?.recordMetadata?.topic()}")
+            log.info(CONFIDENTIAL,
+                    "Fordelte $msg med key ${this?.producerRecord?.key()} og offset ${this?.recordMetadata?.offset()} på ${this?.recordMetadata?.topic()}")
         }
 
     override fun onFailure(e: KafkaProducerException) =
