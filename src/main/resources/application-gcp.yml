@@ -155,7 +155,7 @@ dittnav:
     oppgave:
         topic: min-side.aapen-brukernotifikasjon-oppgave-v1
     done:
-        topic: min-side.aapen-brukernotifikasjon-done-v1
+        min-side.aapen-brukernotifikasjon-done-v1
 
 buckets:
     project: ${gcp.team.project.id}
