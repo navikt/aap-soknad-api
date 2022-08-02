@@ -78,8 +78,8 @@ class EncryptionIAC(private val cfg: BucketsConfig, private val storage: Storage
     }
 
     private fun setAksessForBucketServiceAccount(project: String) {
-        with(cfg) {
-            KeyManagementServiceClient.create().use { client ->
+        KeyManagementServiceClient.create().use { client ->
+            with(cfg) {
                 client.setIamPolicy(key,
                         client.getIamPolicy(key).toBuilder()
                             .addBindings(Binding.newBuilder()

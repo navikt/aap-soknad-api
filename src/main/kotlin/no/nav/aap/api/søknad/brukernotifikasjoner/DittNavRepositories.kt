@@ -27,7 +27,7 @@ interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
     fun done(@Param("eventid") eventid: UUID)
 
     @Query("select b.eventid from JPADittNavBeskjed b  where b.fnr = :fnr and b.done = false and b.mellomlager  = true")
-    fun getMellomlagretEventIdForFnr(@Param("fnr") fnr: String): UUID?
+    fun eventIdForFnr(@Param("fnr") fnr: String): UUID?
 }
 
 interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
