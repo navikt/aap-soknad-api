@@ -10,10 +10,10 @@ import java.time.Duration
 
 @ConfigurationProperties(DITTNAV)
 @ConstructorBinding
-data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
+data class DittNavConfig(@NestedConfigurationProperty private val nais: NAISConfig,
                          @NestedConfigurationProperty val beskjed: TopicConfig,
                          @NestedConfigurationProperty val oppgave: TopicConfig,
-                         @NestedConfigurationProperty val done: DoneConfig) {
+                         val done: String) {
 
     val app = nais.app
     val namespace = nais.namespace
@@ -24,8 +24,6 @@ data class DittNavConfig(@NestedConfigurationProperty val nais: NAISConfig,
                            @DefaultValue("{SMS,EPOST}") val preferertekanaler: List<PreferertKanal>,
                            @DefaultValue(DEFAULT_LEVEL) val sikkerhetsnivaa: Int,
                            @DefaultValue("true") val eksternVarsling: Boolean)
-
-    data class DoneConfig(val topic: String)
 
     data class NAISConfig(val namespace: String, val app: String)
 

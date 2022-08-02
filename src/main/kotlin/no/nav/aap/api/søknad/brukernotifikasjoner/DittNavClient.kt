@@ -75,7 +75,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun avsluttOppgave(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
         with(cfg) {
             if (oppgave.enabled) {
-                dittNav.send(ProducerRecord(done.topic, key(type.name, eventId, fnr, "done"), done()))
+                dittNav.send(ProducerRecord(done, key(type.name, eventId, fnr, "done"), done()))
                     .addCallback(SendCallback("avslutt oppgave"))
                 repos.oppgaver.done(eventId)
             }
@@ -88,7 +88,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun avsluttBeskjed(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
         with(cfg) {
             if (beskjed.enabled) {
-                dittNav.send(ProducerRecord(done.topic, key(type.name, eventId, fnr, "done"), done()))
+                dittNav.send(ProducerRecord(done, key(type.name, eventId, fnr, "done"), done()))
                     .addCallback(SendCallback("avslutt beskjed"))
                 repos.beskjeder.done(eventId)
             }
