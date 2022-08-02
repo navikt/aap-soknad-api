@@ -8,11 +8,9 @@ import com.google.cloud.kms.v1.CryptoKeyVersionTemplate
 import com.google.cloud.kms.v1.KeyManagementServiceClient
 import com.google.cloud.kms.v1.KeyRing
 import com.google.cloud.kms.v1.KeyRingName
-import com.google.cloud.kms.v1.LocationName
 import com.google.cloud.storage.Storage
 import com.google.iam.v1.Binding
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.REGION
 import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.stereotype.Component
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Component
 @Component
 class EncryptionIAC(private val cfg: BucketsConfig, private val storage: Storage) : InitializingBean {
 
-    private val location = LocationName.of(cfg.project, REGION)
     private val ring = with(cfg) { KeyRingName.of(project, location.location, kms.ring) }
     private val key = with(cfg) { CryptoKeyName.of(project, location.location, kms.ring, kms.key) }
 
@@ -44,7 +41,7 @@ class EncryptionIAC(private val cfg: BucketsConfig, private val storage: Storage
 
     private final fun harRing() =
         KeyManagementServiceClient.create().use { client ->
-            client.listKeyRings(location).iterateAll()
+            client.listKeyRings(cfg.location).iterateAll()
                 .map { it.name }
                 .contains("$ring")
         }
@@ -58,7 +55,7 @@ class EncryptionIAC(private val cfg: BucketsConfig, private val storage: Storage
 
     private fun lagRing() =
         KeyManagementServiceClient.create().use { client ->
-            client.createKeyRing(location, ring.keyRing, KeyRing.newBuilder().build()).also {
+            client.createKeyRing(cfg.location, ring.keyRing, KeyRing.newBuilder().build()).also {
                 log.info("Lagd keyring ${it.name}")
             }
         }
@@ -80,8 +77,8 @@ class EncryptionIAC(private val cfg: BucketsConfig, private val storage: Storage
     private fun setAksessForBucketServiceAccount(project: String) {
         with(cfg.kms) {
             KeyManagementServiceClient.create().use { client ->
-                client.setIamPolicy(CryptoKeyName.of(project, location.location, ring, key),
-                        client.getIamPolicy(CryptoKeyName.of(project, location.location, ring, key)).toBuilder()
+                client.setIamPolicy(CryptoKeyName.of(project, cfg.location.location, ring, key),
+                        client.getIamPolicy(CryptoKeyName.of(project, cfg.location.location, ring, key)).toBuilder()
                             .addBindings(Binding.newBuilder()
                                 .setRole("roles/cloudkms.cryptoKeyEncrypterDecrypter")
                                 .addMembers("serviceAccount:${storage.getServiceAccount(project).email}")

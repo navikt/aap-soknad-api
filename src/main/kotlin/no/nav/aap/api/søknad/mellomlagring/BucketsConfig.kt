@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.mellomlagring
 
+import com.google.cloud.kms.v1.LocationName
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.BUCKETS
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -11,6 +12,8 @@ data class BucketsConfig(val project: String,
                          @NestedConfigurationProperty val mellom: MellomlagringBucketConfig,
                          @NestedConfigurationProperty val vedlegg: VedleggBucketConfig,
                          @NestedConfigurationProperty val kms: KeyConfig) {
+
+    val location = LocationName.of(project, REGION)
 
     data class KeyConfig(internal val ring: String, internal val key: String)
 
