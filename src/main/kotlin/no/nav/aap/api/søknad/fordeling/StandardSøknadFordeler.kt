@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.fordeling.standard
+package no.nav.aap.api.søknad.fordeling
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
@@ -15,15 +15,16 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class StandardSøknaFordeler(private val joark: JoarkFordeler,
-                            private val pdl: PDLClient,
-                            private val avslutter: StandardSøknadAvslutter,
-                            private val vl: StandardSøknadVLFordeler) {
+class StandardSøknadFordeler(private val joark: JoarkFordeler,
+                             private val pdl: PDLClient,
+                             private val avslutter: StandardSøknadAvslutter,
+                             private val cfg: VLFordelingConfig,
+                             private val vl: SøknadVLFordeler) {
 
     fun fordel(søknad: StandardSøknad) =
         with(pdl.søkerMedBarn()) outer@{
             with(joark.fordel(søknad, this)) {
-                vl.fordel(søknad, this@outer, journalpostId)
+                vl.fordel(søknad, this@outer.fnr, journalpostId, cfg.standard)
                 avslutter.avsluttSøknad(søknad, this@outer.fnr, pdf)
             }
         }

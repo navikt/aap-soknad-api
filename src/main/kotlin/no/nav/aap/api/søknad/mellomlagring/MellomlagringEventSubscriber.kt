@@ -80,7 +80,7 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
     private fun håndterAvsluttEllerTimeout(msg: PubsubMessage) =
         msg.data.metadata()?.let { md ->
             with(md) {
-                dittNav.getMellomlagretEventIdForFnr(fnr)?.let {
+                dittNav.eventIdForFnr(fnr)?.let {
                     log.trace("Avslutter beskjed med UUID $it")
                     dittNav.avsluttBeskjed(type, fnr, it)
                 } ?: log.warn("Fant ikke UUID for opprinnelig notifikasjon")

@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad
 
-import no.nav.aap.api.søknad.fordeling.Router
+import no.nav.aap.api.søknad.fordeling.Fordeler
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.Constants.IDPORTEN
@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import javax.validation.Valid
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
-internal class InnsendingController(private val router: Router) {
+internal class InnsendingFordelingController(private val fordeler: Fordeler) {
 
     @PostMapping("/utland")
     @ResponseStatus(CREATED)
-    fun utland(@RequestBody søknad: @Valid UtlandSøknad) = router.fordel(søknad)
+    fun utland(@RequestBody søknad: @Valid UtlandSøknad) = fordeler.fordel(søknad)
 
     @PostMapping("/soknad")
     @ResponseStatus(CREATED)
-    fun soknad(@RequestBody søknad: @Valid StandardSøknad) = router.fordel(søknad)
-    override fun toString() = "$javaClass.simpleName [router=$router]"
+    fun soknad(@RequestBody søknad: @Valid StandardSøknad) = fordeler.fordel(søknad)
+    override fun toString() = "$javaClass.simpleName [fordeler=$fordeler]"
 }

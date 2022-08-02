@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import java.util.*
 
 @ConditionalOnMissingBean(SøknadFordeler::class)
-class LocalSøknadFordeler : Router {
+class LocalSøknadFordeler : Fordeler {
     private val log = LoggerUtil.getLogger(javaClass)
     override fun fordel(søknad: UtlandSøknad) =
         Kvittering(UUID.randomUUID())
