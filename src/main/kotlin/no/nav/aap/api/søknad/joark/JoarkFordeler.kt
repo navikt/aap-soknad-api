@@ -22,4 +22,22 @@ class JoarkFordeler(private val joark: JoarkClient,
         }
 }
 
-data class FordelingResultat(val pdf: ByteArray, val journalpostId: String)
+data class FordelingResultat(val pdf: ByteArray, val journalpostId: String) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as FordelingResultat
+
+        if (!pdf.contentEquals(other.pdf)) return false
+        if (journalpostId != other.journalpostId) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = pdf.contentHashCode()
+        result = 31 * result + journalpostId.hashCode()
+        return result
+    }
+}
