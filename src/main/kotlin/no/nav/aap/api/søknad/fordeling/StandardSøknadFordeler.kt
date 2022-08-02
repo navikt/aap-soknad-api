@@ -12,7 +12,6 @@ import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class StandardSøknadFordeler(private val joark: JoarkFordeler,
@@ -37,7 +36,7 @@ class StandardSøknadAvslutter(private val dittnav: DittNavClient,
     fun avsluttSøknad(søknad: StandardSøknad, fnr: Fødselsnummer, pdf: ByteArray) =
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett(STANDARD)
-            dittnav.opprettBeskjed(STANDARD, UUID.randomUUID(), fnr, "Vi har mottatt ${STANDARD.tittel}")
+            dittnav.opprettBeskjed(STANDARD, fnr = fnr, tekst = "Vi har mottatt ${STANDARD.tittel}")
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering.pdf")))
         }
 }

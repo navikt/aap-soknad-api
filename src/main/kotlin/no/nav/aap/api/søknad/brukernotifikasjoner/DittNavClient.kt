@@ -3,7 +3,7 @@ package no.nav.aap.api.søknad.brukernotifikasjoner
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
-import no.nav.aap.api.felles.error.IntegrationException
+import no.nav.aap.api.søknad.SendCallback
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -15,9 +15,6 @@ import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
-import org.springframework.kafka.core.KafkaProducerException
-import org.springframework.kafka.core.KafkaSendCallback
-import org.springframework.kafka.support.SendResult
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
@@ -32,21 +29,20 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     @Transactional
     fun opprettBeskjed(type: SkjemaType = STANDARD,
-                       eventId: UUID,
+                       eventId: UUID = UUID.randomUUID(),
                        fnr: Fødselsnummer,
                        tekst: String,
                        mellomlager: Boolean = false) =
         with(cfg.beskjed) {
             if (enabled) {
-                with(key(type.name, eventId, fnr, "beskjed")) {
-                    dittNav.send(ProducerRecord(topic, this, beskjed(type, tekst)))
-                        .addCallback(DittNavSendCallback("opprett beskjed"))
-                    repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
-                            eventid = eventId,
-                            mellomlager = mellomlager)).also { log.trace(CONFIDENTIAL, "Opprettet beskjed i DB $it") }
-
-                    eventId
+                dittNav.send(ProducerRecord(topic, key(type.name, eventId, fnr, "beskjed"), beskjed(type, tekst)))
+                    .addCallback(SendCallback("opprett beskjed"))
+                repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
+                        eventid = eventId,
+                        mellomlager = mellomlager)).also {
+                    log.trace(CONFIDENTIAL, "Opprettet beskjed i DB $it")
                 }
+                eventId
             }
             else {
                 log.info("Sender ikke opprett beskjed til Ditt Nav")
@@ -58,11 +54,14 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun opprettOppgave(type: SkjemaType, fnr: Fødselsnummer, tekst: String) =
         with(cfg.oppgave) {
             if (enabled) {
-                with(key(type.name, UUID.fromString(callId()), fnr, "oppgave")) {
+                val eventId = UUID.fromString(callId())
+                with(key(type.name, eventId, fnr, "oppgave")) {
                     dittNav.send(ProducerRecord(topic, this, oppgave(type, tekst)))
-                        .addCallback(DittNavSendCallback("opprett oppgave"))
-                    repos.oppgaver.save(JPADittNavOppgave(fnr = fnr.fnr, eventid = UUID.fromString(eventId)))
-                        .also { log.trace(CONFIDENTIAL, "Opprettet oppgave i DB $it") }
+                        .addCallback(SendCallback("opprett oppgave"))
+                    repos.oppgaver.save(JPADittNavOppgave(fnr = fnr.fnr, eventid = eventId))
+                        .also {
+                            log.trace(CONFIDENTIAL, "Opprettet oppgave i DB $it")
+                        }
                     eventId
                 }
             }
@@ -76,11 +75,9 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun avsluttOppgave(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
         with(cfg) {
             if (oppgave.enabled) {
-                with(key(type.name, eventId, fnr, "done")) {
-                    dittNav.send(ProducerRecord(done.topic, this, done()))
-                        .addCallback(DittNavSendCallback("avslutt oppgave"))
-                    repos.oppgaver.done(eventId)
-                }
+                dittNav.send(ProducerRecord(done.topic, key(type.name, eventId, fnr, "done"), done()))
+                    .addCallback(SendCallback("avslutt oppgave"))
+                repos.oppgaver.done(eventId)
             }
             else {
                 log.info("Sender ikke done til Ditt Nav")
@@ -91,11 +88,9 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun avsluttBeskjed(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
         with(cfg) {
             if (beskjed.enabled) {
-                with(key(type.name, eventId, fnr, "done")) {
-                    dittNav.send(ProducerRecord(done.topic, this, done()))
-                        .addCallback(DittNavSendCallback("avslutt beskjed"))
-                    repos.beskjeder.done(eventId)
-                }
+                dittNav.send(ProducerRecord(done.topic, key(type.name, eventId, fnr, "done"), done()))
+                    .addCallback(SendCallback("avslutt beskjed"))
+                repos.beskjeder.done(eventId)
             }
             else {
                 log.info("Sender ikke done til Ditt Nav for beskjed")
@@ -141,20 +136,11 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withGrupperingsId(grupperingId)
                 .withAppnavn(app)
                 .withNamespace(namespace)
-                .build().also { log.info(CONFIDENTIAL, "Key for Ditt Nav $type er $it") }
+                .build().also {
+                    log.info(CONFIDENTIAL, "Key for Ditt Nav $type er $it")
+                }
         }
 
     fun eventIdForFnr(fnr: Fødselsnummer) = repos.beskjeder.eventIdForFnr(fnr.fnr)
 
-    private class DittNavSendCallback(private val msg: String) : KafkaSendCallback<NokkelInput, Any> {
-        private val log = getLogger(javaClass)
-
-        override fun onSuccess(result: SendResult<NokkelInput, Any>?) =
-            with(result) {
-                log.info("Sendte $msg til Ditt Nav med id ${this?.producerRecord?.key()?.eventId}   og offset ${this?.recordMetadata?.offset()} på ${this?.recordMetadata?.topic()}")
-            }
-
-        override fun onFailure(e: KafkaProducerException) =
-            throw IntegrationException(msg = "Kunne ikke sende $msg til Ditt Nav", cause = e)
-    }
 }
