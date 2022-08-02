@@ -31,7 +31,6 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     private val log = getLogger(javaClass)
 
-    @Transactional
     fun opprettBeskjed(type: SkjemaType = STANDARD,
                        eventId: UUID,
                        fnr: Fødselsnummer,
@@ -39,15 +38,15 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                        mellomlager: Boolean = false) =
         with(cfg.beskjed) {
             if (enabled) {
-                with(nøkkel(type.name, eventId, fnr, "beskjed")) {
-                    dittNav.send(ProducerRecord(topic, this, beskjed(type, tekst)))
-                        .addCallback(DittNavSendCallback("opprett beskjed"))
-                    repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
-                            eventid = eventId,
-                            mellomlager = mellomlager)).also { log.trace("Opprettet beskjed i DB $it") }
-
-                    eventId
-                }
+                dittNav.send(ProducerRecord(topic, nøkkel(type.name, eventId, fnr, "beskjed"), beskjed(type, tekst)))
+                    .addCallback(@Transactional {
+                        log.trace("Oppretter beskjed i DB")
+                        repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
+                                eventid = eventId,
+                                mellomlager = mellomlager))
+                            .also { log.trace("Opprettet beskjed i DB $it") }
+                    }, { throw IntegrationException(msg = "Kunne ikke sende beskjed til Ditt Nav", cause = it) })
+                eventId
             }
             else {
                 log.info("Sender ikke opprett beskjed til Ditt Nav")
@@ -150,7 +149,8 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     fun eventIdForFnr(fnr: Fødselsnummer) = repos.beskjeder.getMellomlagretEventIdForFnr(fnr)
 
-    private class DittNavSendCallback(private val msg: String) : KafkaSendCallback<NokkelInput, Any> {
+    private class DittNavSendCallback(private val msg: String) :
+        KafkaSendCallback<NokkelInput, Any> {
         private val log = getLogger(javaClass)
 
         override fun onSuccess(result: SendResult<NokkelInput, Any>?) =
