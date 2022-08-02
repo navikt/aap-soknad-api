@@ -45,18 +45,11 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
     fun receiver() =
         MessageReceiver { msg, consumer ->
             with(msg) {
-                log.trace("Attributer: $attributesMap")
                 val metadata = metadataFra(data)
-                when (typeFra(attributesMap[EVENT_TYPE])) {
-                    OBJECT_FINALIZE -> {
-                        håndterOpprettet(metadata, msg)
-                    }
-
-                    OBJECT_DELETE -> {
-                        håndterSlettet(metadata, msg)
-                    }
-
-                    else -> log.trace("Event type ${attributesMap[EVENT_TYPE]} ikke håndtert")
+                when (eventType()) {
+                    OBJECT_FINALIZE -> håndterOpprettet(metadata, msg)
+                    OBJECT_DELETE -> håndterSlettet(metadata, msg)
+                    else -> log.trace("Event type ${eventType()} ikke håndtert")
                 }
             }
             consumer.ack()
@@ -83,9 +76,6 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
             }
         } ?: log.warn("Fant ikke forventet metadata")
 
-    private fun PubsubMessage.slettetGrunnetOppdatering() = containsAttributes(OVERWRITTEBBYGENERATION)
-    private fun PubsubMessage.oppdatertMedNyVersjon() = containsAttributes(OVERWROTEGENERATION)
-
     private fun håndterOpprettet(metadata: Metadata?, msg: PubsubMessage) =
         if (msg.oppdatertMedNyVersjon()) {
             log.trace("Oppdatert mellomlagring med ny versjon")
@@ -100,7 +90,9 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
             } ?: log.warn("Fant ikke forventet metadata")
         }
 
-    private fun typeFra(type: String?) = type?.let { valueOf(it) }
+    private fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { valueOf(it) }
+    private fun PubsubMessage.slettetGrunnetOppdatering() = containsAttributes(OVERWRITTEBBYGENERATION)
+    private fun PubsubMessage.oppdatertMedNyVersjon() = containsAttributes(OVERWROTEGENERATION)
 
     @Suppress("UNCHECKED_CAST")
     private fun metadataFra(data: ByteString): Metadata? =
@@ -111,7 +103,6 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
             val fnr = meta[FNR]?.let { Fødselsnummer(it) }
             val type = meta[SKJEMATYPE]?.let { SkjemaType.valueOf(it) }
             if (uuid != null && fnr != null && type != null) {
-
                 Metadata(type, fnr, uuid)
             }
             else null
