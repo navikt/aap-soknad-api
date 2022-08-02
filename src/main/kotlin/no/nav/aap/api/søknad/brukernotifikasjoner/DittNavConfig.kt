@@ -13,7 +13,7 @@ import java.time.Duration
 data class DittNavConfig(@NestedConfigurationProperty private val nais: NAISConfig,
                          @NestedConfigurationProperty val beskjed: TopicConfig,
                          @NestedConfigurationProperty val oppgave: TopicConfig,
-                         val done: String) {
+                         @DefaultValue(DEFAULT_DONE) val done: String) {
 
     val app = nais.app
     val namespace = nais.namespace
@@ -28,6 +28,7 @@ data class DittNavConfig(@NestedConfigurationProperty private val nais: NAISConf
     data class NAISConfig(val namespace: String, val app: String)
 
     companion object {
+        private const val DEFAULT_DONE = "min-side.aapen-brukernotifikasjon-done-v1"
         private const val DEFAULT_VARIGHET = "90d"
         const val DITTNAV = "dittnav"
         private const val DEFAULT_LEVEL = "3"
