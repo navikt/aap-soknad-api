@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
+import no.nav.aap.api.felles.Fødselsnummer
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -27,7 +28,7 @@ interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
     fun done(@Param("eventid") eventid: UUID)
 
     @Query("select b.eventid from JPADittNavBeskjed b  where b.fnr = :fnr and b.done = false and b.mellomlager  = true")
-    fun getMellomlagretEventIdForFnr(@Param("fnr") fnr: String): String?
+    fun getMellomlagretEventIdForFnr(@Param("fnr") fnr: Fødselsnummer): UUID?
 }
 
 interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {

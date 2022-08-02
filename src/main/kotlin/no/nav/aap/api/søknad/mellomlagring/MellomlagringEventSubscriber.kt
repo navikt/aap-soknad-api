@@ -12,7 +12,6 @@ import com.google.pubsub.v1.PubsubMessage
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
-import no.nav.aap.api.søknad.brukernotifikasjoner.JPADittNavBeskjedRepository
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -23,7 +22,6 @@ import java.util.*
 @ConditionalOnGCP
 class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
                                    private val dittNav: DittNavClient,
-                                   private val repo: JPADittNavBeskjedRepository,
                                    private val cfg: BucketsConfig) {
 
     private val log = getLogger(javaClass)
@@ -82,11 +80,9 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
     private fun håndterAvsluttEllerTimeout(msg: PubsubMessage) =
         msg.data.metadata()?.let { md ->
             with(md) {
-                repo.getMellomlagretEventIdForFnr(fnr.fnr)?.let { eventId ->
-                    UUID.fromString(eventId).also {
-                        log.trace("Avslutter beskjed med UUID $it")
-                        dittNav.avsluttBeskjed(type, fnr, it)
-                    }
+                dittNav.getMellomlagretEventIdForFnr(fnr)?.let {
+                    log.trace("Avslutter beskjed med UUID $it")
+                    dittNav.avsluttBeskjed(type, fnr, it)
                 } ?: log.warn("Fant ikke UUID for opprinnelig notifikasjon")
             }
         } ?: log.warn("Fant ikke forventet metadata")
