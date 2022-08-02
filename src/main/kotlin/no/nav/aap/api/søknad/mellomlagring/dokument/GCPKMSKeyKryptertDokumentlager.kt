@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
-import com.google.cloud.kms.v1.CryptoKeyName
 import com.google.cloud.storage.BlobId.of
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
@@ -36,7 +35,6 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
                                      private val sjekkere: List<DokumentSjekker>) : Dokumentlager {
 
     private val log = getLogger(javaClass)
-    private val key = with(cfg) { CryptoKeyName.of(project, location.location, kms.ring, kms.key) }
 
     override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(ctx.getFnr(), dokument)
 
@@ -48,7 +46,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
                 lager.create(newBuilder(of(cfg.vedlegg.navn, this@apply.toString()))
                     .setContentType(contentType)
                     .setMetadata(mapOf(FILNAVN to filnavn, UUID_ to this@apply.toString(), FNR to fnr.fnr))
-                    .build(), bytes, kmsKeyName("$key"))
+                    .build(), bytes, kmsKeyName("${cfg.key}"))
             }
         }.also {
             log.trace("Lagret $this kryptert med uuid $it")

@@ -14,7 +14,7 @@ import com.google.iam.v1.SetIamPolicyRequest
 import com.google.pubsub.v1.TopicName
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.MellomlagringBucketConfig.SubscriptionConfig
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component
 class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, private val admin: PubSubAdmin) :
     InitializingBean {
 
-    private val log = LoggerUtil.getLogger(javaClass)
+    private val log = getLogger(javaClass)
     override fun afterPropertiesSet() = init()
 
     private fun init() {

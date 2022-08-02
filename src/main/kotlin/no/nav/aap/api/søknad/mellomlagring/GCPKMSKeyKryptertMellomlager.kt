@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.mellomlagring
 
-import com.google.cloud.kms.v1.CryptoKeyName
 import com.google.cloud.storage.BlobId.of
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
@@ -24,7 +23,6 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfg: BucketsConfig,
                                             private val lager: Storage,
                                             private val ctx: AuthContext) : Mellomlager {
     val log = getLogger(javaClass)
-    private val key = with(cfg) { CryptoKeyName.of(project, location.location, kms.ring, kms.key) }
 
     override fun lagre(type: SkjemaType, value: String) = lagre(ctx.getFnr(), type, value)
 
