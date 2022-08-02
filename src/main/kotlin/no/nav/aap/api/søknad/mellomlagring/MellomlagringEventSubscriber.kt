@@ -33,9 +33,10 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
     }
 
     private fun abonner() =
-        with(ProjectSubscriptionName.of(cfg.project, cfg.mellom.subscription.navn)) {
-            log.trace("Abonnererer på hendelser via $subscription")
-            Subscriber.newBuilder(this, receiver()).build().apply {
+        with(cfg) {
+            Subscriber.newBuilder(ProjectSubscriptionName.of(project, mellom.subscription.navn),
+                    receiver()).build().apply {
+                log.trace("Abonnererer på hendelser i ${mellom.subscription}")
                 startAsync().awaitRunning()
                 awaitRunning() // TODO sjekk dette
             }
@@ -44,59 +45,59 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
     @Transactional
     fun receiver() =
         MessageReceiver { msg, consumer ->
-            with(msg) {
-                val metadata = metadataFra(data)
-                when (eventType()) {
-                    OBJECT_FINALIZE -> håndterOpprettet(metadata, msg)
-                    OBJECT_DELETE -> håndterSlettet(metadata, msg)
-                    else -> log.trace("Event type ${eventType()} ikke håndtert")
-                }
+            when (msg.eventType()) {
+                OBJECT_FINALIZE -> håndterOpprettet(msg)
+                OBJECT_DELETE -> håndterSlettet(msg)
+                else -> log.trace("Event type ${msg.eventType()} ikke håndtert")
             }
             consumer.ack()
         }
 
-    private fun håndterSlettet(metadata: Metadata?, msg: PubsubMessage) =
+    private fun håndterOpprettet(msg: PubsubMessage) =
+        if (msg.oppdatertMedNyVersjon()) {
+            log.trace("Oppdatert mellomlagring med ny versjon")
+        }
+        else {
+            log.trace("Førstegangs mellomlagring")
+            håndterFørstegangsMellomlagring(msg)
+        }
+
+    private fun håndterSlettet(msg: PubsubMessage) =
         if (msg.slettetGrunnetOppdatering()) {
             log.trace("Sletting pga opppdatert mellomlagring")
         }
         else {
-            håndterAvsluttEllerTimeout(metadata)
+            log.trace("Delete entry pga avslutt eller timeout")
+            håndterAvsluttEllerTimeout(msg)
         }
 
-    private fun håndterAvsluttEllerTimeout(metadata: Metadata?) =
-        metadata?.let { md ->
-            log.trace("Delete entry pga avslutt eller timeout")
+    private fun håndterFørstegangsMellomlagring(msg: PubsubMessage) =
+        msg.data.metadata()?.let { md ->
+            with(md) {
+                log.trace("Oppretter beskjed med UUID $uuid")
+                dittNav.opprettBeskjed(type, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
+            }
+        } ?: log.warn("Fant ikke forventet metadata")
+
+    private fun håndterAvsluttEllerTimeout(msg: PubsubMessage) =
+        msg.data.metadata()?.let { md ->
             with(md) {
                 repo.getMellomlagretEventIdForFnr(fnr.fnr)?.let { eventId ->
                     UUID.fromString(eventId).also {
                         log.trace("Avslutter beskjed med UUID $it")
                         dittNav.avsluttBeskjed(type, fnr, it)
                     }
-                } ?: log.warn("Fant ikke uuid for opprinnelig notifikasjon")
+                } ?: log.warn("Fant ikke UUID for opprinnelig notifikasjon")
             }
         } ?: log.warn("Fant ikke forventet metadata")
-
-    private fun håndterOpprettet(metadata: Metadata?, msg: PubsubMessage) =
-        if (msg.oppdatertMedNyVersjon()) {
-            log.trace("Oppdatert mellomlagring med ny versjon")
-        }
-        else {
-            log.trace("Førstegangs mellomlagring")
-            metadata?.let { md ->
-                with(md) {
-                    log.trace("Oppretter beskjed med UUID $uuid")
-                    dittNav.opprettBeskjed(type, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
-                }
-            } ?: log.warn("Fant ikke forventet metadata")
-        }
 
     private fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { valueOf(it) }
     private fun PubsubMessage.slettetGrunnetOppdatering() = containsAttributes(OVERWRITTEBBYGENERATION)
     private fun PubsubMessage.oppdatertMedNyVersjon() = containsAttributes(OVERWROTEGENERATION)
 
     @Suppress("UNCHECKED_CAST")
-    private fun metadataFra(data: ByteString): Metadata? =
-        (mapper.readValue(data.toStringUtf8(), Map::class.java) as Map<String, Any>)[METADATA]?.let {
+    private fun ByteString.metadata(): Metadata? =
+        (mapper.readValue(toStringUtf8(), Map::class.java) as Map<String, Any>)[METADATA]?.let {
             it as Map<String, String>
         }?.let { meta ->
             val uuid = meta[UUID_]?.let { UUID.fromString(it) }
