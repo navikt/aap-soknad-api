@@ -18,8 +18,8 @@ class SøknadVLFordeler(private val fordeler: KafkaOperations<String, Any>) {
 
     private val log = getLogger(javaClass)
 
-    fun fordel(søknad: Any, fnr: Fødselsnummer, journalpostId: String, cfg: VLTopicConfig) =
-        with(cfg) {
+    fun fordel(søknad: Any, fnr: Fødselsnummer, journalpostId: String, topicConfig: VLTopicConfig) =
+        with(topicConfig) {
             if (enabled) {
                 fordeler.send(ProducerRecord(topic, fnr.fnr, søknad)
                     .apply {
