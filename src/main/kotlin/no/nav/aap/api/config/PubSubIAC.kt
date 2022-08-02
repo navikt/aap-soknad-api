@@ -44,7 +44,7 @@ class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, pr
             }
 
             if (!harNotifikasjon(topic)) {
-                setPubSubAdminPolicyForBucketServiceAccountOnTopic(topic)
+                setPubSubAdminPolicyForBucketServiceAccountOnTopic(cfg.project, topic)
                 lagNotifikasjon(topic)
             }
             else {
@@ -79,16 +79,16 @@ class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, pr
             }
         }
 
-    private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic(topic: String) =
+    private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic(project: String, topic: String) =
         TopicAdminClient.create().use { c ->
-            with(TopicName.of(cfg.project, topic).toString()) {
+            with(TopicName.of(project, topic).toString()) {
                 log.info("Setter policy pubsub.publisher for $this")
                 c.setIamPolicy(SetIamPolicyRequest.newBuilder()
                     .setResource(this)
                     .setPolicy(Policy.newBuilder(c.getIamPolicy(GetIamPolicyRequest.newBuilder()
                         .setResource(this).build())).addBindings(Binding.newBuilder()
                         .setRole("roles/pubsub.publisher")
-                        .addMembers("serviceAccount:${storage.getServiceAccount(cfg.project).email}")
+                        .addMembers("serviceAccount:${storage.getServiceAccount(project).email}")
                         .build()).build())
                     .build()).also { log.trace("Policy er ${it.bindingsList}") }
             }
@@ -113,9 +113,9 @@ class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, pr
         fun iacOperation() =
             with(cfg) {
                 mutableMapOf("bøtte" to mellom,
-                        "notification" to storage.listNotifications(mellom.navn),
-                        "nøkkel" to nøkkelNavn,
-                        "ring" to ringNavn)
+                        "notification" to storage.listNotifications(mellom.navn).map { it -> it.topic },
+                        "nøkkel" to kms.key,
+                        "ring" to kms.ring)
             }
     }
 }

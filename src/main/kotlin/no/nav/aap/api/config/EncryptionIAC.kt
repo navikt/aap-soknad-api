@@ -2,23 +2,31 @@ package no.nav.aap.api.config
 
 import com.google.cloud.kms.v1.CryptoKey
 import com.google.cloud.kms.v1.CryptoKey.CryptoKeyPurpose.ENCRYPT_DECRYPT
+import com.google.cloud.kms.v1.CryptoKeyName
 import com.google.cloud.kms.v1.CryptoKeyVersion.CryptoKeyVersionAlgorithm.GOOGLE_SYMMETRIC_ENCRYPTION
 import com.google.cloud.kms.v1.CryptoKeyVersionTemplate
 import com.google.cloud.kms.v1.KeyManagementServiceClient
 import com.google.cloud.kms.v1.KeyRing
+import com.google.cloud.kms.v1.KeyRingName
+import com.google.cloud.kms.v1.LocationName
 import com.google.cloud.storage.Storage
 import com.google.iam.v1.Binding
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
+import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.REGION
 import no.nav.aap.util.LoggerUtil
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.stereotype.Component
 
 @Component
-class EncryptionIAC(private val cfgs: BucketsConfig, private val storage: Storage) : InitializingBean {
+class EncryptionIAC(private val cfg: BucketsConfig, private val storage: Storage) : InitializingBean {
+
+    private val location = LocationName.of(cfg.project, REGION)
+    private val ring = with(cfg) { KeyRingName.of(project, location.location, kms.ring) }
+    private val key = with(cfg) { CryptoKeyName.of(project, location.location, kms.ring, kms.key) }
 
     private val log = LoggerUtil.getLogger(javaClass)
     override fun afterPropertiesSet() =
-        with(cfgs) {
+        with(cfg) {
             if (harRing()) {
                 log.info("KeyRing $ring finnes allerede")
             }
@@ -26,65 +34,58 @@ class EncryptionIAC(private val cfgs: BucketsConfig, private val storage: Storag
                 lagRing()
             }
             if (harNøkkel()) {
-                log.info("Nøkkel $nøkkel finnes allerede")
+                log.info("Nøkkel $key finnes allerede")
             }
             else {
                 lagNøkkel()
             }
-            setAksessForBucketServiceAccount()
-        }
-
-    fun listRinger() =
-        KeyManagementServiceClient.create().use { client ->
-            client.listKeyRings(cfgs.location).iterateAll()
+            setAksessForBucketServiceAccount(project)
         }
 
     private final fun harRing() =
-        listRinger()
-            .map { it.name }
-            .contains(cfgs.ringNavn)
-
-    final fun listNøkler() =
         KeyManagementServiceClient.create().use { client ->
-            client.listCryptoKeys(cfgs.ring).iterateAll()
+            client.listKeyRings(location).iterateAll()
+                .map { it.name }
+                .contains("$ring")
         }
 
     private final fun harNøkkel() =
-        listNøkler()
-            .map { it.name }
-            .contains(cfgs.nøkkelNavn)
+        KeyManagementServiceClient.create().use { client ->
+            client.listCryptoKeys(ring).iterateAll()
+                .map { it.name }
+                .contains("$key")
+        }
 
-    fun lagRing(): KeyRing =
-        with(cfgs) {
-            KeyManagementServiceClient.create().use { client ->
-                client.createKeyRing(location, ring.keyRing, KeyRing.newBuilder().build()).also {
-                    log.info("Lagd keyring ${it.name}")
-                }
+    private fun lagRing() =
+        KeyManagementServiceClient.create().use { client ->
+            client.createKeyRing(location, ring.keyRing, KeyRing.newBuilder().build()).also {
+                log.info("Lagd keyring ${it.name}")
             }
         }
 
-    fun lagNøkkel() {
-        with(cfgs) {
-            KeyManagementServiceClient.create().use { client ->
-                client.createCryptoKey(ring, nøkkel.cryptoKey, CryptoKey.newBuilder()
-                    .setPurpose(ENCRYPT_DECRYPT)
-                    .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
-                        .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
-                    .build()).also {
-                    log.info("Lagd nøkkel $it")
-                }
+    private fun lagNøkkel() {
+        KeyManagementServiceClient.create().use { client ->
+            client.createCryptoKey(ring,
+                    key.cryptoKey,
+                    CryptoKey.newBuilder()
+                        .setPurpose(ENCRYPT_DECRYPT)
+                        .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
+                            .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
+                        .build()).also {
+                log.info("Lagd nøkkel $it")
             }
         }
     }
 
-    fun setAksessForBucketServiceAccount() {
-        with(cfgs) {
+    private fun setAksessForBucketServiceAccount(project: String) {
+        with(cfg.kms) {
             KeyManagementServiceClient.create().use { client ->
-                client.setIamPolicy(nøkkel,
-                        client.getIamPolicy(nøkkel).toBuilder().addBindings(Binding.newBuilder()
-                            .setRole("roles/cloudkms.cryptoKeyEncrypterDecrypter")
-                            .addMembers("serviceAccount:${storage.getServiceAccount(project).email}")
-                            .build()).build())
+                client.setIamPolicy(CryptoKeyName.of(project, location.location, ring, key),
+                        client.getIamPolicy(CryptoKeyName.of(project, location.location, ring, key)).toBuilder()
+                            .addBindings(Binding.newBuilder()
+                                .setRole("roles/cloudkms.cryptoKeyEncrypterDecrypter")
+                                .addMembers("serviceAccount:${storage.getServiceAccount(project).email}")
+                                .build()).build())
                     .also { log.trace("Ny policy er ${it.bindingsList}") }
             }
         }
