@@ -21,8 +21,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, private val admin: PubSubAdmin) {
-    private val log = getLogger(javaClass)
-
     init {
         with(cfg.mellom.subscription) {
             if (!harTopic(topic)) {
@@ -112,5 +110,9 @@ class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, pr
                         "nøkkel" to kms.key,
                         "ring" to kms.ring)
             }
+    }
+
+    companion object {
+        private val log = getLogger(PubSubIAC::class.java)
     }
 }

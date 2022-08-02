@@ -14,9 +14,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class EncryptionIAC(private val cfg: BucketsConfig, private val storage: Storage) {
-
-    private val log = LoggerUtil.getLogger(javaClass)
-
+    
     init {
         with(cfg) {
             if (harRing()) {
@@ -90,6 +88,9 @@ class EncryptionIAC(private val cfg: BucketsConfig, private val storage: Storage
                     .also { log.trace("Ny policy er ${it.bindingsList}") }
             }
         }
+    }
 
+    companion object {
+        private val log = LoggerUtil.getLogger(EncryptionIAC::class.java)
     }
 }
