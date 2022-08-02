@@ -16,27 +16,27 @@ import org.springframework.stereotype.Component
 @Component
 class StandardSøknadFordeler(private val joark: JoarkFordeler,
                              private val pdl: PDLClient,
+                             private val dittnav: DittNavClient,
                              private val avslutter: StandardSøknadAvslutter,
                              private val cfg: VLFordelingConfig,
                              private val vl: SøknadVLFordeler) {
 
     fun fordel(søknad: StandardSøknad) =
-        with(pdl.søkerMedBarn()) outer@{
+        pdl.søkerMedBarn().run {
             with(joark.fordel(søknad, this)) {
-                vl.fordel(søknad, this@outer.fnr, journalpostId, cfg.standard)
-                avslutter.avsluttSøknad(søknad, this@outer.fnr, pdf)
+                vl.fordel(søknad, fnr, journalpostId, cfg.standard)
+                dittnav.opprettBeskjed(STANDARD, fnr = fnr, tekst = "Vi har mottatt ${STANDARD.tittel}")
+                avslutter.avsluttSøknad(søknad, fnr, pdf)
             }
         }
 }
 
 @Component
-class StandardSøknadAvslutter(private val dittnav: DittNavClient,
-                              private val dokumentLager: Dokumentlager,
+class StandardSøknadAvslutter(private val dokumentLager: Dokumentlager,
                               private val mellomlager: Mellomlager) {
     fun avsluttSøknad(søknad: StandardSøknad, fnr: Fødselsnummer, pdf: ByteArray) =
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett(STANDARD)
-            dittnav.opprettBeskjed(STANDARD, fnr = fnr, tekst = "Vi har mottatt ${STANDARD.tittel}")
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering.pdf")))
         }
 }
