@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
+import com.google.cloud.kms.v1.CryptoKeyName
 import com.google.cloud.storage.BlobId.of
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
@@ -12,6 +13,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.AuthContextExtension.getFnr
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.api.søknad.model.StandardSøknad
@@ -34,6 +36,7 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
                                      private val sjekkere: List<DokumentSjekker>) : Dokumentlager {
 
     private val log = getLogger(javaClass)
+    private val key = with(cfg) { CryptoKeyName.of(project, location.location, kms.ring, kms.key) }
 
     override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(ctx.getFnr(), dokument)
 
@@ -44,8 +47,8 @@ class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
                 sjekkere.forEach { it.sjekk(this) }
                 lager.create(newBuilder(of(cfg.vedlegg.navn, this@apply.toString()))
                     .setContentType(contentType)
-                    .setMetadata(mapOf(FILNAVN to filnavn, "uuid" to this@apply.toString(), FNR to fnr.fnr))
-                    .build(), bytes, kmsKeyName(cfg.nøkkelNavn))
+                    .setMetadata(mapOf(FILNAVN to filnavn, UUID_ to this@apply.toString(), FNR to fnr.fnr))
+                    .build(), bytes, kmsKeyName("$key"))
             }
         }.also {
             log.trace("Lagret $this kryptert med uuid $it")
