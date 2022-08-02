@@ -148,7 +148,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .build().also { log.info(CONFIDENTIAL, "Key for Ditt Nav $type er $it") }
         }
 
-    fun eventIdForFnr(fnr: Fødselsnummer) = repos.beskjeder.getMellomlagretEventIdForFnr(fnr)
+    fun eventIdForFnr(fnr: Fødselsnummer) = repos.beskjeder.getMellomlagretEventIdForFnr(fnr.fnr)
 
     private class DittNavSendCallback(private val msg: String) : KafkaSendCallback<NokkelInput, Any> {
         private val log = getLogger(javaClass)
