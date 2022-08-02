@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class EncryptionIAC(private val cfg: BucketsConfig, private val storage: Storage) {
-    
+
     init {
         with(cfg) {
             if (harRing()) {
@@ -23,11 +23,11 @@ class EncryptionIAC(private val cfg: BucketsConfig, private val storage: Storage
             else {
                 lagRing()
             }
-            if (harNøkkel()) {
+            if (harKey()) {
                 log.info("Nøkkel $key finnes allerede")
             }
             else {
-                lagNøkkel()
+                lagKey()
             }
             setAksessForBucketServiceAccount(project)
         }
@@ -42,7 +42,7 @@ class EncryptionIAC(private val cfg: BucketsConfig, private val storage: Storage
             }
         }
 
-    private final fun harNøkkel() =
+    private final fun harKey() =
         KeyManagementServiceClient.create().use { client ->
             with(cfg) {
                 client.listCryptoKeys(ring).iterateAll()
@@ -60,7 +60,7 @@ class EncryptionIAC(private val cfg: BucketsConfig, private val storage: Storage
             }
         }
 
-    private fun lagNøkkel() {
+    private fun lagKey() {
         KeyManagementServiceClient.create().use { client ->
             with(cfg) {
                 client.createCryptoKey(ring,
@@ -82,7 +82,7 @@ class EncryptionIAC(private val cfg: BucketsConfig, private val storage: Storage
                 client.setIamPolicy(key,
                         client.getIamPolicy(key).toBuilder()
                             .addBindings(Binding.newBuilder()
-                                .setRole("roles/cloudkms.cryptoKeyEncrypterDecrypter")
+                                .setRole(ENCRYPT_DECRYPT_ROLE)
                                 .addMembers("serviceAccount:${storage.getServiceAccount(project).email}")
                                 .build()).build())
                     .also { log.trace("Ny policy er ${it.bindingsList}") }
@@ -91,6 +91,7 @@ class EncryptionIAC(private val cfg: BucketsConfig, private val storage: Storage
     }
 
     companion object {
+        private const val ENCRYPT_DECRYPT_ROLE = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
         private val log = LoggerUtil.getLogger(EncryptionIAC::class.java)
     }
 }
