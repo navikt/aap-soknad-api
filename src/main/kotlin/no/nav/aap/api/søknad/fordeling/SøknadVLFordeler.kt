@@ -15,9 +15,9 @@ class SøknadVLFordeler(private val fordeler: KafkaOperations<String, Any>) {
 
     private val log = getLogger(javaClass)
 
-    fun fordel(søknad: Any, fnr: Fødselsnummer, journalpostId: String, topicConfig: VLTopicConfig) =
-        with(topicConfig) {
-            if (enabled) {
+    fun fordel(søknad: Any, fnr: Fødselsnummer, journalpostId: String, cfg: VLTopicConfig) =
+        if (cfg.enabled) {
+            with(cfg) {
                 fordeler.send(ProducerRecord(topic, fnr.fnr, søknad)
                     .apply {
                         headers()
@@ -25,10 +25,10 @@ class SøknadVLFordeler(private val fordeler: KafkaOperations<String, Any>) {
                             .add("journalpostid", journalpostId.toByteArray())
                     }).addCallback(SendCallback("søknad til VL med journalpost $journalpostId"))
             }
-            else {
-                log.warn("Fordeler ikke søknad til VL")
-            }
+        }
+        else {
+            log.warn("Fordeler ikke søknad til VL")
         }
 
-    override fun toString() = "$javaClass.simpleName [fordeler=$fordeler]"
+    override fun toString() = "${javaClass.simpleName} [fordeler=$fordeler]"
 }

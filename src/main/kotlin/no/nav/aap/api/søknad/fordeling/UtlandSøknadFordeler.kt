@@ -20,9 +20,9 @@ class UtlandSøknadFordeler(private val joark: JoarkFordeler,
                            private val vl: SøknadVLFordeler) {
 
     fun fordel(søknad: UtlandSøknad) =
-        with(pdl.søkerUtenBarn()) outer@{
+        pdl.søkerUtenBarn().run {
             with(joark.fordel(søknad, this)) {
-                vl.fordel(søknad, this@outer.fnr, journalpostId, cfg.utland)
+                vl.fordel(søknad, fnr, journalpostId, cfg.utland)
                 dittnav.opprettBeskjed(UTLAND, fnr = fnr, tekst = "Vi har mottatt ${UTLAND.tittel}")
                 Kvittering(lager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering.pdf")))
             }
