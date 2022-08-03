@@ -50,6 +50,6 @@ internal class GCPKryptertMellomlager(private val cfg: BucketsConfig,
 
     fun slett(fnr: Fødselsnummer, type: SkjemaType) =
         lager.delete(of(cfg.mellom.navn, navn(fnr, type)).also {
-            log.trace(CONFIDENTIAL, "Slettet ${it.name} for $fnr ")
+            log.trace(CONFIDENTIAL, "Slettet ${it.name} for $fnr")
         })
 }

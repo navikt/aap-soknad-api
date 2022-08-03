@@ -41,11 +41,11 @@ class GCPKryptertDokumentlager(private val cfg: BucketsConfig,
     fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
         randomUUID().apply {
             with(dokument) {
-                log.trace("Lagrer $filnavn kryptert, med uuid $this@uuid  og contentType $contentType")
+                log.trace("Lagrer $filnavn kryptert, med uuid ${this@apply} og contentType $contentType")
                 sjekkere.forEach { it.sjekk(this) }
-                lager.create(newBuilder(of(cfg.vedlegg.navn, this@apply.toString()))
+                lager.create(newBuilder(of(cfg.vedlegg.navn, "${this@apply}"))
                     .setContentType(contentType)
-                    .setMetadata(mapOf(FILNAVN to filnavn, UUID_ to this@apply.toString(), FNR to fnr.fnr))
+                    .setMetadata(mapOf(FILNAVN to filnavn, UUID_ to "${this@apply}", FNR to fnr.fnr))
                     .build(), bytes, kmsKeyName("${cfg.key}"))
             }
         }.also {
@@ -55,7 +55,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketsConfig,
     override fun lesDokument(uuid: UUID) = lesDokument(ctx.getFnr(), uuid)
 
     fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.get(cfg.vedlegg.navn, uuid.toString(), fields(METADATA, CONTENT_TYPE, TIME_CREATED))
+        lager.get(cfg.vedlegg.navn, "$uuid", fields(METADATA, CONTENT_TYPE, TIME_CREATED))
             ?.let { blob ->
                 with(blob) {
                     DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
