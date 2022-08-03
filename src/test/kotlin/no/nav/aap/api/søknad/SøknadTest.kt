@@ -124,8 +124,7 @@ class SøknadTest {
                     Fødselsnummer("08089403198"),
                     Adresse("Gata", "17", "A",
                             PostNummer("2600", "Lillehammer")), now(), listOf(
-                    Barn(Fødselsnummer("08089405956"),
-                            Navn("Barn", "B", "Barnsben"), now())))
+                    Barn(Navn("Barn", "B", "Barnsben"), now())))
         }
 
         fun standardSøknad() = StandardSøknad(
@@ -147,9 +146,8 @@ class SøknadTest {
                         FraArbeidsgiver(true, Vedlegg(deler = listOf(UUID.randomUUID(),
                                 UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD)),
                         EkstraUtbetaling("hvilken", "hvem")),
-                listOf(BarnOgInntekt(Fødselsnummer("08089403198"), merEnnIG = true, barnepensjon = false)),
-                listOf(AnnetBarnOgInntekt(Barn(Fødselsnummer("08089403198"),
-                        Navn("Et", "ekstra", "Barn"), now().minusYears(14)))),
+                listOf(BarnOgInntekt(merEnnIG = true, barnepensjon = false)),
+                listOf(AnnetBarnOgInntekt(Barn(Navn("Et", "ekstra", "Barn"), now().minusYears(14)))),
                 "Tilegg", Vedlegg(deler = listOf(UUID.randomUUID(),
                 UUID.randomUUID())))
     }
