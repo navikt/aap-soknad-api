@@ -59,7 +59,7 @@ class PDLWebClientAdapter(
             systemWebClient.post(BARN_QUERY, idFra(fnr), PDLBarn::class.java).block()
         }, "barn")
             ?.let { barn ->
-                val b = Barn(Fødselsnummer(fnr), navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
+                val b = Barn(navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
                 b.fødseldato?.let {
                     if (it.isBefore(LocalDate.now().minusYears(18))) {
                         null

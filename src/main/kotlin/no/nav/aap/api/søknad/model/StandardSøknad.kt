@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.TextNode
 import com.neovisionaries.i18n.CountryCode
-import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
@@ -91,7 +90,7 @@ data class Ferie(val ferieType: FerieType, val periode: Periode? = null, val dag
     }
 }
 
-data class BarnOgInntekt(val fnr: Fødselsnummer, val merEnnIG: Boolean? = false, val barnepensjon: Boolean = false)
+data class BarnOgInntekt(val merEnnIG: Boolean? = false, val barnepensjon: Boolean = false)
 data class AnnetBarnOgInntekt(val barn: Barn,
                               val relasjon: Relasjon = FORELDER,
                               val merEnnIG: Boolean? = false,
@@ -157,6 +156,7 @@ internal class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.jav
             when (this) {
                 is ArrayNode -> Vedlegg(deler = filterNotNull().map { (it as TextNode).textValue() }
                     .map { UUID.fromString(it) })
+
                 is TextNode -> Vedlegg(deler = listOf(UUID.fromString(textValue())))
                 else -> throw IllegalStateException("Ikke-forventet node ${javaClass.simpleName}")
             }
