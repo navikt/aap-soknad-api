@@ -59,7 +59,7 @@ spring:
             key-store-type: PKCS12
             key-store-password: ${kafka.credstore.password}
         producer:
-            acks: 1
+            acks: all
             client-id: ${spring.application.name}
             key-serializer: org.apache.kafka.common.serialization.StringSerializer
             value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
