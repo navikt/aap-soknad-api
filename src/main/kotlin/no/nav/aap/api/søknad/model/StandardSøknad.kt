@@ -22,7 +22,6 @@ import no.nav.aap.joark.VariantFormat.ORIGINAL
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.StringExtensions.toEncodedJson
 import java.io.IOException
-import java.time.LocalDate
 import java.util.*
 
 data class StandardSøknad(
@@ -60,12 +59,7 @@ data class Studier(val erStudent: StudieSvar?,
 
 }
 
-data class Startdato(val fom: LocalDate, val hvorfor: Hvorfor?, val beskrivelse: String?) {
-    enum class Hvorfor {
-        HELSE,
-        FEILINFO
-    }
-}
+data class Startdato(val beskrivelse: String?)
 
 data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
                       val jobbetUtenforNorgeFørSyk: Boolean?,
