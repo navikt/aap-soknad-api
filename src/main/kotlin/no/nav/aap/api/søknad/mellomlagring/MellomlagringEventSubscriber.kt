@@ -1,15 +1,11 @@
 package no.nav.aap.api.søknad.mellomlagring
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.cloud.pubsub.v1.MessageReceiver
-import com.google.cloud.pubsub.v1.Subscriber
 import com.google.cloud.spring.pubsub.core.subscriber.PubSubSubscriberTemplate
-import com.google.cloud.spring.pubsub.support.BasicAcknowledgeablePubsubMessage
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import com.google.cloud.storage.NotificationInfo.EventType.valueOf
 import com.google.protobuf.ByteString
-import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.pubsub.v1.PubsubMessage
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
@@ -17,7 +13,6 @@ import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
-import org.springframework.transaction.annotation.Transactional
 import java.util.*
 import java.util.function.Consumer
 
@@ -26,55 +21,27 @@ import java.util.function.Consumer
 class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
                                    private val dittNav: DittNavClient,
                                    private val cfg: BucketsConfig,
-                                   private val template: PubSubSubscriberTemplate) {
+                                   private val pubSub: PubSubSubscriberTemplate) {
 
     private val log = getLogger(javaClass)
 
     init {
-        // abonner()
-        abonner1()
-
+        subscribe()
     }
 
-    fun receiver1(): Consumer<BasicAcknowledgeablePubsubMessage> {
-        return Consumer<BasicAcknowledgeablePubsubMessage> { m ->
-            with(m.pubsubMessage.eventType()) {
-                when (this) {
-                    OBJECT_FINALIZE -> håndterOpprettet(m.pubsubMessage)
-                    OBJECT_DELETE -> håndterSlettet(m.pubsubMessage)
-                    else -> log.trace("Event type $this ikke håndtert (dette skal aldri skje)")
+    private fun subscribe() =
+        with(cfg.mellom) {
+            log.trace("Abonnererer på hendelser i $subscription")
+            pubSub.subscribe(subscription.navn, Consumer { msg ->
+                with(msg.pubsubMessage) {
+                    when (eventType()) {
+                        OBJECT_FINALIZE -> håndterOpprettet(this)
+                        OBJECT_DELETE -> håndterSlettet(this)
+                        else -> log.trace("Event type ${eventType()} ikke håndtert (dette skal aldri skje)")
+                    }
                 }
-            }
-            m.ack()
-        }
-    }
-
-    private fun abonner() =
-        with(cfg) {
-            Subscriber.newBuilder(ProjectSubscriptionName.of(project, mellom.subscription.navn),
-                    receiver()).build().apply {
-                log.trace("Abonnererer på hendelser i ${mellom.subscription}")
-                startAsync().awaitRunning()
-                awaitRunning() // TODO sjekk dette
-            }
-        }
-
-    private fun abonner1() =
-        with(cfg) {
-            template.subscribe(mellom.subscription.navn, receiver1())
-        }
-
-    @Transactional
-    fun receiver() =
-        MessageReceiver { msg, consumer ->
-            with(msg.eventType()) {
-                when (this) {
-                    OBJECT_FINALIZE -> håndterOpprettet(msg)
-                    OBJECT_DELETE -> håndterSlettet(msg)
-                    else -> log.trace("Event type $this ikke håndtert (dette skal aldri skje)")
-                }
-            }
-            consumer.ack()
+                msg.ack()
+            })
         }
 
     private fun håndterOpprettet(msg: PubsubMessage) =
