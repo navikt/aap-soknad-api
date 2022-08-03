@@ -43,10 +43,12 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
     @Transactional
     fun receiver() =
         MessageReceiver { msg, consumer ->
-            when (msg.eventType()) {
-                OBJECT_FINALIZE -> håndterOpprettet(msg)
-                OBJECT_DELETE -> håndterSlettet(msg)
-                else -> log.trace("Event type ${msg.eventType()} ikke håndtert")
+            with(msg.eventType()) {
+                when (this) {
+                    OBJECT_FINALIZE -> håndterOpprettet(msg)
+                    OBJECT_DELETE -> håndterSlettet(msg)
+                    else -> log.trace("Event type $this ikke håndtert (dette skal aldri skje)")
+                }
             }
             consumer.ack()
         }
@@ -70,8 +72,8 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
         }
 
     private fun håndterFørstegangsMellomlagring(msg: PubsubMessage) =
-        msg.data.metadata()?.let { md ->
-            with(md) {
+        msg.data.metadata()?.let {
+            with(it) {
                 log.trace("Oppretter beskjed med UUID $uuid")
                 dittNav.opprettBeskjed(type, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
             }
