@@ -16,9 +16,9 @@
     <description>aap-soknad-api</description>
     <properties>
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
-        <conditionals.version>3.0.2</conditionals.version>
+        <conditionals.version>3.0.3</conditionals.version>
         <confluent.version>7.2.1</confluent.version>
-        <domain.version>0.0.92</domain.version>
+        <domain.version>0.0.94</domain.version>
         <gcp.version>0.176.0</gcp.version>
         <gcp.libraries.version>26.0.0</gcp.libraries.version>
         <spring-cloud-gcp.version>3.3.0</spring-cloud-gcp.version>
@@ -40,7 +40,7 @@
         <sonar.projectKey>navikt_aap-soknad-api</sonar.projectKey>
         <swagger.annotations.version>2.2.2</swagger.annotations.version>
         <springdoc.version>1.6.9</springdoc.version>
-        <token.validation.version>2.1.2</token.validation.version>
+        <token.validation.version>2.1.3</token.validation.version>
         <tika.version>2.4.1</tika.version>
 
     </properties>
