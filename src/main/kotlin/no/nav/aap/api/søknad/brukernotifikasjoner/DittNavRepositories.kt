@@ -85,7 +85,7 @@ class JPASøknad(
 }
 
 @Converter(autoApply = true)
-class UuidConverter : AttributeConverter<UUID, String> {
+class UUIDAttributeConverter : AttributeConverter<UUID, String> {
     override fun convertToDatabaseColumn(entityValue: UUID?) = entityValue?.let(UUID::toString)
     override fun convertToEntityAttribute(databaseValue: String?) = databaseValue?.let(UUID::fromString)
 }

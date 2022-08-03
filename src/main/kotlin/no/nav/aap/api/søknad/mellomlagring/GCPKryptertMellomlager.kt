@@ -19,9 +19,9 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.nio.charset.StandardCharsets.UTF_8
 
 @ConditionalOnGCP
-internal class GCPKMSKeyKryptertMellomlager(private val cfg: BucketsConfig,
-                                            private val lager: Storage,
-                                            private val ctx: AuthContext) : Mellomlager {
+internal class GCPKryptertMellomlager(private val cfg: BucketsConfig,
+                                      private val lager: Storage,
+                                      private val ctx: AuthContext) : Mellomlager {
     val log = getLogger(javaClass)
 
     override fun lagre(type: SkjemaType, value: String) = lagre(ctx.getFnr(), type, value)
@@ -33,7 +33,7 @@ internal class GCPKMSKeyKryptertMellomlager(private val cfg: BucketsConfig,
                 .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName("$key"))
                 .blobId.toGsUtilUri()
                 .also {
-                    log.trace(CONFIDENTIAL, "Lagret kryptert  $value for $fnr som $it")
+                    log.trace(CONFIDENTIAL, "Lagret kryptert $value for $fnr som $it")
                 }
         }
 

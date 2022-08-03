@@ -29,10 +29,10 @@ import java.util.UUID.randomUUID
 
 @ConditionalOnGCP
 @Primary
-class GCPKMSKeyKryptertDokumentlager(private val cfg: BucketsConfig,
-                                     private val lager: Storage,
-                                     private val ctx: AuthContext,
-                                     private val sjekkere: List<DokumentSjekker>) : Dokumentlager {
+class GCPKryptertDokumentlager(private val cfg: BucketsConfig,
+                               private val lager: Storage,
+                               private val ctx: AuthContext,
+                               private val sjekkere: List<DokumentSjekker>) : Dokumentlager {
 
     private val log = getLogger(javaClass)
 

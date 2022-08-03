@@ -24,7 +24,7 @@ class UtlandSøknadFordeler(private val joark: JoarkFordeler,
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.utland)
                 dittnav.opprettBeskjed(UTLAND, fnr = fnr, tekst = "Vi har mottatt ${UTLAND.tittel}")
-                Kvittering(lager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering.pdf")))
+                Kvittering(lager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering-utland.pdf")))
             }
         }
 }

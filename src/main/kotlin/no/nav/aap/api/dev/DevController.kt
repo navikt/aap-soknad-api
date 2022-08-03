@@ -4,9 +4,9 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
-import no.nav.aap.api.søknad.mellomlagring.GCPKMSKeyKryptertMellomlager
+import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
-import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKMSKeyKryptertDokumentlager
+import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
@@ -34,8 +34,8 @@ import java.util.*
 
 @UnprotectedRestController(["/dev/"])
 @ConditionalOnNotProd
-internal class DevController(private val dokumentLager: GCPKMSKeyKryptertDokumentlager,
-                             private val mellomlager: GCPKMSKeyKryptertMellomlager,
+internal class DevController(private val dokumentLager: GCPKryptertDokumentlager,
+                             private val mellomlager: GCPKryptertMellomlager,
                              private val cfg: VLFordelingConfig,
                              private val vl: SøknadVLFordeler) {
 

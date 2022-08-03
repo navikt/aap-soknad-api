@@ -25,7 +25,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
         pdl.søkerMedBarn().run {
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.standard)
-                dittnav.opprettBeskjed(STANDARD, fnr = fnr, tekst = "Vi har mottatt ${STANDARD.tittel}")
+                dittnav.opprettBeskjed(fnr = fnr, tekst = "Vi har mottatt ${STANDARD.tittel}")
                 avslutter.avsluttSøknad(søknad, fnr, pdf)
             }
         }
