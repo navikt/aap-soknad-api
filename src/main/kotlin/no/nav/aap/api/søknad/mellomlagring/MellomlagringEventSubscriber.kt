@@ -14,7 +14,6 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import java.util.*
-import java.util.function.Consumer
 
 @Suppress("BlockingMethodInNonBlockingContext")
 @ConditionalOnGCP
@@ -32,7 +31,7 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
     private fun subscribe() =
         with(cfg.mellom) {
             log.trace("Abonnererer på hendelser i $subscription")
-            pubSub.subscribe(subscription.navn, Consumer { msg ->
+            pubSub.subscribe(subscription.navn) { msg ->
                 with(msg.pubsubMessage) {
                     when (eventType()) {
                         OBJECT_FINALIZE -> håndterOpprettet(this)
@@ -41,7 +40,7 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
                     }
                 }
                 msg.ack()
-            })
+            }
         }
 
     private fun håndterOpprettet(msg: PubsubMessage) =
