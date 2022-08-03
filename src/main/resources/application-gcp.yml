@@ -167,3 +167,7 @@ buckets:
             topic: ${mellomlagring.navn}-topic2
     vedlegg:
         navn: ${vedlegg.navn}
+        typer:
+            - application/pdf
+            - image/jpeg
+            - image/png

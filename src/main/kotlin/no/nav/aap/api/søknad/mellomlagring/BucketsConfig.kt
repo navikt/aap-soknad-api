@@ -7,7 +7,6 @@ import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.BUCKETS
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
-import org.springframework.boot.context.properties.bind.DefaultValue
 
 @ConfigurationProperties(BUCKETS)
 @ConstructorBinding
@@ -28,8 +27,7 @@ data class BucketsConfig(val project: String,
         data class SubscriptionConfig(val navn: String, val topic: String)
     }
 
-    data class VedleggBucketConfig(val navn: String,
-                                   @DefaultValue("{application/pdf,image/jpeg,image/png}") val typer: List<String>)
+    data class VedleggBucketConfig(val navn: String, val typer: List<String>)
 
     companion object {
         const val REGION = "europe-north1"
