@@ -5,6 +5,7 @@ import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class JoarkFordeler(private val joark: JoarkClient,
@@ -35,9 +36,5 @@ data class FordelingResultat(val pdf: ByteArray, val journalpostId: String) {
         return true
     }
 
-    override fun hashCode(): Int {
-        var result = pdf.contentHashCode()
-        result = 31 * result + journalpostId.hashCode()
-        return result
-    }
+    override fun hashCode() = Objects.hash(pdf, journalpostId)
 }

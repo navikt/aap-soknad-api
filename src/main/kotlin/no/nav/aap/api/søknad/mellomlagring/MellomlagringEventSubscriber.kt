@@ -92,20 +92,23 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
     private fun PubsubMessage.oppdatertMedNyVersjon() = containsAttributes(OVERWROTEGENERATION)
 
     @Suppress("UNCHECKED_CAST")
-    private fun ByteString.metadata(): Metadata? =
+    private fun ByteString.metadata() =
         (mapper.readValue(toStringUtf8(), Map::class.java) as Map<String, Any>)[METADATA]?.let {
             it as Map<String, String>
-        }?.let { meta ->
-            val uuid = meta[UUID_]?.let { UUID.fromString(it) }
-            val fnr = meta[FNR]?.let { Fødselsnummer(it) }
-            val type = meta[SKJEMATYPE]?.let { SkjemaType.valueOf(it) }
-            if (uuid != null && fnr != null && type != null) {
-                Metadata(type, fnr, uuid)
-            }
-            else null
+        }?.let {
+            Metadata.getInstance(it[SKJEMATYPE], it[FNR], it[UUID_])
         }
 
-    private data class Metadata(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID)
+    private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
+        companion object {
+            fun getInstance(type: String?, fnr: String?, uuid: String?): Metadata? {
+                return if (uuid != null && fnr != null && type != null) {
+                    Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(uuid))
+                }
+                else null
+            }
+        }
+    }
 
     companion object {
         const val EVENT_TYPE = "eventType"

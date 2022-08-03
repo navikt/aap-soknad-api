@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import javax.validation.Valid
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
-internal class InnsendingFordelingController(private val fordeler: Fordeler) {
+class InnsendingFordelingController(private val fordeler: Fordeler) {
 
     @PostMapping("/utland")
     @ResponseStatus(CREATED)

@@ -17,8 +17,7 @@ class LocalSøknadFordeler : Fordeler {
             }
 
     override fun fordel(søknad: StandardSøknad) =
-        Kvittering(UUID.randomUUID())
-            .also {
-                log.info("Dummy-ruting av søknad til bakenforliggende systemer")
-            }
+        Kvittering(UUID.randomUUID()).also {
+            log.info("Dummy-ruting av søknad til bakenforliggende systemer")
+        }
 }

@@ -13,7 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient.Builder
 import java.net.URI
 
 @Configuration
-internal class VirusScanBeanConfg {
+class VirusScanBeanConfg {
     @Bean
     @Qualifier(VIRUS)
     fun webClientVirusScqn(b: Builder, cfg: VirusScanConfig) = b.baseUrl("${cfg.baseUri}").build()
