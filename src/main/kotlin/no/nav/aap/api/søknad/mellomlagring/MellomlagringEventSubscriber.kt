@@ -3,6 +3,8 @@ package no.nav.aap.api.søknad.mellomlagring
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.pubsub.v1.MessageReceiver
 import com.google.cloud.pubsub.v1.Subscriber
+import com.google.cloud.spring.pubsub.core.subscriber.PubSubSubscriberTemplate
+import com.google.cloud.spring.pubsub.support.BasicAcknowledgeablePubsubMessage
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import com.google.cloud.storage.NotificationInfo.EventType.valueOf
@@ -17,17 +19,34 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
+import java.util.function.Consumer
 
 @Suppress("BlockingMethodInNonBlockingContext")
 @ConditionalOnGCP
 class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
                                    private val dittNav: DittNavClient,
-                                   private val cfg: BucketsConfig) {
+                                   private val cfg: BucketsConfig,
+                                   private val template: PubSubSubscriberTemplate) {
 
     private val log = getLogger(javaClass)
 
     init {
-        abonner()
+        // abonner()
+        abonner1()
+
+    }
+
+    fun receiver1(): Consumer<BasicAcknowledgeablePubsubMessage> {
+        return Consumer<BasicAcknowledgeablePubsubMessage> { m ->
+            with(m.pubsubMessage.eventType()) {
+                when (this) {
+                    OBJECT_FINALIZE -> håndterOpprettet(m.pubsubMessage)
+                    OBJECT_DELETE -> håndterSlettet(m.pubsubMessage)
+                    else -> log.trace("Event type $this ikke håndtert (dette skal aldri skje)")
+                }
+            }
+            m.ack()
+        }
     }
 
     private fun abonner() =
@@ -38,6 +57,11 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
                 startAsync().awaitRunning()
                 awaitRunning() // TODO sjekk dette
             }
+        }
+
+    private fun abonner1() =
+        with(cfg) {
+            template.subscribe(mellom.subscription.navn, receiver1())
         }
 
     @Transactional
