@@ -16,6 +16,7 @@ import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.SKJEMATYPE
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.UUID_
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import java.util.*
 
 @Suppress("BlockingMethodInNonBlockingContext")
@@ -36,6 +37,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             pubSub.subscribe(subscription.navn) { msg ->
                 msg.ack()
                 with(msg.pubsubMessage) {
+                    log.trace(CONFIDENTIAL, "Attributter er $attributesMap")
                     when (eventType()) {
                         OBJECT_FINALIZE -> opprettet(this)
                         OBJECT_DELETE -> slettet(this)
