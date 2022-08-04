@@ -27,7 +27,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketsConfig,
 
     fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
         with(cfg) {
-            lager.create(newBuilder(of(mellom.navn, navn(fnr, type)))
+            lager.create(newBuilder(mellom.navn, navn(fnr, type))
                 .setMetadata(mapOf(SKJEMATYPE to type.name, FNR to fnr.fnr, UUID_ to callId()))
                 .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName("$key"))
                 .blobId.toGsUtilUri()

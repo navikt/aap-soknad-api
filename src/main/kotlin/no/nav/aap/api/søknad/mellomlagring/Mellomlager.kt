@@ -8,5 +8,5 @@ interface Mellomlager {
     fun lagre(type: SkjemaType, value: String): String
     fun les(type: SkjemaType): String?
     fun slett(type: SkjemaType): Boolean
-    fun navn(fnr: Fødselsnummer, type: SkjemaType) = "${hash(type.name, fnr)}"
+    fun navn(fnr: Fødselsnummer, type: SkjemaType) = "${fnr.fnr}/${hash(type.name, fnr)}"
 }
