@@ -9,7 +9,7 @@ interface Dokumentlager {
     fun slettDokument(uuid: UUID): Boolean
     fun slettDokumenter(søknad: StandardSøknad)
     fun lagreDokument(dokument: DokumentInfo): UUID
-    fun navn(fnr: Fødselsnummer, uuid: UUID) = "$uuid"
+    fun navn(fnr: Fødselsnummer, uuid: UUID) = "${fnr.fnr}/$uuid"
 
 }
 
