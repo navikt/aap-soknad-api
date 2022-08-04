@@ -13,6 +13,7 @@ import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.SKJEMATYPE
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.UUID_
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Metadata.Companion.getInstance
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
@@ -87,7 +88,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata() =
         with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA] as Map<String, String>) {
-            Metadata.getInstance(get(SKJEMATYPE), attributesMap[OBJECTID]?.split("/")?.firstOrNull(), get(UUID_))
+            getInstance(get(SKJEMATYPE), attributesMap[OBJECTID]?.split("/")?.firstOrNull(), get(UUID_))
         }
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
