@@ -2,7 +2,6 @@ package no.nav.aap.api.error
 
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.FNR
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager.ContentTypeDokumentSjekker.ContentTypeException
 import no.nav.aap.util.AuthContext
@@ -56,7 +55,7 @@ class AAPApiExceptionHandler(private val ctx: AuthContext) : ProblemHandling {
         builder()
             .withStatus(status)
             .withDetail(e.message)
-            .with(FNR, ctx.getSubject())
+            .with("fnr", ctx.getSubject())
             .with(NAV_CALL_ID, callId()).build().also {
                 log.trace("Status er $it", e)
             }

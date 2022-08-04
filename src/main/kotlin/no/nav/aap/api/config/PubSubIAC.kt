@@ -95,7 +95,7 @@ class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, pri
             log.info("Lager pull subscription $navn for $topic")
             admin.createSubscription(navn, topic)
                 .also {
-                    log.trace("Lagd pull subscription ${it.name}")
+                    log.trace("Lagd subscription ${it.name}")
                 }
         }
 
