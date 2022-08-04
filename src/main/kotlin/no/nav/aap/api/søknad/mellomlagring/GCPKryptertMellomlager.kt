@@ -7,7 +7,6 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -28,8 +27,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketsConfig,
                 .also {
                     log.trace(CONFIDENTIAL, "Lagret $value som ${it.name} i bøtte ${cfg.mellom.navn}")
                 }
-            callId()
-        }
+        }.name
 
     override fun les(type: SkjemaType) = les(ctx.getFnr(), type)
 
