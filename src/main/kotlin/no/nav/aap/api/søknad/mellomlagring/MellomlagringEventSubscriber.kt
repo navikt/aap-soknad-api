@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.mellomlagring
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.cloud.spring.pubsub.core.subscriber.PubSubSubscriberTemplate
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
@@ -81,11 +82,8 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
     private fun PubsubMessage.erSlettetGrunnetNyVersjon() = containsAttributes(OVERWRITTEBBYGENERATION)
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata() =
-        (mapper.readValue(data.toStringUtf8(), Map::class.java) as Map<*, *>)[METADATA]?.let {
-            it as Map<*, *>
-        }?.let {
-            it as Map<String, String>
-            Metadata.getInstance(it[SKJEMATYPE], it[FNR], it[_UUID_])
+        with(mapper.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA] as Map<String, String>) {
+            Metadata.getInstance(get(SKJEMATYPE), get(FNR), get(_UUID_))
         }
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
