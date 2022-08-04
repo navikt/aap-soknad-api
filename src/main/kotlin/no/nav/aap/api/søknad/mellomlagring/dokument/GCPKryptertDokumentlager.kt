@@ -11,7 +11,7 @@ import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
-import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Companion.UUID_
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Companion._UUID_
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FILNAVN
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.api.søknad.model.StandardSøknad
@@ -44,7 +44,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketsConfig,
                 sjekkere.forEach { it.sjekk(this) }
                 lager.create(newBuilder(of(cfg.vedlegg.navn, "${this@apply}"))
                     .setContentType(contentType)
-                    .setMetadata(mapOf(FILNAVN to filnavn, UUID_ to "${this@apply}", FNR to fnr.fnr))
+                    .setMetadata(mapOf(FILNAVN to filnavn, _UUID_ to "${this@apply}", FNR to fnr.fnr))
                     .build(), bytes, kmsKeyName("${cfg.key}"))
             }
         }.also {

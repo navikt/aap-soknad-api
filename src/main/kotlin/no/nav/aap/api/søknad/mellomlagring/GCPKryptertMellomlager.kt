@@ -7,7 +7,7 @@ import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Companion.SKJEMATYPE
-import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Companion.UUID_
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Companion._UUID_
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -28,7 +28,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketsConfig,
     fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
         with(cfg) {
             lager.create(newBuilder(of(mellom.navn, navn(fnr, type)))
-                .setMetadata(mapOf(SKJEMATYPE to type.name, FNR to fnr.fnr, UUID_ to callId()))
+                .setMetadata(mapOf(SKJEMATYPE to type.name, FNR to fnr.fnr, _UUID_ to callId()))
                 .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName("$key"))
                 .blobId.toGsUtilUri()
                 .also {

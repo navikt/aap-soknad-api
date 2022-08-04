@@ -32,32 +32,31 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
             log.trace("Abonnererer på hendelser i $subscription")
             pubSub.subscribe(subscription.navn) { msg ->
                 with(msg.pubsubMessage) {
-                    msg.ack()
                     when (eventType()) {
-                        OBJECT_FINALIZE -> opprettet(metadata())
-                        OBJECT_DELETE -> slettet(metadata())
-                        else -> log.trace("Event type ${eventType()} ikke håndtert, (dette skal aldri skje)")
+                        OBJECT_FINALIZE -> opprettet(this)
+                        OBJECT_DELETE -> slettet(this)
+                        else -> log.trace("Event type ${eventType()} ikke håndtert (dette skal aldri skje)")
                     }
                 }
             }
         }
 
-    private fun opprettet(metadata: Metadata?) =
+    private fun opprettet(msg: PubsubMessage) =
         if (msg.erNyVersjon()) {
             log.trace("Oppdatert mellomlagring med ny versjon, oppdaterer IKKE Ditt Nav")
         }
         else {
             log.trace("Førstegangs mellomlagring, oppdaterer Ditt Nav")
-            førstegangsMellomlagring(metadata)
+            førstegangsMellomlagring(msg.metadata())
         }
 
-    private fun slettet(metadata: Metadata?) =
+    private fun slettet(msg: PubsubMessage) =
         if (msg.erSlettetGrunnetNyVersjon()) {
             log.trace("Sletting pga opppdatert mellomlagring, oppdaterer IKKE Ditt Nav")
         }
         else {
             log.trace("Delete entry pga avslutt eller timeout, oppdaterer Ditt Nav")
-            avsluttEllerTimeout(metadata)
+            avsluttEllerTimeout(msg.metadata())
         }
 
     private fun førstegangsMellomlagring(metadata: Metadata?) =
@@ -81,11 +80,12 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
     private fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { valueOf(it) }
     private fun PubsubMessage.erSlettetGrunnetNyVersjon() = containsAttributes(OVERWRITTEBBYGENERATION)
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
-    private fun PubsubMessage.metadata =
-        (mapper.readValue(data.toStringUtf8(), Map::class.java) as Map<String, Any>)[METADATA]?.let {
-            it as Map<String, String>
+    private fun PubsubMessage.metadata() =
+        (mapper.readValue(data.toStringUtf8(), Map::class.java) as Map<*, *>)[METADATA]?.let {
+            it as Map<*, *>
         }?.let {
-            Metadata.getInstance(it[SKJEMATYPE], it[FNR], it[UUID_])
+            it as Map<String, String>
+            Metadata.getInstance(it[SKJEMATYPE], it[FNR], it[_UUID_])
         }
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
@@ -104,7 +104,7 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
         const val OVERWROTEGENERATION = "overwroteGeneration"
         const val OVERWRITTEBBYGENERATION = "overwrittenByGeneration"
         const val SKJEMATYPE = "skjemaType"
-        const val UUID_ = "uuid"
+        const val _UUID_ = "uuid"
         const val METADATA = "metadata"
     }
 }
