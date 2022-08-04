@@ -40,9 +40,9 @@ class GCPKryptertDokumentlager(private val cfg: BucketsConfig,
     fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
         randomUUID().apply {
             with(dokument) {
-                log.trace("Lagrer $filnavn kryptert, med uuid ${this@apply} og contentType $contentType")
+                log.trace("Lagrer $filnavn kryptert som ${navn(fnr, this@apply)} og contentType $contentType")
                 sjekkere.forEach { it.sjekk(this) }
-                lager.create(newBuilder(of(cfg.vedlegg.navn, "${this@apply}"))
+                lager.create(newBuilder(cfg.vedlegg.navn, "${this@apply}")
                     .setContentType(contentType)
                     .setMetadata(mapOf(FILNAVN to filnavn, UUID_ to "${this@apply}", FNR to fnr.fnr))
                     .build(), bytes, kmsKeyName("${cfg.key}"))

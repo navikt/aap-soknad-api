@@ -3,14 +3,13 @@ package no.nav.aap.api.søknad.mellomlagring.dokument
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.model.StandardSøknad
 import java.util.*
-import java.util.Objects.hash
 
 interface Dokumentlager {
     fun lesDokument(uuid: UUID): DokumentInfo?
     fun slettDokument(uuid: UUID): Boolean
     fun slettDokumenter(søknad: StandardSøknad)
     fun lagreDokument(dokument: DokumentInfo): UUID
-    fun navn(fnr: Fødselsnummer, uuid: UUID) = "${hash(fnr, uuid)}"
+    fun navn(fnr: Fødselsnummer, uuid: UUID) = "${fnr.fnr}/$uuid"
 
 }
 
