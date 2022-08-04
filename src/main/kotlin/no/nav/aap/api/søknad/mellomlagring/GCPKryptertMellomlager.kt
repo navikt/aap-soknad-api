@@ -25,17 +25,19 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
             lager.create(newBuilder(mellom.navn, navn(fnr, type))
                 .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName("$key"))
                 .also {
-                    log.trace(CONFIDENTIAL, "Lagret $value som ${it.name} i bøtte ${cfg.mellom.navn}")
+                    log.trace(CONFIDENTIAL, "Lagret $value som ${it.name} i bøtte ${mellom.navn}")
                 }
         }.name
 
     override fun les(type: SkjemaType) = les(ctx.getFnr(), type)
 
     fun les(fnr: Fødselsnummer, type: SkjemaType) =
-        with(navn(fnr, type)) {
-            lager.get(cfg.mellom.navn, this)?.let { blob ->
-                String(blob.getContent()).also {
-                    log.trace(CONFIDENTIAL, "Lest verdi $it fra $this fra bøtte ${cfg.mellom.navn}")
+        with(cfg.mellom) {
+            with(navn(fnr, type)) {
+                lager.get(navn, this)?.let { blob ->
+                    String(blob.getContent()).also {
+                        log.trace(CONFIDENTIAL, "Lest verdi $it fra $this fra bøtte $navn")
+                    }
                 }
             }
         }
@@ -43,10 +45,11 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
     override fun slett(type: SkjemaType) = slett(ctx.getFnr(), type)
 
     fun slett(fnr: Fødselsnummer, type: SkjemaType) =
-        with(navn(fnr, type)) {
-            lager.delete(cfg.mellom.navn, this).also {
-                log.trace(CONFIDENTIAL, "Slettet $this fra bøtte ${cfg.mellom.navn}")
+        with(cfg.mellom) {
+            with(navn(fnr, type)) {
+                lager.delete(navn, this).also {
+                    log.trace(CONFIDENTIAL, "Slettet $this fra bøtte $navn")
+                }
             }
         }
-
 }

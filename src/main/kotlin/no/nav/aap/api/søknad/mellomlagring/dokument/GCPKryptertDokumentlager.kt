@@ -36,15 +36,17 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(ctx.getFnr(), dokument)
 
     fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
-        randomUUID().apply {
-            with(dokument) {
-                log.trace("Lagrer $filnavn kryptert som ${navn(fnr, this@apply)} og contentType $contentType")
-                sjekkere.forEach { it.sjekk(this) }
-                lager.create(newBuilder(cfg.vedlegg.navn, navn(fnr, this@apply))
-                    .setContentType(contentType)
-                    .setMetadata(mapOf(FILNAVN to filnavn, UUID_ to "${this@apply}"))
-                    .build(), bytes, kmsKeyName("${cfg.key}")).also {
-                    log.trace(CONFIDENTIAL, "Lagret $dokument som ${it.name} i bøtte ${cfg.vedlegg.navn}")
+        with(cfg) {
+            randomUUID().apply {
+                with(dokument) {
+                    log.trace("Lagrer $filnavn kryptert som ${navn(fnr, this@apply)} og contentType $contentType")
+                    sjekkere.forEach { it.sjekk(this) }
+                    lager.create(newBuilder(vedlegg.navn, navn(fnr, this@apply))
+                        .setContentType(contentType)
+                        .setMetadata(mapOf(FILNAVN to filnavn, UUID_ to "${this@apply}"))
+                        .build(), bytes, kmsKeyName("$key")).also {
+                        log.trace(CONFIDENTIAL, "Lagret $dokument som ${it.name} i bøtte ${vedlegg.navn}")
+                    }
                 }
             }
         }
@@ -52,25 +54,29 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     override fun lesDokument(uuid: UUID) = lesDokument(ctx.getFnr(), uuid)
 
     fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.get(cfg.vedlegg.navn, navn(fnr, uuid), fields(METADATA, CONTENT_TYPE, TIME_CREATED))
-            ?.let { blob ->
-                with(blob) {
-                    DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
-                        .also {
-                            log.trace(CONFIDENTIAL,
-                                    "Lest dokument fra ${blob.name} (originalt navn ${it.filnavn}) fra bøtte ${cfg.vedlegg.navn}")
-                        }
+        with(cfg.vedlegg) {
+            lager.get(navn, navn(fnr, uuid), fields(METADATA, CONTENT_TYPE, TIME_CREATED))
+                ?.let { blob ->
+                    with(blob) {
+                        DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
+                            .also {
+                                log.trace(CONFIDENTIAL,
+                                        "Lest dokument fra ${blob.name} (originalt navn ${it.filnavn}) fra bøtte $navn")
+                            }
+                    }
                 }
-            }
+        }
 
     override fun slettDokument(uuid: UUID) = slettDokument(ctx.getFnr(), uuid)
 
     fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
-        with(navn(fnr, uuid)) {
-            lager.delete(cfg.vedlegg.navn, this)
-                .also {
-                    log.trace(CONFIDENTIAL, "Slettet dokument $this fra bøtte ${cfg.vedlegg.navn}")
-                }
+        with(cfg.vedlegg) {
+            with(navn(fnr, uuid)) {
+                lager.delete(navn, this)
+                    .also {
+                        log.trace(CONFIDENTIAL, "Slettet dokument $this fra bøtte $navn")
+                    }
+            }
         }
 
     override fun slettDokumenter(søknad: StandardSøknad) =
