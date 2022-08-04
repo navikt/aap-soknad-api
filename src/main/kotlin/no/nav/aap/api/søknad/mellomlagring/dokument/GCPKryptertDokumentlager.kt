@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
-import com.google.cloud.storage.BlobId.of
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobField.CONTENT_TYPE
@@ -11,7 +10,6 @@ import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.FILNAVN
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.FNR
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.model.StandardSøknad
@@ -44,11 +42,11 @@ class GCPKryptertDokumentlager(private val cfg: BucketsConfig,
                 sjekkere.forEach { it.sjekk(this) }
                 lager.create(newBuilder(cfg.vedlegg.navn, navn(fnr, this@apply))
                     .setContentType(contentType)
-                    .setMetadata(mapOf(FILNAVN to filnavn, UUID_ to "${this@apply}", FNR to fnr.fnr))
-                    .build(), bytes, kmsKeyName("${cfg.key}"))
+                    .setMetadata(mapOf(FILNAVN to filnavn, UUID_ to "${this@apply}"))
+                    .build(), bytes, kmsKeyName("${cfg.key}")).also {
+                    log.trace(CONFIDENTIAL, "Lagret $dokument som ${it.name} i bøtte ${cfg.vedlegg.navn}")
+                }
             }
-        }.also {
-            log.trace(CONFIDENTIAL, "Lagret $dokument som ${navn(fnr, it)} i bøtte  ${cfg.vedlegg.navn}")
         }
 
     override fun lesDokument(uuid: UUID) = lesDokument(ctx.getFnr(), uuid)
@@ -59,8 +57,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketsConfig,
                 with(blob) {
                     DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
                         .also {
-                            log.trace(CONFIDENTIAL,
-                                    "Lest  dokument fra ${navn(fnr, uuid)}  fra bøtte  ${cfg.vedlegg.navn}")
+                            log.trace(CONFIDENTIAL, "Lest dokument fra ${blob.name} fra bøtte ${cfg.vedlegg.navn}")
                         }
                 }
             }
@@ -68,10 +65,12 @@ class GCPKryptertDokumentlager(private val cfg: BucketsConfig,
     override fun slettDokument(uuid: UUID) = slettDokument(ctx.getFnr(), uuid)
 
     fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
-        lager.delete(of(cfg.vedlegg.navn, navn(fnr, uuid)))
-            .also {
-                log.trace(CONFIDENTIAL, "Slettet dokument ${navn(fnr, uuid)} fra bøtte ${cfg.vedlegg.navn}")
-            }
+        with(navn(fnr, uuid)) {
+            lager.delete(cfg.vedlegg.navn, this)
+                .also {
+                    log.trace(CONFIDENTIAL, "Slettet dokument $this fra bøtte ${cfg.vedlegg.navn}")
+                }
+        }
 
     override fun slettDokumenter(søknad: StandardSøknad) =
         slettDokumenter(ctx.getFnr(), søknad)
