@@ -32,7 +32,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketsConfig,
                 .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName("$key"))
                 .blobId.toGsUtilUri()
                 .also {
-                    log.trace(CONFIDENTIAL, "Lagret kryptert $value for $fnr som $it i bøtte ${cfg.mellom.navn}")
+                    log.trace(CONFIDENTIAL, "Lagret  $value for $fnr som $it i bøtte ${cfg.mellom.navn}")
                 }
         }
 
@@ -41,7 +41,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketsConfig,
     fun les(fnr: Fødselsnummer, type: SkjemaType) =
         lager.get(cfg.mellom.navn, navn(fnr, type))?.let { blob ->
             String(blob.getContent()).also {
-                log.trace(CONFIDENTIAL, "Lest kryptert verdi $it for $fnr fra bøtte ${cfg.mellom.navn}")
+                log.trace(CONFIDENTIAL, "Lest  verdi $it for $fnr fra bøtte ${cfg.mellom.navn}")
             }
         }
 
