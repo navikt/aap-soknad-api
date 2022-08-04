@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.mellomlagring
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.cloud.spring.pubsub.core.subscriber.PubSubSubscriberTemplate
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
@@ -17,8 +18,7 @@ import java.util.*
 
 @Suppress("BlockingMethodInNonBlockingContext")
 @ConditionalOnGCP
-class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
-                                   private val dittNav: DittNavClient,
+class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
                                    private val cfg: BucketsConfig,
                                    private val pubSub: PubSubSubscriberTemplate) {
 
@@ -82,7 +82,7 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
     private fun PubsubMessage.erSlettetGrunnetNyVersjon() = containsAttributes(OVERWRITTEBBYGENERATION)
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata() =
-        with(mapper.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA] as Map<String, String>) {
+        with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA] as Map<String, String>) {
             Metadata.getInstance(get(SKJEMATYPE), get(FNR), get(_UUID_))
         }
 
@@ -98,6 +98,7 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
     }
 
     companion object {
+        const val MAPPER = ObjectMapper().registerModule(KotlinModule.Builder().build())
         const val EVENT_TYPE = "eventType"
         const val OVERWROTEGENERATION = "overwroteGeneration"
         const val OVERWRITTEBBYGENERATION = "overwrittenByGeneration"
