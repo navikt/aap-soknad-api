@@ -88,7 +88,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata() =
         with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())) {
-            log.info("ObjectId er ${get(OBJECTID)}")
+            log.info("ObjectId er ${attributesMap[OBJECTID]}")
             val md = get(METADATA) as Map<String, String>
             Metadata.getInstance(md[SKJEMATYPE], md[FNR], md[UUID_])
         }
