@@ -11,7 +11,6 @@ import com.google.pubsub.v1.PubsubMessage
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.FNR
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.SKJEMATYPE
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.UUID_
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -88,11 +87,9 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata() =
         with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())) {
-            log.info("ObjectId er ${attributesMap[OBJECTID]}")
             val fnr = attributesMap[OBJECTID]?.split("/")?.firstOrNull()
-            log.info("FNR er $fnr")
             val md = get(METADATA) as Map<String, String>
-            Metadata.getInstance(md[SKJEMATYPE], md[FNR], md[UUID_])
+            Metadata.getInstance(md[SKJEMATYPE], fnr, md[UUID_])
         }
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
