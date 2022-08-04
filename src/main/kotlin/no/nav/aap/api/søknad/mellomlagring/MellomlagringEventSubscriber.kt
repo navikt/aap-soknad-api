@@ -8,6 +8,7 @@ import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import com.google.cloud.storage.NotificationInfo.EventType.valueOf
 import com.google.pubsub.v1.PubsubMessage
+import com.nimbusds.openid.connect.sdk.claims.LogoutTokenClaimsSet.EVENT_TYPE
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
@@ -86,10 +87,8 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.erSlettetGrunnetNyVersjon() = containsAttributes(OVERWRITTEBBYGENERATION)
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata() =
-        with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())) {
-            val fnr = attributesMap[OBJECTID]?.split("/")?.firstOrNull()
-            val md = get(METADATA) as Map<String, String>
-            Metadata.getInstance(md[SKJEMATYPE], fnr, md[UUID_])
+        with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA] as Map<String, String) {
+                Metadata.getInstance(get(SKJEMATYPE), attributesMap[OBJECTID]?.split("/")?.firstOrNull(), get(UUID_))
         }
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
