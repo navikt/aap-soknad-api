@@ -36,8 +36,7 @@ class JoarkConverter(
     fun convert(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, pdf.asPDFVariant()),
                 tittel = UTLAND.tittel,
-                avsenderMottaker = AvsenderMottaker(søker.fnr,
-                        navn = søker.navn.navn),
+                avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
             .also {
                 log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it")
@@ -46,8 +45,7 @@ class JoarkConverter(
     fun convert(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, søker, pdf.asPDFVariant()),
                 tittel = STANDARD.tittel,
-                avsenderMottaker = AvsenderMottaker(søker.fnr,
-                        navn = søker.navn.navn),
+                avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
             .also {
                 log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it")
