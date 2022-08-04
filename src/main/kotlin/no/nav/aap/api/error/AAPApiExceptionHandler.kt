@@ -29,27 +29,30 @@ class AAPApiExceptionHandler(private val ctx: AuthContext) : ProblemHandling {
     private val log = getLogger(javaClass)
 
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
-    fun handleMissingOrExpiredToken(e: RuntimeException, req: NativeWebRequest) = handle(e, UNAUTHORIZED, req)
+    fun tokenProblem(e: RuntimeException, req: NativeWebRequest) =
+        problem(e, UNAUTHORIZED, req)
 
     @ExceptionHandler(IntegrationException::class)
-    fun handleIntegrationException(e: IntegrationException, req: NativeWebRequest) =
-        handle(e, UNPROCESSABLE_ENTITY, req)
+    fun integrasjon(e: IntegrationException, req: NativeWebRequest) =
+        problem(e, UNPROCESSABLE_ENTITY, req)
 
     @ExceptionHandler(DokumentException::class)
-    fun handleDokumentException(e: DokumentException, req: NativeWebRequest) = handle(e, UNPROCESSABLE_ENTITY, req)
+    fun dokument(e: DokumentException, req: NativeWebRequest) =
+        problem(e, UNPROCESSABLE_ENTITY, req)
 
     @ExceptionHandler(ContentTypeException::class)
-    fun handleUkjentContentTypeException(e: ContentTypeException, req: NativeWebRequest) =
-        handle(e, UNSUPPORTED_MEDIA_TYPE, req)
+    fun ukjent(e: ContentTypeException, req: NativeWebRequest) =
+        problem(e, UNSUPPORTED_MEDIA_TYPE, req)
 
     @ExceptionHandler(StorageException::class)
-    fun handleStorageException(e: StorageException, req: NativeWebRequest) = handle(e, BAD_REQUEST, req)
+    fun bøtte(e: StorageException, req: NativeWebRequest) = problem(e, BAD_REQUEST, req)
 
     @ExceptionHandler(NotFound::class)
-    fun handleNotFound(e: NotFound, req: NativeWebRequest) = handle(e, NOT_FOUND, req)
+    fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = problem(e, NOT_FOUND, req)
 
-    fun handle(e: RuntimeException, status: Status, req: NativeWebRequest) = create(e, problemFra(e, status), req)
-    private fun problemFra(e: RuntimeException, status: Status) =
+    fun problem(e: RuntimeException, status: Status, req: NativeWebRequest) = create(e, problem(e, status), req)
+
+    private fun problem(e: RuntimeException, status: Status) =
         builder()
             .withStatus(status)
             .withDetail(e.message)
