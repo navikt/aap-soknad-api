@@ -34,6 +34,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
         with(cfg.mellom) {
             log.trace("Abonnererer på hendelser i $subscription")
             pubSub.subscribe(subscription.navn) { msg ->
+                msg.ack()
                 with(msg.pubsubMessage) {
                     when (eventType()) {
                         OBJECT_FINALIZE -> opprettet(this)
