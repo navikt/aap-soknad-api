@@ -74,9 +74,9 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun avsluttEllerTimeout(metadata: Metadata?) =
         metadata?.let { md ->
             with(md) {
-                dittNav.eventIdForFnr(fnr).forEach {
-                    log.trace("Avslutter beskjed( i Ditt Nav med UUID $it")
-                    dittNav.avsluttBeskjed(type, fnr, it)
+                dittNav.eventIdForFnr(fnr).forEachIndexed { i, uuid ->
+                    log.trace("Avslutter beskjed ($i) i Ditt Nav med UUID $uuid")
+                    dittNav.avsluttBeskjed(type, fnr, uuid)
                 }
             }
         } ?: log.warn("Fant ikke forventet metadata")

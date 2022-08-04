@@ -77,6 +77,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (oppgave.enabled) {
                 dittNav.send(ProducerRecord(done, key(type.name, eventId, fnr, "done"), done()))
                     .addCallback(SendCallback("avslutt oppgave"))
+                log.trace("Setter oppgave done i DB for eventId $eventId")
                 repos.oppgaver.done(eventId)
             }
             else {
@@ -90,6 +91,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (beskjed.enabled) {
                 dittNav.send(ProducerRecord(done, key(type.name, eventId, fnr, "done"), done()))
                     .addCallback(SendCallback("avslutt beskjed"))
+                log.trace("Setter beskjed done i DB for eventId $eventId")
                 repos.beskjeder.done(eventId)
             }
             else {
