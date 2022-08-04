@@ -5,7 +5,6 @@ import com.google.cloud.spring.pubsub.core.subscriber.PubSubSubscriberTemplate
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import com.google.cloud.storage.NotificationInfo.EventType.valueOf
-import com.google.protobuf.ByteString
 import com.google.pubsub.v1.PubsubMessage
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
@@ -33,59 +32,57 @@ class MellomlagringEventSubscriber(private val mapper: ObjectMapper,
             log.trace("Abonnererer på hendelser i $subscription")
             pubSub.subscribe(subscription.navn) { msg ->
                 with(msg.pubsubMessage) {
+                    msg.ack()
                     when (eventType()) {
-                        OBJECT_FINALIZE -> håndterOpprettet(this)
-                        OBJECT_DELETE -> håndterSlettet(this)
-                        else -> log.trace("Event type ${eventType()} ikke håndtert (dette skal aldri skje)")
+                        OBJECT_FINALIZE -> opprettet(metadata())
+                        OBJECT_DELETE -> slettet(metadata())
+                        else -> log.trace("Event type ${eventType()} ikke håndtert, (dette skal aldri skje)")
                     }
                 }
-                msg.ack()
             }
         }
 
-    private fun håndterOpprettet(msg: PubsubMessage) =
-        if (msg.oppdatertMedNyVersjon()) {
-            log.trace("Oppdatert mellomlagring med ny versjon")
+    private fun opprettet(metadata: Metadata?) =
+        if (msg.erNyVersjon()) {
+            log.trace("Oppdatert mellomlagring med ny versjon, oppdaterer IKKE Ditt Nav")
         }
         else {
-            log.trace("Førstegangs mellomlagring")
-            håndterFørstegangsMellomlagring(msg)
+            log.trace("Førstegangs mellomlagring, oppdaterer Ditt Nav")
+            førstegangsMellomlagring(metadata)
         }
 
-    private fun håndterSlettet(msg: PubsubMessage) =
-        if (msg.slettetGrunnetOppdatering()) {
-            log.trace("Sletting pga opppdatert mellomlagring")
+    private fun slettet(metadata: Metadata?) =
+        if (msg.erSlettetGrunnetNyVersjon()) {
+            log.trace("Sletting pga opppdatert mellomlagring, oppdaterer IKKE Ditt Nav")
         }
         else {
-            log.trace("Delete entry pga avslutt eller timeout")
-            håndterAvsluttEllerTimeout(msg)
+            log.trace("Delete entry pga avslutt eller timeout, oppdaterer Ditt Nav")
+            avsluttEllerTimeout(metadata)
         }
 
-    private fun håndterFørstegangsMellomlagring(msg: PubsubMessage) =
-        msg.data.metadata()?.let {
+    private fun førstegangsMellomlagring(metadata: Metadata?) =
+        metadata?.let {
             with(it) {
-                log.trace("Oppretter beskjed med UUID $uuid")
+                log.trace("Oppretter beskjed i Ditt Nav med UUID $uuid")
                 dittNav.opprettBeskjed(type, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
             }
         } ?: log.warn("Fant ikke forventet metadata")
 
-    private fun håndterAvsluttEllerTimeout(msg: PubsubMessage) =
-        msg.data.metadata()?.let { md ->
+    private fun avsluttEllerTimeout(metadata: Metadata?) =
+        metadata?.let { md ->
             with(md) {
                 dittNav.eventIdForFnr(fnr)?.let {
-                    log.trace("Avslutter beskjed med UUID $it")
+                    log.trace("Avslutter beskjed i Ditt Nav med UUID $it")
                     dittNav.avsluttBeskjed(type, fnr, it)
                 } ?: log.warn("Fant ikke UUID for opprinnelig notifikasjon")
             }
         } ?: log.warn("Fant ikke forventet metadata")
 
     private fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { valueOf(it) }
-    private fun PubsubMessage.slettetGrunnetOppdatering() = containsAttributes(OVERWRITTEBBYGENERATION)
-    private fun PubsubMessage.oppdatertMedNyVersjon() = containsAttributes(OVERWROTEGENERATION)
-
-    @Suppress("UNCHECKED_CAST")
-    private fun ByteString.metadata() =
-        (mapper.readValue(toStringUtf8(), Map::class.java) as Map<String, Any>)[METADATA]?.let {
+    private fun PubsubMessage.erSlettetGrunnetNyVersjon() = containsAttributes(OVERWRITTEBBYGENERATION)
+    private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
+    private fun PubsubMessage.metadata =
+        (mapper.readValue(data.toStringUtf8(), Map::class.java) as Map<String, Any>)[METADATA]?.let {
             it as Map<String, String>
         }?.let {
             Metadata.getInstance(it[SKJEMATYPE], it[FNR], it[UUID_])
