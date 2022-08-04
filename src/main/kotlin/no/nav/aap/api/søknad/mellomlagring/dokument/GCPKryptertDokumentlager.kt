@@ -57,7 +57,8 @@ class GCPKryptertDokumentlager(private val cfg: BucketsConfig,
                 with(blob) {
                     DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
                         .also {
-                            log.trace(CONFIDENTIAL, "Lest dokument fra ${blob.name} fra bøtte ${cfg.vedlegg.navn}")
+                            log.trace(CONFIDENTIAL,
+                                    "Lest dokument fra ${blob.name} (originalt navn ${it.filnavn}) fra bøtte ${cfg.vedlegg.navn}")
                         }
                 }
             }
