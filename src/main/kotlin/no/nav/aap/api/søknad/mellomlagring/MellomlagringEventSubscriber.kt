@@ -11,7 +11,8 @@ import com.google.pubsub.v1.PubsubMessage
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
-import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager.Companion.FNR
+import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.FNR
+import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.UUID_
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import java.util.*
@@ -83,7 +84,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata() =
         with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA] as Map<String, String>) {
-            Metadata.getInstance(get(SKJEMATYPE), get(FNR), get(_UUID_))
+            Metadata.getInstance(get(SKJEMATYPE), get(FNR), get(UUID_))
         }
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
@@ -98,12 +99,11 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     }
 
     companion object {
-        const val MAPPER = ObjectMapper().registerModule(KotlinModule.Builder().build())
-        const val EVENT_TYPE = "eventType"
-        const val OVERWROTEGENERATION = "overwroteGeneration"
-        const val OVERWRITTEBBYGENERATION = "overwrittenByGeneration"
-        const val SKJEMATYPE = "skjemaType"
-        const val _UUID_ = "uuid"
-        const val METADATA = "metadata"
+        private val MAPPER = ObjectMapper().registerModule(KotlinModule.Builder().build())
+        private const val EVENT_TYPE = "eventType"
+        private const val OVERWROTEGENERATION = "overwroteGeneration"
+        private const val OVERWRITTEBBYGENERATION = "overwrittenByGeneration"
+        private const val SKJEMATYPE = "skjemaType"
+        private const val METADATA = "metadata"
     }
 }

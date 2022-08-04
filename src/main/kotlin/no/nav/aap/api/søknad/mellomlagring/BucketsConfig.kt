@@ -32,6 +32,9 @@ data class BucketsConfig(val project: String,
     companion object {
         const val REGION = "europe-north1"
         const val BUCKETS = "buckets"
+        const val FILNAVN = "filnavn"
+        const val FNR = "fnr"
+        const val UUID_ = "uuid"
     }
 }
 

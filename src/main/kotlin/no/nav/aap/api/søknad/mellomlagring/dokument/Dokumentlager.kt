@@ -12,11 +12,6 @@ interface Dokumentlager {
     fun lagreDokument(dokument: DokumentInfo): UUID
     fun navn(fnr: Fødselsnummer, uuid: UUID) = "${hash(fnr, uuid)}"
 
-    companion object {
-        const val FILNAVN = "filnavn"
-        const val FNR = "fnr"
-    }
-
 }
 
 data class DokumentInfo(val bytes: ByteArray,
