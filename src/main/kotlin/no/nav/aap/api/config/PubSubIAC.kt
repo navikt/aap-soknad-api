@@ -12,15 +12,15 @@ import com.google.iam.v1.GetIamPolicyRequest
 import com.google.iam.v1.Policy
 import com.google.iam.v1.SetIamPolicyRequest
 import com.google.pubsub.v1.TopicName
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.MellomlagringBucketConfig.SubscriptionConfig
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig.MellomlagringBucketConfig.SubscriptionConfig
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
 import org.springframework.stereotype.Component
 
 @Component
-class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, private val admin: PubSubAdmin) {
+class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, private val admin: PubSubAdmin) {
     init {
         with(cfg.mellom.subscription) {
             if (!harTopic(topic)) {
@@ -101,7 +101,7 @@ class PubSubIAC(private val cfg: BucketsConfig, private val storage: Storage, pr
 
     @Component
     @Endpoint(id = "iac")
-    class IACEndpoint(private val storage: Storage, private val cfg: BucketsConfig) {
+    class IACEndpoint(private val storage: Storage, private val cfg: BucketConfig) {
         @ReadOperation
         fun iacOperation() =
             with(cfg) {

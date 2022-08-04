@@ -13,7 +13,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.nio.charset.StandardCharsets.UTF_8
 
 @ConditionalOnGCP
-internal class GCPKryptertMellomlager(private val cfg: BucketsConfig,
+internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
                                       private val lager: Storage,
                                       private val ctx: AuthContext) : Mellomlager {
     val log = getLogger(javaClass)

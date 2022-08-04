@@ -2,7 +2,7 @@ package no.nav.aap.api.joark.pdf
 
 import com.google.cloud.kms.v1.KeyRingName
 import no.nav.aap.api.søknad.joark.pdf.ImageScaler
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig
 import org.apache.tika.Tika
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -17,7 +17,7 @@ internal class ImageScalerTest {
 
     @Test
     fun kms() {
-        val kms = KeyRingName.of("myid", BucketsConfig.REGION, "jala").keyRing
+        val kms = KeyRingName.of("myid", BucketConfig.REGION, "jala").keyRing
         println(kms)
     }
 

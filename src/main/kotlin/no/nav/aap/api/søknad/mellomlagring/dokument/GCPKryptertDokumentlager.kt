@@ -8,9 +8,9 @@ import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
 import com.google.cloud.storage.Storage.BlobGetOption.fields
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.FILNAVN
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.UUID_
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.FILNAVN
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.VedleggAware
@@ -26,7 +26,7 @@ import java.util.UUID.randomUUID
 
 @ConditionalOnGCP
 @Primary
-class GCPKryptertDokumentlager(private val cfg: BucketsConfig,
+class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                                private val lager: Storage,
                                private val ctx: AuthContext,
                                private val sjekkere: List<DokumentSjekker>) : Dokumentlager {
@@ -110,7 +110,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketsConfig,
         }
 
     @Component
-    class ContentTypeDokumentSjekker(private val cfg: BucketsConfig) : DokumentSjekker {
+    class ContentTypeDokumentSjekker(private val cfg: BucketConfig) : DokumentSjekker {
 
         override fun sjekk(dokument: DokumentInfo) =
             with(dokument) {

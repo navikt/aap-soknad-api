@@ -2,7 +2,7 @@ package no.nav.aap.api.error
 
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.FNR
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.FNR
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager.ContentTypeDokumentSjekker.ContentTypeException
 import no.nav.aap.util.AuthContext
