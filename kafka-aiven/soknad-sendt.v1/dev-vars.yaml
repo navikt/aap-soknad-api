@@ -14,5 +14,8 @@ acl:
       application: vedtak
       access: read
   -   team: aap
+      application: personopplysninger
+      access: read
+  -   team: aap
       application: devtools
       access: readwrite
