@@ -87,8 +87,10 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.erSlettetGrunnetNyVersjon() = containsAttributes(OVERWRITTEBBYGENERATION)
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata() =
-        with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA] as Map<String, String>) {
-            Metadata.getInstance(get(SKJEMATYPE), get(FNR), get(UUID_))
+        with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())) {
+            log.info("ObjectId er ${get(OBJECTID)}")
+            val md = get(METADATA) as Map<String, String>
+            Metadata.getInstance(md[SKJEMATYPE], md[FNR], md[UUID_])
         }
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
@@ -108,5 +110,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
         private const val OVERWROTEGENERATION = "overwroteGeneration"
         private const val OVERWRITTEBBYGENERATION = "overwrittenByGeneration"
         private const val METADATA = "metadata"
+        private const val OBJECTID = "objectId"
+
     }
 }
