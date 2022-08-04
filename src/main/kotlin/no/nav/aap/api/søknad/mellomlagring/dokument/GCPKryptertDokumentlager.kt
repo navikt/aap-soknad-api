@@ -48,7 +48,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketsConfig,
                     .build(), bytes, kmsKeyName("${cfg.key}"))
             }
         }.also {
-            log.trace(CONFIDENTIAL, "Lagret $this kryptert med uuid $it i bøtte  ${cfg.vedlegg.navn}")
+            log.trace(CONFIDENTIAL, "Lagret $dokument kryptert med uuid $it i bøtte  ${cfg.vedlegg.navn}")
         }
 
     override fun lesDokument(uuid: UUID) = lesDokument(ctx.getFnr(), uuid)
