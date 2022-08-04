@@ -35,6 +35,7 @@ data class BucketsConfig(val project: String,
         const val FILNAVN = "filnavn"
         const val FNR = "fnr"
         const val UUID_ = "uuid"
+        const val SKJEMATYPE = "skjemaType"
     }
 }
 

@@ -12,6 +12,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.FNR
+import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.SKJEMATYPE
 import no.nav.aap.api.søknad.mellomlagring.BucketsConfig.Companion.UUID_
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -103,7 +104,6 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
         private const val EVENT_TYPE = "eventType"
         private const val OVERWROTEGENERATION = "overwroteGeneration"
         private const val OVERWRITTEBBYGENERATION = "overwrittenByGeneration"
-        private const val SKJEMATYPE = "skjemaType"
         private const val METADATA = "metadata"
     }
 }
