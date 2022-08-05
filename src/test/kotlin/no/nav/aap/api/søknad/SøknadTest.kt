@@ -32,7 +32,6 @@ import no.nav.aap.api.søknad.model.Utbetaling.EkstraUtbetaling
 import no.nav.aap.api.søknad.model.Utbetaling.FraArbeidsgiver
 import no.nav.aap.api.søknad.model.Utenlandsopphold
 import no.nav.aap.api.søknad.model.Vedlegg
-import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.json.JsonTest
@@ -107,14 +106,6 @@ class SøknadTest {
        }
         
     """.trimIndent()
-
-    @Test
-    fun serialize() {
-        // println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(Vedlegg(null)))
-        //println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(standardSøknad()))
-        // val ss = mapper.readValue(test, StandardSøknad::class.java)
-        //println(ss)
-    }
 
     companion object {
 

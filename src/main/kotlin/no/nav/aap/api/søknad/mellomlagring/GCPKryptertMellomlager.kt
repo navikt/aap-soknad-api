@@ -5,8 +5,11 @@ import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -23,6 +26,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
     fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
         with(cfg) {
             lager.create(newBuilder(mellom.navn, navn(fnr, type))
+                .setMetadata(mapOf(SKJEMATYPE to type.name, UUID_ to callId()))
                 .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName("$key"))
                 .also {
                     log.trace(CONFIDENTIAL, "Lagret $value som ${it.name} i bøtte ${mellom.navn}")
