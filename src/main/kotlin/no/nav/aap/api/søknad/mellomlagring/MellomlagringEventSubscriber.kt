@@ -86,22 +86,10 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { valueOf(it) }
     private fun PubsubMessage.erSlettetGrunnetNyVersjon() = containsAttributes(OVERWRITTEBBYGENERATION)
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
-    private fun PubsubMessage.metadata(): Metadata? {
-        try {
-            log.trace("META")
-            val m = MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())
-            log.trace("META 1 $m")
-            val m2 = m[METADATA]
-            log.trace("META 2 $m2")
-            return with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA] as Map<String, String>) {
-                getInstance(get(SKJEMATYPE), attributesMap[OBJECTID]?.split("/")?.firstOrNull(), get(UUID_))
-            }.also { log.trace("META er $it") }
-        }
-        catch (e: Exception) {
-            log.warn("OOPS", e)
-            return null
-        }
-    }
+    private fun PubsubMessage.metadata() =
+        with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA] as Map<String, String>) {
+            getInstance(get(SKJEMATYPE), attributesMap[OBJECTID]?.split("/")?.firstOrNull(), get(UUID_))
+        }.also { log.trace("META er $it") }
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
         companion object {
