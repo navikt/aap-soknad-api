@@ -35,12 +35,14 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                        mellomlager: Boolean = false) =
         with(cfg.beskjed) {
             if (enabled) {
+                log.trace("Oppretter Ditt Nav beskjed for $fnr og og $eventId")
                 dittNav.send(ProducerRecord(topic, key(type.name, eventId, fnr, "beskjed"), beskjed(type, tekst)))
                     .addCallback(SendCallback("opprett beskjed"))
+                log.trace("Oppretter DitNav beskjed i DB")
                 repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
                         eventid = eventId,
                         mellomlager = mellomlager)).also {
-                    log.trace("Opprettet beskjed $it i DB")
+                    log.trace("Opprettet Ditt Nav beskjed $it i DB")
                 }
                 eventId
             }
