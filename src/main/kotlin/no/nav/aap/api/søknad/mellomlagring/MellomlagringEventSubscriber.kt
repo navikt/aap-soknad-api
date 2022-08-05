@@ -89,12 +89,13 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.metadata(): Metadata? {
         try {
             log.trace("META")
-            with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA] as Map<String, String>) {
+            return with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA] as Map<String, String>) {
                 getInstance(get(SKJEMATYPE), attributesMap[OBJECTID]?.split("/")?.firstOrNull(), get(UUID_))
             }.also { log.trace("META er $it") }
         }
         catch (e: Exception) {
             log.warn("OOPS", e)
+            return null
         }
     }
 
