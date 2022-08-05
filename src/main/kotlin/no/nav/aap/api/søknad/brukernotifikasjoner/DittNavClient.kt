@@ -113,8 +113,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 when (val size = it.size) {
                     0 -> log.warn(CONFIDENTIAL, "Fant ingen eventId for $fnr")
                     1 -> log.trace(CONFIDENTIAL, "Fant som forventet en rad med eventId for $fnr")
-                    else -> log.warn(CONFIDENTIAL,
-                            "Fant uventet antall rader $size med eventId for $fnr, ikke kritisk men bør undersøkes")
+                    else -> log.warn(CONFIDENTIAL, "Uventet antall rader $size med eventId for $fnr, bør undersøkes")
                 }
             }
 
