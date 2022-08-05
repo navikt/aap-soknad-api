@@ -40,7 +40,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
                         eventid = eventId,
                         mellomlager = mellomlager)).also {
-                    log.trace(CONFIDENTIAL, "Opprettet beskjed $it i DB ")
+                    log.trace(CONFIDENTIAL, "Opprettet beskjed $it i DB")
                 }
                 eventId
             }
@@ -79,13 +79,13 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     .addCallback(SendCallback("avslutt oppgave"))
                 log.trace("Setter oppgave done i DB for eventId $eventId")
                 when (val rows = repos.oppgaver.done(eventId)) {
-                    0 -> log.warn("Kunne ikke sette beskjed $eventId til done i DB, ingen rader funnet")
-                    1 -> log.trace("Satt beskjed $eventId done i DB")
-                    else -> log.warn("Uventet antall rader $rows oppdatert for beskjed $eventId til done i DB")
+                    0 -> log.warn("Kunne ikke sette oppgave $eventId til done i DB, ingen rader funnet")
+                    1 -> log.trace("Satt oppgave $eventId done i DB")
+                    else -> log.warn("Uventet antall rader $rows oppdatert for oppgave $eventId til done i DB")
                 }
             }
             else {
-                log.info("Sender ikke done oppgave til Ditt Nav")
+                log.info("Sender ikke avslutt oppgave til Ditt Nav")
             }
         }
 
@@ -103,7 +103,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 }
             }
             else {
-                log.info("Sender ikke done beskjed til Ditt Nav for beskjed")
+                log.info("Sender ikke avslutt beskjed til Ditt Nav for beskjed")
             }
         }
 
