@@ -54,7 +54,7 @@ class JPADittNavBeskjed(
         var mellomlager: Boolean,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString(): String =
-        "JPADittNavBeskjed(fnr=${fnr?.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
+        "JPADittNavBeskjed(fnr=${fnr?.partialMask()}, mellomlager=$mellomlager, created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
 }
 
 @Entity
