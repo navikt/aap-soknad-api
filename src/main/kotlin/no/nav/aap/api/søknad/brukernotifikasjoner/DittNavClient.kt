@@ -38,12 +38,11 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 log.trace("Oppretter Ditt Nav beskjed for $fnr og og $eventId")
                 dittNav.send(ProducerRecord(topic, key(type.name, eventId, fnr, "beskjed"), beskjed(type, tekst)))
                     .addCallback(SendCallback("opprett beskjed"))
-                log.trace("Oppretter DitNav beskjed i DB")
-                repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
-                        eventid = eventId,
-                        mellomlager = mellomlager)).also {
-                    log.trace("Opprettet Ditt Nav beskjed $it i DB")
-                }
+                log.trace("Oppretter Ditt Nav beskjed i DB")
+                repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr, eventid = eventId, mellomlager = mellomlager))
+                    .also {
+                        log.trace("Opprettet Ditt Nav beskjed $it i DB")
+                    }
                 eventId
             }
             else {
@@ -62,7 +61,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                         .addCallback(SendCallback("opprett oppgave"))
                     repos.oppgaver.save(JPADittNavOppgave(fnr = fnr.fnr, eventid = eventId))
                         .also {
-                            log.trace(CONFIDENTIAL, "Opprettet oppgave $it i DB")
+                            log.trace("Opprettet oppgave $it i DB")
                         }
                     eventId
                 }

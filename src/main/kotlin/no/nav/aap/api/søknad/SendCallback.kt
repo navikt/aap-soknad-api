@@ -29,9 +29,11 @@ class SendCallback<K, V>(private val msg: String) : KafkaSendCallback<K, V> {
         }
 
     private fun log(fnr: String, recordMetadata: RecordMetadata?) {
-        log.info("Sendte $msg med nøkkel $fnr  og offset $recordMetadata?.offset()} på ${recordMetadata?.topic()}")
+        with(recordMetadata) {
+            log.info("Sendte $msg med nøkkel $fnr og offset ${this?.offset()} på ${this?.topic()}")
+        }
     }
 
     private fun feil(key: String, e: KafkaProducerException): Nothing =
-        throw IntegrationException(msg = "Kunne ikke sende $msg for key  $key", cause = e)
+        throw IntegrationException(msg = "Kunne ikke sende $msg for key $key", cause = e)
 }

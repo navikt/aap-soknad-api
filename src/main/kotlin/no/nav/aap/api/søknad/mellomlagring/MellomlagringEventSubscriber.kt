@@ -68,7 +68,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun førstegangsMellomlagring(metadata: Metadata?) =
         metadata?.let {
             with(it) {
-                log.trace("Oppretter beskjed i Ditt Nav med UUID $uuid")
+                log.info("Oppretter beskjed i Ditt Nav med UUID $uuid")
                 dittNav.opprettBeskjed(type, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
             }
         } ?: log.warn("Fant ikke forventet metadata")
