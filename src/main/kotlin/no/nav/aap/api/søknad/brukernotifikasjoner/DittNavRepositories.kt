@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
+import no.nav.aap.util.StringExtensions.partialMask
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -53,7 +54,7 @@ class JPADittNavBeskjed(
         var mellomlager: Boolean,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString(): String =
-        "JPADittNavBeskjed(fnr='$fnr', created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
+        "JPADittNavBeskjed(fnr=${fnr?.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
 }
 
 @Entity
@@ -67,7 +68,7 @@ class JPADittNavOppgave(
         var done: Boolean = false,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
-        "JPADittNavOppgave(fnr='$fnr', created=$created, updated=$updated, eventid=$eventid, done=$done, id=$id)"
+        "JPADittNavOppgave(fnr=${fnr?.partialMask()}, created=$created, updated=$updated, eventid=$eventid, done=$done, id=$id)"
 }
 
 @Entity
@@ -81,7 +82,7 @@ class JPASøknad(
         var gyldigtil: LocalDateTime? = null,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
-        "JPASøknad(fnr='$fnr', created=$created, updated=$updated, eventid=$eventid, gyldigtil=$gyldigtil, id=$id)"
+        "JPASøknad(fnr=${fnr?.partialMask()}, created=$created, updated=$updated, eventid=$eventid, gyldigtil=$gyldigtil, id=$id)"
 }
 
 @Converter(autoApply = true)

@@ -40,12 +40,12 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
                         eventid = eventId,
                         mellomlager = mellomlager)).also {
-                    log.trace(CONFIDENTIAL, "Opprettet beskjed $it i DB")
+                    log.trace("Opprettet beskjed $it i DB")
                 }
                 eventId
             }
             else {
-                log.info("Sender ikke opprett beskjed til Ditt Nav")
+                log.info("Sender ikke opprett beskjed til Ditt Nav for $fnr")
                 callId()
             }
         }
@@ -66,7 +66,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 }
             }
             else {
-                log.info("Sender ikke opprett oppgave til Ditt Nav")
+                log.info("Sender ikke opprett oppgave til Ditt Nav for $fnr")
                 callId()
             }
         }
@@ -79,13 +79,13 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     .addCallback(SendCallback("avslutt oppgave"))
                 log.trace("Setter oppgave done i DB for eventId $eventId")
                 when (val rows = repos.oppgaver.done(eventId)) {
-                    0 -> log.warn("Kunne ikke sette oppgave $eventId til done i DB, ingen rader funnet")
-                    1 -> log.trace("Satt oppgave $eventId done i DB")
-                    else -> log.warn("Uventet antall rader $rows oppdatert for oppgave $eventId til done i DB")
+                    0 -> log.warn("Kunne ikke sette oppgave $eventId for $fnr til done i DB, ingen rader funnet")
+                    1 -> log.trace("Satt oppgave $eventId for $fnr done i DB")
+                    else -> log.warn("Satte et uventet antall rader ($rows) til oppdatert for oppgave $eventId og $fnr til done i DB")
                 }
             }
             else {
-                log.info("Sender ikke avslutt oppgave til Ditt Nav")
+                log.info("Sender ikke avslutt oppgave til Ditt Nav for $fnr")
             }
         }
 
@@ -97,13 +97,13 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     .addCallback(SendCallback("avslutt beskjed"))
                 log.trace("Setter beskjed done i DB for  $eventId")
                 when (val rows = repos.beskjeder.done(eventId)) {
-                    0 -> log.warn("Kunne ikke sette beskjed $eventId til done i DB, ingen rader funnet")
-                    1 -> log.trace("Satt beskjed $eventId done i DB")
-                    else -> log.warn("Uventet antall rader $rows oppdatert for beskjed $eventId til done i DB")
+                    0 -> log.warn("Kunne ikke sette beskjed $eventId for fnr $fnr til done i DB, ingen rader funnet")
+                    1 -> log.trace("Satt beskjed $eventId for $fnr done i DB")
+                    else -> log.warn("Satte et uventet antall rader ($rows) til oppdatert for beskjed $eventId og fnr $fnr til done i DB")
                 }
             }
             else {
-                log.info("Sender ikke avslutt beskjed til Ditt Nav for beskjed")
+                log.info("Sender ikke avslutt beskjed til Ditt Nav for beskjed for $fnr")
             }
         }
 
@@ -111,9 +111,9 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         repos.beskjeder.eventIdForFnr(fnr.fnr)
             .also {
                 when (val size = it.size) {
-                    0 -> log.warn(CONFIDENTIAL, "Fant ingen eventId for $fnr")
-                    1 -> log.trace(CONFIDENTIAL, "Fant som forventet en rad med eventId for $fnr")
-                    else -> log.warn(CONFIDENTIAL, "Uventet antall rader $size med eventId for $fnr, bør undersøkes")
+                    0 -> log.warn("Fant ingen eventId for $fnr")
+                    1 -> log.trace("Fant som forventet en rad med eventId for $fnr")
+                    else -> log.warn("Fant et uventet antall rader ($size) med eventIds for $fnr, bør undersøkes nærmere")
                 }
             }
 
