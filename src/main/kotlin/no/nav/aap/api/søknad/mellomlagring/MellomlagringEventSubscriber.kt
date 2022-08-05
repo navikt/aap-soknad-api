@@ -52,7 +52,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             log.trace("Oppdatert mellomlagring med ny versjon, oppdaterer IKKE Ditt Nav")
         }
         else {
-            log.trace("Førstegangs mellomlagring, oppdaterer Ditt Nav (${msg.metadata()})")
+            log.trace("Førstegangs mellomlagring, oppdaterer Ditt Nav (metadata ${msg.metadata()})")
             førstegangsMellomlagring(msg.metadata())
         }
 
@@ -61,7 +61,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             log.trace("Sletting pga opppdatert mellomlagring, oppdaterer IKKE Ditt Nav")
         }
         else {
-            log.trace("Fjernet pga avslutt eller timeout, oppdaterer Ditt Nav (${msg.metadata()})")
+            log.trace("Fjernet pga avslutt eller timeout, oppdaterer Ditt Nav (metadata ${msg.metadata()})")
             avsluttEllerTimeout(msg.metadata())
         }
 
