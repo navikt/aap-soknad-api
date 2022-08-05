@@ -89,7 +89,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.metadata() =
         with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA] as Map<String, String>) {
             getInstance(get(SKJEMATYPE), attributesMap[OBJECTID]?.split("/")?.firstOrNull(), get(UUID_))
-        }
+        }.also { log.trace("Metadata er $it") }
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
         companion object {
