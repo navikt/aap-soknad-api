@@ -61,7 +61,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             log.trace("Sletting pga opppdatert mellomlagring, oppdaterer IKKE Ditt Nav")
         }
         else {
-            log.trace("Delete entry pga avslutt eller timeout, oppdaterer Ditt Nav")
+            log.trace("Fjernet pga avslutt eller timeout, oppdaterer Ditt Nav ${msg.metadata()}")
             avsluttEllerTimeout(msg.metadata())
         }
 
@@ -97,7 +97,9 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
                 return if (uuid != null && fnr != null && type != null) {
                     Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(uuid))
                 }
-                else null
+                else {
+                    null
+                }
             }
         }
     }
