@@ -40,7 +40,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
                         eventid = eventId,
                         mellomlager = mellomlager)).also {
-                    log.trace(CONFIDENTIAL, "Opprettet beskjed i DB $it")
+                    log.trace(CONFIDENTIAL, "Opprettet beskjed $it i DB ")
                 }
                 eventId
             }
@@ -60,7 +60,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                         .addCallback(SendCallback("opprett oppgave"))
                     repos.oppgaver.save(JPADittNavOppgave(fnr = fnr.fnr, eventid = eventId))
                         .also {
-                            log.trace(CONFIDENTIAL, "Opprettet oppgave i DB $it")
+                            log.trace(CONFIDENTIAL, "Opprettet oppgave $it i DB")
                         }
                     eventId
                 }
@@ -78,10 +78,14 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 dittNav.send(ProducerRecord(done, key(type.name, eventId, fnr, "done"), done()))
                     .addCallback(SendCallback("avslutt oppgave"))
                 log.trace("Setter oppgave done i DB for eventId $eventId")
-                repos.oppgaver.done(eventId)
+                when (val rows = repos.oppgaver.done(eventId)) {
+                    0 -> log.warn("Kunne ikke sette beskjed $eventId til done i DB, ingen rader funnet")
+                    1 -> log.trace("Satt beskjed $eventId done i DB")
+                    else -> log.warn("Uventet antall rader $rows oppdatert for beskjed $eventId til done i DB")
+                }
             }
             else {
-                log.info("Sender ikke done til Ditt Nav")
+                log.info("Sender ikke done oppgave til Ditt Nav")
             }
         }
 
@@ -91,13 +95,28 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (beskjed.enabled) {
                 dittNav.send(ProducerRecord(done, key(type.name, eventId, fnr, "done"), done()))
                     .addCallback(SendCallback("avslutt beskjed"))
-                log.trace("Setter beskjed done i DB for eventId $eventId")
-                repos.beskjeder.done(eventId)
+                log.trace("Setter beskjed done i DB for  $eventId")
+                when (val rows = repos.beskjeder.done(eventId)) {
+                    0 -> log.warn("Kunne ikke sette beskjed $eventId til done i DB, ingen rader funnet")
+                    1 -> log.trace("Satt beskjed $eventId done i DB")
+                    else -> log.warn("Uventet antall rader $rows oppdatert for beskjed $eventId til done i DB")
+                }
             }
             else {
-                log.info("Sender ikke done til Ditt Nav for beskjed")
+                log.info("Sender ikke done beskjed til Ditt Nav for beskjed")
             }
         }
+
+    fun eventIdsForFnr(fnr: Fødselsnummer) =
+        repos.beskjeder.eventIdForFnr(fnr.fnr)
+            .also {
+                when (val size = it.size) {
+                    0 -> log.warn(CONFIDENTIAL, "Fant ingen eventId for $fnr")
+                    1 -> log.trace(CONFIDENTIAL, "Fant som forventet en rad med eventId for $fnr")
+                    else -> log.warn(CONFIDENTIAL,
+                            "Fant uventet antall rader $size med eventId for $fnr, ikke kritisk men bør undersøkes")
+                }
+            }
 
     private fun beskjed(type: SkjemaType, tekst: String) =
         with(cfg.beskjed) {
@@ -142,7 +161,4 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     log.info(CONFIDENTIAL, "Key for Ditt Nav $type er $it")
                 }
         }
-
-    fun eventIdForFnr(fnr: Fødselsnummer) = repos.beskjeder.eventIdForFnr(fnr.fnr)
-
 }

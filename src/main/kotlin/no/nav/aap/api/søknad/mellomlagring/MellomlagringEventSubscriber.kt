@@ -41,7 +41,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
                     when (eventType()) {
                         OBJECT_FINALIZE -> opprettet(this)
                         OBJECT_DELETE -> slettet(this)
-                        else -> log.trace("Event type ${eventType()} ikke håndtert (dette skal aldri skje)")
+                        else -> log.warn("Event type ${eventType()} ikke håndtert (dette skal aldri skje)")
                     }
                 }
             }
@@ -76,9 +76,9 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun avsluttEllerTimeout(metadata: Metadata?) =
         metadata?.let { md ->
             with(md) {
-                dittNav.eventIdForFnr(fnr).forEachIndexed { i, uuid ->
-                    log.trace("Avslutter beskjed ($i) i Ditt Nav med UUID $uuid")
-                    dittNav.avsluttBeskjed(type, fnr, uuid)
+                dittNav.eventIdsForFnr(fnr).forEach {
+                    log.trace("Avslutter beskjed i Ditt Nav med UUID $it")
+                    dittNav.avsluttBeskjed(type, fnr, it)
                 }
             }
         } ?: log.warn("Fant ikke forventet metadata")

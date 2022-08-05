@@ -24,7 +24,7 @@ interface JPADittNavSøknadRepository : JpaRepository<JPASøknad, Long>
 interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
     @Modifying
     @Query("update JPADittNavBeskjed o set o.done = true, o.updated = current_timestamp where o.eventid = :eventid")
-    fun done(@Param("eventid") eventid: UUID)
+    fun done(@Param("eventid") eventid: UUID): Int
 
     @Query("select b.eventid from JPADittNavBeskjed b  where b.fnr = :fnr and b.done = false and b.mellomlager  = true")
     fun eventIdForFnr(@Param("fnr") fnr: String): List<UUID>
@@ -33,7 +33,7 @@ interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
 interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
     @Modifying
     @Query("update JPADittNavOppgave o set o.done = true, o.updated = current_timestamp where o.eventid = :eventid")
-    fun done(@Param("eventid") eventid: UUID)
+    fun done(@Param("eventid") eventid: UUID): Int
 }
 
 @Component
