@@ -35,7 +35,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                        mellomlager: Boolean = false) =
         with(cfg.beskjed) {
             if (enabled) {
-                log.trace("Oppretter Ditt Nav beskjed for $fnr og og $eventId")
+                log.trace("Oppretter Ditt Nav beskjed for $fnr og $eventId")
                 dittNav.send(ProducerRecord(topic, key(type.name, eventId, fnr, "beskjed"), beskjed(type, tekst)))
                     .addCallback(SendCallback("opprett beskjed"))
                 log.trace("Oppretter Ditt Nav beskjed i DB")
