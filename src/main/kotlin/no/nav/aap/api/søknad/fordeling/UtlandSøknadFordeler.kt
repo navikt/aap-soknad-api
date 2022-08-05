@@ -1,0 +1,1 @@
+package no.nav.aap.api.søknad.fordeling
