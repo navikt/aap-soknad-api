@@ -15,6 +15,8 @@ import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Metadata.Companion.getInstance
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.MDCUtil.NAV_CALL_ID
+import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import java.util.*
@@ -95,6 +97,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
         companion object {
             fun getInstance(type: String?, fnr: String?, uuid: String?): Metadata? {
                 return if (uuid != null && fnr != null && type != null) {
+                    toMDC(NAV_CALL_ID, uuid)
                     Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(uuid))
                 }
                 else {
