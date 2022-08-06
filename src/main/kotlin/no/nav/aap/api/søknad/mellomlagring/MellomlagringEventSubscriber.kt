@@ -14,7 +14,6 @@ import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Metadata.Companion.getInstance
-import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.toMDC
@@ -30,10 +29,10 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private val log = getLogger(javaClass)
 
     init {
-        subscribe(ctx)
+        subscribe()
     }
 
-    private fun subscribe(ctx: AuthContext) =
+    private fun subscribe() =
         with(cfg.mellom) {
             log.trace("Abonnererer på hendelser i $subscription")
             pubSub.subscribe(subscription.navn) { msg ->
@@ -53,7 +52,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             log.trace("Oppdatert mellomlagring med ny versjon, oppdaterer IKKE Ditt Nav")
         }
         else {
-            log.trace("Førstegangs mellomlagring, oppdaterer Ditt Nav (metadata ${msg.metadata()})")
+            log.trace("Førstegangs mellomlagring, oppdaterer Ditt Nav")
             førstegangsMellomlagring(msg.metadata())
         }
 
@@ -62,7 +61,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             log.trace("Sletting pga opppdatert mellomlagring, oppdaterer IKKE Ditt Nav")
         }
         else {
-            log.trace("Fjernet pga avslutt eller timeout, oppdaterer Ditt Nav (metadata ${msg.metadata()})")
+            log.trace("Fjernet pga avslutt eller timeout, oppdaterer Ditt Nav")
             avsluttEllerTimeout(msg.metadata())
         }
 
@@ -97,7 +96,6 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             fun getInstance(type: String?, fnr: String?, uuid: String?): Metadata? {
                 return if (uuid != null && fnr != null && type != null) {
                     toMDC(NAV_CALL_ID, uuid)
-
                     Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(uuid))
                 }
                 else {
