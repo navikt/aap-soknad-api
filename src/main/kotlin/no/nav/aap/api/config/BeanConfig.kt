@@ -14,6 +14,8 @@ import no.nav.aap.rest.HeadersToMDCFilter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
+import no.nav.aap.util.Constants.IDPORTEN
+import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.aap.util.StartupInfoContributor
 import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
@@ -29,12 +31,20 @@ import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
+import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
+import java.io.IOException
+import javax.servlet.Filter
+import javax.servlet.FilterChain
+import javax.servlet.ServletException
+import javax.servlet.ServletRequest
+import javax.servlet.ServletResponse
+import javax.servlet.http.HttpServletRequest
 
 @Configuration
 class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String) {
@@ -85,6 +95,14 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
             }
 
     @Bean
+    fun jtiToMDCFilterRegistrationBean(ctx: AuthContext) =
+        FilterRegistrationBean(JTIFilter(ctx))
+            .apply {
+                urlPatterns = listOf("/*")
+                setOrder(LOWEST_PRECEDENCE)
+            }
+
+    @Bean
     fun webClientCustomizer(env: Environment) =
         WebClientCustomizer { b ->
             b.clientConnector(ReactorClientHttpConnector(client(env)))
@@ -95,4 +113,17 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         if (isDevOrLocal(env))
             HttpClient.create().wiretap(javaClass.canonicalName, TRACE, TEXTUAL)
         else HttpClient.create()
+}
+
+class JTIFilter(private val ctx: AuthContext) : Filter {
+
+    @Throws(IOException::class, ServletException::class)
+    override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
+        putValue(HttpServletRequest::class.java.cast(request))
+        chain.doFilter(request, response)
+    }
+
+    private fun putValue(req: HttpServletRequest) {
+        toMDC("jti", ctx.getClaim(IDPORTEN, "jti"), "Ingen JTI")
+    }
 }

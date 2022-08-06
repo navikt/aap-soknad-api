@@ -40,7 +40,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
             with(navn(fnr, type)) {
                 lager.get(navn, this)?.let { blob ->
                     String(blob.getContent()).also {
-                        log.trace(CONFIDENTIAL, "Lest verdi $it fra $this fra bøtte $navn")
+                        log.trace(CONFIDENTIAL, "Lest verdi $it fra $this og bøtte $navn")
                     }
                 }
             }
@@ -52,7 +52,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
         with(cfg.mellom) {
             with(navn(fnr, type)) {
                 lager.delete(navn, this).also {
-                    log.trace(CONFIDENTIAL, "Slettet $this fra bøtte $navn")
+                    log.trace(CONFIDENTIAL, "Slettet $this og bøtte $navn")
                 }
             }
         }
