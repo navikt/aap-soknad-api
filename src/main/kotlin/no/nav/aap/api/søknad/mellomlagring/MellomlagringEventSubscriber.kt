@@ -14,32 +14,34 @@ import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Metadata.Companion.getInstance
+import no.nav.aap.util.AuthContext
+import no.nav.aap.util.Constants
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.boot.conditionals.ConditionalOnGCP
-import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import java.util.*
 
 @Suppress("BlockingMethodInNonBlockingContext")
 @ConditionalOnGCP
 class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
                                    private val cfg: BucketConfig,
+                                   private ctx: AuthContext,
                                    private val pubSub: PubSubSubscriberTemplate) {
 
     private val log = getLogger(javaClass)
 
     init {
-        subscribe()
+        subscribe(ctx)
     }
 
-    private fun subscribe() =
+    private fun subscribe(ctx: AuthContext) =
         with(cfg.mellom) {
             log.trace("Abonnererer på hendelser i $subscription")
             pubSub.subscribe(subscription.navn) { msg ->
                 msg.ack()
                 with(msg.pubsubMessage) {
-                    log.trace(CONFIDENTIAL, "Attributter er $attributesMap")
+                    toMDC("jti", ctx.getClaim(Constants.IDPORTEN, "jti"), "Ingen JTI")
                     when (eventType()) {
                         OBJECT_FINALIZE -> opprettet(this)
                         OBJECT_DELETE -> slettet(this)
@@ -98,6 +100,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             fun getInstance(type: String?, fnr: String?, uuid: String?): Metadata? {
                 return if (uuid != null && fnr != null && type != null) {
                     toMDC(NAV_CALL_ID, uuid)
+
                     Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(uuid))
                 }
                 else {
