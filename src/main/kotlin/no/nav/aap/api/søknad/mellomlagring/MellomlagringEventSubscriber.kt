@@ -38,10 +38,10 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             pubSub.subscribe(subscription.navn) { msg ->
                 msg.ack()
                 with(msg.pubsubMessage) {
-                    when (eventType()) {
+                    when (val type = eventType()) {
                         OBJECT_FINALIZE -> opprettet(this)
                         OBJECT_DELETE -> slettet(this)
-                        else -> log.warn("Event type ${eventType()} ikke håndtert (dette skal aldri skje)")
+                        else -> log.warn("Event type $type ikke håndtert (dette skal aldri skje)")
                     }
                 }
             }
