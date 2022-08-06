@@ -44,7 +44,6 @@ import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
-import javax.servlet.http.HttpServletRequest
 
 @Configuration
 class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String) {
@@ -119,11 +118,7 @@ class JTIFilter(private val ctx: AuthContext) : Filter {
 
     @Throws(IOException::class, ServletException::class)
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
-        putValue(HttpServletRequest::class.java.cast(request))
-        chain.doFilter(request, response)
-    }
-
-    private fun putValue(req: HttpServletRequest) {
         toMDC("jti", ctx.getClaim(IDPORTEN, "jti"), "Ingen JTI")
+        chain.doFilter(request, response)
     }
 }
