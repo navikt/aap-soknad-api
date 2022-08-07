@@ -50,7 +50,7 @@ class StandardSøknadAvslutter(private val dokumentLager: Dokumentlager,
                               private val mellomlager: Mellomlager) {
     fun avsluttSøknad(søknad: StandardSøknad, pdf: ByteArray) =
         dokumentLager.slettDokumenter(søknad).run {
-            mellomlager.slett(STANDARD)
+            mellomlager.slett()
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering.pdf")))
         }
 }

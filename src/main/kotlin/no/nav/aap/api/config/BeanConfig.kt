@@ -2,6 +2,7 @@ package no.nav.aap.api.config
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import io.netty.handler.logging.LogLevel.TRACE
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
@@ -118,7 +119,7 @@ class JTIFilter(private val ctx: AuthContext) : Filter {
 
     @Throws(IOException::class, ServletException::class)
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
-        toMDC("jti", ctx.getClaim(IDPORTEN, "jti"), "Ingen JTI")
+        toMDC(JWT_ID, ctx.getClaim(IDPORTEN, JWT_ID), "Ingen JTI")
         chain.doFilter(request, response)
     }
 }

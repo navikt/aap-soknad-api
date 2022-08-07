@@ -33,15 +33,16 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
 
     private val log = getLogger(javaClass)
 
-    override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(ctx.getFnr(), dokument)
+    override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(dokument, ctx.getFnr())
 
-    fun lagreDokument(fnr: Fødselsnummer, dokument: DokumentInfo) =
+    fun lagreDokument(dokument: DokumentInfo, fnr: Fødselsnummer) =
         with(cfg) {
             randomUUID().apply {
                 with(dokument) {
-                    log.trace("Lagrer $filnavn kryptert som ${navn(fnr, this@apply)} og contentType $contentType")
+                    val navn = navn(fnr, this@apply)
+                    log.trace("Lagrer $filnavn som $navn med contentType $contentType")
                     sjekkere.forEach { it.sjekk(this) }
-                    lager.create(newBuilder(vedlegg.navn, navn(fnr, this@apply))
+                    lager.create(newBuilder(vedlegg.navn, navn)
                         .setContentType(contentType)
                         .setMetadata(mapOf(FILNAVN to filnavn, UUID_ to "${this@apply}"))
                         .build(), bytes, kmsKeyName("$key")).also {
@@ -51,9 +52,9 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
             }
         }
 
-    override fun lesDokument(uuid: UUID) = lesDokument(ctx.getFnr(), uuid)
+    override fun lesDokument(uuid: UUID) = lesDokument(uuid, ctx.getFnr())
 
-    fun lesDokument(fnr: Fødselsnummer, uuid: UUID) =
+    fun lesDokument(uuid: UUID, fnr: Fødselsnummer) =
         with(cfg.vedlegg) {
             lager.get(navn, navn(fnr, uuid), fields(METADATA, CONTENT_TYPE, TIME_CREATED))
                 ?.let { blob ->
@@ -67,22 +68,22 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 }
         }
 
-    override fun slettDokument(uuid: UUID) = slettDokument(ctx.getFnr(), uuid)
+    override fun slettDokument(uuid: UUID) = slettDokument(uuid, ctx.getFnr())
 
-    fun slettDokument(fnr: Fødselsnummer, uuid: UUID) =
+    fun slettDokument(uuid: UUID, fnr: Fødselsnummer) =
         with(cfg.vedlegg) {
             with(navn(fnr, uuid)) {
                 lager.delete(navn, this)
                     .also {
-                        log.trace(CONFIDENTIAL, "Slettet dokument $this fra bøtte $navn")
+                        log.trace(CONFIDENTIAL, "Slettet dokument $this@with fra bøtte $navn")
                     }
             }
         }
 
     override fun slettDokumenter(søknad: StandardSøknad) =
-        slettDokumenter(ctx.getFnr(), søknad)
+        slettDokumenter(søknad, ctx.getFnr())
 
-    fun slettDokumenter(fnr: Fødselsnummer, søknad: StandardSøknad) {
+    fun slettDokumenter(søknad: StandardSøknad, fnr: Fødselsnummer) {
         with(søknad) {
             with(utbetalinger) {
                 slettDokumenter(this?.ekstraFraArbeidsgiver, fnr)
@@ -112,7 +113,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
 
     private fun slettDokumenter(uuid: UUID?, fnr: Fødselsnummer) =
         uuid?.let { id ->
-            slettDokument(fnr, id)
+            slettDokument(id, fnr)
         }
 
     @Component

@@ -46,27 +46,27 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
 
     @DeleteMapping("mellomlager/{type}/{fnr}")
     fun slettMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer): ResponseEntity<Void> =
-        if (mellomlager.slett(fnr, type)) noContent().build() else notFound().build()
+        if (mellomlager.slett(type, fnr)) noContent().build() else notFound().build()
 
     @GetMapping("mellomlager/{type}/{fnr}")
     fun lesMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer) =
-        mellomlager.les(fnr, type)?.let { ok(it) } ?: notFound().build()
+        mellomlager.les(type, fnr)?.let { ok(it) } ?: notFound().build()
 
     @PostMapping("mellomlager/{type}/{fnr}", produces = [TEXT_PLAIN_VALUE])
     @ResponseStatus(CREATED)
     fun mellomlagre(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer, @RequestBody data: String) =
-        mellomlager.lagre(fnr, type, data)
+        mellomlager.lagre(data, type, fnr)
 
     @PostMapping("vedlegg/lagre/{fnr}", consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
     fun lagreDokument(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") vedlegg: MultipartFile) =
         with(vedlegg) {
-            dokumentLager.lagreDokument(fnr, DokumentInfo(bytes, contentType, originalFilename))
+            dokumentLager.lagreDokument(DokumentInfo(bytes, contentType, originalFilename), fnr)
         }
 
     @GetMapping("vedlegg/les/{fnr}/{uuid}")
     fun lesDokument(@PathVariable fnr: Fødselsnummer, @PathVariable uuid: UUID) =
-        dokumentLager.lesDokument(fnr, uuid)
+        dokumentLager.lesDokument(uuid, fnr)
             ?.let {
                 ok().contentType(parseMediaType(it.contentType!!))
                     .cacheControl(noCache().mustRevalidate())
@@ -80,5 +80,5 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     @DeleteMapping("vedlegg/slett/{fnr}/{uuid}")
     @ResponseStatus(NO_CONTENT)
     fun slettDokument(@PathVariable fnr: Fødselsnummer, @PathVariable uuid: UUID) =
-        dokumentLager.slettDokument(fnr, uuid)
+        dokumentLager.slettDokument(uuid, fnr)
 }

@@ -21,9 +21,9 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
                                       private val ctx: AuthContext) : Mellomlager {
     val log = getLogger(javaClass)
 
-    override fun lagre(type: SkjemaType, value: String) = lagre(ctx.getFnr(), type, value)
+    override fun lagre(value: String, type: SkjemaType) = lagre(value, type, ctx.getFnr())
 
-    fun lagre(fnr: Fødselsnummer, type: SkjemaType, value: String) =
+    fun lagre(value: String, type: SkjemaType, fnr: Fødselsnummer) =
         with(cfg) {
             lager.create(newBuilder(mellom.navn, navn(fnr, type))
                 .setMetadata(mapOf(SKJEMATYPE to type.name, UUID_ to callId()))
@@ -33,9 +33,9 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
                 }
         }.name
 
-    override fun les(type: SkjemaType) = les(ctx.getFnr(), type)
+    override fun les(type: SkjemaType) = les(type, ctx.getFnr())
 
-    fun les(fnr: Fødselsnummer, type: SkjemaType) =
+    fun les(type: SkjemaType, fnr: Fødselsnummer) =
         with(cfg.mellom) {
             with(navn(fnr, type)) {
                 lager.get(navn, this)?.let { blob ->
@@ -46,13 +46,13 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
             }
         }
 
-    override fun slett(type: SkjemaType) = slett(ctx.getFnr(), type)
+    override fun slett(type: SkjemaType) = slett(type, ctx.getFnr())
 
-    fun slett(fnr: Fødselsnummer, type: SkjemaType) =
+    fun slett(type: SkjemaType, fnr: Fødselsnummer) =
         with(cfg.mellom) {
             with(navn(fnr, type)) {
                 lager.delete(navn, this).also {
-                    log.trace(CONFIDENTIAL, "Slettet $this og bøtte $navn")
+                    log.trace(CONFIDENTIAL, "Slettet $this fra bøtte $navn")
                 }
             }
         }

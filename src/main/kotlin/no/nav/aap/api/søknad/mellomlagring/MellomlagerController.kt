@@ -20,7 +20,7 @@ internal class MellomlagerController(private val lager: Mellomlager) {
     @PostMapping("/lagre/{type}")
     @ResponseStatus(CREATED)
     fun lagre(@PathVariable type: SkjemaType, @RequestBody data: String) =
-        lager.lagre(type, data)
+        lager.lagre(data, type)
 
     @GetMapping("/les/{type}")
     fun les(@PathVariable type: SkjemaType) =
