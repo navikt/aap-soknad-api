@@ -23,12 +23,13 @@ class PDFASjekker : DokumentSjekker {
                     log.info("PDF validering resultat OK")
                 }
                 else {
-                    throw DokumentException("Dokumentet er ikke PDF/A (${this.errorsList.size})")
+                    throw DokumentException("Dokumentet er ikke PDF/A")
                 }
             }
         }
     }
     catch (e: Exception) {
-        log.warn("Feil ved sjekking av $dokument", e)
+        if (e is DokumentException) throw e
+        else log.warn("Uventet feil ved sjekking av $dokument", e)
     }
 }
