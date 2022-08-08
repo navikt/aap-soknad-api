@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.joark.pdf
 
+import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -22,7 +23,7 @@ class PDFASjekker : DokumentSjekker {
                     log.info("PDF validering resultat OK")
                 }
                 else {
-                    log.warn("PDF validering resultat feilet med ${this.errorsList}")
+                    throw DokumentException("Dokumentet er ikke PDF/A (${this.errorsList})")
                 }
             }
         }
