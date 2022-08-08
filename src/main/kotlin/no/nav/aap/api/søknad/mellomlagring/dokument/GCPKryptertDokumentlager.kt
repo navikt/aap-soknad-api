@@ -12,6 +12,7 @@ import no.nav.aap.api.søknad.mellomlagring.BucketConfig
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.FILNAVN
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.VedleggAware
 import no.nav.aap.util.AuthContext
@@ -19,7 +20,6 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
-import org.apache.tika.Tika
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 import java.util.*
@@ -132,8 +132,5 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
             }
 
         class ContentTypeException(val type: String? = null, msg: String) : RuntimeException(msg)
-        companion object {
-            private val TIKA = Tika()
-        }
     }
 }

@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.model.StandardSøknad
+import org.apache.tika.Tika
 import java.util.*
 
 interface Dokumentlager {
@@ -24,4 +25,8 @@ data class DokumentInfo(val bytes: ByteArray,
 
 interface DokumentSjekker {
     fun sjekk(dokument: DokumentInfo)
+
+    companion object {
+        val TIKA = Tika()
+    }
 }

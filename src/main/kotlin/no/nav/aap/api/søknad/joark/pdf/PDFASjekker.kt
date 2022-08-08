@@ -20,10 +20,10 @@ class PDFASjekker : DokumentSjekker {
             it.validate()
             with(it.result) {
                 if (isValid) {
-                    log.info("PDF validering resultat OK")
+                    log.info("PDF/A validering resultat OK")
                 }
                 else {
-                    throw DokumentException("Dokumentet er ikke PDF/A")
+                    log.trace("PDF/A validering feilet")
                 }
             }
         }
