@@ -16,13 +16,13 @@ import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.VedleggAware
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.apache.tika.Tika
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 import java.util.*
-import java.util.UUID.randomUUID
 
 @ConditionalOnGCP
 @Primary
@@ -37,7 +37,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
 
     fun lagreDokument(dokument: DokumentInfo, fnr: Fødselsnummer) =
         with(cfg) {
-            randomUUID().apply {
+            callIdAsUUID().apply {
                 with(dokument) {
                     val navn = navn(fnr, this@apply)
                     log.trace("Lagrer $filnavn som $navn med contentType $contentType")
