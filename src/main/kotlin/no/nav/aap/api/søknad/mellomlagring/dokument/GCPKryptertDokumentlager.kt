@@ -69,7 +69,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 }
         }
 
-    override fun slettDokument(uuid: UUID) = slettDokument(uuid, ctx.getFnr())
+    override fun slettDokumenter(vararg uuids: UUID) = slettUUIDs(uuids.asList(), ctx.getFnr())
 
     fun slettDokument(uuid: UUID, fnr: Fødselsnummer) =
         with(cfg.vedlegg) {
@@ -107,7 +107,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
             slettUUIDs(it.deler, fnr)
         }
 
-    private fun slettUUIDs(uuids: List<UUID?>?, fnr: Fødselsnummer) =
+    fun slettUUIDs(uuids: List<UUID?>?, fnr: Fødselsnummer) =
         uuids?.forEach {
             slettDokumenter(it, fnr)
         }

@@ -7,7 +7,7 @@ import java.util.*
 
 interface Dokumentlager {
     fun lesDokument(uuid: UUID): DokumentInfo?
-    fun slettDokument(uuid: UUID): Boolean
+    fun slettDokumenter(vararg uuids: UUID): Unit?
     fun slettDokumenter(søknad: StandardSøknad)
     fun lagreDokument(dokument: DokumentInfo): UUID
     fun navn(fnr: Fødselsnummer, uuid: UUID) = "${fnr.fnr}/$uuid"
