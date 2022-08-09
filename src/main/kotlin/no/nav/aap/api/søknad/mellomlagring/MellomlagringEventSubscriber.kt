@@ -12,7 +12,6 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
-import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Metadata.Companion.getInstance
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
@@ -87,16 +86,24 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.erSlettetGrunnetNyVersjon() = containsAttributes(OVERWRITTEBBYGENERATION)
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata() =
-        with(MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA] as Map<String, String>) {
-            getInstance(get(SKJEMATYPE), attributesMap[OBJECTID]?.split("/")?.firstOrNull(), get(UUID_))
-        }.also { log.trace("META er $it") }
+        with(attributesMap[OBJECTID]?.split("/")) {
+            if (this?.size == 2) {
+                MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA]?.let {
+                    it as Map<String, String>
+                    getInstance(it[SKJEMATYPE], this[0], this[1])
+                }
+            }
+        }
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
         companion object {
+            private val log = getLogger(Metadata::class.java)
             fun getInstance(type: String?, fnr: String?, uuid: String?): Metadata? {
                 return if (uuid != null && fnr != null && type != null) {
                     toMDC(NAV_CALL_ID, uuid)
-                    Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(uuid))
+                    Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(uuid)).also {
+                        log.trace("Metadata er $this")
+                    }
                 }
                 else {
                     null
