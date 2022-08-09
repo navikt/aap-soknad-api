@@ -9,6 +9,9 @@ class InMemoryDokumentlager : Dokumentlager {
     private val store = mutableMapOf<String, String>()
 
     override fun lesDokument(uuid: UUID) = null
+    override fun slettDokumenter(vararg uuids: UUID): Unit? {
+        TODO("Not yet implemented")
+    }
 
     override fun slettDokument(uuid: UUID) = true
     override fun slettDokumenter(søknad: StandardSøknad) {
