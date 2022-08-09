@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.virus
 
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
+import no.nav.aap.api.søknad.mellomlagring.DokumentException.Substatus.VIRUS
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker
 import no.nav.aap.api.søknad.virus.ScanResult.Result.FOUND
@@ -19,4 +20,4 @@ class ClamAvVirusScanner(private val a: VirusScanWebClientAdapter) : DokumentSje
         }
 }
 
-class VirusException(msg: String) : DokumentException(msg)
+class VirusException(msg: String) : DokumentException(VIRUS, msg)

@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.joark.pdf
 
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
+import no.nav.aap.api.søknad.mellomlagring.DokumentException.Substatus.PASSWORD_PROTECTED
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
@@ -22,7 +23,7 @@ class PDFEncryptionChecker : DokumentSjekker {
                     PDDocument.load(bytes).use { }
                 }
                 catch (e: InvalidPasswordException) {
-                    throw DokumentException("$filnavn er passord-beskyttet", e)
+                    throw DokumentException(PASSWORD_PROTECTED, "$filnavn er passord-beskyttet", e)
                 }
                 catch (e: Exception) {
                     log.warn("Uventet feil ved sjekking om $filnavn er passord-beskyttet", e)

@@ -34,7 +34,7 @@ class Image2PDFConverter(private val scaler: ImageScaler) {
             }
         }
         catch (e: Exception) {
-            throw DokumentException("Sammenslåing/konvertering av vedlegg feilet", e)
+            throw DokumentException(msg = "Sammenslåing/konvertering av vedlegg feilet", cause = e)
         }
 
     private fun pdfFraBilde(doc: PDDocument, bilde: ByteArray, fmt: String) =
@@ -48,7 +48,7 @@ class Image2PDFConverter(private val scaler: ImageScaler) {
                 }
             }
             catch (e: Exception) {
-                throw DokumentException("Konvertering av vedlegg feilet", e)
+                throw DokumentException(msg = "Konvertering av vedlegg feilet", cause = e)
             }
         }
 }

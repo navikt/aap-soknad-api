@@ -3,8 +3,8 @@ package no.nav.aap.api.error
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
+import no.nav.aap.api.søknad.mellomlagring.DokumentException.Substatus
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager.ContentTypeDokumentSjekker.ContentTypeException
-import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
@@ -24,7 +24,7 @@ import org.zalando.problem.Status.UNSUPPORTED_MEDIA_TYPE
 import org.zalando.problem.spring.web.advice.ProblemHandling
 
 @ControllerAdvice
-class AAPApiExceptionHandler(private val ctx: AuthContext) : ProblemHandling {
+class AAPApiExceptionHandler : ProblemHandling {
     private val log = getLogger(javaClass)
 
     @ExceptionHandler(JwtTokenUnauthorizedException::class, JwtTokenMissingException::class)
@@ -49,14 +49,13 @@ class AAPApiExceptionHandler(private val ctx: AuthContext) : ProblemHandling {
     @ExceptionHandler(NotFound::class)
     fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = problem(e, NOT_FOUND, req)
 
-    fun problem(e: RuntimeException, status: Status, req: NativeWebRequest) = create(e, problem(e, status), req)
+    fun problem(e: DokumentException, status: Status, req: NativeWebRequest) =
+        create(e, problem(e, status, e.substatus), req)
 
-    private fun problem(e: RuntimeException, status: Status) =
-        builder()
-            .withStatus(status)
-            .withDetail(e.message)
-            .with("fnr", ctx.getSubject())
-            .with(NAV_CALL_ID, callId()).build().also {
-                log.trace("Status er $it", e)
-            }
+    fun problem(e: RuntimeException, status: Status, req: NativeWebRequest) = create(e, problem(e, status, null), req)
+
+    private fun problem(e: RuntimeException, status: Status, substatus: Substatus? = null) =
+        with(builder().withStatus(status).withDetail(e.message).with(NAV_CALL_ID, callId())) {
+            substatus?.let { with("substatus", it).build() } ?: build()
+        }.also { log.warn("Problem $it", e) }
 }

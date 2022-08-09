@@ -37,7 +37,7 @@ class ImageScaler {
             }
         }
         catch (e: IOException) {
-            throw DokumentException("Konvertering av vedlegg feilet", e)
+            throw DokumentException(msg = "Konvertering av vedlegg feilet", cause = e)
         }
 
     private fun tilPortrett(image: BufferedImage): BufferedImage {

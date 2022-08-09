@@ -12,6 +12,7 @@ import no.nav.aap.api.søknad.mellomlagring.BucketConfig
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.FILNAVN
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
+import no.nav.aap.api.søknad.mellomlagring.DokumentException.Substatus.UNSUPPORTED
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.VedleggAware
@@ -122,15 +123,15 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
         override fun sjekk(dokument: DokumentInfo) =
             with(dokument) {
                 if (contentType !in cfg.vedlegg.typer) {
-                    throw DokumentException("Type $contentType for $filnavn er ikke blant ${cfg.vedlegg.typer}")
+                    throw ContentTypeException("$contentType for $filnavn er ikke blant ${cfg.vedlegg.typer}")
                 }
                 TIKA.detect(bytes).run {
                     if (!equals(contentType)) {
-                        throw ContentTypeException(this, "Foventet $contentType for $filnavn, men fikk $this")
+                        throw ContentTypeException("Foventet $contentType for $filnavn, men fikk $this")
                     }
                 }
             }
 
-        class ContentTypeException(val type: String? = null, msg: String) : RuntimeException(msg)
+        class ContentTypeException(msg: String) : DokumentException(UNSUPPORTED, msg = msg)
     }
 }

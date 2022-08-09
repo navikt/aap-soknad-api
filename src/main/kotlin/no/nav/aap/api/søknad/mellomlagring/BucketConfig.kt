@@ -38,4 +38,12 @@ data class BucketConfig(val project: String,
     }
 }
 
-open class DokumentException(msg: String?, cause: Exception? = null) : RuntimeException(msg, cause)
+open class DokumentException(val substatus: Substatus? = null, msg: String?, cause: Exception? = null) :
+    RuntimeException(msg, cause) {
+    enum class Substatus {
+        PASSWORD_PROTECTED,
+        VIRUS,
+        UNSUPPORTED,
+    }
+
+}
