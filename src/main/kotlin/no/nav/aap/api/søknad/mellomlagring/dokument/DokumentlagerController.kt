@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.multipart.MultipartFile
@@ -45,10 +46,10 @@ internal class DokumentlagerController(private val lager: Dokumentlager) {
 
             } ?: notFound().build()
 
-    @DeleteMapping("/slett/{uuid}")
+    @DeleteMapping("/slett")
     @ResponseStatus(NO_CONTENT)
-    fun slettDokument(@PathVariable uuid: UUID) =
-        lager.slettDokument(uuid)
+    fun slettDokument(@RequestParam vararg uuids: UUID) =
+        lager.slettDokumenter(*uuids)
 
     companion object {
         const val BASEPATH = "vedlegg"
