@@ -85,7 +85,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { valueOf(it) }
     private fun PubsubMessage.erSlettetGrunnetNyVersjon() = containsAttributes(OVERWRITTEBBYGENERATION)
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
-    private fun PubsubMessage.metadata() =
+    private fun PubsubMessage.metadata(): Metadata? =
         with(attributesMap[OBJECTID]?.split("/")) {
             if (this?.size == 2) {
                 MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA]?.let {
@@ -93,6 +93,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
                     getInstance(it[SKJEMATYPE], this[0], this[1])
                 }
             }
+            null
         }
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
