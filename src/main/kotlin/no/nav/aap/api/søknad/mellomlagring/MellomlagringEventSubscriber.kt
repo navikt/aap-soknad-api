@@ -88,13 +88,19 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.erSlettetGrunnetNyVersjon() = containsAttributes(OVERWRITTEBBYGENERATION)
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata(): Metadata? =
-        with(objektNavn()) {
-            if (this?.size == 2) {
-                data()[METADATA]?.let {
-                    it as Map<String, String>
-                    getInstance(it[SKJEMATYPE], this[0], this[1])
+        try {
+            with(objektNavn()) {
+                if (this?.size == 2) {
+                    data()[METADATA]?.let {
+                        it as Map<String, String>
+                        getInstance(it[SKJEMATYPE], this[0], this[1])
+                    }
                 }
+                null
             }
+        }
+        catch (e: Exception) {
+            log.warn("OOPS", e)
             null
         }
 
