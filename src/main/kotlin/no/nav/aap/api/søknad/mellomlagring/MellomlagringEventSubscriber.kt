@@ -12,6 +12,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Metadata.Companion.getInstance
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
@@ -89,11 +90,12 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata(): Metadata? =
         try {
+            log.warn("META INIT")
             with(objektNavn()) {
                 if (this?.size == 2) {
                     data()[METADATA]?.let {
                         it as Map<String, String>
-                        getInstance(it[SKJEMATYPE], this[0], this[1])
+                        getInstance(it[SKJEMATYPE], this[0], it[UUID_])
                     }
                 }
                 null
