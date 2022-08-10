@@ -82,13 +82,15 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             }
         } ?: log.warn("Fant ikke forventet metadata")
 
+    private fun PubsubMessage.data() = MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())
+    private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
     private fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { valueOf(it) }
     private fun PubsubMessage.erSlettetGrunnetNyVersjon() = containsAttributes(OVERWRITTEBBYGENERATION)
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata(): Metadata? =
-        with(attributesMap[OBJECTID]?.split("/")) {
+        with(objektNavn()) {
             if (this?.size == 2) {
-                MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())[METADATA]?.let {
+                data()[METADATA]?.let {
                     it as Map<String, String>
                     getInstance(it[SKJEMATYPE], this[0], this[1])
                 }
@@ -98,13 +100,10 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
         companion object {
-            private val log = getLogger(Metadata::class.java)
             fun getInstance(type: String?, fnr: String?, uuid: String?): Metadata? {
                 return if (uuid != null && fnr != null && type != null) {
                     toMDC(NAV_CALL_ID, uuid)
-                    Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(uuid)).also {
-                        log.trace("Metadata er $this")
-                    }
+                    Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(uuid))
                 }
                 else {
                     null
