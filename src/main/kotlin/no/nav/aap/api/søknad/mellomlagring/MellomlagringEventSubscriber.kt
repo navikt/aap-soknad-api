@@ -98,7 +98,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
                         getInstance(it[SKJEMATYPE], this[0], it[UUID_])
                     }
                 }
-                null
+                else null
             }
         }
         catch (e: Exception) {
