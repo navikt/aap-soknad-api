@@ -2,7 +2,7 @@ package no.nav.aap.api.oppslag.krr
 
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import javax.validation.constraints.Email
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -13,20 +13,21 @@ data class KontaktinformasjonDTO(@JsonAlias("spraak") val målform: Målform? = 
                                  @JsonAlias("epostadresse") @Email val epost: String? = null,
                                  @JsonAlias("mobiltelefonnummer") val mobil: String? = null) {
 
-    private val log = LoggerUtil.getLogger(javaClass)
+    private val log = getLogger(javaClass)
     fun tilKontaktinfo() =
         when (aktiv) {
             true -> {
                 when (kanVarsles) {
                     true -> Kontaktinformasjon(epost, mobil)
                     else -> {
-                        log.info("Kan ikke varsles")
+                        log.info("Kan ikke varsles, kanVarsles er false i KRR")
                         null
                     }
                 }
             }
+
             else -> {
-                log.info("Er ikke aktiv")
+                log.info("Er ikke aktiv i KRR")
                 null
             }
         }

@@ -61,7 +61,6 @@ data class Studier(val erStudent: StudieSvar?,
 
 data class Startdato(val beskrivelse: String?)
 
-//@JsonIgnoreProperties(ignoreUnknown = true)
 data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
                       val jobbetUtenforNorgeFørSyk: Boolean?,
                       val jobbetSammenhengendeINorgeSiste5: Boolean?,
@@ -90,8 +89,7 @@ data class AnnetBarnOgInntekt(val barn: Barn,
                               val relasjon: Relasjon = FORELDER,
                               val merEnnIG: Boolean? = false,
                               val barnepensjon: Boolean = false,
-                              override val vedlegg: Vedlegg? = null) :
-    VedleggAware {
+                              override val vedlegg: Vedlegg? = null) : VedleggAware {
 
     enum class Relasjon {
         FOSTERFORELDER,
