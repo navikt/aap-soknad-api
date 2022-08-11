@@ -91,7 +91,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 slettDokumenter(this?.ekstraUtbetaling, fnr)
                 slettDokumenter(this?.andreStønader, fnr)
             }
-            slettDokumenter(this, fnr)
+            //slettDokumenter(this, fnr)
             slettDokumenter(studier, fnr)
             slettDokumenter(andreBarn, fnr)
         }
