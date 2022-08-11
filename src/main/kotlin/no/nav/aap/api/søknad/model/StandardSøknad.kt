@@ -66,7 +66,7 @@ data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
                       val jobbetUtenforNorgeFørSyk: Boolean?,
                       val jobbetSammenhengendeINorgeSiste5: Boolean?,
                       val iTilleggArbeidUtenforNorge: Boolean?,
-                      val utenlandsopphold: List<Utenlandsopphold>)
+                      val utenlandsopphold: List<Utenlandsopphold> = emptyList())
 
 data class Utenlandsopphold(val land: CountryCode,
                             val periode: Periode,
