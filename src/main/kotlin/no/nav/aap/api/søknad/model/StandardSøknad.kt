@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.TreeNode
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.TextNode
@@ -18,9 +19,8 @@ import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.AFP
 import no.nav.aap.joark.DokumentVariant
 import no.nav.aap.joark.Filtype.JSON
 import no.nav.aap.joark.VariantFormat.ORIGINAL
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.toEncodedJson
-import org.springframework.boot.jackson.JsonComponent
 import java.io.IOException
 import java.util.*
 
@@ -40,7 +40,7 @@ data class StandardSøknad(
     fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
 }
 
-//@JsonDeserialize(using = VedleggDeserializer::class)
+@JsonDeserialize(using = VedleggDeserializer::class)
 data class Vedlegg(val tittel: String? = null, @JsonValue val deler: List<UUID?>? = null)
 
 interface VedleggAware {
@@ -140,10 +140,9 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
     }
 }
 
-@JsonComponent
 internal class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.java) {
 
-    private val log = LoggerUtil.getLogger(javaClass)
+    private val log = getLogger(javaClass)
 
     @Throws(IOException::class)
     override fun deserialize(p: JsonParser, ctx: DeserializationContext) =
