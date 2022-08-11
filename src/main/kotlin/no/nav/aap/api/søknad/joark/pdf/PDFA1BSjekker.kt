@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
 
 @Component
-class PDFASjekker : DokumentSjekker {
+class PDFA1BSjekker : DokumentSjekker {
     private val log = getLogger(javaClass)
 
     override fun sjekk(dokument: DokumentInfo) =
@@ -21,10 +21,10 @@ class PDFASjekker : DokumentSjekker {
                 preflightDocument.use {
                     it.validate()
                     if (it.result.isValid) {
-                        log.info(CONFIDENTIAL, "PDF/A validering resultat OK for $filnavn")
+                        log.info(CONFIDENTIAL, "PDF-A1B validering resultat OK for $filnavn")
                     }
                     else {
-                        log.trace(CONFIDENTIAL, "PDF/A validering feilet for $filnavn")
+                        log.trace(CONFIDENTIAL, "PDF-A1B validering feilet for $filnavn")
                     }
                 }
             }
