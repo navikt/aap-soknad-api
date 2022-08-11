@@ -18,6 +18,7 @@ import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
+import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.aap.util.StartupInfoContributor
 import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
@@ -130,8 +131,13 @@ class JTIFilter(private val ctx: AuthContext) : Filter {
 }
 
 class HibernateObjectMapperSupplier : ObjectMapperSupplier {
-    override fun get(): ObjectMapper =
-        ObjectMapperHolder.objectMapper
+
+    private val log = LoggerUtil.getLogger(javaClass)
+
+    override fun get(): ObjectMapper {
+        log.trace("XXXXXXXXX henter mapper")
+        return ObjectMapperHolder.objectMapper
+    }
 }
 
 @Component

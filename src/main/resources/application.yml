@@ -25,7 +25,7 @@ spring:
             accept-single-value-as-array: true
             fail-on-unknown-properties: true
         serialization:
-            write-empty-json-arrays: false
+            write-empty-json-arrays: true
             fail-on-empty-beans: false
 management:
     info:
