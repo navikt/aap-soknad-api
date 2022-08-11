@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
+import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier
 import io.netty.handler.logging.LogLevel.TRACE
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
@@ -25,6 +26,8 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
@@ -42,7 +45,6 @@ import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 import java.io.IOException
-import java.util.function.Supplier
 import javax.servlet.Filter
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
@@ -127,7 +129,28 @@ class JTIFilter(private val ctx: AuthContext) : Filter {
     }
 }
 
-@Component("hibernateObjectMapper")
-class HibernateObjectMapperSupplier(private val mapper: ObjectMapper) : Supplier<ObjectMapper?> {
-    override fun get() = mapper
+class HibernateObjectMapperSupplier : ObjectMapperSupplier {
+    override fun get(): ObjectMapper =
+        ObjectMapperHolder.objectMapper
+}
+
+@Component
+class ObjectMapperHolder(objectMapper: ObjectMapper) {
+    init {
+        Companion.objectMapper = objectMapper
+    }
+
+    companion object {
+        lateinit var objectMapper: ObjectMapper
+    }
+}
+
+@Component
+class ObjectMapperDependencyFixer : BeanFactoryPostProcessor {
+    override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory) {
+        val beanDefinition = beanFactory.getBeanDefinition("entityManagerFactory")
+        val oldDependsOn = beanDefinition.dependsOn ?: emptyArray()
+        val newDependsOn = oldDependsOn + "objectMapperHolder"
+        beanDefinition.setDependsOn(*newDependsOn)
+    }
 }
