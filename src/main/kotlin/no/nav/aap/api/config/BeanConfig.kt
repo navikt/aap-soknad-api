@@ -1,5 +1,6 @@
 package no.nav.aap.api.config
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
@@ -24,6 +25,8 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
@@ -36,10 +39,12 @@ import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
+import org.springframework.stereotype.Component
 import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 import java.io.IOException
+import java.util.function.Supplier
 import javax.servlet.Filter
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
@@ -121,5 +126,23 @@ class JTIFilter(private val ctx: AuthContext) : Filter {
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         toMDC(JWT_ID, ctx.getClaim(IDPORTEN, JWT_ID), "Ingen JTI")
         chain.doFilter(request, response)
+    }
+
+    @Component("hibernateObjectMapper")
+    class HibernateObjectMapper(private val mapper: ObjectMapper) : Supplier<ObjectMapper?> {
+        override fun get() = mapper
+    }
+
+    @Component
+    class HibernateBeanDependencyProcessor : BeanFactoryPostProcessor {
+        override fun postProcessBeanFactory(factory: ConfigurableListableBeanFactory) {
+            val beanDefinition = factory.getBeanDefinition("entityManagerFactory")
+            var dependsOn = beanDefinition.dependsOn
+            dependsOn = dependsOn ?: arrayOf()
+            val newDependsOn = arrayOfNulls<String>(dependsOn.size + 1)
+            System.arraycopy(dependsOn, 0, newDependsOn, 1, dependsOn.size)
+            newDependsOn[0] = "hibernateObjectMapper"
+            beanDefinition.setDependsOn(*newDependsOn)
+        }
     }
 }
