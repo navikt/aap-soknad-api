@@ -20,8 +20,6 @@ import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
 import javax.persistence.Table
 
-interface JPADittNavSøknadRepository : JpaRepository<JPASøknad, Long>
-
 interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
     @Modifying
     @Query("update JPADittNavBeskjed o set o.done = true, o.updated = current_timestamp where o.eventid = :eventid")
@@ -39,8 +37,7 @@ interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
 
 @Component
 data class DittNavRepositories(val beskjeder: JPADittNavBeskjedRepository,
-                               val oppgaver: JPADittNavOppgaveRepository,
-                               val søknader: JPADittNavSøknadRepository)
+                               val oppgaver: JPADittNavOppgaveRepository)
 
 @Entity
 @Table(name = "dittnavbeskjeder")
@@ -69,20 +66,6 @@ class JPADittNavOppgave(
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString() =
         "JPADittNavOppgave(fnr=${fnr?.partialMask()}, created=$created, updated=$updated, eventid=$eventid, done=$done, id=$id)"
-}
-
-@Entity
-@Table(name = "soknader")
-@EntityListeners(AuditingEntityListener::class)
-class JPASøknad(
-        var fnr: String? = null,
-        @CreatedDate var created: LocalDateTime? = null,
-        @LastModifiedDate var updated: LocalDateTime? = null,
-        var eventid: UUID,
-        var gyldigtil: LocalDateTime? = null,
-        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
-    override fun toString() =
-        "JPASøknad(fnr=${fnr?.partialMask()}, created=$created, updated=$updated, eventid=$eventid, gyldigtil=$gyldigtil, id=$id)"
 }
 
 @Converter(autoApply = true)

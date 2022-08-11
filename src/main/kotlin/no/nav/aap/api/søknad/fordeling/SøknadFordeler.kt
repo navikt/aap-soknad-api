@@ -11,7 +11,9 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
+import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnGCP
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.stereotype.Component
 
@@ -33,13 +35,19 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                              private val dittnav: DittNavClient,
                              private val avslutter: StandardSøknadAvslutter,
                              private val cfg: VLFordelingConfig,
+                             private val repo: SøknadRepository,
                              private val vl: SøknadVLFordeler) {
+
+    private val log = LoggerUtil.getLogger(javaClass)
 
     fun fordel(søknad: StandardSøknad) =
         pdl.søkerMedBarn().run {
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.standard)
                 dittnav.opprettBeskjed(fnr = fnr, tekst = "Vi har mottatt ${STANDARD.tittel}")
+                    ?.let { repo.save(JPASøknad(fnr = this@run.fnr.fnr, soknad = søknad, eventid = it)) }.also {
+                        log.info(CONFIDENTIAL, "Lagret søknad $it OK")
+                    }
                 avslutter.avsluttSøknad(søknad, pdf)
             }
         }
@@ -67,6 +75,7 @@ class UtlandSøknadFordeler(private val joark: JoarkFordeler,
         pdl.søkerUtenBarn().run {
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.utland)
+                val uuid = dittnav.opprettBeskjed(UTLAND, fnr = fnr, tekst = "Vi har mottatt ${UTLAND.tittel}")
                 dittnav.opprettBeskjed(UTLAND, fnr = fnr, tekst = "Vi har mottatt ${UTLAND.tittel}")
                 Kvittering(lager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering-utland.pdf")))
             }

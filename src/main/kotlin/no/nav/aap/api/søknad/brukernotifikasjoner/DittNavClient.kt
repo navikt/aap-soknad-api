@@ -5,7 +5,7 @@ import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.SendCallback
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.aap.util.MDCUtil.callId
+import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
@@ -32,45 +32,45 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                        eventId: UUID = UUID.randomUUID(),
                        fnr: Fødselsnummer,
                        tekst: String,
-                       mellomlager: Boolean = false) =
+                       mellomlager: Boolean = false): UUID? {
         with(cfg.beskjed) {
             if (enabled) {
                 log.trace("Oppretter Ditt Nav beskjed for $fnr og $eventId")
                 dittNav.send(ProducerRecord(topic, key(type.name, eventId, fnr, "beskjed"), beskjed(type, tekst)))
                     .addCallback(SendCallback("opprett beskjed"))
                 log.trace("Oppretter Ditt Nav beskjed i DB")
-                repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr, eventid = eventId, mellomlager = mellomlager))
+                return repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
+                        eventid = eventId,
+                        mellomlager = mellomlager)).eventid
                     .also {
                         log.trace("Opprettet Ditt Nav beskjed $it i DB")
                     }
-                eventId
             }
-            else {
-                log.info("Sender ikke opprett beskjed til Ditt Nav for $fnr")
-                callId()
-            }
+            log.info("Sender ikke opprett beskjed til Ditt Nav for $fnr")
+            return null
         }
+    }
 
     @Transactional
-    fun opprettOppgave(type: SkjemaType, fnr: Fødselsnummer, tekst: String) =
+    fun opprettOppgave(type: SkjemaType, fnr: Fødselsnummer, tekst: String): UUID? {
         with(cfg.oppgave) {
             if (enabled) {
-                val eventId = UUID.fromString(callId())
+                val eventId = callIdAsUUID()
                 with(key(type.name, eventId, fnr, "oppgave")) {
                     dittNav.send(ProducerRecord(topic, this, oppgave(type, tekst)))
                         .addCallback(SendCallback("opprett oppgave"))
-                    repos.oppgaver.save(JPADittNavOppgave(fnr = fnr.fnr, eventid = eventId))
+                    return repos.oppgaver.save(JPADittNavOppgave(fnr = fnr.fnr, eventid = eventId)).eventid
                         .also {
                             log.trace("Opprettet oppgave $it i DB")
                         }
-                    eventId
                 }
             }
             else {
                 log.info("Sender ikke opprett oppgave til Ditt Nav for $fnr")
-                callId()
+                return null
             }
         }
+    }
 
     @Transactional
     fun avsluttOppgave(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
