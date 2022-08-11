@@ -18,7 +18,6 @@ import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
-import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.aap.util.StartupInfoContributor
 import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
@@ -131,32 +130,25 @@ class JTIFilter(private val ctx: AuthContext) : Filter {
 }
 
 class HibernateObjectMapperSupplier : ObjectMapperSupplier {
-
-    private val log = LoggerUtil.getLogger(javaClass)
-
-    override fun get(): ObjectMapper {
-        log.trace("XXXXXXXXX henter mapper")
-        return ObjectMapperHolder.objectMapper
-    }
+    override fun get() = ObjectMapperHolder.mapper
 }
 
 @Component
 class ObjectMapperHolder(objectMapper: ObjectMapper) {
     init {
-        Companion.objectMapper = objectMapper
+        mapper = objectMapper
     }
 
     companion object {
-        lateinit var objectMapper: ObjectMapper
+        lateinit var mapper: ObjectMapper
     }
 }
 
 @Component
 class ObjectMapperDependencyFixer : BeanFactoryPostProcessor {
     override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory) {
-        val beanDefinition = beanFactory.getBeanDefinition("entityManagerFactory")
-        val oldDependsOn = beanDefinition.dependsOn ?: emptyArray()
-        val newDependsOn = oldDependsOn + "objectMapperHolder"
-        beanDefinition.setDependsOn(*newDependsOn)
+        beanFactory.getBeanDefinition("entityManagerFactory").apply {
+            setDependsOn(*(dependsOn ?: emptyArray()) + "objectMapperHolder")
+        }
     }
 }
