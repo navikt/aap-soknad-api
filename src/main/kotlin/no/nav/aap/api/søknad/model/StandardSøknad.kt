@@ -29,7 +29,7 @@ data class StandardSøknad(
         val startdato: Startdato,
         val ferie: Ferie,
         val medlemsskap: Medlemskap,
-        val behandlere: List<Behandler>,
+        val behandlere: List<Behandler> = emptyList(),
         val yrkesskadeType: RadioValg,
         val utbetalinger: Utbetaling?,
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
