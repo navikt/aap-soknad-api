@@ -6,6 +6,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
@@ -19,7 +20,7 @@ class PDFEncryptionChecker : DokumentSjekker {
         with(dokument) {
             if (APPLICATION_PDF_VALUE == TIKA.detect(bytes)) {
                 try {
-                    log.trace("Sjekker om  $filnavn er passord-beskyttet")
+                    log.trace(CONFIDENTIAL, "Sjekker om  $filnavn er passord-beskyttet")
                     PDDocument.load(bytes).use { }
                 }
                 catch (e: InvalidPasswordException) {
@@ -27,7 +28,7 @@ class PDFEncryptionChecker : DokumentSjekker {
                 }
             }
             else {
-                log.trace("Sjekker ikke dokumenter om type $contentType er passord-beskyttet")
+                log.trace(CONFIDENTIAL, "Sjekker ikke dokumenter om type $contentType er passord-beskyttet")
             }
         }
 }
