@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.model
 
 import com.fasterxml.jackson.annotation.JsonAlias
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.TreeNode
@@ -61,6 +62,7 @@ data class Studier(val erStudent: StudieSvar?,
 
 data class Startdato(val beskrivelse: String?)
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
                       val jobbetUtenforNorgeFørSyk: Boolean?,
                       val jobbetSammenhengendeINorgeSiste5: Boolean?,
