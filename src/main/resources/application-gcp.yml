@@ -11,12 +11,7 @@ management:
         env:
             additional-keys-to-sanitize: "client-jwk,jwk,jwks"
 
-
-hibernate:
-    types:
-        jackson:
-            object:
-                mapper: no.nav.aap.api.config.HibernateObjectMapper
+spring:
     cloud:
         gcp:
             project-id: ${gcp.team.project.id}

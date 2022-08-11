@@ -25,8 +25,6 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
@@ -127,22 +125,9 @@ class JTIFilter(private val ctx: AuthContext) : Filter {
         toMDC(JWT_ID, ctx.getClaim(IDPORTEN, JWT_ID), "Ingen JTI")
         chain.doFilter(request, response)
     }
+}
 
-    @Component("hibernateObjectMapper")
-    class HibernateObjectMapper(private val mapper: ObjectMapper) : Supplier<ObjectMapper?> {
-        override fun get() = mapper
-    }
-
-    @Component
-    class HibernateBeanDependencyProcessor : BeanFactoryPostProcessor {
-        override fun postProcessBeanFactory(factory: ConfigurableListableBeanFactory) {
-            factory.getBeanDefinition("entityManagerFactory").apply {
-                val dependsOn = dependsOn ?: arrayOf()
-                val newDependsOn = arrayOfNulls<String>(dependsOn.size + 1)
-                System.arraycopy(dependsOn, 0, newDependsOn, 1, dependsOn.size)
-                newDependsOn[0] = "hibernateObjectMapper"
-                setDependsOn(*newDependsOn)
-            }
-        }
-    }
+@Component("hibernateObjectMapper")
+class HibernateObjectMapperSupplier(private val mapper: ObjectMapper) : Supplier<ObjectMapper?> {
+    override fun get() = mapper
 }
