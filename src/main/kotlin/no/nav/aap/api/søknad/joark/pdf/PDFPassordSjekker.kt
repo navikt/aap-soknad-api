@@ -13,7 +13,7 @@ import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.stereotype.Component
 
 @Component
-class PDFEncryptionChecker : DokumentSjekker {
+class PDFPassordSjekker : DokumentSjekker {
     private val log = getLogger(javaClass)
 
     override fun sjekk(dokument: DokumentInfo) =
