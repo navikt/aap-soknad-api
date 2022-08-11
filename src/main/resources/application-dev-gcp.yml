@@ -27,4 +27,4 @@ arbeidsforhold:
 organisasjon:
     base-uri: https://ereg-services-q1.dev-fss-pub.nais.io
     enabled: false
-debug: false
+debug: true

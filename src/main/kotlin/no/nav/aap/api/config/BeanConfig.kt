@@ -136,13 +136,13 @@ class JTIFilter(private val ctx: AuthContext) : Filter {
     @Component
     class HibernateBeanDependencyProcessor : BeanFactoryPostProcessor {
         override fun postProcessBeanFactory(factory: ConfigurableListableBeanFactory) {
-            val beanDefinition = factory.getBeanDefinition("entityManagerFactory")
-            var dependsOn = beanDefinition.dependsOn
-            dependsOn = dependsOn ?: arrayOf()
-            val newDependsOn = arrayOfNulls<String>(dependsOn.size + 1)
-            System.arraycopy(dependsOn, 0, newDependsOn, 1, dependsOn.size)
-            newDependsOn[0] = "hibernateObjectMapper"
-            beanDefinition.setDependsOn(*newDependsOn)
+            factory.getBeanDefinition("entityManagerFactory").apply {
+                val dependsOn = dependsOn ?: arrayOf()
+                val newDependsOn = arrayOfNulls<String>(dependsOn.size + 1)
+                System.arraycopy(dependsOn, 0, newDependsOn, 1, dependsOn.size)
+                newDependsOn[0] = "hibernateObjectMapper"
+                setDependsOn(*newDependsOn)
+            }
         }
     }
 }
