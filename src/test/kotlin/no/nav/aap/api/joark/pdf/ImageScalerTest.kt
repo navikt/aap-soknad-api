@@ -1,6 +1,6 @@
 package no.nav.aap.api.joark.pdf
 
-import no.nav.aap.api.søknad.joark.pdf.ImageScaler
+import no.nav.aap.api.søknad.joark.pdf.BildeSkalerer
 import org.apache.tika.Tika
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -17,7 +17,7 @@ internal class ImageScalerTest {
     @Throws(Exception::class)
     fun imgSmallerThanA4RemainsUnchanged() =
         with(bytesFra("/pdf/jks.jpg")) {
-            assertThat(ImageScaler().tilA4(this, "jpg")).hasSameSizeAs(this)
+            assertThat(BildeSkalerer().tilA4(this, "jpg")).hasSameSizeAs(this)
         }
 
     @Test
@@ -25,21 +25,21 @@ internal class ImageScalerTest {
     fun imgBiggerThanA4IsScaledDown() {
         val orig = bytesFra("/pdf/rdd.png")
         val origImg = fromBytes(orig)
-        val scaledImg = fromBytes(ImageScaler().tilA4(orig, "jpg"))
+        val scaledImg = fromBytes(BildeSkalerer().tilA4(orig, "jpg"))
         assertThat(scaledImg.width).isLessThan(origImg.width)
         assertThat(scaledImg.height).isLessThan(origImg.height)
     }
 
     @Test
     @Throws(Exception::class)
-    fun scaledImgHasRetainedFormat() = assertTrue(isJpg(ImageScaler().tilA4(bytesFra("/pdf/rdd.png"), "jpg")))
+    fun scaledImgHasRetainedFormat() = assertTrue(isJpg(BildeSkalerer().tilA4(bytesFra("/pdf/rdd.png"), "jpg")))
 
     @Test
     @Throws(Exception::class)
     fun rotateLandscapeToPortrait() {
         val orig = bytesFra("/pdf/landscape.jpg")
         val origImg = fromBytes(orig)
-        val scaledImg = fromBytes(ImageScaler().tilA4(orig, "jpg"))
+        val scaledImg = fromBytes(BildeSkalerer().tilA4(orig, "jpg"))
         assertThat(origImg.width).isGreaterThan(origImg.height)
         assertThat(scaledImg.height).isGreaterThan(scaledImg.width)
     }

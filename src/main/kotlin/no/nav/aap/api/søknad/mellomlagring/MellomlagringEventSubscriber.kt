@@ -90,7 +90,6 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata(): Metadata? =
         try {
-            log.warn("META INIT")
             with(objektNavn()) {
                 if (this?.size == 2) {
                     data()[METADATA]?.let {
@@ -102,7 +101,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             }
         }
         catch (e: Exception) {
-            log.warn("OOPS", e)
+            log.warn("Uforventet feil ved lesing av metadata", e)
             null
         }
 

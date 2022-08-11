@@ -3,8 +3,8 @@ package no.nav.aap.api.joark
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.søknad.SøknadTest
 import no.nav.aap.api.søknad.joark.JoarkConverter
-import no.nav.aap.api.søknad.joark.pdf.Image2PDFConverter
-import no.nav.aap.api.søknad.joark.pdf.ImageScaler
+import no.nav.aap.api.søknad.joark.pdf.BildeSkalerer
+import no.nav.aap.api.søknad.joark.pdf.BildeTilPDFKonverterer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.joark.Filtype.PDFA
@@ -57,8 +57,8 @@ class JoarkConverterTest {
 
         val søknad = SøknadTest.standardSøknad()
         val søker = SøknadTest.søker()
-        val c = JoarkConverter(mapper, lager, Image2PDFConverter(ImageScaler()))
-        val converted = c.convert(søknad, søker, bytes)
+        val c = JoarkConverter(mapper, lager, BildeTilPDFKonverterer(BildeSkalerer()))
+        val converted = c.konverter(søknad, søker, bytes)
         converted.dokumenter.forEach { doc ->
             doc?.dokumentVarianter?.forEach {
                 if (it?.filtype == PDFA.name)

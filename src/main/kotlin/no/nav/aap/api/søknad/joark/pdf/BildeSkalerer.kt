@@ -21,7 +21,7 @@ import javax.imageio.ImageIO.read
 import javax.imageio.ImageIO.write
 
 @Component
-class ImageScaler {
+class BildeSkalerer {
     private val log = getLogger(javaClass)
     fun tilA4(origImage: ByteArray, format: String) =
         try {

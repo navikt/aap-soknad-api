@@ -3,7 +3,7 @@ package no.nav.aap.api.søknad.joark
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
-import no.nav.aap.api.søknad.joark.pdf.Image2PDFConverter
+import no.nav.aap.api.søknad.joark.pdf.BildeTilPDFKonverterer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.StandardSøknad
@@ -29,11 +29,11 @@ import java.util.Base64.getEncoder
 class JoarkConverter(
         private val mapper: ObjectMapper,
         private val lager: Dokumentlager,
-        private val converter: Image2PDFConverter) {
+        private val converter: BildeTilPDFKonverterer) {
 
     private val log = getLogger(javaClass)
 
-    fun convert(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
+    fun konverter(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, pdf.asPDFVariant()),
                 tittel = UTLAND.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
@@ -42,7 +42,7 @@ class JoarkConverter(
                 log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it")
             }
 
-    fun convert(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
+    fun konverter(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, søker, pdf.asPDFVariant()),
                 tittel = STANDARD.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
@@ -111,7 +111,7 @@ class JoarkConverter(
     private fun DokumentInfo.asDokument(tittel: String?) =
         Dokument(tittel = tittel,
                 dokumentVariant = DokumentVariant(PDFA, getEncoder().encodeToString(bytes)))
-            .also { log.trace("Dokument konvertert fra DokumentInfo  er $it") }
+            .also { log.trace("Dokument konvertert fra DokumentInfo er $it") }
 
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
         listOf(Dokument(UTLAND, listOf(søknad.asJsonVariant(mapper), pdfDokument)

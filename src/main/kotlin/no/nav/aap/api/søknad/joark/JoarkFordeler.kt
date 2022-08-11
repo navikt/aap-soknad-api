@@ -14,12 +14,12 @@ class JoarkFordeler(private val joark: JoarkClient,
 
     fun fordel(søknad: StandardSøknad, søker: Søker) =
         with(pdf.generate(søker, søknad)) {
-            FordelingResultat(this, joark.journalfør(converter.convert(søknad, søker, this)))
+            FordelingResultat(this, joark.journalfør(converter.konverter(søknad, søker, this)))
         }
 
     fun fordel(søknad: UtlandSøknad, søker: Søker) =
         with(pdf.generate(søker, søknad)) {
-            FordelingResultat(this, joark.journalfør(converter.convert(søknad, søker, this)))
+            FordelingResultat(this, joark.journalfør(converter.konverter(søknad, søker, this)))
         }
 }
 

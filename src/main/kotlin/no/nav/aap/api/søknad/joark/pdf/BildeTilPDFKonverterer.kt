@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 import java.io.ByteArrayOutputStream
 
 @Component
-class Image2PDFConverter(private val scaler: ImageScaler) {
+class BildeTilPDFKonverterer(private val scaler: BildeSkalerer) {
 
     private val log = getLogger(javaClass)
     fun tilPdf(imgType: String, images: List<ByteArray>) = slåSammen(imgType, *images.toTypedArray())
