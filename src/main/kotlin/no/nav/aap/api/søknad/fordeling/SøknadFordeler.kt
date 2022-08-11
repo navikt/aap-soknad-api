@@ -45,10 +45,11 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.standard)
                 dittnav.opprettBeskjed(fnr = fnr, tekst = "Vi har mottatt ${STANDARD.tittel}")
-                    ?.let {
-                        log.info(CONFIDENTIAL, "Lagrer DB søknad med uuid $it $søknad")
-                        repo.save(JPASøknad(fnr = this@run.fnr.fnr, soknad = søknad, eventid = it))
-                        log.info(CONFIDENTIAL, "Lagret DB søknad OK")
+                    ?.let { uuid ->
+                        log.info(CONFIDENTIAL, "Lagrer DB søknad med uuid $uuid $søknad")
+                        repo.save(JPASøknad(fnr = this@run.fnr.fnr, soknad = søknad, eventid = uuid)).also {
+                            log.info(CONFIDENTIAL, "Lagret DB søknad $it OK")
+                        }
                     }
                 avslutter.avsluttSøknad(søknad, pdf)
             }
