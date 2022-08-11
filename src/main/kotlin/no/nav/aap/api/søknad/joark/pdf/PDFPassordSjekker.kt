@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component
 class PDFEncryptionChecker : DokumentSjekker {
     private val log = getLogger(javaClass)
 
-    override fun sjekk(dokument: DokumentInfo) {
+    override fun sjekk(dokument: DokumentInfo) =
         with(dokument) {
             if (APPLICATION_PDF_VALUE == TIKA.detect(bytes)) {
                 try {
@@ -23,15 +23,13 @@ class PDFEncryptionChecker : DokumentSjekker {
                     PDDocument.load(bytes).use { }
                 }
                 catch (e: InvalidPasswordException) {
-                    throw DokumentException(PASSWORD_PROTECTED, "$filnavn er passord-beskyttet", e)
-                }
-                catch (e: Exception) {
-                    log.warn("Uventet feil ved sjekking om $filnavn er passord-beskyttet", e)
+                    throw PassordBeskyttetException("$filnavn er passord-beskyttet", e)
                 }
             }
             else {
                 log.trace("Sjekker ikke dokumenter om type $contentType er passord-beskyttet")
             }
         }
-    }
 }
+
+class PassordBeskyttetException(msg: String, cause: Exception) : DokumentException(PASSWORD_PROTECTED, msg, cause)
