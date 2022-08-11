@@ -107,9 +107,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
         companion object {
-            private val log = getLogger(javaClass)
             fun getInstance(type: String?, fnr: String?, uuid: String?): Metadata? {
-                log.warn("META INIT $type $fnr $uuid")
                 return if (uuid != null && fnr != null && type != null) {
                     toMDC(NAV_CALL_ID, uuid)
                     Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(uuid))

@@ -45,8 +45,10 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.standard)
                 dittnav.opprettBeskjed(fnr = fnr, tekst = "Vi har mottatt ${STANDARD.tittel}")
-                    ?.let { repo.save(JPASøknad(fnr = this@run.fnr.fnr, soknad = søknad, eventid = it)) }.also {
-                        log.info(CONFIDENTIAL, "Lagret søknad $it OK")
+                    ?.let {
+                        log.info(CONFIDENTIAL, "Lagrer DB søknad med uuid $it $søknad")
+                        repo.save(JPASøknad(fnr = this@run.fnr.fnr, soknad = søknad, eventid = it))
+                        log.info(CONFIDENTIAL, "Lagret DB søknad OK")
                     }
                 avslutter.avsluttSøknad(søknad, pdf)
             }
@@ -75,7 +77,6 @@ class UtlandSøknadFordeler(private val joark: JoarkFordeler,
         pdl.søkerUtenBarn().run {
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.utland)
-                val uuid = dittnav.opprettBeskjed(UTLAND, fnr = fnr, tekst = "Vi har mottatt ${UTLAND.tittel}")
                 dittnav.opprettBeskjed(UTLAND, fnr = fnr, tekst = "Vi har mottatt ${UTLAND.tittel}")
                 Kvittering(lager.lagreDokument(DokumentInfo(pdf, APPLICATION_PDF_VALUE, "kvittering-utland.pdf")))
             }
