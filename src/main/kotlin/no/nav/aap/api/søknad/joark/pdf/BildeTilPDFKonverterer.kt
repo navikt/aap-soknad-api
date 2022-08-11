@@ -16,18 +16,18 @@ import java.io.ByteArrayOutputStream
 class BildeTilPDFKonverterer(private val scaler: BildeSkalerer) {
 
     private val log = getLogger(javaClass)
-    fun tilPdf(imgType: String, images: List<ByteArray>) = slåSammen(imgType, *images.toTypedArray())
-    fun tilPdf(imgType: String, fil: String) =
-        tilPdf(imgType, ClassPathResource(fil).inputStream.readBytes()) // testing only
+    fun tilPdf(bildeType: String, images: List<ByteArray>) = slåSammen(bildeType, *images.toTypedArray())
+    fun tilPdf(bildeType: String, fil: String) =
+        tilPdf(bildeType, ClassPathResource(fil).inputStream.readBytes()) // testing only
 
-    fun tilPdf(imgType: String, vararg images: ByteArray) = slåSammen(imgType, *images)
+    fun tilPdf(bildeType: String, vararg bilder: ByteArray) = slåSammen(bildeType, *bilder)
 
-    private fun slåSammen(imgType: String, vararg images: ByteArray) =
+    private fun slåSammen(bildeType: String, vararg bilder: ByteArray) =
         try {
-            log.trace("Slår sammen ${images.size} fil(er) for $imgType")
+            log.trace("Slår sammen ${bilder.size} fil(er) for $bildeType")
             PDDocument().use { doc ->
                 ByteArrayOutputStream().use { os ->
-                    images.forEach { pdfFraBilde(doc, it, parseMediaType(imgType).subtype) }
+                    bilder.forEach { pdfFraBilde(doc, it, parseMediaType(bildeType).subtype) }
                     doc.save(os)
                     os.toByteArray()
                 }
