@@ -14,8 +14,11 @@ import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.Behandler
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
+import no.nav.aap.api.søknad.model.Studier.StudieSvar.AVBRUTT
 import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.AFP
+import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.OMSORGSSTØNAD
+import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.UTLAND
 import no.nav.aap.joark.DokumentVariant
 import no.nav.aap.joark.Filtype.JSON
 import no.nav.aap.joark.VariantFormat.ORIGINAL
@@ -38,6 +41,32 @@ data class StandardSøknad(
         @JsonAlias("andreVedlegg") override val vedlegg: Vedlegg? = null) : VedleggAware {
 
     fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
+    fun manglendeVedlegg(): List<VedleggTyper> {
+        val mangler = mutableListOf<VedleggTyper>()
+        if (studier.erStudent == AVBRUTT && studier.vedlegg == null) {
+            mangler + VedleggTyper.STUDIER
+        }
+        with(utbetalinger) {
+            if (this?.ekstraFraArbeidsgiver.fraArbeidsgiver && this.ekstraFraArbeidsgiver.vedlegg == null) {
+                mangler + VedleggTyper.ARBEIDSGIVER
+            }
+            this?.andreStønader.forEach {
+                if (it.vedlegg == null) {
+                    when (it.type) {
+                        OMSORGSSTØNAD -> mangler + VedleggTyper.OMSORG
+                        UTLAND -> mangler + VedleggTyper.UTLAND
+                        else -> {}
+                    }
+                }
+            }
+        }
+
+        with(andreBarn) {
+            if (count() > count { it.vedlegg != null })
+                mangler + VedleggTyper.ANDREBARN
+        }
+        return mangler
+    }
 }
 
 @JsonDeserialize(using = VedleggDeserializer::class)
@@ -116,8 +145,7 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
 
     data class AnnenStønad(val type: AnnenStønadstype,
                            val hvemUtbetalerAFP: String? = null,
-                           override val vedlegg: Vedlegg? = null) :
-        VedleggAware {
+                           override val vedlegg: Vedlegg? = null) : VedleggAware {
 
         init {
             require((type == AFP && hvemUtbetalerAFP != null) || (type != AFP && hvemUtbetalerAFP == null))
@@ -136,6 +164,15 @@ data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
         ANNET,
         NEI
     }
+}
+
+enum class VedleggTyper {
+    ARBEIDSGIVER,
+    STUDIER,
+    ANDREBARN,
+    OMSORG,
+    UTLAND,
+    ANNET
 }
 
 internal class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.java) {

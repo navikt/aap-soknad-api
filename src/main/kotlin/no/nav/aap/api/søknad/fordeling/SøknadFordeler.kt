@@ -51,6 +51,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                             log.info(CONFIDENTIAL, "Lagret DB søknad $it OK")
                         }
                     }
+                log.trace("Manglende vedlegg er ${søknad.manglendeVedlegg()}")
                 avslutter.avsluttSøknad(søknad, pdf)
             }
         }
