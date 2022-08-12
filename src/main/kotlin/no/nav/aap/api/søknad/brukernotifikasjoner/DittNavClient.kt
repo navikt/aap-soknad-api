@@ -96,7 +96,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     .addCallback(SendCallback("avslutt beskjed"))
                 log.trace("Setter beskjed done i DB for  $eventId")
                 when (val rows = repos.beskjeder.done(eventId)) {
-                    0 -> log.warn("Kunne ikke sette beskjed $eventId for fnr $fnr til done i DB, ingen rader funnet")
+                    0 -> log.warn("Kunne ikke sette beskjed $eventId for fnr $fnr til done i DB, ingen rader oppdatert")
                     1 -> log.trace("Satt beskjed $eventId for $fnr done i DB")
                     else -> log.warn("Satte et uventet antall rader ($rows) til oppdatert for beskjed $eventId og fnr $fnr til done i DB")
                 }

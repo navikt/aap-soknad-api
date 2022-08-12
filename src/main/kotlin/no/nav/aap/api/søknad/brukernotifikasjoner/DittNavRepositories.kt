@@ -45,11 +45,11 @@ data class DittNavRepositories(val beskjeder: JPADittNavBeskjedRepository,
 class JPADittNavBeskjed(
         val fnr: String,
         @CreatedDate var created: LocalDateTime? = null,
-        var eventid: UUID,
+        val eventid: UUID,
         @LastModifiedDate var updated: LocalDateTime? = null,
-        var done: Boolean = false,
-        var mellomlager: Boolean,
-        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
+        val done: Boolean = false,
+        val mellomlager: Boolean,
+        @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0) {
     override fun toString(): String =
         "JPADittNavBeskjed(fnr=${fnr.partialMask()}, mellomlager=$mellomlager, created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
 }
