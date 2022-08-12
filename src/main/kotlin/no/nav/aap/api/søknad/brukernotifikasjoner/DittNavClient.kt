@@ -32,45 +32,43 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                        eventId: UUID = UUID.randomUUID(),
                        fnr: Fødselsnummer,
                        tekst: String,
-                       mellomlager: Boolean = false): UUID? {
+                       mellomlager: Boolean = false) =
         with(cfg.beskjed) {
             if (enabled) {
                 log.trace("Oppretter Ditt Nav beskjed for $fnr og $eventId")
                 dittNav.send(ProducerRecord(topic, key(type.name, eventId, fnr, "beskjed"), beskjed(type, tekst)))
                     .addCallback(SendCallback("opprett beskjed"))
                 log.trace("Oppretter Ditt Nav beskjed i DB")
-                return repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
+                repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
                         eventid = eventId,
-                        mellomlager = mellomlager)).eventid
-                    .also {
-                        log.trace("Opprettet Ditt Nav beskjed $it i DB")
-                    }
+                        mellomlager = mellomlager)).also {
+                    log.trace(CONFIDENTIAL, "Opprettet Ditt Nav beskjed $it i DB")
+                }.eventid
             }
-            log.info("Sender ikke opprett beskjed til Ditt Nav for $fnr")
-            return null
+            else {
+                log.info("Sender ikke opprett beskjed til Ditt Nav for $fnr")
+                null
+            }
         }
-    }
 
     @Transactional
-    fun opprettOppgave(type: SkjemaType, fnr: Fødselsnummer, tekst: String): UUID? {
+    fun opprettOppgave(type: SkjemaType, fnr: Fødselsnummer, tekst: String) =
         with(cfg.oppgave) {
             if (enabled) {
                 val eventId = callIdAsUUID()
                 with(key(type.name, eventId, fnr, "oppgave")) {
                     dittNav.send(ProducerRecord(topic, this, oppgave(type, tekst)))
                         .addCallback(SendCallback("opprett oppgave"))
-                    return repos.oppgaver.save(JPADittNavOppgave(fnr = fnr.fnr, eventid = eventId)).eventid
-                        .also {
-                            log.trace("Opprettet oppgave $it i DB")
-                        }
+                    repos.oppgaver.save(JPADittNavOppgave(fnr = fnr.fnr, eventid = eventId)).also {
+                        log.trace(CONFIDENTIAL, "Opprettet oppgave $it i DB")
+                    }.eventid
                 }
             }
             else {
                 log.info("Sender ikke opprett oppgave til Ditt Nav for $fnr")
-                return null
+                null
             }
         }
-    }
 
     @Transactional
     fun avsluttOppgave(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
