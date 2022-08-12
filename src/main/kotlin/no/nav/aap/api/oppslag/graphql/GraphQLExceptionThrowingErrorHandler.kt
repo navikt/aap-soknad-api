@@ -1,7 +1,8 @@
 package no.nav.aap.api.oppslag.graphql
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.LoggerUtil.getSecureLogger
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -15,8 +16,8 @@ import java.nio.charset.Charset.defaultCharset
 
 @Component
 class GraphQLExceptionThrowingErrorHandler : GraphQLErrorHandler {
-    private val log = LoggerUtil.getLogger(javaClass)
-    private val secureLogger = LoggerUtil.getSecureLogger()
+    private val log = getLogger(javaClass)
+    private val secureLogger = getSecureLogger()
 
     override fun <T> handleError(e: GraphQLErrorsException): T {
         log.warn("GraphQL feilet, se secure logs for mer detaljer")

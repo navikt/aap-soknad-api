@@ -11,7 +11,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
@@ -38,7 +38,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                              private val repo: SøknadRepository,
                              private val vl: SøknadVLFordeler) {
 
-    private val log = LoggerUtil.getLogger(javaClass)
+    private val log = getLogger(javaClass)
 
     fun fordel(søknad: StandardSøknad) =
         pdl.søkerMedBarn().run {

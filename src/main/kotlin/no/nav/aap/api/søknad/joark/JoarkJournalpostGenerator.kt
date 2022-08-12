@@ -29,7 +29,7 @@ import java.util.Base64.getEncoder
 class JoarkJournalpostGenerator(
         private val mapper: ObjectMapper,
         private val lager: Dokumentlager,
-        private val converter: BildeTilPDFKonverterer) {
+        private val konverterer: BildeTilPDFKonverterer) {
 
     private val log = getLogger(javaClass)
 
@@ -91,27 +91,27 @@ class JoarkJournalpostGenerator(
             val pdfs = vedlegg[APPLICATION_PDF_VALUE] ?: mutableListOf()
             val jpgs = vedlegg[IMAGE_JPEG_VALUE] ?: emptyList()
             val pngs = vedlegg[IMAGE_PNG_VALUE] ?: emptyList()
-            pdfs.map { it.asDokument(tittel) }.toMutableList().apply {
+            pdfs.map { it.somDokument(tittel) }.toMutableList().apply {
                 if (jpgs.isNotEmpty()) {
-                    add(converter.tilPdf(IMAGE_JPEG_VALUE, jpgs.map(DokumentInfo::bytes)).asDokument(tittel))
+                    add(konverterer.tilPdf(IMAGE_JPEG_VALUE, jpgs.map(DokumentInfo::bytes)).somDokument(tittel))
                 }
                 if (pngs.isNotEmpty()) {
-                    add(converter.tilPdf(IMAGE_PNG_VALUE, pngs.map(DokumentInfo::bytes)).asDokument(tittel))
+                    add(konverterer.tilPdf(IMAGE_PNG_VALUE, pngs.map(DokumentInfo::bytes)).somDokument(tittel))
                 }
             }
         } ?: emptyList()
 
-    private fun ByteArray.asDokument(tittel: String?) =
+    private fun ByteArray.somDokument(tittel: String?) =
         Dokument(tittel = tittel,
-                dokumentVariant = DokumentVariant(PDFA,
-                        getEncoder().encodeToString(this))).also {
+                dokumentVariant = DokumentVariant(PDFA, getEncoder().encodeToString(this))).also {
             log.trace("Dokument konvertert fra bytes er $it")
         }
 
-    private fun DokumentInfo.asDokument(tittel: String?) =
-        Dokument(tittel = tittel,
-                dokumentVariant = DokumentVariant(PDFA, getEncoder().encodeToString(bytes)))
-            .also { log.trace("Dokument konvertert fra DokumentInfo er $it") }
+    private fun DokumentInfo.somDokument(tittel: String?) =
+        Dokument(tittel = tittel, dokumentVariant = DokumentVariant(PDFA, getEncoder().encodeToString(bytes)))
+            .also {
+                log.trace("Dokument konvertert fra DokumentInfo er $it")
+            }
 
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
         listOf(Dokument(UTLAND, listOf(søknad.asJsonVariant(mapper), pdfDokument)
