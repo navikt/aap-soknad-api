@@ -43,7 +43,7 @@ data class DittNavRepositories(val beskjeder: JPADittNavBeskjedRepository,
 @Table(name = "dittnavbeskjeder")
 @EntityListeners(AuditingEntityListener::class)
 class JPADittNavBeskjed(
-        var fnr: String? = null,
+        val fnr: String,
         @CreatedDate var created: LocalDateTime? = null,
         var eventid: UUID,
         @LastModifiedDate var updated: LocalDateTime? = null,
@@ -51,7 +51,7 @@ class JPADittNavBeskjed(
         var mellomlager: Boolean,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
     override fun toString(): String =
-        "JPADittNavBeskjed(fnr=${fnr?.partialMask()}, mellomlager=$mellomlager, created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
+        "JPADittNavBeskjed(fnr=${fnr.partialMask()}, mellomlager=$mellomlager, created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
 }
 
 @Entity
