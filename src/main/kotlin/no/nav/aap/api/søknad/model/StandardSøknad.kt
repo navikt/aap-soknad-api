@@ -46,24 +46,24 @@ data class StandardSøknad(
         if (studier.erStudent == AVBRUTT && studier.vedlegg == null) {
             mangler + VedleggTyper.STUDIER
         }
+        with(andreBarn) {
+            if (count() > count { it.vedlegg != null })
+                mangler + VedleggTyper.ANDREBARN
+        }
         with(utbetalinger) {
             if (this?.ekstraFraArbeidsgiver?.fraArbeidsgiver == true && ekstraFraArbeidsgiver.vedlegg == null) {
                 mangler + VedleggTyper.ARBEIDSGIVER
             }
-            this?.andreStønader?.forEach {
-                if (it.vedlegg == null) {
-                    when (it.type) {
-                        OMSORGSSTØNAD -> mangler + VedleggTyper.OMSORG
-                        UTLAND -> mangler + VedleggTyper.UTLAND
-                        else -> {}
-                    }
+            this?.andreStønader?.firstOrNull() { it.type == OMSORGSSTØNAD }?.let {
+                if (it.vedlegg?.deler?.isEmpty() == true) {
+                    mangler + VedleggTyper.OMSORG
                 }
             }
-        }
-
-        with(andreBarn) {
-            if (count() > count { it.vedlegg != null })
-                mangler + VedleggTyper.ANDREBARN
+            this?.andreStønader?.firstOrNull() { it.type == UTLAND }?.let {
+                if (it.vedlegg?.deler?.isEmpty() == true) {
+                    mangler + VedleggTyper.UTLAND
+                }
+            }
         }
         return mangler
     }
