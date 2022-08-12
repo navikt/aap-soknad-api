@@ -24,13 +24,13 @@ import javax.persistence.Table
 
 interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
     @Modifying
-    @Query("update JPADittNavBeskjed o set o.done = true, o.updated = current_timestamp where o.eventid = :eventid")
+    @Query("update beskjeder set done = true, updated = current_timestamp where eventid = :eventid")
     fun done(@Param("eventid") eventid: UUID): Int
 
-    @Query("select b.eventid from JPADittNavBeskjed b  where b.fnr = :fnr and b.done = false and b.mellomlager  = true")
+    @Query("select eventid from beskjeder  where fnr = :fnr and done = false and mellomlager  = true")
     fun eventIdForFnr(@Param("fnr") fnr: String): List<UUID>
 
-    @Entity
+    @Entity(name = "beskjeder")
     @Table(name = "dittnavbeskjeder")
     @EntityListeners(AuditingEntityListener::class)
     class JPADittNavBeskjed(
@@ -48,10 +48,10 @@ interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
 
 interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
     @Modifying
-    @Query("update JPADittNavOppgave o set o.done = true, o.updated = current_timestamp where o.eventid = :eventid")
+    @Query("update oppgaver set done = true, updated = current_timestamp where eventid = :eventid")
     fun done(@Param("eventid") eventid: UUID): Int
 
-    @Entity
+    @Entity(name = "oppgaver")
     @Table(name = "dittnavoppgaver")
     @EntityListeners(AuditingEntityListener::class)
     class JPADittNavOppgave(
@@ -62,7 +62,7 @@ interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
             var done: Boolean = false,
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
         override fun toString() =
-            "JPADittNavOppgave(fnr=${fnr?.partialMask()}, created=$created, updated=$updated, eventid=$eventid, done=$done, id=$id)"
+            "JPADittNavOppgave(fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, done=$done, id=$id)"
 
     }
 
