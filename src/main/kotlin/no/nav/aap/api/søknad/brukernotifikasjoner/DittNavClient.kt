@@ -4,6 +4,9 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.SendCallback
+import no.nav.aap.api.søknad.brukernotifikasjoner.JPADittNavBeskjedRepository.JPADittNavBeskjed
+import no.nav.aap.api.søknad.brukernotifikasjoner.JPADittNavOppgaveRepository.DittNavRepositories
+import no.nav.aap.api.søknad.brukernotifikasjoner.JPADittNavOppgaveRepository.JPADittNavOppgave
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
