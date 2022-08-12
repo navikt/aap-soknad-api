@@ -14,17 +14,14 @@
     </appender>
     <appender name="stdout"
               class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                <maxLength>30</maxLength>
+            </throwableConverter>
+        </encoder>
     </appender>
     <springProfile name="dev">
-        <logger name="org.springframework.transaction" level="info"/>
-        <logger name="org.hibernate" level="info"/>
-        <logger name="com.vladmihalcea" level="trace"/>
-        <logger name="com.zaxxer.hikari" level="info"/>
-        <logger name="org.springframework.boot.flyway" level="info"/>
-        <logger name="reactor.netty.http.client.HttpClient" level="info"/>
         <logger name="no.nav.aap" level="trace"/>
-        <logger name="no.nav.security" level="info"/>
         <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="trace"/>
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="secureJson"/>
