@@ -4,6 +4,7 @@ import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
+import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.joark.JoarkFordeler
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
@@ -47,7 +48,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                 dittnav.opprettBeskjed(fnr = fnr, tekst = "Vi har mottatt ${STANDARD.tittel}")
                     ?.let { uuid ->
                         log.info(CONFIDENTIAL, "Lagrer DB søknad med uuid $uuid $søknad")
-                        repo.save(JPASøknad(fnr = this@run.fnr.fnr, soknad = søknad, eventid = uuid)).also {
+                        repo.save(Søknad(fnr = this@run.fnr.fnr, soknad = søknad, eventid = uuid)).also {
                             log.info(CONFIDENTIAL, "Lagret DB søknad $it OK")
                         }
                     }
