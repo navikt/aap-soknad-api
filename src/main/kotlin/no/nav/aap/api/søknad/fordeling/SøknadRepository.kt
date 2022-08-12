@@ -25,13 +25,13 @@ interface SøknadRepository : JpaRepository<JPASøknad, Long>
 @EntityListeners(AuditingEntityListener::class)
 @TypeDef(name = "json", typeClass = JsonType::class)
 class JPASøknad(
-        var fnr: String? = null,
+        val fnr: String,
         @Type(type = "json")
-        var soknad: StandardSøknad? = null,
+        val soknad: StandardSøknad,
         @CreatedDate var created: LocalDateTime? = null,
         @LastModifiedDate var updated: LocalDateTime? = null,
-        var eventid: UUID,
-        @Id @GeneratedValue(strategy = IDENTITY) var id: Long? = null) {
+        val eventid: UUID,
+        @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
     override fun toString() =
-        "JPASøknad(fnr=${fnr?.partialMask()},søknad=$soknad, created=$created, updated=$updated, eventid=$eventid, id=$id)"
+        "JPASøknad(fnr=${fnr.partialMask()},søknad=$soknad, created=$created, updated=$updated, eventid=$eventid, id=$id)"
 }
