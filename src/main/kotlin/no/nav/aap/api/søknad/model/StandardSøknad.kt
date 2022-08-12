@@ -47,10 +47,10 @@ data class StandardSøknad(
             mangler + VedleggTyper.STUDIER
         }
         with(utbetalinger) {
-            if (this?.ekstraFraArbeidsgiver.fraArbeidsgiver && this.ekstraFraArbeidsgiver.vedlegg == null) {
+            if (this?.ekstraFraArbeidsgiver?.fraArbeidsgiver == true && ekstraFraArbeidsgiver.vedlegg == null) {
                 mangler + VedleggTyper.ARBEIDSGIVER
             }
-            this?.andreStønader.forEach {
+            this?.andreStønader?.forEach {
                 if (it.vedlegg == null) {
                     when (it.type) {
                         OMSORGSSTØNAD -> mangler + VedleggTyper.OMSORG
