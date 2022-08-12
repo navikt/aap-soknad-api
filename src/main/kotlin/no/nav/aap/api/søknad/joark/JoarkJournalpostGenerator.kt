@@ -26,14 +26,14 @@ import org.springframework.stereotype.Component
 import java.util.Base64.getEncoder
 
 @Component
-class JoarkConverter(
+class JoarkJournalpostGenerator(
         private val mapper: ObjectMapper,
         private val lager: Dokumentlager,
         private val converter: BildeTilPDFKonverterer) {
 
     private val log = getLogger(javaClass)
 
-    fun konverter(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
+    fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, pdf.asPDFVariant()),
                 tittel = UTLAND.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
@@ -42,7 +42,7 @@ class JoarkConverter(
                 log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it")
             }
 
-    fun konverter(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
+    fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, søker, pdf.asPDFVariant()),
                 tittel = STANDARD.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
