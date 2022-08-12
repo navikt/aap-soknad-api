@@ -40,28 +40,50 @@ data class StandardSøknad(
         val tilleggsopplysninger: String?,
         @JsonAlias("andreVedlegg") override val vedlegg: Vedlegg? = null) : VedleggAware {
 
+    private val log = getLogger(javaClass)
+
     fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
     fun manglendeVedlegg(): List<VedleggTyper> {
         val mangler = mutableListOf<VedleggTyper>()
+        log.trace("Sjekker vedlegg studier $studier")
         if (studier.erStudent == AVBRUTT && studier.vedlegg == null) {
             mangler + VedleggTyper.STUDIER
         }
+        else {
+            log.trace("Ingen mangler for studier")
+        }
         with(andreBarn) {
-            if (count() > count { it.vedlegg != null })
+            log.trace("Sjekker vedlegg andre barn $andreBarn")
+            if (count() > count { it.vedlegg != null }) {
                 mangler + VedleggTyper.ANDREBARN
+            }
+            else {
+                log.trace("Ingen mangler for andre barn")
+            }
         }
         with(utbetalinger) {
+            log.trace("Sjekker vedlegg arbeidsgiver ${this?.ekstraFraArbeidsgiver}")
             if (this?.ekstraFraArbeidsgiver?.fraArbeidsgiver == true && ekstraFraArbeidsgiver.vedlegg == null) {
                 mangler + VedleggTyper.ARBEIDSGIVER
             }
+            else {
+                log.trace("Ingen mangler for arbeidsgiver")
+            }
+            log.trace("Sjekker vedlegg andre stønader ${this?.andreStønader}")
             this?.andreStønader?.firstOrNull() { it.type == OMSORGSSTØNAD }?.let {
                 if (it.vedlegg?.deler?.isEmpty() == true) {
                     mangler + VedleggTyper.OMSORG
+                }
+                else {
+                    log.trace("Ingen mangler for omsorg")
                 }
             }
             this?.andreStønader?.firstOrNull() { it.type == UTLAND }?.let {
                 if (it.vedlegg?.deler?.isEmpty() == true) {
                     mangler + VedleggTyper.UTLAND
+                }
+                else {
+                    log.trace("Ingen mangler for utland")
                 }
             }
         }
