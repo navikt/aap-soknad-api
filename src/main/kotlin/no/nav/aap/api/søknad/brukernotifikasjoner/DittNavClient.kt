@@ -4,9 +4,8 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.SendCallback
-import no.nav.aap.api.søknad.brukernotifikasjoner.JPADittNavBeskjedRepository.JPADittNavBeskjed
-import no.nav.aap.api.søknad.brukernotifikasjoner.JPADittNavOppgaveRepository.DittNavRepositories
-import no.nav.aap.api.søknad.brukernotifikasjoner.JPADittNavOppgaveRepository.JPADittNavOppgave
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -42,7 +41,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 dittNav.send(ProducerRecord(topic, key(type.name, eventId, fnr, "beskjed"), beskjed(type, tekst)))
                     .addCallback(SendCallback("opprett beskjed"))
                 log.trace("Oppretter Ditt Nav beskjed i DB")
-                repos.beskjeder.save(JPADittNavBeskjed(fnr = fnr.fnr,
+                repos.beskjeder.save(Beskjed(fnr = fnr.fnr,
                         eventid = eventId,
                         mellomlager = mellomlager)).also {
                     log.trace(CONFIDENTIAL, "Opprettet Ditt Nav beskjed $it i DB")
@@ -62,7 +61,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 with(key(type.name, eventId, fnr, "oppgave")) {
                     dittNav.send(ProducerRecord(topic, this, oppgave(type, tekst)))
                         .addCallback(SendCallback("opprett oppgave"))
-                    repos.oppgaver.save(JPADittNavOppgave(fnr = fnr.fnr, eventid = eventId)).also {
+                    repos.oppgaver.save(Oppgave(fnr = fnr.fnr, eventid = eventId)).also {
                         log.trace(CONFIDENTIAL, "Opprettet oppgave $it i DB")
                     }.eventid
                 }

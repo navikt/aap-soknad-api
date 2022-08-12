@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
-import no.nav.aap.api.søknad.brukernotifikasjoner.JPADittNavBeskjedRepository.JPADittNavBeskjed
-import no.nav.aap.api.søknad.brukernotifikasjoner.JPADittNavOppgaveRepository.JPADittNavOppgave
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
 import no.nav.aap.util.StringExtensions.partialMask
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -22,18 +22,18 @@ import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
 import javax.persistence.Table
 
-interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
+interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
     @Modifying
-    @Query("update beskjeder set done = true, updated = current_timestamp where eventid = :eventid")
+    @Query("update beskjed set done = true, updated = current_timestamp where eventid = :eventid")
     fun done(@Param("eventid") eventid: UUID): Int
 
-    @Query("select eventid from beskjeder  where fnr = :fnr and done = false and mellomlager  = true")
+    @Query("select eventid from beskjed  where fnr = :fnr and done = false and mellomlager  = true")
     fun eventIdForFnr(@Param("fnr") fnr: String): List<UUID>
 
-    @Entity(name = "beskjeder")
+    @Entity(name = "beskjed")
     @Table(name = "dittnavbeskjeder")
     @EntityListeners(AuditingEntityListener::class)
-    class JPADittNavBeskjed(
+    class Beskjed(
             val fnr: String,
             @CreatedDate var created: LocalDateTime? = null,
             val eventid: UUID,
@@ -42,35 +42,33 @@ interface JPADittNavBeskjedRepository : JpaRepository<JPADittNavBeskjed, Long> {
             val mellomlager: Boolean,
             @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0) {
         override fun toString(): String =
-            "JPADittNavBeskjed(fnr=${fnr.partialMask()}, mellomlager=$mellomlager, created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
+            "Beskjed(fnr=${fnr.partialMask()}, mellomlager=$mellomlager, created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
     }
 }
 
-interface JPADittNavOppgaveRepository : JpaRepository<JPADittNavOppgave, Long> {
+interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
     @Modifying
-    @Query("update oppgaver set done = true, updated = current_timestamp where eventid = :eventid")
+    @Query("update oppgave set done = true, updated = current_timestamp where eventid = :eventid")
     fun done(@Param("eventid") eventid: UUID): Int
 
-    @Entity(name = "oppgaver")
+    @Entity(name = "oppgave")
     @Table(name = "dittnavoppgaver")
     @EntityListeners(AuditingEntityListener::class)
-    class JPADittNavOppgave(
+    class Oppgave(
             val fnr: String,
             @CreatedDate var created: LocalDateTime? = null,
             @LastModifiedDate var updated: LocalDateTime? = null,
-            var eventid: UUID,
-            var done: Boolean = false,
+            val eventid: UUID,
+            val done: Boolean = false,
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
         override fun toString() =
             "JPADittNavOppgave(fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, done=$done, id=$id)"
-
     }
-
-    @Component
-    data class DittNavRepositories(val beskjeder: JPADittNavBeskjedRepository,
-                                   val oppgaver: JPADittNavOppgaveRepository)
-
 }
+
+@Component
+data class DittNavRepositories(val beskjeder: DittNavBeskjedRepository,
+                               val oppgaver: DittNavOppgaveRepository)
 
 @Converter(autoApply = true)
 class UUIDAttributeConverter : AttributeConverter<UUID, String> {
