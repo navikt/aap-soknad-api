@@ -10,7 +10,6 @@ import com.google.cloud.storage.Storage.BlobGetOption.fields
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig
-import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.FILNAVN
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.DokumentException.Substatus.UNSUPPORTED
@@ -23,7 +22,6 @@ import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.context.annotation.Primary
-import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.ContentDisposition.parse
 import org.springframework.stereotype.Component
 import java.util.*
@@ -48,8 +46,8 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                     sjekkere.forEach { it.sjekk(this) }
                     lager.create(newBuilder(vedlegg.navn, navn)
                         .setContentType(contentType)
-                        .setContentDisposition("${attachment().filename(filnavn!!).build()}")
-                        .setMetadata(mapOf(FILNAVN to filnavn, UUID_ to "${this@apply}"))
+                        .setContentDisposition("$contentDisposition")
+                        .setMetadata(mapOf(UUID_ to "${this@apply}"))
                         .build(), bytes, kmsKeyName("$key")).also {
                         log.trace(CONFIDENTIAL, "Lagret $dokument som ${it.name} i bøtte ${vedlegg.navn}")
                     }
@@ -95,7 +93,6 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 slettDokumenter(this?.ekstraUtbetaling, fnr)
                 slettDokumenter(this?.andreStønader, fnr)
             }
-            //slettDokumenter(this, fnr)
             slettDokumenter(studier, fnr)
             slettDokumenter(andreBarn, fnr)
         }

@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.apache.tika.Tika
 import org.springframework.http.ContentDisposition
@@ -20,7 +21,7 @@ data class DokumentInfo(val bytes: ByteArray,
                         val contentType: String?,
                         val contentDisposition: ContentDisposition?,
                         val createTime: Long = 0) {
-    constructor(bytes: ByteArray, contentType: String?, navn: String?) : this(bytes,
+    constructor(bytes: ByteArray, contentType: String? = TIKA.detect(bytes), navn: String?) : this(bytes,
             contentType, navn?.let { attachment().filename(it).build() })
 
     val filnavn = contentDisposition?.filename

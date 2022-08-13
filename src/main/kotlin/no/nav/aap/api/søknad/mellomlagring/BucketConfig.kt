@@ -32,7 +32,6 @@ data class BucketConfig(val project: String,
     companion object {
         private const val REGION = "europe-north1"
         const val BUCKETS = "buckets"
-        const val FILNAVN = "filnavn"
         const val UUID_ = "uuid"
         const val SKJEMATYPE = "skjemaType"
     }
