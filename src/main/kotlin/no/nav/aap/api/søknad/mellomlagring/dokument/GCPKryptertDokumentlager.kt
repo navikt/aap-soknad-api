@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
+import com.google.cloud.storage.Blob
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobField.CONTENT_DISPOSITION
@@ -62,7 +63,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
             lager.get(navn, navn(fnr, uuid), fields(METADATA, CONTENT_TYPE, CONTENT_DISPOSITION, TIME_CREATED))
                 ?.let { blob ->
                     with(blob) {
-                        DokumentInfo(getContent(), contentType, parse(contentDisposition), createTime)
+                        DokumentInfo(getContent(), contentType, contentDisposition(), createTime)
                             .also {
                                 log.trace(CONFIDENTIAL,
                                         "Lest dokument $it fra ${blob.name} (originalt navn ${it.filnavn}) fra bøtte $navn")
@@ -71,6 +72,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 }
         }
 
+    fun Blob.contentDisposition() = parse(contentDisposition)
     override fun slettDokumenter(vararg uuids: UUID) = slettUUIDs(uuids.asList(), ctx.getFnr())
 
     fun slettDokument(uuid: UUID, fnr: Fødselsnummer) =
