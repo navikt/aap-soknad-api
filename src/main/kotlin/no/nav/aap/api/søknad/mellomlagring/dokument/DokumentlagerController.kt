@@ -2,8 +2,10 @@ package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentlagerController.Companion.BASEPATH
 import no.nav.aap.util.Constants.IDPORTEN
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.CacheControl.noCache
+import org.springframework.http.ContentDisposition
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus.CREATED
@@ -25,6 +27,8 @@ import java.util.*
 @ProtectedRestController(value = [BASEPATH], issuer = IDPORTEN)
 internal class DokumentlagerController(private val lager: Dokumentlager) {
 
+    private val log = getLogger(javaClass)
+
     @PostMapping("/lagre", consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
     fun lagreDokument(@RequestPart("vedlegg") vedlegg: MultipartFile) =
@@ -36,6 +40,9 @@ internal class DokumentlagerController(private val lager: Dokumentlager) {
     fun lesDokument(@PathVariable uuid: UUID) =
         lager.lesDokument(uuid)
             ?.let {
+                it.contentDisposition?.let { cd ->
+                    log.trace("XXX leste content disposition ${ContentDisposition.parse(cd)} ")
+                }
                 ok()
                     .contentType(parseMediaType(it.contentType!!))
                     .cacheControl(noCache().mustRevalidate())

@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
+import com.google.cloud.storage.Storage.BlobField.CONTENT_DISPOSITION
 import com.google.cloud.storage.Storage.BlobField.CONTENT_TYPE
 import com.google.cloud.storage.Storage.BlobField.METADATA
 import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
@@ -22,6 +23,7 @@ import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.context.annotation.Primary
+import org.springframework.http.ContentDisposition.attachment
 import org.springframework.stereotype.Component
 import java.util.*
 
@@ -45,6 +47,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                     sjekkere.forEach { it.sjekk(this) }
                     lager.create(newBuilder(vedlegg.navn, navn)
                         .setContentType(contentType)
+                        .setContentDisposition("${attachment().filename(filnavn!!).build()}")
                         .setMetadata(mapOf(FILNAVN to filnavn, UUID_ to "${this@apply}"))
                         .build(), bytes, kmsKeyName("$key")).also {
                         log.trace(CONFIDENTIAL, "Lagret $dokument som ${it.name} i bøtte ${vedlegg.navn}")
@@ -57,13 +60,13 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
 
     fun lesDokument(uuid: UUID, fnr: Fødselsnummer) =
         with(cfg.vedlegg) {
-            lager.get(navn, navn(fnr, uuid), fields(METADATA, CONTENT_TYPE, TIME_CREATED))
+            lager.get(navn, navn(fnr, uuid), fields(METADATA, CONTENT_TYPE, CONTENT_DISPOSITION, TIME_CREATED))
                 ?.let { blob ->
                     with(blob) {
-                        DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime)
+                        DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime, contentDisposition)
                             .also {
                                 log.trace(CONFIDENTIAL,
-                                        "Lest dokument fra ${blob.name} (originalt navn ${it.filnavn}) fra bøtte $navn")
+                                        "Lest dokument $it fra ${blob.name} (originalt navn ${it.filnavn}) fra bøtte $navn")
                             }
                     }
                 }

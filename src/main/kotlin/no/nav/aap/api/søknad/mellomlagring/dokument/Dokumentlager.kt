@@ -17,10 +17,11 @@ interface Dokumentlager {
 data class DokumentInfo(val bytes: ByteArray,
                         val contentType: String?,
                         val filnavn: String?,
-                        val createTime: Long = 0) {
+                        val createTime: Long = 0,
+                        val contentDisposition: String? = null) {
 
     override fun toString() =
-        "${javaClass.simpleName} [filnavn=$filnavn,contentType=$contentType,createTime=$createTime,størrelse=${bytes.size} bytes]"
+        "${javaClass.simpleName} [filnavn=$filnavn,contentDisposition=$contentDisposition,contentType=$contentType,createTime=$createTime,størrelse=${bytes.size} bytes]"
 }
 
 interface DokumentSjekker {
