@@ -39,7 +39,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             pubSub.subscribe(subscription.navn) { msg ->
                 msg.ack()
                 with(msg.pubsubMessage) {
-                    log.trace(CONFIDENTIAL, "Data i event er ${this.data}")
+                    log.trace(CONFIDENTIAL, "Data i event er ${this.data.toStringUtf8()}")
                     when (val type = eventType()) {
                         OBJECT_FINALIZE -> opprettet(this)
                         OBJECT_DELETE -> slettet(this)
