@@ -5,8 +5,6 @@ import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.CacheControl.noCache
-import org.springframework.http.ContentDisposition
-import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
@@ -40,14 +38,13 @@ internal class DokumentlagerController(private val lager: Dokumentlager) {
     fun lesDokument(@PathVariable uuid: UUID) =
         lager.lesDokument(uuid)
             ?.let {
-                it.contentDisposition?.let { cd ->
-                    log.trace("XXX leste content disposition ${ContentDisposition.parse(cd)} ")
-                }
                 ok()
                     .contentType(parseMediaType(it.contentType!!))
                     .cacheControl(noCache().mustRevalidate())
                     .headers(HttpHeaders().apply {
-                        contentDisposition = attachment().filename(it.filnavn!!).build()
+                        it.contentDisposition?.let { cd ->
+                            contentDisposition = cd
+                        }
                     })
                     .body(it.bytes)
 

@@ -3,6 +3,8 @@ package no.nav.aap.api.søknad.mellomlagring.dokument
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.apache.tika.Tika
+import org.springframework.http.ContentDisposition
+import org.springframework.http.ContentDisposition.attachment
 import java.util.*
 
 interface Dokumentlager {
@@ -16,9 +18,12 @@ interface Dokumentlager {
 
 data class DokumentInfo(val bytes: ByteArray,
                         val contentType: String?,
-                        val filnavn: String?,
-                        val createTime: Long = 0,
-                        val contentDisposition: String? = null) {
+                        val contentDisposition: ContentDisposition?,
+                        val createTime: Long = 0) {
+    constructor(bytes: ByteArray, contentType: String?, navn: String?) : this(bytes,
+            contentType, navn?.let { attachment().filename(it).build() })
+
+    val filnavn = contentDisposition?.filename
 
     override fun toString() =
         "${javaClass.simpleName} [filnavn=$filnavn,contentDisposition=$contentDisposition,contentType=$contentType,createTime=$createTime,størrelse=${bytes.size} bytes]"

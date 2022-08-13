@@ -24,6 +24,7 @@ import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.context.annotation.Primary
 import org.springframework.http.ContentDisposition.attachment
+import org.springframework.http.ContentDisposition.parse
 import org.springframework.stereotype.Component
 import java.util.*
 
@@ -63,7 +64,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
             lager.get(navn, navn(fnr, uuid), fields(METADATA, CONTENT_TYPE, CONTENT_DISPOSITION, TIME_CREATED))
                 ?.let { blob ->
                     with(blob) {
-                        DokumentInfo(getContent(), contentType, metadata[FILNAVN], createTime, contentDisposition)
+                        DokumentInfo(getContent(), contentType, parse(contentDisposition), createTime)
                             .also {
                                 log.trace(CONFIDENTIAL,
                                         "Lest dokument $it fra ${blob.name} (originalt navn ${it.filnavn}) fra bøtte $navn")
