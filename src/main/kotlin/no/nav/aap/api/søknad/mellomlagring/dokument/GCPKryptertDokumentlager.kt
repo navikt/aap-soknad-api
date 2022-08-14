@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Primary
 import org.springframework.http.ContentDisposition.parse
 import org.springframework.stereotype.Component
 import java.util.*
-import java.util.concurrent.TimeUnit.DAYS
 
 @ConditionalOnGCP
 @Primary
@@ -63,8 +62,8 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 with(blob) {
                     DokumentInfo(getContent(), contentType, contentDisposition(), createTime)
                         .also {
-                            val signed = lager.signUrl(newBuilder(blob.bucket, blob.name).build(), 14, DAYS)
-                            log.trace("SIGNED $signed url self ${blob.selfLink} media ${blob.mediaLink}")
+                            //val signed = lager.signUrl(newBuilder(blob.bucket, blob.name).build(), 14, DAYS)
+                            //log.trace("SIGNED $signed url self ${blob.selfLink} media ${blob.mediaLink}")
                             log.trace(CONFIDENTIAL,
                                     "Lest $it fra ${blob.name} fra bøtte ${blob.bucket}")
                         }
