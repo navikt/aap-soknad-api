@@ -17,7 +17,7 @@ class JoarkFordeler(private val joark: JoarkClient,
         with(pdf.tilPdf(søker, søknad)) {
             log.trace("Fordeler til JOARK")
             FordelingResultat(this, joark.journalfør(generator.journalpostFra(søknad, søker, this))).also {
-                log.trace("Fordeling til JOARK OK $it")
+                log.trace("Fordeling til JOARK OK med journalpost ${it.journalpostId}")
             }
         }
 
