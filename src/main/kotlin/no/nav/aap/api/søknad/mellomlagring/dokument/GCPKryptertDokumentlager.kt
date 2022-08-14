@@ -48,7 +48,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                     .setContentType(contentType)
                     .setContentDisposition("$contentDisposition")
                     // .setMetadata(mapOf(UUID_ to "${this@apply}"))
-                    .build(), bytes, kmsKeyName("$key")).also {
+                    .build(), bytes, kmsKeyName("${cfg.key}")).also {
                     log.trace(CONFIDENTIAL, "Lagret $dokument som ${it.name} i bøtte ${it.bucket}")
                 }
             }
