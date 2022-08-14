@@ -5,7 +5,6 @@ import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobField.CONTENT_DISPOSITION
 import com.google.cloud.storage.Storage.BlobField.CONTENT_TYPE
-import com.google.cloud.storage.Storage.BlobField.METADATA
 import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
 import com.google.cloud.storage.Storage.BlobGetOption.fields
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
@@ -46,7 +45,6 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 lager.create(newBuilder(cfg.vedlegg.navn, navn)
                     .setContentType(contentType)
                     .setContentDisposition("$contentDisposition")
-                    // .setMetadata(mapOf(UUID_ to "${this@apply}"))
                     .build(), bytes, kmsKeyName("${cfg.key}")).also {
                     log.trace(CONFIDENTIAL, "Lagret $dokument som ${it.name} i bøtte ${it.bucket}")
                 }
@@ -56,13 +54,13 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     override fun lesDokument(uuid: UUID) = lesDokument(uuid, ctx.getFnr())
 
     fun lesDokument(uuid: UUID, fnr: Fødselsnummer) =
-        lager.get(cfg.vedlegg.navn, navn(fnr, uuid), fields(METADATA, CONTENT_TYPE, CONTENT_DISPOSITION, TIME_CREATED))
+        lager.get(cfg.vedlegg.navn, navn(fnr, uuid), fields(CONTENT_TYPE, CONTENT_DISPOSITION, TIME_CREATED))
             ?.let { blob ->
                 with(blob) {
                     DokumentInfo(getContent(), contentType, contentDisposition(), createTime)
                         .also {
                             //val signed = lager.signUrl(newBuilder(blob.bucket, blob.name).build(), 14, DAYS)
-                            //log.trace("SIGNED $signed url self ${blob.selfLink} media ${blob.mediaLink}")
+                            log.trace("XXXXXX  url self ${blob.selfLink} media ${blob.mediaLink}")
                             log.trace(CONFIDENTIAL,
                                     "Lest $it fra ${blob.name} fra bøtte ${blob.bucket}")
                         }
