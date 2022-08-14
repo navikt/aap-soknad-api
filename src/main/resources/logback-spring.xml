@@ -23,7 +23,7 @@
         </encoder>
     </appender>
     <springProfile name="dev">
-        <logger name="org.zalando.problem.spring.common" level="trace"/>
+        <logger name="org.zalando.problem" level="trace"/>
         <logger name="no.nav.aap" level="trace"/>
         <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="info"/>
         <logger name="secure" level="debug" additivity="false">
