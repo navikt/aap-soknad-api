@@ -11,7 +11,6 @@ import com.google.cloud.storage.Storage.BlobGetOption.fields
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig
-import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.DokumentException.Substatus.UNSUPPORTED
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
@@ -40,19 +39,17 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(dokument, ctx.getFnr())
 
     fun lagreDokument(dokument: DokumentInfo, fnr: Fødselsnummer) =
-        with(cfg) {
-            callIdAsUUID().apply {
-                with(dokument) {
-                    val navn = navn(fnr, this@apply)
-                    log.trace("Lagrer $filnavn som $navn med contentType $contentType")
-                    sjekkere.forEach { it.sjekk(this) }
-                    lager.create(newBuilder(vedlegg.navn, navn)
-                        .setContentType(contentType)
-                        .setContentDisposition("$contentDisposition")
-                        .setMetadata(mapOf(UUID_ to "${this@apply}"))
-                        .build(), bytes, kmsKeyName("$key")).also {
-                        log.trace(CONFIDENTIAL, "Lagret $dokument som ${it.name} i bøtte ${vedlegg.navn}")
-                    }
+        callIdAsUUID().apply {
+            with(dokument) {
+                val navn = navn(fnr, this@apply)
+                log.trace("Lagrer $filnavn som $navn med contentType $contentType")
+                sjekkere.forEach { it.sjekk(this) }
+                lager.create(newBuilder(cfg.vedlegg.navn, navn)
+                    .setContentType(contentType)
+                    .setContentDisposition("$contentDisposition")
+                    // .setMetadata(mapOf(UUID_ to "${this@apply}"))
+                    .build(), bytes, kmsKeyName("$key")).also {
+                    log.trace(CONFIDENTIAL, "Lagret $dokument som ${it.name} i bøtte ${it.bucket}")
                 }
             }
         }
@@ -60,20 +57,18 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     override fun lesDokument(uuid: UUID) = lesDokument(uuid, ctx.getFnr())
 
     fun lesDokument(uuid: UUID, fnr: Fødselsnummer) =
-        with(cfg.vedlegg) {
-            lager.get(navn, navn(fnr, uuid), fields(METADATA, CONTENT_TYPE, CONTENT_DISPOSITION, TIME_CREATED))
-                ?.let { blob ->
-                    with(blob) {
-                        DokumentInfo(getContent(), contentType, contentDisposition(), createTime)
-                            .also {
-                                val signed = lager.signUrl(newBuilder(navn, blob.name).build(), 14, DAYS)
-                                log.trace("SIGNED $signed url")
-                                log.trace(CONFIDENTIAL,
-                                        "Lest dokument $it fra ${blob.name} (originalt navn ${it.filnavn}) fra bøtte $navn")
-                            }
-                    }
+        lager.get(cfg.vedlegg.navn, navn(fnr, uuid), fields(METADATA, CONTENT_TYPE, CONTENT_DISPOSITION, TIME_CREATED))
+            ?.let { blob ->
+                with(blob) {
+                    DokumentInfo(getContent(), contentType, contentDisposition(), createTime)
+                        .also {
+                            val signed = lager.signUrl(newBuilder(blob.bucket, blob.name).build(), 14, DAYS)
+                            log.trace("SIGNED $signed url self ${blob.selfLink} media ${blob.mediaLink}")
+                            log.trace(CONFIDENTIAL,
+                                    "Lest  $it fra ${blob.name} (originalt navn ${it.filnavn}) fra bøtte ${blob.bucket}")
+                        }
                 }
-        }
+            }
 
     fun Blob.contentDisposition() = parse(contentDisposition)
     override fun slettDokumenter(vararg uuids: UUID) = slettUUIDs(uuids.asList(), ctx.getFnr())
