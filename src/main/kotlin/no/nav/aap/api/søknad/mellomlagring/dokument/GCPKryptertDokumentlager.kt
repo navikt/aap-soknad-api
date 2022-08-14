@@ -11,7 +11,6 @@ import com.google.cloud.storage.Storage.BlobGetOption.fields
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig
-import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.DokumentException.Substatus.UNSUPPORTED
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
@@ -47,7 +46,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 lager.create(newBuilder(cfg.vedlegg.navn, navn)
                     .setContentType(contentType)
                     .setContentDisposition("$contentDisposition")
-                    .setMetadata(mapOf(UUID_ to "${this@apply}"))
+                    // .setMetadata(mapOf(UUID_ to "${this@apply}"))
                     .build(), bytes, kmsKeyName("${cfg.key}")).also {
                     log.trace(CONFIDENTIAL, "Lagret $dokument som ${it.name} i bøtte ${it.bucket}")
                 }
