@@ -57,5 +57,5 @@ class AAPApiExceptionHandler : ProblemHandling {
     private fun problem(e: Exception, status: Status, substatus: Substatus? = null) =
         with(builder().withStatus(status).withDetail(e.message).with(NAV_CALL_ID, callId())) {
             substatus?.let { with("substatus", it).build() } ?: build()
-        }.also { log.warn("Problem ${it.stackTrace}", it) }
+        }.also { log.warn("Problem ${it.message}", it) }
 }

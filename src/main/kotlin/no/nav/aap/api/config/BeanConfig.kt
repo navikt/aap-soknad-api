@@ -56,7 +56,10 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b ->
-        b.modules(ProblemModule(), JavaTimeModule(), TokenXJacksonModule(), KotlinModule.Builder().build())
+        b.modules(ProblemModule().withStackTraces(),
+                JavaTimeModule(),
+                TokenXJacksonModule(),
+                KotlinModule.Builder().build())
     }
 
     @Bean
