@@ -23,7 +23,7 @@ data class DokumentInfo(val bytes: ByteArray,
                         val createTime: Long = 0) {
     constructor(bytes: ByteArray, contentType: String? = TIKA.detect(bytes), navn: String?) : this(bytes,
             contentType, navn?.let { attachment().filename(it).build() })
-
+    
     val filnavn = contentDisposition?.filename
 
     override fun toString() =
