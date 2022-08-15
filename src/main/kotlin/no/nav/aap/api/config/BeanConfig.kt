@@ -20,7 +20,8 @@ import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.aap.util.StartupInfoContributor
-import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
+import no.nav.boot.conditionals.ConditionalOnNotProd
+import no.nav.boot.conditionals.ConditionalOnProd
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
@@ -38,7 +39,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
-import org.springframework.core.env.Environment
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.stereotype.Component
 import org.zalando.problem.jackson.ProblemModule
@@ -111,16 +111,17 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
             }
 
     @Bean
-    fun webClientCustomizer(env: Environment) =
+    fun webClientCustomizer(client: HttpClient) =
         WebClientCustomizer { b ->
-            b.clientConnector(ReactorClientHttpConnector(client(env)))
+            b.clientConnector(ReactorClientHttpConnector(client))
                 .filter(correlatingFilterFunction(applicationName))
         }
 
-    private fun client(env: Environment) =
-        if (isDevOrLocal(env))
-            HttpClient.create().wiretap(javaClass.canonicalName, TRACE, TEXTUAL)
-        else HttpClient.create()
+    @ConditionalOnNotProd
+    fun httpClientNotProd() = HttpClient.create().wiretap(javaClass.name, TRACE, TEXTUAL)
+
+    @ConditionalOnProd()
+    fun httpClientProd() = HttpClient.create()
 }
 
 class JTIFilter(private val ctx: AuthContext) : Filter {

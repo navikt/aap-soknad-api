@@ -58,7 +58,7 @@ class AAPApiExceptionHandler : ProblemHandling {
     fun problem(e: DokumentException, status: Status, req: NativeWebRequest) =
         create(e, problem(e, status, e.substatus), req)
 
-    fun problem(e: RuntimeException, status: Status, req: NativeWebRequest) = create(e, problem(e, status, null), req)
+    fun problem(t: Throwable, status: Status, req: NativeWebRequest) = create(t, problem(t, status, null), req)
 
     private fun problem(t: Throwable, status: Status, substatus: Substatus? = null) =
         with(builder().withStatus(status).withDetail(t.message).with(NAV_CALL_ID, callId())) {
