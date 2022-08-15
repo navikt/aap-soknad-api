@@ -60,7 +60,7 @@ class AAPApiExceptionHandler : ProblemHandling {
         with(builder().withStatus(status).withDetail(t.message).with(NAV_CALL_ID, callId())) {
             substatus?.let { with("substatus", it).build() } ?: build()
         }.also {
-            log.trace("Lagd problem fra ${t.javaClass} ${t.message} ${it.message}"))
+            log.trace("Lagd problem fra ${t.javaClass} ${t.message} ${it.message}")
         }
 
     override fun isCausalChainsEnabled() = true
