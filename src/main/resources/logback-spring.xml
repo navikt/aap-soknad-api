@@ -15,11 +15,9 @@
     <appender name="stdout"
               class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <!--
             <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
-                <maxLength>30</maxLength>
+                <rootCauseFirst>true</rootCauseFirst>
             </throwableConverter>
-            -->
         </encoder>
     </appender>
     <springProfile name="dev">
