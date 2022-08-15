@@ -29,8 +29,12 @@ import org.zalando.problem.spring.web.advice.ProblemHandling
 class AAPApiExceptionHandler : ProblemHandling {
     private val log = LoggerUtil.getLogger(javaClass)
 
-    @ExceptionHandler(value = [JwtTokenUnauthorizedException::class, JwtTokenMissingException::class])
-    fun tokenProblem(e: RuntimeException, req: NativeWebRequest) =
+    @ExceptionHandler(JwtTokenUnauthorizedException::class)
+    fun unauthorized(e: JwtTokenUnauthorizedException, req: NativeWebRequest) =
+        problem(e, UNAUTHORIZED, req)
+
+    @ExceptionHandler(JwtTokenMissingException::class)
+    fun missing(e: JwtTokenMissingException, req: NativeWebRequest) =
         problem(e, UNAUTHORIZED, req)
 
     @ExceptionHandler(IntegrationException::class)
