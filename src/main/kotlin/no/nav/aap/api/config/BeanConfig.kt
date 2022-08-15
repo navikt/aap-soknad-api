@@ -20,7 +20,6 @@ import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.aap.util.StartupInfoContributor
-import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.boot.conditionals.ConditionalOnProd
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
@@ -29,6 +28,7 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
@@ -117,7 +117,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                 .filter(correlatingFilterFunction(applicationName))
         }
 
-    @ConditionalOnNotProd
+    @ConditionalOnMissingBean(HttpClient::class)
     fun httpClientNotProd() = HttpClient.create().wiretap(javaClass.name, TRACE, TEXTUAL)
 
     @ConditionalOnProd()
