@@ -118,9 +118,11 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         }
 
     @ConditionalOnMissingBean(HttpClient::class)
+    @Bean
     fun httpClientNotProd() = HttpClient.create().wiretap(javaClass.name, TRACE, TEXTUAL)
 
     @ConditionalOnProd()
+    @Bean
     fun httpClientProd() = HttpClient.create()
 }
 
