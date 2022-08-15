@@ -56,9 +56,11 @@ class AAPApiExceptionHandler : ProblemHandling {
 
     fun problem(e: RuntimeException, status: Status, req: NativeWebRequest) = create(e, problem(e, status, null), req)
 
-    private fun problem(e: Exception, status: Status, substatus: Substatus? = null) =
-        with(builder().withStatus(status).withDetail(e.message).with(NAV_CALL_ID, callId())) {
+    private fun problem(t: Throwable, status: Status, substatus: Substatus? = null) =
+        with(builder().withStatus(status).withDetail(t.message).with(NAV_CALL_ID, callId())) {
             substatus?.let { with("substatus", it).build() } ?: build()
+        }.also {
+            log.trace("Lagd problem fra ${t.javaClass} ${t.message} ${it.message}"))
         }
 
     override fun isCausalChainsEnabled() = true
