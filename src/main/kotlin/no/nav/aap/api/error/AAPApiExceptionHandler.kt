@@ -63,7 +63,6 @@ class AAPApiExceptionHandler : ProblemHandling {
 
     override fun isCausalChainsEnabled() = true
     override fun log(t: Throwable, problem: Problem, request: NativeWebRequest, status: HttpStatus) {
-        log.info("${t.message}", t)
-        super.log(t, problem, request, status)
+        log.warn("${t.message}", t)
     }
 }
