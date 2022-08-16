@@ -40,7 +40,8 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             pubSub.subscribe(subscription.navn) { msg ->
                 msg.ack()
                 with(msg.pubsubMessage) {
-                    log.trace(CONFIDENTIAL, "Data i event er ${this.data.toStringUtf8()}")
+                    log.trace(CONFIDENTIAL, "Data i event er ${data.toStringUtf8()}")
+                    log.trace(CONFIDENTIAL, "attributter i event er $attributesMap")
                     when (val type = eventType()) {
                         OBJECT_FINALIZE -> opprettet(this)
                         OBJECT_DELETE -> slettet(this)
@@ -93,7 +94,11 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
 
     private fun PubsubMessage.data() = MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())
     private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
-    private fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { valueOf(it) }
+    private fun PubsubMessage.eventType() =
+        attributesMap[EVENT_TYPE]?.let { valueOf(it) }.also {
+            log.trace("Event type er $this")
+        }
+
     private fun PubsubMessage.erSlettetGrunnetNyVersjon() = containsAttributes(OVERWRITTEBBYGENERATION)
     private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata(): Metadata? =
