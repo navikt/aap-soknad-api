@@ -11,6 +11,7 @@ import com.google.pubsub.v1.PubsubMessage
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.Companion.SØKNADSTD
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Metadata.Companion.getInstance
@@ -71,7 +72,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
         metadata?.let {
             with(it) {
                 log.info("Oppretter beskjed i Ditt Nav med UUID $uuid")
-                dittNav.opprettBeskjed(type, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
+                dittNav.opprettBeskjed(SØKNADSTD, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
             }
         } ?: log.warn("Fant ikke forventet metadata")
 

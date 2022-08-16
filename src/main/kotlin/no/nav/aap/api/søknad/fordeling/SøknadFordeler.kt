@@ -4,6 +4,8 @@ import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.Companion.MINAAPSTD
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.Companion.MINAAPUTLAND
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.joark.JoarkFordeler
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
@@ -44,14 +46,19 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
         pdl.søkerMedBarn().run {
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.standard)
-                dittnav.opprettBeskjed(fnr = fnr, tekst = "Vi har mottatt ${STANDARD.tittel}")
+                dittnav.opprettBeskjed(MINAAPSTD, fnr = fnr, tekst = "Vi har mottatt ${STANDARD.tittel}")
                     ?.let { uuid ->
                         log.info(CONFIDENTIAL, "Lagrer DB søknad med uuid $uuid $søknad")
                         repo.save(Søknad(fnr = this@run.fnr.fnr, eventid = uuid)).also {
                             log.info(CONFIDENTIAL, "Lagret DB søknad $it OK")
                         }
                     }
-                log.trace("Manglende vedlegg er ${søknad.manglendeVedlegg()}")
+                with(søknad.manglendeVedlegg()) {
+                    if (this.isNotEmpty()) {
+                        log.trace("Det mangler ${this.size} vedlegg av følgende typer $this")
+                        dittnav.opprettOppgave(MINAAPSTD, fnr, "${STANDARD.tittel} mangler vedlegg")
+                    }
+                }
                 avslutter.avsluttSøknad(søknad, pdf)
             }
         }
@@ -79,7 +86,7 @@ class UtlandSøknadFordeler(private val joark: JoarkFordeler,
         pdl.søkerUtenBarn().run {
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.utland)
-                dittnav.opprettBeskjed(UTLAND, fnr = fnr, tekst = "Vi har mottatt ${UTLAND.tittel}")
+                dittnav.opprettBeskjed(MINAAPUTLAND, fnr = fnr, tekst = "Vi har mottatt ${UTLAND.tittel}")
                 Kvittering(lager.lagreDokument(DokumentInfo(pdf, navn = "kvittering-utland.pdf")))
             }
         }

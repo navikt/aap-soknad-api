@@ -3,8 +3,12 @@ package no.nav.aap.api.søknad.brukernotifikasjoner
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
+import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.SendCallback
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavConfig.BacklinksConfig
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.DittNavKontekst.MINAAP
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.DittNavKontekst.SØKNAD
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
@@ -18,6 +22,7 @@ import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.transaction.annotation.Transactional
+import java.net.URL
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
 import java.util.*
@@ -30,7 +35,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     private val log = getLogger(javaClass)
 
     @Transactional
-    fun opprettBeskjed(type: SkjemaType = STANDARD,
+    fun opprettBeskjed(type: DittNavNotifikasjonType,
                        eventId: UUID = UUID.randomUUID(),
                        fnr: Fødselsnummer,
                        tekst: String,
@@ -38,7 +43,9 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         with(cfg.beskjed) {
             if (enabled) {
                 log.trace("Oppretter Ditt Nav beskjed for $fnr og $eventId")
-                dittNav.send(ProducerRecord(topic, key(type.name, eventId, fnr, "beskjed"), beskjed(type, tekst)))
+                dittNav.send(ProducerRecord(topic,
+                        key(type.type.name, eventId, fnr, "beskjed"),
+                        beskjed(tekst, type.link(cfg.backlinks))))
                     .addCallback(SendCallback("opprett beskjed"))
                 log.trace("Oppretter Ditt Nav beskjed i DB")
                 repos.beskjeder.save(Beskjed(fnr = fnr.fnr,
@@ -54,12 +61,12 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
-    fun opprettOppgave(type: SkjemaType, fnr: Fødselsnummer, tekst: String) =
+    fun opprettOppgave(type: DittNavNotifikasjonType, fnr: Fødselsnummer, tekst: String) =
         with(cfg.oppgave) {
             if (enabled) {
                 val eventId = callIdAsUUID()
-                with(key(type.name, eventId, fnr, "oppgave")) {
-                    dittNav.send(ProducerRecord(topic, this, oppgave(type, tekst)))
+                with(key(type.type.name, eventId, fnr, "oppgave")) {
+                    dittNav.send(ProducerRecord(topic, this, oppgave(tekst, type.link(cfg.backlinks))))
                         .addCallback(SendCallback("opprett oppgave"))
                     repos.oppgaver.save(Oppgave(fnr = fnr.fnr, eventid = eventId)).also {
                         log.trace(CONFIDENTIAL, "Opprettet oppgave $it i DB")
@@ -118,26 +125,26 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 }
             }
 
-    private fun beskjed(type: SkjemaType, tekst: String) =
+    private fun beskjed(tekst: String, link: URL) =
         with(cfg.beskjed) {
             BeskjedInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
                 .withTidspunkt(now(UTC))
                 .withSynligFremTil(now(UTC).plus(varighet))
-                //.withLink(replaceWith("/aap/${type.name}"))  TODO
+                .withLink(link)
                 .withTekst(tekst)
                 .withEksternVarsling(eksternVarsling)
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
                 .build()
         }
 
-    private fun oppgave(type: SkjemaType, tekst: String) =
+    private fun oppgave(tekst: String, link: URL) =
         with(cfg.oppgave) {
             OppgaveInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
                 .withTidspunkt(now(UTC))
                 .withSynligFremTil(now(UTC).plus(varighet))
-                //  .withLink(replaceWith("/aap/${type.name}")) TODO
+                .withLink(link)
                 .withTekst(tekst)
                 .withEksternVarsling(eksternVarsling)
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
@@ -161,4 +168,38 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     log.info(CONFIDENTIAL, "Key for Ditt Nav $type er $it")
                 }
         }
+}
+
+data class DittNavNotifikasjonType private constructor(val type: SkjemaType, val ctx: DittNavKontekst) {
+
+    enum class DittNavKontekst {
+        MINAAP,
+        SØKNAD
+    }
+
+    fun link(cfg: BacklinksConfig) =
+        when (type) {
+            STANDARD -> linkForStd(cfg)
+            UTLAND -> linkForUtland(cfg)
+        }
+
+    private fun linkForStd(cfg: BacklinksConfig) =
+        when (ctx) {
+            MINAAP -> cfg.innsyn
+            else -> cfg.standard
+        }
+
+    private fun linkForUtland(cfg: BacklinksConfig) =
+        when (ctx) {
+            MINAAP -> cfg.innsyn
+            else -> cfg.utland
+        }
+
+    companion object {
+        val MINAAPSTD = DittNavNotifikasjonType(STANDARD, MINAAP)
+        val MINAAPUTLAND = DittNavNotifikasjonType(UTLAND, MINAAP)
+        val SØKNADSTD = DittNavNotifikasjonType(STANDARD, SØKNAD)
+        val SØKNADUTLAND = DittNavNotifikasjonType(UTLAND, SØKNAD)
+
+    }
 }

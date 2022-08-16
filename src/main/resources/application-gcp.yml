@@ -154,6 +154,10 @@ joark:
 saf:
     base-uri: https://safselvbetjening.${onprem}-pub.nais.io
 dittnav:
+    backlinks:
+        innsyn: ${ingress}/aap/innsyn
+        standard: ${ingress}/aap/standard
+        utland: ${ingress}/aap/utland
     nais:
         app: ${nais.app.name}
         namespace: ${nais.namespace}

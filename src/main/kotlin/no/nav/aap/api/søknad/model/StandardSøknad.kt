@@ -44,6 +44,7 @@ data class StandardSøknad(
 
     fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
     fun manglendeVedlegg(): List<VedleggTyper> {
+
         val mangler = mutableListOf<VedleggTyper>()
         log.trace("Sjekker vedlegg studier $studier")
         if (studier.erStudent == AVBRUTT && studier.vedlegg == null) {
