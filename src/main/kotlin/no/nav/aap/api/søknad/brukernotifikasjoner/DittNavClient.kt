@@ -22,7 +22,6 @@ import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.transaction.annotation.Transactional
-import java.net.URL
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
 import java.util.*
@@ -42,11 +41,11 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                        mellomlager: Boolean = false) =
         with(cfg.beskjed) {
             if (enabled) {
-                log.trace("Oppretter Ditt Nav beskjed for $fnr og $eventId")
+                log.trace("Oppretter Ditt Nav beskjed for $fnr og eventid $eventId")
                 dittNav.send(ProducerRecord(topic,
                         key(type.skjemaType.name, eventId, fnr, "beskjed"),
-                        beskjed(tekst, type.link(cfg.backlinks))))
-                    .addCallback(SendCallback("opprett beskjed med id $eventId"))
+                        beskjed(tekst, type)))
+                    .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
                 log.trace("Oppretter Ditt Nav beskjed i DB")
                 repos.beskjeder.save(Beskjed(fnr = fnr.fnr,
                         eventid = eventId,
@@ -65,9 +64,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         with(cfg.oppgave) {
             if (enabled) {
                 val eventId = callIdAsUUID()
+                log.trace("Oppretter Ditt Nav oppgave for $fnr og eventid $eventId")
                 with(key(type.skjemaType.name, eventId, fnr, "oppgave")) {
                     dittNav.send(ProducerRecord(topic, this, oppgave(tekst, type.link(cfg.backlinks))))
-                        .addCallback(SendCallback("opprett oppgave"))
+                        .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
                     repos.oppgaver.save(Oppgave(fnr = fnr.fnr, eventid = eventId)).also {
                         log.trace(CONFIDENTIAL, "Opprettet oppgave $it i DB")
                     }.eventid
@@ -87,9 +87,9 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     .addCallback(SendCallback("avslutt oppgave med eventid $eventId"))
                 log.trace("Setter oppgave done i DB for eventId $eventId")
                 when (val rows = repos.oppgaver.done(eventId)) {
-                    0 -> log.warn("Kunne ikke sette oppgave $eventId for $fnr til done i DB, ingen rader funnet")
-                    1 -> log.trace("Satt oppgave $eventId for $fnr done i DB")
-                    else -> log.warn("Satte et uventet antall rader ($rows) til oppdatert for oppgave $eventId og $fnr til done i DB")
+                    0 -> log.warn("Kunne ikke sette oppgave med eventid $eventId for $fnr til done i DB, ingen rader funnet")
+                    1 -> log.trace("Satt oppgave med eventid $eventId for $fnr done i DB")
+                    else -> log.warn("Satte et uventet antall rader ($rows) til oppdatert for oppgave med eventid  $eventId og $fnr til done i DB")
                 }
             }
             else {
@@ -102,12 +102,12 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         with(cfg) {
             if (beskjed.enabled) {
                 dittNav.send(ProducerRecord(done, key(type.name, eventId, fnr, "done"), done()))
-                    .addCallback(SendCallback("avslutt beskjed med id $eventId"))
+                    .addCallback(SendCallback("avslutt beskjed med eventid $eventId"))
                 log.trace("Setter beskjed done i DB for  $eventId")
                 when (val rows = repos.beskjeder.done(eventId)) {
-                    0 -> log.warn("Kunne ikke sette beskjed $eventId for fnr $fnr til done i DB, ingen rader oppdatert")
-                    1 -> log.trace("Satt beskjed $eventId for $fnr done i DB")
-                    else -> log.warn("Satte et uventet antall rader ($rows) til oppdatert for beskjed $eventId og fnr $fnr til done i DB")
+                    0 -> log.warn("Kunne ikke sette beskjed med eventid $eventId for fnr $fnr til done i DB, ingen rader oppdatert")
+                    1 -> log.trace("Satt beskjed med eventid $eventId for $fnr done i DB")
+                    else -> log.warn("Satte et uventet antall rader ($rows) til oppdatert for beskjed med eventid $eventId og fnr $fnr til done i DB")
                 }
             }
             else {
@@ -119,32 +119,32 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         repos.beskjeder.eventIdForFnr(fnr.fnr)
             .also {
                 when (val size = it.size) {
-                    0 -> log.warn("Fant ingen eventId for $fnr")
-                    1 -> log.trace("Fant som forventet en rad med eventId ${it.first()} for $fnr")
-                    else -> log.warn("Fant et uventet antall rader ($size) med eventIds $it for $fnr, bør undersøkes nærmere")
+                    0 -> log.warn("Fant ingen eventid for $fnr")
+                    1 -> log.trace("Fant som forventet en rad med eventid ${it.first()} for $fnr")
+                    else -> log.warn("Fant et uventet antall rader ($size) med eventids $it for $fnr, dette bør undersøkes nærmere")
                 }
             }
 
-    private fun beskjed(tekst: String, link: URL) =
+    private fun beskjed(tekst: String, type: DittNavNotifikasjonType) =
         with(cfg.beskjed) {
             BeskjedInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
                 .withTidspunkt(now(UTC))
                 .withSynligFremTil(now(UTC).plus(varighet))
-                .withLink(link)
+                .withLink(type.link(cfg.backlinks))
                 .withTekst(tekst)
                 .withEksternVarsling(eksternVarsling)
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
                 .build()
         }
 
-    private fun oppgave(tekst: String, link: URL) =
+    private fun oppgave(tekst: String, type: DittNavNotifikasjonType) =
         with(cfg.oppgave) {
             OppgaveInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
                 .withTidspunkt(now(UTC))
                 .withSynligFremTil(now(UTC).plus(varighet))
-                .withLink(link)
+                .withLink(type.link(cfg.backlinks))
                 .withTekst(tekst)
                 .withEksternVarsling(eksternVarsling)
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
@@ -179,20 +179,15 @@ data class DittNavNotifikasjonType private constructor(val skjemaType: SkjemaTyp
 
     fun link(cfg: BacklinksConfig) =
         when (skjemaType) {
-            STANDARD -> linkForStd(cfg)
-            UTLAND -> linkForUtland(cfg)
-        }
+            STANDARD -> when (ctx) {
+                MINAAP -> cfg.innsyn
+                else -> cfg.standard
+            }
 
-    private fun linkForStd(cfg: BacklinksConfig) =
-        when (ctx) {
-            MINAAP -> cfg.innsyn
-            else -> cfg.standard
-        }
-
-    private fun linkForUtland(cfg: BacklinksConfig) =
-        when (ctx) {
-            MINAAP -> cfg.innsyn
-            else -> cfg.utland
+            UTLAND -> when (ctx) {
+                MINAAP -> cfg.innsyn
+                else -> cfg.utland
+            }
         }
 
     companion object {
