@@ -2,7 +2,6 @@ package no.nav.aap.api.søknad.fordeling
 
 import com.vladmihalcea.hibernate.type.json.JsonType
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
-import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.util.StringExtensions.partialMask
 import org.hibernate.annotations.Type
 import org.hibernate.annotations.TypeDef
@@ -27,12 +26,12 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     class Søknad(
             val fnr: String,
             @Type(type = "json")
-            val soknad: StandardSøknad,
+            // val soknad: StandardSøknad,
             @CreatedDate var created: LocalDateTime? = null,
             @LastModifiedDate var updated: LocalDateTime? = null,
             val eventid: UUID,
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
         override fun toString() =
-            "JPASøknad(fnr=${fnr.partialMask()},søknad=$soknad, created=$created, updated=$updated, eventid=$eventid, id=$id)"
+            "JPASøknad(fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, id=$id)"
     }
 }
