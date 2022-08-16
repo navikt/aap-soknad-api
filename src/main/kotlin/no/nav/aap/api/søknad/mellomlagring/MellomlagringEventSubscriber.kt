@@ -52,7 +52,12 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
 
     private fun opprettet(msg: PubsubMessage) =
         if (msg.erNyVersjon()) {
-            log.trace("Oppdatert mellomlagring med ny versjon, oppdaterer IKKE Ditt Nav")
+            msg.metadata().apply {
+                log.trace("TEST Avslutter gammel og oppretter ny for $this")
+                //avsluttEllerTimeout(this)
+                //førstegangsMellomlagring(this)
+            }
+            //log.trace("Oppdatert mellomlagring med ny versjon, oppdaterer IKKE Ditt Nav")
         }
         else {
             log.trace("Førstegangs mellomlagring, oppdaterer Ditt Nav")
