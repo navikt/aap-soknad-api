@@ -4,7 +4,6 @@ import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.DokumentException.Substatus.PASSWORD_PROTECTED
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker
-import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.apache.pdfbox.pdmodel.PDDocument
@@ -18,7 +17,7 @@ class PDFPassordSjekker : DokumentSjekker {
 
     override fun sjekk(dokument: DokumentInfo) =
         with(dokument) {
-            if (APPLICATION_PDF_VALUE == TIKA.detect(bytes)) {
+            if (APPLICATION_PDF_VALUE == contentType) {
                 try {
                     log.trace(CONFIDENTIAL, "Sjekker om  $filnavn er passord-beskyttet")
                     PDDocument.load(bytes).use { }
@@ -28,7 +27,7 @@ class PDFPassordSjekker : DokumentSjekker {
                 }
             }
             else {
-                log.trace(CONFIDENTIAL, "Sjekker ikke dokumenter om type $contentType er passord-beskyttet")
+                log.trace(CONFIDENTIAL, "Sjekker ikke $contentType for passord-beskyttelse")
             }
         }
 }
