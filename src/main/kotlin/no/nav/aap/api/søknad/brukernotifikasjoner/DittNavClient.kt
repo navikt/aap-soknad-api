@@ -36,7 +36,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
 
     @Transactional
     fun opprettBeskjed(type: DittNavNotifikasjonType,
-                       eventId: UUID = UUID.randomUUID(),
+                       eventId: UUID,
                        fnr: Fødselsnummer,
                        tekst: String,
                        mellomlager: Boolean = false) =
@@ -46,7 +46,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 dittNav.send(ProducerRecord(topic,
                         key(type.skjemaType.name, eventId, fnr, "beskjed"),
                         beskjed(tekst, type.link(cfg.backlinks))))
-                    .addCallback(SendCallback("opprett beskjed"))
+                    .addCallback(SendCallback("opprett beskjed med id $eventId"))
                 log.trace("Oppretter Ditt Nav beskjed i DB")
                 repos.beskjeder.save(Beskjed(fnr = fnr.fnr,
                         eventid = eventId,
@@ -84,7 +84,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         with(cfg) {
             if (oppgave.enabled) {
                 dittNav.send(ProducerRecord(done, key(type.name, eventId, fnr, "done"), done()))
-                    .addCallback(SendCallback("avslutt oppgave"))
+                    .addCallback(SendCallback("avslutt oppgave med eventid $eventId"))
                 log.trace("Setter oppgave done i DB for eventId $eventId")
                 when (val rows = repos.oppgaver.done(eventId)) {
                     0 -> log.warn("Kunne ikke sette oppgave $eventId for $fnr til done i DB, ingen rader funnet")
@@ -102,7 +102,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         with(cfg) {
             if (beskjed.enabled) {
                 dittNav.send(ProducerRecord(done, key(type.name, eventId, fnr, "done"), done()))
-                    .addCallback(SendCallback("avslutt beskjed"))
+                    .addCallback(SendCallback("avslutt beskjed med id $eventId"))
                 log.trace("Setter beskjed done i DB for  $eventId")
                 when (val rows = repos.beskjeder.done(eventId)) {
                     0 -> log.warn("Kunne ikke sette beskjed $eventId for fnr $fnr til done i DB, ingen rader oppdatert")

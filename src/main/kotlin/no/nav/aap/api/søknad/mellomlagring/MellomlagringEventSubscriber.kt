@@ -52,12 +52,12 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
 
     private fun opprettet(msg: PubsubMessage) =
         if (msg.erNyVersjon()) {
-            msg.metadata().apply {
-                log.trace("TEST Avslutter gammel og oppretter ny for $this")
-                //avsluttEllerTimeout(this)
-                //førstegangsMellomlagring(this)
-            }
-            //log.trace("Oppdatert mellomlagring med ny versjon, oppdaterer IKKE Ditt Nav")
+            //msg.metadata().apply {
+            //    log.trace("TEST Avslutter gammel og oppretter ny for $this")
+            //avsluttEllerTimeout(this)
+            //førstegangsMellomlagring(this)
+            //}
+            log.trace("Oppdatert mellomlagring med ny versjon, oppdaterer IKKE Ditt Nav")
         }
         else {
             log.trace("Førstegangs mellomlagring, oppdaterer Ditt Nav")
@@ -76,7 +76,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun førstegangsMellomlagring(metadata: Metadata?) =
         metadata?.let {
             with(it) {
-                log.info("Oppretter beskjed i Ditt Nav med UUID $uuid")
+                log.info("Oppretter beskjed i Ditt Nav med eventid $uuid")
                 dittNav.opprettBeskjed(SØKNADSTD, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
             }
         } ?: log.warn("Fant ikke forventet metadata")
@@ -85,7 +85,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
         metadata?.let { md ->
             with(md) {
                 dittNav.eventIdsForFnr(fnr).forEach {
-                    log.trace("Avslutter beskjed i Ditt Nav med UUID $it")
+                    log.trace("Avslutter beskjed i Ditt Nav med eventid $it")
                     dittNav.avsluttBeskjed(type, fnr, it)
                 }
             }
@@ -109,7 +109,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             }
         }
         catch (e: Exception) {
-            log.warn("Uforventet feil ved lesing av metadata", e)
+            log.warn("Uventet feil ved lesing av metadata", e)
             null
         }
 

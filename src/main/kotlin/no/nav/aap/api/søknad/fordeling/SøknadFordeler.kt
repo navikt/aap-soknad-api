@@ -15,6 +15,7 @@ import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.stereotype.Component
@@ -46,7 +47,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
         pdl.søkerMedBarn().run {
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.standard)
-                dittnav.opprettBeskjed(MINAAPSTD, fnr = fnr, tekst = "Vi har mottatt ${STANDARD.tittel}")
+                dittnav.opprettBeskjed(MINAAPSTD, callIdAsUUID(), fnr, "Vi har mottatt ${STANDARD.tittel}")
                     ?.let { uuid ->
                         log.info(CONFIDENTIAL, "Lagrer DB søknad med uuid $uuid $søknad")
                         repo.save(Søknad(fnr = this@run.fnr.fnr, eventid = uuid)).also {
@@ -86,7 +87,7 @@ class UtlandSøknadFordeler(private val joark: JoarkFordeler,
         pdl.søkerUtenBarn().run {
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.utland)
-                dittnav.opprettBeskjed(MINAAPUTLAND, fnr = fnr, tekst = "Vi har mottatt ${UTLAND.tittel}")
+                dittnav.opprettBeskjed(MINAAPUTLAND, callIdAsUUID(), fnr, "Vi har mottatt ${UTLAND.tittel}")
                 Kvittering(lager.lagreDokument(DokumentInfo(pdf, navn = "kvittering-utland.pdf")))
             }
         }
