@@ -6,8 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.OrgNummer
-import no.nav.aap.api.oppslag.behandler.Behandler.BehandlerKategori.LEGE
-import no.nav.aap.api.oppslag.behandler.Behandler.BehandlerType.FASTLEGE
+import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerKategori.LEGE
+import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerType.FASTLEGE
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

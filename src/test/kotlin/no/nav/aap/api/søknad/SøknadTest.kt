@@ -8,10 +8,10 @@ import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.felles.PostNummer
-import no.nav.aap.api.oppslag.behandler.Behandler
-import no.nav.aap.api.oppslag.behandler.Behandler.BehandlerKategori.LEGE
-import no.nav.aap.api.oppslag.behandler.Behandler.BehandlerType.FASTLEGE
-import no.nav.aap.api.oppslag.behandler.Behandler.KontaktInformasjon
+import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
+import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerKategori.LEGE
+import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerType.FASTLEGE
+import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.KontaktInformasjon
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
 import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Ferie
@@ -125,7 +125,7 @@ class SøknadTest {
                         listOf(Utenlandsopphold(SE,
                                 Periode(now(), now().plusDays(2)),
                                 true, "11111111"))),
-                listOf(Behandler(FASTLEGE, LEGE, Navn("Lege", "A", "Legesen"),
+                listOf(RegistrertBehandler(FASTLEGE, LEGE, Navn("Lege", "A", "Legesen"),
                         KontaktInformasjon("Legekontoret",
                                 OrgNummer("888888888"),
                                 Adresse("Legegata", "17", "A",

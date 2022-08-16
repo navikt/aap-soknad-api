@@ -12,7 +12,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.TextNode
 import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Periode
-import no.nav.aap.api.oppslag.behandler.Behandler
+import no.nav.aap.api.oppslag.behandler.ManuellBehandler
+import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.AVBRUTT
 import no.nav.aap.api.søknad.model.Søker.Barn
@@ -32,7 +33,9 @@ data class StandardSøknad(
         val startdato: Startdato,
         val ferie: Ferie,
         val medlemsskap: Medlemskap,
-        val behandlere: List<Behandler> = emptyList(),
+        @JsonAlias("behandlere")
+        val registrerteBehandlere: List<RegistrertBehandler> = emptyList(),
+        val manuelleBehandlere: List<ManuellBehandler> = emptyList(),
         val yrkesskadeType: RadioValg,
         val utbetalinger: Utbetaling?,
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
