@@ -156,8 +156,8 @@ saf:
 dittnav:
     backlinks:
         innsyn: ${ingress}/aap/innsyn
-        standard: ${ingress}/aap/standard
-        utland: ${ingress}/aap/utland
+        standard: ${ingress}/aap/soknad/standard
+        utland: ${ingress}/aap/soknad/utland
     nais:
         app: ${nais.app.name}
         namespace: ${nais.namespace}
