@@ -40,7 +40,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
         callIdAsUUID().apply {
             with(dokument) {
                 val navn = navn(fnr, this@apply)
-                log.trace("Lagrer $filnavn som $navn med contentType $contentType")
+                log.trace("Lagrer $this")
                 sjekkere.forEach { it.sjekk(this) }
                 lager.create(newBuilder(cfg.vedlegg.navn, navn)
                     .setContentType(contentType)
