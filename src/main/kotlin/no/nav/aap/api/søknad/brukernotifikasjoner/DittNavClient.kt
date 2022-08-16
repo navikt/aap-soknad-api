@@ -7,8 +7,8 @@ import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.SendCallback
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavConfig.BacklinksConfig
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.DittNavKontekst.MINAAP
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.DittNavKontekst.SØKNAD
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.DittNavBacklinkContext.MINAAP
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.DittNavBacklinkContext.SØKNAD
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
@@ -44,7 +44,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (enabled) {
                 log.trace("Oppretter Ditt Nav beskjed for $fnr og $eventId")
                 dittNav.send(ProducerRecord(topic,
-                        key(type.type.name, eventId, fnr, "beskjed"),
+                        key(type.skjemaType.name, eventId, fnr, "beskjed"),
                         beskjed(tekst, type.link(cfg.backlinks))))
                     .addCallback(SendCallback("opprett beskjed"))
                 log.trace("Oppretter Ditt Nav beskjed i DB")
@@ -65,7 +65,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         with(cfg.oppgave) {
             if (enabled) {
                 val eventId = callIdAsUUID()
-                with(key(type.type.name, eventId, fnr, "oppgave")) {
+                with(key(type.skjemaType.name, eventId, fnr, "oppgave")) {
                     dittNav.send(ProducerRecord(topic, this, oppgave(tekst, type.link(cfg.backlinks))))
                         .addCallback(SendCallback("opprett oppgave"))
                     repos.oppgaver.save(Oppgave(fnr = fnr.fnr, eventid = eventId)).also {
@@ -170,15 +170,15 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 }
 
-data class DittNavNotifikasjonType private constructor(val type: SkjemaType, val ctx: DittNavKontekst) {
+data class DittNavNotifikasjonType private constructor(val skjemaType: SkjemaType, val ctx: DittNavBacklinkContext) {
 
-    enum class DittNavKontekst {
+    enum class DittNavBacklinkContext {
         MINAAP,
         SØKNAD
     }
 
     fun link(cfg: BacklinksConfig) =
-        when (type) {
+        when (skjemaType) {
             STANDARD -> linkForStd(cfg)
             UTLAND -> linkForUtland(cfg)
         }
