@@ -47,7 +47,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                 dittnav.opprettBeskjed(fnr = fnr, tekst = "Vi har mottatt ${STANDARD.tittel}")
                     ?.let { uuid ->
                         log.info(CONFIDENTIAL, "Lagrer DB søknad med uuid $uuid $søknad")
-                        repo.save(Søknad(fnr = this@run.fnr.fnr, soknad = søknad, eventid = uuid)).also {
+                        repo.save(Søknad(fnr = this@run.fnr.fnr, eventid = uuid)).also {
                             log.info(CONFIDENTIAL, "Lagret DB søknad $it OK")
                         }
                     }
