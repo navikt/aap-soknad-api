@@ -130,7 +130,7 @@ class SøknadTest {
                                 OrgNummer("888888888"),
                                 Adresse("Legegata", "17", "A",
                                         PostNummer("2600", "Lillehammer")),
-                                "22222222"))),
+                                "22222222"))), emptyList(),
                 JA,
                 Utbetaling(
                         FraArbeidsgiver(true, Vedlegg(deler = listOf(UUID.randomUUID(),
