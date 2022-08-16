@@ -43,8 +43,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (enabled) {
                 log.trace("Oppretter Ditt Nav beskjed for $fnr og eventid $eventId")
                 dittNav.send(ProducerRecord(topic,
-                        key(type.skjemaType.name, eventId, fnr, "beskjed"),
-                        beskjed(tekst, type)))
+                        key(type.skjemaType.name, eventId, fnr, "beskjed"), beskjed(tekst, type)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
                 log.trace("Oppretter Ditt Nav beskjed i DB")
                 repos.beskjeder.save(Beskjed(fnr = fnr.fnr,
@@ -66,7 +65,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 val eventId = callIdAsUUID()
                 log.trace("Oppretter Ditt Nav oppgave for $fnr og eventid $eventId")
                 with(key(type.skjemaType.name, eventId, fnr, "oppgave")) {
-                    dittNav.send(ProducerRecord(topic, this, oppgave(tekst, type.link(cfg.backlinks))))
+                    dittNav.send(ProducerRecord(topic, this, oppgave(tekst, type)))
                         .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
                     repos.oppgaver.save(Oppgave(fnr = fnr.fnr, eventid = eventId)).also {
                         log.trace(CONFIDENTIAL, "Opprettet oppgave $it i DB")
