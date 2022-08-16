@@ -28,3 +28,8 @@ organisasjon:
     base-uri: https://ereg-services-q1.dev-fss-pub.nais.io
     enabled: false
 debug: false
+dittnav:
+    backlinks:
+        innsyn: https://aap-soknad.dev.nav.no/aap/minaap
+        standard: https://aap-soknad.dev.nav.no/aap/soknad/standard
+        utland: https://aap-soknad.dev.nav.no/aap/soknad/utland

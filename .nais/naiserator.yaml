@@ -100,8 +100,6 @@ spec:
             cpu: 250m
             memory: 1536Mi
     env:
-        -   name: INGRESS
-            value: '{{ingress}}'
         -   name: MELLOMLAGRING_NAVN
             value: '{{mellomlagring-navn}}'
         -   name: VEDLEGG_NAVN
