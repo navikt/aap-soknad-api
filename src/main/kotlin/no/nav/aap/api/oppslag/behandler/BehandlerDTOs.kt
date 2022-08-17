@@ -34,7 +34,7 @@ data class BehandlerDTO(
 }
 
 data class ManuellBehandler(val type: BehandlerType,
-                            val kategori: BehandlerKategori,
+                            val kategori: BehandlerKategori?,
                             val navn: Navn,
                             val kontaktinformasjon: KontaktInformasjon)
 
