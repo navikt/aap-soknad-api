@@ -63,6 +63,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun opprettet(msg: Metadata?) =
         msg?.let {
             with(it) {
+                log.trace(CONFIDENTIAL, "Oppretter fra metadata $it")
                 dittNav.opprettBeskjed(SØKNADSTD, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
             }
         } ?: log.warn("Fant ikke forventede metadata")
@@ -70,6 +71,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun slettet(msg: Metadata?) =
         msg?.let {
             with(it) {
+                log.trace(CONFIDENTIAL, "Sletter fra metadata $it")
                 dittNav.eventIdsForFnr(fnr).forEach { uuid ->
                     dittNav.avsluttBeskjed(type, fnr, uuid)
                 }
@@ -83,8 +85,6 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             log.trace("Event type er $t")
         }
 
-    private fun PubsubMessage.erSlettetGrunnetNyVersjon() = containsAttributes(OVERWRITTEBBYGENERATION)
-    private fun PubsubMessage.erNyVersjon() = containsAttributes(OVERWROTEGENERATION)
     private fun PubsubMessage.metadata(): Metadata? =
         try {
             with(objektNavn()) {
