@@ -40,11 +40,20 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             pubSub.subscribe(subscription.navn) { msg ->
                 msg.ack()
                 with(msg.pubsubMessage) {
-                    log.trace(CONFIDENTIAL, "Data i event er ${data.toStringUtf8()}")
-                    log.trace(CONFIDENTIAL, "attributter i event er $attributesMap")
+
                     when (val type = eventType()) {
-                        OBJECT_FINALIZE -> opprettet(metadata())
-                        OBJECT_DELETE -> slettet(metadata())
+                        OBJECT_FINALIZE -> {
+                            log.trace(CONFIDENTIAL, "Data i finalize event er ${data.toStringUtf8()}")
+                            log.trace(CONFIDENTIAL, "attributter i finalize event er $attributesMap")
+                            opprettet(metadata())
+                        }
+
+                        OBJECT_DELETE -> {
+                            log.trace(CONFIDENTIAL, "Data i delete event er ${data.toStringUtf8()}")
+                            log.trace(CONFIDENTIAL, "attributter i delete event er $attributesMap")
+                            slettet(metadata())
+                        }
+
                         else -> log.warn("Event type $type ikke håndtert (dette skal aldri skje)")
                     }
                 }
