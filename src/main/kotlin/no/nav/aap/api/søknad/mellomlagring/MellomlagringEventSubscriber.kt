@@ -95,8 +95,8 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.data() = MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())
     private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
     private fun PubsubMessage.eventType() =
-        attributesMap[EVENT_TYPE]?.let { valueOf(it) }.also {
-            log.trace("Event type er $this")
+        attributesMap[EVENT_TYPE]?.let { valueOf(it) }.also { t ->
+            log.trace("Event type er $t")
         }
 
     private fun PubsubMessage.erSlettetGrunnetNyVersjon() = containsAttributes(OVERWRITTEBBYGENERATION)
