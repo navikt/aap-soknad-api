@@ -36,10 +36,9 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
             val eventid: UUID,
             @LastModifiedDate var updated: LocalDateTime? = null,
             val done: Boolean = false,
-            val mellomlager: Boolean,
             @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0) {
         override fun toString(): String =
-            "Beskjed(fnr=${fnr.partialMask()}, mellomlager=$mellomlager, created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
+            "Beskjed(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
     }
 }
 

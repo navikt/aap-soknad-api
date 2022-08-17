@@ -47,8 +47,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
                 log.trace("Oppretter Ditt Nav beskjed i DB")
                 repos.beskjeder.save(Beskjed(fnr = fnr.fnr,
-                        eventid = eventId,
-                        mellomlager = mellomlager)).also {
+                        eventid = eventId)).also {
                     log.trace(CONFIDENTIAL, "Opprettet Ditt Nav beskjed $it i DB")
                 }.eventid
             }

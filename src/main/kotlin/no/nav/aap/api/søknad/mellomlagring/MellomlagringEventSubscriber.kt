@@ -46,7 +46,6 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
                     when (type) {
                         OBJECT_FINALIZE -> opprettet(metadata())
                         OBJECT_DELETE -> slettet(metadata())
-
                         else -> log.warn("Event type $type ikke håndtert (dette skal aldri skje)")
                     }
                 }
