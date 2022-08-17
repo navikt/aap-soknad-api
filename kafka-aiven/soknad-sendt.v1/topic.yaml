@@ -33,7 +33,12 @@ metadata:
         team: aap
 spec:
     pool: {{pool}}
-    
+    acl:
+  {{#each acl}}
+    - team: {{team}}
+      application: {{application}}
+      access: {{access}}
+  {{/each}}
 ---
 
 apiVersion: kafka.nais.io/v1
@@ -47,4 +52,9 @@ metadata:
         team: aap
 spec:
     pool: {{pool}}
-
+    acl:
+  {{#each acl}}
+    - team: {{team}}
+      application: {{application}}
+      access: {{access}}
+  {{/each}}
