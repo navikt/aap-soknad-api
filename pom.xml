@@ -81,6 +81,11 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
+            <groupId>no.nav.teamdokumenthandtering</groupId>
+            <artifactId>teamdokumenthandtering-avro-schemas</artifactId>
+            <version>357738b9</version>
+        </dependency>
+        <dependency>
             <groupId>com.vladmihalcea</groupId>
             <artifactId>hibernate-types-55</artifactId>
             <version>2.18.0</version>
