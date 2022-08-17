@@ -26,7 +26,7 @@ import java.util.*
 @ConditionalOnGCP
 class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
                                    private val cfg: BucketConfig,
-                                   private val pubSub: PubSubSubscriberTemplate) {
+                                   private val subscriber: PubSubSubscriberTemplate) {
 
     private val log = getLogger(javaClass)
 
@@ -37,31 +37,31 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun subscribe() =
         with(cfg.mellom) {
             log.trace("Abonnererer på hendelser i $subscription")
-            pubSub.subscribe(subscription.navn) { msg ->
-                msg.ack()
-                with(msg.pubsubMessage) {
+            subscriber.subscribe(subscription.navn) { event ->
+                event.ack()
+                with(event.pubsubMessage) {
                     val type = eventType()
-                    log.trace(CONFIDENTIAL, "Data i $type event er ${data.toStringUtf8()}")
-                    log.trace(CONFIDENTIAL, "attributter i $type event er $attributesMap")
+                    log.trace(CONFIDENTIAL,
+                            "Data i $type event er ${data.toStringUtf8()}, attributter er $attributesMap")
                     when (type) {
                         OBJECT_FINALIZE -> opprettet(metadata())
                         OBJECT_DELETE -> slettet(metadata())
-                        else -> log.warn("Event type $type ikke håndtert (dette skal aldri skje)")
+                        else -> log.warn("Event $type ikke håndtert (dette skal aldri skje)")
                     }
                 }
             }
         }
 
-    private fun opprettet(msg: Metadata?) =
-        msg?.let {
+    private fun opprettet(metadata: Metadata?) =
+        metadata?.let {
             with(it) {
                 log.trace(CONFIDENTIAL, "Oppretter beskjed fra metadata $it")
                 dittNav.opprettBeskjed(SØKNADSTD, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
             }
         } ?: log.warn("Fant ikke forventede metadata")
 
-    private fun slettet(msg: Metadata?) =
-        msg?.let {
+    private fun slettet(metadata: Metadata?) =
+        metadata?.let {
             with(it) {
                 log.trace(CONFIDENTIAL, "Sletter beskjed fra metadata $it")
                 dittNav.avsluttBeskjed(type, fnr, uuid)
@@ -71,9 +71,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun PubsubMessage.data() = MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())
     private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
     private fun PubsubMessage.eventType() =
-        attributesMap[EVENT_TYPE]?.let { valueOf(it) }.also { t ->
-            log.trace("Event type er $t")
-        }
+        attributesMap[EVENT_TYPE]?.let { valueOf(it) }
 
     private fun PubsubMessage.metadata(): Metadata? =
         with(objektNavn()) {

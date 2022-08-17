@@ -56,8 +56,8 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                         }
                     }
                 with(søknad.manglendeVedlegg()) {
-                    if (this.isNotEmpty()) {
-                        log.trace("Det mangler ${this.size} vedlegg av følgende typer $this")
+                    if (isNotEmpty()) {
+                        log.trace("Det mangler $size vedlegg av følgende typer $this")
                         dittnav.opprettOppgave(MINAAPSTD,
                                 fnr, UUID.randomUUID(),
                                 "Du må ettersende dokumentasjon til din $STANDARD.tittel")
