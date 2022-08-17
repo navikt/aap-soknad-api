@@ -11,7 +11,6 @@ import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.DittN
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.DittNavBacklinkContext.SØKNAD
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
@@ -58,10 +57,9 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
-    fun opprettOppgave(type: DittNavNotifikasjonType, fnr: Fødselsnummer, tekst: String) =
+    fun opprettOppgave(type: DittNavNotifikasjonType, fnr: Fødselsnummer, eventId: UUID, tekst: String) =
         with(cfg.oppgave) {
             if (enabled) {
-                val eventId = callIdAsUUID()
                 log.trace("Oppretter Ditt Nav oppgave for $fnr og eventid $eventId")
                 with(key(type.skjemaType.name, eventId, fnr, "oppgave")) {
                     dittNav.send(ProducerRecord(topic, this, oppgave("$tekst ($eventId)", type)))
