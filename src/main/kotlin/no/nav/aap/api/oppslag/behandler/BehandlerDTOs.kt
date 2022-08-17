@@ -32,10 +32,10 @@ data class BehandlerDTO(
                     telefon))
 }
 
-data class ManuellBehandler(val type: BehandlerType,
-                            val kategori: BehandlerKategori?,
-                            val navn: Navn,
-                            val kontaktinformasjon: KontaktInformasjon)
+data class AnnenBehandler(val type: BehandlerType,
+                          val kategori: BehandlerKategori?,
+                          val navn: Navn,
+                          val kontaktinformasjon: KontaktInformasjon)
 
 data class RegistrertBehandler(val type: BehandlerType,
                                val kategori: BehandlerKategori,

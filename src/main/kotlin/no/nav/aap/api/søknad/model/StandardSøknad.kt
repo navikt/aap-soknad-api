@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.TextNode
 import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Periode
-import no.nav.aap.api.oppslag.behandler.ManuellBehandler
+import no.nav.aap.api.oppslag.behandler.AnnenBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.AVBRUTT
@@ -36,7 +36,7 @@ data class StandardSøknad(
         @JsonAlias("behandlere")
         val registrerteBehandlere: List<RegistrertBehandler> = emptyList(),
         @JsonAlias("manuelleBehandlere")
-        val andreBehandlere: List<ManuellBehandler> = emptyList(),
+        val andreBehandlere: List<AnnenBehandler> = emptyList(),
         val yrkesskadeType: RadioValg,
         val utbetalinger: Utbetaling?,
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
