@@ -64,7 +64,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 val eventId = callIdAsUUID()
                 log.trace("Oppretter Ditt Nav oppgave for $fnr og eventid $eventId")
                 with(key(type.skjemaType.name, eventId, fnr, "oppgave")) {
-                    dittNav.send(ProducerRecord(topic, this, oppgave(tekst, type)))
+                    dittNav.send(ProducerRecord(topic, this, oppgave("$tekst ($eventId)", type)))
                         .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
                     repos.oppgaver.save(Oppgave(fnr = fnr.fnr, eventid = eventId)).also {
                         log.trace(CONFIDENTIAL, "Opprettet oppgave $it i DB")
@@ -169,12 +169,12 @@ data class DittNavNotifikasjonType private constructor(val skjemaType: SkjemaTyp
         when (skjemaType) {
             STANDARD -> when (ctx) {
                 MINAAP -> cfg.innsyn
-                else -> cfg.standard
+                SØKNAD -> cfg.standard
             }
 
             UTLAND -> when (ctx) {
                 MINAAP -> cfg.innsyn
-                else -> cfg.utland
+                SØKNAD -> cfg.utland
             }
         }
 
