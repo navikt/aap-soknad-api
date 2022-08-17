@@ -9,7 +9,6 @@ import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerKategori
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerType
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.KontaktInformasjon
-import no.nav.aap.api.søknad.model.RadioValg
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class BehandlerDTO(
@@ -42,7 +41,7 @@ data class RegistrertBehandler(val type: BehandlerType,
                                val kategori: BehandlerKategori,
                                val navn: Navn,
                                val kontaktinformasjon: KontaktInformasjon,
-                               val erRegistrertFastlegeRiktig: RadioValg) {
+                               val erRegistrertFastlegeRiktig: Boolean) {
     enum class BehandlerType {
         FASTLEGE,
         SYKMELDER,
