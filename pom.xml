@@ -18,7 +18,7 @@
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
         <conditionals.version>3.0.3</conditionals.version>
         <confluent.version>7.2.1</confluent.version>
-        <domain.version>0.0.95</domain.version>
+        <domain.version>0.0.96</domain.version>
         <gcp.version>0.177.0</gcp.version>
         <gcp.libraries.version>26.1.0</gcp.libraries.version>
         <spring-cloud-gcp.version>3.3.0</spring-cloud-gcp.version>
@@ -41,6 +41,8 @@
         <swagger.annotations.version>2.2.2</swagger.annotations.version>
         <springdoc.version>1.6.10</springdoc.version>
         <token.validation.version>2.1.3</token.validation.version>
+        <types.version>2.18.0</types.version>
+        <varsling.version>357738b9</varsling.version>
         <tika.version>2.4.1</tika.version>
 
     </properties>
@@ -83,12 +85,12 @@
         <dependency>
             <groupId>no.nav.teamdokumenthandtering</groupId>
             <artifactId>teamdokumenthandtering-avro-schemas</artifactId>
-            <version>357738b9</version>
+            <version>${varsling.version}</version>
         </dependency>
         <dependency>
             <groupId>com.vladmihalcea</groupId>
             <artifactId>hibernate-types-55</artifactId>
-            <version>2.18.0</version>
+            <version>${types.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>

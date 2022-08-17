@@ -30,7 +30,7 @@ class SendCallback<K, V>(private val msg: String) : KafkaSendCallback<K, V> {
 
     private fun log(fnr: String, recordMetadata: RecordMetadata?) {
         with(recordMetadata) {
-            log.info("Sendte $msg for $fnr og offset ${this?.offset()} på partition ${this?.partition()} på topic  ${this?.topic()}")
+            log.info("Sendte $msg for $fnr og offset ${this?.offset()} på partition ${this?.partition()} på topic ${this?.topic()}")
         }
     }
 
