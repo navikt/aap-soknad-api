@@ -27,9 +27,6 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
     @Query("update beskjed set done = true, updated = current_timestamp where eventid = :eventid")
     fun done(@Param("eventid") eventid: UUID): Int
 
-    @Query("select eventid from beskjed  where fnr = :fnr and done = false and mellomlager  = true")
-    fun eventIdForFnr(@Param("fnr") fnr: String): List<UUID>
-
     @Entity(name = "beskjed")
     @Table(name = "dittnavbeskjeder")
     @EntityListeners(AuditingEntityListener::class)

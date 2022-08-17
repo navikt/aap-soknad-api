@@ -114,17 +114,6 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-    @Transactional(readOnly = true)
-    fun eventIdsForFnr(fnr: Fødselsnummer) =
-        repos.beskjeder.eventIdForFnr(fnr.fnr)
-            .also {
-                when (val size = it.size) {
-                    0 -> log.warn("Fant ingen eventid i DB for $fnr")
-                    1 -> log.trace("Fant som forventet en rad med eventid ${it.first()} for $fnr")
-                    else -> log.warn("Fant et uventet antall rader ($size) med eventids $it for $fnr, dette bør undersøkes nærmere")
-                }
-            }
-
     private fun beskjed(tekst: String, type: DittNavNotifikasjonType) =
         with(cfg.beskjed) {
             BeskjedInputBuilder()

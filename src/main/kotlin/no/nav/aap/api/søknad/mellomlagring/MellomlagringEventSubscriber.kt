@@ -40,19 +40,12 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
             pubSub.subscribe(subscription.navn) { msg ->
                 msg.ack()
                 with(msg.pubsubMessage) {
-
-                    when (val type = eventType()) {
-                        OBJECT_FINALIZE -> {
-                            log.trace(CONFIDENTIAL, "Data i finalize event er ${data.toStringUtf8()}")
-                            log.trace(CONFIDENTIAL, "attributter i finalize event er $attributesMap")
-                            opprettet(metadata())
-                        }
-
-                        OBJECT_DELETE -> {
-                            log.trace(CONFIDENTIAL, "Data i delete event er ${data.toStringUtf8()}")
-                            log.trace(CONFIDENTIAL, "attributter i delete event er $attributesMap")
-                            slettet(metadata())
-                        }
+                    val type = eventType()
+                    log.trace(CONFIDENTIAL, "Data i $type event er ${data.toStringUtf8()}")
+                    log.trace(CONFIDENTIAL, "attributter i $type event er $attributesMap")
+                    when (type) {
+                        OBJECT_FINALIZE -> opprettet(metadata())
+                        OBJECT_DELETE -> slettet(metadata())
 
                         else -> log.warn("Event type $type ikke håndtert (dette skal aldri skje)")
                     }
@@ -63,7 +56,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun opprettet(msg: Metadata?) =
         msg?.let {
             with(it) {
-                log.trace(CONFIDENTIAL, "Oppretter fra metadata $it")
+                log.trace(CONFIDENTIAL, "Oppretter beskjed fra metadata $it")
                 dittNav.opprettBeskjed(SØKNADSTD, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
             }
         } ?: log.warn("Fant ikke forventede metadata")
@@ -71,7 +64,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     private fun slettet(msg: Metadata?) =
         msg?.let {
             with(it) {
-                log.trace(CONFIDENTIAL, "Sletter fra metadata $it")
+                log.trace(CONFIDENTIAL, "Sletter beskjed fra metadata $it")
                 dittNav.avsluttBeskjed(type, fnr, uuid)
             }
         } ?: log.warn("Fant ikke forventede metadata")
@@ -117,10 +110,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
     companion object {
         private val MAPPER = ObjectMapper().registerModule(KotlinModule.Builder().build())
         private const val EVENT_TYPE = "eventType"
-        private const val OVERWROTEGENERATION = "overwroteGeneration"
-        private const val OVERWRITTEBBYGENERATION = "overwrittenByGeneration"
         private const val METADATA = "metadata"
         private const val OBJECTID = "objectId"
-
     }
 }
