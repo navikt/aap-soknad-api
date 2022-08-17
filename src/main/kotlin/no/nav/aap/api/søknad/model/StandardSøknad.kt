@@ -17,9 +17,9 @@ import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.AVBRUTT
 import no.nav.aap.api.søknad.model.Søker.Barn
-import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.AFP
-import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.OMSORGSSTØNAD
-import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.UTLAND
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.AFP
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.joark.DokumentVariant
 import no.nav.aap.joark.Filtype.JSON
 import no.nav.aap.joark.VariantFormat.ORIGINAL
@@ -38,7 +38,7 @@ data class StandardSøknad(
         @JsonAlias("manuelleBehandlere")
         val andreBehandlere: List<AnnenBehandler> = emptyList(),
         val yrkesskadeType: RadioValg,
-        val utbetalinger: Utbetaling?,
+        val utbetalinger: Utbetalinger?,
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
         val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         val tilleggsopplysninger: String?,
@@ -164,9 +164,9 @@ enum class RadioValg {
     VET_IKKE
 }
 
-data class Utbetaling(val ekstraFraArbeidsgiver: FraArbeidsgiver,
-                      @JsonAlias("stønadstyper") val andreStønader: List<AnnenStønad> = emptyList(),
-                      val ekstraUtbetaling: EkstraUtbetaling? = null) {
+data class Utbetalinger(val ekstraFraArbeidsgiver: FraArbeidsgiver,
+                        @JsonAlias("stønadstyper") val andreStønader: List<AnnenStønad> = emptyList(),
+                        val ekstraUtbetaling: EkstraUtbetaling? = null) {
 
     data class FraArbeidsgiver(val fraArbeidsgiver: Boolean,
                                override val vedlegg: Vedlegg? = null) : VedleggAware

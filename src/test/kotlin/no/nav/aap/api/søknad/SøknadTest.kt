@@ -25,11 +25,11 @@ import no.nav.aap.api.søknad.model.Studier
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.NEI
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.Søker.Barn
-import no.nav.aap.api.søknad.model.Utbetaling
-import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønad
-import no.nav.aap.api.søknad.model.Utbetaling.AnnenStønadstype.INTRODUKSJONSSTØNAD
-import no.nav.aap.api.søknad.model.Utbetaling.EkstraUtbetaling
-import no.nav.aap.api.søknad.model.Utbetaling.FraArbeidsgiver
+import no.nav.aap.api.søknad.model.Utbetalinger
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønad
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.INTRODUKSJONSSTØNAD
+import no.nav.aap.api.søknad.model.Utbetalinger.EkstraUtbetaling
+import no.nav.aap.api.søknad.model.Utbetalinger.FraArbeidsgiver
 import no.nav.aap.api.søknad.model.Utenlandsopphold
 import no.nav.aap.api.søknad.model.Vedlegg
 import org.springframework.beans.factory.annotation.Autowired
@@ -132,7 +132,7 @@ class SøknadTest {
                                         PostNummer("2600", "Lillehammer")),
                                 "22222222"))), emptyList(),
                 JA,
-                Utbetaling(
+                Utbetalinger(
                         FraArbeidsgiver(true, Vedlegg(deler = listOf(UUID.randomUUID(),
                                 UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD)),
                         EkstraUtbetaling("hvilken", "hvem")),
