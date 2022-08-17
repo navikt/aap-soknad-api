@@ -36,13 +36,13 @@ data class BehandlerDTO(
 data class ManuellBehandler(val type: BehandlerType,
                             val kategori: BehandlerKategori,
                             val navn: Navn,
-                            val kontaktinformasjon: KontaktInformasjon,
-                            val erRegistrertFastlegeRiktig: RadioValg)
+                            val kontaktinformasjon: KontaktInformasjon)
 
 data class RegistrertBehandler(val type: BehandlerType,
                                val kategori: BehandlerKategori,
                                val navn: Navn,
-                               val kontaktinformasjon: KontaktInformasjon) {
+                               val kontaktinformasjon: KontaktInformasjon,
+                               val erRegistrertFastlegeRiktig: RadioValg) {
     enum class BehandlerType {
         FASTLEGE,
         SYKMELDER,
