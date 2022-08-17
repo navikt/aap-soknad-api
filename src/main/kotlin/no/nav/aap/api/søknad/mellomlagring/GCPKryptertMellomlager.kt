@@ -29,7 +29,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
                 .setMetadata(mapOf(SKJEMATYPE to type.name, UUID_ to callId()))
                 .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName("$key"))
                 .also {
-                    log.trace(CONFIDENTIAL, "Lagret $value som ${it.name} i bøtte ${mellom.navn}")
+                    log.trace(CONFIDENTIAL, "Lagret mellomlagret $value som ${it.name} i bøtte ${mellom.navn}")
                 }
         }.name
 
@@ -40,7 +40,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
             with(navn(fnr, type)) {
                 lager.get(navn, this)?.let { blob ->
                     String(blob.getContent()).also {
-                        log.trace(CONFIDENTIAL, "Lest verdi $it fra $this og bøtte $navn")
+                        log.trace(CONFIDENTIAL, "Lest mellomlagret verdi $it fra $this og bøtte $navn")
                     }
                 }
             }
@@ -52,7 +52,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
         with(cfg.mellom) {
             with(navn(fnr, type)) {
                 lager.delete(navn, this).also {
-                    log.trace(CONFIDENTIAL, "Slettet $this fra bøtte $navn")
+                    log.trace(CONFIDENTIAL, "Slettet mellomlagret $this fra bøtte $navn")
                 }
             }
         }
