@@ -76,20 +76,14 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
         }
 
     private fun PubsubMessage.metadata(): Metadata? =
-        try {
-            with(objektNavn()) {
-                if (this?.size == 2) {
-                    data()[METADATA]?.let {
-                        it as Map<String, String>
-                        getInstance(it[SKJEMATYPE], this[0], it[UUID_])
-                    }
+        with(objektNavn()) {
+            if (this?.size == 2) {
+                data()[METADATA]?.let {
+                    it as Map<String, String>
+                    getInstance(it[SKJEMATYPE], this[0], it[UUID_])
                 }
-                else null
             }
-        }
-        catch (e: Exception) {
-            log.warn("Uventet feil ved lesing av metadata", e)
-            null
+            else null
         }
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
