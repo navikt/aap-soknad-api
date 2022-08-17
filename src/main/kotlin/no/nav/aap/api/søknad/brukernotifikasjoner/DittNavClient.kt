@@ -114,6 +114,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             }
         }
 
+    @Transactional(readOnly = true)
     fun eventIdsForFnr(fnr: Fødselsnummer) =
         repos.beskjeder.eventIdForFnr(fnr.fnr)
             .also {
