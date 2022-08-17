@@ -72,9 +72,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
         msg?.let {
             with(it) {
                 log.trace(CONFIDENTIAL, "Sletter fra metadata $it")
-                dittNav.eventIdsForFnr(fnr).forEach { uuid ->
-                    dittNav.avsluttBeskjed(type, fnr, uuid)
-                }
+                dittNav.avsluttBeskjed(type, fnr, uuid)
             }
         } ?: log.warn("Fant ikke forventede metadata")
 
