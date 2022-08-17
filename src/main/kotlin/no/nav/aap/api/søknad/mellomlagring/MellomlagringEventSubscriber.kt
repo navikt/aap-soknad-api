@@ -43,54 +43,29 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
                     log.trace(CONFIDENTIAL, "Data i event er ${data.toStringUtf8()}")
                     log.trace(CONFIDENTIAL, "attributter i event er $attributesMap")
                     when (val type = eventType()) {
-                        OBJECT_FINALIZE -> opprettet(this)
-                        OBJECT_DELETE -> slettet(this)
+                        OBJECT_FINALIZE -> opprettet(metadata())
+                        OBJECT_DELETE -> slettet(metadata())
                         else -> log.warn("Event type $type ikke håndtert (dette skal aldri skje)")
                     }
                 }
             }
         }
 
-    private fun opprettet(msg: PubsubMessage) =
-    //   if (msg.erNyVersjon()) {
-    //msg.metadata().apply {
-    //    log.trace("TEST Avslutter gammel og oppretter ny for $this")
-    //avsluttEllerTimeout(this)
-    //førstegangsMellomlagring(this)
-    //}
-    //log.trace("Oppdatert mellomlagring med ny versjon, oppdaterer IKKE Ditt Nav")
-    //   }
-    // else {
-        // log.trace("Førstegangs mellomlagring, oppdaterer Ditt Nav")
-        førstegangsMellomlagring(msg.metadata())
-    // }
-
-    private fun slettet(msg: PubsubMessage) =
-        /*  if (msg.erSlettetGrunnetNyVersjon()) {
-              log.trace("Sletting pga opppdatert mellomlagring, oppdaterer IKKE Ditt Nav")
-          }
-          else {
-              log.trace("Fjernet pga avslutt eller timeout, oppdaterer Ditt Nav") */
-        avsluttEllerTimeout(msg.metadata())
-    // }
-
-    private fun førstegangsMellomlagring(metadata: Metadata?) =
-        metadata?.let {
+    private fun opprettet(msg: Metadata?) =
+        msg?.let {
             with(it) {
-                log.info("Oppretter beskjed i Ditt Nav med eventid $uuid")
                 dittNav.opprettBeskjed(SØKNADSTD, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
             }
-        } ?: log.warn("Fant ikke forventet metadata")
+        } ?: log.warn("Fant ikke forventede metadata")
 
-    private fun avsluttEllerTimeout(metadata: Metadata?) =
-        metadata?.let { md ->
-            with(md) {
-                dittNav.eventIdsForFnr(fnr).forEach {
-                    log.trace("Avslutter beskjed i Ditt Nav med eventid $it")
-                    dittNav.avsluttBeskjed(type, fnr, it)
+    private fun slettet(msg: Metadata?) =
+        msg?.let {
+            with(it) {
+                dittNav.eventIdsForFnr(fnr).forEach { uuid ->
+                    dittNav.avsluttBeskjed(type, fnr, uuid)
                 }
             }
-        } ?: log.warn("Fant ikke forventet metadata")
+        } ?: log.warn("Fant ikke forventede metadata")
 
     private fun PubsubMessage.data() = MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())
     private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
