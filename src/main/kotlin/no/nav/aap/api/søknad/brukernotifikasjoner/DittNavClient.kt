@@ -102,7 +102,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (beskjed.enabled) {
                 dittNav.send(ProducerRecord(done, key(type.name, eventId, fnr, "done"), done()))
                     .addCallback(SendCallback("avslutt beskjed med eventid $eventId"))
-                log.trace("Setter beskjed done i DB for  $eventId")
+                log.trace("Setter beskjed done i DB for eventid $eventId")
                 when (val rows = repos.beskjeder.done(eventId)) {
                     0 -> log.warn("Kunne ikke sette beskjed med eventid $eventId for fnr $fnr til done i DB, ingen rader oppdatert")
                     1 -> log.trace("Satt beskjed med eventid $eventId for $fnr done i DB")

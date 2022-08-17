@@ -52,27 +52,27 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
         }
 
     private fun opprettet(msg: PubsubMessage) =
-        if (msg.erNyVersjon()) {
-            //msg.metadata().apply {
-            //    log.trace("TEST Avslutter gammel og oppretter ny for $this")
-            //avsluttEllerTimeout(this)
-            //førstegangsMellomlagring(this)
-            //}
-            log.trace("Oppdatert mellomlagring med ny versjon, oppdaterer IKKE Ditt Nav")
-        }
-        else {
-            log.trace("Førstegangs mellomlagring, oppdaterer Ditt Nav")
-            førstegangsMellomlagring(msg.metadata())
-        }
+    //   if (msg.erNyVersjon()) {
+    //msg.metadata().apply {
+    //    log.trace("TEST Avslutter gammel og oppretter ny for $this")
+    //avsluttEllerTimeout(this)
+    //førstegangsMellomlagring(this)
+    //}
+    //log.trace("Oppdatert mellomlagring med ny versjon, oppdaterer IKKE Ditt Nav")
+    //   }
+    // else {
+        // log.trace("Førstegangs mellomlagring, oppdaterer Ditt Nav")
+        førstegangsMellomlagring(msg.metadata())
+    // }
 
     private fun slettet(msg: PubsubMessage) =
-        if (msg.erSlettetGrunnetNyVersjon()) {
-            log.trace("Sletting pga opppdatert mellomlagring, oppdaterer IKKE Ditt Nav")
-        }
-        else {
-            log.trace("Fjernet pga avslutt eller timeout, oppdaterer Ditt Nav")
-            avsluttEllerTimeout(msg.metadata())
-        }
+        /*  if (msg.erSlettetGrunnetNyVersjon()) {
+              log.trace("Sletting pga opppdatert mellomlagring, oppdaterer IKKE Ditt Nav")
+          }
+          else {
+              log.trace("Fjernet pga avslutt eller timeout, oppdaterer Ditt Nav") */
+        avsluttEllerTimeout(msg.metadata())
+    // }
 
     private fun førstegangsMellomlagring(metadata: Metadata?) =
         metadata?.let {
