@@ -41,7 +41,7 @@ data class RegistrertBehandler(val type: BehandlerType,
                                val kategori: BehandlerKategori,
                                val navn: Navn,
                                val kontaktinformasjon: KontaktInformasjon,
-                               val erRegistrertFastlegeRiktig: Boolean) {
+                               val erRegistrertFastlegeRiktig: Boolean? = null) {
     enum class BehandlerType {
         FASTLEGE,
         SYKMELDER,
