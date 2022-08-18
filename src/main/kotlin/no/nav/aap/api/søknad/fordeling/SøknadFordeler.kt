@@ -60,7 +60,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                         log.trace("Det mangler $size vedlegg av følgende typer $this")
                         dittnav.opprettOppgave(MINAAPSTD,
                                 fnr, UUID.randomUUID(),
-                                "Du må ettersende dokumentasjon til din $STANDARD.tittel")
+                                "Du må ettersende dokumentasjon til din ${STANDARD.tittel}")
                     }
                 }
                 avslutter.avsluttSøknad(søknad, pdf)
