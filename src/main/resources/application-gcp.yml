@@ -65,6 +65,8 @@ spring:
             key-store-location: file:${kafka.keystore.path}
             key-store-type: PKCS12
             key-store-password: ${kafka.credstore.password}
+        consumer:
+            group-id: ${spring.application.name}
         producer:
             acks: all
             client-id: ${spring.application.name}
