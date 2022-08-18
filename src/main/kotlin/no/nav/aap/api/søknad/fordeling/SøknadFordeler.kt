@@ -19,6 +19,7 @@ import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.stereotype.Component
+import java.util.*
 
 @ConditionalOnGCP
 class SøknadFordeler(private val utland: UtlandSøknadFordeler, private val standard: StandardSøknadFordeler) :
@@ -58,7 +59,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                     if (isNotEmpty()) {
                         log.trace("Det mangler $size vedlegg av følgende typer $this")
                         dittnav.opprettOppgave(MINAAPSTD,
-                                fnr, callIdAsUUID(),
+                                fnr, UUID.randomUUID(),
                                 "Du må ettersende dokumentasjon til din $STANDARD.tittel")
                     }
                 }
