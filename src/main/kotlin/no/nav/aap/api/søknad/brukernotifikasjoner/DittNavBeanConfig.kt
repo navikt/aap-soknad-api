@@ -53,7 +53,7 @@ class DittNavBeanConfig {
         private val log = getLogger(javaClass)
 
         @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
-                containerFactory = "stringAvroKafkaListenerContainerFactory")
+                containerFactory = "notifikasjonListenerContainerFactory")
         fun consume(kafkaRecord: ConsumerRecord<String, DoknotifikasjonStatus>) {
             log.info("XXXXXXX ${kafkaRecord.value()}")
         }
