@@ -61,7 +61,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         with(cfg.oppgave) {
             if (enabled) {
                 log.trace("Oppretter Ditt Nav oppgave for $fnr og eventid $eventId")
-                with(key(type.skjemaType.name, eventId, fnr, "oppgave")) {
+                with(key(type.skjemaType.name, "O$eventId", fnr, "oppgave")) {
                     dittNav.send(ProducerRecord(topic, this, oppgave("$tekst ($eventId)", type)))
                         .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
                     repos.oppgaver.save(Oppgave(fnr = fnr.fnr, eventid = eventId)).also {
@@ -79,7 +79,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun avsluttOppgave(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
         with(cfg) {
             if (oppgave.enabled) {
-                dittNav.send(ProducerRecord(done, key(type.name, eventId, fnr, "done"), done()))
+                dittNav.send(ProducerRecord(done, key(type.name, "O$eventId", fnr, "done"), done()))
                     .addCallback(SendCallback("avslutt oppgave med eventid $eventId"))
                 log.trace("Setter oppgave done i DB for eventId $eventId")
                 when (val rows = repos.oppgaver.done(eventId)) {
@@ -143,10 +143,15 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             .build()
 
     private fun key(grupperingId: String, eventId: UUID, fnr: Fødselsnummer, type: String) =
+        key(grupperingId, "$eventId", fnr, type)
+
+    private
+
+    fun key(grupperingId: String, eventId: String, fnr: Fødselsnummer, type: String) =
         with(cfg) {
             NokkelInputBuilder()
                 .withFodselsnummer(fnr.fnr)
-                .withEventId(eventId.toString())
+                .withEventId(eventId)
                 .withGrupperingsId(grupperingId)
                 .withAppnavn(app)
                 .withNamespace(namespace)
