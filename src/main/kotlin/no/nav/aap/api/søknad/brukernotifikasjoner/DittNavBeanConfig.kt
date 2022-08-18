@@ -21,6 +21,7 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS
+import org.springframework.stereotype.Component
 
 @Configuration
 class DittNavBeanConfig {
@@ -47,10 +48,11 @@ class DittNavBeanConfig {
             consumerFactory = kafkaConsumerFactory
         }
 
+    @Component
     class NotifikasjonConsumer {
         private val log = LoggerUtil.getLogger(javaClass)
 
-        @KafkaListener(topics = ["aapen-dok-notifikasjon-status"],
+        @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
                 containerFactory = "stringAvroKafkaListenerContainerFactory")
         fun consume(kafkaRecord: ConsumerRecord<String, DoknotifikasjonStatus>) {
             log.info("XXXXXXX ${kafkaRecord.value()}")
