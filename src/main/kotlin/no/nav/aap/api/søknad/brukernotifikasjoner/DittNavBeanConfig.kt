@@ -29,9 +29,9 @@ class DittNavBeanConfig {
     private val log = getLogger(javaClass)
 
     @Bean
-    fun dittNavKafkaOperations(pf: ProducerFactory<Any, Any>) =
+    fun dittNavKafkaOperations(pf: ProducerFactory<Any, Any>, kafkaProperties: KafkaProperties) =
         // Clone the PF to use Avro serializers
-        KafkaTemplate(DefaultKafkaProducerFactory<NokkelInput, Any>(HashMap(pf.configurationProperties)
+        KafkaTemplate(DefaultKafkaProducerFactory<NokkelInput, Any>(kafkaProperties.buildProducerProperties()/*HashMap(pf.configurationProperties)*/
             .apply {
                 put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
                 put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
