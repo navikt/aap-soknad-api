@@ -161,9 +161,6 @@ dittnav:
         namespace: ${nais.namespace}
     beskjed:
         topic: min-side.aapen-brukernotifikasjon-beskjed-v1
-        preferertekanaler:
-            - SMS
-            - EPOST
     oppgave:
         topic: min-side.aapen-brukernotifikasjon-oppgave-v1
         preferertekanaler:
