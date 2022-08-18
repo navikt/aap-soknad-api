@@ -4,7 +4,6 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
-import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
@@ -37,7 +36,7 @@ class DittNavBeanConfig {
 
     @Bean
     fun notifikasjonConsumerFactory(kafkaProperties: KafkaProperties) =
-        DefaultKafkaConsumerFactory<String, DoknotifikasjonStatus>(kafkaProperties.buildConsumerProperties().apply {
+        DefaultKafkaConsumerFactory<String, Any>(kafkaProperties.buildConsumerProperties().apply {
             put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
             put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
         })
