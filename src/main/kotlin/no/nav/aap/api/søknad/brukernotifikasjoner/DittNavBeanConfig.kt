@@ -4,6 +4,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
+import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
@@ -36,14 +37,14 @@ class DittNavBeanConfig {
 
     @Bean
     fun notifikasjonConsumerFactory(kafkaProperties: KafkaProperties) =
-        DefaultKafkaConsumerFactory<Any, Any>(kafkaProperties.buildConsumerProperties().apply {
+        DefaultKafkaConsumerFactory<Any, DoknotifikasjonStatus>(kafkaProperties.buildConsumerProperties().apply {
             put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
             put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
         })
 
     @Bean
-    fun notifikasjonListenerContainerFactory(kafkaConsumerFactory: ConsumerFactory<Any, Any>) =
-        ConcurrentKafkaListenerContainerFactory<Any, Any>().apply {
+    fun notifikasjonListenerContainerFactory(kafkaConsumerFactory: ConsumerFactory<Any, DoknotifikasjonStatus>) =
+        ConcurrentKafkaListenerContainerFactory<Any, DoknotifikasjonStatus>().apply {
             consumerFactory = kafkaConsumerFactory
         }
 
@@ -53,7 +54,7 @@ class DittNavBeanConfig {
 
         @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
                 containerFactory = "notifikasjonListenerContainerFactory")
-        fun consume(kafkaRecord: ConsumerRecord<Any, Any>) {
+        fun consume(kafkaRecord: ConsumerRecord<Any, DoknotifikasjonStatus>) {
             with(kafkaRecord) {
                 log.info("Notifikasjon:  key er ${key().javaClass.name}, value = ${value().javaClass.name}")
                 //log.info("Notifikasjon:  key er ${kafkaRecord.key()}, bestiller= $bestillerId, bestillingId=$bestillingsId, status=$status, distribusjonId=$distribusjonId, melding=$melding}")
