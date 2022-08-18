@@ -6,6 +6,8 @@ import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.SendCallback
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient.DittNavNotifikasjonType.DittNavBacklinkContext.MINAAP
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient.DittNavNotifikasjonType.DittNavBacklinkContext.SØKNAD
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavConfig.BacklinksConfig
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.DittNavBacklinkContext.MINAAP
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.DittNavBacklinkContext.SØKNAD
@@ -121,8 +123,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withTekst(tekst)
                 .withEksternVarsling(eksternVarsling)
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
-                .build()
-        }
+                .build().also { m->
+                    log.trace(CONFIDENTIAL,
+                            "Melding har tekst ${m.tekst}, prefererte kanaler ${m.prefererteKanaler} og ekstern varsling ${m.eksternVarsling}")
+                }
 
     private fun oppgave(tekst: String, type: DittNavNotifikasjonType) =
         with(cfg.oppgave) {
@@ -134,7 +138,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withTekst(tekst)
                 .withEksternVarsling(eksternVarsling)
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
-                .build()
+                .build().also { o ->
+                    log.trace(CONFIDENTIAL,
+                            "Oppgave har tekst ${o.tekst}, prefererte kanaler ${o.prefererteKanaler} og ekstern varsling ${o.eksternVarsling}")
+                }
         }
 
     private fun done() =
