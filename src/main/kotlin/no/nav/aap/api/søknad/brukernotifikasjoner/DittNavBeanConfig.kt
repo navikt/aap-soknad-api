@@ -49,13 +49,15 @@ class DittNavBeanConfig {
         }
 
     @Component
-    class NotifikasjonConsumer {
+    class EksternNotifikasjonStatusKonsument {
         private val log = getLogger(javaClass)
 
         @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
                 containerFactory = "notifikasjonListenerContainerFactory")
         fun consume(kafkaRecord: ConsumerRecord<String, DoknotifikasjonStatus>) {
-            log.info("XXXXXXX ${kafkaRecord.value()}")
+            with(kafkaRecord.value()) {
+                log.info("Notifikasjon:  key er ${kafkaRecord.key()}, bestiller= $bestillerId, bestillingId=$bestillingsId, status=$status, distribusjonId=$distribusjonId, melding=$melding}")
+            }
         }
     }
 }
