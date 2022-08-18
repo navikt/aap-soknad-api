@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
@@ -41,6 +42,7 @@ class DittNavBeanConfig {
         DefaultKafkaConsumerFactory<Any, DoknotifikasjonStatus>(kafkaProperties.buildConsumerProperties().apply {
             put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
             put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
+            put(SPECIFIC_AVRO_READER_CONFIG, true)
         })
 
     @Bean
