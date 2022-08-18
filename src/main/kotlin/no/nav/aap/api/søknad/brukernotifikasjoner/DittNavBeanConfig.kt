@@ -3,10 +3,8 @@ package no.nav.aap.api.søknad.brukernotifikasjoner
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
-import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -22,6 +20,7 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS
+import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 
 @Configuration
@@ -40,11 +39,8 @@ class DittNavBeanConfig {
     @Bean
     fun notifikasjonConsumerFactory(kafkaProperties: KafkaProperties) =
         DefaultKafkaConsumerFactory<Any, DoknotifikasjonStatus>(kafkaProperties.buildConsumerProperties().apply {
-            log.trace(CONFIDENTIAL, "Consumer properties før  $this")
             put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
             put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
-            log.trace(CONFIDENTIAL, "Consumer properties etter  $this")
-
         })
 
     @Bean
@@ -59,9 +55,9 @@ class DittNavBeanConfig {
 
         @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
                 containerFactory = "notifikasjonListenerContainerFactory")
-        fun consume(kafkaRecord: ConsumerRecord<Any, DoknotifikasjonStatus>) {
-            with(kafkaRecord) {
-                log.info("Notifikasjon:  key er ${key().javaClass.name}, value = ${value().javaClass.name}")
+        fun listen(@Payload status: DoknotifikasjonStatus) {
+            with(status) {
+                log.info("Notifikasjon:  melding er er ${status.melding}}")
                 //log.info("Notifikasjon:  key er ${kafkaRecord.key()}, bestiller= $bestillerId, bestillingId=$bestillingsId, status=$status, distribusjonId=$distribusjonId, melding=$melding}")
             }
         }
