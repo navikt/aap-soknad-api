@@ -67,6 +67,7 @@ spring:
             key-store-password: ${kafka.credstore.password}
         consumer:
             group-id: ${spring.application.name}
+            value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
         producer:
             acks: all
             client-id: ${spring.application.name}

@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.brukernotifikasjoner
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Component
 
 @Configuration
 class DittNavBeanConfig {
+    private val log = getLogger(javaClass)
 
     @Bean
     fun dittNavKafkaOperations(pf: ProducerFactory<Any, Any>) =
@@ -38,8 +40,11 @@ class DittNavBeanConfig {
     @Bean
     fun notifikasjonConsumerFactory(kafkaProperties: KafkaProperties) =
         DefaultKafkaConsumerFactory<Any, DoknotifikasjonStatus>(kafkaProperties.buildConsumerProperties().apply {
+            log.trace(CONFIDENTIAL, "Consumer properties før  $this")
             put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
             put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
+            log.trace(CONFIDENTIAL, "Consumer properties etter  $this")
+
         })
 
     @Bean
