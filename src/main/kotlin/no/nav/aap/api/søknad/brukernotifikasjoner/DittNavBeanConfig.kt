@@ -36,7 +36,7 @@ class DittNavBeanConfig {
 
     @Bean
     fun notifikasjonConsumerFactory(kafkaProperties: KafkaProperties) =
-        DefaultKafkaConsumerFactory<String, Any>(kafkaProperties.buildConsumerProperties().apply {
+        DefaultKafkaConsumerFactory<Any, Any>(kafkaProperties.buildConsumerProperties().apply {
             put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
             put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
         })
