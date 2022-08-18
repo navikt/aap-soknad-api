@@ -25,8 +25,7 @@ data class DittNavConfig(@NestedConfigurationProperty private val nais: NAISConf
                            @DefaultValue(DEFAULT_VARIGHET) val varighet: Duration,
                            @DefaultValue("true") val enabled: Boolean,
                            val preferertekanaler: List<PreferertKanal> = listOf(),
-                           @DefaultValue(DEFAULT_LEVEL) val sikkerhetsnivaa: Int,
-                           @DefaultValue("true") val eksternVarsling: Boolean)
+                           @DefaultValue(DEFAULT_LEVEL) val sikkerhetsnivaa: Int)
 
     data class NAISConfig(val namespace: String, val app: String)
 

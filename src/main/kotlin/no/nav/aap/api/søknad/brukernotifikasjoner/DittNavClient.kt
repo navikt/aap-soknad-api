@@ -119,7 +119,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withSynligFremTil(now(UTC).plus(varighet))
                 .withLink(type.link(cfg.backlinks))
                 .withTekst(tekst)
-                .withEksternVarsling(eksternVarsling)
+                .withEksternVarsling(preferertekanaler.isNotEmpty())
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
                 .build().also { m ->
                     log.trace(CONFIDENTIAL,
@@ -135,7 +135,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withSynligFremTil(now(UTC).plus(varighet))
                 .withLink(type.link(cfg.backlinks))
                 .withTekst(tekst)
-                .withEksternVarsling(eksternVarsling)
+                .withEksternVarsling(preferertekanaler.isNotEmpty())
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
                 .build().also { o ->
                     log.trace(CONFIDENTIAL,
