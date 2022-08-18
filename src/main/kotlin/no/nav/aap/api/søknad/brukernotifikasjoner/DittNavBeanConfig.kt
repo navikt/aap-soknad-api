@@ -2,7 +2,7 @@ package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroSerializer
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -50,7 +50,7 @@ class DittNavBeanConfig {
 
     @Component
     class NotifikasjonConsumer {
-        private val log = LoggerUtil.getLogger(javaClass)
+        private val log = getLogger(javaClass)
 
         @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
                 containerFactory = "stringAvroKafkaListenerContainerFactory")
