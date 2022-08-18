@@ -60,7 +60,7 @@ class DittNavBeanConfig {
                    @Header(OFFSET) offset: Int,
                    @Header(RECEIVED_TOPIC) topic: String) {
             with(status) {
-                log.info("Fikk notifikasjon $this med key $key fra partisjon $partition, offset $offset  på topic $topic")
+                log.trace("Fikk notifikasjon $this med key $key fra partisjon $partition, offset $offset  på topic $topic")
             }
         }
     }
