@@ -55,7 +55,7 @@ class DittNavBeanConfig {
                 containerFactory = "notifikasjonListenerContainerFactory")
         fun consume(kafkaRecord: ConsumerRecord<Any, Any>) {
             with(kafkaRecord) {
-                log.info("Notifikasjon:  key er ${key()}, value = ${value()}")
+                log.info("Notifikasjon:  key er ${key().javaClass.name}, value = ${value().javaClass.name}")
                 //log.info("Notifikasjon:  key er ${kafkaRecord.key()}, bestiller= $bestillerId, bestillingId=$bestillingsId, status=$status, distribusjonId=$distribusjonId, melding=$melding}")
             }
         }
