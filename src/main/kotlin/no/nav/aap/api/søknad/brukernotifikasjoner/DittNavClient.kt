@@ -161,9 +161,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 }
 
-data class DittNavNotifikasjonType private constructor(val skjemaType: SkjemaType, val ctx: DittNavBacklinkContext) {
+data class DittNavNotifikasjonType private constructor(val skjemaType: SkjemaType,
+                                                       private val ctx: DittNavBacklinkContext) {
 
-    enum class DittNavBacklinkContext {
+    private enum class DittNavBacklinkContext {
         MINAAP,
         SØKNAD
     }
