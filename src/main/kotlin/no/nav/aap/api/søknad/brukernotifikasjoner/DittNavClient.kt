@@ -21,6 +21,7 @@ import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.util.UriComponentsBuilder.fromUri
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
 import java.util.*
@@ -61,7 +62,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (enabled) {
                 log.trace("Oppretter Ditt Nav oppgave for $fnr og eventid $eventId")
                 with(key(type.skjemaType, eventId, fnr)) {
-                    dittNav.send(ProducerRecord(topic, this, oppgave("$tekst ($eventId)", type)))
+                    dittNav.send(ProducerRecord(topic, this, oppgave("$tekst ($eventId)", type, eventId)))
                         .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
                     repos.oppgaver.save(Oppgave(fnr = fnr.fnr, eventid = eventId)).also {
                         log.trace(CONFIDENTIAL, "Opprettet oppgave $it i DB")
@@ -116,7 +117,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
                 .withTidspunkt(now(UTC))
                 .withSynligFremTil(now(UTC).plus(varighet))
-                .withLink(type.link(cfg.backlinks))
+                .withLink(type.link(cfg.backlinks).toURL())
                 .withTekst(tekst)
                 .withEksternVarsling(preferertekanaler.isNotEmpty())
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
@@ -126,13 +127,13 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 }
         }
 
-    private fun oppgave(tekst: String, type: DittNavNotifikasjonType) =
+    private fun oppgave(tekst: String, type: DittNavNotifikasjonType, eventId: UUID) =
         with(cfg.oppgave) {
             OppgaveInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
                 .withTidspunkt(now(UTC))
                 .withSynligFremTil(now(UTC).plus(varighet))
-                .withLink(type.link(cfg.backlinks))
+                .withLink(type.link(cfg.backlinks, eventId).toURL())
                 .withTekst(tekst)
                 .withEksternVarsling(preferertekanaler.isNotEmpty())
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
@@ -169,11 +170,14 @@ data class DittNavNotifikasjonType private constructor(val skjemaType: SkjemaTyp
         SØKNAD
     }
 
-    fun link(cfg: BacklinksConfig) =
+    fun link(cfg: BacklinksConfig, eventId: UUID? = null) =
         when (skjemaType) {
             STANDARD -> when (ctx) {
-                MINAAP -> cfg.innsyn
-                SØKNAD -> cfg.standard
+                MINAAP -> eventId?.let { fromUri(cfg.innsyn).queryParam("eventId", it).build().toUri() }
+                    ?: cfg.innsyn
+
+                SØKNAD -> eventId?.let { fromUri(cfg.standard).queryParam("eventId", it).build().toUri() }
+                    ?: cfg.standard
             }
 
             UTLAND -> when (ctx) {

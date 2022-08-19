@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
-import java.net.URL
+import java.net.URI
 import java.time.Duration
 
 @ConfigurationProperties(DITTNAV)
@@ -20,7 +20,7 @@ data class DittNavConfig(@NestedConfigurationProperty private val nais: NAISConf
     val app = nais.app
     val namespace = nais.namespace
 
-    data class BacklinksConfig(val innsyn: URL, val standard: URL, val utland: URL)
+    data class BacklinksConfig(val innsyn: URI, val standard: URI, val utland: URI)
     data class TopicConfig(val topic: String,
                            @DefaultValue(DEFAULT_VARIGHET) val varighet: Duration,
                            @DefaultValue("true") val enabled: Boolean,
