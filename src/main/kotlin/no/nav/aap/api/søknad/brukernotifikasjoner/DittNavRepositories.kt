@@ -28,9 +28,8 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
     fun done(@Param("eventid") eventid: UUID): Int
 
     @Modifying
-    @Query("update beskjed set distribusjondato = :distribusjondato, distribusjonkanal = :distribusjonkanal, distribusjonid = :distribusjonid, updated = current_timestamp where eventid = :eventid")
+    @Query("update beskjed set distribusjondato = current_timestamp, distribusjonkanal = :distribusjonkanal, distribusjonid = :distribusjonid, updated = current_timestamp where eventid = :eventid")
     fun distribuert(@Param("eventid") eventid: UUID,
-                    @Param("distribusjondato") distribusjondato: LocalDateTime,
                     @Param("distribusjonkanal") distribusjonkanal: String,
                     @Param("distribusjonid") distribusjonid: Long): Int
 
@@ -58,9 +57,8 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
     fun done(@Param("eventid") eventid: UUID): Int
 
     @Modifying
-    @Query("update oppgave set distribusjondato = :distribusjondato, distribusjonkanal = :distribusjonkanal, distribusjonid = :distribusjonid, updated = current_timestamp where eventid = :eventid")
+    @Query("update oppgave set distribusjondato = current_timestamp, distribusjonkanal = :distribusjonkanal, distribusjonid = :distribusjonid, updated = current_timestamp where eventid = :eventid")
     fun distribuert(@Param("eventid") eventid: UUID,
-                    @Param("distribusjondato") distribusjondato: LocalDateTime,
                     @Param("distribusjonkanal") distribusjonkanal: String,
                     @Param("distribusjonid") distribusjonid: Long): Int
 

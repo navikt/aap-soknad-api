@@ -23,7 +23,6 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VA
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime.now
 import java.util.UUID.fromString
 
 @Configuration
@@ -66,8 +65,8 @@ class DittNavBeanConfig {
 
         private fun oppdaterDistribusjonStatus(payload: DoknotifikasjonStatus) {
             with(payload) {
-                log.trace("Oppdaterer beskjed fra distribusjonsinfo $this")
-                when (repos.beskjeder.distribuert(fromString(bestillingsId), now(), melding, distribusjonId)) {
+                log.trace("Oppdaterer beskjed fra distribusjonsinfo fra $this")
+                when (repos.beskjeder.distribuert(fromString(bestillingsId), melding, distribusjonId)) {
                     0 -> oppdaterOppgave(payload)
                     1 -> log.trace("Oppdatert beskjed $bestillingsId med distribusjonsinfo fra $this")
                     else -> log.warn("Uventet antall rader oppdatert med distribusjonsinfo fra $this (skal aldri skje)")
@@ -77,9 +76,9 @@ class DittNavBeanConfig {
 
         private fun oppdaterOppgave(payload: DoknotifikasjonStatus) {
             with(payload) {
-                log.trace("Oppdaterer oppgave fra distribusjonsinfo $this")
-                when (repos.oppgaver.distribuert(fromString(bestillingsId), now(), melding, distribusjonId)) {
-                    0 -> log.warn("Kunne heller ikke oppdatere oppgave med distribusjonsinfo fra $this")
+                log.trace("Oppdaterer oppgave fra distribusjonsinfo fra $this")
+                when (repos.oppgaver.distribuert(fromString(bestillingsId), melding, distribusjonId)) {
+                    0 -> log.warn("Kunne  ikke oppdatere oppgave med distribusjonsinfo fra $this")
                     1 -> log.trace("Oppdatert oppgave $bestillingsId med distribusjonsinfo fra $this")
                     else -> log.warn("Uventet antall rader oppdatert med distribusjonsinfo fra $this (skal aldri skje)")
                 }
