@@ -46,7 +46,11 @@ class DittNavBeanConfig {
                     put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
                     put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
                     put(SPECIFIC_AVRO_READER_CONFIG, true)
-                    setRecordFilterStrategy { f -> f.value().status != FERDIGSTILT }
+                    setRecordFilterStrategy { payload ->
+                        with(payload.value()) {
+                            !(status == FERDIGSTILT && melding.contains(NOTIFIKASJON_SENDT))
+                        }
+                    }
                 })
         }
 
@@ -60,12 +64,8 @@ class DittNavBeanConfig {
         @Transactional
         fun listen(@Payload payload: DoknotifikasjonStatus) {
             with(payload) {
-                if (bestillerId == navn && status == FERDIGSTILT && melding.contains(NOTIFIKASJON_SENDT)) {
-                    oppdaterBeskjed(payload)
-                }
-                else {
-                    log.trace("Ignorerer notifikasjon $this")
-                }
+                log.trace("Oppdaterer beskjed fra  notifikasjon $this")
+                oppdaterBeskjed(payload)
             }
         }
 
