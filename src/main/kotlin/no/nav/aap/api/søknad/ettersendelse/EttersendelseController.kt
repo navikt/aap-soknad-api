@@ -1,19 +1,21 @@
 package no.nav.aap.api.søknad.ettersendelse
 
+import no.nav.aap.api.felles.SkjemaType.STANDARD
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
+import no.nav.aap.util.AuthContext
+import no.nav.aap.util.Constants
 import no.nav.aap.util.LoggerUtil
-import no.nav.boot.conditionals.ConditionalOnNotProd
-import no.nav.security.token.support.spring.UnprotectedRestController
+import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import java.util.*
 
-@UnprotectedRestController(["/ettersend"])
-@ConditionalOnNotProd
-internal class EttersendelseController {
+@ProtectedRestController(value = ["/ettersend"], issuer = Constants.IDPORTEN)
+internal class EttersendelseController(private val dittNav: DittNavClient, private val ctx: AuthContext) {
     private val log = LoggerUtil.getLogger(javaClass)
 
     @GetMapping
-    fun ettersend(@RequestParam uuid: UUID) {
-        log.trace("Ettersender $uuid")
+    fun ettersend(@RequestParam eventId: UUID) {
+        dittNav.avsluttOppgave(STANDARD, ctx.getFnr(), eventId)
     }
 }
