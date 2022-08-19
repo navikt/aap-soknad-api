@@ -74,7 +74,7 @@ class DittNavBeanConfig {
                 when (repos.beskjeder.distribuert(fromString(bestillingsId), now(), melding, distribusjonId)) {
                     0 -> oppdaterOppgave(payload)
                     1 -> log.trace("Oppdatert beskjed $bestillingsId med distribusjonsinfo fra $this")
-                    else -> log.trace("Uventet antall rader oppdatert med distribusjonsinfo fra $this (skal aldri skje)")
+                    else -> log.warn("Uventet antall rader oppdatert med distribusjonsinfo fra $this (skal aldri skje)")
                 }
             }
         }
