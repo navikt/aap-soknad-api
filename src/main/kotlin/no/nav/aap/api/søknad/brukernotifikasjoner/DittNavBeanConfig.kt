@@ -36,31 +36,30 @@ class DittNavBeanConfig {
             }))
 
     @Bean
-    fun notifikasjonListenerContainerFactory(properties: KafkaProperties,
-                                             @Value("\${spring.application.name}") navn: String) =
+    fun notifikasjonListenerContainerFactory(properties: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, DoknotifikasjonStatus>().apply {
             consumerFactory =
                 DefaultKafkaConsumerFactory(properties.buildConsumerProperties().apply {
                     put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
                     put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
                     put(SPECIFIC_AVRO_READER_CONFIG, true)
-                    setRecordFilterStrategy { f ->
-                        val filter = f.value().bestillerId != navn || f.value().status != "FERDIGSTILT"
-                        log.trace("FILTER ${f.value()} er $filter")
-                        filter
-                    }
                 })
         }
 
     @Component
-    class EksternNotifikasjonStatusKonsument {
+    class EksternNotifikasjonStatusKonsument(@Value("\${spring.application.name}") private val navn: String) {
         private val log = getLogger(javaClass)
 
         @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
                 containerFactory = "notifikasjonListenerContainerFactory")
         fun listen(@Payload status: DoknotifikasjonStatus) {
             with(status) {
-                log.trace("Fikk notifikasjon $this")
+                if (bestillerId == navn && this.status == "FERDIGSTILT") {
+                    log.trace("Fikk notifikasjon $this")
+                }
+                else {
+                    log.trace("Ignorerer notifikasjon $this")
+                }
             }
         }
     }
