@@ -15,6 +15,6 @@ internal class DittNavDevController(private val dittNav: DittNavClient, private 
 
     @GetMapping("/avsluttalle")
     fun avslutt(@RequestParam fnr: Fødselsnummer) {
-        repos.oppgaver.allNotDone(fnr).forEach { dittNav.avsluttOppgave(STANDARD, fnr, it) }
+        repos.oppgaver.allNotDone(fnr.fnr).forEach { dittNav.avsluttOppgave(STANDARD, fnr, it) }
     }
 }

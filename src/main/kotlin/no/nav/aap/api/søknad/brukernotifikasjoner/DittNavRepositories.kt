@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
-import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
 import no.nav.aap.util.StringExtensions.partialMask
@@ -58,7 +57,7 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
     fun done(@Param("eventid") eventid: UUID): Int
 
     @Query("select eventid from oppgave where  done = false and fnr = :fnr")
-    fun allNotDone(@Param("fnr") fnr: Fødselsnummer): List<UUID>
+    fun allNotDone(@Param("fnr") fnr: String): List<UUID>
 
     @Modifying
     @Query("update oppgave set distribusjondato = current_timestamp, distribusjonkanal = :distribusjonkanal, distribusjonid = :distribusjonid, updated = current_timestamp where eventid = :eventid")
