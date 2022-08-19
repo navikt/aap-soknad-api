@@ -43,9 +43,9 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
             val eventid: UUID,
             @LastModifiedDate var updated: LocalDateTime? = null,
             val done: Boolean = false,
-            val distribusjondato: LocalDateTime?,
-            val distribusjonid: Int?,
-            val distribusjonkanal: String,
+            val distribusjondato: LocalDateTime? = null,
+            val distribusjonid: Int? = null,
+            val distribusjonkanal: String? = null,
             @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0) {
         override fun toString(): String =
             "Beskjed(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done, distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonknal=$distribusjonkanal,id=$id)"
@@ -73,9 +73,9 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
             @LastModifiedDate var updated: LocalDateTime? = null,
             val eventid: UUID,
             val done: Boolean = false,
-            val distribusjondato: LocalDateTime?,
-            val distribusjonid: Int?,
-            val distribusjonkanal: String,
+            val distribusjondato: LocalDateTime? = null,
+            val distribusjonid: Int? = null,
+            val distribusjonkanal: String? = null,
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
         override fun toString(): String =
             "Oppgave(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done, distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonknal=$distribusjonkanal,id=$id)"
