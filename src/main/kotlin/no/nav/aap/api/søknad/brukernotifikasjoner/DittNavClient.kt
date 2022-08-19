@@ -36,17 +36,16 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun opprettBeskjed(type: DittNavNotifikasjonType,
                        eventId: UUID,
                        fnr: Fødselsnummer,
-                       tekst: String,
-                       mellomlager: Boolean = false) =
+                       tekst: String) =
         with(cfg.beskjed) {
             if (enabled) {
                 log.trace("Oppretter Ditt Nav beskjed for $fnr og eventid $eventId")
                 dittNav.send(ProducerRecord(topic,
-                        key(type.skjemaType.name, eventId, fnr, "beskjed"), beskjed("$tekst ($eventId)", type)))
+                        key(type.skjemaType, eventId, fnr),
+                        beskjed("$tekst ($eventId)", type)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
                 log.trace("Oppretter Ditt Nav beskjed i DB")
-                repos.beskjeder.save(Beskjed(fnr = fnr.fnr,
-                        eventid = eventId)).also {
+                repos.beskjeder.save(Beskjed(fnr = fnr.fnr, eventid = eventId)).also {
                     log.trace(CONFIDENTIAL, "Opprettet Ditt Nav beskjed $it i DB")
                 }.eventid
             }
@@ -61,7 +60,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         with(cfg.oppgave) {
             if (enabled) {
                 log.trace("Oppretter Ditt Nav oppgave for $fnr og eventid $eventId")
-                with(key(type.skjemaType.name, eventId, fnr, "oppgave")) {
+                with(key(type.skjemaType, eventId, fnr)) {
                     dittNav.send(ProducerRecord(topic, this, oppgave("$tekst ($eventId)", type)))
                         .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
                     repos.oppgaver.save(Oppgave(fnr = fnr.fnr, eventid = eventId)).also {
@@ -79,13 +78,13 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun avsluttOppgave(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
         with(cfg) {
             if (oppgave.enabled) {
-                dittNav.send(ProducerRecord(done, key(type.name, eventId, fnr, "done"), done()))
+                dittNav.send(ProducerRecord(done, key(type, eventId, fnr), done()))
                     .addCallback(SendCallback("avslutt oppgave med eventid $eventId"))
                 log.trace("Setter oppgave done i DB for eventId $eventId")
-                when (val rows = repos.oppgaver.done(eventId)) {
+                when (repos.oppgaver.done(eventId)) {
                     0 -> log.warn("Kunne ikke sette oppgave med eventid $eventId for $fnr til done i DB, ingen rader funnet")
                     1 -> log.trace("Satt oppgave med eventid $eventId for $fnr done i DB")
-                    else -> log.warn("Satte et uventet antall rader ($rows) til oppdatert for oppgave med eventid  $eventId og $fnr til done i DB")
+                    else -> log.warn("Satte et uventet antall rader til oppdatert for oppgave med eventid  $eventId og $fnr til done i DB")
                 }
             }
             else {
@@ -97,13 +96,13 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun avsluttBeskjed(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
         with(cfg) {
             if (beskjed.enabled) {
-                dittNav.send(ProducerRecord(done, key(type.name, eventId, fnr, "done"), done()))
+                dittNav.send(ProducerRecord(done, key(type, eventId, fnr), done()))
                     .addCallback(SendCallback("avslutt beskjed med eventid $eventId"))
                 log.trace("Setter beskjed done i DB for eventid $eventId")
-                when (val rows = repos.beskjeder.done(eventId)) {
+                when (repos.beskjeder.done(eventId)) {
                     0 -> log.warn("Kunne ikke sette beskjed med eventid $eventId for fnr $fnr til done i DB, ingen rader oppdatert")
                     1 -> log.trace("Satt beskjed med eventid $eventId for $fnr done i DB")
-                    else -> log.warn("Satte et uventet antall rader ($rows) til oppdatert for beskjed med eventid $eventId og fnr $fnr til done i DB")
+                    else -> log.warn("Satte et uventet antall rader til oppdatert for beskjed med eventid $eventId og fnr $fnr til done i DB")
                 }
             }
             else {
@@ -148,12 +147,12 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             .withTidspunkt(now(UTC))
             .build()
 
-    private fun key(grupperingId: String, eventId: UUID, fnr: Fødselsnummer, type: String) =
+    private fun key(type: SkjemaType, eventId: UUID, fnr: Fødselsnummer) =
         with(cfg) {
             NokkelInputBuilder()
                 .withFodselsnummer(fnr.fnr)
                 .withEventId("$eventId")
-                .withGrupperingsId(grupperingId)
+                .withGrupperingsId(type.name)
                 .withAppnavn(app)
                 .withNamespace(namespace)
                 .build().also {
