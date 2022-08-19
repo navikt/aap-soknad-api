@@ -43,9 +43,7 @@ class DittNavBeanConfig {
                     put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
                     put(SPECIFIC_AVRO_READER_CONFIG, true)
                     setRecordFilterStrategy { f ->
-                        with(f.value()) {
-                            bestillerId == navn && status == "FERDIGSTILT"
-                        }
+                        f.value().bestillerId == navn && f.value().status == "FERDIGSTILT"
                     }
                 })
         }
