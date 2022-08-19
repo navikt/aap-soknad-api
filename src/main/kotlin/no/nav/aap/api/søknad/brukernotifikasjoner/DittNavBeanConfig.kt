@@ -73,7 +73,7 @@ class DittNavBeanConfig {
             with(payload) {
                 when (repos.beskjeder.distribuert(fromString(bestillingsId), now(), melding, distribusjonId)) {
                     0 -> oppdaterOppgave(payload)
-                    1 -> log.trace("Oppdatert beskjed $distribusjonId med distribusjonsinfo fra $this")
+                    1 -> log.trace("Oppdatert beskjed $bestillingsId med distribusjonsinfo fra $this")
                     else -> log.trace("Uventet antall rader oppdatert med distribusjonsinfo fra $this (skal aldri skje)")
                 }
             }
@@ -83,7 +83,7 @@ class DittNavBeanConfig {
             with(payload) {
                 when (repos.oppgaver.distribuert(fromString(bestillingsId), now(), melding, distribusjonId)) {
                     0 -> log.warn("Kunne heller ikke oppdatere oppgave med distribusjonsinfo fra $this")
-                    1 -> log.trace("Oppdatert oppgave $distribusjonId med distribusjonsinfo")
+                    1 -> log.trace("Oppdatert oppgave $bestillingsId med distribusjonsinfo fra $this")
                     else -> log.warn("Uventet antall rader oppdatert med distribusjonsinfo fra $this (skal aldri skje)")
                 }
             }
