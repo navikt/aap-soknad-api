@@ -42,7 +42,11 @@ class DittNavBeanConfig {
                     put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
                     put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
                     put(SPECIFIC_AVRO_READER_CONFIG, true)
-                    // setRecordFilterStrategy { f -> f.value().bestillerId == navn }
+                    setRecordFilterStrategy { f ->
+                        with(f.value()) {
+                            bestillerId == navn && status == "FERDIGSTILT"
+                        }
+                    }
                 })
         }
 
