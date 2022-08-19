@@ -62,13 +62,9 @@ class DittNavBeanConfig {
         @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
                 containerFactory = "notifikasjonListenerContainerFactory")
         @Transactional
-        fun listen(@Payload payload: DoknotifikasjonStatus) {
-            with(payload) {
-                oppdaterBeskjed(payload)
-            }
-        }
+        fun listen(@Payload payload: DoknotifikasjonStatus) = oppdaterDistribusjonStatus(payload)
 
-        private fun oppdaterBeskjed(payload: DoknotifikasjonStatus) {
+        private fun oppdaterDistribusjonStatus(payload: DoknotifikasjonStatus) {
             with(payload) {
                 log.trace("Oppdaterer beskjed fra distribusjonsinfo $this")
                 when (repos.beskjeder.distribuert(fromString(bestillingsId), now(), melding, distribusjonId)) {
