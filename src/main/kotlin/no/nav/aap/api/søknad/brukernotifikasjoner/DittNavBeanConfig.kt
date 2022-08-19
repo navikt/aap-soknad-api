@@ -64,13 +64,13 @@ class DittNavBeanConfig {
         @Transactional
         fun listen(@Payload payload: DoknotifikasjonStatus) {
             with(payload) {
-                log.trace("Oppdaterer beskjed fra  notifikasjon $this")
                 oppdaterBeskjed(payload)
             }
         }
 
         private fun oppdaterBeskjed(payload: DoknotifikasjonStatus) {
             with(payload) {
+                log.trace("Oppdaterer beskjed fra distribusjonsinfo $this")
                 when (repos.beskjeder.distribuert(fromString(bestillingsId), now(), melding, distribusjonId)) {
                     0 -> oppdaterOppgave(payload)
                     1 -> log.trace("Oppdatert beskjed $bestillingsId med distribusjonsinfo fra $this")
@@ -81,6 +81,7 @@ class DittNavBeanConfig {
 
         private fun oppdaterOppgave(payload: DoknotifikasjonStatus) {
             with(payload) {
+                log.trace("Oppdaterer oppgave fra distribusjonsinfo $this")
                 when (repos.oppgaver.distribuert(fromString(bestillingsId), now(), melding, distribusjonId)) {
                     0 -> log.warn("Kunne heller ikke oppdatere oppgave med distribusjonsinfo fra $this")
                     1 -> log.trace("Oppdatert oppgave $bestillingsId med distribusjonsinfo fra $this")
