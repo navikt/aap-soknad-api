@@ -56,7 +56,7 @@ class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
         metadata?.let {
             with(it) {
                 log.trace(CONFIDENTIAL, "Oppretter beskjed fra metadata $it")
-                dittNav.opprettBeskjed(SØKNADSTD, uuid, fnr, "Du har en påbegynt ${type.tittel}", true)
+                dittNav.opprettBeskjed(SØKNADSTD, uuid, fnr, "Du har en påbegynt ${type.tittel}")
             }
         } ?: log.warn("Fant ikke forventede metadata")
 
