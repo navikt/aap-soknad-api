@@ -25,6 +25,8 @@ import org.springframework.stereotype.Component
 
 @Configuration
 class DittNavBeanConfig {
+    private val log = getLogger(javaClass)
+
     @Bean
     fun dittNavKafkaOperations(properties: KafkaProperties) =
         KafkaTemplate(DefaultKafkaProducerFactory<NokkelInput, Any>(properties.buildProducerProperties()
@@ -43,7 +45,9 @@ class DittNavBeanConfig {
                     put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
                     put(SPECIFIC_AVRO_READER_CONFIG, true)
                     setRecordFilterStrategy { f ->
-                        f.value().bestillerId == navn && f.value().status == "FERDIGSTILT"
+                        val filter = f.value().bestillerId == navn && f.value().status == "FERDIGSTILT"
+                        log.trace("FILTER ${f.value()} er $filter")
+                        filter
                     }
                 })
         }
