@@ -27,6 +27,13 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
     @Query("update beskjed set done = true, updated = current_timestamp where eventid = :eventid")
     fun done(@Param("eventid") eventid: UUID): Int
 
+    @Modifying
+    @Query("update beskjed set distribusjondato = :distribusjondato, distribusjonkanal = :distribusjonkanal, distribusjonid = :distribusjonid, updated = current_timestamp where eventid = :eventid")
+    fun distribuert(@Param("eventid") eventid: UUID,
+                    @Param("distribusjondato") distribusjondato: LocalDateTime,
+                    @Param("distribusjonkanal") distribusjonkanal: String,
+                    @Param("distribusjonid") distribusjonid: Int): Int
+
     @Entity(name = "beskjed")
     @Table(name = "dittnavbeskjeder")
     @EntityListeners(AuditingEntityListener::class)
@@ -36,9 +43,12 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
             val eventid: UUID,
             @LastModifiedDate var updated: LocalDateTime? = null,
             val done: Boolean = false,
+            val distribusjondato: LocalDateTime?,
+            val distribusjonid: Int?,
+            val distribusjonkanal: String,
             @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0) {
         override fun toString(): String =
-            "Beskjed(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done, id=$id)"
+            "Beskjed(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done, distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonknal=$distribusjonkanal,id=$id)"
     }
 }
 
@@ -46,6 +56,13 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
     @Modifying
     @Query("update oppgave set done = true, updated = current_timestamp where eventid = :eventid")
     fun done(@Param("eventid") eventid: UUID): Int
+
+    @Modifying
+    @Query("update oppgave set distribusjondato = :distribusjondato, distribusjonkanal = :distribusjonkanal, distribusjonid = :distribusjonid, updated = current_timestamp where eventid = :eventid")
+    fun distribuert(@Param("eventid") eventid: UUID,
+                    @Param("distribusjondato") distribusjondato: LocalDateTime,
+                    @Param("distribusjonkanal") distribusjonkanal: String,
+                    @Param("distribusjonid") distribusjonid: Int): Int
 
     @Entity(name = "oppgave")
     @Table(name = "dittnavoppgaver")
@@ -56,9 +73,12 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
             @LastModifiedDate var updated: LocalDateTime? = null,
             val eventid: UUID,
             val done: Boolean = false,
+            val distribusjondato: LocalDateTime?,
+            val distribusjonid: Int?,
+            val distribusjonkanal: String,
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
-        override fun toString() =
-            "JPADittNavOppgave(fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, done=$done, id=$id)"
+        override fun toString(): String =
+            "Oppgave(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done, distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonknal=$distribusjonkanal,id=$id)"
     }
 }
 

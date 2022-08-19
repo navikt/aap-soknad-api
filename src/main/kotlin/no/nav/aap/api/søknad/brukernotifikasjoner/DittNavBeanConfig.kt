@@ -52,9 +52,9 @@ class DittNavBeanConfig {
 
         @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
                 containerFactory = "notifikasjonListenerContainerFactory")
-        fun listen(@Payload status: DoknotifikasjonStatus) {
-            with(status) {
-                if (bestillerId == navn && this.status == "FERDIGSTILT") {
+        fun listen(@Payload payload: DoknotifikasjonStatus) {
+            with(payload) {
+                if (bestillerId == navn && status == "FERDIGSTILT" && melding.contains("notifikasjon sendt via")) {
                     log.trace("Fikk notifikasjon $this")
                 }
                 else {
