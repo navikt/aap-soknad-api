@@ -39,7 +39,8 @@ class DittNavBeanConfig {
             }))
 
     @Bean
-    fun notifikasjonListenerContainerFactory(properties: KafkaProperties) =
+    fun notifikasjonListenerContainerFactory(properties: KafkaProperties,
+                                             @Value("\${spring.application.name}") appNavn: String) =
         ConcurrentKafkaListenerContainerFactory<String, DoknotifikasjonStatus>().apply {
             consumerFactory =
                 DefaultKafkaConsumerFactory(properties.buildConsumerProperties().apply {
@@ -48,15 +49,14 @@ class DittNavBeanConfig {
                     put(SPECIFIC_AVRO_READER_CONFIG, true)
                     setRecordFilterStrategy { payload ->
                         with(payload.value()) {
-                            !(status == FERDIGSTILT && melding.contains(NOTIFIKASJON_SENDT))
+                            !(bestillerId == appNavn && status == FERDIGSTILT && melding.contains(NOTIFIKASJON_SENDT))
                         }
                     }
                 })
         }
 
     @Component
-    class EksternNotifikasjonStatusKonsument(@Value("\${spring.application.name}") private val navn: String,
-                                             private val repos: DittNavRepositories) {
+    class EksternNotifikasjonStatusKonsument(private val repos: DittNavRepositories) {
         private val log = getLogger(javaClass)
 
         @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
