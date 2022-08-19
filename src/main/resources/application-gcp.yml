@@ -67,6 +67,7 @@ spring:
             key-store-password: ${kafka.credstore.password}
         consumer:
             group-id: ${spring.application.name}
+            value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
         producer:
             acks: all
             client-id: ${spring.application.name}
@@ -161,6 +162,9 @@ dittnav:
         namespace: ${nais.namespace}
     beskjed:
         topic: min-side.aapen-brukernotifikasjon-beskjed-v1
+        preferertekanaler:
+            - SMS
+            - EPOST
     oppgave:
         topic: min-side.aapen-brukernotifikasjon-oppgave-v1
         preferertekanaler:
