@@ -22,6 +22,9 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.KE
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime.now
+import java.util.UUID.fromString
 
 @Configuration
 class DittNavBeanConfig {
@@ -47,20 +50,47 @@ class DittNavBeanConfig {
         }
 
     @Component
-    class EksternNotifikasjonStatusKonsument(@Value("\${spring.application.name}") private val navn: String) {
+    class EksternNotifikasjonStatusKonsument(@Value("\${spring.application.name}") private val navn: String,
+                                             private val repos: DittNavRepositories) {
         private val log = getLogger(javaClass)
 
         @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
                 containerFactory = "notifikasjonListenerContainerFactory")
+        @Transactional
         fun listen(@Payload payload: DoknotifikasjonStatus) {
             with(payload) {
-                if (bestillerId == navn && status == "FERDIGSTILT" && melding.contains("notifikasjon sendt via")) {
-                    log.trace("Fikk notifikasjon $this")
+                if (bestillerId == navn && status == FERDIGSTILT && melding.contains(NOTIFIKASJON_SENDT)) {
+                    oppdaterBeskjed(payload)
                 }
                 else {
                     log.trace("Ignorerer notifikasjon $this")
                 }
             }
         }
+
+        private fun oppdaterBeskjed(payload: DoknotifikasjonStatus) {
+            with(payload) {
+                when (repos.beskjeder.distribuert(fromString(bestillingsId), now(), melding, distribusjonId)) {
+                    0 -> oppdaterOppgave(payload)
+                    1 -> log.trace("Oppdatert beskjed $distribusjonId med distribusjonsinfo fra $this")
+                    else -> log.trace("Uventet antall rader oppdatert med distribusjonsinfo fra $this (skal aldri skje)")
+                }
+            }
+        }
+
+        private fun oppdaterOppgave(payload: DoknotifikasjonStatus) {
+            with(payload) {
+                when (repos.oppgaver.distribuert(fromString(bestillingsId), now(), melding, distribusjonId)) {
+                    0 -> log.warn("Kunne heller ikke oppdatere oppgave med distribusjonsinfo fra $this")
+                    1 -> log.trace("Oppdatert oppgave $distribusjonId med distribusjonsinfo")
+                    else -> log.warn("Uventet antall rader oppdatert med distribusjonsinfo fra $this (skal aldri skje)")
+                }
+            }
+        }
+    }
+
+    companion object {
+        private const val FERDIGSTILT = "FERDIGSTILT"
+        private const val NOTIFIKASJON_SENDT = "notifikasjon sendt via"
     }
 }

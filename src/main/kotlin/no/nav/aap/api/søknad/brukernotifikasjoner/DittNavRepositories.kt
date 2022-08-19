@@ -32,7 +32,7 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
     fun distribuert(@Param("eventid") eventid: UUID,
                     @Param("distribusjondato") distribusjondato: LocalDateTime,
                     @Param("distribusjonkanal") distribusjonkanal: String,
-                    @Param("distribusjonid") distribusjonid: Int): Int
+                    @Param("distribusjonid") distribusjonid: Long): Int
 
     @Entity(name = "beskjed")
     @Table(name = "dittnavbeskjeder")
@@ -44,7 +44,7 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
             @LastModifiedDate var updated: LocalDateTime? = null,
             val done: Boolean = false,
             val distribusjondato: LocalDateTime? = null,
-            val distribusjonid: Int? = null,
+            val distribusjonid: Long? = null,
             val distribusjonkanal: String? = null,
             @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0) {
         override fun toString(): String =
@@ -62,7 +62,7 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
     fun distribuert(@Param("eventid") eventid: UUID,
                     @Param("distribusjondato") distribusjondato: LocalDateTime,
                     @Param("distribusjonkanal") distribusjonkanal: String,
-                    @Param("distribusjonid") distribusjonid: Int): Int
+                    @Param("distribusjonid") distribusjonid: Long): Int
 
     @Entity(name = "oppgave")
     @Table(name = "dittnavoppgaver")
@@ -74,7 +74,7 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
             val eventid: UUID,
             val done: Boolean = false,
             val distribusjondato: LocalDateTime? = null,
-            val distribusjonid: Int? = null,
+            val distribusjonid: Long? = null,
             val distribusjonkanal: String? = null,
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
         override fun toString(): String =
