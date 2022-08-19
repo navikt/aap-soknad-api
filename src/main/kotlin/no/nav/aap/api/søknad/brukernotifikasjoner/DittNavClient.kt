@@ -19,6 +19,7 @@ import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.springframework.core.env.Environment
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.util.UriComponentsBuilder.fromUri
@@ -29,7 +30,7 @@ import java.util.*
 @ConditionalOnGCP
 class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                     private val cfg: DittNavConfig,
-                    private val repos: DittNavRepositories) {
+                    private val repos: DittNavRepositories, val env: Environment) {
 
     private val log = getLogger(javaClass)
 
@@ -176,8 +177,7 @@ data class DittNavNotifikasjonType private constructor(val skjemaType: SkjemaTyp
                 MINAAP -> eventId?.let { fromUri(cfg.innsyn).queryParam("eventId", it).build().toUri() }
                     ?: cfg.innsyn
 
-                SØKNAD -> eventId?.let { fromUri(cfg.standard).queryParam("eventId", it).build().toUri() }
-                    ?: cfg.standard
+                SØKNAD -> cfg.standard
             }
 
             UTLAND -> when (ctx) {
