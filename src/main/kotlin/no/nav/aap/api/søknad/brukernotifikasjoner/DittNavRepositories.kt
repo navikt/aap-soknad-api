@@ -27,6 +27,9 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
     @Query("update beskjed set done = true, updated = current_timestamp where eventid = :eventid")
     fun done(@Param("eventid") eventid: UUID): Int
 
+    @Query("select eventid from beskjed where  done = false and fnr = :fnr")
+    fun allNotDone(@Param("fnr") fnr: String): List<UUID>
+
     @Modifying
     @Query("update beskjed set distribusjondato = current_timestamp, distribusjonkanal = :distribusjonkanal, distribusjonid = :distribusjonid, updated = current_timestamp where eventid = :eventid")
     fun distribuert(@Param("eventid") eventid: UUID,
