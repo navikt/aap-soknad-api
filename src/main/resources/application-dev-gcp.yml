@@ -30,6 +30,6 @@ organisasjon:
 debug: false
 dittnav:
     backlinks:
-        innsyn: https://aap-soknad.dev.nav.no/aap/minaap
+        innsyn: https://aap-soknad-api.dev.intern.nav.no/ettersend
         standard: https://aap-soknad.dev.nav.no/aap/soknad/standard
         utland: https://aap-soknad.dev.nav.no/aap/soknad/utland
