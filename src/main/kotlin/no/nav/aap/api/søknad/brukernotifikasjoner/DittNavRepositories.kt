@@ -83,7 +83,7 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
             @CreatedDate var created: LocalDateTime? = null,
             @LastModifiedDate var updated: LocalDateTime? = null,
             @OneToMany(mappedBy = "oppgave", cascade = [ALL])
-            val notifikasjoner: Set<EksternNotifikasjon> = setOf(),
+            var notifikasjoner: Set<EksternNotifikasjon> = setOf(),
             val eventid: UUID,
             val done: Boolean = false,
             val distribusjondato: LocalDateTime? = null,
@@ -114,9 +114,9 @@ interface DittNavNotifikasjonRepository : JpaRepository<EksternNotifikasjon, Lon
     class EksternNotifikasjon(
             @ManyToOne
             @JoinColumn(name = "fk_eventid", nullable = false)
-            val oppgave: Oppgave? = null,
+            var oppgave: Oppgave? = null,
             @CreatedDate
-            val distribusjondato: LocalDateTime? = null,
+            var distribusjondato: LocalDateTime? = null,
             val distribusjonid: Long? = null,
             val distribusjonkanal: String? = null,
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
