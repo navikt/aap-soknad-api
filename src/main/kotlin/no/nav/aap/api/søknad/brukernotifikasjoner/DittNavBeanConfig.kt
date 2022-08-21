@@ -75,7 +75,7 @@ class DittNavBeanConfig {
                             eventid = fromString(bestillingsId),
                             distribusjonid = distribusjonId,
                             distribusjonkanal = melding)
-                    it.notifikasjoner = it.notifikasjoner.plus(e)
+                    it.notifikasjoner.add(e)
                     val o1 = repos.oppgaver.save(it)
                     log.trace("Oppdatert oppgave $o1 i DB")
                 }
