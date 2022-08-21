@@ -16,6 +16,7 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.AttributeConverter
 import javax.persistence.CascadeType.ALL
+import javax.persistence.Column
 import javax.persistence.Converter
 import javax.persistence.Entity
 import javax.persistence.EntityListeners
@@ -112,6 +113,7 @@ interface DittNavNotifikasjonRepository : JpaRepository<EksternNotifikasjon, Lon
     @EntityListeners(AuditingEntityListener::class)
     class EksternNotifikasjon(
             @ManyToOne(optional = false)
+            @Column("oppgave_id")
             var oppgave: Oppgave? = null,
             var eventid: UUID,
             @CreatedDate
