@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.brukernotifikasjoner
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import io.confluent.kafka.serializers.KafkaAvroSerializer
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternNotifikasjon
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
@@ -23,6 +24,7 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VA
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 import java.util.UUID.fromString
 
 @Configuration
@@ -66,6 +68,10 @@ class DittNavBeanConfig {
         private fun oppdaterDistribusjonStatus(payload: DoknotifikasjonStatus) {
             with(payload) {
                 log.trace("Oppdaterer beskjed med distribusjonsinfo fra $this")
+                val notifikasjon =
+                    repos.notifikasjoner.saveAndFlush(EksternNotifikasjon(distribusjonid = distribusjonId,
+                            distribusjonkanal = melding))
+                log.trace("Oppdatert notifikasjon $notifikasjon i DB")
                 when (repos.beskjeder.distribuert(fromString(bestillingsId), melding, distribusjonId)) {
                     0 -> oppdaterOppgave(payload)
                     1 -> log.trace("Oppdatert beskjed $bestillingsId med distribusjonsinfo fra $this")
@@ -77,6 +83,8 @@ class DittNavBeanConfig {
         private fun oppdaterOppgave(payload: DoknotifikasjonStatus) {
             with(payload) {
                 log.trace("Oppdaterer oppgave med distribusjonsinfo fra $this")
+                val oppgave = repos.oppgaver.findOppgaveByEventid(UUID.fromString(bestillingsId))
+                log.trace("XXXX  Fant oppgave $oppgave")
                 when (repos.oppgaver.distribuert(fromString(bestillingsId), melding, distribusjonId)) {
                     0 -> log.warn("Kunne  ikke oppdatere oppgave $bestillingsId med distribusjonsinfo fra $this")
                     1 -> log.trace("Oppdatert oppgave $bestillingsId med distribusjonsinfo fra $this")

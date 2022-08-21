@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternNotifikasjon
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
 import no.nav.aap.util.StringExtensions.partialMask
 import org.springframework.data.annotation.CreatedDate
@@ -18,7 +19,6 @@ import javax.persistence.CascadeType.ALL
 import javax.persistence.Converter
 import javax.persistence.Entity
 import javax.persistence.EntityListeners
-import javax.persistence.FetchType.LAZY
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
@@ -60,6 +60,8 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
 }
 
 interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
+    fun findOppgaveByEventid(eventid: UUID): Oppgave?
+
     @Modifying
     @Query("update oppgave set done = true, updated = current_timestamp where eventid = :eventid")
     fun done(@Param("eventid") eventid: UUID): Int
@@ -95,7 +97,8 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
 
 @Component
 data class DittNavRepositories(val beskjeder: DittNavBeskjedRepository,
-                               val oppgaver: DittNavOppgaveRepository)
+                               val oppgaver: DittNavOppgaveRepository,
+                               var notifikasjoner: DittNavNotifikasjonRepository)
 
 @Converter(autoApply = true)
 class UUIDAttributeConverter : AttributeConverter<UUID, String> {
@@ -103,18 +106,21 @@ class UUIDAttributeConverter : AttributeConverter<UUID, String> {
     override fun convertToEntityAttribute(databaseValue: String?) = databaseValue?.let(UUID::fromString)
 }
 
-@Entity(name = "eksternnotifikasjon")
-@Table(name = "eksternenotifikasjoner")
-@EntityListeners(AuditingEntityListener::class)
-class EksternNotifikasjon(
-        @ManyToOne(fetch = LAZY)
-        @JoinColumn(name = "fk_eventid", nullable = false)
-        val oppgave: Oppgave,
-        @CreatedDate
-        val distribusjondato: LocalDateTime? = null,
-        val distribusjonid: Long? = null,
-        val distribusjonkanal: String? = null,
-        @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
-    override fun toString(): String =
-        "EksterneNotifikasjoner(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,id=$id)"
+interface DittNavNotifikasjonRepository : JpaRepository<EksternNotifikasjon, Long> {
+
+    @Entity(name = "eksternnotifikasjon")
+    @Table(name = "eksternenotifikasjoner")
+    @EntityListeners(AuditingEntityListener::class)
+    class EksternNotifikasjon(
+            @ManyToOne
+            @JoinColumn(name = "fk_eventid", nullable = false)
+            val oppgave: Oppgave,
+            @CreatedDate
+            val distribusjondato: LocalDateTime? = null,
+            val distribusjonid: Long? = null,
+            val distribusjonkanal: String? = null,
+            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
+        override fun toString(): String =
+            "EksterneNotifikasjoner(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,id=$id)"
+    }
 }
