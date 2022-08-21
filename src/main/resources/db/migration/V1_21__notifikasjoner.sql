@@ -1,3 +1,8 @@
+ALTER TABLE dittnavoppgaver
+    ADD UNIQUE (eventid);
+ALTER TABLE dittnavbeskjeder
+    ADD UNIQUE (eventid);
+
 CREATE TABLE eksternenotifikasjoner
 (
     id                serial primary key,

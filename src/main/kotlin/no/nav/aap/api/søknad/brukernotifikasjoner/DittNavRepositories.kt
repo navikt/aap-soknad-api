@@ -80,7 +80,7 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
             val fnr: String,
             @CreatedDate var created: LocalDateTime? = null,
             @LastModifiedDate var updated: LocalDateTime? = null,
-            @OneToMany(mappedBy = "oppgave", fetch = LAZY, cascade = [ALL])
+            @OneToMany(mappedBy = "oppgave", cascade = [ALL])
             val notifikasjoner: Set<EksternNotifikasjon> = setOf(),
             val eventid: UUID,
             val done: Boolean = false,
