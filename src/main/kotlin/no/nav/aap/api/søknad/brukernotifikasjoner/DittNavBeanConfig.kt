@@ -30,19 +30,19 @@ class DittNavBeanConfig {
     private val log = getLogger(javaClass)
 
     @Bean
-    fun dittNavKafkaOperations(properties: KafkaProperties) =
-        KafkaTemplate(DefaultKafkaProducerFactory<NokkelInput, Any>(properties.buildProducerProperties()
+    fun dittNavKafkaOperations(props: KafkaProperties) =
+        KafkaTemplate(DefaultKafkaProducerFactory<NokkelInput, Any>(props.buildProducerProperties()
             .apply {
                 put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
                 put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
             }))
 
     @Bean
-    fun notifikasjonListenerContainerFactory(properties: KafkaProperties,
+    fun notifikasjonListenerContainerFactory(props: KafkaProperties,
                                              @Value("\${spring.application.name}") appNavn: String) =
         ConcurrentKafkaListenerContainerFactory<String, DoknotifikasjonStatus>().apply {
             consumerFactory =
-                DefaultKafkaConsumerFactory(properties.buildConsumerProperties().apply {
+                DefaultKafkaConsumerFactory(props.buildConsumerProperties().apply {
                     put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
                     put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
                     put(SPECIFIC_AVRO_READER_CONFIG, true)
@@ -65,7 +65,7 @@ class DittNavBeanConfig {
 
         private fun oppdaterDistribusjonStatus(payload: DoknotifikasjonStatus) {
             with(payload) {
-                log.trace("Oppdaterer beskjed fra distribusjonsinfo fra $this")
+                log.trace("Oppdaterer beskjed med distribusjonsinfo fra $this")
                 when (repos.beskjeder.distribuert(fromString(bestillingsId), melding, distribusjonId)) {
                     0 -> oppdaterOppgave(payload)
                     1 -> log.trace("Oppdatert beskjed $bestillingsId med distribusjonsinfo fra $this")
@@ -76,7 +76,7 @@ class DittNavBeanConfig {
 
         private fun oppdaterOppgave(payload: DoknotifikasjonStatus) {
             with(payload) {
-                log.trace("Oppdaterer oppgave fra distribusjonsinfo fra $this")
+                log.trace("Oppdaterer oppgave med distribusjonsinfo fra $this")
                 when (repos.oppgaver.distribuert(fromString(bestillingsId), melding, distribusjonId)) {
                     0 -> log.warn("Kunne  ikke oppdatere oppgave $bestillingsId med distribusjonsinfo fra $this")
                     1 -> log.trace("Oppdatert oppgave $bestillingsId med distribusjonsinfo fra $this")

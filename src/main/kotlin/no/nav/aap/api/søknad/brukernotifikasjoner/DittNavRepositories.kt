@@ -14,12 +14,17 @@ import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.AttributeConverter
+import javax.persistence.CascadeType.ALL
 import javax.persistence.Converter
 import javax.persistence.Entity
 import javax.persistence.EntityListeners
+import javax.persistence.FetchType.LAZY
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
 import javax.persistence.Table
 
 interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
@@ -75,6 +80,8 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
             val fnr: String,
             @CreatedDate var created: LocalDateTime? = null,
             @LastModifiedDate var updated: LocalDateTime? = null,
+            @OneToMany(mappedBy = "oppgave", fetch = LAZY, cascade = [ALL])
+            val notifikasjoner: Set<EksternNotifikasjon> = setOf()
             val eventid: UUID,
             val done: Boolean = false,
             val distribusjondato: LocalDateTime? = null,
@@ -94,4 +101,20 @@ data class DittNavRepositories(val beskjeder: DittNavBeskjedRepository,
 class UUIDAttributeConverter : AttributeConverter<UUID, String> {
     override fun convertToDatabaseColumn(entityValue: UUID?) = entityValue?.let(UUID::toString)
     override fun convertToEntityAttribute(databaseValue: String?) = databaseValue?.let(UUID::fromString)
+}
+
+@Entity(name = "eksternnotifikasjon")
+@Table(name = "eksternenotifikasjoner")
+@EntityListeners(AuditingEntityListener::class)
+class EksternNotifikasjon(
+        @ManyToOne(fetch = LAZY)
+        @JoinColumn(name = "fk_eventid", nullable = false)
+        val oppgave: Oppgave,
+        @CreatedDate
+        val distribusjondato: LocalDateTime? = null,
+        val distribusjonid: Long? = null,
+        val distribusjonkanal: String? = null,
+        @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
+    override fun toString(): String =
+        "EksterneNotifikasjoner(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,id=$id)"
 }
