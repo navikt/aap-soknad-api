@@ -82,7 +82,7 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
             val fnr: String,
             @CreatedDate var created: LocalDateTime? = null,
             @LastModifiedDate var updated: LocalDateTime? = null,
-            @OneToMany(mappedBy = "eventid", cascade = [ALL])
+            @OneToMany(mappedBy = "oppgave", cascade = [ALL])
             var notifikasjoner: Set<EksternNotifikasjon> = setOf(),
             val eventid: UUID,
             val done: Boolean = false,
@@ -112,12 +112,12 @@ interface DittNavNotifikasjonRepository : JpaRepository<EksternNotifikasjon, Lon
     @Table(name = "eksternenotifikasjoner")
     @EntityListeners(AuditingEntityListener::class)
     class EksternNotifikasjon(
+            @ManyToOne
+            @JoinColumn(name = "eventid")
+            var oppgave: Oppgave? = null,
             @CreatedDate
             var distribusjondato: LocalDateTime? = null,
             val distribusjonid: Long? = null,
-            @ManyToOne
-            @JoinColumn(name = "eventid", nullable = false)
-            val eventid: UUID,
             val distribusjonkanal: String? = null,
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
         override fun toString(): String =

@@ -68,9 +68,10 @@ class DittNavBeanConfig {
         private fun oppdaterDistribusjonStatus(payload: DoknotifikasjonStatus) {
             with(payload) {
                 log.trace("Oppdaterer beskjed med distribusjonsinfo fra $this")
+                val o = repos.oppgaver.findOppgaveByEventid(UUID.fromString(bestillingsId))
+                log.trace("Oppdaterer oppgave $o")
                 val notifikasjon =
-                    repos.notifikasjoner.saveAndFlush(EksternNotifikasjon(eventid = UUID.fromString(bestillingsId),
-                            distribusjonid = distribusjonId,
+                    repos.notifikasjoner.saveAndFlush(EksternNotifikasjon(oppgave = o, distribusjonid = distribusjonId,
                             distribusjonkanal = melding))
                 log.trace("Oppdatert notifikasjon $notifikasjon i DB")
                 when (repos.beskjeder.distribuert(fromString(bestillingsId), melding, distribusjonId)) {
