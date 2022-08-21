@@ -113,7 +113,7 @@ interface DittNavNotifikasjonRepository : JpaRepository<EksternNotifikasjon, Lon
     @EntityListeners(AuditingEntityListener::class)
     class EksternNotifikasjon(
             @ManyToOne
-            @JoinColumn(name = "fk_eventid", nullable = false)
+            @JoinColumn(name = "eventid", nullable = false)
             var oppgave: Oppgave? = null,
             @CreatedDate
             var distribusjondato: LocalDateTime? = null,
