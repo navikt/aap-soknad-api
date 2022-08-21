@@ -112,15 +112,16 @@ interface DittNavNotifikasjonRepository : JpaRepository<EksternNotifikasjon, Lon
     @Table(name = "eksternenotifikasjoner")
     @EntityListeners(AuditingEntityListener::class)
     class EksternNotifikasjon(
-            @ManyToOne
-            @JoinColumn(name = "eventid")
+            @ManyToOne(optional = false)
+            @JoinColumn(name = "id")
             var oppgave: Oppgave? = null,
+            var eventid: UUID,
             @CreatedDate
             var distribusjondato: LocalDateTime? = null,
             val distribusjonid: Long? = null,
             val distribusjonkanal: String? = null,
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
         override fun toString(): String =
-            "EksterneNotifikasjoner(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,id=$id)"
+            "EksterneNotifikasjoner(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,oppgave=$oppgave,id=$id)"
     }
 }

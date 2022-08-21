@@ -24,7 +24,6 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VA
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
 import java.util.UUID.fromString
 
 @Configuration
@@ -68,12 +67,19 @@ class DittNavBeanConfig {
         private fun oppdaterDistribusjonStatus(payload: DoknotifikasjonStatus) {
             with(payload) {
                 log.trace("Oppdaterer beskjed med distribusjonsinfo fra $this")
-                val o = repos.oppgaver.findOppgaveByEventid(UUID.fromString(bestillingsId))
-                log.trace("Oppdaterer oppgave $o")
-                val notifikasjon =
-                    repos.notifikasjoner.saveAndFlush(EksternNotifikasjon(oppgave = o, distribusjonid = distribusjonId,
-                            distribusjonkanal = melding))
-                log.trace("Oppdatert notifikasjon $notifikasjon i DB")
+
+                val o = repos.oppgaver.findOppgaveByEventid(fromString(bestillingsId))
+                o?.let {
+                    val e = EksternNotifikasjon(
+                            oppgave = it,
+                            eventid = fromString(bestillingsId),
+                            distribusjonid = distribusjonId,
+                            distribusjonkanal = melding)
+                    it.notifikasjoner = it.notifikasjoner.plus(e)
+                    val o1 = repos.oppgaver.save(it)
+                    log.trace("Oppdatert oppgave $o1 i DB")
+                }
+
                 when (repos.beskjeder.distribuert(fromString(bestillingsId), melding, distribusjonId)) {
                     0 -> oppdaterOppgave(payload)
                     1 -> log.trace("Oppdatert beskjed $bestillingsId med distribusjonsinfo fra $this")
@@ -85,7 +91,7 @@ class DittNavBeanConfig {
         private fun oppdaterOppgave(payload: DoknotifikasjonStatus) {
             with(payload) {
                 log.trace("Oppdaterer oppgave med distribusjonsinfo fra $this")
-                val oppgave = repos.oppgaver.findOppgaveByEventid(UUID.fromString(bestillingsId))
+                val oppgave = repos.oppgaver.findOppgaveByEventid(fromString(bestillingsId))
                 log.trace("XXXX  Fant oppgave $oppgave")
                 when (repos.oppgaver.distribuert(fromString(bestillingsId), melding, distribusjonId)) {
                     0 -> log.warn("Kunne  ikke oppdatere oppgave $bestillingsId med distribusjonsinfo fra $this")
