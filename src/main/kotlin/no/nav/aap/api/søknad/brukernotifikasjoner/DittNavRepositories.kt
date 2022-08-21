@@ -115,6 +115,7 @@ interface DittNavNotifikasjonRepository : JpaRepository<EksternNotifikasjon, Lon
             @ManyToOne
             @JoinColumn(name = "eventid", nullable = false)
             var oppgave: Oppgave? = null,
+            val eventid: UUID,
             @CreatedDate
             var distribusjondato: LocalDateTime? = null,
             val distribusjonid: Long? = null,
