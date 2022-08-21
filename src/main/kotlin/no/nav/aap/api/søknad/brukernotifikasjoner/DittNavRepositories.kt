@@ -90,7 +90,7 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
             val distribusjonkanal: String? = null,
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
         override fun toString(): String =
-            "Oppgave(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done, distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,id=$id)"
+            "Oppgave(fnr=${fnr.partialMask()}, notifikasjoner=${notifikasjoner}, created=$created, eventid=$eventid, updated=$updated, done=$done, distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,id=$id)"
     }
 }
 

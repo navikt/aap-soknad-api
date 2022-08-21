@@ -68,16 +68,15 @@ class DittNavBeanConfig {
             with(payload) {
                 log.trace("Oppdaterer beskjed med distribusjonsinfo fra $this")
 
-                val o = repos.oppgaver.findOppgaveByEventid(fromString(bestillingsId))
-                o?.let {
-                    val e = EksternNotifikasjon(
+                repos.oppgaver.findOppgaveByEventid(fromString(bestillingsId))?.let {
+                    it.notifikasjoner.add(EksternNotifikasjon(
                             oppgave = it,
                             eventid = fromString(bestillingsId),
                             distribusjonid = distribusjonId,
-                            distribusjonkanal = melding)
-                    it.notifikasjoner.add(e)
-                    val o1 = repos.oppgaver.save(it)
-                    log.trace("Oppdatert oppgave $o1 i DB")
+                            distribusjonkanal = melding))
+                    repos.oppgaver.save(it).also {
+                        log.trace("Oppdatert oppgave $this i DB")
+                    }
                 }
 
                 when (repos.beskjeder.distribuert(fromString(bestillingsId), melding, distribusjonId)) {
