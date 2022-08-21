@@ -16,10 +16,10 @@ no.nav:
                             audience: ${onprem}:arbeidsforhold:aareg-services-nais-q1
 spring:
     jpa:
-        show-sql: true
+        show-sql: false
         properties:
             hibernate:
-                format_sql: true
+                format_sql: false
     mvc:
         log-request-details: true
 server:
@@ -38,3 +38,13 @@ dittnav:
         innsyn: https://aap-soknad-api.dev.intern.nav.no/ettersend
         standard: https://aap-soknad.dev.nav.no/aap/soknad/standard
         utland: https://aap-soknad.dev.nav.no/aap/soknad/utland
+
+logging:
+    level:
+        org:
+            hibernate:
+                sql: trace
+                type:
+                    descriptor:
+                        sql:
+                            BasicBinder: trace
