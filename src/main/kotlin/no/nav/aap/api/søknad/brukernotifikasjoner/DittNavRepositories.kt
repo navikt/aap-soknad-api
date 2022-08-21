@@ -81,7 +81,7 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
             @CreatedDate var created: LocalDateTime? = null,
             @LastModifiedDate var updated: LocalDateTime? = null,
             @OneToMany(mappedBy = "oppgave", fetch = LAZY, cascade = [ALL])
-            val notifikasjoner: Set<EksternNotifikasjon> = setOf()
+            val notifikasjoner: Set<EksternNotifikasjon> = setOf(),
             val eventid: UUID,
             val done: Boolean = false,
             val distribusjondato: LocalDateTime? = null,
