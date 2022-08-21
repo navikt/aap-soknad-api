@@ -22,7 +22,6 @@ import javax.persistence.EntityListeners
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
-import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.Table
@@ -82,7 +81,7 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
             val fnr: String,
             @CreatedDate var created: LocalDateTime? = null,
             @LastModifiedDate var updated: LocalDateTime? = null,
-            @OneToMany(mappedBy = "oppgave", cascade = [ALL])
+            @OneToMany(mappedBy = "oppgave", cascade = [ALL], orphanRemoval = true)
             var notifikasjoner: Set<EksternNotifikasjon> = setOf(),
             val eventid: UUID,
             val done: Boolean = false,
@@ -113,7 +112,6 @@ interface DittNavNotifikasjonRepository : JpaRepository<EksternNotifikasjon, Lon
     @EntityListeners(AuditingEntityListener::class)
     class EksternNotifikasjon(
             @ManyToOne(optional = false)
-            @JoinColumn(name = "id")
             var oppgave: Oppgave? = null,
             var eventid: UUID,
             @CreatedDate
