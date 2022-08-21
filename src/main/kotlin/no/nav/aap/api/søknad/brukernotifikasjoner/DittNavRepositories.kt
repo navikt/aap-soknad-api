@@ -16,6 +16,7 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.AttributeConverter
 import javax.persistence.CascadeType.ALL
+import javax.persistence.Column
 import javax.persistence.Converter
 import javax.persistence.Entity
 import javax.persistence.EntityListeners
@@ -115,10 +116,11 @@ interface DittNavNotifikasjonRepository : JpaRepository<EksternNotifikasjon, Lon
             @ManyToOne
             @JoinColumn(name = "eventid", nullable = false)
             var oppgave: Oppgave? = null,
-            val eventid: UUID,
             @CreatedDate
             var distribusjondato: LocalDateTime? = null,
             val distribusjonid: Long? = null,
+            @Column(insertable = false, updatable = false)
+            val eventid: UUID,
             val distribusjonkanal: String? = null,
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
         override fun toString(): String =
