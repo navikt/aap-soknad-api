@@ -83,13 +83,9 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                                 }
                             }
                             if (manglendevedlegg.isNotEmpty()) {
+                                log.trace("Det mangler ${manglendevedlegg.size} vedlegg")
                                 repo.save(this).also {
                                     log.trace("Oppdaterte DB søknad med ${manglendevedlegg.size} manglende vedlegg for eventid $eventId OK")
-                                }
-                            }
-                            else {
-                                with(søknad.manglendeVedlegg()) {
-                                    log.trace("Det mangler $size vedlegg av følgende typer $this")
                                     dittnav.opprettOppgave(MINAAPSTD,
                                             søker.fnr,
                                             oppgaveId,
