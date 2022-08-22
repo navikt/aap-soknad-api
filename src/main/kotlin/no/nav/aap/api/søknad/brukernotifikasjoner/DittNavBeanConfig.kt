@@ -3,6 +3,8 @@ package no.nav.aap.api.søknad.brukernotifikasjoner
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import io.confluent.kafka.serializers.KafkaAvroSerializer
+import no.nav.aap.api.søknad.brukernotifikasjoner.EksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
+import no.nav.aap.api.søknad.brukernotifikasjoner.EksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
@@ -47,9 +49,4 @@ class DittNavBeanConfig {
                     }
                 })
         }
-
-    companion object {
-        private const val FERDIGSTILT = "FERDIGSTILT"
-        private const val NOTIFIKASJON_SENDT = "notifikasjon sendt via"
-    }
 }

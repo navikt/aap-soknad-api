@@ -4,7 +4,7 @@ import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Besk
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternBeskjedNotifikasjon
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternOppgaveNotifikasjon
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.messaging.handler.annotation.Payload
@@ -14,7 +14,7 @@ import java.util.*
 
 @Component
 class EksternNotifikasjonStatusKonsument(private val repos: DittNavRepositories) {
-    private val log = LoggerUtil.getLogger(javaClass)
+    private val log = getLogger(javaClass)
 
     @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
             containerFactory = "notifikasjonListenerContainerFactory")
@@ -22,13 +22,14 @@ class EksternNotifikasjonStatusKonsument(private val repos: DittNavRepositories)
     fun listen(@Payload status: DoknotifikasjonStatus) = oppdaterDistribusjonStatus(status)
 
     private fun oppdaterDistribusjonStatus(status: DoknotifikasjonStatus) {
-        val uuid = UUID.fromString(status.bestillingsId)
-        repos.oppgaver.findOppgaveByEventid((uuid))?.let {
-            oppdaterOppgave(it, status)
-        } ?: repos.beskjeder.findBeskjedByEventid((uuid))?.let {
-            oppdaterBeskjed(it, status)
-        } ?: log.warn("Ingen beskjed/oppgave med eventid $uuid (skal aldri skje)")
+        with(status.eventId()) {
+            repos.oppgaver.findOppgaveByEventid(this)?.let {
+                oppdaterOppgave(it, status)
+            } ?: repos.beskjeder.findBeskjedByEventid(this)?.let {
+                oppdaterBeskjed(it, status)
+            } ?: log.warn("Fant in ngen beskjed/oppgave med eventid $this i DB (dette skal aldri skje)")
 
+        }
     }
 
     private fun oppdaterOppgave(oppgave: Oppgave, status: DoknotifikasjonStatus) =
@@ -36,7 +37,7 @@ class EksternNotifikasjonStatusKonsument(private val repos: DittNavRepositories)
             log.trace("Oppdaterer oppgave med distribusjonsinfo fra $status")
             oppgave.notifikasjoner.add(EksternOppgaveNotifikasjon(
                     oppgave = oppgave,
-                    eventid = UUID.fromString(bestillingsId),
+                    eventid = status.eventId(),
                     distribusjonid = distribusjonId,
                     distribusjonkanal = melding))
             repos.oppgaver.save(oppgave).also {
@@ -56,4 +57,11 @@ class EksternNotifikasjonStatusKonsument(private val repos: DittNavRepositories)
                 log.trace("Oppdatert beskjed $it med distribusjonsinfo fra $this i DB")
             }
         }
+
+    fun DoknotifikasjonStatus.eventId() = UUID.fromString(bestillingsId)
+
+    companion object {
+        const val FERDIGSTILT = "FERDIGSTILT"
+        const val NOTIFIKASJON_SENDT = "notifikasjon sendt via"
+    }
 }
