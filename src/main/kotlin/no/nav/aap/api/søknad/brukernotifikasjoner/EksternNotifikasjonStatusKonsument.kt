@@ -37,7 +37,7 @@ class EksternNotifikasjonStatusKonsument(private val repos: DittNavRepositories)
             log.trace("Oppdaterer oppgave med distribusjonsinfo fra $status")
             oppgave.notifikasjoner.add(EksternOppgaveNotifikasjon(
                     oppgave = oppgave,
-                    eventid = status.eventId(),
+                    eventid = eventId(),
                     distribusjonid = distribusjonId,
                     distribusjonkanal = melding))
             repos.oppgaver.save(oppgave).also {
