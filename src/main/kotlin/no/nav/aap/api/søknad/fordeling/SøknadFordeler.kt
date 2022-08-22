@@ -62,12 +62,13 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
     fun fullfør(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett()
+            val oppgaveId = UUID.randomUUID()
             with(søknad.manglendeVedlegg()) {
                 if (isNotEmpty()) {
                     log.trace("Det mangler $size vedlegg av følgende typer $this")
                     dittnav.opprettOppgave(MINAAPSTD,
                             søker.fnr,
-                            UUID.randomUUID(),
+                            oppgaveId,
                             "Du må ettersende dokumentasjon til din ${STANDARD.tittel}")
                 }
             }
@@ -77,7 +78,10 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                     with(Søknad(fnr = søker.fnr.fnr, eventid = eventId)) søknad@{
                         repo.save(this).also {
                             søknad.manglendeVedlegg().forEach { type ->
-                                with(ManglendeVedlegg(soknad = this, vedleggtype = type, eventid = eventId)) {
+                                with(ManglendeVedlegg(soknad = this,
+                                        vedleggtype = type,
+                                        oppgaveid = oppgaveId,
+                                        eventid = eventId)) {
                                     manglendevedlegg.add(this)
                                     soknad = this@søknad
                                 }
