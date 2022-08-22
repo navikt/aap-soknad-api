@@ -51,6 +51,7 @@ data class StandardSøknad(
     private val log = getLogger(javaClass)
 
     fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
+
     fun manglendeVedlegg(): List<VedleggType> {
 
         val mangler = mutableListOf<VedleggType>()
@@ -101,7 +102,9 @@ data class StandardSøknad(
                 }
             }
         }
-        return mangler
+        return mangler.also {
+            log.trace("Det mangler følgende vedlegg $it")
+        }
     }
 }
 
