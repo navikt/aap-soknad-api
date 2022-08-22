@@ -1,7 +1,7 @@
 create table manglendevedlegg
 (
     id          serial primary key,
-    soknad_id   int         not null references dittnavsoknader (id),
+    soknad_id   int         not null references soknader (id),
     eventid     varchar(50) not null,
     created     timestamp   not null,
     updated     timestamp   not null,

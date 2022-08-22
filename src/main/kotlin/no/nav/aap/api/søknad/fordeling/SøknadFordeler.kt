@@ -73,6 +73,7 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
             dittnav.opprettBeskjed(MINAAPSTD, callIdAsUUID(), søker.fnr, "Vi har mottatt ${STANDARD.tittel}")
                 ?.let { uuid ->
                     log.trace(CONFIDENTIAL, "Lagrer DB søknad med uuid $uuid $søknad")
+                    // søknad.manglendeVedlegg().forEach { ManglendeVedlegg() }
                     repo.save(Søknad(fnr = søker.fnr.fnr, eventid = uuid)).also {
                         log.trace(CONFIDENTIAL, "Lagret DB søknad $it OK")
                     }
