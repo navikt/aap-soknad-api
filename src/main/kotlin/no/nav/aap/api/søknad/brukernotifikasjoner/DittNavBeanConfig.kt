@@ -49,7 +49,10 @@ class DittNavBeanConfig {
                     put(SPECIFIC_AVRO_READER_CONFIG, true)
                     setRecordFilterStrategy { payload ->
                         with(payload.value()) {
-                            !(bestillerId == appNavn && status == FERDIGSTILT && melding.contains(NOTIFIKASJON_SENDT))
+                            val status =
+                                !(bestillerId == appNavn && status == FERDIGSTILT && melding.contains(NOTIFIKASJON_SENDT))
+                            log.trace("Record filter status for $payload er $status")
+                            status
                         }
                     }
                 })
@@ -66,8 +69,7 @@ class DittNavBeanConfig {
 
         private fun oppdaterDistribusjonStatus(payload: DoknotifikasjonStatus) {
             with(payload) {
-                log.trace("Oppdaterer beskjed med distribusjonsinfo fra $this")
-
+                log.trace("Oppdaterer oppgave med distribusjonsinfo fra $this")
                 repos.oppgaver.findOppgaveByEventid(fromString(bestillingsId))?.let { n ->
                     n.notifikasjoner.add(EksternNotifikasjon(
                             oppgave = n,
@@ -75,7 +77,7 @@ class DittNavBeanConfig {
                             distribusjonid = distribusjonId,
                             distribusjonkanal = melding))
                     repos.oppgaver.save(n).also {
-                        log.trace("Oppdatert oppgave $it i DB")
+                        log.trace("Oppdatert oppgave med $n i $it i DB")
                     }
                 }
 

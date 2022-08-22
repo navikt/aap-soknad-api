@@ -47,7 +47,7 @@ logging:
                     clients:
                         consumer:
                             internals:
-                                ConsumerCoordinator: warn
+                                ConsumerCoordinator: info
             hibernate:
                 sql: trace
                 type:
