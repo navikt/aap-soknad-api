@@ -9,6 +9,7 @@ import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.Compa
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.fordeling.VedleggRepository.ManglendeVedlegg
 import no.nav.aap.api.søknad.joark.JoarkFordeler
+import no.nav.aap.api.søknad.joark.JoarkFordeler.FordelingResultat
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
@@ -46,7 +47,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
         pdl.søkerMedBarn().run {
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.standard)
-                fullfører.fullfør(søknad, this@run, pdf)
+                fullfører.fullfør(søknad, this@run, this@with)
             }
         }
 }
@@ -59,25 +60,19 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
 
     private val log = getLogger(javaClass)
 
-    fun fullfør(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
+    fun fullfør(søknad: StandardSøknad, søker: Søker, resultat: FordelingResultat) =
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett()
             val oppgaveId = UUID.randomUUID()
-            with(søknad.manglendeVedlegg()) {
-                if (isNotEmpty()) {
-                    log.trace("Det mangler $size vedlegg av følgende typer $this")
-                    dittnav.opprettOppgave(MINAAPSTD,
-                            søker.fnr,
-                            oppgaveId,
-                            "Du må ettersende dokumentasjon til din ${STANDARD.tittel}")
-                }
-            }
+
             dittnav.opprettBeskjed(MINAAPSTD, callIdAsUUID(), søker.fnr, "Vi har mottatt ${STANDARD.tittel}")
                 ?.let { eventId ->
                     log.trace(CONFIDENTIAL, "Lagrer DB søknad med eventId $eventId $søknad")
-                    with(Søknad(fnr = søker.fnr.fnr, eventid = eventId)) søknad@{
+                    with(Søknad(fnr = søker.fnr.fnr,
+                            journalpostid = resultat.journalpostId,
+                            eventid = eventId)) søknad@{
                         repo.save(this).also {
-                            log.trace("Lagret metadata om  søknad i DB med eventid $eventId OK")
+                            log.trace("Lagret metadata om søknad i DB med eventid $eventId OK")
                             søknad.manglendeVedlegg().forEach { type ->
                                 with(ManglendeVedlegg(soknad = this,
                                         vedleggtype = type,
@@ -92,11 +87,19 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                                     log.trace("Oppdaterte DB søknad med ${manglendevedlegg.size} manglende vedlegg for eventid $eventId OK")
                                 }
                             }
+                            else {
+                                with(søknad.manglendeVedlegg()) {
+                                    log.trace("Det mangler $size vedlegg av følgende typer $this")
+                                    dittnav.opprettOppgave(MINAAPSTD,
+                                            søker.fnr,
+                                            oppgaveId,
+                                            "Du må ettersende dokumentasjon til din ${STANDARD.tittel}")
+                                }
+                            }
                         }
                     }
-
                 }
-            Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = pdf, navn = "kvittering.pdf")))
+            Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = resultat.pdf, navn = "kvittering.pdf")))
         }
 }
 

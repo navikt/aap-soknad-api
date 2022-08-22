@@ -24,6 +24,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     @EntityListeners(AuditingEntityListener::class)
     class Søknad(
             val fnr: String,
+            val journalpostid: String,
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var manglendevedlegg: MutableSet<ManglendeVedlegg> = mutableSetOf(),
             @CreatedDate var created: LocalDateTime? = null,
