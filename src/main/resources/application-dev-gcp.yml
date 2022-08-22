@@ -16,10 +16,10 @@ no.nav:
                             audience: ${onprem}:arbeidsforhold:aareg-services-nais-q1
 spring:
     jpa:
-        show-sql: false
+        show-sql: true
         properties:
             hibernate:
-                format_sql: false
+                format_sql: true
     mvc:
         log-request-details: true
 server:
