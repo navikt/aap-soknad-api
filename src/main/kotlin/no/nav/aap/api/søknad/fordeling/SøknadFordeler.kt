@@ -80,8 +80,8 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                             val m = ManglendeVedlegg(soknad = s, vedleggtype = v, eventid = uuid)
                             s.manglendevedlegg.add(m)
                             m.soknad = s
-                            repo.save(s)
                         }
+                        repo.save(s)
                         log.trace(CONFIDENTIAL, "Lagret DB søknad $it OK")
                     }
                 }
