@@ -5,6 +5,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.aap.api.søknad.brukernotifikasjoner.EksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
 import no.nav.aap.api.søknad.brukernotifikasjoner.EksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
+import no.nav.aap.util.LoggerUtil
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
@@ -23,6 +24,7 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VA
 
 @Configuration
 class DittNavBeanConfig {
+    private val log = LoggerUtil.getLogger(javaClass)
 
     @Bean
     fun dittNavKafkaOperations(props: KafkaProperties) =
@@ -38,6 +40,7 @@ class DittNavBeanConfig {
         ConcurrentKafkaListenerContainerFactory<String, DoknotifikasjonStatus>().apply {
             consumerFactory =
                 DefaultKafkaConsumerFactory(props.buildConsumerProperties().apply {
+                    log.trace("Consumer properties er $this")
                     put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
                     put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
                     put(SPECIFIC_AVRO_READER_CONFIG, true)
