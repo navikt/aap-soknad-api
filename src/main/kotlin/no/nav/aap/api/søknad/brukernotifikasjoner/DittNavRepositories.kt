@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternBeskjedNotifikasjon
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternOppgaveNotifikasjon
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
 import no.nav.aap.util.StringExtensions.partialMask
@@ -46,6 +47,8 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
             val eventid: UUID,
             @LastModifiedDate var updated: LocalDateTime? = null,
             val done: Boolean = false,
+            @OneToMany(mappedBy = "beskjed", cascade = [ALL], orphanRemoval = true)
+            var notifikasjoner: MutableSet<EksternBeskjedNotifikasjon> = mutableSetOf(),
             @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0) {
         override fun toString(): String =
             "Beskjed(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id)"

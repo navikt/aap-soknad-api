@@ -1,0 +1,59 @@
+package no.nav.aap.api.søknad.brukernotifikasjoner
+
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternBeskjedNotifikasjon
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternOppgaveNotifikasjon
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
+import no.nav.aap.util.LoggerUtil
+import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
+import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.messaging.handler.annotation.Payload
+import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
+import java.util.*
+
+@Component
+class EksternNotifikasjonStatusKonsument(private val repos: DittNavRepositories) {
+    private val log = LoggerUtil.getLogger(javaClass)
+
+    @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
+            containerFactory = "notifikasjonListenerContainerFactory")
+    @Transactional
+    fun listen(@Payload status: DoknotifikasjonStatus) = oppdaterDistribusjonStatus(status)
+
+    private fun oppdaterDistribusjonStatus(status: DoknotifikasjonStatus) {
+        val uuid = UUID.fromString(status.bestillingsId)
+        repos.oppgaver.findOppgaveByEventid((uuid))?.let {
+            oppdaterOppgave(it, status)
+        } ?: repos.beskjeder.findBeskjedByEventid((uuid))?.let {
+            oppdaterBeskjed(it, status)
+        } ?: log.warn("Ingen beskjed/oppgave med eventid $uuid (skal aldri skje)")
+
+    }
+
+    private fun oppdaterOppgave(oppgave: Oppgave, status: DoknotifikasjonStatus) =
+        with(status) {
+            log.trace("Oppdaterer oppgave med distribusjonsinfo fra $status")
+            oppgave.notifikasjoner.add(EksternOppgaveNotifikasjon(
+                    oppgave = oppgave,
+                    eventid = UUID.fromString(bestillingsId),
+                    distribusjonid = distribusjonId,
+                    distribusjonkanal = melding))
+            repos.oppgaver.save(oppgave).also {
+                log.trace("Oppdatert oppgave $it med distribusjonsinfo fra $this i DB")
+            }
+        }
+
+    private fun oppdaterBeskjed(beskjed: Beskjed, status: DoknotifikasjonStatus) =
+        with(status) {
+            log.trace("Oppdaterer beskjed med distribusjonsinfo fra $status")
+            beskjed.notifikasjoner.add(EksternBeskjedNotifikasjon(
+                    beskjed = beskjed,
+                    eventid = UUID.fromString(bestillingsId),
+                    distribusjonid = distribusjonId,
+                    distribusjonkanal = melding))
+            repos.beskjeder.save(beskjed).also {
+                log.trace("Oppdatert beskjed $it med distribusjonsinfo fra $this i DB")
+            }
+        }
+}

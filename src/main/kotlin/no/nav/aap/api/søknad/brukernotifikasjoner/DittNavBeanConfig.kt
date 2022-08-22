@@ -3,8 +3,6 @@ package no.nav.aap.api.søknad.brukernotifikasjoner
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import io.confluent.kafka.serializers.KafkaAvroSerializer
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternOppgaveNotifikasjon
-import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
@@ -14,21 +12,15 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS
-import org.springframework.messaging.handler.annotation.Payload
-import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
-import java.util.UUID.fromString
 
 @Configuration
 class DittNavBeanConfig {
-    private val log = getLogger(javaClass)
 
     @Bean
     fun dittNavKafkaOperations(props: KafkaProperties) =
@@ -55,32 +47,6 @@ class DittNavBeanConfig {
                     }
                 })
         }
-
-    @Component
-    class EksternNotifikasjonStatusKonsument(private val repos: DittNavRepositories) {
-        private val log = getLogger(javaClass)
-
-        @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
-                containerFactory = "notifikasjonListenerContainerFactory")
-        @Transactional
-        fun listen(@Payload payload: DoknotifikasjonStatus) = oppdaterDistribusjonStatus(payload)
-
-        private fun oppdaterDistribusjonStatus(payload: DoknotifikasjonStatus) {
-            with(payload) {
-                log.trace("Oppdaterer oppgave med distribusjonsinfo fra $this")
-                repos.oppgaver.findOppgaveByEventid(fromString(bestillingsId))?.let { oppgave ->
-                    oppgave.notifikasjoner.add(EksternOppgaveNotifikasjon(
-                            oppgave = oppgave,
-                            eventid = fromString(bestillingsId),
-                            distribusjonid = distribusjonId,
-                            distribusjonkanal = melding))
-                    repos.oppgaver.save(oppgave).also {
-                        log.trace("Oppdatert oppgave $it med distribusjonsinfo fra $this i DB")
-                    }
-                }
-            }
-        }
-    }
 
     companion object {
         private const val FERDIGSTILT = "FERDIGSTILT"
