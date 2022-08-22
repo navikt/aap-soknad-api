@@ -1,3 +1,6 @@
+ALTER TABLE soknader
+    ADD UNIQUE (eventid);
+
 create table manglendevedlegg
 (
     id          serial primary key,
