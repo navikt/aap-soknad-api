@@ -65,7 +65,7 @@ data class StandardSøknad(
         }
         with(andreBarn) {
             log.trace("Sjekker vedlegg andre barn $andreBarn")
-            if (count() > count { it.vedlegg != null }) {
+            if (count() > count { (it.vedlegg?.deler?.size ?: 0) > 0 }) {
                 log.trace("Fant mangel for andre barn")
                 mangler += ANDREBARN
             }
