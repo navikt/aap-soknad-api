@@ -3,7 +3,7 @@ package no.nav.aap.api.søknad.brukernotifikasjoner
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import io.confluent.kafka.serializers.KafkaAvroSerializer
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternNotifikasjon
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternOppgaveNotifikasjon
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
@@ -49,10 +49,8 @@ class DittNavBeanConfig {
                     put(SPECIFIC_AVRO_READER_CONFIG, true)
                     setRecordFilterStrategy { payload ->
                         with(payload.value()) {
-                            val status =
-                                !(bestillerId == appNavn && status == FERDIGSTILT && melding.contains(NOTIFIKASJON_SENDT))
-                            log.trace("Record filter status for $payload er $status")
-                            status
+                            !(bestillerId == appNavn && this.status == FERDIGSTILT && melding.contains(
+                                    NOTIFIKASJON_SENDT))
                         }
                     }
                 })
@@ -70,34 +68,15 @@ class DittNavBeanConfig {
         private fun oppdaterDistribusjonStatus(payload: DoknotifikasjonStatus) {
             with(payload) {
                 log.trace("Oppdaterer oppgave med distribusjonsinfo fra $this")
-                repos.oppgaver.findOppgaveByEventid(fromString(bestillingsId))?.let { n ->
-                    n.notifikasjoner.add(EksternNotifikasjon(
-                            oppgave = n,
+                repos.oppgaver.findOppgaveByEventid(fromString(bestillingsId))?.let { oppgave ->
+                    oppgave.notifikasjoner.add(EksternOppgaveNotifikasjon(
+                            oppgave = oppgave,
                             eventid = fromString(bestillingsId),
                             distribusjonid = distribusjonId,
                             distribusjonkanal = melding))
-                    repos.oppgaver.save(n).also {
-                        log.trace("Oppdatert oppgave med $n i $it i DB")
+                    repos.oppgaver.save(oppgave).also {
+                        log.trace("Oppdatert oppgave $it med distribusjonsinfo fra $this i DB")
                     }
-                }
-
-                when (repos.beskjeder.distribuert(fromString(bestillingsId), melding, distribusjonId)) {
-                    0 -> oppdaterOppgave(payload)
-                    1 -> log.trace("Oppdatert beskjed $bestillingsId med distribusjonsinfo fra $this")
-                    else -> log.warn("Uventet antall rader oppdatert for $bestillingsId med distribusjonsinfo fra $this (skal aldri skje)")
-                }
-            }
-        }
-
-        private fun oppdaterOppgave(payload: DoknotifikasjonStatus) {
-            with(payload) {
-                log.trace("Oppdaterer oppgave med distribusjonsinfo fra $this")
-                val oppgave = repos.oppgaver.findOppgaveByEventid(fromString(bestillingsId))
-                log.trace("XXXX  Fant oppgave $oppgave")
-                when (repos.oppgaver.distribuert(fromString(bestillingsId), melding, distribusjonId)) {
-                    0 -> log.warn("Kunne  ikke oppdatere oppgave $bestillingsId med distribusjonsinfo fra $this")
-                    1 -> log.trace("Oppdatert oppgave $bestillingsId med distribusjonsinfo fra $this")
-                    else -> log.warn("Uventet antall rader oppdatert  for $bestillingsId  med distribusjonsinfo fra $this (skal aldri skje)")
                 }
             }
         }

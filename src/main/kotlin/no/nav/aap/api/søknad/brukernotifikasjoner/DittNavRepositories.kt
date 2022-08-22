@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternNotifikasjon
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternOppgaveNotifikasjon
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
 import no.nav.aap.util.StringExtensions.partialMask
 import org.springframework.data.annotation.CreatedDate
@@ -27,18 +27,15 @@ import javax.persistence.OneToMany
 import javax.persistence.Table
 
 interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
+
+    fun findBeskjedByEventid(eventid: UUID): Beskjed?
+
     @Modifying
     @Query("update beskjed set done = true, updated = current_timestamp where eventid = :eventid")
     fun done(@Param("eventid") eventid: UUID): Int
 
     @Query("select eventid from beskjed where  done = false and fnr = :fnr")
     fun allNotDone(@Param("fnr") fnr: String): List<UUID>
-
-    @Modifying
-    @Query("update beskjed set distribusjondato = current_timestamp, distribusjonkanal = :distribusjonkanal, distribusjonid = :distribusjonid, updated = current_timestamp where eventid = :eventid")
-    fun distribuert(@Param("eventid") eventid: UUID,
-                    @Param("distribusjonkanal") distribusjonkanal: String,
-                    @Param("distribusjonid") distribusjonid: Long): Int
 
     @Entity(name = "beskjed")
     @Table(name = "dittnavbeskjeder")
@@ -49,12 +46,9 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
             val eventid: UUID,
             @LastModifiedDate var updated: LocalDateTime? = null,
             val done: Boolean = false,
-            val distribusjondato: LocalDateTime? = null,
-            val distribusjonid: Long? = null,
-            val distribusjonkanal: String? = null,
             @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0) {
         override fun toString(): String =
-            "Beskjed(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done, distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,id=$id)"
+            "Beskjed(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id)"
     }
 }
 
@@ -68,12 +62,6 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
     @Query("select eventid from oppgave where  done = false and fnr = :fnr")
     fun allNotDone(@Param("fnr") fnr: String): List<UUID>
 
-    @Modifying
-    @Query("update oppgave set distribusjondato = current_timestamp, distribusjonkanal = :distribusjonkanal, distribusjonid = :distribusjonid, updated = current_timestamp where eventid = :eventid")
-    fun distribuert(@Param("eventid") eventid: UUID,
-                    @Param("distribusjonkanal") distribusjonkanal: String,
-                    @Param("distribusjonid") distribusjonid: Long): Int
-
     @Entity(name = "oppgave")
     @Table(name = "dittnavoppgaver")
     @EntityListeners(AuditingEntityListener::class)
@@ -82,15 +70,12 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
             @CreatedDate var created: LocalDateTime? = null,
             @LastModifiedDate var updated: LocalDateTime? = null,
             @OneToMany(mappedBy = "oppgave", cascade = [ALL], orphanRemoval = true)
-            var notifikasjoner: MutableSet<EksternNotifikasjon> = mutableSetOf(),
+            var notifikasjoner: MutableSet<EksternOppgaveNotifikasjon> = mutableSetOf(),
             val eventid: UUID,
             val done: Boolean = false,
-            val distribusjondato: LocalDateTime? = null,
-            val distribusjonid: Long? = null,
-            val distribusjonkanal: String? = null,
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
         override fun toString(): String =
-            "Oppgave(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done, distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,id=$id)"
+            "Oppgave(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id)"
     }
 }
 
@@ -105,12 +90,12 @@ class UUIDAttributeConverter : AttributeConverter<UUID, String> {
     override fun convertToEntityAttribute(databaseValue: String?) = databaseValue?.let(UUID::fromString)
 }
 
-interface DittNavNotifikasjonRepository : JpaRepository<EksternNotifikasjon, Long> {
+interface DittNavNotifikasjonRepository : JpaRepository<EksternOppgaveNotifikasjon, Long> {
 
-    @Entity(name = "eksternnotifikasjon")
-    @Table(name = "eksternenotifikasjoner")
+    @Entity(name = "eksternoppgavenotifikasjon")
+    @Table(name = "eksterneoppgavenotifikasjoner")
     @EntityListeners(AuditingEntityListener::class)
-    class EksternNotifikasjon(
+    class EksternOppgaveNotifikasjon(
             @ManyToOne(optional = false)
             var oppgave: Oppgave? = null,
             var eventid: UUID,
@@ -120,6 +105,22 @@ interface DittNavNotifikasjonRepository : JpaRepository<EksternNotifikasjon, Lon
             val distribusjonkanal: String? = null,
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
         override fun toString(): String =
-            "EksterneNotifikasjoner(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,oppgave=$oppgave,id=$id)"
+            "EksternOppgaveNotifikasjon(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,oppgave=$oppgave,id=$id)"
+    }
+
+    @Entity(name = "eksternbeskjednotifikasjon")
+    @Table(name = "eksternebeskjednotifikasjoner")
+    @EntityListeners(AuditingEntityListener::class)
+    class EksternBeskjedNotifikasjon(
+            @ManyToOne(optional = false)
+            var beskjed: Beskjed? = null,
+            var eventid: UUID,
+            @CreatedDate
+            var distribusjondato: LocalDateTime? = null,
+            val distribusjonid: Long? = null,
+            val distribusjonkanal: String? = null,
+            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
+        override fun toString(): String =
+            "EksternOppgaveNotifikasjon(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,beskjed=$beskjed,id=$id)"
     }
 }
