@@ -82,7 +82,7 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                             m.soknad = s
                         }
                         repo.save(s)
-                        log.trace(CONFIDENTIAL, "Lagret DB søknad $it OK")
+                        log.trace(CONFIDENTIAL, "Lagret DB søknad  OK")
                     }
                 }
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = pdf, navn = "kvittering.pdf")))
