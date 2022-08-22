@@ -77,6 +77,7 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                     log.trace(CONFIDENTIAL, "Lagrer DB søknad med eventId $eventId $søknad")
                     with(Søknad(fnr = søker.fnr.fnr, eventid = eventId)) søknad@{
                         repo.save(this).also {
+                            log.trace("Lagret metadata om  søknad i DB med eventid $eventId OK")
                             søknad.manglendeVedlegg().forEach { type ->
                                 with(ManglendeVedlegg(soknad = this,
                                         vedleggtype = type,
@@ -86,8 +87,10 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                                     soknad = this@søknad
                                 }
                             }
-                            repo.save(this).also {
-                                log.trace(CONFIDENTIAL, "Lagret DB søknad med eventid $eventId OK")
+                            if (manglendevedlegg.isNotEmpty()) {
+                                repo.save(this).also {
+                                    log.trace("Oppdaterte DB søknad med ${manglendevedlegg.size} manglende vedlegg for eventid $eventId OK")
+                                }
                             }
                         }
                     }
