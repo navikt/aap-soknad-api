@@ -7,6 +7,7 @@ import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.Companion.MINAAPSTD
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.Companion.MINAAPUTLAND
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
+import no.nav.aap.api.søknad.fordeling.VedleggRepository.ManglendeVedlegg
 import no.nav.aap.api.søknad.joark.JoarkFordeler
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
@@ -74,7 +75,15 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                 ?.let { uuid ->
                     log.trace(CONFIDENTIAL, "Lagrer DB søknad med uuid $uuid $søknad")
                     // søknad.manglendeVedlegg().forEach { ManglendeVedlegg() }
-                    repo.save(Søknad(fnr = søker.fnr.fnr, eventid = uuid)).also {
+                    val mv = ManglendeVedlegg()
+                    val s = Søknad(fnr = søker.fnr.fnr, eventid = uuid)
+                    repo.save(s).also {
+                        søknad.manglendeVedlegg().forEach { v ->
+                            val m = ManglendeVedlegg(soknad = s, vedleggtype = v, eventid = uuid)
+                            s.manglendevedlegg.add(m)
+                            m.soknad = s
+                            repo.save(s)
+                        }
                         log.trace(CONFIDENTIAL, "Lagret DB søknad $it OK")
                     }
                 }
