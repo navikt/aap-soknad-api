@@ -47,13 +47,13 @@ data class StandardSøknad(
     private val log = getLogger(javaClass)
 
     fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
-    fun manglendeVedlegg(): List<VedleggTyper> {
+    fun manglendeVedlegg(): List<VedleggType> {
 
-        val mangler = mutableListOf<VedleggTyper>()
+        val mangler = mutableListOf<VedleggType>()
         log.trace("Sjekker vedlegg studier $studier")
         if (studier.erStudent == AVBRUTT && studier.vedlegg == null) {
             log.trace("Fant mangel for studier")
-            mangler += VedleggTyper.STUDIER
+            mangler += VedleggType.STUDIER
         }
         else {
             log.trace("Ingen mangler for studier")
@@ -62,7 +62,7 @@ data class StandardSøknad(
             log.trace("Sjekker vedlegg andre barn $andreBarn")
             if (count() > count { it.vedlegg != null }) {
                 log.trace("Fant mangel for andre barn")
-                mangler += VedleggTyper.ANDREBARN
+                mangler += VedleggType.ANDREBARN
             }
             else {
                 log.trace("Ingen mangler for andre barn")
@@ -72,7 +72,7 @@ data class StandardSøknad(
             log.trace("Sjekker vedlegg arbeidsgiver ${this?.ekstraFraArbeidsgiver}")
             if (this?.ekstraFraArbeidsgiver?.fraArbeidsgiver == true && ekstraFraArbeidsgiver.vedlegg == null) {
                 log.trace("Fant mangel for arbeidsgiver")
-                mangler += VedleggTyper.ARBEIDSGIVER
+                mangler += VedleggType.ARBEIDSGIVER
             }
             else {
                 log.trace("Ingen mangler for arbeidsgiver")
@@ -81,7 +81,7 @@ data class StandardSøknad(
             this?.andreStønader?.firstOrNull() { it.type == OMSORGSSTØNAD }?.let {
                 if (it.vedlegg?.deler?.isEmpty() == true) {
                     log.trace("Fant mangel for omsorg")
-                    mangler += VedleggTyper.OMSORG
+                    mangler += VedleggType.OMSORG
                 }
                 else {
                     log.trace("Ingen mangler for omsorg")
@@ -90,7 +90,7 @@ data class StandardSøknad(
             this?.andreStønader?.firstOrNull() { it.type == UTLAND }?.let {
                 if (it.vedlegg?.deler?.isEmpty() == true) {
                     log.trace("Fant mangel for utland")
-                    mangler += VedleggTyper.UTLAND
+                    mangler += VedleggType.UTLAND
                 }
                 else {
                     log.trace("Ingen mangler for utland")
@@ -198,7 +198,7 @@ data class Utbetalinger(val ekstraFraArbeidsgiver: FraArbeidsgiver,
     }
 }
 
-enum class VedleggTyper {
+enum class VedleggType {
     ARBEIDSGIVER,
     STUDIER,
     ANDREBARN,

@@ -65,15 +65,16 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                 if (isNotEmpty()) {
                     log.trace("Det mangler $size vedlegg av følgende typer $this")
                     dittnav.opprettOppgave(MINAAPSTD,
-                            søker.fnr, UUID.randomUUID(),
+                            søker.fnr,
+                            UUID.randomUUID(),
                             "Du må ettersende dokumentasjon til din ${STANDARD.tittel}")
                 }
             }
             dittnav.opprettBeskjed(MINAAPSTD, callIdAsUUID(), søker.fnr, "Vi har mottatt ${STANDARD.tittel}")
                 ?.let { uuid ->
-                    log.info(CONFIDENTIAL, "Lagrer DB søknad med uuid $uuid $søknad")
+                    log.trace(CONFIDENTIAL, "Lagrer DB søknad med uuid $uuid $søknad")
                     repo.save(Søknad(fnr = søker.fnr.fnr, eventid = uuid)).also {
-                        log.info(CONFIDENTIAL, "Lagret DB søknad $it OK")
+                        log.trace(CONFIDENTIAL, "Lagret DB søknad $it OK")
                     }
                 }
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = pdf, navn = "kvittering.pdf")))
