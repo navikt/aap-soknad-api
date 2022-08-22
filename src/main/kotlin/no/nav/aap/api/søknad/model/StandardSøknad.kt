@@ -20,6 +20,10 @@ import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.AFP
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
+import no.nav.aap.api.søknad.model.VedleggType.ANDREBARN
+import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
+import no.nav.aap.api.søknad.model.VedleggType.OMSORG
+import no.nav.aap.api.søknad.model.VedleggType.STUDIER
 import no.nav.aap.joark.DokumentVariant
 import no.nav.aap.joark.Filtype.JSON
 import no.nav.aap.joark.VariantFormat.ORIGINAL
@@ -53,7 +57,7 @@ data class StandardSøknad(
         log.trace("Sjekker vedlegg studier $studier")
         if (studier.erStudent == AVBRUTT && studier.vedlegg == null) {
             log.trace("Fant mangel for studier")
-            mangler += VedleggType.STUDIER
+            mangler += STUDIER
         }
         else {
             log.trace("Ingen mangler for studier")
@@ -62,7 +66,7 @@ data class StandardSøknad(
             log.trace("Sjekker vedlegg andre barn $andreBarn")
             if (count() > count { it.vedlegg != null }) {
                 log.trace("Fant mangel for andre barn")
-                mangler += VedleggType.ANDREBARN
+                mangler += ANDREBARN
             }
             else {
                 log.trace("Ingen mangler for andre barn")
@@ -70,9 +74,9 @@ data class StandardSøknad(
         }
         with(utbetalinger) {
             log.trace("Sjekker vedlegg arbeidsgiver ${this?.ekstraFraArbeidsgiver}")
-            if (this?.ekstraFraArbeidsgiver?.fraArbeidsgiver == true && ekstraFraArbeidsgiver.vedlegg == null) {
+            if (this?.ekstraFraArbeidsgiver?.fraArbeidsgiver == true && ekstraFraArbeidsgiver.vedlegg?.deler?.isEmpty() == true) {
                 log.trace("Fant mangel for arbeidsgiver")
-                mangler += VedleggType.ARBEIDSGIVER
+                mangler += ARBEIDSGIVER
             }
             else {
                 log.trace("Ingen mangler for arbeidsgiver")
@@ -81,7 +85,7 @@ data class StandardSøknad(
             this?.andreStønader?.firstOrNull() { it.type == OMSORGSSTØNAD }?.let {
                 if (it.vedlegg?.deler?.isEmpty() == true) {
                     log.trace("Fant mangel for omsorg")
-                    mangler += VedleggType.OMSORG
+                    mangler += OMSORG
                 }
                 else {
                     log.trace("Ingen mangler for omsorg")

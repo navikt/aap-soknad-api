@@ -64,7 +64,6 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett()
             val oppgaveId = UUID.randomUUID()
-
             dittnav.opprettBeskjed(MINAAPSTD, callIdAsUUID(), søker.fnr, "Vi har mottatt ${STANDARD.tittel}")
                 ?.let { eventId ->
                     log.trace(CONFIDENTIAL, "Lagrer DB søknad med eventId $eventId $søknad")
