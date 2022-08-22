@@ -27,7 +27,7 @@ class EksternNotifikasjonStatusKonsument(private val repos: DittNavRepositories)
                 oppdaterOppgave(it, status)
             } ?: repos.beskjeder.findBeskjedByEventid(this)?.let {
                 oppdaterBeskjed(it, status)
-            } ?: log.warn("Fant in ngen beskjed/oppgave med eventid $this i DB (dette skal aldri skje)")
+            } ?: log.warn("Fant ingen beskjed/oppgave med eventid $this i DB (dette skal aldri skje)")
 
         }
     }
