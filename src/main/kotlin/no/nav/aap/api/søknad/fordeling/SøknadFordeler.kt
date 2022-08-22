@@ -72,18 +72,22 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                 }
             }
             dittnav.opprettBeskjed(MINAAPSTD, callIdAsUUID(), søker.fnr, "Vi har mottatt ${STANDARD.tittel}")
-                ?.let { uuid ->
-                    log.trace(CONFIDENTIAL, "Lagrer DB søknad med uuid $uuid $søknad")
-                    val s = Søknad(fnr = søker.fnr.fnr, eventid = uuid)
-                    repo.save(s).also {
-                        søknad.manglendeVedlegg().forEach { v ->
-                            val m = ManglendeVedlegg(soknad = s, vedleggtype = v, eventid = uuid)
-                            s.manglendevedlegg.add(m)
-                            m.soknad = s
+                ?.let { eventId ->
+                    log.trace(CONFIDENTIAL, "Lagrer DB søknad med eventId $eventId $søknad")
+                    with(Søknad(fnr = søker.fnr.fnr, eventid = eventId)) søknad@{
+                        repo.save(this).also {
+                            søknad.manglendeVedlegg().forEach { type ->
+                                with(ManglendeVedlegg(soknad = this, vedleggtype = type, eventid = eventId)) {
+                                    manglendevedlegg.add(this)
+                                    soknad = this@søknad
+                                }
+                            }
+                            repo.save(this).also {
+                                log.trace(CONFIDENTIAL, "Lagret DB søknad med eventid $eventId OK")
+                            }
                         }
-                        repo.save(s)
-                        log.trace(CONFIDENTIAL, "Lagret DB søknad  OK")
                     }
+
                 }
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = pdf, navn = "kvittering.pdf")))
         }

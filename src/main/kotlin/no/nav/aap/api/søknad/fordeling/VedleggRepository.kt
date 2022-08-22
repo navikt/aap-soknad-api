@@ -11,6 +11,8 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.Entity
 import javax.persistence.EntityListeners
+import javax.persistence.EnumType.STRING
+import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
@@ -27,6 +29,7 @@ interface VedleggRepository : JpaRepository<ManglendeVedlegg, Long> {
             @ManyToOne(optional = false)
             var soknad: Søknad? = null,
             val eventid: UUID,
+            @Enumerated(STRING)
             val vedleggtype: VedleggType,
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
         override fun toString() =
