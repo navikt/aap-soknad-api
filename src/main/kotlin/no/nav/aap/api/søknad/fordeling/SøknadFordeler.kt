@@ -13,6 +13,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
@@ -36,44 +37,45 @@ interface Fordeler {
 @Component
 class StandardSøknadFordeler(private val joark: JoarkFordeler,
                              private val pdl: PDLClient,
-                             private val dittnav: DittNavClient,
-                             private val avslutter: StandardSøknadAvslutter,
+                             private val fullfører: StandardSøknadFullfører,
                              private val cfg: VLFordelingConfig,
-                             private val repo: SøknadRepository,
                              private val vl: SøknadVLFordeler) {
-
-    private val log = getLogger(javaClass)
 
     fun fordel(søknad: StandardSøknad) =
         pdl.søkerMedBarn().run {
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.standard)
-                dittnav.opprettBeskjed(MINAAPSTD, callIdAsUUID(), fnr, "Vi har mottatt ${STANDARD.tittel}")
-                    ?.let { uuid ->
-                        log.info(CONFIDENTIAL, "Lagrer DB søknad med uuid $uuid $søknad")
-                        repo.save(Søknad(fnr = this@run.fnr.fnr, eventid = uuid)).also {
-                            log.info(CONFIDENTIAL, "Lagret DB søknad $it OK")
-                        }
-                    }
-                with(søknad.manglendeVedlegg()) {
-                    if (isNotEmpty()) {
-                        log.trace("Det mangler $size vedlegg av følgende typer $this")
-                        dittnav.opprettOppgave(MINAAPSTD,
-                                fnr, UUID.randomUUID(),
-                                "Du må ettersende dokumentasjon til din ${STANDARD.tittel}")
-                    }
-                }
-                avslutter.avsluttSøknad(søknad, pdf)
+                fullfører.fullfør(søknad, this@run, pdf)
             }
         }
 }
 
 @Component
-class StandardSøknadAvslutter(private val dokumentLager: Dokumentlager,
+class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
+                              private val dittnav: DittNavClient,
+                              private val repo: SøknadRepository,
                               private val mellomlager: Mellomlager) {
-    fun avsluttSøknad(søknad: StandardSøknad, pdf: ByteArray) =
+
+    private val log = getLogger(javaClass)
+
+    fun fullfør(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett()
+            with(søknad.manglendeVedlegg()) {
+                if (isNotEmpty()) {
+                    log.trace("Det mangler $size vedlegg av følgende typer $this")
+                    dittnav.opprettOppgave(MINAAPSTD,
+                            søker.fnr, UUID.randomUUID(),
+                            "Du må ettersende dokumentasjon til din ${STANDARD.tittel}")
+                }
+            }
+            dittnav.opprettBeskjed(MINAAPSTD, callIdAsUUID(), søker.fnr, "Vi har mottatt ${STANDARD.tittel}")
+                ?.let { uuid ->
+                    log.info(CONFIDENTIAL, "Lagrer DB søknad med uuid $uuid $søknad")
+                    repo.save(Søknad(fnr = søker.fnr.fnr, eventid = uuid)).also {
+                        log.info(CONFIDENTIAL, "Lagret DB søknad $it OK")
+                    }
+                }
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = pdf, navn = "kvittering.pdf")))
         }
 }

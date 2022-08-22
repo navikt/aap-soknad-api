@@ -28,7 +28,6 @@ class EksternNotifikasjonStatusKonsument(private val repos: DittNavRepositories)
             } ?: repos.beskjeder.findBeskjedByEventid(this)?.let {
                 oppdaterBeskjed(it, status)
             } ?: log.warn("Fant ingen beskjed/oppgave med eventid $this i DB (dette skal aldri skje)")
-
         }
     }
 
@@ -50,7 +49,7 @@ class EksternNotifikasjonStatusKonsument(private val repos: DittNavRepositories)
             log.trace("Oppdaterer beskjed med distribusjonsinfo fra $status")
             beskjed.notifikasjoner.add(EksternBeskjedNotifikasjon(
                     beskjed = beskjed,
-                    eventid = UUID.fromString(bestillingsId),
+                    eventid = eventId(),
                     distribusjonid = distribusjonId,
                     distribusjonkanal = melding))
             repos.beskjeder.save(beskjed).also {
@@ -58,7 +57,7 @@ class EksternNotifikasjonStatusKonsument(private val repos: DittNavRepositories)
             }
         }
 
-    fun DoknotifikasjonStatus.eventId() = UUID.fromString(bestillingsId)
+    private fun DoknotifikasjonStatus.eventId() = UUID.fromString(bestillingsId)
 
     companion object {
         const val FERDIGSTILT = "FERDIGSTILT"
