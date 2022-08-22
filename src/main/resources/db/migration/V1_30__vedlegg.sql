@@ -1,2 +1,2 @@
 alter table manglendevedlegg
-    ALTER COLUMN vedleggtype varchar(20) not null;
+    ALTER COLUMN vedleggtype type varchar(20);
