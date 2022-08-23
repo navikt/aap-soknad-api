@@ -18,14 +18,12 @@ class EttersendelseClient(private val repo: SøknadRepository) {
     private fun tilSøknad(s: Søknad) =
         with(s) {
             SøknadDTO(Fødselsnummer(fnr),
-                    journalpostid,
                     created,
                     eventid,
                     manglendevedlegg.map { it.vedleggtype }.toSet())
         }
 
     data class SøknadDTO(val fnr: Fødselsnummer,
-                         val journalpostId: String,
                          val opprettet: LocalDateTime?,
                          val søknadId: UUID,
                          val mangler: Set<VedleggType>)
