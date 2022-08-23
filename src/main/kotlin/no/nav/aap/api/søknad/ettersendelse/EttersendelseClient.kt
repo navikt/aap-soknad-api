@@ -6,6 +6,7 @@ import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.model.VedleggType
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
+import java.util.*
 
 @Component
 class EttersendelseClient(private val repo: SøknadRepository) {
@@ -16,11 +17,16 @@ class EttersendelseClient(private val repo: SøknadRepository) {
 
     private fun tilSøknad(s: Søknad) =
         with(s) {
-            SøknadDTO(Fødselsnummer(fnr), journalpostid, created, manglendevedlegg.map { it.vedleggtype }.toSet())
+            SøknadDTO(Fødselsnummer(fnr),
+                    journalpostid,
+                    created,
+                    eventid,
+                    manglendevedlegg.map { it.vedleggtype }.toSet())
         }
 
     data class SøknadDTO(val fnr: Fødselsnummer,
                          val journalpostId: String,
                          val opprettet: LocalDateTime?,
+                         val eventId: UUID,
                          val mangler: Set<VedleggType>)
 }
