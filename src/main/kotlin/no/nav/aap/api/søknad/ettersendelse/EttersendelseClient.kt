@@ -12,11 +12,10 @@ class EttersendelseClient(private val repo: SøknadRepository) {
             s.manglendevedlegg.isNotEmpty()
         }?.map(::tilSøknad)
 
-    private fun tilSøknad(s: Søknad) {
+    private fun tilSøknad(s: Søknad) =
         with(s) {
             SøknadDTO(Fødselsnummer(fnr), journalpostid, created, manglendevedlegg.map { it.vedleggtype }.toSet())
         }
-    }
 
     data class SøknadDTO(val fnr: Fødselsnummer,
                          val journalpostId: String,
