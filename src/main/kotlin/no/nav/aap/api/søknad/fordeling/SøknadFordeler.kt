@@ -73,7 +73,7 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                 dittnav.opprettOppgave(MINAAPSTD,
                         søker.fnr,
                         s.eventid,
-                        "Du må ettersende dokumentasjon til din ${STANDARD.tittel}")?.let { eventId ->
+                        "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")?.let { eventId ->
                     søknad.manglendeVedlegg().forEach { type ->
                         with(ManglendeVedlegg(soknad = s,
                                 vedleggtype = type,
@@ -88,7 +88,7 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                 }
             }
             else {
-                dittnav.opprettBeskjed(MINAAPSTD, callIdAsUUID(), søker.fnr, "Vi har mottatt ${STANDARD.tittel}")
+                dittnav.opprettBeskjed(MINAAPSTD, callIdAsUUID(), søker.fnr, "Vi har mottatt din ${STANDARD.tittel}")
             }
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = resultat.pdf, navn = "kvittering.pdf")))
         }
