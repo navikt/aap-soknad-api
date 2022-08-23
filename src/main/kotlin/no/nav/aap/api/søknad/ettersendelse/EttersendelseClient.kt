@@ -27,6 +27,6 @@ class EttersendelseClient(private val repo: SøknadRepository) {
     data class SøknadDTO(val fnr: Fødselsnummer,
                          val journalpostId: String,
                          val opprettet: LocalDateTime?,
-                         val eventId: UUID,
+                         val søknadId: UUID,
                          val mangler: Set<VedleggType>)
 }
