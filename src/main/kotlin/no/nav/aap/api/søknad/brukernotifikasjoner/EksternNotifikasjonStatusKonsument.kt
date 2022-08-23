@@ -1,8 +1,6 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternBeskjedNotifikasjon
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternOppgaveNotifikasjon
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
