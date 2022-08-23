@@ -37,7 +37,7 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
     fun done(@Param("eventid") eventid: UUID): Int
 
     @Query("select eventid from beskjed where  done = false and fnr = :fnr")
-    fun allNotDone(@Param("fnr") fnr: String): List<UUID>
+    fun alleIkkeAvsluttede(@Param("fnr") fnr: String): List<UUID>
 
     @Entity(name = "beskjed")
     @Table(name = "dittnavbeskjeder")
@@ -64,7 +64,7 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
     fun done(@Param("eventid") eventid: UUID): Int
 
     @Query("select eventid from oppgave where  done = false and fnr = :fnr")
-    fun allNotDone(@Param("fnr") fnr: String): List<UUID>
+    fun alleIkkeAvsluttede(@Param("fnr") fnr: String): List<UUID>
 
     @Entity(name = "oppgave")
     @Table(name = "dittnavoppgaver")
@@ -86,7 +86,7 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
 @Component
 data class DittNavRepositories(val beskjeder: DittNavBeskjedRepository,
                                val oppgaver: DittNavOppgaveRepository,
-                               var notifikasjoner: DittNavNotifikasjonRepository
+                               var notifikasjoner: DittNavNotifikasjonRepository,
                                var søknader: SøknadRepository)
 
 @Converter(autoApply = true)
