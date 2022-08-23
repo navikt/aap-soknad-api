@@ -28,7 +28,6 @@ interface VedleggRepository : JpaRepository<ManglendeVedlegg, Long> {
             @LastModifiedDate var updated: LocalDateTime? = null,
             @ManyToOne(optional = false)
             var soknad: Søknad? = null,
-            val oppgaveid: UUID,
             val eventid: UUID,
             @Enumerated(STRING)
             val vedleggtype: VedleggType,

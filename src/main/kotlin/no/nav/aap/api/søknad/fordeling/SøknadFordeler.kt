@@ -20,7 +20,7 @@ import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
-import no.nav.boot.conditionals.EnvUtil
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.stereotype.Component
 
 @ConditionalOnGCP
@@ -62,7 +62,7 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
     fun fullfør(søknad: StandardSøknad, søker: Søker, resultat: FordelingResultat) =
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett()
-            log.trace(EnvUtil.CONFIDENTIAL, "Lagrer metadata om søknad i DB")
+            log.trace(CONFIDENTIAL, "Lagrer metadata om søknad i DB")
             val s =
                 with(Søknad(fnr = søker.fnr.fnr, journalpostid = resultat.journalpostId, eventid = callIdAsUUID())) {
                     repo.save(this).also {
@@ -72,12 +72,11 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
             if (søknad.manglendeVedlegg().isNotEmpty()) {
                 dittnav.opprettOppgave(MINAAPSTD,
                         søker.fnr,
-                        callIdAsUUID(),
+                        s.eventid,
                         "Du må ettersende dokumentasjon til din ${STANDARD.tittel}")?.let { eventId ->
                     søknad.manglendeVedlegg().forEach { type ->
                         with(ManglendeVedlegg(soknad = s,
                                 vedleggtype = type,
-                                oppgaveid = callIdAsUUID(),
                                 eventid = eventId)) {
                             s.manglendevedlegg.add(this)
                             soknad = s
