@@ -1,8 +1,6 @@
 package no.nav.aap.api.søknad.brukernotifikasjoner
 
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternBeskjedNotifikasjon
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternOppgaveNotifikasjon
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
 import no.nav.aap.api.søknad.fordeling.SøknadRepository
 import no.nav.aap.util.StringExtensions.partialMask
@@ -86,7 +84,6 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
 @Component
 data class DittNavRepositories(val beskjeder: DittNavBeskjedRepository,
                                val oppgaver: DittNavOppgaveRepository,
-                               var notifikasjoner: DittNavNotifikasjonRepository,
                                var søknader: SøknadRepository)
 
 @Converter(autoApply = true)
@@ -95,37 +92,34 @@ class UUIDAttributeConverter : AttributeConverter<UUID, String> {
     override fun convertToEntityAttribute(databaseValue: String?) = databaseValue?.let(UUID::fromString)
 }
 
-interface DittNavNotifikasjonRepository : JpaRepository<EksternOppgaveNotifikasjon, Long> {
+@Entity(name = "eksternoppgavenotifikasjon")
+@Table(name = "eksterneoppgavenotifikasjoner")
+@EntityListeners(AuditingEntityListener::class)
+class EksternOppgaveNotifikasjon(
+        @ManyToOne(optional = false)
+        var oppgave: Oppgave? = null,
+        var eventid: UUID,
+        @CreatedDate
+        var distribusjondato: LocalDateTime? = null,
+        val distribusjonid: Long? = null,
+        val distribusjonkanal: String? = null,
+        @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
+    override fun toString(): String =
+        "EksternOppgaveNotifikasjon(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,oppgave=$oppgave,id=$id)"
+}
 
-    @Entity(name = "eksternoppgavenotifikasjon")
-    @Table(name = "eksterneoppgavenotifikasjoner")
-    @EntityListeners(AuditingEntityListener::class)
-    class EksternOppgaveNotifikasjon(
-            @ManyToOne(optional = false)
-            var oppgave: Oppgave? = null,
-            var eventid: UUID,
-            @CreatedDate
-            var distribusjondato: LocalDateTime? = null,
-            val distribusjonid: Long? = null,
-            val distribusjonkanal: String? = null,
-            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
-        override fun toString(): String =
-            "EksternOppgaveNotifikasjon(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,oppgave=$oppgave,id=$id)"
-    }
-
-    @Entity(name = "eksternbeskjednotifikasjon")
-    @Table(name = "eksternebeskjednotifikasjoner")
-    @EntityListeners(AuditingEntityListener::class)
-    class EksternBeskjedNotifikasjon(
-            @ManyToOne(optional = false)
-            var beskjed: Beskjed? = null,
-            var eventid: UUID,
-            @CreatedDate
-            var distribusjondato: LocalDateTime? = null,
-            val distribusjonid: Long? = null,
-            val distribusjonkanal: String? = null,
-            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
-        override fun toString(): String =
-            "EksternOppgaveNotifikasjon(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,beskjed=$beskjed,id=$id)"
-    }
+@Entity(name = "eksternbeskjednotifikasjon")
+@Table(name = "eksternebeskjednotifikasjoner")
+@EntityListeners(AuditingEntityListener::class)
+class EksternBeskjedNotifikasjon(
+        @ManyToOne(optional = false)
+        var beskjed: Beskjed? = null,
+        var eventid: UUID,
+        @CreatedDate
+        var distribusjondato: LocalDateTime? = null,
+        val distribusjonid: Long? = null,
+        val distribusjonkanal: String? = null,
+        @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
+    override fun toString(): String =
+        "EksternOppgaveNotifikasjon(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,beskjed=$beskjed,id=$id)"
 }
