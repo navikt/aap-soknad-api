@@ -6,8 +6,8 @@ import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.Companion.MINAAPSTD
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.Companion.MINAAPUTLAND
+import no.nav.aap.api.søknad.fordeling.SøknadRepository.ManglendeVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
-import no.nav.aap.api.søknad.fordeling.VedleggRepository.ManglendeVedlegg
 import no.nav.aap.api.søknad.joark.JoarkFordeler
 import no.nav.aap.api.søknad.joark.JoarkFordeler.JoarkFordelingResultat
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager

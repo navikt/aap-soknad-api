@@ -1,10 +1,12 @@
 package no.nav.aap.api.dev
 
+import io.netty.handler.codec.http.HttpResponseStatus.NO_CONTENT
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavRepositories
+import no.nav.aap.api.søknad.ettersendelse.EttersendelseClient
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
 import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
@@ -17,14 +19,13 @@ import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus.CREATED
-import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
-import org.springframework.http.MediaType.TEXT_PLAIN_VALUE
 import org.springframework.http.MediaType.parseMediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
+import org.springframework.util.MimeTypeUtils.TEXT_PLAIN_VALUE
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -43,11 +44,12 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
                              private val cfg: VLFordelingConfig,
                              private val vl: SøknadVLFordeler,
                              private val dittNav: DittNavClient,
+                             private val ettersendelse: EttersendelseClient,
                              private val repos: DittNavRepositories) {
 
-    @GetMapping("/vedlegg")
-    fun manglendeVedlegg(@RequestParam fnr: Fødselsnummer) =
-        repos.søknader.getSøknadByFnr(fnr.fnr)?.map { v -> v.manglendevedlegg.map { t -> t.vedleggtype } }
+    @GetMapping("/mangler")
+    fun mangler(@RequestParam fnr: Fødselsnummer) =
+        ettersendelse.søknaderMedMangler(fnr)
 
     @GetMapping("/dittnav/avsluttalle")
     fun avslutt(@RequestParam fnr: Fødselsnummer) {
