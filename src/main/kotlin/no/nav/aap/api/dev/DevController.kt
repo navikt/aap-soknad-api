@@ -46,9 +46,8 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
                              private val repos: DittNavRepositories) {
 
     @GetMapping("/vedlegg")
-    fun manglendeVedlegg(@RequestParam fnr: Fødselsnummer) {
+    fun manglendeVedlegg(@RequestParam fnr: Fødselsnummer) =
         repos.søknader.getSøknadByFnr(fnr.fnr)
-    }
 
     @GetMapping("/dittnav/avsluttalle")
     fun avslutt(@RequestParam fnr: Fødselsnummer) {
