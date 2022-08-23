@@ -6,12 +6,14 @@ import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavRepositories
 import no.nav.aap.api.søknad.ettersendelse.EttersendelseClient
+import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
 import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
 import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
 import org.springframework.http.CacheControl.noCache
@@ -47,9 +49,17 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
                              private val ettersendelse: EttersendelseClient,
                              private val repos: DittNavRepositories) {
 
+    private val log = LoggerUtil.getLogger(javaClass)
+
     @GetMapping("/mangler")
     fun mangler(@RequestParam fnr: Fødselsnummer) =
         ettersendelse.søknaderMedMangler(fnr)
+
+    @PostMapping("ettersend/{fnr}")
+    @ResponseStatus(CREATED)
+    fun ettersend(@PathVariable fnr: Fødselsnummer, @RequestBody ettersending: Ettersending) {
+        log.trace("Mottok ettersendng $ettersending for $fnr")
+    }
 
     @GetMapping("/dittnav/avsluttalle")
     fun avslutt(@RequestParam fnr: Fødselsnummer) {
