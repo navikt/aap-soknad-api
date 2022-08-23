@@ -4,6 +4,7 @@ import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Besk
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternBeskjedNotifikasjon
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonRepository.EksternOppgaveNotifikasjon
 import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
+import no.nav.aap.api.søknad.fordeling.SøknadRepository
 import no.nav.aap.util.StringExtensions.partialMask
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -85,7 +86,8 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
 @Component
 data class DittNavRepositories(val beskjeder: DittNavBeskjedRepository,
                                val oppgaver: DittNavOppgaveRepository,
-                               var notifikasjoner: DittNavNotifikasjonRepository)
+                               var notifikasjoner: DittNavNotifikasjonRepository
+                               var søknader: SøknadRepository)
 
 @Converter(autoApply = true)
 class UUIDAttributeConverter : AttributeConverter<UUID, String> {

@@ -9,7 +9,7 @@ import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.Compa
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.fordeling.VedleggRepository.ManglendeVedlegg
 import no.nav.aap.api.søknad.joark.JoarkFordeler
-import no.nav.aap.api.søknad.joark.JoarkFordeler.FordelingResultat
+import no.nav.aap.api.søknad.joark.JoarkFordeler.JoarkFordelingResultat
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
@@ -20,7 +20,6 @@ import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
-import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.stereotype.Component
 
 @ConditionalOnGCP
@@ -59,36 +58,32 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
 
     private val log = getLogger(javaClass)
 
-    fun fullfør(søknad: StandardSøknad, søker: Søker, resultat: FordelingResultat) =
+    fun fullfør(søknad: StandardSøknad, søker: Søker, resultat: JoarkFordelingResultat) =
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett()
-            log.trace(CONFIDENTIAL, "Lagrer metadata om søknad i DB")
+            log.trace("Lagrer metadata om søknad i DB")
             val s =
-                with(Søknad(fnr = søker.fnr.fnr, journalpostid = resultat.journalpostId, eventid = callIdAsUUID())) {
-                    repo.save(this).also {
+                repo.save(Søknad(fnr = søker.fnr.fnr, journalpostid = resultat.journalpostId, eventid = callIdAsUUID()))
+                    .also {
                         log.trace("Lagret metadata om søknad i DB OK")
                     }
-                }
             if (søknad.manglendeVedlegg().isNotEmpty()) {
+                søknad.manglendeVedlegg().forEach { type ->
+                    with(ManglendeVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
+                        s.manglendevedlegg.add(this)
+                        soknad = s
+                    }
+                }
+                repo.save(s).also {
+                    log.trace("Oppdatert metadata om søknad med ${s.manglendevedlegg.size} manglende vedlegg i DB OK")
+                }
                 dittnav.opprettOppgave(MINAAPSTD,
                         søker.fnr,
                         s.eventid,
-                        "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")?.let { eventId ->
-                    søknad.manglendeVedlegg().forEach { type ->
-                        with(ManglendeVedlegg(soknad = s,
-                                vedleggtype = type,
-                                eventid = eventId)) {
-                            s.manglendevedlegg.add(this)
-                            soknad = s
-                        }
-                    }
-                    repo.save(s).also {
-                        log.trace("Oppdatert metadata om søknad med ${s.manglendevedlegg.size} manglende vedlegg i DB OK")
-                    }
-                }
+                        "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")
             }
             else {
-                dittnav.opprettBeskjed(MINAAPSTD, callIdAsUUID(), søker.fnr, "Vi har mottatt din ${STANDARD.tittel}")
+                dittnav.opprettBeskjed(MINAAPSTD, s.eventid, søker.fnr, "Vi har mottatt din ${STANDARD.tittel}")
             }
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = resultat.pdf, navn = "kvittering.pdf")))
         }

@@ -16,15 +16,15 @@ class JoarkFordeler(private val joark: JoarkClient,
     fun fordel(søknad: StandardSøknad, søker: Søker) =
         with(pdf.tilPdf(søker, søknad)) {
             log.trace("Fordeler til JOARK")
-            FordelingResultat(this, joark.journalfør(generator.journalpostFra(søknad, søker, this))).also {
+            JoarkFordelingResultat(this, joark.journalfør(generator.journalpostFra(søknad, søker, this))).also {
                 log.trace("Fordeling til JOARK OK med journalpost ${it.journalpostId}")
             }
         }
 
     fun fordel(søknad: UtlandSøknad, søker: Søker) =
         with(pdf.tilPdf(søker, søknad)) {
-            FordelingResultat(this, joark.journalfør(generator.journalpostFra(søknad, søker, this)))
+            JoarkFordelingResultat(this, joark.journalfør(generator.journalpostFra(søknad, søker, this)))
         }
 
-    data class FordelingResultat(val pdf: ByteArray, val journalpostId: String)
+    data class JoarkFordelingResultat(val pdf: ByteArray, val journalpostId: String)
 }

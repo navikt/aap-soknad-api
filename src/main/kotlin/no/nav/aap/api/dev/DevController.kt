@@ -2,6 +2,9 @@ package no.nav.aap.api.dev
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
+import no.nav.aap.api.felles.SkjemaType.STANDARD
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
+import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavRepositories
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
 import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
@@ -38,7 +41,20 @@ import java.util.*
 internal class DevController(private val dokumentLager: GCPKryptertDokumentlager,
                              private val mellomlager: GCPKryptertMellomlager,
                              private val cfg: VLFordelingConfig,
-                             private val vl: SøknadVLFordeler) {
+                             private val vl: SøknadVLFordeler,
+                             private val dittNav: DittNavClient,
+                             private val repos: DittNavRepositories) {
+
+    @GetMapping("/vedlegg")
+    fun manglendeVedlegg(@RequestParam fnr: Fødselsnummer) {
+        repos.søknader.getSøknadByFnr(fnr.fnr)
+    }
+
+    @GetMapping("/dittnav/avsluttalle")
+    fun avslutt(@RequestParam fnr: Fødselsnummer) {
+        repos.beskjeder.allNotDone(fnr.fnr).forEach { dittNav.avsluttOppgave(STANDARD, fnr, it) }
+        repos.oppgaver.allNotDone(fnr.fnr).forEach { dittNav.avsluttOppgave(STANDARD, fnr, it) }
+    }
 
     @PostMapping("vl/{fnr}")
     @ResponseStatus(CREATED)
