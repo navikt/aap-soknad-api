@@ -20,9 +20,8 @@ import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
-import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
+import no.nav.boot.conditionals.EnvUtil
 import org.springframework.stereotype.Component
-import java.util.*
 
 @ConditionalOnGCP
 class SøknadFordeler(private val utland: UtlandSøknadFordeler, private val standard: StandardSøknadFordeler) :
@@ -63,37 +62,35 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
     fun fullfør(søknad: StandardSøknad, søker: Søker, resultat: FordelingResultat) =
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett()
-            val oppgaveId = UUID.randomUUID()
-            dittnav.opprettBeskjed(MINAAPSTD, callIdAsUUID(), søker.fnr, "Vi har mottatt ${STANDARD.tittel}")
-                ?.let { eventId ->
-                    log.trace(CONFIDENTIAL, "Lagrer DB søknad med eventId $eventId $søknad")
-                    with(Søknad(fnr = søker.fnr.fnr,
-                            journalpostid = resultat.journalpostId,
-                            eventid = eventId)) søknad@{
-                        repo.save(this).also {
-                            log.trace("Lagret metadata om søknad i DB med eventid $eventId OK")
-                            søknad.manglendeVedlegg().forEach { type ->
-                                with(ManglendeVedlegg(soknad = this,
-                                        vedleggtype = type,
-                                        oppgaveid = oppgaveId,
-                                        eventid = eventId)) {
-                                    manglendevedlegg.add(this)
-                                    soknad = this@søknad
-                                }
-                            }
-                            if (manglendevedlegg.isNotEmpty()) {
-                                log.trace("Det mangler ${manglendevedlegg.size} vedlegg")
-                                repo.save(this).also {
-                                    log.trace("Oppdaterte DB søknad med ${manglendevedlegg.size} manglende vedlegg for eventid $eventId OK")
-                                    dittnav.opprettOppgave(MINAAPSTD,
-                                            søker.fnr,
-                                            oppgaveId,
-                                            "Du må ettersende dokumentasjon til din ${STANDARD.tittel}")
-                                }
-                            }
-                        }
+            log.trace(EnvUtil.CONFIDENTIAL, "Lagrer metadata om søknad i DB")
+            val s =
+                with(Søknad(fnr = søker.fnr.fnr, journalpostid = resultat.journalpostId, eventid = callIdAsUUID())) {
+                    repo.save(this).also {
+                        log.trace("Lagret metadata om søknad i DB OK")
                     }
                 }
+            if (søknad.manglendeVedlegg().isNotEmpty()) {
+                dittnav.opprettOppgave(MINAAPSTD,
+                        søker.fnr,
+                        callIdAsUUID(),
+                        "Du må ettersende dokumentasjon til din ${STANDARD.tittel}")?.let { eventId ->
+                    søknad.manglendeVedlegg().forEach { type ->
+                        with(ManglendeVedlegg(soknad = s,
+                                vedleggtype = type,
+                                oppgaveid = callIdAsUUID(),
+                                eventid = eventId)) {
+                            s.manglendevedlegg.add(this)
+                            soknad = s
+                        }
+                    }
+                    repo.save(s).also {
+                        log.trace("Oppdatert metadata om søknad med ${s.manglendevedlegg.size} manglende vedlegg i DB OK")
+                    }
+                }
+            }
+            else {
+                dittnav.opprettBeskjed(MINAAPSTD, callIdAsUUID(), søker.fnr, "Vi har mottatt ${STANDARD.tittel}")
+            }
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = resultat.pdf, navn = "kvittering.pdf")))
         }
 }

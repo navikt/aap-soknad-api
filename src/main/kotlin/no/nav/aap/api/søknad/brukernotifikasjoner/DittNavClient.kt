@@ -124,7 +124,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
                 .build().also { m ->
                     log.trace(CONFIDENTIAL,
-                            "Melding har tekst ${m.tekst}, prefererte kanaler ${m.prefererteKanaler} og ekstern varsling ${m.eksternVarsling}")
+                            "Melding ${m.tekst}, prefererte kanaler ${m.prefererteKanaler} og ekstern varsling ${m.eksternVarsling}")
                 }
         }
 
