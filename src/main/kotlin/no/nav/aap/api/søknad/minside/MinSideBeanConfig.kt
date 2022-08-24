@@ -46,12 +46,12 @@ class MinSideBeanConfig {
                     put(SPECIFIC_AVRO_READER_CONFIG, true)
                     setRecordFilterStrategy { payload ->
                         with(payload.value()) {
-                            val filtrert = !(bestillerId == appNavn && status == FERDIGSTILT && melding.contains(
-                                    NOTIFIKASJON_SENDT))
-                            if (status == FEILET) {
-                                log.warn("Ekstern notifikasjon feilet for $bestillingsId, ($melding)")
+                            !(bestillerId == appNavn && status == FERDIGSTILT && melding.contains(
+                                    NOTIFIKASJON_SENDT)).apply {
+                                if (status == FEILET) {
+                                    log.warn("Ekstern notifikasjon feilet for $bestillingsId, ($melding)")
+                                }
                             }
-                            filtrert
                         }
                     }
                 })
