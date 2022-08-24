@@ -51,7 +51,7 @@ class JoarkJournalpostGenerator(
             }
 
     fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
-        Journalpost(dokumenter = dokumenterFra(søknad, søker, pdf.asPDFVariant()),
+        Journalpost(dokumenter = journalpostDokumenterFra(søknad, pdf.asPDFVariant()),
                 tittel = STANDARD.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
@@ -59,7 +59,7 @@ class JoarkJournalpostGenerator(
                 log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it")
             }
 
-    private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
+    private fun journalpostDokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
         with(søknad) {
             dokumenterFra(this, pdfVariant).apply {
                 addAll(dokumenterFra(studier, STUDIER))
@@ -75,19 +75,19 @@ class JoarkJournalpostGenerator(
         }
 
     private fun dokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
-        mutableListOf(Dokument(STANDARD, listOf(søknad.asJsonVariant(mapper), pdfVariant)))
+        mutableListOf(Dokument(STANDARD, listOf(søknad.somJsonVariant(mapper), pdfVariant)))
 
     private fun dokumenterFra(a: List<VedleggAware?>?, type: VedleggType) =
         a?.map {
-            dokumenterFra(it?.vedlegg, type.tittel)
+            dokumenterFra(it?.vedlegg, type)
         }?.flatten() ?: emptyList()
 
     private fun dokumenterFra(a: VedleggAware?, type: VedleggType): List<Dokument> =
         a?.let { v ->
-            v.vedlegg?.let { dokumenterFra(it, type.tittel) }
+            v.vedlegg?.let { dokumenterFra(it, type) }
         } ?: emptyList()
 
-    private fun dokumenterFra(v: Vedlegg?, tittel: String) =
+    private fun dokumenterFra(v: Vedlegg?, type: VedleggType) =
         v?.let { vl ->
             val vedlegg = (vl.deler?.mapNotNull {
                 it?.let { uuid ->
@@ -99,12 +99,12 @@ class JoarkJournalpostGenerator(
             val pdfs = vedlegg[APPLICATION_PDF_VALUE] ?: mutableListOf()
             val jpgs = vedlegg[IMAGE_JPEG_VALUE] ?: emptyList()
             val pngs = vedlegg[IMAGE_PNG_VALUE] ?: emptyList()
-            pdfs.map { it.somDokument(tittel) }.toMutableList().apply {
+            pdfs.map { it.somDokument(type.tittel) }.toMutableList().apply {
                 if (jpgs.isNotEmpty()) {
-                    add(konverterer.tilPdf(IMAGE_JPEG_VALUE, jpgs.map(DokumentInfo::bytes)).somDokument(tittel))
+                    add(konverterer.tilPdf(IMAGE_JPEG_VALUE, jpgs.map(DokumentInfo::bytes)).somDokument(type.tittel))
                 }
                 if (pngs.isNotEmpty()) {
-                    add(konverterer.tilPdf(IMAGE_PNG_VALUE, pngs.map(DokumentInfo::bytes)).somDokument(tittel))
+                    add(konverterer.tilPdf(IMAGE_PNG_VALUE, pngs.map(DokumentInfo::bytes)).somDokument(type.tittel))
                 }
             }
         } ?: emptyList()

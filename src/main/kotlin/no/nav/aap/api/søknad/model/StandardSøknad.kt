@@ -50,7 +50,7 @@ data class StandardSøknad(
 
     private val log = getLogger(javaClass)
 
-    fun asJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
+    fun somJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
 
     fun manglendeVedlegg(): List<VedleggType> {
 
