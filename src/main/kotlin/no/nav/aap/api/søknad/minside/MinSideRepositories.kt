@@ -133,4 +133,4 @@ abstract class BaseEntity(
         @CreatedDate var created: LocalDateTime? = null,
         val eventid: UUID,
         @LastModifiedDate var updated: LocalDateTime? = null,
-        @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0)
+        @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0)
