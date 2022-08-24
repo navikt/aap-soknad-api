@@ -51,6 +51,22 @@ interface MinSideBeskjedRepository : JpaRepository<Beskjed, Long> {
         override fun toString(): String =
             "Beskjed(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id)"
     }
+
+    @Entity(name = "eksternbeskjednotifikasjon")
+    @Table(name = "eksternebeskjednotifikasjoner")
+    @EntityListeners(AuditingEntityListener::class)
+    class EksternBeskjedNotifikasjon(
+            @ManyToOne(optional = false)
+            var beskjed: Beskjed? = null,
+            var eventid: UUID,
+            @CreatedDate
+            var distribusjondato: LocalDateTime? = null,
+            val distribusjonid: Long? = null,
+            val distribusjonkanal: String? = null,
+            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
+        override fun toString(): String =
+            "EksternOppgaveNotifikasjon(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,beskjed=$beskjed,id=$id)"
+    }
 }
 
 interface MinSideOppgaveRepository : JpaRepository<Oppgave, Long> {
@@ -76,6 +92,23 @@ interface MinSideOppgaveRepository : JpaRepository<Oppgave, Long> {
         override fun toString(): String =
             "Oppgave(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id)"
     }
+
+    @Entity(name = "eksternoppgavenotifikasjon")
+    @Table(name = "eksterneoppgavenotifikasjoner")
+    @EntityListeners(AuditingEntityListener::class)
+    class EksternOppgaveNotifikasjon(
+            @ManyToOne(optional = false)
+            var oppgave: Oppgave? = null,
+            var eventid: UUID,
+            @CreatedDate
+            var distribusjondato: LocalDateTime? = null,
+            val distribusjonid: Long? = null,
+            val distribusjonkanal: String? = null,
+            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
+        override fun toString(): String =
+            "EksternOppgaveNotifikasjon(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,oppgave=$oppgave,id=$id)"
+    }
+
 }
 
 @Component
@@ -87,38 +120,6 @@ data class MinSideRepositories(val beskjeder: MinSideBeskjedRepository,
 class UUIDAttributeConverter : AttributeConverter<UUID, String> {
     override fun convertToDatabaseColumn(entityValue: UUID?) = entityValue?.let(UUID::toString)
     override fun convertToEntityAttribute(databaseValue: String?) = databaseValue?.let(UUID::fromString)
-}
-
-@Entity(name = "eksternoppgavenotifikasjon")
-@Table(name = "eksterneoppgavenotifikasjoner")
-@EntityListeners(AuditingEntityListener::class)
-class EksternOppgaveNotifikasjon(
-        @ManyToOne(optional = false)
-        var oppgave: Oppgave? = null,
-        var eventid: UUID,
-        @CreatedDate
-        var distribusjondato: LocalDateTime? = null,
-        val distribusjonid: Long? = null,
-        val distribusjonkanal: String? = null,
-        @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
-    override fun toString(): String =
-        "EksternOppgaveNotifikasjon(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,oppgave=$oppgave,id=$id)"
-}
-
-@Entity(name = "eksternbeskjednotifikasjon")
-@Table(name = "eksternebeskjednotifikasjoner")
-@EntityListeners(AuditingEntityListener::class)
-class EksternBeskjedNotifikasjon(
-        @ManyToOne(optional = false)
-        var beskjed: Beskjed? = null,
-        var eventid: UUID,
-        @CreatedDate
-        var distribusjondato: LocalDateTime? = null,
-        val distribusjonid: Long? = null,
-        val distribusjonkanal: String? = null,
-        @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
-    override fun toString(): String =
-        "EksternOppgaveNotifikasjon(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,beskjed=$beskjed,id=$id)"
 }
 
 @MappedSuperclass

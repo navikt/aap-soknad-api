@@ -24,7 +24,7 @@ import javax.persistence.Table
 
 interface SøknadRepository : JpaRepository<Søknad, Long> {
 
-    fun getSøknadByFnr(@Param("fnr") fnr: String): List<Søknad>?
+    fun getSøknadByFnrOrderByCreatedDesc(@Param("fnr") fnr: String): List<Søknad>?
 
     @Entity(name = "søknad")
     @Table(name = "soknader")

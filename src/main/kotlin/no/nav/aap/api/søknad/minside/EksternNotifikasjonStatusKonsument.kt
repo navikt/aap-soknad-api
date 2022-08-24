@@ -1,6 +1,8 @@
 package no.nav.aap.api.søknad.minside
 
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
+import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.EksternBeskjedNotifikasjon
+import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.EksternOppgaveNotifikasjon
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus

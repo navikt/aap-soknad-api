@@ -11,16 +11,13 @@ import java.util.*
 @Component
 class EttersendelseClient(private val repo: SøknadRepository) {
     fun søknaderMedMangler(fnr: Fødselsnummer) =
-        repo.getSøknadByFnr(fnr.fnr)?.filter { s ->
+        repo.getSøknadByFnrOrderByCreatedDesc(fnr.fnr)?.filter { s ->
             s.manglendevedlegg.isNotEmpty()
         }?.map(::tilSøknad)
 
     private fun tilSøknad(s: Søknad) =
         with(s) {
-            SøknadDTO(Fødselsnummer(fnr),
-                    created,
-                    eventid,
-                    manglendevedlegg.map { it.vedleggtype }.toSet())
+            SøknadDTO(Fødselsnummer(fnr), created, eventid, manglendevedlegg.map { it.vedleggtype }.toSet())
         }
 
     data class SøknadDTO(val fnr: Fødselsnummer,
