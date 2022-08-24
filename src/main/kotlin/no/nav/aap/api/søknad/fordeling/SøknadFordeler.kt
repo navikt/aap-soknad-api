@@ -84,7 +84,7 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                         "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")
             }
             else {
-                dittnav.opprettBeskjed(MINAAPSTD, s.eventid, søker.fnr, "Vi har mottatt din ${STANDARD.tittel}")
+                dittnav.opprettBeskjed(MINAAPSTD, s.eventid, søker.fnr, "Vi har mottatt din ${STANDARD.tittel}", true)
             }
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = resultat.pdf, navn = "kvittering.pdf")))
         }
@@ -102,7 +102,7 @@ class UtlandSøknadFordeler(private val joark: JoarkFordeler,
         pdl.søkerUtenBarn().run {
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.utland)
-                dittnav.opprettBeskjed(MINAAPUTLAND, callIdAsUUID(), fnr, "Vi har mottatt ${UTLAND.tittel}")
+                dittnav.opprettBeskjed(MINAAPUTLAND, callIdAsUUID(), fnr, "Vi har mottatt ${UTLAND.tittel}", true)
                 Kvittering(lager.lagreDokument(DokumentInfo(pdf, navn = "kvittering-utland.pdf")))
             }
         }
