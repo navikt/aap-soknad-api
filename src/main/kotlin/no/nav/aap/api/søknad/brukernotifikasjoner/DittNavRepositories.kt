@@ -23,6 +23,7 @@ import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
 import javax.persistence.ManyToOne
+import javax.persistence.MappedSuperclass
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
@@ -68,14 +69,13 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
     @Table(name = "dittnavoppgaver")
     @EntityListeners(AuditingEntityListener::class)
     class Oppgave(
-            val fnr: String,
-            @CreatedDate var created: LocalDateTime? = null,
-            @LastModifiedDate var updated: LocalDateTime? = null,
+            fnr: String,
+            eventid: UUID,
+            done: Boolean = false,
             @OneToMany(mappedBy = "oppgave", cascade = [ALL], orphanRemoval = true)
             var notifikasjoner: MutableSet<EksternOppgaveNotifikasjon> = mutableSetOf(),
-            val eventid: UUID,
-            val done: Boolean = false,
-            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
+            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) :
+        NotifikasjonBaseEntity(fnr = fnr, eventid = eventid, done = done) {
         override fun toString(): String =
             "Oppgave(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id)"
     }
@@ -123,3 +123,11 @@ class EksternBeskjedNotifikasjon(
     override fun toString(): String =
         "EksternOppgaveNotifikasjon(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,beskjed=$beskjed,id=$id)"
 }
+
+@MappedSuperclass
+abstract class NotifikasjonBaseEntity(
+        val fnr: String,
+        @CreatedDate var created: LocalDateTime? = null,
+        val eventid: UUID,
+        @LastModifiedDate var updated: LocalDateTime? = null,
+        val done: Boolean)
