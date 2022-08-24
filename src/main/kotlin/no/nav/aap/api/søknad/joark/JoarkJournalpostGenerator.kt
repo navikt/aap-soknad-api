@@ -62,15 +62,22 @@ class JoarkJournalpostGenerator(
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         with(søknad) {
             dokumenterFra(this, pdfVariant).apply {
+                log.trace("Etter pdf og json,størrelse er $size")
                 addAll(dokumenterFra(studier, STUDIER.tittel))
+                log.trace("Etter studier, størrelse er $size")
                 addAll(dokumenterFra(andreBarn, ANDREBARN.tittel))
+                log.trace("Etter andre barn, størrelse er $size")
                 addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER.tittel))
+                log.trace("Etter arbeidsgiver, størrelse er $size")
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == AnnenStønadstype.UTLAND },
                         VedleggType.UTLAND.tittel))
+                log.trace("Etter utland, størrelse er $size")
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD },
                         OMSORG.tittel))
+                log.trace("Etter omsorg, størrelse er $size")
                 //  addAll(dokumenterFra(utbetalinger?.andreStønader, "Dokumentasjon av andre stønader"))
                 addAll(dokumenterFra(this@with, ANNET.tittel))
+                log.trace("Etter annet, størrelse er $size")
             }.also {
                 log.trace("Sender ${it.size} dokumenter til JOARK  $it")
             }

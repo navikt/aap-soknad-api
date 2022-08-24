@@ -57,7 +57,7 @@ data class StandardSøknad(
         val mangler = mutableListOf<VedleggType>()
         log.trace("Sjekker vedlegg studier $studier")
         if (studier.erStudent == AVBRUTT && manglerVedlegg(studier)) {
-            log.trace("Fant mangel for ${STUDIER.tittel}").also {
+            log.trace("Fant mangler for ${STUDIER.tittel}").also {
                 mangler += STUDIER
             }
         }
@@ -68,7 +68,7 @@ data class StandardSøknad(
             log.trace("Sjekker vedlegg andre barn $andreBarn")
             if (count() > count { (it.vedlegg?.deler?.size ?: 0) > 0 }) {
                 mangler += ANDREBARN.also {
-                    log.trace("Fant mangel for ${ANDREBARN.tittel}")
+                    log.trace("Fant mangler for ${ANDREBARN.tittel}")
                 }
             }
             else {
@@ -79,7 +79,7 @@ data class StandardSøknad(
             log.trace("Sjekker vedlegg arbeidsgiver ${this?.ekstraFraArbeidsgiver}")
             if (this?.ekstraFraArbeidsgiver?.fraArbeidsgiver == true && manglerVedlegg(ekstraFraArbeidsgiver)) {
                 mangler += ARBEIDSGIVER.also {
-                    log.trace("Fant mangel for ${ARBEIDSGIVER.tittel}")
+                    log.trace("Fant mangler for ${ARBEIDSGIVER.tittel}")
                 }
             }
             else {
@@ -89,7 +89,7 @@ data class StandardSøknad(
             this?.andreStønader?.firstOrNull() { it.type == OMSORGSSTØNAD }?.let {
                 if (manglerVedlegg(it)) {
                     mangler += OMSORG.also {
-                        log.trace("Fant mangel for ${OMSORG.tittel}")
+                        log.trace("Fant mangler for ${OMSORG.tittel}")
                     }
                 }
                 else {
@@ -99,7 +99,7 @@ data class StandardSøknad(
             this?.andreStønader?.firstOrNull() { it.type == UTLAND }?.let {
                 if (manglerVedlegg(it)) {
                     mangler += VedleggType.UTLAND.also {
-                        log.trace("Fant mangel for ${VedleggType.UTLAND.tittel}")
+                        log.trace("Fant mangler for ${VedleggType.UTLAND.tittel}")
                     }
                 }
                 else {
@@ -108,7 +108,12 @@ data class StandardSøknad(
             }
         }
         return mangler.also {
-            log.trace("Det mangler følgende vedlegg $it")
+            if (it.isEmpty()) {
+                log.trace("Det mangler ingen vedlegg")
+            }
+            else {
+                log.trace("Det mangler følgende vedlegg $it")
+            }
         }
     }
 }
