@@ -66,7 +66,7 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
             val s =
                 repo.save(Søknad(fnr = søker.fnr.fnr, journalpostid = resultat.journalpostId, eventid = callIdAsUUID()))
                     .also {
-                        log.trace("Lagret metadata om søknad i DB OK")
+                        log.trace("Lagret metadata $it om søknad i DB OK")
                     }
             with(søknad.manglendeVedlegg()) {
                 if (isNotEmpty()) {
@@ -77,7 +77,7 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                         }
                     }
                     repo.save(s).also {
-                        log.trace("Oppdatert metadata om søknad med ${s.manglendevedlegg.size} manglende vedlegg i DB OK")
+                        log.trace("Oppdatert metadata om søknad $it med ${s.manglendevedlegg.size} manglende vedlegg i DB OK")
                     }
                     dittnav.opprettOppgave(MINAAPSTD,
                             søker.fnr,
