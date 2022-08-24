@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.fordeling
 
+import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
@@ -15,7 +16,6 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
@@ -46,7 +46,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
         pdl.søkerMedBarn().run {
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.standard)
-                fullfører.fullfør(søknad, this@run, this@with)
+                fullfører.fullfør(søknad, this@run.fnr, this@with)
             }
         }
 }
@@ -59,12 +59,12 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
 
     private val log = getLogger(javaClass)
 
-    fun fullfør(søknad: StandardSøknad, søker: Søker, resultat: JoarkFordelingResultat) =
+    fun fullfør(søknad: StandardSøknad, søker: Fødselsnummer, resultat: JoarkFordelingResultat) =
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett()
             log.trace("Lagrer metadata om søknad i DB")
             val s =
-                repo.save(Søknad(fnr = søker.fnr.fnr, journalpostid = resultat.journalpostId, eventid = callIdAsUUID()))
+                repo.save(Søknad(fnr = søker.fnr, journalpostid = resultat.journalpostId, eventid = callIdAsUUID()))
                     .also {
                         log.trace("Lagret metadata $it om søknad i DB OK")
                     }
@@ -80,7 +80,7 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                         log.trace("Oppdatert metadata om søknad $it med ${s.manglendevedlegg.size} manglende vedlegg i DB OK")
                     }
                     dittnav.opprettOppgave(MINAAPSTD,
-                            søker.fnr,
+                            søker,
                             s.eventid,
                             "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")
                 }
