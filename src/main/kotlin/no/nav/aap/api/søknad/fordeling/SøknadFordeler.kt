@@ -20,7 +20,6 @@ import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
-import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.stereotype.Component
 
 @ConditionalOnGCP
@@ -45,7 +44,6 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
     fun fordel(søknad: StandardSøknad) =
         pdl.søkerMedBarn().run {
-            log.trace(CONFIDENTIAL, "Fordeler søknad $søknad")
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.standard)
                 fullfører.fullfør(søknad, this@run, this@with)

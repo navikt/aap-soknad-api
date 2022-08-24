@@ -209,8 +209,8 @@ enum class VedleggType(val tittel: String) {
     ARBEIDSGIVER("Dokumentasjon av ekstra utbetaling fra arbeidsgiver"),
     STUDIER("Dokumentasjon av studier"),
     ANDREBARN("Dokumentasjon av andre barn"),
-    OMSORG("Dokumentasjon av omsorgslønn fra kommunen"),
-    UTLAND("Dokumentasjon av inntekt fra utandet"),
+    OMSORG("Dokumentasjon av omsorgsstønad fra kommunen"),
+    UTLAND("Dokumentasjon av ytelser fra utenlandske trygdemyndigheter"),
     ANNET("Annen dokumentasjon")
 }
 
