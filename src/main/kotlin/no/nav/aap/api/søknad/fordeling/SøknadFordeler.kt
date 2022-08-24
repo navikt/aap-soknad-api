@@ -87,7 +87,7 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                 else {
                     dittnav.opprettBeskjed(MINAAPSTD,
                             s.eventid,
-                            søker.fnr,
+                            søker,
                             "Vi har mottatt din ${STANDARD.tittel}",
                             true)
                 }
