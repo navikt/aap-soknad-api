@@ -56,7 +56,7 @@ data class StandardSøknad(
 
         val mangler = mutableListOf<VedleggType>()
         log.trace("Sjekker vedlegg studier $studier")
-        if (studier.erStudent == AVBRUTT && studier.vedlegg == null) {
+        if (studier.erStudent == AVBRUTT && manglerVedlegg(studier)) {
             log.trace("Fant mangel for studier")
             mangler += STUDIER
         }
@@ -75,7 +75,7 @@ data class StandardSøknad(
         }
         with(utbetalinger) {
             log.trace("Sjekker vedlegg arbeidsgiver ${this?.ekstraFraArbeidsgiver}")
-            if (this?.ekstraFraArbeidsgiver?.fraArbeidsgiver == true && ekstraFraArbeidsgiver.vedlegg?.deler?.isEmpty() == true) {
+            if (this?.ekstraFraArbeidsgiver?.fraArbeidsgiver == true && manglerVedlegg(ekstraFraArbeidsgiver)) {
                 log.trace("Fant mangel for arbeidsgiver")
                 mangler += ARBEIDSGIVER
             }
@@ -84,7 +84,7 @@ data class StandardSøknad(
             }
             log.trace("Sjekker vedlegg andre stønader ${this?.andreStønader}")
             this?.andreStønader?.firstOrNull() { it.type == OMSORGSSTØNAD }?.let {
-                if (it.vedlegg?.deler?.isEmpty() == true) {
+                if (manglerVedlegg(it)) {
                     log.trace("Fant mangel for omsorg")
                     mangler += OMSORG
                 }
@@ -93,7 +93,7 @@ data class StandardSøknad(
                 }
             }
             this?.andreStønader?.firstOrNull() { it.type == UTLAND }?.let {
-                if (it.vedlegg?.deler?.isEmpty() == true) {
+                if (manglerVedlegg(it)) {
                     log.trace("Fant mangel for utland")
                     mangler += VedleggType.UTLAND
                 }
@@ -107,6 +107,8 @@ data class StandardSøknad(
         }
     }
 }
+
+fun manglerVedlegg(v: VedleggAware) = v.vedlegg == null || v.vedlegg?.deler?.isEmpty() == true
 
 @JsonDeserialize(using = VedleggDeserializer::class)
 data class Vedlegg(val tittel: String? = null, @JsonValue val deler: List<UUID?>? = null)
