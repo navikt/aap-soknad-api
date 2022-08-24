@@ -122,15 +122,12 @@ class EksternBeskjedNotifikasjon(
 }
 
 @MappedSuperclass
-abstract class MinSideBaseEntity(
-        fnr: String,
-        eventid: UUID,
-        val done: Boolean) : BaseEntity(fnr, eventid = eventid)
+abstract class MinSideBaseEntity(fnr: String, eventid: UUID, val done: Boolean) : BaseEntity(fnr, eventid = eventid)
 
 @MappedSuperclass
 abstract class BaseEntity(
         val fnr: String,
-        @CreatedDate val created: LocalDateTime? = null,
+        @CreatedDate var created: LocalDateTime? = null,
         val eventid: UUID,
-        @LastModifiedDate val updated: LocalDateTime? = null,
+        @LastModifiedDate var updated: LocalDateTime? = null,
         @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0)
