@@ -5,6 +5,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
+import no.nav.aap.util.LoggerUtil
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
@@ -23,6 +24,8 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VA
 
 @Configuration
 class MinSideBeanConfig {
+    private val log = LoggerUtil.getLogger(javaClass)
+
     @Bean
     fun minSideKafkaOperations(props: KafkaProperties) =
         KafkaTemplate(DefaultKafkaProducerFactory<NokkelInput, Any>(props.buildProducerProperties()
@@ -42,8 +45,15 @@ class MinSideBeanConfig {
                     put(SPECIFIC_AVRO_READER_CONFIG, true)
                     setRecordFilterStrategy { payload ->
                         with(payload.value()) {
-                            !(bestillerId == appNavn && this.status == FERDIGSTILT && melding.contains(
+                            val status = !(bestillerId == appNavn && this.status == FERDIGSTILT && melding.contains(
                                     NOTIFIKASJON_SENDT))
+                            if (status) {
+                                log.trace("Filtrert vekk $this")
+                            }
+                            else {
+                                log.trace("Slipper gjennom $this")
+                            }
+                            status
                         }
                     }
                 })
