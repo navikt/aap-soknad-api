@@ -59,6 +59,7 @@ class EksternNotifikasjonStatusKonsument(private val repos: MinSideRepositories)
 
     companion object {
         const val FERDIGSTILT = "FERDIGSTILT"
+        const val FEILET = "FEILET"
         const val NOTIFIKASJON_SENDT = "notifikasjon sendt via"
     }
 }

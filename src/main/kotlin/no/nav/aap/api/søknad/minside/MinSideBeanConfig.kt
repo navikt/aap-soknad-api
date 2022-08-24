@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.minside
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import io.confluent.kafka.serializers.KafkaAvroSerializer
+import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FEILET
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
 import no.nav.aap.util.LoggerUtil
@@ -45,15 +46,12 @@ class MinSideBeanConfig {
                     put(SPECIFIC_AVRO_READER_CONFIG, true)
                     setRecordFilterStrategy { payload ->
                         with(payload.value()) {
-                            val status = !(bestillerId == appNavn && this.status == FERDIGSTILT && melding.contains(
+                            val filtrert = !(bestillerId == appNavn && status == FERDIGSTILT && melding.contains(
                                     NOTIFIKASJON_SENDT))
-                            if (status) {
-                                log.trace("XXX Filtrert vekk $this")
+                            if (status == FEILET) {
+                                log.warn("Ekstern notifikasjon feilet for $bestillingsId, ($melding)")
                             }
-                            else {
-                                log.trace("XXX Slipper gjennom $this")
-                            }
-                            status
+                            filtrert
                         }
                     }
                 })
