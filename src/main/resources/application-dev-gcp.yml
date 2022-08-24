@@ -33,7 +33,7 @@ organisasjon:
     base-uri: https://ereg-services-q1.dev-fss-pub.nais.io
     enabled: false
 debug: false
-dittnav:
+minside:
     backlinks:
         innsyn: https://aap-soknad-api.dev.intern.nav.no/ettersend
         standard: https://aap-soknad.dev.nav.no/aap/soknad/standard

@@ -4,9 +4,6 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.Companion.MINAAPSTD
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.Companion.MINAAPUTLAND
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.ManglendeVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.joark.JoarkFordeler
@@ -14,6 +11,9 @@ import no.nav.aap.api.søknad.joark.JoarkFordeler.JoarkFordelingResultat
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
+import no.nav.aap.api.søknad.minside.MinSideClient
+import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
+import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPUTLAND
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
@@ -53,7 +53,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
 @Component
 class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
-                              private val dittnav: DittNavClient,
+                              private val dittnav: MinSideClient,
                               private val repo: SøknadRepository,
                               private val mellomlager: Mellomlager) {
 
@@ -99,7 +99,7 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
 @Component
 class UtlandSøknadFordeler(private val joark: JoarkFordeler,
                            private val pdl: PDLClient,
-                           private val dittnav: DittNavClient,
+                           private val dittnav: MinSideClient,
                            private val lager: Dokumentlager,
                            private val cfg: VLFordelingConfig,
                            private val vl: SøknadVLFordeler) {

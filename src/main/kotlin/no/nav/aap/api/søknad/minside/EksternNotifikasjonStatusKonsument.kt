@@ -1,7 +1,7 @@
-package no.nav.aap.api.søknad.brukernotifikasjoner
+package no.nav.aap.api.søknad.minside
 
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
+import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
+import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.springframework.kafka.annotation.KafkaListener
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Component
-class EksternNotifikasjonStatusKonsument(private val repos: DittNavRepositories) {
+class EksternNotifikasjonStatusKonsument(private val repos: MinSideRepositories) {
     private val log = getLogger(javaClass)
 
     @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],

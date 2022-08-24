@@ -1,8 +1,8 @@
-package no.nav.aap.api.søknad.brukernotifikasjoner
+package no.nav.aap.api.søknad.minside
 
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
 import no.nav.aap.api.søknad.fordeling.SøknadRepository
+import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
+import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.util.StringExtensions.partialMask
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -27,7 +27,7 @@ import javax.persistence.MappedSuperclass
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
-interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
+interface MinSideBeskjedRepository : JpaRepository<Beskjed, Long> {
 
     fun findBeskjedByEventid(eventid: UUID): Beskjed?
 
@@ -47,13 +47,13 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
             done: Boolean = false,
             @OneToMany(mappedBy = "beskjed", cascade = [ALL], orphanRemoval = true)
             var notifikasjoner: MutableSet<EksternBeskjedNotifikasjon> = mutableSetOf()) :
-        NotifikasjonBaseEntity(fnr = fnr, eventid = eventid, done = done) {
+        MinSideBaseEntity(fnr = fnr, eventid = eventid, done = done) {
         override fun toString(): String =
             "Beskjed(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id)"
     }
 }
 
-interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
+interface MinSideOppgaveRepository : JpaRepository<Oppgave, Long> {
     fun findOppgaveByEventid(eventid: UUID): Oppgave?
 
     @Modifying
@@ -72,15 +72,15 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
             done: Boolean = false,
             @OneToMany(mappedBy = "oppgave", cascade = [ALL], orphanRemoval = true)
             var notifikasjoner: MutableSet<EksternOppgaveNotifikasjon> = mutableSetOf()) :
-        NotifikasjonBaseEntity(fnr = fnr, eventid = eventid, done = done) {
+        MinSideBaseEntity(fnr = fnr, eventid = eventid, done = done) {
         override fun toString(): String =
             "Oppgave(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id)"
     }
 }
 
 @Component
-data class DittNavRepositories(val beskjeder: DittNavBeskjedRepository,
-                               val oppgaver: DittNavOppgaveRepository,
+data class MinSideRepositories(val beskjeder: MinSideBeskjedRepository,
+                               val oppgaver: MinSideOppgaveRepository,
                                var søknader: SøknadRepository)
 
 @Converter(autoApply = true)
@@ -122,10 +122,15 @@ class EksternBeskjedNotifikasjon(
 }
 
 @MappedSuperclass
-abstract class NotifikasjonBaseEntity(
+abstract class MinSideBaseEntity(
+        fnr: String,
+        eventid: UUID,
+        val done: Boolean) : BaseEntity(fnr, eventid = eventid)
+
+@MappedSuperclass
+abstract class BaseEntity(
         val fnr: String,
         @CreatedDate var created: LocalDateTime? = null,
         val eventid: UUID,
         @LastModifiedDate var updated: LocalDateTime? = null,
-        val done: Boolean,
         @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0)

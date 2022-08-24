@@ -10,11 +10,11 @@ import com.google.cloud.storage.NotificationInfo.EventType.valueOf
 import com.google.pubsub.v1.PubsubMessage
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavClient
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.Companion.SØKNADSTD
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Metadata.Companion.getInstance
+import no.nav.aap.api.søknad.minside.MinSideClient
+import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.SØKNADSTD
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.toMDC
@@ -24,7 +24,7 @@ import java.util.*
 
 @Suppress("BlockingMethodInNonBlockingContext")
 @ConditionalOnGCP
-class MellomlagringEventSubscriber(private val dittNav: DittNavClient,
+class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                                    private val cfg: BucketConfig,
                                    private val subscriber: PubSubSubscriberTemplate) {
 

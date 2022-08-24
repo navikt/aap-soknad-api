@@ -1,10 +1,10 @@
-package no.nav.aap.api.søknad.brukernotifikasjoner
+package no.nav.aap.api.søknad.minside
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import io.confluent.kafka.serializers.KafkaAvroSerializer
-import no.nav.aap.api.søknad.brukernotifikasjoner.EksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
-import no.nav.aap.api.søknad.brukernotifikasjoner.EksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
+import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
+import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
@@ -22,9 +22,9 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.KE
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS
 
 @Configuration
-class DittNavBeanConfig {
+class MinSideBeanConfig {
     @Bean
-    fun dittNavKafkaOperations(props: KafkaProperties) =
+    fun minSideKafkaOperations(props: KafkaProperties) =
         KafkaTemplate(DefaultKafkaProducerFactory<NokkelInput, Any>(props.buildProducerProperties()
             .apply {
                 put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)

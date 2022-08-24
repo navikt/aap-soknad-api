@@ -1,6 +1,6 @@
-package no.nav.aap.api.søknad.brukernotifikasjoner
+package no.nav.aap.api.søknad.minside
 
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavConfig.Companion.DITTNAV
+import no.nav.aap.api.søknad.minside.MinSideConfig.Companion.MINSIDE
 import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -9,9 +9,9 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 import java.net.URI
 import java.time.Duration
 
-@ConfigurationProperties(DITTNAV)
+@ConfigurationProperties(MINSIDE)
 @ConstructorBinding
-data class DittNavConfig(@NestedConfigurationProperty private val nais: NAISConfig,
+data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConfig,
                          @NestedConfigurationProperty val beskjed: TopicConfig,
                          @NestedConfigurationProperty val backlinks: BacklinksConfig,
                          @NestedConfigurationProperty val oppgave: TopicConfig,
@@ -32,7 +32,7 @@ data class DittNavConfig(@NestedConfigurationProperty private val nais: NAISConf
     companion object {
         private const val DEFAULT_DONE = "min-side.aapen-brukernotifikasjon-done-v1"
         private const val DEFAULT_VARIGHET = "90d"
-        const val DITTNAV = "dittnav"
+        const val MINSIDE = "minside"
         private const val DEFAULT_LEVEL = "3"
     }
 }

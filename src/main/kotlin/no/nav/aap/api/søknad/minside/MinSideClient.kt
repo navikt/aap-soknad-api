@@ -1,15 +1,15 @@
-package no.nav.aap.api.søknad.brukernotifikasjoner
+package no.nav.aap.api.søknad.minside
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.SendCallback
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavBeskjedRepository.Beskjed
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavConfig.BacklinksConfig
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.DittNavBacklinkContext.MINAAP
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavNotifikasjonType.DittNavBacklinkContext.SØKNAD
-import no.nav.aap.api.søknad.brukernotifikasjoner.DittNavOppgaveRepository.Oppgave
+import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
+import no.nav.aap.api.søknad.minside.MinSideConfig.BacklinksConfig
+import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.MINAAP
+import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.SØKNAD
+import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
@@ -28,25 +28,25 @@ import java.time.ZoneOffset.UTC
 import java.util.*
 
 @ConditionalOnGCP
-class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
-                    private val cfg: DittNavConfig,
-                    private val repos: DittNavRepositories, val env: Environment) {
+class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
+                    private val cfg: MinSideConfig,
+                    private val repos: MinSideRepositories, val env: Environment) {
 
     private val log = getLogger(javaClass)
 
     @Transactional
-    fun opprettBeskjed(type: DittNavNotifikasjonType,
+    fun opprettBeskjed(type: MinSideNotifikasjonType,
                        eventId: UUID,
                        fnr: Fødselsnummer,
                        tekst: String, eksternNotifikasjon: Boolean = false) =
         with(cfg.beskjed) {
             if (enabled) {
-                log.trace("Oppretter Ditt Nav beskjed for $fnr og eventid $eventId")
+                log.trace("Oppretter Min Side beskjed for $fnr og eventid $eventId")
                 dittNav.send(ProducerRecord(topic,
                         key(type.skjemaType, eventId, fnr),
                         beskjed("$tekst ($eventId)", type, eksternNotifikasjon)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
-                log.trace("Oppretter Ditt Nav beskjed i DB")
+                log.trace("Oppretter Min Side beskjed i DB")
                 repos.beskjeder.save(Beskjed(fnr = fnr.fnr, eventid = eventId)).also {
                     log.trace(CONFIDENTIAL, "Opprettet Ditt Nav beskjed $it i DB")
                 }.eventid
@@ -58,26 +58,26 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
-    fun opprettOppgave(type: DittNavNotifikasjonType,
+    fun opprettOppgave(type: MinSideNotifikasjonType,
                        fnr: Fødselsnummer,
                        eventId: UUID,
                        tekst: String,
                        eksternNotifikasjon: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
-                log.trace("Oppretter Ditt Nav oppgave for $fnr og eventid $eventId")
+                log.trace("Oppretter Min Side oppgave for $fnr og eventid $eventId")
                 with(key(type.skjemaType, eventId, fnr)) {
                     dittNav.send(ProducerRecord(topic,
                             this,
                             oppgave("$tekst ($eventId)", type, eventId, eksternNotifikasjon)))
                         .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
                     repos.oppgaver.save(Oppgave(fnr = fnr.fnr, eventid = eventId)).also {
-                        log.trace(CONFIDENTIAL, "Opprettet oppgave $it i DB")
+                        log.trace(CONFIDENTIAL, "Opprettet Min Side oppgave $it i DB")
                     }.eventid
                 }
             }
             else {
-                log.info("Sender ikke opprett oppgave til Ditt Nav for $fnr")
+                log.info("Sender ikke opprett oppgave til Min Side for $fnr")
                 null
             }
         }
@@ -114,11 +114,11 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 }
             }
             else {
-                log.info("Sender ikke avslutt beskjed til Ditt Nav for beskjed for $fnr")
+                log.info("Sender ikke avslutt beskjed til Min Side for beskjed for $fnr")
             }
         }
 
-    private fun beskjed(tekst: String, type: DittNavNotifikasjonType, eksternNotifikasjon: Boolean) =
+    private fun beskjed(tekst: String, type: MinSideNotifikasjonType, eksternNotifikasjon: Boolean) =
         with(cfg.beskjed) {
             BeskjedInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
@@ -134,7 +134,7 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 }
         }
 
-    private fun oppgave(tekst: String, type: DittNavNotifikasjonType, eventId: UUID, eksternNotifikasjon: Boolean) =
+    private fun oppgave(tekst: String, type: MinSideNotifikasjonType, eventId: UUID, eksternNotifikasjon: Boolean) =
         with(cfg.oppgave) {
             OppgaveInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
@@ -169,10 +169,10 @@ class DittNavClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         }
 }
 
-data class DittNavNotifikasjonType private constructor(val skjemaType: SkjemaType,
-                                                       private val ctx: DittNavBacklinkContext) {
+data class MinSideNotifikasjonType private constructor(val skjemaType: SkjemaType,
+                                                       private val ctx: MinSideBacklinkContext) {
 
-    private enum class DittNavBacklinkContext {
+    private enum class MinSideBacklinkContext {
         MINAAP,
         SØKNAD
     }
@@ -193,10 +193,10 @@ data class DittNavNotifikasjonType private constructor(val skjemaType: SkjemaTyp
         }
 
     companion object {
-        val MINAAPSTD = DittNavNotifikasjonType(STANDARD, MINAAP)
-        val MINAAPUTLAND = DittNavNotifikasjonType(UTLAND, MINAAP)
-        val SØKNADSTD = DittNavNotifikasjonType(STANDARD, SØKNAD)
-        val SØKNADUTLAND = DittNavNotifikasjonType(UTLAND, SØKNAD)
+        val MINAAPSTD = MinSideNotifikasjonType(STANDARD, MINAAP)
+        val MINAAPUTLAND = MinSideNotifikasjonType(UTLAND, MINAAP)
+        val SØKNADSTD = MinSideNotifikasjonType(STANDARD, SØKNAD)
+        val SØKNADUTLAND = MinSideNotifikasjonType(UTLAND, SØKNAD)
 
     }
 }

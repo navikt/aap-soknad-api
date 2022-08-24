@@ -156,7 +156,7 @@ joark:
     base-uri: https://aap-fss-proxy.${onprem}-pub.nais.io
 saf:
     base-uri: https://safselvbetjening.${onprem}-pub.nais.io
-dittnav:
+minside:
     nais:
         app: ${nais.app.name}
         namespace: ${nais.namespace}
