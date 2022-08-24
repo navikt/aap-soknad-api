@@ -57,8 +57,9 @@ data class StandardSøknad(
         val mangler = mutableListOf<VedleggType>()
         log.trace("Sjekker vedlegg studier $studier")
         if (studier.erStudent == AVBRUTT && manglerVedlegg(studier)) {
-            log.trace("Fant mangel for studier")
-            mangler += STUDIER
+            log.trace("Fant mangel for ${STUDIER.tittel}").also {
+                mangler += STUDIER
+            }
         }
         else {
             log.trace("Ingen mangler for studier")
@@ -66,8 +67,9 @@ data class StandardSøknad(
         with(andreBarn) {
             log.trace("Sjekker vedlegg andre barn $andreBarn")
             if (count() > count { (it.vedlegg?.deler?.size ?: 0) > 0 }) {
-                log.trace("Fant mangel for andre barn")
-                mangler += ANDREBARN
+                mangler += ANDREBARN.also {
+                    log.trace("Fant mangel for ${ANDREBARN.tittel}")
+                }
             }
             else {
                 log.trace("Ingen mangler for andre barn")
@@ -76,8 +78,9 @@ data class StandardSøknad(
         with(utbetalinger) {
             log.trace("Sjekker vedlegg arbeidsgiver ${this?.ekstraFraArbeidsgiver}")
             if (this?.ekstraFraArbeidsgiver?.fraArbeidsgiver == true && manglerVedlegg(ekstraFraArbeidsgiver)) {
-                log.trace("Fant mangel for arbeidsgiver")
-                mangler += ARBEIDSGIVER
+                mangler += ARBEIDSGIVER.also {
+                    log.trace("Fant mangel for ${ARBEIDSGIVER.tittel}")
+                }
             }
             else {
                 log.trace("Ingen mangler for arbeidsgiver")
@@ -85,8 +88,9 @@ data class StandardSøknad(
             log.trace("Sjekker vedlegg andre stønader ${this?.andreStønader}")
             this?.andreStønader?.firstOrNull() { it.type == OMSORGSSTØNAD }?.let {
                 if (manglerVedlegg(it)) {
-                    log.trace("Fant mangel for omsorg")
-                    mangler += OMSORG
+                    mangler += OMSORG.also {
+                        log.trace("Fant mangel for ${OMSORG.tittel}")
+                    }
                 }
                 else {
                     log.trace("Ingen mangler for omsorg")
@@ -94,8 +98,9 @@ data class StandardSøknad(
             }
             this?.andreStønader?.firstOrNull() { it.type == UTLAND }?.let {
                 if (manglerVedlegg(it)) {
-                    log.trace("Fant mangel for utland")
-                    mangler += VedleggType.UTLAND
+                    mangler += VedleggType.UTLAND.also {
+                        log.trace("Fant mangel for ${VedleggType.UTLAND.tittel}")
+                    }
                 }
                 else {
                     log.trace("Ingen mangler for utland")

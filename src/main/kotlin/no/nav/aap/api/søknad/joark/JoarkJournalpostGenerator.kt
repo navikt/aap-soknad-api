@@ -8,12 +8,16 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.api.søknad.model.VedleggAware
+import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.api.søknad.model.VedleggType.ANDREBARN
 import no.nav.aap.api.søknad.model.VedleggType.ANNET
 import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
+import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
 import no.nav.aap.joark.AvsenderMottaker
 import no.nav.aap.joark.Bruker
@@ -59,10 +63,14 @@ class JoarkJournalpostGenerator(
         with(søknad) {
             dokumenterFra(this, pdfVariant).apply {
                 addAll(dokumenterFra(studier, STUDIER.tittel))
-                addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER.tittel))
-                addAll(dokumenterFra(this@with, ANNET.tittel))
-                addAll(dokumenterFra(utbetalinger?.andreStønader, "Dokumentasjon av andre stønader"))
                 addAll(dokumenterFra(andreBarn, ANDREBARN.tittel))
+                addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER.tittel))
+                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == AnnenStønadstype.UTLAND },
+                        VedleggType.UTLAND.tittel))
+                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD },
+                        OMSORG.tittel))
+                //  addAll(dokumenterFra(utbetalinger?.andreStønader, "Dokumentasjon av andre stønader"))
+                addAll(dokumenterFra(this@with, ANNET.tittel))
             }.also {
                 log.trace("Sender ${it.size} dokumenter til JOARK  $it")
             }
