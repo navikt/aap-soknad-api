@@ -62,22 +62,13 @@ class JoarkJournalpostGenerator(
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         with(søknad) {
             dokumenterFra(this, pdfVariant).apply {
-                log.trace("Etter pdf og json,størrelse er $size")
-                addAll(dokumenterFra(studier, STUDIER.tittel))
-                log.trace("Etter studier, størrelse er $size")
-                addAll(dokumenterFra(andreBarn, ANDREBARN.tittel))
-                log.trace("Etter andre barn, størrelse er $size")
-                addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER.tittel))
-                log.trace("Etter arbeidsgiver, størrelse er $size")
+                addAll(dokumenterFra(studier, STUDIER))
+                addAll(dokumenterFra(andreBarn, ANDREBARN))
+                addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER))
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == AnnenStønadstype.UTLAND },
-                        VedleggType.UTLAND.tittel))
-                log.trace("Etter utland, størrelse er $size")
-                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD },
-                        OMSORG.tittel))
-                log.trace("Etter omsorg, størrelse er $size")
-                //  addAll(dokumenterFra(utbetalinger?.andreStønader, "Dokumentasjon av andre stønader"))
-                addAll(dokumenterFra(this@with, ANNET.tittel))
-                log.trace("Etter annet, størrelse er $size")
+                        VedleggType.UTLAND))
+                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD }, OMSORG))
+                addAll(dokumenterFra(this@with, ANNET))
             }.also {
                 log.trace("Sender ${it.size} dokumenter til JOARK  $it")
             }
@@ -86,17 +77,17 @@ class JoarkJournalpostGenerator(
     private fun dokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
         mutableListOf(Dokument(STANDARD, listOf(søknad.asJsonVariant(mapper), pdfVariant)))
 
-    private fun dokumenterFra(a: List<VedleggAware?>?, tittel: String?) =
+    private fun dokumenterFra(a: List<VedleggAware?>?, type: VedleggType) =
         a?.map {
-            dokumenterFra(it?.vedlegg, tittel)
+            dokumenterFra(it?.vedlegg, type.tittel)
         }?.flatten() ?: emptyList()
 
-    private fun dokumenterFra(a: VedleggAware?, tittel: String): List<Dokument> =
+    private fun dokumenterFra(a: VedleggAware?, type: VedleggType): List<Dokument> =
         a?.let { v ->
-            v.vedlegg?.let { dokumenterFra(it, tittel) }
+            v.vedlegg?.let { dokumenterFra(it, type.tittel) }
         } ?: emptyList()
 
-    private fun dokumenterFra(v: Vedlegg?, tittel: String?) =
+    private fun dokumenterFra(v: Vedlegg?, tittel: String) =
         v?.let { vl ->
             val vedlegg = (vl.deler?.mapNotNull {
                 it?.let { uuid ->
@@ -118,13 +109,13 @@ class JoarkJournalpostGenerator(
             }
         } ?: emptyList()
 
-    private fun ByteArray.somDokument(tittel: String?) =
+    private fun ByteArray.somDokument(tittel: String) =
         Dokument(tittel = tittel,
                 dokumentVariant = DokumentVariant(PDFA, getEncoder().encodeToString(this))).also {
             log.trace("Dokument konvertert fra bytes er $it")
         }
 
-    private fun DokumentInfo.somDokument(tittel: String?) =
+    private fun DokumentInfo.somDokument(tittel: String) =
         Dokument(tittel = tittel, dokumentVariant = DokumentVariant(PDFA, getEncoder().encodeToString(bytes)))
             .also {
                 log.trace("Dokument konvertert fra DokumentInfo er $it")
