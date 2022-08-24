@@ -41,7 +41,7 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                        tekst: String, eksternNotifikasjon: Boolean = false) =
         with(cfg.beskjed) {
             if (enabled) {
-                log.trace("Oppretter Min Side beskjed for $fnr og eventid $eventId")
+                log.trace("Oppretter Min Side beskjed for $fnr, ekstern nofifikasjon $eksternNotifikasjon og eventid $eventId")
                 dittNav.send(ProducerRecord(topic,
                         key(type.skjemaType, eventId, fnr),
                         beskjed("$tekst ($eventId)", type, eksternNotifikasjon)))
@@ -65,7 +65,7 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                        eksternNotifikasjon: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
-                log.trace("Oppretter Min Side oppgave for $fnr og eventid $eventId")
+                log.trace("Oppretter Min Side oppgave for $fnr, ekstern notifikasjon $eksternNotifikasjon og eventid $eventId")
                 with(key(type.skjemaType, eventId, fnr)) {
                     dittNav.send(ProducerRecord(topic,
                             this,
