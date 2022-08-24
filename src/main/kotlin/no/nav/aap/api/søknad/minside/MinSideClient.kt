@@ -130,7 +130,7 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
                 .build().also { m ->
                     log.trace(CONFIDENTIAL,
-                            "Melding ${m.tekst}, prefererte kanaler ${m.prefererteKanaler} og ekstern varsling ${m.eksternVarsling}")
+                            "Melding ${m.tekst}, prefererte kanaler ${m.prefererteKanaler} og ekstern notifikasjon ${m.eksternVarsling}")
                 }
         }
 
@@ -146,7 +146,7 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
                 .build().also { o ->
                     log.trace(CONFIDENTIAL,
-                            "Oppgave har tekst ${o.tekst}, prefererte kanaler ${o.prefererteKanaler} og ekstern varsling ${o.eksternVarsling}")
+                            "Oppgave har tekst ${o.tekst}, prefererte kanaler ${o.prefererteKanaler} og ekstern notifikasjon ${o.eksternVarsling}")
                 }
         }
 
