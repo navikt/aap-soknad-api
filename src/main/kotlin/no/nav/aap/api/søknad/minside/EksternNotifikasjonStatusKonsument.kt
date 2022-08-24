@@ -15,7 +15,7 @@ class EksternNotifikasjonStatusKonsument(private val repos: MinSideRepositories)
     private val log = getLogger(javaClass)
 
     @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],
-            containerFactory = "notifikasjonListenerContainerFactory")
+            containerFactory = DOKNOTIFIKASJON)
     @Transactional
     fun listen(@Payload status: DoknotifikasjonStatus) = oppdaterDistribusjonStatus(status)
 
@@ -58,6 +58,7 @@ class EksternNotifikasjonStatusKonsument(private val repos: MinSideRepositories)
     private fun DoknotifikasjonStatus.eventId() = UUID.fromString(bestillingsId)
 
     companion object {
+        const val DOKNOTIFIKASJON = "doknotifikasjon"
         const val FERDIGSTILT = "FERDIGSTILT"
         const val FEILET = "FEILET"
         const val NOTIFIKASJON_SENDT = "notifikasjon sendt via"

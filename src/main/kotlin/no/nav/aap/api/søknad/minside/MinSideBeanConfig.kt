@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.minside
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import io.confluent.kafka.serializers.KafkaAvroSerializer
+import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.DOKNOTIFIKASJON
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FEILET
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
@@ -35,9 +36,9 @@ class MinSideBeanConfig {
                 put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
             }))
 
-    @Bean
-    fun notifikasjonListenerContainerFactory(props: KafkaProperties,
-                                             @Value("\${spring.application.name}") appNavn: String) =
+    @Bean(DOKNOTIFIKASJON)
+    fun dokNotifikasjonListenerContainerFactory(props: KafkaProperties,
+                                                @Value("\${spring.application.name}") appNavn: String) =
         ConcurrentKafkaListenerContainerFactory<String, DoknotifikasjonStatus>().apply {
             consumerFactory =
                 DefaultKafkaConsumerFactory(props.buildConsumerProperties().apply {
