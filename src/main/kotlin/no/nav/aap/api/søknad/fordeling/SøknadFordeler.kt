@@ -68,23 +68,29 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                     .also {
                         log.trace("Lagret metadata om søknad i DB OK")
                     }
-            if (søknad.manglendeVedlegg().isNotEmpty()) {
-                søknad.manglendeVedlegg().forEach { type ->
-                    with(ManglendeVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
-                        s.manglendevedlegg.add(this)
-                        soknad = s
+            with(søknad.manglendeVedlegg()) {
+                if (isNotEmpty()) {
+                    forEach { type ->
+                        with(ManglendeVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
+                            s.manglendevedlegg.add(this)
+                            soknad = s
+                        }
                     }
+                    repo.save(s).also {
+                        log.trace("Oppdatert metadata om søknad med ${s.manglendevedlegg.size} manglende vedlegg i DB OK")
+                    }
+                    dittnav.opprettOppgave(MINAAPSTD,
+                            søker.fnr,
+                            s.eventid,
+                            "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")
                 }
-                repo.save(s).also {
-                    log.trace("Oppdatert metadata om søknad med ${s.manglendevedlegg.size} manglende vedlegg i DB OK")
+                else {
+                    dittnav.opprettBeskjed(MINAAPSTD,
+                            s.eventid,
+                            søker.fnr,
+                            "Vi har mottatt din ${STANDARD.tittel}",
+                            true)
                 }
-                dittnav.opprettOppgave(MINAAPSTD,
-                        søker.fnr,
-                        s.eventid,
-                        "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")
-            }
-            else {
-                dittnav.opprettBeskjed(MINAAPSTD, s.eventid, søker.fnr, "Vi har mottatt din ${STANDARD.tittel}", true)
             }
             Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = resultat.pdf, navn = "kvittering.pdf")))
         }
