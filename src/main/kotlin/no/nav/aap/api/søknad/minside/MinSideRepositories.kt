@@ -39,7 +39,7 @@ interface MinSideBeskjedRepository : JpaRepository<Beskjed, Long> {
     fun alleIkkeAvsluttede(@Param("fnr") fnr: String): List<UUID>
 
     @Entity(name = "beskjed")
-    @Table(name = "dittnavbeskjeder")
+    @Table(name = "minsidebeskjeder")
     @EntityListeners(AuditingEntityListener::class)
     class Beskjed(
             fnr: String,
@@ -64,7 +64,7 @@ interface MinSideOppgaveRepository : JpaRepository<Oppgave, Long> {
     fun alleIkkeAvsluttede(@Param("fnr") fnr: String): List<UUID>
 
     @Entity(name = "oppgave")
-    @Table(name = "dittnavoppgaver")
+    @Table(name = "minsideoppgaver")
     @EntityListeners(AuditingEntityListener::class)
     class Oppgave(
             fnr: String,
