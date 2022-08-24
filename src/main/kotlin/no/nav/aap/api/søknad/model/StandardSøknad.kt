@@ -205,13 +205,13 @@ data class Utbetalinger(val ekstraFraArbeidsgiver: FraArbeidsgiver,
     }
 }
 
-enum class VedleggType {
-    ARBEIDSGIVER,
-    STUDIER,
-    ANDREBARN,
-    OMSORG,
-    UTLAND,
-    ANNET
+enum class VedleggType(val tittel: String) {
+    ARBEIDSGIVER("Dokumentasjon av ekstra utbetaling fra arbeidsgiver"),
+    STUDIER("Dokumentasjon av studier"),
+    ANDREBARN("Dokumentasjon av andre barn"),
+    OMSORG("Dokumentasjon av omsorgslønn fra kommunen"),
+    UTLAND("Dokumentasjon av inntekt fra utandet"),
+    ANNET("Annen dokumentasjon")
 }
 
 internal class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.java) {

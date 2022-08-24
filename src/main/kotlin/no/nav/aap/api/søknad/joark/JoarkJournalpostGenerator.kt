@@ -11,6 +11,10 @@ import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.api.søknad.model.VedleggAware
+import no.nav.aap.api.søknad.model.VedleggType.ANDREBARN
+import no.nav.aap.api.søknad.model.VedleggType.ANNET
+import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
+import no.nav.aap.api.søknad.model.VedleggType.STUDIER
 import no.nav.aap.joark.AvsenderMottaker
 import no.nav.aap.joark.Bruker
 import no.nav.aap.joark.Dokument
@@ -54,13 +58,12 @@ class JoarkJournalpostGenerator(
     private fun dokumenterFra(søknad: StandardSøknad, søker: Søker, pdfVariant: DokumentVariant) =
         with(søknad) {
             dokumenterFra(this, pdfVariant).apply {
-                addAll(dokumenterFra(studier, "Dokumentasjon av studier"))
+                addAll(dokumenterFra(studier, STUDIER.tittel))
                 addAll(dokumenterFra(utbetalinger?.ekstraUtbetaling, "Dokumentasjon av ekstra utbetalinger"))
-                addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver,
-                        "Dokumentasjon av ekstra utbetaling fra arbeidsgiver"))
-                addAll(dokumenterFra(this@with, "Annen dokumentasjon"))
+                addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER.tittel))
+                addAll(dokumenterFra(this@with, ANNET.tittel))
                 addAll(dokumenterFra(utbetalinger?.andreStønader, "Dokumentasjon av andre stønader"))
-                addAll(dokumenterFra(andreBarn, "barn"))
+                addAll(dokumenterFra(andreBarn, ANDREBARN.tittel))
             }.also {
                 log.trace("Sender ${it.size} dokumenter til JOARK  $it")
             }
@@ -70,7 +73,7 @@ class JoarkJournalpostGenerator(
         mutableListOf(Dokument(STANDARD, listOf(søknad.asJsonVariant(mapper), pdfVariant)))
 
     private fun dokumenterFra(a: List<VedleggAware?>?, tittel: String?) =
-        a?.map { it ->
+        a?.map {
             dokumenterFra(it?.vedlegg, tittel)
         }?.flatten() ?: emptyList()
 
