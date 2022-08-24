@@ -59,7 +59,6 @@ class JoarkJournalpostGenerator(
         with(søknad) {
             dokumenterFra(this, pdfVariant).apply {
                 addAll(dokumenterFra(studier, STUDIER.tittel))
-                addAll(dokumenterFra(utbetalinger?.ekstraUtbetaling, "Dokumentasjon av ekstra utbetalinger"))
                 addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER.tittel))
                 addAll(dokumenterFra(this@with, ANNET.tittel))
                 addAll(dokumenterFra(utbetalinger?.andreStønader, "Dokumentasjon av andre stønader"))

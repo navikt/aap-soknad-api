@@ -28,7 +28,6 @@ import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetalinger
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønad
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.INTRODUKSJONSSTØNAD
-import no.nav.aap.api.søknad.model.Utbetalinger.EkstraUtbetaling
 import no.nav.aap.api.søknad.model.Utbetalinger.FraArbeidsgiver
 import no.nav.aap.api.søknad.model.Utenlandsopphold
 import no.nav.aap.api.søknad.model.Vedlegg
@@ -134,8 +133,7 @@ class SøknadTest {
                 JA,
                 Utbetalinger(
                         FraArbeidsgiver(true, Vedlegg(deler = listOf(UUID.randomUUID(),
-                                UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD)),
-                        EkstraUtbetaling("hvilken", "hvem")),
+                                UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD))),
                 listOf(BarnOgInntekt(merEnnIG = true, barnepensjon = false)),
                 listOf(AnnetBarnOgInntekt(Barn(Navn("Et", "ekstra", "Barn"), now().minusYears(14)))),
                 "Tilegg", Vedlegg(deler = listOf(UUID.randomUUID(),

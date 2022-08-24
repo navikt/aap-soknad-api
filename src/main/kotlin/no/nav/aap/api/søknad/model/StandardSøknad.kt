@@ -172,15 +172,10 @@ enum class RadioValg {
 }
 
 data class Utbetalinger(val ekstraFraArbeidsgiver: FraArbeidsgiver,
-                        @JsonAlias("stønadstyper") val andreStønader: List<AnnenStønad> = emptyList(),
-                        val ekstraUtbetaling: EkstraUtbetaling? = null) {
+                        @JsonAlias("stønadstyper") val andreStønader: List<AnnenStønad> = emptyList()) {
 
     data class FraArbeidsgiver(val fraArbeidsgiver: Boolean,
                                override val vedlegg: Vedlegg? = null) : VedleggAware
-
-    data class EkstraUtbetaling(val hvilken: String,
-                                val hvem: String,
-                                override val vedlegg: Vedlegg? = null) : VedleggAware
 
     data class AnnenStønad(val type: AnnenStønadstype,
                            val hvemUtbetalerAFP: String? = null,

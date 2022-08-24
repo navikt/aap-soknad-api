@@ -8,8 +8,10 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager.Co
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
+import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
+import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -26,7 +28,7 @@ import org.zalando.problem.Status.UNSUPPORTED_MEDIA_TYPE
 import org.zalando.problem.spring.web.advice.ProblemHandling
 
 @ControllerAdvice
-class AAPApiExceptionHandler : ProblemHandling {
+class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
     private val log = LoggerUtil.getLogger(javaClass)
 
     @ExceptionHandler(JwtTokenUnauthorizedException::class)
@@ -67,7 +69,7 @@ class AAPApiExceptionHandler : ProblemHandling {
             log.trace("Lagd problem fra ${t.javaClass} ${t.message} ${it.message}")
         }
 
-    override fun isCausalChainsEnabled() = true
+    override fun isCausalChainsEnabled() = isDevOrLocal(env)
     override fun log(t: Throwable, problem: Problem, request: NativeWebRequest, status: HttpStatus) {
         log.warn("${t.message} ${t.javaClass.simpleName}", t)
     }
