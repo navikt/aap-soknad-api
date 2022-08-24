@@ -49,17 +49,18 @@ class MinSideBeanConfig {
                             when (bestillerId) {
                                 appNavn -> {
                                     when (status) {
-                                        FERDIGSTILT -> !(bestillerId == appNavn && melding.contains(NOTIFIKASJON_SENDT))
+                                        FERDIGSTILT -> !melding.contains(NOTIFIKASJON_SENDT)
 
-                                        FEILET -> {
-                                            log.warn("Ekstern notifikasjon feilet for bestillingid $bestillingsId, ($melding)")
-                                            true
-                                        }
+                                        FEILET ->
+                                            true.also {
+                                                log.warn("Ekstern notifikasjon feilet for bestillingid $bestillingsId, ($melding)")
 
-                                        else -> {
-                                            log.trace("Ekstern notifikasjon status $status filtrert vekk for bestillingid $bestillingsId")
-                                            true
-                                        }
+                                            }
+
+                                        else ->
+                                            true.also {
+                                                log.trace("Ekstern notifikasjon status $status filtrert vekk for bestillingid $bestillingsId")
+                                            }
                                     }
                                 }
 
