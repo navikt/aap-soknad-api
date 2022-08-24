@@ -55,7 +55,7 @@ class MinSideBeanConfig {
                                 }
 
                                 else -> {
-                                    log.trace("Ekstern notifikasjon status ${status}filtrert vekk for $bestillingsId")
+                                    log.trace("Ekstern notifikasjon status ${status} filtrert vekk for $bestillingsId")
                                     true
                                 }
                             }
