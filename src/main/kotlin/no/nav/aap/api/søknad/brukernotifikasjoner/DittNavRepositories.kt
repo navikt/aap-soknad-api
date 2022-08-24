@@ -42,14 +42,12 @@ interface DittNavBeskjedRepository : JpaRepository<Beskjed, Long> {
     @Table(name = "dittnavbeskjeder")
     @EntityListeners(AuditingEntityListener::class)
     class Beskjed(
-            val fnr: String,
-            @CreatedDate var created: LocalDateTime? = null,
-            val eventid: UUID,
-            @LastModifiedDate var updated: LocalDateTime? = null,
-            val done: Boolean = false,
+            fnr: String,
+            eventid: UUID,
+            done: Boolean = false,
             @OneToMany(mappedBy = "beskjed", cascade = [ALL], orphanRemoval = true)
-            var notifikasjoner: MutableSet<EksternBeskjedNotifikasjon> = mutableSetOf(),
-            @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0) {
+            var notifikasjoner: MutableSet<EksternBeskjedNotifikasjon> = mutableSetOf()) :
+        NotifikasjonBaseEntity(fnr = fnr, eventid = eventid, done = done) {
         override fun toString(): String =
             "Beskjed(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id)"
     }
@@ -73,8 +71,7 @@ interface DittNavOppgaveRepository : JpaRepository<Oppgave, Long> {
             eventid: UUID,
             done: Boolean = false,
             @OneToMany(mappedBy = "oppgave", cascade = [ALL], orphanRemoval = true)
-            var notifikasjoner: MutableSet<EksternOppgaveNotifikasjon> = mutableSetOf(),
-            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) :
+            var notifikasjoner: MutableSet<EksternOppgaveNotifikasjon> = mutableSetOf()) :
         NotifikasjonBaseEntity(fnr = fnr, eventid = eventid, done = done) {
         override fun toString(): String =
             "Oppgave(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id)"
@@ -130,4 +127,5 @@ abstract class NotifikasjonBaseEntity(
         @CreatedDate var created: LocalDateTime? = null,
         val eventid: UUID,
         @LastModifiedDate var updated: LocalDateTime? = null,
-        val done: Boolean)
+        val done: Boolean,
+        @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0)
