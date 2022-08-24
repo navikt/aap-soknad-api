@@ -46,22 +46,24 @@ class MinSideBeanConfig {
                     put(SPECIFIC_AVRO_READER_CONFIG, true)
                     setRecordFilterStrategy { payload ->
                         with(payload.value()) {
-                            when (status) {
-                                FERDIGSTILT -> !(bestillerId == appNavn && melding.contains(NOTIFIKASJON_SENDT))
+                            when (bestillerId) {
+                                appNavn -> {
+                                    when (status) {
+                                        FERDIGSTILT -> !(bestillerId == appNavn && melding.contains(NOTIFIKASJON_SENDT))
 
-                                FEILET -> {
-                                    if (bestillerId == appNavn) {
-                                        log.warn("Ekstern notifikasjon feilet for bestillingid $bestillingsId, ($melding)")
+                                        FEILET -> {
+                                            log.warn("Ekstern notifikasjon feilet for bestillingid $bestillingsId, ($melding)")
+                                            true
+                                        }
+
+                                        else -> {
+                                            log.trace("Ekstern notifikasjon status $status filtrert vekk for bestillingid $bestillingsId")
+                                            true
+                                        }
                                     }
-                                    true
                                 }
 
-                                else -> {
-                                    if (bestillerId == appNavn) {
-                                        log.trace("Ekstern notifikasjon status $status filtrert vekk for bestillingid $bestillingsId")
-                                    }
-                                    true
-                                }
+                                else -> true
                             }
                         }
                     }
