@@ -48,10 +48,10 @@ class MinSideBeanConfig {
                             val status = !(bestillerId == appNavn && this.status == FERDIGSTILT && melding.contains(
                                     NOTIFIKASJON_SENDT))
                             if (status) {
-                                log.trace("Filtrert vekk $this")
+                                log.trace("XXX Filtrert vekk $this")
                             }
                             else {
-                                log.trace("Slipper gjennom $this")
+                                log.trace("XXX Slipper gjennom $this")
                             }
                             status
                         }
