@@ -130,7 +130,7 @@ abstract class MinSideBaseEntity(
 @MappedSuperclass
 abstract class BaseEntity(
         val fnr: String,
-        @CreatedDate var created: LocalDateTime? = null,
+        @CreatedDate val created: LocalDateTime? = null,
         val eventid: UUID,
-        @LastModifiedDate var updated: LocalDateTime? = null,
+        @LastModifiedDate val updated: LocalDateTime? = null,
         @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0)
