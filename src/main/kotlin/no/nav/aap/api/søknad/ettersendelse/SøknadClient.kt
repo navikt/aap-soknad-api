@@ -9,19 +9,20 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Component
-class EttersendelseClient(private val repo: SøknadRepository) {
-    fun søknaderMedMangler(fnr: Fødselsnummer) =
-        repo.getSøknadByFnrOrderByCreatedDesc(fnr.fnr)?.filter { s ->
-            s.manglendevedlegg.isNotEmpty()
-        }?.map(::tilSøknad)
+class SøknadClient(private val repo: SøknadRepository) {
+    fun søknader(fnr: Fødselsnummer) =
+        repo.getSøknadByFnrOrderByCreatedDesc(fnr.fnr)?.map(::tilSøknad)
 
     private fun tilSøknad(s: Søknad) =
         with(s) {
-            SøknadDTO(Fødselsnummer(fnr), created, eventid, manglendevedlegg.map { it.vedleggtype }.toSet())
+            SøknadDTO(created,
+                    eventid,
+                    innsendtevedlegg.map { it.vedleggtype }.toSet(),
+                    manglendevedlegg.map { it.vedleggtype }.toSet())
         }
 
-    data class SøknadDTO(val fnr: Fødselsnummer,
-                         val opprettet: LocalDateTime?,
+    data class SøknadDTO(val opprettet: LocalDateTime?,
                          val søknadId: UUID,
+                         val innsendte: Set<VedleggType>,
                          val mangler: Set<VedleggType>)
 }

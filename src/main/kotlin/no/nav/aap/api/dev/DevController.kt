@@ -3,8 +3,8 @@ package no.nav.aap.api.dev
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
-import no.nav.aap.api.søknad.ettersendelse.EttersendelseClient
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
+import no.nav.aap.api.søknad.ettersendelse.SøknadClient
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
 import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
@@ -46,14 +46,14 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
                              private val cfg: VLFordelingConfig,
                              private val vl: SøknadVLFordeler,
                              private val dittNav: MinSideClient,
-                             private val ettersendelse: EttersendelseClient,
+                             private val søknad: SøknadClient,
                              private val repos: MinSideRepositories) {
 
     private val log = LoggerUtil.getLogger(javaClass)
 
-    @GetMapping("/mangler")
+    @GetMapping("/soknader")
     fun mangler(@RequestParam fnr: Fødselsnummer) =
-        ettersendelse.søknaderMedMangler(fnr)
+        søknad.søknader(fnr)
 
     @PostMapping("ettersend/{fnr}")
     @ResponseStatus(CREATED)
