@@ -53,10 +53,6 @@ data class StandardSøknad(
 
     fun somJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
 
-    fun innsendteVedlegg(): List<VedleggType> {
-
-    }
-
     data class VedleggInfo(val innsendte: List<VedleggType>, val mangler: List<VedleggType>)
 
     fun vedlegg(): VedleggInfo {
