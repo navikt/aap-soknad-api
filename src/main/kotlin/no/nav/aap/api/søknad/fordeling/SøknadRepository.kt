@@ -6,6 +6,7 @@ import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.StringExtensions.partialMask
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.AbstractPersistable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.query.Param
@@ -16,10 +17,8 @@ import javax.persistence.Entity
 import javax.persistence.EntityListeners
 import javax.persistence.EnumType.STRING
 import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType.IDENTITY
-import javax.persistence.Id
 import javax.persistence.ManyToOne
+import javax.persistence.MappedSuperclass
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
@@ -46,14 +45,10 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     @Table(name = "manglendevedlegg")
     @EntityListeners(AuditingEntityListener::class)
     class ManglendeVedlegg(
-            @CreatedDate var created: LocalDateTime? = null,
-            @LastModifiedDate var updated: LocalDateTime? = null,
             @ManyToOne(optional = false)
             var soknad: Søknad? = null,
-            val eventid: UUID,
-            @Enumerated(STRING)
-            val vedleggtype: VedleggType,
-            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
+            eventid: UUID,
+            vedleggtype: VedleggType) : VedleggBaseEntity(eventid = eventid, vedleggtype = vedleggtype) {
         override fun toString() =
             "ManglendeVedlegg(created=$created, updated=$updated, eventid=$eventid, id=$id)"
     }
@@ -62,15 +57,19 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     @Table(name = "innsendtevedlegg")
     @EntityListeners(AuditingEntityListener::class)
     class InnsendteVedlegg(
-            @CreatedDate var created: LocalDateTime? = null,
-            @LastModifiedDate var updated: LocalDateTime? = null,
             @ManyToOne(optional = false)
             var soknad: Søknad? = null,
-            val eventid: UUID,
-            @Enumerated(STRING)
-            val vedleggtype: VedleggType,
-            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
+            eventid: UUID,
+            vedleggtype: VedleggType) : VedleggBaseEntity(eventid = eventid, vedleggtype = vedleggtype) {
         override fun toString() =
             "InnsendteVedlegg(created=$created, updated=$updated, eventid=$eventid, id=$id)"
     }
+
+    @MappedSuperclass
+    abstract class VedleggBaseEntity(
+            @CreatedDate var created: LocalDateTime? = null,
+            @LastModifiedDate var updated: LocalDateTime? = null,
+            val eventid: UUID,
+            @Enumerated(STRING)
+            val vedleggtype: VedleggType) : AbstractPersistable<Long>()
 }
