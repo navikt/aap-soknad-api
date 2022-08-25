@@ -25,7 +25,7 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
     @Modifying
     fun done(@Param("eventid") eventid: UUID): Int
     fun findByEventid(eventid: UUID): T?
-    fun findByFnrAndDoneIsFalse(fnr: String): List<UUID>
+    fun findByFnrAndDoneIsFalse(fnr: String): List<T>
 
     @Converter(autoApply = true)
     class UUIDAttributeConverter : AttributeConverter<UUID, String> {
