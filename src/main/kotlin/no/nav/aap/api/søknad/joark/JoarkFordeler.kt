@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.joark
 
+import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.joark.pdf.PDFClient
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
@@ -25,6 +26,10 @@ class JoarkFordeler(private val joark: JoarkClient,
         with(pdf.tilPdf(søker, søknad)) {
             JoarkFordelingResultat(this, joark.journalfør(generator.journalpostFra(søknad, søker, this)))
         }
+
+    fun ettersend(ettersending: Ettersending, søker: Søker) {
+        joark.journalfør(generator.journalpostFra(ettersending, søker))
+    }
 
     data class JoarkFordelingResultat(val pdf: ByteArray, val journalpostId: String)
 }

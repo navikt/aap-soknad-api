@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.joark
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
+import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.joark.pdf.BildeTilPDFKonverterer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
@@ -40,6 +41,20 @@ class JoarkJournalpostGenerator(
         private val konverterer: BildeTilPDFKonverterer) {
 
     private val log = getLogger(javaClass)
+
+    fun journalpostFra(ettersending: Ettersending, søker: Søker): Journalpost {
+        return Journalpost(dokumenter = dokumenterFra(ettersending),
+                tittel = STANDARD.tittel, // TODO
+                avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
+                bruker = Bruker(søker.fnr))
+            .also {
+                log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it")
+            }
+    }
+
+    private fun dokumenterFra(ettersending: Ettersending): List<Dokument?> {
+        TODO("TODO")
+    }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, pdf.asPDFVariant()),
@@ -128,4 +143,5 @@ class JoarkJournalpostGenerator(
             }).also {
             log.trace("Dokument til JOARK $it")
         })
+
 }

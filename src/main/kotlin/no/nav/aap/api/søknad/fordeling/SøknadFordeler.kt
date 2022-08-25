@@ -4,6 +4,8 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
+import no.nav.aap.api.søknad.ettersendelse.Ettersending
+import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.UtlandSøknadFordeler
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.ManglendeVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.joark.JoarkFordeler
@@ -27,11 +29,15 @@ class SøknadFordeler(private val utland: UtlandSøknadFordeler, private val sta
     Fordeler {
     override fun fordel(søknad: UtlandSøknad) = utland.fordel(søknad)
     override fun fordel(søknad: StandardSøknad) = standard.fordel(søknad)
+    override fun ettersend(ettersending: Ettersending) = standard.ettersend(ettersending)
 }
 
 interface Fordeler {
     fun fordel(søknad: UtlandSøknad): Kvittering
     fun fordel(søknad: StandardSøknad): Kvittering
+
+    fun ettersend(ettersending: Ettersending)
+
 }
 
 @Component
@@ -49,6 +55,9 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                 fullfører.fullfør(søknad, this@run.fnr, this@with)
             }
         }
+
+    fun ettersend(ettersending: Ettersending ) {
+        joark.ettersend(ettersending,pdl.søkerUtenBarn())
 }
 
 @Component

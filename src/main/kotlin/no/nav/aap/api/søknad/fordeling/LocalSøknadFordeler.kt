@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.fordeling
 
+import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
@@ -20,4 +21,8 @@ class LocalSøknadFordeler : Fordeler {
         Kvittering(UUID.randomUUID()).also {
             log.info("Dummy-ruting av søknad til bakenforliggende systemer")
         }
+
+    override fun ettersend(ettersending: Ettersending) {
+        TODO("Not yet implemented")
+    }
 }
