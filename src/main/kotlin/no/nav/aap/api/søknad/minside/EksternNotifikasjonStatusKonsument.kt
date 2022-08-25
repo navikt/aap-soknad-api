@@ -23,9 +23,9 @@ class EksternNotifikasjonStatusKonsument(private val repos: MinSideRepositories)
 
     private fun oppdaterDistribusjonStatus(status: DoknotifikasjonStatus) {
         with(status.eventId()) {
-            repos.oppgaver.findOppgaveByEventid(this)?.let {
+            repos.oppgaver.findByEventid(this)?.let {
                 oppdaterOppgave(it, status)
-            } ?: repos.beskjeder.findBeskjedByEventid(this)?.let {
+            } ?: repos.beskjeder.findByEventid(this)?.let {
                 oppdaterBeskjed(it, status)
             } ?: log.warn("Fant ingen beskjed/oppgave med eventid $this i DB (dette skal aldri skje)")
         }
