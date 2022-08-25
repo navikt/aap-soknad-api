@@ -21,6 +21,7 @@ import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.AFP
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.api.søknad.model.VedleggType.ANDREBARN
+import no.nav.aap.api.søknad.model.VedleggType.ANNET
 import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
 import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
@@ -52,9 +53,15 @@ data class StandardSøknad(
 
     fun somJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
 
-    fun manglendeVedlegg(): List<VedleggType> {
+    fun innsendteVedlegg(): List<VedleggType> {
+
+    }
+
+    fun vedlegg(): Pair<MutableList<VedleggType>, MutableList<VedleggType>> {
 
         val mangler = mutableListOf<VedleggType>()
+        val innsendte = mutableListOf<VedleggType>()
+
         log.trace("Sjekker vedlegg studier $studier")
         if (studier.erStudent == AVBRUTT && manglerVedlegg(studier)) {
             log.trace("Fant mangler for ${STUDIER.tittel}").also {
@@ -62,6 +69,10 @@ data class StandardSøknad(
             }
         }
         else {
+            if (harVedlegg(studier)) {
+                log.trace("Studier har vedlegg")
+                innsendte += STUDIER
+            }
             log.trace("Ingen mangler for studier")
         }
         with(andreBarn) {
@@ -72,6 +83,10 @@ data class StandardSøknad(
                 }
             }
             else {
+                if (harVedlegg(this)) {
+                    log.trace("barn har vedlegg")
+                    innsendte += ANDREBARN
+                }
                 log.trace("Ingen mangler for andre barn")
             }
         }
@@ -93,6 +108,10 @@ data class StandardSøknad(
                     }
                 }
                 else {
+                    if (harVedlegg(it)) {
+                        log.trace("omsorg har vedlegg")
+                        innsendte += OMSORG
+                    }
                     log.trace("Ingen mangler for omsorg")
                 }
             }
@@ -103,22 +122,42 @@ data class StandardSøknad(
                     }
                 }
                 else {
+                    if (harVedlegg(it)) {
+                        log.trace("utland har vedlegg")
+                        innsendte += VedleggType.UTLAND
+                    }
                     log.trace("Ingen mangler for utland")
                 }
             }
         }
-        return mangler.also {
+        if (vedlegg?.deler?.isNotEmpty() == true) {
+            log.trace("Vi har andre vedlegg")
+            innsendte += ANNET
+        }
+
+        return Pair(innsendte.also {
+            if (it.isEmpty()) {
+                log.trace("Vi har ingen vedlegg")
+            }
+            else {
+                log.trace("Vi har  følgende vedlegg $it")
+            }
+        }, mangler.also {
             if (it.isEmpty()) {
                 log.trace("Det mangler ingen vedlegg")
             }
             else {
                 log.trace("Det mangler følgende vedlegg $it")
             }
-        }
+        })
     }
+
 }
 
-fun manglerVedlegg(v: VedleggAware) = v.vedlegg == null || v.vedlegg?.deler?.isEmpty() == true
+fun manglerVedlegg(v: VedleggAware) = v.vedlegg?.deler?.isEmpty() == true
+fun harVedlegg(v: VedleggAware) = v.vedlegg?.deler?.isNotEmpty() == true
+
+private fun harVedlegg(v: List<VedleggAware>) = v.find { harVedlegg(it) } != null
 
 @JsonDeserialize(using = VedleggDeserializer::class)
 data class Vedlegg(val tittel: String? = null, @JsonValue val deler: List<UUID?>? = null)

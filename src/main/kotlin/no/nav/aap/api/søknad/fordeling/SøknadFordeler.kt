@@ -77,9 +77,10 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                     .also {
                         log.trace("Lagret metadata $it om søknad i DB OK")
                     }
-            with(søknad.manglendeVedlegg()) {
-                if (isNotEmpty()) {
-                    forEach { type ->
+
+            with(søknad.vedlegg()) {  //
+                if (second.isNotEmpty()) {
+                    second.forEach { type ->
                         with(ManglendeVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
                             s.manglendevedlegg.add(this)
                             soknad = s

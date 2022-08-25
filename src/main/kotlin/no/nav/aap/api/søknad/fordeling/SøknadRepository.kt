@@ -35,6 +35,8 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             val journalpostid: String,
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var manglendevedlegg: MutableSet<ManglendeVedlegg> = mutableSetOf(),
+            @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
+            var innsendtevedlegg: MutableSet<InnsendteVedlegg> = mutableSetOf(),
             eventid: UUID) : BaseEntity(fnr, eventid = eventid) {
         override fun toString() =
             "JPASøknad(fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, id=$id)"
@@ -54,5 +56,21 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
         override fun toString() =
             "ManglendeVedlegg(created=$created, updated=$updated, eventid=$eventid, id=$id)"
+    }
+
+    @Entity(name = "innsendtevedlegg")
+    @Table(name = "innsendtevedlegg")
+    @EntityListeners(AuditingEntityListener::class)
+    class InnsendteVedlegg(
+            @CreatedDate var created: LocalDateTime? = null,
+            @LastModifiedDate var updated: LocalDateTime? = null,
+            @ManyToOne(optional = false)
+            var soknad: Søknad? = null,
+            val eventid: UUID,
+            @Enumerated(STRING)
+            val vedleggtype: VedleggType,
+            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
+        override fun toString() =
+            "InnsendteVedlegg(created=$created, updated=$updated, eventid=$eventid, id=$id)"
     }
 }
