@@ -21,12 +21,6 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
     fun findByEventid(eventid: UUID): T?
     fun findByFnrAndDoneIsFalse(fnr: String): List<T>
 
-    @Converter(autoApply = true)
-    class UUIDAttributeConverter : AttributeConverter<UUID, String> {
-        override fun convertToDatabaseColumn(entityValue: UUID?) = entityValue?.let(UUID::toString)
-        override fun convertToEntityAttribute(databaseValue: String?) = databaseValue?.let(UUID::fromString)
-    }
-
     @MappedSuperclass
     abstract class MinSideBaseEntity(fnr: String, eventid: UUID, var done: Boolean) : BaseEntity(fnr, eventid = eventid)
 
@@ -46,6 +40,12 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
             val distribusjonid: Long,
             val distribusjonkanal: String,
             @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0)
+}
+
+@Converter(autoApply = true)
+class UUIDAttributeConverter : AttributeConverter<UUID, String> {
+    override fun convertToDatabaseColumn(entityValue: UUID?) = entityValue?.let(UUID::toString)
+    override fun convertToEntityAttribute(databaseValue: String?) = databaseValue?.let(UUID::fromString)
 }
 
 @Component

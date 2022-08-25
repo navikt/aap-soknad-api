@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.fordeling
 
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
+import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.StringExtensions.partialMask
 import org.springframework.data.annotation.CreatedDate
@@ -30,14 +31,11 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     @Table(name = "soknader")
     @EntityListeners(AuditingEntityListener::class)
     class Søknad(
-            val fnr: String,
+            fnr: String,
             val journalpostid: String,
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var manglendevedlegg: MutableSet<ManglendeVedlegg> = mutableSetOf(),
-            @CreatedDate var created: LocalDateTime? = null,
-            @LastModifiedDate var updated: LocalDateTime? = null,
-            val eventid: UUID,
-            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
+            eventid: UUID) : BaseEntity(fnr, eventid = eventid) {
         override fun toString() =
             "JPASøknad(fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, id=$id)"
     }
