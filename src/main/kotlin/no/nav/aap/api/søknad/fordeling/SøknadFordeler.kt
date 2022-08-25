@@ -56,71 +56,72 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
             }
         }
 
-    fun ettersend(ettersending: Ettersending ) {
-        joark.ettersend(ettersending,pdl.søkerUtenBarn())
-}
+    fun ettersend(ettersending: Ettersending) {
+        joark.ettersend(ettersending, pdl.søkerUtenBarn())
+    }
 
-@Component
-class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
-                              private val dittnav: MinSideClient,
-                              private val repo: SøknadRepository,
-                              private val mellomlager: Mellomlager) {
+    @Component
+    class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
+                                  private val dittnav: MinSideClient,
+                                  private val repo: SøknadRepository,
+                                  private val mellomlager: Mellomlager) {
 
-    private val log = getLogger(javaClass)
+        private val log = getLogger(javaClass)
 
-    fun fullfør(søknad: StandardSøknad, søker: Fødselsnummer, resultat: JoarkFordelingResultat) =
-        dokumentLager.slettDokumenter(søknad).run {
-            mellomlager.slett()
-            log.trace("Lagrer metadata om søknad i DB")
-            val s =
-                repo.save(Søknad(fnr = søker.fnr, journalpostid = resultat.journalpostId, eventid = callIdAsUUID()))
-                    .also {
-                        log.trace("Lagret metadata $it om søknad i DB OK")
-                    }
-
-            with(søknad.vedlegg()) {  //
-                log.trace("VedleggInfo $this")
-                if (mangler.isNotEmpty()) {
-                    mangler.forEach { type ->
-                        with(ManglendeVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
-                            s.manglendevedlegg.add(this)
-                            soknad = s
+        fun fullfør(søknad: StandardSøknad, søker: Fødselsnummer, resultat: JoarkFordelingResultat) =
+            dokumentLager.slettDokumenter(søknad).run {
+                mellomlager.slett()
+                log.trace("Lagrer metadata om søknad i DB")
+                val s =
+                    repo.save(Søknad(fnr = søker.fnr, journalpostid = resultat.journalpostId, eventid = callIdAsUUID()))
+                        .also {
+                            log.trace("Lagret metadata $it om søknad i DB OK")
                         }
+
+                with(søknad.vedlegg()) {  //
+                    log.trace("VedleggInfo $this")
+                    if (mangler.isNotEmpty()) {
+                        mangler.forEach { type ->
+                            with(ManglendeVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
+                                s.manglendevedlegg.add(this)
+                                soknad = s
+                            }
+                        }
+                        repo.save(s).also {
+                            log.trace("Oppdatert metadata om søknad $it med ${s.manglendevedlegg.size} manglende vedlegg i DB OK")
+                        }
+                        dittnav.opprettOppgave(MINAAPSTD,
+                                søker,
+                                s.eventid,
+                                "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")
                     }
-                    repo.save(s).also {
-                        log.trace("Oppdatert metadata om søknad $it med ${s.manglendevedlegg.size} manglende vedlegg i DB OK")
+                    else {
+                        dittnav.opprettBeskjed(MINAAPSTD,
+                                s.eventid,
+                                søker,
+                                "Vi har mottatt din ${STANDARD.tittel}",
+                                true)
                     }
-                    dittnav.opprettOppgave(MINAAPSTD,
-                            søker,
-                            s.eventid,
-                            "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")
                 }
-                else {
-                    dittnav.opprettBeskjed(MINAAPSTD,
-                            s.eventid,
-                            søker,
-                            "Vi har mottatt din ${STANDARD.tittel}",
-                            true)
+                Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = resultat.pdf, navn = "kvittering.pdf")))
+            }
+    }
+
+    @Component
+    class UtlandSøknadFordeler(private val joark: JoarkFordeler,
+                               private val pdl: PDLClient,
+                               private val dittnav: MinSideClient,
+                               private val lager: Dokumentlager,
+                               private val cfg: VLFordelingConfig,
+                               private val vl: SøknadVLFordeler) {
+
+        fun fordel(søknad: UtlandSøknad) =
+            pdl.søkerUtenBarn().run {
+                with(joark.fordel(søknad, this)) {
+                    vl.fordel(søknad, fnr, journalpostId, cfg.utland)
+                    dittnav.opprettBeskjed(MINAAPUTLAND, callIdAsUUID(), fnr, "Vi har mottatt ${UTLAND.tittel}", true)
+                    Kvittering(lager.lagreDokument(DokumentInfo(pdf, navn = "kvittering-utland.pdf")))
                 }
             }
-            Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = resultat.pdf, navn = "kvittering.pdf")))
-        }
-}
-
-@Component
-class UtlandSøknadFordeler(private val joark: JoarkFordeler,
-                           private val pdl: PDLClient,
-                           private val dittnav: MinSideClient,
-                           private val lager: Dokumentlager,
-                           private val cfg: VLFordelingConfig,
-                           private val vl: SøknadVLFordeler) {
-
-    fun fordel(søknad: UtlandSøknad) =
-        pdl.søkerUtenBarn().run {
-            with(joark.fordel(søknad, this)) {
-                vl.fordel(søknad, fnr, journalpostId, cfg.utland)
-                dittnav.opprettBeskjed(MINAAPUTLAND, callIdAsUUID(), fnr, "Vi har mottatt ${UTLAND.tittel}", true)
-                Kvittering(lager.lagreDokument(DokumentInfo(pdf, navn = "kvittering-utland.pdf")))
-            }
-        }
+    }
 }
