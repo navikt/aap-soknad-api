@@ -89,11 +89,8 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 dittNav.send(ProducerRecord(done, key(type, eventId, fnr), done()))
                     .addCallback(SendCallback("avslutt oppgave med eventid $eventId"))
                 log.trace("Setter oppgave done i DB for eventId $eventId")
-                when (repos.oppgaver.done(eventId)) {
-                    0 -> log.warn("Kunne ikke sette oppgave med eventid $eventId for $fnr til done i DB, ingen rader funnet")
-                    1 -> log.trace("Satt oppgave med eventid $eventId for $fnr done i DB")
-                    else -> log.warn("Satte et uventet antall rader til oppdatert for oppgave med eventid  $eventId og $fnr til done i DB")
-                }
+                repos.oppgaver.findByEventid(eventId)?.let { it.done = true }
+                    ?: log.warn("Kunne ikke sette beskjed med eventid $eventId for fnr $fnr til done i DB, ingen rader oppdatert")
             }
             else {
                 log.info("Sender ikke avslutt oppgave til Ditt Nav for $fnr")
@@ -109,13 +106,6 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 log.trace("Setter beskjed done i DB for eventid $eventId")
                 repos.beskjeder.findByEventid(eventId)?.let { it.done = true }
                     ?: log.warn("Kunne ikke sette beskjed med eventid $eventId for fnr $fnr til done i DB, ingen rader oppdatert")
-                /*
-                                when (repos.beskjeder.done(eventId)) {
-                                    0 -> log.warn("Kunne ikke sette beskjed med eventid $eventId for fnr $fnr til done i DB, ingen rader oppdatert")
-                                    1 -> log.trace("Satt beskjed med eventid $eventId for $fnr done i DB")
-                                    else -> log.warn("Satte et uventet antall rader til oppdatert for beskjed med eventid $eventId og fnr $fnr til done i DB")
-                                }
-                 */
             }
             else {
                 log.info("Sender ikke avslutt beskjed til Min Side for beskjed for $fnr")
