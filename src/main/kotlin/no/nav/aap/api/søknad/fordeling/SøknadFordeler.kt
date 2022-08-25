@@ -6,6 +6,7 @@ import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.UtlandSøknadFordeler
+import no.nav.aap.api.søknad.fordeling.SøknadRepository.InnsendteVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.ManglendeVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.joark.JoarkFordeler
@@ -23,6 +24,7 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @ConditionalOnGCP
 class SøknadFordeler(private val utland: UtlandSøknadFordeler, private val standard: StandardSøknadFordeler) :
@@ -68,6 +70,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
         private val log = getLogger(javaClass)
 
+        @Transactional
         fun fullfør(søknad: StandardSøknad, søker: Fødselsnummer, resultat: JoarkFordelingResultat) =
             dokumentLager.slettDokumenter(søknad).run {
                 mellomlager.slett()
@@ -101,6 +104,12 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                                 søker,
                                 "Vi har mottatt din ${STANDARD.tittel}",
                                 true)
+                    }
+                    innsendte.forEach { type ->
+                        with(InnsendteVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
+                            s.innsendtevedlegg.add(this)
+                            soknad = s
+                        }
                     }
                 }
                 Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = resultat.pdf, navn = "kvittering.pdf")))
