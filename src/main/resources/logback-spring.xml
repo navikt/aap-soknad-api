@@ -21,7 +21,7 @@
         </encoder>
     </appender>
     <springProfile name="dev">
-        <logger name="no.nav.aap.api.søknad.minside.MinSideBeanConfig" level="none"/>
+        <logger name="no.nav.aap.api.søknad.minside.MinSideBeanConfig" level="warn"/>
         <logger name="no.nav.aap" level="trace"/>
         <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="info"/>
         <logger name="secure" level="debug" additivity="false">
