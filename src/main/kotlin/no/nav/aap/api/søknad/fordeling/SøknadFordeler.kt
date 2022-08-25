@@ -79,8 +79,9 @@ class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                     }
 
             with(søknad.vedlegg()) {  //
-                if (second.isNotEmpty()) {
-                    second.forEach { type ->
+                log.trace("VedleggInfo $this")
+                if (mangler.isNotEmpty()) {
+                    mangler.forEach { type ->
                         with(ManglendeVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
                             s.manglendevedlegg.add(this)
                             soknad = s

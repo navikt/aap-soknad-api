@@ -57,7 +57,9 @@ data class StandardSøknad(
 
     }
 
-    fun vedlegg(): Pair<MutableList<VedleggType>, MutableList<VedleggType>> {
+    data class VedleggInfo(val innsendte: List<VedleggType>, val mangler: List<VedleggType>)
+
+    fun vedlegg(): VedleggInfo {
 
         val mangler = mutableListOf<VedleggType>()
         val innsendte = mutableListOf<VedleggType>()
@@ -134,22 +136,7 @@ data class StandardSøknad(
             log.trace("Vi har andre vedlegg")
             innsendte += ANNET
         }
-
-        return Pair(innsendte.also {
-            if (it.isEmpty()) {
-                log.trace("Vi har ingen vedlegg")
-            }
-            else {
-                log.trace("Vi har  følgende vedlegg $it")
-            }
-        }, mangler.also {
-            if (it.isEmpty()) {
-                log.trace("Det mangler ingen vedlegg")
-            }
-            else {
-                log.trace("Det mangler følgende vedlegg $it")
-            }
-        })
+        return VedleggInfo(mangler, innsendte)
     }
 
 }
