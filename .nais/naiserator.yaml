@@ -53,7 +53,7 @@ spec:
         inbound:
             rules:
                 -   application: soknad
-                -   application: soknad-next
+                -   application: innsyn
         outbound:
             rules:
                 -   application: clamav
