@@ -132,7 +132,7 @@ data class StandardSøknad(
             log.trace("Vi har andre vedlegg")
             innsendte += ANNET
         }
-        return VedleggInfo(mangler, innsendte)
+        return VedleggInfo(innsendte, mangler)
     }
 
 }
