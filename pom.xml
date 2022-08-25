@@ -83,6 +83,10 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
+            <groupId>org.jolokia</groupId>
+            <artifactId>jolokia-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>no.nav.teamdokumenthandtering</groupId>
             <artifactId>teamdokumenthandtering-avro-schemas</artifactId>
             <version>${varsling.version}</version>
