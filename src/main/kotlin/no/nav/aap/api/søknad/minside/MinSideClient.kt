@@ -107,11 +107,15 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 dittNav.send(ProducerRecord(done, key(type, eventId, fnr), done()))
                     .addCallback(SendCallback("avslutt beskjed med eventid $eventId"))
                 log.trace("Setter beskjed done i DB for eventid $eventId")
-                when (repos.beskjeder.done(eventId)) {
-                    0 -> log.warn("Kunne ikke sette beskjed med eventid $eventId for fnr $fnr til done i DB, ingen rader oppdatert")
-                    1 -> log.trace("Satt beskjed med eventid $eventId for $fnr done i DB")
-                    else -> log.warn("Satte et uventet antall rader til oppdatert for beskjed med eventid $eventId og fnr $fnr til done i DB")
-                }
+                repos.beskjeder.findByEventid(eventId)?.let { it.done = true }
+                    ?: log.warn("Kunne ikke sette beskjed med eventid $eventId for fnr $fnr til done i DB, ingen rader oppdatert")
+                /*
+                                when (repos.beskjeder.done(eventId)) {
+                                    0 -> log.warn("Kunne ikke sette beskjed med eventid $eventId for fnr $fnr til done i DB, ingen rader oppdatert")
+                                    1 -> log.trace("Satt beskjed med eventid $eventId for $fnr done i DB")
+                                    else -> log.warn("Satte et uventet antall rader til oppdatert for beskjed med eventid $eventId og fnr $fnr til done i DB")
+                                }
+                 */
             }
             else {
                 log.info("Sender ikke avslutt beskjed til Min Side for beskjed for $fnr")
