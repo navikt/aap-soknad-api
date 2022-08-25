@@ -1,134 +1,62 @@
 package no.nav.aap.api.søknad.minside
 
 import no.nav.aap.api.søknad.fordeling.SøknadRepository
-import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
-import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
-import no.nav.aap.util.StringExtensions.partialMask
+import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
-import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.AttributeConverter
-import javax.persistence.CascadeType.ALL
 import javax.persistence.Converter
-import javax.persistence.Entity
-import javax.persistence.EntityListeners
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
-import javax.persistence.ManyToOne
 import javax.persistence.MappedSuperclass
-import javax.persistence.OneToMany
-import javax.persistence.Table
 
-interface MinSideBeskjedRepository : JpaRepository<Beskjed, Long> {
-
-    fun findBeskjedByEventid(eventid: UUID): Beskjed?
-
+@NoRepositoryBean
+interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
+    @Query("update #{#entityName} set done = true, updated = current_timestamp where eventid = :eventid")
     @Modifying
-    @Query("update beskjed set done = true, updated = current_timestamp where eventid = :eventid")
     fun done(@Param("eventid") eventid: UUID): Int
+    fun findByEventid(eventid: UUID): T?
 
-    @Query("select eventid from beskjed where  done = false and fnr = :fnr")
+    @Query("select eventid from #{#entityName} where  done = false and fnr = :fnr")
     fun alleIkkeAvsluttede(@Param("fnr") fnr: String): List<UUID>
 
-    @Entity(name = "beskjed")
-    @Table(name = "minsidebeskjeder")
-    @EntityListeners(AuditingEntityListener::class)
-    class Beskjed(
-            fnr: String,
-            eventid: UUID,
-            done: Boolean = false,
-            @OneToMany(mappedBy = "beskjed", cascade = [ALL], orphanRemoval = true)
-            var notifikasjoner: MutableSet<EksternBeskjedNotifikasjon> = mutableSetOf()) :
-        MinSideBaseEntity(fnr = fnr, eventid = eventid, done = done) {
-        override fun toString(): String =
-            "Beskjed(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id)"
+    @Converter(autoApply = true)
+    class UUIDAttributeConverter : AttributeConverter<UUID, String> {
+        override fun convertToDatabaseColumn(entityValue: UUID?) = entityValue?.let(UUID::toString)
+        override fun convertToEntityAttribute(databaseValue: String?) = databaseValue?.let(UUID::fromString)
     }
 
-    @Entity(name = "eksternbeskjednotifikasjon")
-    @Table(name = "eksternebeskjednotifikasjoner")
-    @EntityListeners(AuditingEntityListener::class)
-    class EksternBeskjedNotifikasjon(
-            @ManyToOne(optional = false)
-            var beskjed: Beskjed? = null,
-            var eventid: UUID,
+    @MappedSuperclass
+    abstract class MinSideBaseEntity(fnr: String, eventid: UUID, var done: Boolean) : BaseEntity(fnr, eventid = eventid)
+
+    @MappedSuperclass
+    abstract class BaseEntity(
+            val fnr: String,
+            @CreatedDate var created: LocalDateTime? = null,
+            val eventid: UUID,
+            @LastModifiedDate var updated: LocalDateTime? = null,
+            @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0)
+
+    @MappedSuperclass
+    abstract class EksternNotifikasjonBaseEntity(
+            val eventid: UUID,
             @CreatedDate
             var distribusjondato: LocalDateTime? = null,
-            val distribusjonid: Long? = null,
-            val distribusjonkanal: String? = null,
-            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
-        override fun toString(): String =
-            "EksternOppgaveNotifikasjon(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,beskjed=$beskjed,id=$id)"
-    }
-}
-
-interface MinSideOppgaveRepository : JpaRepository<Oppgave, Long> {
-    fun findOppgaveByEventid(eventid: UUID): Oppgave?
-
-    @Modifying
-    @Query("update oppgave set done = true, updated = current_timestamp where eventid = :eventid")
-    fun done(@Param("eventid") eventid: UUID): Int
-
-    @Query("select eventid from oppgave where  done = false and fnr = :fnr")
-    fun alleIkkeAvsluttede(@Param("fnr") fnr: String): List<UUID>
-
-    @Entity(name = "oppgave")
-    @Table(name = "minsideoppgaver")
-    @EntityListeners(AuditingEntityListener::class)
-    class Oppgave(
-            fnr: String,
-            eventid: UUID,
-            done: Boolean = false,
-            @OneToMany(mappedBy = "oppgave", cascade = [ALL], orphanRemoval = true)
-            var notifikasjoner: MutableSet<EksternOppgaveNotifikasjon> = mutableSetOf()) :
-        MinSideBaseEntity(fnr = fnr, eventid = eventid, done = done) {
-        override fun toString(): String =
-            "Oppgave(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id)"
-    }
-
-    @Entity(name = "eksternoppgavenotifikasjon")
-    @Table(name = "eksterneoppgavenotifikasjoner")
-    @EntityListeners(AuditingEntityListener::class)
-    class EksternOppgaveNotifikasjon(
-            @ManyToOne(optional = false)
-            var oppgave: Oppgave? = null,
-            var eventid: UUID,
-            @CreatedDate
-            var distribusjondato: LocalDateTime? = null,
-            val distribusjonid: Long? = null,
-            val distribusjonkanal: String? = null,
-            @Id @GeneratedValue(strategy = IDENTITY) var id: Long = 0) {
-        override fun toString(): String =
-            "EksternOppgaveNotifikasjon(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,oppgave=$oppgave,id=$id)"
-    }
-
+            val distribusjonid: Long,
+            val distribusjonkanal: String,
+            @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0)
 }
 
 @Component
 data class MinSideRepositories(val beskjeder: MinSideBeskjedRepository,
                                val oppgaver: MinSideOppgaveRepository,
                                var søknader: SøknadRepository)
-
-@Converter(autoApply = true)
-class UUIDAttributeConverter : AttributeConverter<UUID, String> {
-    override fun convertToDatabaseColumn(entityValue: UUID?) = entityValue?.let(UUID::toString)
-    override fun convertToEntityAttribute(databaseValue: String?) = databaseValue?.let(UUID::fromString)
-}
-
-@MappedSuperclass
-abstract class MinSideBaseEntity(fnr: String, eventid: UUID, val done: Boolean) : BaseEntity(fnr, eventid = eventid)
-
-@MappedSuperclass
-abstract class BaseEntity(
-        val fnr: String,
-        @CreatedDate var created: LocalDateTime? = null,
-        val eventid: UUID,
-        @LastModifiedDate var updated: LocalDateTime? = null,
-        @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0)
