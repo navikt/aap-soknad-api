@@ -52,7 +52,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     private val log = LoggerUtil.getLogger(javaClass)
 
     @GetMapping("/soknader")
-    fun mangler(@RequestParam fnr: Fødselsnummer) =
+    fun søknader(@RequestParam fnr: Fødselsnummer) =
         søknad.søknader(fnr)
 
     @PostMapping("ettersend/{fnr}")
