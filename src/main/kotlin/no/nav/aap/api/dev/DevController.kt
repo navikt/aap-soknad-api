@@ -1,7 +1,6 @@
 package no.nav.aap.api.dev
 
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.søknad.SøknadClient
@@ -15,7 +14,6 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideRepositories
 import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
@@ -63,9 +61,9 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     @ResponseStatus(CREATED)
     fun ettersend(@PathVariable fnr: Fødselsnummer, @RequestBody ettersending: Ettersending) {
         log.trace("Mottok ettersendng $ettersending for $fnr")
-        val post = joark.journalpostFra(ettersending,
-                Søker(Navn("Dennis", "B", "Bergkamp"), fnr))
-        log.trace("Lagde journalpost $post for $fnr")
+        // val post = joark.journalpostFra(ettersending,
+        //           Søker(Navn("Dennis", "B", "Bergkamp"), fnr))
+        // log.trace("Lagde journalpost $post for $fnr")
     }
 
     @GetMapping("/dittnav/avsluttalle")
