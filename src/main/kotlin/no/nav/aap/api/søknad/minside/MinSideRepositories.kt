@@ -6,7 +6,6 @@ import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
-import org.springframework.data.jpa.domain.AbstractPersistable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.stereotype.Component
@@ -15,6 +14,9 @@ import java.util.*
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter
 import javax.persistence.EntityListeners
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType.IDENTITY
+import javax.persistence.Id
 import javax.persistence.MappedSuperclass
 import javax.persistence.PostLoad
 import javax.persistence.PostPersist
@@ -38,7 +40,9 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
             val fnr: String,
             @CreatedDate var created: LocalDateTime? = null,
             val eventid: UUID,
-            @LastModifiedDate var updated: LocalDateTime? = null) : AbstractPersistable<Long>()
+            @LastModifiedDate var updated: LocalDateTime? = null,
+            @Id @GeneratedValue(strategy = IDENTITY)
+            val id: Long = 0)
 
     @MappedSuperclass
     abstract class EksternNotifikasjonBaseEntity(
@@ -46,7 +50,9 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
             @CreatedDate
             var distribusjondato: LocalDateTime? = null,
             val distribusjonid: Long,
-            val distribusjonkanal: String) : AbstractPersistable<Long>()
+            val distribusjonkanal: String,
+            @Id @GeneratedValue(strategy = IDENTITY)
+            val id: Long = 0)
 }
 
 @Converter(autoApply = true)

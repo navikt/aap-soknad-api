@@ -6,7 +6,6 @@ import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.StringExtensions.partialMask
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
-import org.springframework.data.jpa.domain.AbstractPersistable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.query.Param
@@ -17,6 +16,9 @@ import javax.persistence.Entity
 import javax.persistence.EntityListeners
 import javax.persistence.EnumType.STRING
 import javax.persistence.Enumerated
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType.IDENTITY
+import javax.persistence.Id
 import javax.persistence.ManyToOne
 import javax.persistence.MappedSuperclass
 import javax.persistence.OneToMany
@@ -71,5 +73,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             @LastModifiedDate var updated: LocalDateTime? = null,
             val eventid: UUID,
             @Enumerated(STRING)
-            val vedleggtype: VedleggType) : AbstractPersistable<Long>()
+            val vedleggtype: VedleggType,
+            @Id @GeneratedValue(strategy = IDENTITY)
+            val id: Long = 0)
 }
