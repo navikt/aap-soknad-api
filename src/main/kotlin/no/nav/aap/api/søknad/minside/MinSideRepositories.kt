@@ -4,6 +4,7 @@ import no.nav.aap.api.søknad.fordeling.SøknadRepository
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
 import no.nav.aap.util.LoggerUtil.getLogger
+import org.springframework.core.annotation.AnnotatedElementUtils.getMergedAnnotation
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -14,6 +15,7 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter
+import javax.persistence.Entity
 import javax.persistence.EntityListeners
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType.IDENTITY
@@ -64,39 +66,42 @@ class UUIDAttributeConverter : AttributeConverter<UUID, String> {
 }
 
 class LoggingEntityListener {
+
+    fun name(entity: BaseEntity) = getMergedAnnotation(entity::class.java, Entity::class.java)?.name
+
     @PrePersist
     private fun lagrer(entity: BaseEntity) {
-        log.trace("Lagrer $entity i DB")
+        log.trace("Lagrer ${name(entity)} $entity i DB")
     }
 
     @PreUpdate
     private fun oppdaterer(entity: BaseEntity) {
-        log.trace("Oppdaterer $entity i DB")
+        log.trace("Oppdaterer ${name(entity)} $entity i DB")
     }
 
     @PreRemove
     private fun fjerner(entity: BaseEntity) {
-        log.trace("Fjerner $entity fra DB")
+        log.trace("Fjerner ${name(entity)} $entity fra DB")
     }
 
     @PostPersist
     private fun lagret(entity: BaseEntity) {
-        log.trace("Lagret $entity i DB")
+        log.trace("Lagret ${name(entity)} $entity i DB")
     }
 
     @PostUpdate
     private fun oppdatert(entity: BaseEntity) {
-        log.trace("Oppdatert $entity i DB")
+        log.trace("Oppdatert ${name(entity)} $entity i DB")
     }
 
     @PostRemove
     private fun fjernet(entity: BaseEntity) {
-        log.trace("Fjernet $entity fra DB")
+        log.trace("Fjernet ${name(entity)} $entity fra DB")
     }
 
     @PostLoad
     private fun lest(entity: BaseEntity) {
-        log.trace("Lest $entity fra DB")
+        log.trace("Lest ${name(entity)} $entity fra DB")
     }
 
     companion object {
