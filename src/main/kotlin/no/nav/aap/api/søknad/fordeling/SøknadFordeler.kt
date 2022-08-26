@@ -19,7 +19,6 @@ import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPST
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPUTLAND
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
@@ -32,14 +31,14 @@ class SøknadFordeler(private val utland: UtlandSøknadFordeler, private val sta
     Fordeler {
     override fun fordel(søknad: UtlandSøknad) = utland.fordel(søknad)
     override fun fordel(søknad: StandardSøknad) = standard.fordel(søknad)
-    override fun ettersend(ettersending: Ettersending, søker: Søker) = standard.ettersend(ettersending, søker)
+    override fun ettersend(ettersending: Ettersending) = standard.ettersend(ettersending)
 }
 
 interface Fordeler {
     fun fordel(søknad: UtlandSøknad): Kvittering
     fun fordel(søknad: StandardSøknad): Kvittering
 
-    fun ettersend(ettersending: Ettersending, søker: Søker)
+    fun ettersend(ettersending: Ettersending)
 
 }
 
@@ -59,8 +58,8 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
             }
         }
 
-    fun ettersend(ettersending: Ettersending, søker: Søker) {
-        with(søker) {
+    fun ettersend(ettersending: Ettersending) {
+        with(pdl.søkerUtenBarn()) {
             joark.ettersend(ettersending, this)
             fullfører.fullfør(ettersending, this.fnr)
         }
