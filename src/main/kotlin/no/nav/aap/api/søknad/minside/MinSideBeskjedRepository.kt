@@ -3,7 +3,9 @@ package no.nav.aap.api.søknad.minside
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
 import no.nav.aap.api.søknad.minside.MinSideRepository.EksternNotifikasjonBaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
+import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.StringExtensions.partialMask
+import org.springframework.core.annotation.AnnotatedElementUtils.getMergedAnnotation
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.util.*
 import javax.persistence.CascadeType.ALL
@@ -11,6 +13,7 @@ import javax.persistence.Entity
 import javax.persistence.EntityListeners
 import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
+import javax.persistence.PrePersist
 import javax.persistence.Table
 
 interface MinSideBeskjedRepository : MinSideRepository<Beskjed> {
@@ -25,6 +28,7 @@ interface MinSideBeskjedRepository : MinSideRepository<Beskjed> {
             @OneToMany(mappedBy = "beskjed", cascade = [ALL], orphanRemoval = true)
             var notifikasjoner: MutableSet<EksternBeskjedNotifikasjon> = mutableSetOf()) :
         MinSideBaseEntity(fnr = fnr, eventid = eventid, done = done) {
+
         override fun toString() =
             "Beskjed(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id)"
     }

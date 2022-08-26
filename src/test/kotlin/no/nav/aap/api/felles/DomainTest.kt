@@ -1,6 +1,5 @@
 package no.nav.aap.api.felles
 
-import no.nav.aap.util.LoggerUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
@@ -10,7 +9,6 @@ import javax.validation.Validation
 import javax.validation.constraints.Min
 
 class DomainTest {
-    val log = LoggerUtil.getLogger(DomainTest::class.java)
 
     @Test
     @DisplayName("varighet viser riktige dager")
