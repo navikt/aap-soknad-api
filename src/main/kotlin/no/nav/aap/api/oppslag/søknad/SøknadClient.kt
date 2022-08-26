@@ -24,7 +24,7 @@ class SøknadClient(private val repo: SøknadRepository, private val ctx: AuthCo
                     manglendevedlegg.map { it.vedleggtype })
         }
 
-    data class SøknadDTO(val opprettet: LocalDateTime?,
+    data class SøknadDTO(val søknadtidspunkt: LocalDateTime?,
                          val søknadId: UUID,
                          val innsendte: List<VedleggType>,
                          val mangler: List<VedleggType>)

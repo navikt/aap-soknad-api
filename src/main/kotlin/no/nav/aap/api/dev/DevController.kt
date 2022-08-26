@@ -62,7 +62,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     fun ettersend(@PathVariable fnr: Fødselsnummer, @RequestBody ettersending: Ettersending) {
         log.trace("Mottok ettersendng $ettersending for $fnr")
         // val post = joark.journalpostFra(ettersending,
-        //           Søker(Navn("Dennis", "B", "Bergkamp"), fnr))
+        //S           Søker(Navn("Dennis", "B", "Bergkamp"), fnr))
         // log.trace("Lagde journalpost $post for $fnr")
     }
 
