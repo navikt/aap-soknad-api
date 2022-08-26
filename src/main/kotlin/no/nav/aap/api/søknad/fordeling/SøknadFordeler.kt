@@ -23,7 +23,6 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 @ConditionalOnGCP
 class SøknadFordeler(private val utland: UtlandSøknadFordeler, private val standard: StandardSøknadFordeler) :
@@ -69,7 +68,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
         private val log = getLogger(javaClass)
 
-        @Transactional
+        //@Transactional
         fun fullfør(søknad: StandardSøknad, søker: Fødselsnummer, resultat: JoarkFordelingResultat) =
             dokumentLager.slettDokumenter(søknad).run {
                 mellomlager.slett()
