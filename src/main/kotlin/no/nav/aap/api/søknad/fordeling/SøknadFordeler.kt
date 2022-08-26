@@ -110,7 +110,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
         fun fullfør(ettersending: Ettersending, fnr: Fødselsnummer) {
             repo.getSøknadByEventidAndFnr(ettersending.søknadId, fnr.fnr)?.let { s ->
                 log.trace("Lest søknad $s")
-                s.manglendevedlegg?.forEach {
+                s.manglendevedlegg?.iterator()?.forEach {
                     log.trace("Sjekker manglende vedlegg ${s.eventid} $it")
                     ettersending.ettersendteVedlegg.forEach { ev ->
                         log.trace("Sjekker ettersendt vedlegg $ev mot $it")
