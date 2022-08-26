@@ -110,7 +110,9 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
         fun fullfør(ettersending: Ettersending, fnr: Fødselsnummer) {
             repo.getSøknadByEventidAndFnr(ettersending.søknadId, fnr.fnr)?.let { s ->
                 s.manglendevedlegg?.forEach {
+                    log.trace("Sjekker manglende vedlegg ${s.eventid} $it")
                     ettersending.ettersendteVedlegg.forEach { ev ->
+                        log.trace("Sjekker ettersendt vedlegg $ev mot $it")
                         if (ev.type == it.vedleggtype) {
                             log.trace("Manglende søknad $it ble nå sendt inn")
                             s.manglendevedlegg.remove(it)  // TODO merke istedet for å slette?
