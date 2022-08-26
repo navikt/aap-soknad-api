@@ -79,7 +79,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
                 with(søknad.vedlegg()) {  //
                     log.trace("VedleggInfo $this")
-                    mangler.forEach { type ->
+                    manglende.forEach { type ->
                         with(ManglendeVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
                             s.manglendevedlegg.add(this)
                             soknad = s
@@ -91,7 +91,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                             soknad = s
                         }
                     }
-                    if (mangler.isNotEmpty()) {
+                    if (manglende.isNotEmpty()) {
                         dittnav.opprettOppgave(MINAAPSTD, søker, s.eventid,
                                 "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")
                     }
