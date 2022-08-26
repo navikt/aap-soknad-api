@@ -1,18 +1,21 @@
 package no.nav.aap.api.dev
 
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
+import no.nav.aap.api.søknad.joark.JoarkJournalpostGenerator
 import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideRepositories
 import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
@@ -47,6 +50,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
                              private val vl: SøknadVLFordeler,
                              private val dittNav: MinSideClient,
                              private val søknad: SøknadClient,
+                             private val joark: JoarkJournalpostGenerator,
                              private val repos: MinSideRepositories) {
 
     private val log = LoggerUtil.getLogger(javaClass)
@@ -59,6 +63,8 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     @ResponseStatus(CREATED)
     fun ettersend(@PathVariable fnr: Fødselsnummer, @RequestBody ettersending: Ettersending) {
         log.trace("Mottok ettersendng $ettersending for $fnr")
+        val post = joark.journalpostFra(ettersending, Søker(Navn("Dennis", "B", "Bergkamp"), fnr))
+        log.trace("Lagde journalpost $post for $fnr")
     }
 
     @GetMapping("/dittnav/avsluttalle")
