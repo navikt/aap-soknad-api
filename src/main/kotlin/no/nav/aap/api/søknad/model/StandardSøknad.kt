@@ -60,9 +60,9 @@ data class StandardSøknad(
         val manglende = mutableListOf<VedleggType>()
         val innsendte = mutableListOf<VedleggType>()
 
-        log.trace("Sjekker vedlegg studier $studier")
+        log.trace("Sjekker om det er manglende vedlegg for studier $studier")
         if (studier.erStudent == AVBRUTT && manglerVedlegg(studier)) {
-            log.trace("Fant mangler for ${STUDIER.tittel}").also {
+            log.trace("Det er manglende vedlegg for ${STUDIER.tittel}").also {
                 manglende += STUDIER
             }
         }
@@ -71,66 +71,70 @@ data class StandardSøknad(
                 log.trace("Studier har vedlegg")
                 innsendte += STUDIER
             }
-            log.trace("Ingen mangler for studier")
+            log.trace("Ingen manglende vedlegg for studier")
         }
         with(andreBarn) {
-            log.trace("Sjekker vedlegg andre barn $andreBarn")
+            log.trace("Sjekker om det er manglende vedlegg for andre barn $andreBarn")
             if (count() > count { (it.vedlegg?.deler?.size ?: 0) > 0 }) {
                 manglende += ANDREBARN.also {
-                    log.trace("Fant mangler for ${ANDREBARN.tittel}")
+                    log.trace("Det er manglende vedlegg for ${ANDREBARN.tittel}")
                 }
             }
             else {
                 if (harVedlegg(this)) {
-                    log.trace("barn har vedlegg")
+                    log.trace("Barn har vedlegg")
                     innsendte += ANDREBARN
                 }
-                log.trace("Ingen mangler for andre barn")
+                log.trace("Ingen manglende vedlegg for andre barn")
             }
         }
         with(utbetalinger) {
-            log.trace("Sjekker vedlegg arbeidsgiver ${this?.ekstraFraArbeidsgiver}")
+            log.trace("Sjekker om det er manglende vedlegg for arbeidsgiver ${this?.ekstraFraArbeidsgiver}")
             if (this?.ekstraFraArbeidsgiver?.fraArbeidsgiver == true && manglerVedlegg(ekstraFraArbeidsgiver)) {
                 manglende += ARBEIDSGIVER.also {
-                    log.trace("Fant mangler for ${ARBEIDSGIVER.tittel}")
+                    log.trace("Det er manglende vedlegg for ${ARBEIDSGIVER.tittel}")
                 }
             }
             else {
-                log.trace("Ingen mangler for arbeidsgiver")
+                log.trace("Ingen manglende vedlegg for arbeidsgiver")
             }
-            log.trace("Sjekker vedlegg andre stønader ${this?.andreStønader}")
+            log.trace("Sjekker om det er manglende vedlegg for andre stønader ${this?.andreStønader}")
             this?.andreStønader?.firstOrNull() { it.type == OMSORGSSTØNAD }?.let {
                 if (manglerVedlegg(it)) {
                     manglende += OMSORG.also {
-                        log.trace("Fant mangler for ${OMSORG.tittel}")
+                        log.trace("Det er manglende vedlegg for ${OMSORG.tittel}")
                     }
                 }
                 else {
                     if (harVedlegg(it)) {
-                        log.trace("omsorg har vedlegg")
+                        log.trace("Omsorg har vedlegg")
                         innsendte += OMSORG
                     }
-                    log.trace("Ingen mangler for omsorg")
+                    log.trace("Ingen manglende vedlegg for omsorg")
                 }
             }
             this?.andreStønader?.firstOrNull() { it.type == UTLAND }?.let {
                 if (manglerVedlegg(it)) {
                     manglende += VedleggType.UTLAND.also {
-                        log.trace("Fant mangler for ${VedleggType.UTLAND.tittel}")
+                        log.trace("Det er manglende vedlegg for ${VedleggType.UTLAND.tittel}")
                     }
                 }
                 else {
                     if (harVedlegg(it)) {
-                        log.trace("utland har vedlegg")
+                        log.trace("Utland har vedlegg")
                         innsendte += VedleggType.UTLAND
                     }
-                    log.trace("Ingen mangler for utland")
+                    log.trace("Ingen manglende vedlegg for utland")
                 }
             }
         }
+        log.trace("Sjekker om det er andre vedlegg")
         if (vedlegg?.deler?.isNotEmpty() == true) {
-            log.trace("Vi har andre vedlegg")
+            log.trace("Det er andre vedlegg")
             innsendte += ANNET
+        }
+        else {
+            log.trace("Det er ingen andre vedlegg")
         }
         return VedleggInfo(innsendte, manglende)
     }
