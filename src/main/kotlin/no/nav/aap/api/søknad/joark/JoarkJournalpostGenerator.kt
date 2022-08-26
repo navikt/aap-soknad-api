@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
+import no.nav.aap.api.søknad.ettersendelse.Ettersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.joark.pdf.BildeTilPDFKonverterer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
@@ -43,7 +44,7 @@ class JoarkJournalpostGenerator(
     private val log = getLogger(javaClass)
 
     fun journalpostFra(ettersending: Ettersending, søker: Søker): Journalpost {
-        return Journalpost(dokumenter = dokumenterFra(ettersending),
+        return Journalpost(dokumenter = dokumenterFra(ettersending.ettersendteVedlegg),
                 tittel = STANDARD.tittel, // TODO E må inn
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
@@ -52,8 +53,8 @@ class JoarkJournalpostGenerator(
             }
     }
 
-    private fun dokumenterFra(ettersending: Ettersending) =
-        ettersending.ettersendteVedlegg.flatMap { dokumenterFra(it.ettersending, it.type) }
+    private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>) =
+        vedlegg.flatMap { dokumenterFra(it.ettersending, it.type) }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, pdf.asPDFVariant()),
