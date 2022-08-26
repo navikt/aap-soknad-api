@@ -59,8 +59,10 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
         }
 
     fun ettersend(ettersending: Ettersending) {
-        joark.ettersend(ettersending, pdl.søkerUtenBarn())
-        fullfører.fullfør(ettersending)
+        with(pdl.søkerUtenBarn()) {
+            joark.ettersend(ettersending, this)
+            fullfører.fullfør(ettersending, this.fnr)
+        }
     }
 
     @Component
@@ -105,13 +107,13 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
             }
 
         @Transactional
-        fun fullfør(ettersending: Ettersending) {
-            repo.getSøknadByEventid(ettersending.søknadId)?.let { s ->
+        fun fullfør(ettersending: Ettersending, fnr: Fødselsnummer) {
+            repo.getSøknadByEventidAndFnr(ettersending.søknadId, fnr.fnr)?.let { s ->
                 s.manglendevedlegg?.forEach {
                     ettersending.ettersendteVedlegg.forEach { ev ->
                         if (ev.type == it.vedleggtype) {
-                            log.trace("Manglende søknad $it er sendt inn")
-                            s.manglendevedlegg.remove(it)
+                            log.trace("Manglende søknad $it ble nå sendt inn")
+                            s.manglendevedlegg.remove(it)  // TODO merke istedet for å slette?
                             with(InnsendteVedlegg(soknad = s, vedleggtype = ev.type, eventid = s.eventid)) {
                                 s.innsendtevedlegg.add(this)
                                 soknad = s
@@ -119,7 +121,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                         }
                     }
                 }
-            }
+            } ?: log.warn("Ingen tidligere innsendt søknad med ud ${ettersending.søknadId} ble funnet")
         }
     }
 
