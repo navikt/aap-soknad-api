@@ -112,6 +112,10 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                         if (ev.type == it.vedleggtype) {
                             log.trace("Manglende søknad $it er sendt inn")
                             s.manglendevedlegg.remove(it)
+                            with(InnsendteVedlegg(soknad = s, vedleggtype = ev.type, eventid = s.eventid)) {
+                                s.innsendtevedlegg.add(this)
+                                soknad = s
+                            }
                         }
                     }
                 }
