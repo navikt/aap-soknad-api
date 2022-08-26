@@ -7,8 +7,8 @@ import java.time.LocalDate
 
 data class Søker(val navn: Navn,
                  val fnr: Fødselsnummer,
-                 val adresse: Adresse?,
-                 val fødseldato: LocalDate?,
+                 val adresse: Adresse? = null,
+                 val fødseldato: LocalDate? = null,
                  val barn: List<Barn?>? = null) {
 
     data class Barn(val navn: Navn? = null,
