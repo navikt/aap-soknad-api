@@ -60,6 +60,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
     fun ettersend(ettersending: Ettersending) {
         joark.ettersend(ettersending, pdl.søkerUtenBarn())
+        fullfører.fullfør(ettersending)
     }
 
     @Component
@@ -102,6 +103,20 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                 }
                 Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = resultat.pdf, navn = "kvittering.pdf")))
             }
+
+        @Transactional
+        fun fullfør(ettersending: Ettersending) {
+            repo.getSøknadByEventid(ettersending.søknadId)?.let { s ->
+                s.manglendevedlegg?.forEach {
+                    ettersending.ettersendteVedlegg.forEach { ev ->
+                        if (ev.type == it.vedleggtype) {
+                            log.trace("Manglende søknad $it er sendt inn")
+                            s.manglendevedlegg.remove(it)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Component
