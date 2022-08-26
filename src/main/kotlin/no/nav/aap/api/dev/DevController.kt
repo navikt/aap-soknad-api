@@ -3,8 +3,8 @@ package no.nav.aap.api.dev
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
+import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
-import no.nav.aap.api.søknad.ettersendelse.SøknadClient
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
 import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
