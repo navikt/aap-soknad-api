@@ -4,7 +4,6 @@ import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.LoggingEntityListener
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.model.VedleggType
-import no.nav.aap.util.StringExtensions.partialMask
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -38,10 +37,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             var manglendevedlegg: MutableSet<ManglendeVedlegg> = mutableSetOf(),
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var innsendtevedlegg: MutableSet<InnsendteVedlegg> = mutableSetOf(),
-            eventid: UUID) : BaseEntity(fnr, eventid = eventid) {
-        override fun toString() =
-            "JPASøknad(fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, id=$id)"
-    }
+            eventid: UUID) : BaseEntity(fnr, eventid = eventid)
 
     @Entity(name = "manglendevedlegg")
     @Table(name = "manglendevedlegg")
@@ -49,10 +45,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             @ManyToOne(optional = false)
             var soknad: Søknad? = null,
             eventid: UUID,
-            vedleggtype: VedleggType) : VedleggBaseEntity(eventid = eventid, vedleggtype = vedleggtype) {
-        override fun toString() =
-            "ManglendeVedlegg(created=$created, updated=$updated, eventid=$eventid, id=$id)"
-    }
+            vedleggtype: VedleggType) : VedleggBaseEntity(eventid = eventid, vedleggtype = vedleggtype)
 
     @Entity(name = "innsendtevedlegg")
     @Table(name = "innsendtevedlegg")
@@ -60,10 +53,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             @ManyToOne(optional = false)
             var soknad: Søknad? = null,
             eventid: UUID,
-            vedleggtype: VedleggType) : VedleggBaseEntity(eventid = eventid, vedleggtype = vedleggtype) {
-        override fun toString() =
-            "InnsendteVedlegg(created=$created, updated=$updated, eventid=$eventid, id=$id)"
-    }
+            vedleggtype: VedleggType) : VedleggBaseEntity(eventid = eventid, vedleggtype = vedleggtype)
 
     @MappedSuperclass
     @EntityListeners(LoggingEntityListener::class, AuditingEntityListener::class)
@@ -74,5 +64,9 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             @Enumerated(STRING)
             val vedleggtype: VedleggType,
             @Id @GeneratedValue(strategy = IDENTITY)
-            val id: Long = 0)
+            val id: Long = 0) {
+        override fun toString() =
+            "${javaClass.simpleName} [created=$created, updated=$updated, eventid=$eventid, vedleggType=$vedleggtype, id=$id)]"
+
+    }
 }

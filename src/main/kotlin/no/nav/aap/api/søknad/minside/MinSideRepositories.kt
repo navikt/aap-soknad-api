@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.minside
 import no.nav.aap.api.søknad.fordeling.SøknadRepository
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.StringExtensions.partialMask
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -32,7 +33,11 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
     fun findByFnrAndDoneIsFalse(fnr: String): List<T>
 
     @MappedSuperclass
-    abstract class MinSideBaseEntity(fnr: String, eventid: UUID, var done: Boolean) : BaseEntity(fnr, eventid = eventid)
+    abstract class MinSideBaseEntity(fnr: String, eventid: UUID, var done: Boolean) :
+        BaseEntity(fnr, eventid = eventid) {
+        override fun toString() =
+            "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id]"
+    }
 
     @MappedSuperclass
     @EntityListeners(LoggingEntityListener::class, AuditingEntityListener::class)
@@ -42,7 +47,10 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
             val eventid: UUID,
             @LastModifiedDate var updated: LocalDateTime? = null,
             @Id @GeneratedValue(strategy = IDENTITY)
-            val id: Long = 0)
+            val id: Long = 0) {
+        override fun toString() =
+            "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, id=$id)]"
+    }
 
     @MappedSuperclass
     @EntityListeners(LoggingEntityListener::class, AuditingEntityListener::class)
@@ -53,7 +61,10 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
             val distribusjonid: Long,
             val distribusjonkanal: String,
             @Id @GeneratedValue(strategy = IDENTITY)
-            val id: Long = 0)
+            val id: Long = 0) {
+        override fun toString() =
+            "${javaClass.simpleName} [(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,id=$id]"
+    }
 }
 
 @Converter(autoApply = true)

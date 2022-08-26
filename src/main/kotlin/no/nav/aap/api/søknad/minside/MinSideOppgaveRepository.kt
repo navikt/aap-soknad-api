@@ -3,7 +3,6 @@ package no.nav.aap.api.søknad.minside
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.api.søknad.minside.MinSideRepository.EksternNotifikasjonBaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
-import no.nav.aap.util.StringExtensions.partialMask
 import java.util.*
 import javax.persistence.CascadeType.ALL
 import javax.persistence.Entity
@@ -21,10 +20,7 @@ interface MinSideOppgaveRepository : MinSideRepository<Oppgave> {
             done: Boolean = false,
             @OneToMany(mappedBy = "oppgave", cascade = [ALL], orphanRemoval = true)
             var notifikasjoner: MutableSet<EksternOppgaveNotifikasjon> = mutableSetOf()) :
-        MinSideBaseEntity(fnr = fnr, eventid = eventid, done = done) {
-        override fun toString() =
-            "Oppgave(fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id)"
-    }
+        MinSideBaseEntity(fnr = fnr, eventid = eventid, done = done)
 
     @Entity(name = "eksternoppgavenotifikasjon")
     @Table(name = "eksterneoppgavenotifikasjoner")
@@ -35,9 +31,6 @@ interface MinSideOppgaveRepository : MinSideRepository<Oppgave> {
             distribusjonid: Long,
             distribusjonkanal: String) : EksternNotifikasjonBaseEntity(eventid = eventid,
             distribusjonkanal = distribusjonkanal,
-            distribusjonid = distribusjonid) {
-        override fun toString() =
-            "EksternOppgaveNotifikasjon(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,oppgave=$oppgave,id=$id)"
-    }
+            distribusjonid = distribusjonid)
 
 }
