@@ -77,9 +77,6 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                 log.trace("Lagrer metadata om søknad i DB")
                 val s =
                     repo.save(Søknad(fnr = søker.fnr, journalpostid = resultat.journalpostId, eventid = callIdAsUUID()))
-                        .also {
-                            log.trace("Lagret metadata $it om søknad i DB OK")
-                        }
 
                 with(søknad.vedlegg()) {  //
                     log.trace("VedleggInfo $this")
@@ -90,9 +87,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                                 soknad = s
                             }
                         }
-                        repo.save(s).also {
-                            log.trace("Oppdatert metadata om søknad $it med ${s.manglendevedlegg.size} manglende vedlegg i DB OK")
-                        }
+                        repo.save(s)
                         dittnav.opprettOppgave(MINAAPSTD,
                                 søker,
                                 s.eventid,

@@ -46,7 +46,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     @Entity(name = "manglendevedlegg")
     @Table(name = "manglendevedlegg")
     class ManglendeVedlegg(
-            @ManyToOne
+            @ManyToOne(optional = false)
             var soknad: Søknad? = null,
             eventid: UUID,
             vedleggtype: VedleggType) : VedleggBaseEntity(eventid = eventid, vedleggtype = vedleggtype) {
@@ -57,7 +57,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     @Entity(name = "innsendtevedlegg")
     @Table(name = "innsendtevedlegg")
     class InnsendteVedlegg(
-            @ManyToOne
+            @ManyToOne(optional = false)
             var soknad: Søknad? = null,
             eventid: UUID,
             vedleggtype: VedleggType) : VedleggBaseEntity(eventid = eventid, vedleggtype = vedleggtype) {
