@@ -30,7 +30,6 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
 
     @Entity(name = "søknad")
     @Table(name = "soknader")
-    @EntityListeners(AuditingEntityListener::class)
     class Søknad(
             fnr: String,
             val journalpostid: String,
@@ -45,7 +44,6 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
 
     @Entity(name = "manglendevedlegg")
     @Table(name = "manglendevedlegg")
-    @EntityListeners(AuditingEntityListener::class)
     class ManglendeVedlegg(
             @ManyToOne(optional = false)
             var soknad: Søknad? = null,

@@ -46,10 +46,7 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                         key(type.skjemaType, eventId, fnr),
                         beskjed("$tekst ($eventId)", type, eksternNotifikasjon)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
-                log.trace("Oppretter Min Side beskjed i DB")
-                repos.beskjeder.save(Beskjed(fnr = fnr.fnr, eventid = eventId)).also {
-                    log.trace(CONFIDENTIAL, "Opprettet Ditt Nav beskjed $it i DB")
-                }.eventid
+                repos.beskjeder.save(Beskjed(fnr = fnr.fnr, eventid = eventId)).eventid
             }
             else {
                 log.info("Sender ikke opprett beskjed til Ditt Nav for $fnr")
@@ -71,9 +68,7 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                             this,
                             oppgave("$tekst ($eventId)", type, eventId, eksternNotifikasjon)))
                         .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
-                    repos.oppgaver.save(Oppgave(fnr = fnr.fnr, eventid = eventId)).also {
-                        log.trace(CONFIDENTIAL, "Opprettet Min Side oppgave $it i DB")
-                    }.eventid
+                    repos.oppgaver.save(Oppgave(fnr = fnr.fnr, eventid = eventId)).eventid
                 }
             }
             else {
@@ -88,7 +83,6 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (oppgave.enabled) {
                 dittNav.send(ProducerRecord(done, key(type, eventId, fnr), done()))
                     .addCallback(SendCallback("avslutt oppgave med eventid $eventId"))
-                log.trace("Setter oppgave done i DB for eventId $eventId")
                 repos.oppgaver.findByEventid(eventId)?.let { it.done = true }
                     ?: log.warn("Kunne ikke sette beskjed med eventid $eventId for fnr $fnr til done i DB, ingen rader oppdatert")
             }
@@ -103,7 +97,6 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (beskjed.enabled) {
                 dittNav.send(ProducerRecord(done, key(type, eventId, fnr), done()))
                     .addCallback(SendCallback("avslutt beskjed med eventid $eventId"))
-                log.trace("Setter beskjed done i DB for eventid $eventId")
                 repos.beskjeder.findByEventid(eventId)?.let { it.done = true }
                     ?: log.warn("Kunne ikke sette beskjed med eventid $eventId for fnr $fnr til done i DB, ingen rader oppdatert")
             }

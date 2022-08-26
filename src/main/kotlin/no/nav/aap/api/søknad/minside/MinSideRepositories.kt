@@ -6,6 +6,7 @@ import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.stereotype.Component
@@ -35,7 +36,7 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
     abstract class MinSideBaseEntity(fnr: String, eventid: UUID, var done: Boolean) : BaseEntity(fnr, eventid = eventid)
 
     @MappedSuperclass
-    @EntityListeners(LoggingEntityListener::class)
+    @EntityListeners(LoggingEntityListener::class, AuditingEntityListener::class)
     abstract class BaseEntity(
             val fnr: String,
             @CreatedDate var created: LocalDateTime? = null,
@@ -45,6 +46,7 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
             val id: Long = 0)
 
     @MappedSuperclass
+    @EntityListeners(LoggingEntityListener::class, AuditingEntityListener::class)
     abstract class EksternNotifikasjonBaseEntity(
             val eventid: UUID,
             @CreatedDate

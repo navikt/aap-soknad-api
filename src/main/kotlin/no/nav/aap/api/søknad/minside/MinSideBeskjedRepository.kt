@@ -3,24 +3,18 @@ package no.nav.aap.api.søknad.minside
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
 import no.nav.aap.api.søknad.minside.MinSideRepository.EksternNotifikasjonBaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
-import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.StringExtensions.partialMask
-import org.springframework.core.annotation.AnnotatedElementUtils.getMergedAnnotation
-import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.util.*
 import javax.persistence.CascadeType.ALL
 import javax.persistence.Entity
-import javax.persistence.EntityListeners
 import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
-import javax.persistence.PrePersist
 import javax.persistence.Table
 
 interface MinSideBeskjedRepository : MinSideRepository<Beskjed> {
 
     @Entity(name = "beskjed")
     @Table(name = "minsidebeskjeder")
-    @EntityListeners(AuditingEntityListener::class)
     class Beskjed(
             fnr: String,
             eventid: UUID,
@@ -35,7 +29,6 @@ interface MinSideBeskjedRepository : MinSideRepository<Beskjed> {
 
     @Entity(name = "eksternbeskjednotifikasjon")
     @Table(name = "eksternebeskjednotifikasjoner")
-    @EntityListeners(AuditingEntityListener::class)
     class EksternBeskjedNotifikasjon(
             @ManyToOne(optional = false)
             var beskjed: Beskjed? = null,
