@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.joark
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
@@ -28,6 +29,7 @@ import no.nav.aap.joark.DokumentVariant
 import no.nav.aap.joark.Filtype.PDFA
 import no.nav.aap.joark.Journalpost
 import no.nav.aap.joark.asPDFVariant
+import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
@@ -39,12 +41,13 @@ import java.util.Base64.getEncoder
 class JoarkJournalpostGenerator(
         private val mapper: ObjectMapper,
         private val lager: Dokumentlager,
+        private val ctx: AuthContext,
         private val konverterer: BildeTilPDFKonverterer) {
 
     private val log = getLogger(javaClass)
 
     fun journalpostFra(ettersending: Ettersending, søker: Søker): Journalpost {
-        return Journalpost(dokumenter = dokumenterFra(ettersending.ettersendteVedlegg),
+        return Journalpost(dokumenter = dokumenterFra(ettersending.ettersendteVedlegg, søker.fnr),
                 tittel = STANDARD.tittel, // TODO E må inn
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
@@ -53,8 +56,8 @@ class JoarkJournalpostGenerator(
             }
     }
 
-    private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>) =
-        vedlegg.flatMap { dokumenterFra(it.ettersending, it.type) }
+    private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>, fnr: Fødselsnummer) =
+        vedlegg.flatMap { dokumenterFra(it.ettersending, it.type, fnr) }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, pdf.asPDFVariant()),
@@ -103,10 +106,13 @@ class JoarkJournalpostGenerator(
         } ?: emptyList()
 
     private fun dokumenterFra(v: Vedlegg?, type: VedleggType) =
+        dokumenterFra(v, type, ctx.getFnr())
+
+    private fun dokumenterFra(v: Vedlegg?, type: VedleggType, fnr: Fødselsnummer) =
         v?.let { vl ->
             val vedlegg = (vl.deler?.mapNotNull {
                 it?.let { uuid ->
-                    lager.lesDokument(uuid)
+                    lager.lesDokument(uuid, fnr)
                 }
             } ?: emptyList())
                 .sortedBy { it.createTime }
