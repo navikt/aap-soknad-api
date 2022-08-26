@@ -44,7 +44,7 @@ class JoarkJournalpostGenerator(
 
     fun journalpostFra(ettersending: Ettersending, søker: Søker): Journalpost {
         return Journalpost(dokumenter = dokumenterFra(ettersending),
-                tittel = STANDARD.tittel, // TODO
+                tittel = STANDARD.tittel, // TODO E må inn
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
             .also {
@@ -52,9 +52,8 @@ class JoarkJournalpostGenerator(
             }
     }
 
-    private fun dokumenterFra(ettersending: Ettersending): List<Dokument?> {
-        TODO("TODO")
-    }
+    private fun dokumenterFra(ettersending: Ettersending) =
+        ettersending.vedlegg.flatMap { dokumenterFra(it.vedlegg, it.type) }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, pdf.asPDFVariant()),

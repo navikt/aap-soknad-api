@@ -138,7 +138,6 @@ data class StandardSøknad(
         }
         return VedleggInfo(innsendte, manglende)
     }
-
 }
 
 fun manglerVedlegg(v: VedleggAware) = v.vedlegg?.deler?.isEmpty() == true

@@ -32,7 +32,7 @@ class InnsendingFordelingController(private val fordeler: Fordeler) {
 
     @PostMapping("/ettesend")
     @ResponseStatus(CREATED)
-    fun ettersenf(@RequestBody ettersending: @Valid Ettersending): Unit {
+    fun ettersend(@RequestBody ettersending: @Valid Ettersending): Unit {
         log.trace(CONFIDENTIAL, "Ettersender $ettersending")
         return fordeler.ettersend(ettersending)
     }
