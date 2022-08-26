@@ -4,7 +4,6 @@ import no.nav.aap.api.søknad.fordeling.SøknadRepository
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
 import no.nav.aap.util.LoggerUtil.getLogger
-import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.AbstractPersistable
@@ -15,7 +14,6 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter
-import javax.persistence.Entity
 import javax.persistence.EntityListeners
 import javax.persistence.MappedSuperclass
 import javax.persistence.PostLoad
@@ -36,29 +34,11 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
 
     @MappedSuperclass
     @EntityListeners(LoggingEntityListener::class)
-
     abstract class BaseEntity(
             val fnr: String,
             @CreatedDate var created: LocalDateTime? = null,
             val eventid: UUID,
-            @LastModifiedDate var updated: LocalDateTime? = null) : AbstractPersistable<Long>() {
-
-        fun name() = AnnotatedElementUtils.getMergedAnnotation(javaClass, Entity::class.java)
-
-        @PrePersist
-        fun logPre() {
-            log.trace("Lagrer ${name()} $this i DB")
-        }
-
-        @PostPersist
-        fun logPost() {
-            log.trace("Lagret ${name()} $this i DB")
-        }
-
-        companion object {
-            val log = getLogger(javaClass)
-        }
-    }
+            @LastModifiedDate var updated: LocalDateTime? = null) : AbstractPersistable<Long>()
 
     @MappedSuperclass
     abstract class EksternNotifikasjonBaseEntity(
