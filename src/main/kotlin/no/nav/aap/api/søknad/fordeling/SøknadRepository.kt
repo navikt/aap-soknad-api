@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.fordeling
 
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
+import no.nav.aap.api.søknad.minside.LoggingEntityListener
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.StringExtensions.partialMask
@@ -45,7 +46,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     @Entity(name = "manglendevedlegg")
     @Table(name = "manglendevedlegg")
     class ManglendeVedlegg(
-            @ManyToOne(optional = false)
+            @ManyToOne
             var soknad: Søknad? = null,
             eventid: UUID,
             vedleggtype: VedleggType) : VedleggBaseEntity(eventid = eventid, vedleggtype = vedleggtype) {
@@ -55,9 +56,8 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
 
     @Entity(name = "innsendtevedlegg")
     @Table(name = "innsendtevedlegg")
-    @EntityListeners(AuditingEntityListener::class)
     class InnsendteVedlegg(
-            @ManyToOne(optional = false)
+            @ManyToOne
             var soknad: Søknad? = null,
             eventid: UUID,
             vedleggtype: VedleggType) : VedleggBaseEntity(eventid = eventid, vedleggtype = vedleggtype) {
@@ -66,6 +66,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     }
 
     @MappedSuperclass
+    @EntityListeners(LoggingEntityListener::class, AuditingEntityListener::class)
     abstract class VedleggBaseEntity(
             @CreatedDate var created: LocalDateTime? = null,
             @LastModifiedDate var updated: LocalDateTime? = null,
