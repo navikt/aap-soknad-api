@@ -123,6 +123,12 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                             }
                         }
                     }
+                    if (s.manglendevedlegg.isEmpty()) {
+                        log.trace("Alle manglende vedegg er sendt inn")
+                    }
+                    else {
+                        log.trace("Det mangler fremdeles ${s.manglendevedlegg.size} vedlegg")
+                    }
                 }
             } ?: log.warn("Ingen tidligere innsendt søknad med ud ${ettersending.søknadId} ble funnet")
         }
