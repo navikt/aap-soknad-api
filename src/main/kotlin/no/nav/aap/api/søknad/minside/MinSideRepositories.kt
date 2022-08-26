@@ -1,7 +1,6 @@
 package no.nav.aap.api.søknad.minside
 
 import no.nav.aap.api.søknad.fordeling.SøknadRepository
-import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.core.annotation.AnnotatedElementUtils.getMergedAnnotation
@@ -67,40 +66,40 @@ class UUIDAttributeConverter : AttributeConverter<UUID, String> {
 
 class LoggingEntityListener {
 
-    fun name(entity: BaseEntity) = getMergedAnnotation(entity::class.java, Entity::class.java)?.name
+    fun name(entity: Entity) = getMergedAnnotation(entity::class.java, Entity::class.java)?.name
 
     @PrePersist
-    private fun lagrer(entity: BaseEntity) {
+    private fun lagrer(entity: Entity) {
         log.trace("Lagrer ${name(entity)} $entity i DB")
     }
 
     @PreUpdate
-    private fun oppdaterer(entity: BaseEntity) {
+    private fun oppdaterer(entity: Entity) {
         log.trace("Oppdaterer ${name(entity)} $entity i DB")
     }
 
     @PreRemove
-    private fun fjerner(entity: BaseEntity) {
+    private fun fjerner(entity: Entity) {
         log.trace("Fjerner ${name(entity)} $entity fra DB")
     }
 
     @PostPersist
-    private fun lagret(entity: BaseEntity) {
+    private fun lagret(entity: Entity) {
         log.trace("Lagret ${name(entity)} $entity i DB")
     }
 
     @PostUpdate
-    private fun oppdatert(entity: BaseEntity) {
+    private fun oppdatert(entity: Entity) {
         log.trace("Oppdatert ${name(entity)} $entity i DB")
     }
 
     @PostRemove
-    private fun fjernet(entity: BaseEntity) {
+    private fun fjernet(entity: Entity) {
         log.trace("Fjernet ${name(entity)} $entity fra DB")
     }
 
     @PostLoad
-    private fun lest(entity: BaseEntity) {
+    private fun lest(entity: Entity) {
         log.trace("Lest ${name(entity)} $entity fra DB")
     }
 

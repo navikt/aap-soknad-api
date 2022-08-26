@@ -6,7 +6,6 @@ import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.UtlandSøknadFordeler
-import no.nav.aap.api.søknad.fordeling.SøknadRepository.InnsendteVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.ManglendeVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.joark.JoarkFordeler
@@ -74,7 +73,6 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
         fun fullfør(søknad: StandardSøknad, søker: Fødselsnummer, resultat: JoarkFordelingResultat) =
             dokumentLager.slettDokumenter(søknad).run {
                 mellomlager.slett()
-                log.trace("Lagrer metadata om søknad i DB")
                 val s =
                     repo.save(Søknad(fnr = søker.fnr, journalpostid = resultat.journalpostId, eventid = callIdAsUUID()))
 
@@ -100,12 +98,13 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                                 "Vi har mottatt din ${STANDARD.tittel}",
                                 true)
                     }
+                    /*
                     innsendte.forEach { type ->
                         with(InnsendteVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
                             s.innsendtevedlegg.add(this)
                             soknad = s
                         }
-                    }
+                    }*/
                 }
                 Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = resultat.pdf, navn = "kvittering.pdf")))
             }
