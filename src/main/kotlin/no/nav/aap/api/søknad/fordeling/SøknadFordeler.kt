@@ -6,6 +6,7 @@ import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.UtlandSøknadFordeler
+import no.nav.aap.api.søknad.fordeling.SøknadRepository.InnsendteVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.ManglendeVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.joark.JoarkFordeler
@@ -78,33 +79,26 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
                 with(søknad.vedlegg()) {  //
                     log.trace("VedleggInfo $this")
-                    if (mangler.isNotEmpty()) {
-                        mangler.forEach { type ->
-                            with(ManglendeVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
-                                s.manglendevedlegg.add(this)
-                                soknad = s
-                            }
+                    mangler.forEach { type ->
+                        with(ManglendeVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
+                            s.manglendevedlegg.add(this)
+                            soknad = s
                         }
-                        //repo.save(s)
-                        dittnav.opprettOppgave(MINAAPSTD,
-                                søker,
-                                s.eventid,
-                                "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")
                     }
-                    else {
-                        dittnav.opprettBeskjed(MINAAPSTD,
-                                s.eventid,
-                                søker,
-                                "Vi har mottatt din ${STANDARD.tittel}",
-                                true)
-                    }
-                    /*
                     innsendte.forEach { type ->
                         with(InnsendteVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
                             s.innsendtevedlegg.add(this)
                             soknad = s
                         }
-                    }*/
+                    }
+                    if (mangler.isNotEmpty()) {
+                        dittnav.opprettOppgave(MINAAPSTD, søker, s.eventid,
+                                "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")
+                    }
+                    else {
+                        dittnav.opprettBeskjed(MINAAPSTD, s.eventid, søker,
+                                "Vi har mottatt din ${STANDARD.tittel}", true)
+                    }
                 }
                 Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = resultat.pdf, navn = "kvittering.pdf")))
             }
