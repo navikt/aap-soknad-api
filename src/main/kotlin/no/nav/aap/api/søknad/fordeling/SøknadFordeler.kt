@@ -125,9 +125,9 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                     }
                 }
                 log.trace("Interseksjon er $interseksjon")
-                log.trace("Funnet er $interseksjon")
+                log.trace("Funnet er $funnet")
 
-                funnet.forEach {
+                interseksjon.forEach {
                     with(InnsendteVedlegg(soknad = s, vedleggtype = it.vedleggtype, eventid = s.eventid)) {
                         s.innsendtevedlegg.add(this)
                         soknad = s
