@@ -108,28 +108,31 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
         @Transactional
         fun fullfør(ettersending: Ettersending, fnr: Fødselsnummer) {
+
             repo.getSøknadByEventidAndFnr(ettersending.søknadId, fnr.fnr)?.let { s ->
-                log.trace("Lest søknad $s")
-                s.manglendevedlegg?.iterator()?.forEach {
+                val funnet = mutableListOf<ManglendeVedlegg>()
+                s.manglendevedlegg?.forEach {
                     log.trace("Sjekker manglende vedlegg ${s.eventid} $it")
                     ettersending.ettersendteVedlegg.forEach { ev ->
                         log.trace("Sjekker ettersendt vedlegg $ev mot $it")
                         if (ev.type == it.vedleggtype) {
                             log.trace("Manglende søknad $it ble nå sendt inn")
-                            it.soknad = null
-                            s.manglendevedlegg.remove(it)  // TODO merke istedet for å slette?
-                            with(InnsendteVedlegg(soknad = s, vedleggtype = ev.type, eventid = s.eventid)) {
-                                s.innsendtevedlegg.add(this)
-                                soknad = s
-                            }
+                            funnet += it
                         }
                     }
-                    if (s.manglendevedlegg.isEmpty()) {
-                        log.trace("Alle manglende vedegg er sendt inn")
+                }
+                funnet.forEach {
+                    with(InnsendteVedlegg(soknad = s, vedleggtype = it.vedleggtype, eventid = s.eventid)) {
+                        s.innsendtevedlegg.add(this)
+                        soknad = s
                     }
-                    else {
-                        log.trace("Det mangler fremdeles ${s.manglendevedlegg.size} vedlegg")
-                    }
+                    s.manglendevedlegg.remove(it)
+                }
+                if (s.manglendevedlegg.isEmpty()) {
+                    log.trace("Alle manglende vedegg er sendt inn")
+                }
+                else {
+                    log.trace("Det mangler fremdeles ${s.manglendevedlegg.size} vedlegg")
                 }
             } ?: log.warn("Ingen tidligere innsendt søknad med ud ${ettersending.søknadId} ble funnet")
         }
