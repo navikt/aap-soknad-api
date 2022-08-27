@@ -16,7 +16,7 @@
     <description>aap-soknad-api</description>
     <properties>
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
-        <conditionals.version>3.0.3</conditionals.version>
+        <conditionals.version>3.1.0</conditionals.version>
         <confluent.version>7.2.1</confluent.version>
         <domain.version>0.0.97</domain.version>
         <gcp.version>0.177.0</gcp.version>
