@@ -110,6 +110,10 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
         fun fullfør(ettersending: Ettersending, fnr: Fødselsnummer) {
 
             repo.getSøknadByEventidAndFnr(ettersending.søknadId, fnr.fnr)?.let { s ->
+                val interseksjon =
+                    s.manglendevedlegg.interseksjon(ettersending.ettersendteVedlegg) { a, b ->
+                        a.vedleggtype == b.type
+                    }
                 val funnet = mutableListOf<ManglendeVedlegg>()
                 s.manglendevedlegg.forEach {
                     log.trace("Sjekker om manglende vedlegg er sendt inn nå ${s.eventid} $it")
@@ -120,6 +124,9 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                         }
                     }
                 }
+                log.trace("Interseksjon er $interseksjon")
+                log.trace("Funnet er $interseksjon")
+
                 funnet.forEach {
                     with(InnsendteVedlegg(soknad = s, vedleggtype = it.vedleggtype, eventid = s.eventid)) {
                         s.innsendtevedlegg.add(this)
@@ -128,7 +135,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                     s.manglendevedlegg.remove(it)
                 }
                 if (s.manglendevedlegg.isEmpty()) {
-                    log.trace("Alle manglende vedegg er sendt inn")
+                    log.trace("Alle manglende vedlegg er sendt inn")
                     minside.avsluttOppgave(STANDARD, fnr, s.eventid)
                 }
                 else {
@@ -136,6 +143,10 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                 }
             } ?: log.warn("Ingen tidligere innsendt søknad med ud ${ettersending.søknadId} ble funnet")
         }
+
+        private fun <T, U> Set<T>.interseksjon(l: List<U>, predikat: (T, U) -> Boolean) =
+            filter { m -> l.any { predikat(m, it) } }
+
     }
 
     @Component
