@@ -108,8 +108,8 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
         @Transactional
         fun fullfør(ettersending: Ettersending, fnr: Fødselsnummer) {
-            repo.getSøknadByEventidAndFnr(ettersending.søknadId, fnr.fnr)?.let { s ->
-                with(s) søknad@{
+            repo.getSøknadByEventidAndFnr(ettersending.søknadId, fnr.fnr)?.let { søknad ->
+                with(søknad) søknad@{
                     manglendevedlegg.innsendteNå(ettersending.ettersendteVedlegg) { a, b ->
                         a.vedleggtype == b.type
                     }.forEach {
