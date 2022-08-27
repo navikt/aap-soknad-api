@@ -9,6 +9,7 @@ import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.StandardSøknadFullfører
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
+import no.nav.aap.api.søknad.joark.JoarkFordeler.JoarkEttersendingResultat
 import no.nav.aap.api.søknad.joark.JoarkJournalpostGenerator
 import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
@@ -68,7 +69,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
         val søker = Søker(Navn("Dennis", "B", "Bergkamp"), fnr)
         val post = joark.journalpostFra(ettersending, søker)
         log.trace("Lagde journalpost $post for $fnr")
-        fullfører.fullfør(ettersending, søker.fnr)
+        fullfører.fullfør(ettersending, søker.fnr, JoarkEttersendingResultat("42"))
     }
 
     @GetMapping("/dittnav/avsluttalle")
