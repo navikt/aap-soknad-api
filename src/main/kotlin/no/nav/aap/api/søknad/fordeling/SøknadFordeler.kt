@@ -111,7 +111,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
             repo.getSøknadByEventidAndFnr(ettersending.søknadId, fnr.fnr)?.let { søknad ->
                 with(søknad) søknad@{
                     manglendevedlegg.innsendteNå(ettersending.ettersendteVedlegg) { a, b ->
-                        a.vedleggtype == b.type
+                        a.vedleggtype == b.vedleggType
                     }.forEach {
                         with(InnsendteVedlegg(soknad = this, vedleggtype = it.vedleggtype, eventid = s.eventid)) {
                             innsendtevedlegg.add(this)

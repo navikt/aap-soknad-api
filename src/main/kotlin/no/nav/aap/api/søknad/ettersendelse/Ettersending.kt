@@ -6,5 +6,5 @@ import java.util.*
 
 data class Ettersending(val søknadId: UUID,
                         val ettersendteVedlegg: List<EttersendtVedlegg>) {
-    data class EttersendtVedlegg(val ettersending: Vedlegg, val type: VedleggType)
+    data class EttersendtVedlegg(val ettersending: Vedlegg, val vedleggType: VedleggType)
 }

@@ -57,7 +57,7 @@ class JoarkJournalpostGenerator(
     }
 
     private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>, fnr: Fødselsnummer) =
-        vedlegg.flatMap { dokumenterFra(it.ettersending, it.type, fnr) }
+        vedlegg.flatMap { dokumenterFra(it.ettersending, it.vedleggType, fnr) }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, pdf.asPDFVariant()),
