@@ -110,21 +110,21 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
         fun fullfør(ettersending: Ettersending, fnr: Fødselsnummer) {
             repo.getSøknadByEventidAndFnr(ettersending.søknadId, fnr.fnr)?.let { søknad ->
                 with(søknad) søknad@{
-                    manglendevedlegg.innsendteNå(ettersending.ettersendteVedlegg) { a, b ->
-                        a.vedleggtype == b.vedleggType
-                    }.forEach {
-                        with(InnsendteVedlegg(soknad = this, vedleggtype = it.vedleggtype, eventid = s.eventid)) {
+                    manglendevedlegg.innsendteNå(ettersending.ettersendteVedlegg) { t, t1 ->
+                        t.vedleggtype == t1.vedleggType
+                    }.forEach { m ->
+                        with(InnsendteVedlegg(soknad = this, vedleggtype = m.vedleggtype, eventid = eventid)) {
                             innsendtevedlegg.add(this)
                             soknad = this@søknad
                         }
-                        manglendevedlegg.remove(it)
+                        manglendevedlegg.remove(m)
                     }
                     if (manglendevedlegg.isEmpty()) {
                         log.trace("Alle manglende vedlegg er sendt inn, avslutter oppgave")
                         minside.avsluttOppgave(STANDARD, fnr, eventid)
                     }
                     else {
-                        log.trace("Det mangler fremdeles ${s.manglendevedlegg.size} vedlegg (${s.manglendevedlegg.map { it.vedleggtype }})")
+                        log.trace("Det mangler fremdeles ${manglendevedlegg.size} vedlegg (${manglendevedlegg.map { it.vedleggtype }})")
                     }
                 }
             } ?: log.warn("Ingen tidligere innsendt søknad med søknadId ${ettersending.søknadId} ble funnet for $fnr")
