@@ -108,44 +108,32 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
         @Transactional
         fun fullfør(ettersending: Ettersending, fnr: Fødselsnummer) {
-
             repo.getSøknadByEventidAndFnr(ettersending.søknadId, fnr.fnr)?.let { s ->
-                val interseksjon =
-                    s.manglendevedlegg.interseksjon(ettersending.ettersendteVedlegg) { a, b ->
+                with(s) søknad@{
+                    manglendevedlegg.innsendteNå(ettersending.ettersendteVedlegg) { a, b ->
                         a.vedleggtype == b.type
-                    }
-                val funnet = mutableListOf<ManglendeVedlegg>()
-                s.manglendevedlegg.forEach {
-                    log.trace("Sjekker om manglende vedlegg er sendt inn nå ${s.eventid} $it")
-                    ettersending.ettersendteVedlegg.forEach { ev ->
-                        if (ev.type == it.vedleggtype) {
-                            log.trace("Manglende vedlegg $it ble nå sendt inn")
-                            funnet += it
+                    }.forEach {
+                        with(InnsendteVedlegg(soknad = this, vedleggtype = it.vedleggtype, eventid = s.eventid)) {
+                            innsendtevedlegg.add(this)
+                            soknad = this@søknad
                         }
+                        manglendevedlegg.remove(it)
+                    }
+                    if (manglendevedlegg.isEmpty()) {
+                        log.trace("Alle manglende vedlegg er sendt inn, avslutter oppgave")
+                        minside.avsluttOppgave(STANDARD, fnr, eventid)
+                    }
+                    else {
+                        log.trace("Det mangler fremdeles ${s.manglendevedlegg.size} vedlegg (${s.manglendevedlegg.map { it.vedleggtype }})")
                     }
                 }
-                log.trace("Interseksjon er $interseksjon")
-                log.trace("Funnet er $funnet")
-
-                interseksjon.forEach {
-                    with(InnsendteVedlegg(soknad = s, vedleggtype = it.vedleggtype, eventid = s.eventid)) {
-                        s.innsendtevedlegg.add(this)
-                        soknad = s
-                    }
-                    s.manglendevedlegg.remove(it)
-                }
-                if (s.manglendevedlegg.isEmpty()) {
-                    log.trace("Alle manglende vedlegg er sendt inn")
-                    minside.avsluttOppgave(STANDARD, fnr, s.eventid)
-                }
-                else {
-                    log.trace("Det mangler fremdeles ${s.manglendevedlegg.size} vedlegg (${s.manglendevedlegg.map { it.vedleggtype }})")
-                }
-            } ?: log.warn("Ingen tidligere innsendt søknad med ud ${ettersending.søknadId} ble funnet")
+            } ?: log.warn("Ingen tidligere innsendt søknad med søknadId ${ettersending.søknadId} ble funnet for $fnr")
         }
 
-        private fun <T, U> Set<T>.interseksjon(l: List<U>, predikat: (T, U) -> Boolean) =
-            filter { m -> l.any { predikat(m, it) } }
+        private fun <T, U> Set<T>.innsendteNå(l: List<U>, predikat: (T, U) -> Boolean) =
+            filter { m -> l.any { predikat(m, it) } }.also {
+                log.trace("Følgende vedlegg ble nå sendt inn:  $it")
+            }
 
     }
 
