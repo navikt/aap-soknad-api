@@ -116,6 +116,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                         log.trace("Sjekker ettersendt vedlegg $ev mot $it")
                         if (ev.type == it.vedleggtype) {
                             log.trace("Manglende søknad $it ble nå sendt inn")
+                            it.soknad = null
                             s.manglendevedlegg.remove(it)  // TODO merke istedet for å slette?
                             with(InnsendteVedlegg(soknad = s, vedleggtype = ev.type, eventid = s.eventid)) {
                                 s.innsendtevedlegg.add(this)
