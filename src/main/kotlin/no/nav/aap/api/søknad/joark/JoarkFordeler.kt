@@ -27,9 +27,10 @@ class JoarkFordeler(private val joark: JoarkClient,
             JoarkFordelingResultat(this, joark.journalfør(generator.journalpostFra(søknad, søker, this)))
         }
 
-    fun ettersend(ettersending: Ettersending, søker: Søker) {
-        joark.journalfør(generator.journalpostFra(ettersending, søker))
-    }
+    fun fordel(ettersending: Ettersending, søker: Søker) =
+        JoarkEttersendingResultat(joark.journalfør(generator.journalpostFra(ettersending, søker)))
 
     data class JoarkFordelingResultat(val pdf: ByteArray, val journalpostId: String)
+    data class JoarkEttersendingResultat(val journalpostId: String)
+
 }

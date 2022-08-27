@@ -10,6 +10,7 @@ import no.nav.aap.api.søknad.fordeling.SøknadRepository.InnsendteVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.ManglendeVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.joark.JoarkFordeler
+import no.nav.aap.api.søknad.joark.JoarkFordeler.JoarkEttersendingResultat
 import no.nav.aap.api.søknad.joark.JoarkFordeler.JoarkFordelingResultat
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
@@ -31,7 +32,7 @@ class SøknadFordeler(private val utland: UtlandSøknadFordeler, private val sta
     Fordeler {
     override fun fordel(søknad: UtlandSøknad) = utland.fordel(søknad)
     override fun fordel(søknad: StandardSøknad) = standard.fordel(søknad)
-    override fun ettersend(ettersending: Ettersending) = standard.ettersend(ettersending)
+    override fun ettersend(ettersending: Ettersending) = standard.fordel(ettersending)
 }
 
 interface Fordeler {
@@ -48,7 +49,6 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                              private val fullfører: StandardSøknadFullfører,
                              private val cfg: VLFordelingConfig,
                              private val vl: SøknadVLFordeler) {
-    private val log = getLogger(javaClass)
 
     fun fordel(søknad: StandardSøknad) =
         pdl.søkerMedBarn().run {
@@ -58,12 +58,13 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
             }
         }
 
-    fun ettersend(ettersending: Ettersending) {
-        with(pdl.søkerUtenBarn()) {
-            joark.ettersend(ettersending, this)
-            fullfører.fullfør(ettersending, this.fnr)
+    fun fordel(ettersending: Ettersending) =
+        pdl.søkerUtenBarn().run {
+            with(joark.fordel(ettersending, this)) {
+                // TODO fordel til VL
+                fullfører.fullfør(ettersending, this@run.fnr, this)
+            }
         }
-    }
 
     @Component
     class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
@@ -107,7 +108,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
             }
 
         @Transactional
-        fun fullfør(ettersending: Ettersending, fnr: Fødselsnummer) {
+        fun fullfør(ettersending: Ettersending, fnr: Fødselsnummer, resultat: JoarkEttersendingResultat) {
             repo.getSøknadByEventidAndFnr(ettersending.søknadId, fnr.fnr)?.let { søknad ->
                 with(søknad) søknad@{
                     manglendevedlegg.innsendteNå(ettersending.ettersendteVedlegg) { t, t1 ->
@@ -128,6 +129,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                     }
                 }
             } ?: log.warn("Ingen tidligere innsendt søknad med søknadId ${ettersending.søknadId} ble funnet for $fnr")
+            // TODO lagre og returnere kvittering
         }
 
         private fun <T, U> Set<T>.innsendteNå(l: List<U>, predikat: (T, U) -> Boolean) =
