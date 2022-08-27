@@ -67,7 +67,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
     @Component
     class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
-                                  private val dittnav: MinSideClient,
+                                  private val minside: MinSideClient,
                                   private val repo: SøknadRepository,
                                   private val mellomlager: Mellomlager) {
 
@@ -95,11 +95,11 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                         }
                     }
                     if (manglende.isNotEmpty()) {
-                        dittnav.opprettOppgave(MINAAPSTD, søker, s.eventid,
+                        minside.opprettOppgave(MINAAPSTD, søker, s.eventid,
                                 "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")
                     }
                     else {
-                        dittnav.opprettBeskjed(MINAAPSTD, s.eventid, søker,
+                        minside.opprettBeskjed(MINAAPSTD, s.eventid, søker,
                                 "Vi har mottatt din ${STANDARD.tittel}", true)
                     }
                 }
@@ -111,12 +111,11 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
             repo.getSøknadByEventidAndFnr(ettersending.søknadId, fnr.fnr)?.let { s ->
                 val funnet = mutableListOf<ManglendeVedlegg>()
-                s.manglendevedlegg?.forEach {
-                    log.trace("Sjekker manglende vedlegg ${s.eventid} $it")
+                s.manglendevedlegg.forEach {
+                    log.trace("Sjekker om manglende vedlegg er sendt inn nå ${s.eventid} $it")
                     ettersending.ettersendteVedlegg.forEach { ev ->
-                        log.trace("Sjekker ettersendt vedlegg $ev mot $it")
                         if (ev.type == it.vedleggtype) {
-                            log.trace("Manglende søknad $it ble nå sendt inn")
+                            log.trace("Manglende vedlegg $it ble nå sendt inn")
                             funnet += it
                         }
                     }
@@ -130,9 +129,10 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                 }
                 if (s.manglendevedlegg.isEmpty()) {
                     log.trace("Alle manglende vedegg er sendt inn")
+                    minside.avsluttOppgave(STANDARD, fnr, s.eventid)
                 }
                 else {
-                    log.trace("Det mangler fremdeles ${s.manglendevedlegg.size} vedlegg")
+                    log.trace("Det mangler fremdeles ${s.manglendevedlegg.size} vedlegg (${s.manglendevedlegg.map { it.vedleggtype }})")
                 }
             } ?: log.warn("Ingen tidligere innsendt søknad med ud ${ettersending.søknadId} ble funnet")
         }
