@@ -15,7 +15,7 @@ class SøknadClient(private val repo: SøknadRepository, private val ctx: AuthCo
 
     fun søknader() = søknader(ctx.getFnr())
     fun søknader(fnr: Fødselsnummer) =
-        repo.getSøknadByFnrOrderByCreatedDesc(fnr.fnr)?.map(::tilSøknad)
+        repo.getSøknadByFnrOrderByCreatedDesc(fnr.fnr).map(::tilSøknad)
 
     private fun tilSøknad(s: Søknad) =
         with(s) {
@@ -25,7 +25,7 @@ class SøknadClient(private val repo: SøknadRepository, private val ctx: AuthCo
                     manglendevedlegg.map { it.vedleggtype })
         }
 
-    data class SøknadDTO(val søknadTidspunkt: LocalDateTime?,
+    data class SøknadDTO(val innsendtDato: LocalDateTime?,
                          val søknadId: UUID,
                          val innsendteVedlegg: List<VedleggInfo>,
                          val manglendeVedlegg: List<VedleggType>) {

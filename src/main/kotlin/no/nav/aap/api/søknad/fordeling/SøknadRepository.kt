@@ -27,7 +27,7 @@ import javax.persistence.Table
 
 interface SøknadRepository : JpaRepository<Søknad, Long> {
 
-    fun getSøknadByFnrOrderByCreatedDesc(@Param("fnr") fnr: String): List<Søknad>?
+    fun getSøknadByFnrOrderByCreatedDesc(@Param("fnr") fnr: String): List<Søknad>
     fun getSøknadByEventidAndFnr(@Param("eventid") eventId: UUID, @Param("fnr") fnr: String): Søknad?
 
     @Entity(name = "søknad")
