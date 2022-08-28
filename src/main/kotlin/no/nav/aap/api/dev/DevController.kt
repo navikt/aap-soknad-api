@@ -73,12 +73,20 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     }
 
     @GetMapping("/dittnav/avsluttalle")
-    fun avslutt(@RequestParam fnr: Fødselsnummer) {
+    fun avsluttAlle(@RequestParam fnr: Fødselsnummer) {
         with(repos) {
-            beskjeder.findByFnrAndDoneIsFalse(fnr.fnr).forEach { dittNav.avsluttBeskjed(STANDARD, fnr, it.eventid) }
-            oppgaver.findByFnrAndDoneIsFalse(fnr.fnr).forEach { dittNav.avsluttOppgave(STANDARD, fnr, it.eventid) }
+            beskjeder.findByFnrAndDoneIsFalse(fnr.fnr).forEach { avsluttBeskjed(fnr, it.eventid) }
+            oppgaver.findByFnrAndDoneIsFalse(fnr.fnr).forEach { avsluttOppgave(fnr, it.eventid) }
         }
     }
+
+    @GetMapping("/dittnav/avsluttbeskjed")
+    fun avsluttBeskjed(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) =
+        dittNav.avsluttBeskjed(STANDARD, fnr, uuid)
+
+    @GetMapping("/dittnav/avsluttoppgave")
+    fun avsluttOppgave(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) =
+        dittNav.avsluttOppgave(STANDARD, fnr, uuid)
 
     @PostMapping("vl/{fnr}")
     @ResponseStatus(CREATED)
