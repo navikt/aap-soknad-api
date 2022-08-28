@@ -75,8 +75,8 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     @GetMapping("/dittnav/avsluttalle")
     fun avsluttAlle(@RequestParam fnr: Fødselsnummer) {
         with(repos) {
-            beskjeder.findByFnrAndDoneIsFalse(fnr.fnr).forEach { avsluttBeskjed(fnr, it.eventid) }
-            oppgaver.findByFnrAndDoneIsFalse(fnr.fnr).forEach { avsluttOppgave(fnr, it.eventid) }
+            beskjeder.findByFnrAndDoneIsFalse(fnr.fnr).map { it.eventid }.forEach { avsluttBeskjed(fnr, it) }
+            oppgaver.findByFnrAndDoneIsFalse(fnr.fnr).map { it.eventid }.forEach { avsluttOppgave(fnr, it) }
         }
     }
 
