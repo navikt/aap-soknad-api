@@ -31,5 +31,4 @@ class SøknadClient(private val repo: SøknadRepository, private val ctx: AuthCo
                          val manglendeVedlegg: List<VedleggType>) {
         data class VedleggInfo(val vedleggType: VedleggType, val innsendtDato: LocalDateTime?)
     }
-
 }

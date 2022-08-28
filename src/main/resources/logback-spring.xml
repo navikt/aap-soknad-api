@@ -21,7 +21,10 @@
         </encoder>
     </appender>
     <springProfile name="dev">
+        <logger name="org.apache.kafka.clients.consumer.internals.ConsumerCoordinator" level="info"/>
         <logger name="no.nav.aap" level="trace"/>
+        <logger name="org.hibernate.SQL" level="trace"/>
+        <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="trace"/>
         <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="info"/>
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="secureJson"/>

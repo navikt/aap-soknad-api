@@ -38,19 +38,3 @@ minside:
         innsyn: https://aap-soknad-api.dev.intern.nav.no/ettersend
         standard: https://aap-soknad.dev.nav.no/aap/soknad/standard
         utland: https://aap-soknad.dev.nav.no/aap/soknad/utland
-
-logging:
-    level:
-        org:
-            apache:
-                kafka:
-                    clients:
-                        consumer:
-                            internals:
-                                ConsumerCoordinator: info
-            hibernate:
-                sql: trace
-                type:
-                    descriptor:
-                        sql:
-                            BasicBinder: trace
