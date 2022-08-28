@@ -6,8 +6,6 @@ import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.UtlandSøknadFordeler
-import no.nav.aap.api.søknad.fordeling.SøknadRepository.InnsendteVedlegg
-import no.nav.aap.api.søknad.fordeling.SøknadRepository.ManglendeVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.joark.JoarkFordeler
 import no.nav.aap.api.søknad.joark.JoarkFordeler.JoarkEttersendingResultat
@@ -58,11 +56,11 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
             }
         }
 
-    fun fordel(ettersending: Ettersending) =
+    fun fordel(e: Ettersending) =
         pdl.søkerUtenBarn().run {
-            with(joark.fordel(ettersending, this)) {
+            with(joark.fordel(e, this)) {
                 // TODO fordel til VL
-                fullfører.fullfør(ettersending, this@run.fnr, this)
+                fullfører.fullfør(e, this@run.fnr, this)
             }
         }
 
@@ -75,67 +73,56 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
         private val log = getLogger(javaClass)
 
         @Transactional
-        fun fullfør(søknad: StandardSøknad, søker: Fødselsnummer, resultat: JoarkFordelingResultat) =
+        fun fullfør(søknad: StandardSøknad, fnr: Fødselsnummer, res: JoarkFordelingResultat) =
             dokumentLager.slettDokumenter(søknad).run {
                 mellomlager.slett()
-                val s =
-                    repo.save(Søknad(fnr = søker.fnr, journalpostid = resultat.journalpostId, eventid = callIdAsUUID()))
-
-                with(søknad.vedlegg()) {  //
-                    log.trace("VedleggInfo $this")
-                    manglende.forEach { type ->
-                        with(ManglendeVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
-                            s.manglendevedlegg.add(this)
-                            soknad = s
-                        }
-                    }
-                    innsendte.forEach { type ->
-                        with(InnsendteVedlegg(soknad = s, vedleggtype = type, eventid = s.eventid)) {
-                            s.innsendtevedlegg.add(this)
-                            soknad = s
-                        }
-                    }
-                    if (manglende.isNotEmpty()) {
-                        minside.opprettOppgave(MINAAPSTD, søker, s.eventid,
-                                "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")
-                    }
-                    else {
-                        minside.opprettBeskjed(MINAAPSTD, s.eventid, søker,
-                                "Vi har mottatt din ${STANDARD.tittel}", true)
+                with(søknad.vedlegg()) {
+                    with(repo.save(Søknad(fnr = fnr.fnr,
+                            journalpostid = res.journalpostId,
+                            eventid = callIdAsUUID()))) {
+                        registrerSomManglende(manglende)
+                        registrerSomVedlagte(vedlagte)
+                        oppdaterMinSide(manglende.isEmpty())
                     }
                 }
-                Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = resultat.pdf, navn = "kvittering.pdf")))
+                Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = res.pdf, navn = "kvittering.pdf")))
             }
 
         @Transactional
-        fun fullfør(ettersending: Ettersending, fnr: Fødselsnummer, resultat: JoarkEttersendingResultat) {
-            repo.getSøknadByEventidAndFnr(ettersending.søknadId, fnr.fnr)?.let { søknad ->
-                with(søknad) søknad@{
-                    manglendevedlegg.innsendteNå(ettersending.ettersendteVedlegg) { t, t1 ->
-                        t.vedleggtype == t1.vedleggType
-                    }.forEach { m ->
-                        with(InnsendteVedlegg(soknad = this, vedleggtype = m.vedleggtype, eventid = eventid)) {
-                            innsendtevedlegg.add(this)
-                            soknad = this@søknad
+        fun fullfør(e: Ettersending, fnr: Fødselsnummer, resultat: JoarkEttersendingResultat) =
+            dokumentLager.slettDokumenter(e).run {
+                repo.getSøknadByEventidAndFnr(e.søknadId, fnr.fnr)?.let {
+                    with(it) {
+                        tidligereManglendeNåVedlagte(e.ettersendteVedlegg).forEach { m ->
+                            registrerVedlagtFraEttersending(m)
                         }
-                        manglendevedlegg.remove(m)
+                        avsluttMinSideOppgaveHvisKomplett()
+                        // TODO lagre og returnere kvittering
                     }
-                    if (manglendevedlegg.isEmpty()) {
-                        log.trace("Alle manglende vedlegg er sendt inn, avslutter oppgave")
-                        minside.avsluttOppgave(STANDARD, fnr, eventid)
-                    }
-                    else {
-                        log.trace("Det mangler fremdeles ${manglendevedlegg.size} vedlegg (${manglendevedlegg.map { it.vedleggtype }})")
-                    }
-                }
-            } ?: log.warn("Ingen tidligere innsendt søknad med søknadId ${ettersending.søknadId} ble funnet for $fnr")
-            // TODO lagre og returnere kvittering
-        }
-
-        private fun <T, U> Set<T>.innsendteNå(l: List<U>, predikat: (T, U) -> Boolean) =
-            filter { m -> l.any { predikat(m, it) } }.also {
-                log.trace("Følgende vedlegg ble nå sendt inn:  $it")
+                } ?: log.warn("Ingen tidligere innsendt søknad med søknadId ${e.søknadId} ble funnet for $fnr")
             }
+
+        private fun Søknad.oppdaterMinSide(erKomplett: Boolean) =
+            if (erKomplett) {
+                minside.opprettBeskjed(MINAAPSTD, eventid, Fødselsnummer(fnr),
+                        "Vi har mottatt din ${STANDARD.tittel}", true)
+            }
+            else {
+                minside.opprettOppgave(MINAAPSTD, Fødselsnummer(fnr), eventid,
+                        "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")
+            }
+
+        private fun Søknad.avsluttMinSideOppgaveHvisKomplett() {
+            with(manglendevedlegg) {
+                if (isEmpty()) {
+                    log.trace("Alle manglende vedlegg er sendt inn, avslutter oppgave $eventid")
+                    minside.avsluttOppgave(STANDARD, Fødselsnummer(fnr), eventid)
+                }
+                else {
+                    log.trace("Det mangler fremdeles $size vedlegg (${map { it.vedleggtype }})")
+                }
+            }
+        }
 
     }
 
