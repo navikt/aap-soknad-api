@@ -56,8 +56,12 @@ spec:
                 -   application: innsyn
         outbound:
             rules:
+                -   application: sokos-kontoregister-person
+                    namespace: okonomi
+                    cluster: dev-gcp
                 -   application: clamav
                     namespace: clamav
+                    cluster: dev-gcp
                 -   application: pdfgen
                     namespace: aap
                     cluster: dev-gcp
