@@ -33,38 +33,37 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
     fun findByFnrAndDoneIsFalse(fnr: String): List<T>
 
     @MappedSuperclass
-    abstract class MinSideBaseEntity(fnr: String, eventid: UUID, var done: Boolean) :
-        BaseEntity(fnr, eventid = eventid) {
+    abstract class MinSideBaseEntity(fnr: String, eventid: UUID, val done: Boolean) : BaseEntity(fnr, eventid) {
         override fun toString() =
             "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id]"
     }
 
     @MappedSuperclass
-    @EntityListeners(LoggingEntityListener::class, AuditingEntityListener::class)
-    abstract class BaseEntity(
-            val fnr: String,
-            @CreatedDate var created: LocalDateTime? = null,
-            val eventid: UUID,
-            @LastModifiedDate var updated: LocalDateTime? = null,
-            @Id @GeneratedValue(strategy = IDENTITY)
-            val id: Long = 0) {
+    abstract class BaseEntity(val fnr: String,
+                              val eventid: UUID,
+                              @LastModifiedDate var updated: LocalDateTime? = null) :
+        IdentifiableTimestampedBaseEntity() {
         override fun toString() =
             "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, id=$id)]"
     }
 
     @MappedSuperclass
-    @EntityListeners(LoggingEntityListener::class, AuditingEntityListener::class)
     abstract class EksternNotifikasjonBaseEntity(
             val eventid: UUID,
-            @CreatedDate
-            var created: LocalDateTime? = null,
             val distribusjonid: Long,
-            val distribusjonkanal: String,
-            @Id @GeneratedValue(strategy = IDENTITY)
-            val id: Long = 0) {
+            val distribusjonkanal: String) : IdentifiableTimestampedBaseEntity() {
         override fun toString() =
             "${javaClass.simpleName} [(distribusjonid=$distribusjonid,created=$created,distribusjonkanal=$distribusjonkanal,id=$id]"
     }
+
+    @MappedSuperclass
+    @EntityListeners(LoggingEntityListener::class, AuditingEntityListener::class)
+    abstract class IdentifiableTimestampedBaseEntity(
+            @CreatedDate
+            var created: LocalDateTime? = null,
+            @Id @GeneratedValue(strategy = IDENTITY)
+            val id: Long = 0)
+
 }
 
 @Converter(autoApply = true)
