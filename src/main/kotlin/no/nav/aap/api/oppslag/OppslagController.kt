@@ -2,6 +2,7 @@ package no.nav.aap.api.oppslag
 
 import no.nav.aap.api.oppslag.arbeid.ArbeidClient
 import no.nav.aap.api.oppslag.behandler.BehandlerClient
+import no.nav.aap.api.oppslag.konto.KontoClient
 import no.nav.aap.api.oppslag.krr.KRRClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.oppslag.saf.SafClient
@@ -25,6 +26,7 @@ class OppslagController(val pdl: PDLClient,
                         val arbeid: ArbeidClient,
                         val krr: KRRClient,
                         val søknad: SøknadClient,
+                        val konto: KontoClient,
                         val saf: SafClient) {
 
     val log = LoggerUtil.getLogger(javaClass)
@@ -37,6 +39,7 @@ class OppslagController(val pdl: PDLClient,
             krr.kontaktinfo())
         .also {
             log.trace("Søker er $it")
+            log.trace("Konto ${konto.kontoinfo()}")
         }
 
     @GetMapping("/soeknader")
