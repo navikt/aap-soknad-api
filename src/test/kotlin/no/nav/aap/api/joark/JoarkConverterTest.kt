@@ -16,7 +16,6 @@ import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.core.io.ClassPathResource
-import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.util.StreamUtils.copyToByteArray
@@ -42,9 +41,9 @@ class JoarkConverterTest {
         val bytes1 = bytesFra("pdf/rdd.png")
         val bytes2 = bytesFra("pdf/landscape.jpg")
 
-        val dokinfo = DokumentInfo(bytes, APPLICATION_PDF_VALUE, "test123.pdf")
-        val dokinfo1 = DokumentInfo(bytes1, IMAGE_PNG_VALUE, "rdd.png")
-        val dokinfo2 = DokumentInfo(bytes2, IMAGE_JPEG_VALUE, "landscape.png")
+        val dokinfo = DokumentInfo(bytes, "test123.pdf, APPLICATION_PDF_VALUE ")
+        val dokinfo1 = DokumentInfo(bytes1, "rdd.png", IMAGE_PNG_VALUE)
+        val dokinfo2 = DokumentInfo(bytes2, "landscape.png", IMAGE_JPEG_VALUE)
 
 
 

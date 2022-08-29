@@ -31,7 +31,7 @@ internal class DokumentlagerController(private val lager: Dokumentlager) {
     @ResponseStatus(CREATED)
     fun lagreDokument(@RequestPart("vedlegg") vedlegg: MultipartFile) =
         with(vedlegg) {
-            lager.lagreDokument(DokumentInfo(bytes, contentType, originalFilename))
+            lager.lagreDokument(DokumentInfo(bytes, originalFilename, contentType))
         }
 
     @GetMapping("/les/{uuid}")

@@ -110,7 +110,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     @ResponseStatus(CREATED)
     fun lagreDokument(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") vedlegg: MultipartFile) =
         with(vedlegg) {
-            dokumentLager.lagreDokument(DokumentInfo(bytes, contentType, originalFilename), fnr)
+            dokumentLager.lagreDokument(DokumentInfo(bytes, originalFilename, contentType), fnr)
         }
 
     @GetMapping("vedlegg/les/{fnr}/{uuid}")
