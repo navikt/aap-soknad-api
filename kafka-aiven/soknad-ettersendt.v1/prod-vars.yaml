@@ -1,0 +1,18 @@
+pool: nav-prod
+config:
+    cleanupPolicy: delete
+    minimumInSyncReplicas: 2
+    partitions: 12
+    replication: 3
+    retentionBytes: -1
+    retentionHours: 120
+acl:
+    -   team: aap
+        application: soknad-api
+        access: write
+    -   team: aap
+        application: vedtak
+        access: read
+    -   team: aap
+        application: personopplysninger
+        access: read
