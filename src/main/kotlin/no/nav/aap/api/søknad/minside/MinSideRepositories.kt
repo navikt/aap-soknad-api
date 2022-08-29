@@ -57,13 +57,13 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
     abstract class EksternNotifikasjonBaseEntity(
             val eventid: UUID,
             @CreatedDate
-            var distribusjondato: LocalDateTime? = null,
+            var created: LocalDateTime? = null,
             val distribusjonid: Long,
             val distribusjonkanal: String,
             @Id @GeneratedValue(strategy = IDENTITY)
             val id: Long = 0) {
         override fun toString() =
-            "${javaClass.simpleName} [(distribusjonid=$distribusjonid,distribusjondato=$distribusjondato,distribusjonkanal=$distribusjonkanal,id=$id]"
+            "${javaClass.simpleName} [(distribusjonid=$distribusjonid,created=$created,distribusjonkanal=$distribusjonkanal,id=$id]"
     }
 }
 
