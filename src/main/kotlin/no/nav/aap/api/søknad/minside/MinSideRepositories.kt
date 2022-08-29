@@ -33,7 +33,7 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
     fun findByFnrAndDoneIsFalse(fnr: String): List<T>
 
     @MappedSuperclass
-    abstract class MinSideBaseEntity(fnr: String, eventid: UUID, val done: Boolean) : BaseEntity(fnr, eventid) {
+    abstract class MinSideBaseEntity(fnr: String, eventid: UUID, var done: Boolean) : BaseEntity(fnr, eventid) {
         override fun toString() =
             "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id]"
     }

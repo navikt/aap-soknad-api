@@ -36,7 +36,6 @@ class SøknadFordeler(private val utland: UtlandSøknadFordeler, private val sta
 interface Fordeler {
     fun fordel(søknad: UtlandSøknad): Kvittering
     fun fordel(søknad: StandardSøknad): Kvittering
-
     fun ettersend(ettersending: Ettersending)
 
 }
@@ -112,8 +111,9 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
         private fun Søknad.avsluttMinSideOppgaveHvisKomplett(fnr: Fødselsnummer) {
             if (manglendevedlegg.isEmpty()) {
-                log.trace("Alle manglende vedlegg er sendt inn, avslutter oppgave $eventid")
-                minside.avsluttOppgave(STANDARD, fnr, eventid)
+                minside.avsluttOppgave(STANDARD, fnr, eventid).also {
+                    log.trace("Alle manglende vedlegg er sendt inn, avsluttet oppgave $eventid")
+                }
             }
             else {
                 with(manglendevedlegg) {
