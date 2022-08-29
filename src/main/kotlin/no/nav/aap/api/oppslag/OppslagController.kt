@@ -39,7 +39,7 @@ class OppslagController(val pdl: PDLClient,
             krr.kontaktinfo())
         .also {
             log.trace("Søker er $it")
-            log.trace("Konto ${konto.kontoinfo()}")
+            //log.trace("Konto ${konto.kontoinfo()}")
         }
 
     @GetMapping("/soeknader")
