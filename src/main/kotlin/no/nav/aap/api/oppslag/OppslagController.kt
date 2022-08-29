@@ -47,11 +47,9 @@ class OppslagController(val pdl: PDLClient,
         saf.dokument(journalpostId, dokumentInfoId)
             ?.let {
                 ok()
-                    // .contentType(MediaType.parseMediaType(it.contentType))
                     .cacheControl(noCache().mustRevalidate())
                     .headers(HttpHeaders().apply {
                         contentDisposition = attachment()
-                            //    .filename(it.metadata[Dokumentlager.FILNAVN]!!)
                             .build()
                     })
                     .body(it)

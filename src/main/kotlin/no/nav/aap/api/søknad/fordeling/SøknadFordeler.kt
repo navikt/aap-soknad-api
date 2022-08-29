@@ -51,7 +51,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
         pdl.søkerMedBarn().run {
             with(joark.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.standard)
-                fullfører.fullfør(søknad, this@run.fnr, this@with)
+                fullfører.fullfør(søknad, this@run.fnr, this)
             }
         }
 
