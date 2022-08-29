@@ -24,7 +24,7 @@ class InnsendingFordelingController(private val fordeler: Fordeler) {
 
     @PostMapping("/ettesend")
     @ResponseStatus(CREATED)
-    fun ettersend(@RequestBody ettersending: @Valid Ettersending) = fordeler.ettersend(ettersending)
+    fun ettersend(@RequestBody ettersending: @Valid Ettersending) = fordeler.fordel(ettersending)
 
     override fun toString() = "$javaClass.simpleName [fordeler=$fordeler]"
 }

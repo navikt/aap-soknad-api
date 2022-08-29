@@ -22,7 +22,7 @@ class LocalSøknadFordeler : Fordeler {
             log.info("Dummy-ruting av søknad til bakenforliggende systemer")
         }
 
-    override fun ettersend(ettersending: Ettersending) {
+    override fun fordel(ettersending: Ettersending) {
         TODO("Not yet implemented")
     }
 }

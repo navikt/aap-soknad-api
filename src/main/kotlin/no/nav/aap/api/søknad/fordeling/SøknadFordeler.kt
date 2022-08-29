@@ -30,13 +30,13 @@ class SøknadFordeler(private val utland: UtlandSøknadFordeler, private val sta
     Fordeler {
     override fun fordel(søknad: UtlandSøknad) = utland.fordel(søknad)
     override fun fordel(søknad: StandardSøknad) = standard.fordel(søknad)
-    override fun ettersend(ettersending: Ettersending) = standard.fordel(ettersending)
+    override fun fordel(ettersending: Ettersending) = standard.fordel(ettersending)
 }
 
 interface Fordeler {
     fun fordel(søknad: UtlandSøknad): Kvittering
     fun fordel(søknad: StandardSøknad): Kvittering
-    fun ettersend(ettersending: Ettersending)
+    fun fordel(ettersending: Ettersending)
 
 }
 
