@@ -76,39 +76,25 @@ class UUIDAttributeConverter : AttributeConverter<UUID, String> {
 class LoggingEntityListener {
 
     @PrePersist
-    private fun lagrer(entity: Any) {
-        log.trace("Lagrer $entity i DB")
-    }
+    private fun lagrer(entity: Any) = log.trace("Lagrer $entity i DB")
 
     @PreUpdate
-    private fun oppdaterer(entity: Any) {
-        log.trace("Oppdaterer $entity i DB")
-    }
+    private fun oppdaterer(entity: Any) = log.trace("Oppdaterer $entity i DB")
 
     @PreRemove
-    private fun fjerner(entity: Any) {
-        log.trace("Fjerner $entity fra DB")
-    }
+    private fun fjerner(entity: Any) = log.trace("Fjerner $entity fra DB")
 
     @PostPersist
-    private fun lagret(entity: Any) {
-        log.trace("Lagret $entity i DB")
-    }
+    private fun lagret(entity: Any) = log.trace("Lagret $entity i DB")
 
     @PostUpdate
-    private fun oppdatert(entity: Any) {
-        log.trace("Oppdatert $entity i DB")
-    }
+    private fun oppdatert(entity: Any) = log.trace("Oppdaterte $entity i DB")
 
     @PostRemove
-    private fun fjernet(entity: Any) {
-        log.trace("Fjernet $entity fra DB")
-    }
+    private fun fjernet(entity: Any) = log.trace("Fjernet $entity fra DB")
 
     @PostLoad
-    private fun lest(entity: Any) {
-        log.trace("Lest $entity fra DB")
-    }
+    private fun lest(entity: Any) = log.trace("Leste $entity fra DB")
 
     companion object {
         private val log = getLogger(LoggingEntityListener::class.java)
