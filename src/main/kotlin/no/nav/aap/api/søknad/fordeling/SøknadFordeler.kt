@@ -58,7 +58,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
     fun fordel(e: Ettersending) =
         pdl.søkerUtenBarn().run {
             with(joark.fordel(e, this)) {
-                // TODO fordel til VL
+                vl.fordel(e, fnr, journalpostId, cfg.ettersending)
                 fullfører.fullfør(e, this@run.fnr, this)
             }
         }
