@@ -29,11 +29,12 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     class Søknad(
             fnr: String,
             val journalpostid: String,
+            eventid: UUID,
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var manglendevedlegg: MutableSet<ManglendeVedlegg> = mutableSetOf(),
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var innsendtevedlegg: MutableSet<InnsendteVedlegg> = mutableSetOf(),
-            eventid: UUID) : BaseEntity(fnr, eventid = eventid) {
+                ) : BaseEntity(fnr, eventid = eventid) {
         fun registrerSomVedlagte(vedlagte: List<VedleggType>) {
             vedlagte.forEach { type ->
                 with(InnsendteVedlegg(soknad = this, vedleggtype = type, eventid = eventid)) {

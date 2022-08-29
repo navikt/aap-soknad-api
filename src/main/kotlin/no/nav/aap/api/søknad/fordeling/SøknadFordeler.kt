@@ -77,15 +77,13 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
             dokumentLager.slettDokumenter(søknad).run {
                 mellomlager.slett()
                 with(søknad.vedlegg()) {
-                    with(søknader.save(Søknad(fnr = fnr.fnr,
-                            journalpostid = res.journalpostId,
-                            eventid = callIdAsUUID()))) {
+                    with(søknader.save(Søknad(fnr.fnr, res.journalpostId, callIdAsUUID()))) {
                         registrerSomManglende(manglende)
                         registrerSomVedlagte(vedlagte)
                         oppdaterMinSide(manglende.isEmpty(), fnr)
                     }
                 }
-                Kvittering(dokumentLager.lagreDokument(DokumentInfo(bytes = res.pdf, navn = "kvittering.pdf")))
+                Kvittering(dokumentLager.lagreDokument(DokumentInfo(res.pdf, "kvittering.pdf")))
             }
 
         @Transactional
@@ -99,7 +97,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                         avsluttMinSideOppgaveHvisKomplett(fnr)
                         // TODO lagre og returnere kvittering
                     }
-                } ?: log.warn("Ingen tidligere innsendt søknad med søknadId ${e.søknadId} ble funnet for $fnr")
+                } ?: log.warn("Ingen tidligere innsendt søknad med id ${e.søknadId} ble funnet for $fnr")
             }
 
         private fun Søknad.oppdaterMinSide(erKomplett: Boolean, fnr: Fødselsnummer) =
@@ -139,7 +137,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
                 with(joark.fordel(søknad, this)) {
                     vl.fordel(søknad, fnr, journalpostId, cfg.utland)
                     dittnav.opprettBeskjed(MINAAPUTLAND, callIdAsUUID(), fnr, "Vi har mottatt ${UTLAND.tittel}", true)
-                    Kvittering(lager.lagreDokument(DokumentInfo(pdf, navn = "kvittering-utland.pdf")))
+                    Kvittering(lager.lagreDokument(DokumentInfo(pdf, "kvittering-utland.pdf")))
                 }
             }
     }

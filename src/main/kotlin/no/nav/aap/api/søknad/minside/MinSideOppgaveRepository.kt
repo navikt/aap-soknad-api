@@ -20,7 +20,7 @@ interface MinSideOppgaveRepository : MinSideRepository<Oppgave> {
             done: Boolean = false,
             @OneToMany(mappedBy = "oppgave", cascade = [ALL], orphanRemoval = true)
             var notifikasjoner: MutableSet<EksternOppgaveNotifikasjon> = mutableSetOf()) :
-        MinSideBaseEntity(fnr = fnr, eventid = eventid, done = done)
+        MinSideBaseEntity(fnr, eventid, done)
 
     @Entity(name = "eksternoppgavenotifikasjon")
     @Table(name = "eksterneoppgavenotifikasjoner")
@@ -29,8 +29,5 @@ interface MinSideOppgaveRepository : MinSideRepository<Oppgave> {
             var oppgave: Oppgave? = null,
             eventid: UUID,
             distribusjonid: Long,
-            distribusjonkanal: String) : EksternNotifikasjonBaseEntity(eventid = eventid,
-            distribusjonkanal = distribusjonkanal,
-            distribusjonid = distribusjonid)
-
+            distribusjonkanal: String) : EksternNotifikasjonBaseEntity(eventid, distribusjonid, distribusjonkanal)
 }

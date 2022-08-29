@@ -34,11 +34,7 @@ class EksternNotifikasjonStatusKonsument(private val repos: MinSideRepositories)
     private fun oppdaterOppgave(oppgave: Oppgave, status: DoknotifikasjonStatus) =
         with(status) {
             log.trace("Oppdaterer oppgave med distribusjonsinfo fra $status")
-            oppgave.notifikasjoner.add(EksternOppgaveNotifikasjon(
-                    oppgave = oppgave,
-                    eventid = eventId(),
-                    distribusjonid = distribusjonId,
-                    distribusjonkanal = melding))
+            oppgave.notifikasjoner.add(EksternOppgaveNotifikasjon(oppgave, eventId(), distribusjonId, melding))
             repos.oppgaver.save(oppgave).also {
                 log.trace("Oppdatert oppgave $it med distribusjonsinfo fra $this i DB")
             }
@@ -47,11 +43,7 @@ class EksternNotifikasjonStatusKonsument(private val repos: MinSideRepositories)
     private fun oppdaterBeskjed(beskjed: Beskjed, status: DoknotifikasjonStatus) =
         with(status) {
             log.trace("Oppdaterer beskjed med distribusjonsinfo fra $status")
-            beskjed.notifikasjoner.add(EksternBeskjedNotifikasjon(
-                    beskjed = beskjed,
-                    eventid = eventId(),
-                    distribusjonid = distribusjonId,
-                    distribusjonkanal = melding))
+            beskjed.notifikasjoner.add(EksternBeskjedNotifikasjon(beskjed, eventId(), distribusjonId, melding))
             repos.beskjeder.save(beskjed).also {
                 log.trace("Oppdatert beskjed $it med distribusjonsinfo fra $this i DB")
             }
