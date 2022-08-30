@@ -11,7 +11,9 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
-class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient, private val ctx: AuthContext, val cf: KontoConfig) :
+class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
+                            private val ctx: AuthContext,
+                            private val cf: KontoConfig) :
     AbstractWebClientAdapter(client, cf) {
 
     fun kontoInformasjon(historikk: Boolean = false) =
@@ -25,9 +27,9 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient, private val ctx
                 log.trace("Kontoinformasjon er $it")
             }
             .doOnError { t: Throwable ->
-                log.warn("Konto oppslag feilet", t)
+                log.warn("Kontoinformasjon oppslag feilet", t)
             }
             .block()
 
-    data class Body(val kontohaver: Fødselsnummer, val historikk: Boolean)
+    internal data class Body(val kontohaver: Fødselsnummer, val historikk: Boolean)
 }

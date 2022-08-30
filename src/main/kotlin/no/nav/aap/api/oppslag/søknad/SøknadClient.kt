@@ -7,15 +7,17 @@ import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.AuthContext
 import org.springframework.stereotype.Component
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
 @Component
 class SøknadClient(private val repo: SøknadRepository, private val ctx: AuthContext) {
 
-    fun søknader() = søknader(ctx.getFnr())
-    fun søknader(fnr: Fødselsnummer) =
-        repo.getSøknadByFnrOrderByCreatedDesc(fnr.fnr).map(::tilSøknad)
+    fun søknader(fra: LocalDate) = søknader(ctx.getFnr(), fra)
+    fun søknader(fnr: Fødselsnummer, fra: LocalDate) =
+        repo.getSøknadByFnrAndCreatedIsAfterOrderByCreatedDesc(fnr.fnr, fra.atStartOfDay()).map(::tilSøknad)
+    // repo.getSøknadByFnrOrderByCreatedDesc(fnr.fnr).map(::tilSøknad)
 
     private fun tilSøknad(s: Søknad) =
         with(s) {

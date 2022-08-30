@@ -10,7 +10,7 @@ import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.model.SøkerInfo
 import no.nav.aap.joark.DokumentInfoId
 import no.nav.aap.util.Constants
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
@@ -29,7 +29,7 @@ class OppslagController(val pdl: PDLClient,
                         val konto: KontoClient,
                         val saf: SafClient) {
 
-    val log = LoggerUtil.getLogger(javaClass)
+    val log = getLogger(javaClass)
 
     @GetMapping("/soeker")
     fun søker() = SøkerInfo(

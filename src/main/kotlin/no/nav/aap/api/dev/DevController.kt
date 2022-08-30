@@ -42,6 +42,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.multipart.MultipartFile
+import java.time.LocalDate
+import java.time.LocalDate.now
 import java.util.*
 
 @UnprotectedRestController(["/dev/"])
@@ -59,8 +61,8 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     private val log = LoggerUtil.getLogger(javaClass)
 
     @GetMapping("/soknader")
-    fun søknader(@RequestParam fnr: Fødselsnummer) =
-        søknad.søknader(fnr)
+    fun søknader(@RequestParam fnr: Fødselsnummer, @RequestParam fra: LocalDate = now().minusYears(3)) =
+        søknad.søknader(fnr, fra)
 
     @PostMapping("ettersend/{fnr}")
     @ResponseStatus(CREATED)
