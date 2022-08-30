@@ -3,6 +3,7 @@ package no.nav.aap.api.oppslag.konto
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Kontonummer
 import no.nav.aap.api.oppslag.konto.KontoConfig.Companion.KONTO
+import no.nav.aap.api.oppslag.konto.KontoWebClientAdapter.AktivKonto.Companion.NONE
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.AuthContext
 import org.springframework.beans.factory.annotation.Qualifier
@@ -32,8 +33,11 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
                 .doOnError { t: Throwable ->
                     log.warn("Kontoinformasjon oppslag feilet", t)
                 }
-                .onErrorReturn(AktivKonto.NONE)
-                .block()?.let { it.aktivKonto?.kontonummer }
+                .defaultIfEmpty(NONE)
+                .onErrorReturn(NONE)
+                .block()?.let {
+                    it.aktivKonto?.kontonummer
+                }
         }
         else null
 
