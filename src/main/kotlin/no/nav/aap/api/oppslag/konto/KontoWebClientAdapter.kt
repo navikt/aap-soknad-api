@@ -32,7 +32,7 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
                 .doOnError { t: Throwable ->
                     log.warn("Kontoinformasjon oppslag feilet", t)
                 }
-                .onErrorReturn(AktivKonto.EMPTY)
+                .onErrorReturn(AktivKonto.NONE)
                 .block()?.let { it.aktivKonto?.kontonummer }
         }
         else null
@@ -44,7 +44,7 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
                                         val opprettetAv: String)
 
         companion object {
-            val EMPTY = AktivKonto(null)
+            val NONE = AktivKonto(null)
         }
     }
 
