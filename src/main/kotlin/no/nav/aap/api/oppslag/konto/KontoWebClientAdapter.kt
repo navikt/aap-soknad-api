@@ -23,7 +23,7 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
             .bodyValue(Body(ctx.getFnr(), historikk))
             .accept(APPLICATION_JSON)
             .retrieve()
-            .bodyToMono<Kontoinformasjon>()
+            .bodyToMono<AktivKonto>()
             .doOnSuccess {
                 log.trace("Kontoinformasjon er $it")
             }
@@ -32,6 +32,7 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
             }
             .block()
 
+    data class AktivKonto(val aktivKonto: Kontoinformasjon)
     data class Kontoinformasjon(val kontohaver: Fødselsnummer,
                                 val kontonummer: String,
                                 val gyldigFom: LocalDateTime,

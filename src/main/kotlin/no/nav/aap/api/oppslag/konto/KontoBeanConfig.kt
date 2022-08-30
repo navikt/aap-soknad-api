@@ -30,11 +30,11 @@ class KontoClientBeanConfig {
     @Qualifier(KONTO)
     fun kontoClientCredentialFilterFunction(cfgs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
         ExchangeFilterFunction { req, next ->
-            next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.kontoSystemBearerToken(cfgs))
+            next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.systemBearerToken(cfgs))
                 .build())
         }
 
-    private fun OAuth2AccessTokenService.kontoSystemBearerToken(cfgs: ClientConfigurationProperties) =
+    private fun OAuth2AccessTokenService.systemBearerToken(cfgs: ClientConfigurationProperties) =
         getAccessToken(cfgs.registration[KONTO_CREDENTIALS]).accessToken.asBearer()
 
     @Bean
