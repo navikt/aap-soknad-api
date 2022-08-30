@@ -13,7 +13,7 @@ import java.net.URI
 class KontoConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
                   @DefaultValue(PINGPATH) pingPath: String,
                   @DefaultValue(DEFAULT_KONTO_PATH) private val kontoPath: String,
-                  @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, KONTO, enabled) {
+                  @DefaultValue("false") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, KONTO, enabled) {
 
     fun kontoUri(b: UriBuilder) = b.path(kontoPath).build()
 
