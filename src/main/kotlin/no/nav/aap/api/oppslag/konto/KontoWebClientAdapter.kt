@@ -18,25 +18,33 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
     AbstractWebClientAdapter(client, cf) {
 
     fun kontoInformasjon(historikk: Boolean = false) =
-        webClient.post()
-            .uri(cf::kontoUri)
-            .bodyValue(Body(ctx.getFnr(), historikk))
-            .accept(APPLICATION_JSON)
-            .retrieve()
-            .bodyToMono<AktivKonto>()
-            .doOnSuccess {
-                log.trace("Kontoinformasjon er $it")
-            }
-            .doOnError { t: Throwable ->
-                log.warn("Kontoinformasjon oppslag feilet", t)
-            }
-            .block()
+        if (cf.isEnabled) {
+            webClient.post()
+                .uri(cf::kontoUri)
+                .bodyValue(KontoQuery(ctx.getFnr(), historikk))
+                .accept(APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono<AktivKonto>()
+                .doOnSuccess {
+                    log.trace("Kontoinformasjon er $it")
+                }
+                .doOnError { t: Throwable ->
+                    log.warn("Kontoinformasjon oppslag feilet", t)
+                }
+                .block()?.tilKonto()
+        }
+        else null
 
-    data class AktivKonto(val aktivKonto: Kontoinformasjon)
-    data class Kontoinformasjon(val kontohaver: Fødselsnummer,
-                                val kontonummer: String,
-                                val gyldigFom: LocalDateTime,
-                                val opprettetAv: String)
+    internal data class AktivKonto(val aktivKonto: Kontoinformasjon?) {
+        fun tilKonto() = aktivKonto?.let { Konto(it.kontohaver, it.kontonummer) }
+    }
 
-    internal data class Body(val kontohaver: Fødselsnummer, val historikk: Boolean)
+    data class Konto(val fnr: Fødselsnummer, val kontonummer: String)
+
+    class Kontoinformasjon(val kontohaver: Fødselsnummer,
+                           val kontonummer: String,
+                           val gyldigFom: LocalDateTime,
+                           val opprettetAv: String)
+
+    internal data class KontoQuery(val kontohaver: Fødselsnummer, val historikk: Boolean)
 }

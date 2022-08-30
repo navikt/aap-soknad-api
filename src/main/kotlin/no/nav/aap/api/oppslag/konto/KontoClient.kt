@@ -4,5 +4,5 @@ import org.springframework.stereotype.Component
 
 @Component
 class KontoClient(private val a: KontoWebClientAdapter) {
-    fun kontoinfo() = a.kontoInformasjon()
+    fun kontoinfo() = a.kontoInformasjon()?.aktivKonto
 }
