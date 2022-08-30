@@ -58,7 +58,7 @@ spec:
             rules:
                 -   application: sokos-kontoregister-person
                     namespace: okonomi
-                    cluster: dev-gcp
+                    cluster: {{cluster}}
                 -   application: clamav
                     namespace: clamav
                     cluster: dev-gcp
