@@ -61,19 +61,19 @@ spec:
                     cluster: {{cluster}}
                 -   application: clamav
                     namespace: clamav
-                    cluster: dev-gcp
+                    cluster: {{cluster}}
                 -   application: pdfgen
                     namespace: aap
-                    cluster: dev-gcp
+                    cluster: {{cluster}}
                 -   application: fss-proxy
                     namespace: aap
                     cluster: dev-fss
                 -   application: digdir-krr-proxy
                     namespace: team-rocket
-                    cluster: dev-gcp
+                    cluster: {{cluster}}
                 -   application: isdialogmelding
                     namespace: teamsykefravr
-                    cluster: dev-gcp
+                    cluster: {{cluster}}
     tokenx:
         enabled: true
     kafka:
