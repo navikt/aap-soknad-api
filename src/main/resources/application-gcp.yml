@@ -73,6 +73,10 @@ spring:
             client-id: ${spring.application.name}
             key-serializer: org.apache.kafka.common.serialization.StringSerializer
             value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    servlet:
+        multipart:
+            max-file-size: 250B
+            max-request-size: 250MB
 no.nav:
     security:
         jwt:
