@@ -32,6 +32,7 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
                 .doOnError { t: Throwable ->
                     log.warn("Kontoinformasjon oppslag feilet", t)
                 }
+                .onErrorReturn(AktivKonto(null))
                 .block()?.tilKonto()
         }
         else null

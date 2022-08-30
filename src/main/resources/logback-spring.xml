@@ -21,7 +21,7 @@
         </encoder>
     </appender>
     <springProfile name="dev">
-        <logger name="org.apache.kafka.clients.consumer.internals.ConsumerCoordinator" level="info"/>
+        <logger name="org.apache.kafka.clients.consumer.internals.ConsumerCoordinator" level="warn"/>
         <logger name="no.nav.aap" level="trace"/>
         <logger name="no.nav.aap.api.søknad.minside.MinSideBeanConfig" level="error"/>
         <logger name="org.hibernate.SQL" level="trace"/>
