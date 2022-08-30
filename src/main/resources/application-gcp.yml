@@ -144,15 +144,15 @@ no.nav:
                             client-jwk: ${token.x.private.jwk}
                             client-auth-method: private_key_jwt
 
-                    sokos-kontoregister-person:
-                        token-exchange:
-                            audience: ${nais.cluster.name}:okonomi:sokos-kontoregister-person
-                        well-known-url: ${token.x.well.known.url}
-                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                    client-credentials-sokos:
+                        token-endpoint-url: ${azure.openid.config.token.endpoint}
+                        grant-type: client_credentials
+                        scope: api://dev-gcp.okonomi.sokos-kontoregister-person/.default
                         authentication:
-                            client-id: ${token.x.client.id}
-                            client-jwk: ${token.x.private.jwk}
+                            client-id: ${azure.app.client.id}
+                            client-jwk: ${azure.app.jwk}
                             client-auth-method: private_key_jwt
+
             issuer:
                 idporten:
                     discovery-url: ${token.x.well.known.url}
