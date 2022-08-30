@@ -111,7 +111,7 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
                 .withTidspunkt(now(UTC))
                 .withSynligFremTil(now(UTC).plus(varighet))
-                .withLink(type.link(cfg.backlinks).toURL())
+                .withLink(type.link(cfg.backlinks)?.toURL())
                 .withTekst(tekst)
                 .withEksternVarsling(eksternNotifikasjon)
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
@@ -127,7 +127,7 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
                 .withTidspunkt(now(UTC))
                 .withSynligFremTil(now(UTC).plus(varighet))
-                .withLink(type.link(cfg.backlinks, eventId).toURL())
+                .withLink(type.link(cfg.backlinks, eventId)?.toURL())
                 .withTekst(tekst)
                 .withEksternVarsling(eksternNotifikasjon)
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
@@ -177,6 +177,8 @@ data class MinSideNotifikasjonType private constructor(val skjemaType: SkjemaTyp
                 MINAAP -> cfg.innsyn
                 SØKNAD -> cfg.utland
             }
+
+            else -> null
         }
 
     companion object {

@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.joark
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
+import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.ettersendelse.Ettersending.EttersendtVedlegg
@@ -48,7 +49,7 @@ class JoarkJournalpostGenerator(
 
     fun journalpostFra(ettersending: Ettersending, søker: Søker): Journalpost {
         return Journalpost(dokumenter = dokumenterFra(ettersending.ettersendteVedlegg, søker.fnr),
-                tittel = STANDARD.tittel, // TODO E må inn
+                tittel = STANDARD_ETTERSENDING.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
             .also {
