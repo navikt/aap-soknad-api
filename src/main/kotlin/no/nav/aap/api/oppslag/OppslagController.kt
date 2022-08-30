@@ -19,8 +19,6 @@ import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestParam
-import java.time.LocalDate
 
 @ProtectedRestController(value = ["/oppslag"], issuer = Constants.IDPORTEN)
 class OppslagController(val pdl: PDLClient,
@@ -45,7 +43,7 @@ class OppslagController(val pdl: PDLClient,
         }
 
     @GetMapping("/soeknader")
-    fun søknader(@RequestParam fra: LocalDate? = LocalDate.now().minusYears(3)) = søknad.søknader(fra)
+    fun søknader() = søknad.søknader()
 
     @GetMapping("/saf")
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentInfoId: DokumentInfoId) =
