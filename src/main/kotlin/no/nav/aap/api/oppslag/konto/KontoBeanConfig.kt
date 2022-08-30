@@ -21,14 +21,14 @@ class KontoClientBeanConfig {
     @Bean
     fun kontoWebClient(
             b: Builder, cfg: KontoConfig,
-            @Qualifier(KONTO) aadKontoFilterFunction: ExchangeFilterFunction) =
+            @Qualifier(KONTO) kontoClientCredentialFilterFunction: ExchangeFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
-            .filter(aadKontoFilterFunction)
+            .filter(kontoClientCredentialFilterFunction)
             .build()
 
     @Bean
     @Qualifier(KONTO)
-    fun aadKontoClientCredentialFilterFunction(cfgs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
+    fun kontoClientCredentialFilterFunction(cfgs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
         ExchangeFilterFunction { req, next ->
             next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.kontoSystemBearerToken(cfgs))
                 .build())

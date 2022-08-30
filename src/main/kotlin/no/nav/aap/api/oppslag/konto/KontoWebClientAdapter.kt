@@ -9,6 +9,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
+import java.time.LocalDateTime
 
 @Component
 class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
@@ -22,15 +23,19 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
             .bodyValue(Body(ctx.getFnr(), historikk))
             .accept(APPLICATION_JSON)
             .retrieve()
-            .bodyToMono<Map<String, String>>()
+            .bodyToMono<Kontoinformasjon>()
             .doOnSuccess {
                 log.trace("Kontoinformasjon er $it")
             }
-            .onErrorReturn(mapOf())
-            // .doOnError { t: Throwable ->
-            //     log.warn("Kontoinformasjon oppslag feilet", t)
-            //  }
+            .doOnError { t: Throwable ->
+                log.warn("Kontoinformasjon oppslag feilet", t)
+            }
             .block()
+
+    data class Kontoinformasjon(val kontohaver: Fødselsnummer,
+                                val kontonummer: String,
+                                val gyldigFom: LocalDateTime,
+                                val opprettetAv: String)
 
     internal data class Body(val kontohaver: Fødselsnummer, val historikk: Boolean)
 }
