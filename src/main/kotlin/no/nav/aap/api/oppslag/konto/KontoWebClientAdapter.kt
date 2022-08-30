@@ -26,9 +26,10 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
             .doOnSuccess {
                 log.trace("Kontoinformasjon er $it")
             }
-            .doOnError { t: Throwable ->
-                log.warn("Kontoinformasjon oppslag feilet", t)
-            }
+            .onErrorReturn(mapOf())
+            // .doOnError { t: Throwable ->
+            //     log.warn("Kontoinformasjon oppslag feilet", t)
+            //  }
             .block()
 
     internal data class Body(val kontohaver: Fødselsnummer, val historikk: Boolean)
