@@ -45,7 +45,7 @@ class OppslagController(val pdl: PDLClient,
         }
 
     @GetMapping("/soeknader")
-    fun søknader(@RequestParam fra: LocalDate = LocalDate.now().minusYears(3)) = søknad.søknader(fra)
+    fun søknader(@RequestParam fra: LocalDate? = LocalDate.now().minusYears(3)) = søknad.søknader(fra)
 
     @GetMapping("/saf")
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentInfoId: DokumentInfoId) =
