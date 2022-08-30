@@ -8,7 +8,6 @@ import no.nav.aap.api.søknad.model.VedleggType
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.query.Param
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.CascadeType.ALL
@@ -22,7 +21,9 @@ import javax.persistence.Table
 
 interface SøknadRepository : JpaRepository<Søknad, Long> {
 
-    fun getSøknadByFnrAndCreatedIsAfterOrderByCreatedDesc(@Param("fnr") fnr: String, @Param("created") fra: LocalDateTime): List<Søknad>)
+    fun getSøknadByFnrAndCreatedIsAfterOrderByCreatedDesc(@Param("fnr") fnr: String,
+                                                          @Param("created") fra: LocalDateTime): List<Søknad>
+
     fun getSøknadByFnrOrderByCreatedDesc(@Param("fnr") fnr: String): List<Søknad>
     fun getSøknadByEventidAndFnr(@Param("eventid") eventId: UUID, @Param("fnr") fnr: String): Søknad?
 
