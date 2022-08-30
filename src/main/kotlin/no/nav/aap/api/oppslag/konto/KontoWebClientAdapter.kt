@@ -1,6 +1,7 @@
 package no.nav.aap.api.oppslag.konto
 
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.felles.Kontonummer
 import no.nav.aap.api.oppslag.konto.KontoConfig.Companion.KONTO
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.AuthContext
@@ -40,7 +41,7 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
     }
 
     class Kontoinformasjon(val kontohaver: Fødselsnummer,
-                           val kontonummer: String,
+                           val kontonummer: Kontonummer,
                            val gyldigFom: LocalDateTime,
                            val opprettetAv: String)
 
