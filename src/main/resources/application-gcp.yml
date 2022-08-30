@@ -158,8 +158,6 @@ no.nav:
                     discovery-url: ${token.x.well.known.url}
                     accepted-audience: ${token.x.client.id}
 
-konto:
-    enabled: false
 pdl:
     base-uri: https://pdl-api.${onprem}-pub.nais.io/graphql
     scope: api://${onprem}.pdl.pdl-api/.default

@@ -36,9 +36,9 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
         else null
 
     internal data class AktivKonto(val aktivKonto: Kontoinformasjon?) {
-        fun tilKonto() = aktivKonto?.let {  it.kontonummer)}
+        fun tilKonto() = aktivKonto?.kontonummer
     }
-    
+
     class Kontoinformasjon(val kontohaver: Fødselsnummer,
                            val kontonummer: String,
                            val gyldigFom: LocalDateTime,

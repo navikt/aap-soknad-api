@@ -34,7 +34,6 @@ organisasjon:
     enabled: false
 konto:
     enabled: true
-
 minside:
     backlinks:
         innsyn: https://aap-soknad-api.dev.intern.nav.no/ettersend
