@@ -33,23 +33,20 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
                     log.warn("Kontoinformasjon oppslag feilet", t)
                 }
                 .onErrorReturn(AktivKonto.EMPTY)
-                .block()?.tilKonto()
+                .block()?.let { it.aktivKonto?.kontonummer }
         }
         else null
 
     internal data class AktivKonto(val aktivKonto: Kontoinformasjon?) {
-        fun tilKonto() = aktivKonto?.kontonummer
+        internal class Kontoinformasjon(val kontohaver: Fødselsnummer,
+                                        val kontonummer: Kontonummer,
+                                        val gyldigFom: LocalDateTime,
+                                        val opprettetAv: String)
 
         companion object {
             val EMPTY = AktivKonto(null)
         }
-
     }
-
-    internal class Kontoinformasjon(val kontohaver: Fødselsnummer,
-                                    val kontonummer: Kontonummer,
-                                    val gyldigFom: LocalDateTime,
-                                    val opprettetAv: String)
 
     internal data class KontoQuery(val kontohaver: Fødselsnummer, val historikk: Boolean)
 }
