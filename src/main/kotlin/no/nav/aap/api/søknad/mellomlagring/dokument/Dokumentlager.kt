@@ -31,14 +31,18 @@ interface Dokumentlager {
 data class DokumentInfo(val bytes: ByteArray,
                         val contentType: String? = TIKA.detect(bytes),
                         val contentDisposition: ContentDisposition?,
-                        val createTime: Long = 0) {
-    constructor(bytes: ByteArray, navn: String?, contentType: String? = TIKA.detect(bytes)) : this(bytes,
-            contentType, navn?.let { attachment().filename(it).build() })
+                        val createTime: Long = 0,
+                        val size: Long) {
+    constructor(bytes: ByteArray,
+                navn: String?,
+                contentType: String? = TIKA.detect(bytes),
+                size: Long = bytes.size.toLong()) : this(bytes,
+            contentType, navn?.let { attachment().filename(it).build() }, size = size)
 
     val filnavn = contentDisposition?.filename
 
     override fun toString() =
-        "${javaClass.simpleName} [filnavn=$filnavn,contentDisposition=$contentDisposition,contentType=$contentType,createTime=$createTime,størrelse=${bytes.size} bytes]"
+        "${javaClass.simpleName} [filnavn=$filnavn,contentDisposition=$contentDisposition,contentType=$contentType,createTime=$createTime,størrelse=$size bytes]"
 }
 
 interface DokumentSjekker {

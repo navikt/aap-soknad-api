@@ -5,6 +5,7 @@ import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobField.CONTENT_DISPOSITION
 import com.google.cloud.storage.Storage.BlobField.CONTENT_TYPE
+import com.google.cloud.storage.Storage.BlobField.SIZE
 import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
 import com.google.cloud.storage.Storage.BlobGetOption.fields
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
@@ -54,10 +55,10 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     override fun lesDokument(uuid: UUID) = lesDokument(uuid, ctx.getFnr())
 
     override fun lesDokument(uuid: UUID, fnr: Fødselsnummer) =
-        lager.get(cfg.vedlegg.navn, navn(fnr, uuid), fields(CONTENT_TYPE, CONTENT_DISPOSITION, TIME_CREATED))
+        lager.get(cfg.vedlegg.navn, navn(fnr, uuid), fields(CONTENT_TYPE, CONTENT_DISPOSITION, TIME_CREATED, SIZE))
             ?.let { blob ->
                 with(blob) {
-                    DokumentInfo(getContent(), contentType, contentDisposition(), createTime)
+                    DokumentInfo(getContent(), contentType, contentDisposition(), createTime, size)
                         .also {
                             log.trace(CONFIDENTIAL, "Lest $it fra ${blob.name} fra bøtte ${blob.bucket}")
                         }
