@@ -2,9 +2,9 @@ package no.nav.aap.api.joark
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.søknad.SøknadTest
-import no.nav.aap.api.søknad.joark.JoarkJournalpostGenerator
-import no.nav.aap.api.søknad.joark.pdf.BildeSkalerer
-import no.nav.aap.api.søknad.joark.pdf.BildeTilPDFKonverterer
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
+import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
+import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.joark.Filtype.PDFA
@@ -57,7 +57,7 @@ class JoarkConverterTest {
 
         val søknad = SøknadTest.standardSøknad()
         val søker = SøknadTest.søker()
-        val c = JoarkJournalpostGenerator(mapper, lager, AuthContext(ctx), BildeTilPDFKonverterer(BildeSkalerer()))
+        val c = ArkivJournalpostGenerator(mapper, lager, AuthContext(ctx), BildeTilPDFKonverterer(BildeSkalerer()))
         val converted = c.journalpostFra(søknad, søker, bytes)
         converted.dokumenter.forEach { doc ->
             doc?.dokumentVarianter?.forEach {

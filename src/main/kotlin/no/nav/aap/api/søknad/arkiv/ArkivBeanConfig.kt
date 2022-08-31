@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.joark
+package no.nav.aap.api.søknad.arkiv
 
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
-class JoarkBeanConfig {
+class ArkivBeanConfig {
     @Qualifier(JOARK)
     @Bean
-    fun webClientJoark(builder: WebClient.Builder, cfg: JoarkConfig, tokenXFilterFunction: TokenXFilterFunction) =
+    fun webClientJoark(builder: WebClient.Builder, cfg: ArkivConfig, tokenXFilterFunction: TokenXFilterFunction) =
         builder
             .baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
@@ -21,5 +21,5 @@ class JoarkBeanConfig {
             .build()
 
     @Bean
-    fun joarkHealthIndicator(adapter: JoarkWebClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {}
+    fun joarkHealthIndicator(adapter: ArkivWebClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {}
 }

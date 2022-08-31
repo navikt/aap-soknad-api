@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.joark
+package no.nav.aap.api.søknad.arkiv
 
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.util.Constants.JOARK
@@ -9,7 +9,7 @@ import java.net.URI
 
 @ConfigurationProperties(JOARK)
 @ConstructorBinding
-class JoarkConfig(
+class ArkivConfig(
         @DefaultValue(DEFAULT_OPPRETT_PATH) val joarkPath: String,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
         @DefaultValue("true") enabled: Boolean,

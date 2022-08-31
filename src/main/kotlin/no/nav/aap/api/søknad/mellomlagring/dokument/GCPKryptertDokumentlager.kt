@@ -65,7 +65,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 }
             }
 
-    fun Blob.contentDisposition() = parse(contentDisposition)
+    private fun Blob.contentDisposition() = parse(contentDisposition)
     override fun slettDokumenter(vararg uuids: UUID) = slettUUIDs(uuids.asList(), ctx.getFnr())
 
     fun slettDokument(uuid: UUID, fnr: Fødselsnummer) =

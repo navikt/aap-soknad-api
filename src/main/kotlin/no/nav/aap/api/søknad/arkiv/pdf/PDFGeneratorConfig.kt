@@ -1,6 +1,6 @@
-package no.nav.aap.api.søknad.joark.pdf
+package no.nav.aap.api.søknad.arkiv.pdf
 
-import no.nav.aap.api.søknad.joark.pdf.PDFGeneratorConfig.Companion.PDF
+import no.nav.aap.api.søknad.arkiv.pdf.PDFGeneratorConfig.Companion.PDF
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding

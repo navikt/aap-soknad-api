@@ -1,7 +1,7 @@
-package no.nav.aap.api.søknad.joark
+package no.nav.aap.api.søknad.arkiv
 
+import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
-import no.nav.aap.api.søknad.joark.pdf.PDFClient
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
@@ -9,9 +9,9 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.stereotype.Service
 
 @Service
-class JoarkFordeler(private val joark: JoarkClient,
+class ArkivFordeler(private val joark: ArkivClient,
                     private val pdf: PDFClient,
-                    private val generator: JoarkJournalpostGenerator) {
+                    private val generator: ArkivJournalpostGenerator) {
     private val log = getLogger(javaClass)
 
     fun fordel(søknad: StandardSøknad, søker: Søker) =

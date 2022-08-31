@@ -1,13 +1,13 @@
-package no.nav.aap.api.søknad.joark
+package no.nav.aap.api.søknad.arkiv
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.felles.SkjemaType.UTLAND
+import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.ettersendelse.Ettersending.EttersendtVedlegg
-import no.nav.aap.api.søknad.joark.pdf.BildeTilPDFKonverterer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.StandardSøknad
@@ -39,7 +39,7 @@ import org.springframework.stereotype.Component
 import java.util.Base64.getEncoder
 
 @Component
-class JoarkJournalpostGenerator(
+class ArkivJournalpostGenerator(
         private val mapper: ObjectMapper,
         private val lager: Dokumentlager,
         private val ctx: AuthContext,

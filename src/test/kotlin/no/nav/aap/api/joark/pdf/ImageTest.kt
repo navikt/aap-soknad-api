@@ -1,7 +1,7 @@
 package no.nav.aap.api.joark.pdf
 
-import no.nav.aap.api.søknad.joark.pdf.BildeSkalerer
-import no.nav.aap.api.søknad.joark.pdf.BildeTilPDFKonverterer
+import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
+import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import org.apache.tika.Tika
 import org.junit.jupiter.api.Assertions.assertTrue

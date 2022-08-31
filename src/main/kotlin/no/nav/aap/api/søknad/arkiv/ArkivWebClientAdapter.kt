@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.joark
+package no.nav.aap.api.søknad.arkiv
 
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.joark.JoarkResponse
@@ -12,7 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
-class JoarkWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, val cf: JoarkConfig) :
+class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, val cf: ArkivConfig) :
     AbstractWebClientAdapter(webClient, cf) {
 
     fun opprettJournalpost(journalpost: Journalpost) =

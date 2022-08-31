@@ -5,12 +5,12 @@ import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.søknad.SøknadClient
+import no.nav.aap.api.søknad.arkiv.ArkivFordeler.JoarkEttersendingResultat
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.StandardSøknadFullfører
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
-import no.nav.aap.api.søknad.joark.JoarkFordeler.JoarkEttersendingResultat
-import no.nav.aap.api.søknad.joark.JoarkJournalpostGenerator
 import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
@@ -53,7 +53,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
                              private val dittNav: MinSideClient,
                              private val søknad: SøknadClient,
                              private val fullfører: StandardSøknadFullfører,
-                             private val joark: JoarkJournalpostGenerator,
+                             private val arkiv: ArkivJournalpostGenerator,
                              private val repos: MinSideRepositories) {
 
     private val log = LoggerUtil.getLogger(javaClass)
@@ -67,7 +67,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     fun ettersend(@PathVariable fnr: Fødselsnummer, @RequestBody ettersending: Ettersending) {
         log.trace("Mottok ettersendng $ettersending for $fnr")
         val søker = Søker(Navn("Dennis", "B", "Bergkamp"), fnr)
-        val post = joark.journalpostFra(ettersending, søker)
+        val post = arkiv.journalpostFra(ettersending, søker)
         log.trace("Lagde journalpost $post for $fnr")
         fullfører.fullfør(ettersending, søker.fnr, JoarkEttersendingResultat("42"))
     }

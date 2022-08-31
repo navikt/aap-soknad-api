@@ -4,12 +4,12 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
+import no.nav.aap.api.søknad.arkiv.ArkivFordeler
+import no.nav.aap.api.søknad.arkiv.ArkivFordeler.JoarkEttersendingResultat
+import no.nav.aap.api.søknad.arkiv.ArkivFordeler.JoarkSøknadResultat
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.UtlandSøknadFordeler
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
-import no.nav.aap.api.søknad.joark.JoarkFordeler
-import no.nav.aap.api.søknad.joark.JoarkFordeler.JoarkEttersendingResultat
-import no.nav.aap.api.søknad.joark.JoarkFordeler.JoarkSøknadResultat
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
@@ -41,7 +41,7 @@ interface Fordeler {
 }
 
 @Component
-class StandardSøknadFordeler(private val joark: JoarkFordeler,
+class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
                              private val pdl: PDLClient,
                              private val fullfører: StandardSøknadFullfører,
                              private val cfg: VLFordelingConfig,
@@ -49,7 +49,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
     fun fordel(søknad: StandardSøknad) =
         pdl.søkerMedBarn().run {
-            with(joark.fordel(søknad, this)) {
+            with(arkiv.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.standard)
                 fullfører.fullfør(søknad, this@run.fnr, this)
             }
@@ -57,7 +57,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
 
     fun fordel(e: Ettersending) =
         pdl.søkerUtenBarn().run {
-            with(joark.fordel(e, this)) {
+            with(arkiv.fordel(e, this)) {
                 vl.fordel(e, fnr, journalpostId, cfg.ettersending)
                 fullfører.fullfør(e, this@run.fnr, this)
             }
@@ -125,7 +125,7 @@ class StandardSøknadFordeler(private val joark: JoarkFordeler,
     }
 
     @Component
-    class UtlandSøknadFordeler(private val joark: JoarkFordeler,
+    class UtlandSøknadFordeler(private val joark: ArkivFordeler,
                                private val pdl: PDLClient,
                                private val dittnav: MinSideClient,
                                private val lager: Dokumentlager,

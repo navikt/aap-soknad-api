@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.joark.pdf
+package no.nav.aap.api.søknad.arkiv.pdf
 
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
