@@ -90,7 +90,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
             dokumentLager.slettDokumenter(e).run {
                 søknader.getSøknadByEventidAndFnr(e.søknadId, fnr.fnr)?.let {
                     with(it) {
-                        tidligereManglendeNåVedlagte(e.ettersendteVedlegg).forEach { m ->
+                        tidligereManglendeNåEttersendte(e.ettersendteVedlegg).forEach { m ->
                             registrerVedlagtFraEttersending(m)
                         }
                         avsluttMinSideOppgaveHvisKomplett(fnr)

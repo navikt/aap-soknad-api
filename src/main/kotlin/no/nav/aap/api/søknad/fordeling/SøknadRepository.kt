@@ -67,7 +67,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
                 soknad = this@Søknad
             }
 
-        fun tidligereManglendeNåVedlagte(e: List<EttersendtVedlegg>) =
+        fun tidligereManglendeNåEttersendte(e: List<EttersendtVedlegg>) =
             manglendevedlegg.filter { m -> e.any { m.vedleggtype == it.vedleggType } }
     }
 
