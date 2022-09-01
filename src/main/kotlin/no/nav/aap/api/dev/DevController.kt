@@ -5,7 +5,6 @@ import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.søknad.SøknadClient
-import no.nav.aap.api.søknad.arkiv.ArkivFordeler.JoarkEttersendingResultat
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.StandardSøknadFullfører
@@ -68,8 +67,8 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
         log.trace("Mottok ettersendng $ettersending for $fnr")
         val søker = Søker(Navn("Dennis", "B", "Bergkamp"), fnr)
         val post = arkiv.journalpostFra(ettersending, søker)
-        log.trace("Lagde journalpost $post for $fnr")
-        fullfører.fullfør(ettersending, søker.fnr, JoarkEttersendingResultat("42"))
+        //log.trace("Lagde journalpost $post for $fnr")
+        // fullfører.fullfør(ettersending, søker.fnr, JoarkEttersendingResultat("42"))
     }
 
     @GetMapping("/dittnav/avsluttalle")
