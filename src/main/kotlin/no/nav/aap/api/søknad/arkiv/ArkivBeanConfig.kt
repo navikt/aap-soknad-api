@@ -13,7 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient
 class ArkivBeanConfig {
     @Qualifier(JOARK)
     @Bean
-    fun webClientJoark(builder: WebClient.Builder, cfg: ArkivConfig, tokenXFilterFunction: TokenXFilterFunction) =
+    fun webClientArkiv(builder: WebClient.Builder, cfg: ArkivConfig, tokenXFilterFunction: TokenXFilterFunction) =
         builder
             .baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
@@ -21,5 +21,5 @@ class ArkivBeanConfig {
             .build()
 
     @Bean
-    fun joarkHealthIndicator(adapter: ArkivWebClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {}
+    fun arkivHealthIndicator(adapter: ArkivWebClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {}
 }

@@ -16,22 +16,22 @@ class ArkivFordeler(private val joark: ArkivClient,
 
     fun fordel(søknad: StandardSøknad, søker: Søker) =
         with(pdf.tilPdf(søker, søknad)) {
-            JoarkSøknadResultat(this, joark.journalfør(generator.journalpostFra(søknad, søker, this))).also {
+            ArkivSøknadResultat(this, joark.journalfør(generator.journalpostFra(søknad, søker, this))).also {
                 log.trace("Fordeling til JOARK OK med journalpost ${it.journalpostId}")
             }
         }
 
     fun fordel(søknad: UtlandSøknad, søker: Søker) =
         with(pdf.tilPdf(søker, søknad)) {
-            JoarkSøknadResultat(this, joark.journalfør(generator.journalpostFra(søknad, søker, this)))
+            ArkivSøknadResultat(this, joark.journalfør(generator.journalpostFra(søknad, søker, this)))
         }
 
     fun fordel(ettersending: Ettersending, søker: Søker) =
-        JoarkEttersendingResultat(joark.journalfør(generator.journalpostFra(ettersending, søker))).also {
+        ArkivEttersendingResultat(joark.journalfør(generator.journalpostFra(ettersending, søker))).also {
             log.trace("Fordeling av ettersending til JOARK OK med journalpost ${it.journalpostId}")
         }
 
-    data class JoarkSøknadResultat(val pdf: ByteArray, val journalpostId: String)
-    data class JoarkEttersendingResultat(val journalpostId: String)
+    data class ArkivSøknadResultat(val pdf: ByteArray, val journalpostId: String)
+    data class ArkivEttersendingResultat(val journalpostId: String)
 
 }

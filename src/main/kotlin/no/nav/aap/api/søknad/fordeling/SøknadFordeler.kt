@@ -5,8 +5,8 @@ import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler
-import no.nav.aap.api.søknad.arkiv.ArkivFordeler.JoarkEttersendingResultat
-import no.nav.aap.api.søknad.arkiv.ArkivFordeler.JoarkSøknadResultat
+import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivEttersendingResultat
+import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivSøknadResultat
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.UtlandSøknadFordeler
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
@@ -72,7 +72,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
         private val log = getLogger(javaClass)
 
         @Transactional
-        fun fullfør(søknad: StandardSøknad, fnr: Fødselsnummer, res: JoarkSøknadResultat) =
+        fun fullfør(søknad: StandardSøknad, fnr: Fødselsnummer, res: ArkivSøknadResultat) =
             dokumentLager.slettDokumenter(søknad).run {
                 mellomlager.slett()
                 with(søknad.vedlegg()) {
@@ -86,7 +86,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
             }
 
         @Transactional
-        fun fullfør(e: Ettersending, fnr: Fødselsnummer, res: JoarkEttersendingResultat) =
+        fun fullfør(e: Ettersending, fnr: Fødselsnummer, res: ArkivEttersendingResultat) =
             dokumentLager.slettDokumenter(e).run {
                 søknader.getSøknadByEventidAndFnr(e.søknadId, fnr.fnr)?.let {
                     with(it) {
@@ -125,7 +125,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
     }
 
     @Component
-    class UtlandSøknadFordeler(private val joark: ArkivFordeler,
+    class UtlandSøknadFordeler(private val arkiv: ArkivFordeler,
                                private val pdl: PDLClient,
                                private val dittnav: MinSideClient,
                                private val lager: Dokumentlager,
@@ -134,7 +134,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
 
         fun fordel(søknad: UtlandSøknad) =
             pdl.søkerUtenBarn().run {
-                with(joark.fordel(søknad, this)) {
+                with(arkiv.fordel(søknad, this)) {
                     vl.fordel(søknad, fnr, journalpostId, cfg.utland)
                     dittnav.opprettBeskjed(MINAAPUTLAND, callIdAsUUID(), fnr, "Vi har mottatt ${UTLAND.tittel}", true)
                     Kvittering(lager.lagreDokument(DokumentInfo(pdf, "kvittering-utland.pdf")))

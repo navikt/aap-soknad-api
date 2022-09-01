@@ -1,4 +1,4 @@
-package no.nav.aap.api.joark.pdf
+package no.nav.aap.api.arkiv.pdf
 
 import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
 import org.apache.tika.Tika

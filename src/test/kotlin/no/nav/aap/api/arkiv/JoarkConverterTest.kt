@@ -1,4 +1,4 @@
-package no.nav.aap.api.joark
+package no.nav.aap.api.arkiv
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.søknad.SøknadTest
