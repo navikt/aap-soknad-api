@@ -30,7 +30,7 @@ class InnsendingFordelingController(private val fordeler: Fordeler) {
     @Unprotected
     fun ettersend(@RequestBody ettersending: Ettersending): Unit {
         log.info("Ettersender $ettersending")
-        fordeler.fordel(ettersending)
+        //fordeler.fordel(ettersending)
     }
 
     override fun toString() = "$javaClass.simpleName [fordeler=$fordeler]"
