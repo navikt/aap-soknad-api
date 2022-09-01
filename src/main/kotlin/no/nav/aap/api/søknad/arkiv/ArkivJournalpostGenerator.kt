@@ -47,18 +47,21 @@ class ArkivJournalpostGenerator(
 
     private val log = getLogger(javaClass)
 
-    fun journalpostFra(ettersending: Ettersending, søker: Søker): Journalpost {
-        return Journalpost(dokumenter = dokumenterFra(ettersending.ettersendteVedlegg, søker.fnr),
+    fun journalpostFra(es: Ettersending, søker: Søker): Journalpost =
+        Journalpost(dokumenter = dokumenterFra(es.ettersendteVedlegg, søker.fnr),
                 tittel = STANDARD_ETTERSENDING.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
             .also {
                 log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it")
             }
-    }
 
     private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>, fnr: Fødselsnummer) =
-        vedlegg.flatMap { dokumenterFra(it.ettersending, it.vedleggType, fnr) }
+        vedlegg.flatMap { e ->
+            dokumenterFra(e.ettersending, e.vedleggType, fnr)
+        }.also {
+            require(it.isNotEmpty() && vedlegg.size == it.size) { "Forventet ${vedlegg.size} fra dokumentlager, fant ${it.size}" }
+        }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(dokumenter = dokumenterFra(søknad, pdf.asPDFVariant()),
@@ -129,7 +132,9 @@ class ArkivJournalpostGenerator(
                     add(konverterer.tilPdf(IMAGE_PNG_VALUE, pngs.map(DokumentInfo::bytes)).somDokument(type.tittel))
                 }
             }
-        } ?: emptyList()
+        } ?: emptyList<Dokument>().also {
+            log.trace("Ingen dokumenter å lese fra dokumentlager")
+        }
 
     private fun ByteArray.somDokument(tittel: String) =
         Dokument(tittel = tittel,

@@ -11,7 +11,7 @@ class InMemoryDokumentlager : Dokumentlager {
 
     override fun lesDokument(uuid: UUID) = null
     override fun lesDokument(uuid: UUID, fnr: Fødselsnummer): DokumentInfo? {
-        TODO("Not yet implemented")
+        return DokumentInfo(ByteArray(0), "jalla.pdf", "application/pdf", 0)
     }
 
     override fun slettDokumenter(vararg uuids: UUID): Unit? {

@@ -12,7 +12,12 @@ import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerKategori.LEGE
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerType.FASTLEGE
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.KontaktInformasjon
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
+import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
+import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
 import no.nav.aap.api.søknad.ettersendelse.Ettersending
+import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
+import no.nav.aap.api.søknad.mellomlagring.dokument.InMemoryDokumentlager
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
 import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Ferie
@@ -32,17 +37,26 @@ import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.INTRODUKSJONS
 import no.nav.aap.api.søknad.model.Utbetalinger.FraArbeidsgiver
 import no.nav.aap.api.søknad.model.Utenlandsopphold
 import no.nav.aap.api.søknad.model.Vedlegg
+import no.nav.aap.util.AuthContext
 import org.junit.jupiter.api.Test
+import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import java.time.LocalDate.now
 import java.util.*
+import kotlin.test.assertEquals
 
 @JsonTest
 class SøknadTest {
     @Autowired
     lateinit var mapper: ObjectMapper
+
+    @Mock
+    lateinit var lager: Dokumentlager
+
+    @Mock
+    lateinit var ctx: AuthContext
 
     val v2 = """
         [ "07e35799-4db5-4ba3-81cc-3681dd1dec60" ]
@@ -109,14 +123,27 @@ class SøknadTest {
     """.trimIndent()
 
     val ettersending = """
-
-        {"søknadId":"b86fdc45-6bbf-4891-98e8-5aed1247a301","ettersendteVedlegg":[{"vedleggType":"ARBEIDSGIVER","ettersending":["5a58d38e-448b-4a62-84f9-e7700d3494aa"]}]}
+    {
+     "søknadId":"b86fdc45-6bbf-4891-98e8-5aed1247a301",
+     "ettersendteVedlegg":[
+        {
+           "vedleggType":"ARBEIDSGIVER",
+           "ettersending":[
+              "5a58d38e-448b-4a62-84f9-e7700d3494aa"
+            ]
+         }
+      ]
+   }
         
     """.trimIndent()
 
     @Test
     fun parse() {
-        print(mapper.readValue(ettersending, Ettersending::class.java))
+        val es = mapper.readValue(ettersending, Ettersending::class.java)
+        val journalpost = ArkivJournalpostGenerator(mapper,
+                InMemoryDokumentlager(), ctx,
+                BildeTilPDFKonverterer(BildeSkalerer())).journalpostFra(es, søker())
+        assertEquals(1, journalpost.dokumenter.size)
     }
 
     companion object {

@@ -63,7 +63,10 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                             log.trace(CONFIDENTIAL, "Lest $it fra ${blob.name} fra bøtte ${blob.bucket}")
                         }
                 }
-            }
+            } ?: run {
+            log.warn("Kunne ikke lese dokument med id $uuid fra dokumentlager")
+            null
+        }
 
     private fun Blob.contentDisposition() = parse(contentDisposition)
     override fun slettDokumenter(vararg uuids: UUID) = slettUUIDs(uuids.asList(), ctx.getFnr())
