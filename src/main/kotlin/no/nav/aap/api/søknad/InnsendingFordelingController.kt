@@ -22,7 +22,7 @@ class InnsendingFordelingController(private val fordeler: Fordeler) {
     @ResponseStatus(CREATED)
     fun soknad(@RequestBody søknad: @Valid StandardSøknad) = fordeler.fordel(søknad)
 
-    @PostMapping("/ettesend")
+    @PostMapping("/ettersend")
     @ResponseStatus(CREATED)
     fun ettersend(@RequestBody ettersending: @Valid Ettersending) = fordeler.fordel(ettersending)
 

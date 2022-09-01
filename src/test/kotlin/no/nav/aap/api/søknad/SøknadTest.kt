@@ -12,6 +12,7 @@ import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerKategori.LEGE
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerType.FASTLEGE
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.KontaktInformasjon
+import no.nav.aap.api.søknad.ettersendelse.Ettersending
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
 import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Ferie
@@ -31,6 +32,7 @@ import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.INTRODUKSJONS
 import no.nav.aap.api.søknad.model.Utbetalinger.FraArbeidsgiver
 import no.nav.aap.api.søknad.model.Utenlandsopphold
 import no.nav.aap.api.søknad.model.Vedlegg
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.json.JsonTest
@@ -105,6 +107,17 @@ class SøknadTest {
        }
         
     """.trimIndent()
+
+    val ettersending = """
+
+        {"søknadId":"b86fdc45-6bbf-4891-98e8-5aed1247a301","ettersendteVedlegg":[{"vedleggType":"ARBEIDSGIVER","ettersending":["5a58d38e-448b-4a62-84f9-e7700d3494aa"]}]}
+        
+    """.trimIndent()
+
+    @Test
+    fun parse() {
+        print(mapper.readValue(ettersending, Ettersending::class.java))
+    }
 
     companion object {
 
