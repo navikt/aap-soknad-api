@@ -25,6 +25,6 @@ class KontoConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
         const val KONTO = "konto"
         private const val DEFAULT_URI = "http://sokos-kontoregister-person.okonomi"
         private const val PINGPATH = "internal/is_alive"
-        private const val DEFAULT_KONTO_PATH = "kontoregister/api/kontoregister/v1/hent-konto"
+        private const val DEFAULT_KONTO_PATH = "kontoregister/api/borger/v1/hent-aktiv-konto"
     }
 }

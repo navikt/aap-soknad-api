@@ -3,6 +3,7 @@ package no.nav.aap.api.oppslag.konto
 import no.nav.aap.api.oppslag.konto.KontoConfig.Companion.KONTO
 import no.nav.aap.api.oppslag.konto.KontoConfig.Companion.KONTO_CREDENTIALS
 import no.nav.aap.health.AbstractPingableHealthIndicator
+import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.util.StringExtensions.asBearer
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
@@ -21,21 +22,10 @@ class KontoClientBeanConfig {
     @Bean
     fun kontoWebClient(
             b: Builder, cfg: KontoConfig,
-            @Qualifier(KONTO) kontoClientCredentialFilterFunction: ExchangeFilterFunction) =
+            tokenXFilterFunction: TokenXFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
-            .filter(kontoClientCredentialFilterFunction)
+            .filter(tokenXFilterFunction)
             .build()
-
-    @Bean
-    @Qualifier(KONTO)
-    fun kontoClientCredentialFilterFunction(cfgs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
-        ExchangeFilterFunction { req, next ->
-            next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.systemBearerToken(cfgs))
-                .build())
-        }
-
-    private fun OAuth2AccessTokenService.systemBearerToken(cfgs: ClientConfigurationProperties) =
-        getAccessToken(cfgs.registration[KONTO_CREDENTIALS]).accessToken.asBearer()
 
     @Bean
     fun kontoHealthIndicator(a: KontoWebClientAdapter) =
