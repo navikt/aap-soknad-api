@@ -22,7 +22,7 @@ class InnsendingFordelingController(private val fordeler: Fordeler) {
     fun soknad(@RequestBody søknad: @Valid StandardSøknad) = fordeler.fordel(søknad)
 
     @PostMapping("/ettersend")
-    fun ettersend(@RequestBody ettersending: @Valid Ettersending) = fordeler.fordel(ettersending)
+    fun ettersend(@RequestBody ettersending: Ettersending) = fordeler.fordel(ettersending)
 
     override fun toString() = "$javaClass.simpleName [fordeler=$fordeler]"
 }
