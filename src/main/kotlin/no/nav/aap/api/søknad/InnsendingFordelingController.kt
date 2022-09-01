@@ -5,6 +5,7 @@ import no.nav.aap.api.søknad.fordeling.Fordeler
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.Constants.IDPORTEN
+import no.nav.aap.util.LoggerUtil
 import no.nav.security.token.support.core.api.Unprotected
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.HttpStatus.CREATED
@@ -16,6 +17,9 @@ import javax.validation.Valid
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 @ResponseStatus(CREATED)
 class InnsendingFordelingController(private val fordeler: Fordeler) {
+
+    private val log = LoggerUtil.getLogger(javaClass)
+
     @PostMapping("/utland")
     fun utland(@RequestBody søknad: @Valid UtlandSøknad) = fordeler.fordel(søknad)
 
@@ -24,7 +28,10 @@ class InnsendingFordelingController(private val fordeler: Fordeler) {
 
     @PostMapping("/ettersend")
     @Unprotected
-    fun ettersend(@RequestBody ettersending: Ettersending) = fordeler.fordel(ettersending)
+    fun ettersend(@RequestBody ettersending: Ettersending): Unit {
+        log.info("Ettersneder $ettersending")
+        fordeler.fordel(ettersending)
+    }
 
     override fun toString() = "$javaClass.simpleName [fordeler=$fordeler]"
 }
