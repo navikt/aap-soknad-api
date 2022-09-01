@@ -13,17 +13,15 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import javax.validation.Valid
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
+@ResponseStatus(CREATED)
 class InnsendingFordelingController(private val fordeler: Fordeler) {
     @PostMapping("/utland")
-    @ResponseStatus(CREATED)
     fun utland(@RequestBody søknad: @Valid UtlandSøknad) = fordeler.fordel(søknad)
 
     @PostMapping("/soknad")
-    @ResponseStatus(CREATED)
     fun soknad(@RequestBody søknad: @Valid StandardSøknad) = fordeler.fordel(søknad)
 
     @PostMapping("/ettersend")
-    @ResponseStatus(CREATED)
     fun ettersend(@RequestBody ettersending: @Valid Ettersending) = fordeler.fordel(ettersending)
 
     override fun toString() = "$javaClass.simpleName [fordeler=$fordeler]"
