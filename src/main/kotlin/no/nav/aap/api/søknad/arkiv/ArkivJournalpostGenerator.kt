@@ -58,9 +58,11 @@ class ArkivJournalpostGenerator(
 
     private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>, fnr: Fødselsnummer) =
         vedlegg.flatMap { e ->
+            require(vedlegg.isNotEmpty()) { "Forventet > 0 vedlagte vedlegg" }
             dokumenterFra(e.ettersending, e.vedleggType, fnr)
         }.also {
-            require(it.isNotEmpty() && vedlegg.size == it.size) { "Forventet ${vedlegg.size} fra dokumentlager, fant ${it.size}" }
+            require(it.isNotEmpty()) { "Forventet > 0 vedlegg fra dokumentlager" }
+            require(vedlegg.size == it.size) { "Forventet ${vedlegg.size} fra dokumentlager,fant ${it.size}" }
         }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
