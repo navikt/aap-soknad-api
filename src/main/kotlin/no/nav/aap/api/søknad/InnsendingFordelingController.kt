@@ -29,7 +29,7 @@ class InnsendingFordelingController(private val fordeler: Fordeler) {
     @PostMapping("/ettersend")
     @Unprotected
     fun ettersend(@RequestBody ettersending: Ettersending): Unit {
-        log.info("Ettersneder $ettersending")
+        log.info("Ettersender $ettersending")
         fordeler.fordel(ettersending)
     }
 
