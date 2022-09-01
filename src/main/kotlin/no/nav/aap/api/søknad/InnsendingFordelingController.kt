@@ -5,6 +5,7 @@ import no.nav.aap.api.søknad.fordeling.Fordeler
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.Constants.IDPORTEN
+import no.nav.security.token.support.core.api.Unprotected
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.web.bind.annotation.PostMapping
@@ -22,6 +23,7 @@ class InnsendingFordelingController(private val fordeler: Fordeler) {
     fun soknad(@RequestBody søknad: @Valid StandardSøknad) = fordeler.fordel(søknad)
 
     @PostMapping("/ettersend")
+    @Unprotected
     fun ettersend(@RequestBody ettersending: Ettersending) = fordeler.fordel(ettersending)
 
     override fun toString() = "$javaClass.simpleName [fordeler=$fordeler]"
