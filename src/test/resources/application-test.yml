@@ -21,7 +21,7 @@ pdl:
 
 spring:
     datasource:
-        url: jdbc:tc:postgresql://localhost/test
+        url: jdbc:tc:postgresql:14:///test
         username: test
         password: test
     jpa:
