@@ -5,7 +5,7 @@ import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler
 import no.nav.aap.api.oppslag.saf.SafConfig.Companion.SAF
 import no.nav.aap.api.oppslag.saf.SafConfig.Companion.SAKER_QUERY
-import no.nav.aap.joark.VariantFormat.ARKIV
+import no.nav.aap.arkiv.VariantFormat.ARKIV
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.AAP
 import no.nav.aap.util.Constants.TEMA

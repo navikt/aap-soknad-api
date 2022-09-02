@@ -1,6 +1,6 @@
 package no.nav.aap.api.oppslag.saf
 
-import no.nav.aap.joark.DokumentInfoId
+import no.nav.aap.arkiv.DokumentInfoId
 import org.springframework.stereotype.Component
 
 @Component

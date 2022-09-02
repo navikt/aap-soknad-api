@@ -23,13 +23,13 @@ import no.nav.aap.api.søknad.model.VedleggType.ANNET
 import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
 import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
-import no.nav.aap.joark.AvsenderMottaker
-import no.nav.aap.joark.Bruker
-import no.nav.aap.joark.Dokument
-import no.nav.aap.joark.DokumentVariant
-import no.nav.aap.joark.Filtype.PDFA
-import no.nav.aap.joark.Journalpost
-import no.nav.aap.joark.asPDFVariant
+import no.nav.aap.arkiv.AvsenderMottaker
+import no.nav.aap.arkiv.Bruker
+import no.nav.aap.arkiv.Dokument
+import no.nav.aap.arkiv.DokumentVariant
+import no.nav.aap.arkiv.Filtype.PDFA
+import no.nav.aap.arkiv.Journalpost
+import no.nav.aap.arkiv.somPDFVariant
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.størrelse
@@ -67,7 +67,7 @@ class ArkivJournalpostGenerator(
         }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
-        Journalpost(dokumenter = dokumenterFra(søknad, pdf.asPDFVariant()),
+        Journalpost(dokumenter = dokumenterFra(søknad, pdf.somPDFVariant()),
                 tittel = UTLAND.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
@@ -76,14 +76,13 @@ class ArkivJournalpostGenerator(
             }
 
     fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
-        Journalpost(dokumenter = journalpostDokumenterFra(søknad, pdf.asPDFVariant()),
+        Journalpost(dokumenter = journalpostDokumenterFra(søknad, pdf.somPDFVariant()),
                 tittel = STANDARD.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
             .also {
-                log.trace("Journalpost med ${it.størrelse())} er $it")
+                log.trace("Journalpost med ${it.størrelse()} er $it")
             }
-
 
     private fun journalpostDokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
         with(søknad) {
@@ -153,12 +152,13 @@ class ArkivJournalpostGenerator(
             }
 
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
-        listOf(Dokument(UTLAND, listOf(søknad.asJsonVariant(mapper), pdfDokument)
+        listOf(Dokument(UTLAND, listOf(søknad.somJsonVariant(mapper), pdfDokument)
             .also {
                 log.trace("${it.størrelse("dokumentvariant")}) ($it)")
             }).also {
             log.trace("Dokument til arkiv $it")
         })
+
     internal fun Journalpost.størrelse() = this.dokumenter.størrelse("dokument")
 
 }
