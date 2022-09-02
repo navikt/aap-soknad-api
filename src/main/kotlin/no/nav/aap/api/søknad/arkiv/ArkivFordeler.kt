@@ -9,25 +9,25 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.stereotype.Service
 
 @Service
-class ArkivFordeler(private val joark: ArkivClient,
+class ArkivFordeler(private val arkiv: ArkivClient,
                     private val pdf: PDFClient,
                     private val generator: ArkivJournalpostGenerator) {
     private val log = getLogger(javaClass)
 
     fun fordel(søknad: StandardSøknad, søker: Søker) =
         with(pdf.tilPdf(søker, søknad)) {
-            ArkivSøknadResultat(this, joark.journalfør(generator.journalpostFra(søknad, søker, this))).also {
+            ArkivSøknadResultat(this, arkiv.journalfør(generator.journalpostFra(søknad, søker, this))).also {
                 log.trace("Fordeling til arkiv OK med journalpost ${it.journalpostId}")
             }
         }
 
     fun fordel(søknad: UtlandSøknad, søker: Søker) =
         with(pdf.tilPdf(søker, søknad)) {
-            ArkivSøknadResultat(this, joark.journalfør(generator.journalpostFra(søknad, søker, this)))
+            ArkivSøknadResultat(this, arkiv.journalfør(generator.journalpostFra(søknad, søker, this)))
         }
 
     fun fordel(ettersending: Ettersending, søker: Søker) =
-        ArkivEttersendingResultat(joark.journalfør(generator.journalpostFra(ettersending, søker))).also {
+        ArkivEttersendingResultat(arkiv.journalfør(generator.journalpostFra(ettersending, søker))).also {
             log.trace("Fordeling av ettersending til arkiv OK med journalpost ${it.journalpostId}")
         }
 
