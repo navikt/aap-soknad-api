@@ -32,6 +32,7 @@ import no.nav.aap.joark.Journalpost
 import no.nav.aap.joark.asPDFVariant
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.StringExtensions.størrelse
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
@@ -53,7 +54,7 @@ class ArkivJournalpostGenerator(
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
             .also {
-                log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it")
+                log.trace("Journalpost med ${it.dokumenter.størrelse("dokument")} er $it")
             }
 
     private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>, fnr: Fødselsnummer) =
@@ -71,7 +72,7 @@ class ArkivJournalpostGenerator(
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
             .also {
-                log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it")
+                log.trace("Journalpost med ${it.dokumenter.størrelse("dokument")} er $it")
             }
 
     fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
@@ -80,7 +81,7 @@ class ArkivJournalpostGenerator(
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
             .also {
-                log.trace("Journalpost med ${it.dokumenter.size} dokumenter er $it")
+                log.trace("Journalpost med ${it.dokumenter.størrelse("dokument")} er $it")
             }
 
     private fun journalpostDokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
@@ -94,7 +95,7 @@ class ArkivJournalpostGenerator(
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD }, OMSORG))
                 addAll(dokumenterFra(this@with, ANNET))
             }.also {
-                log.trace("Sender ${it.size} dokumenter til JOARK  $it")
+                log.trace("Sender ${it.størrelse("dokument")} til arkiv  $it")
             }
         }
 
@@ -153,9 +154,9 @@ class ArkivJournalpostGenerator(
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
         listOf(Dokument(UTLAND, listOf(søknad.asJsonVariant(mapper), pdfDokument)
             .also {
-                log.trace("${it.size} dokumentvariant(er) ($it)")
+                log.trace("${it.størrelse("dokumentvariant")}) ($it)")
             }).also {
-            log.trace("Dokument til JOARK $it")
+            log.trace("Dokument til arkiv $it")
         })
 
 }

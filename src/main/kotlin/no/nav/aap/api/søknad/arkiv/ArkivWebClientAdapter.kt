@@ -17,7 +17,7 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, val cf: Arki
 
     fun opprettJournalpost(journalpost: Journalpost) =
         webClient.post()
-            .uri { b -> b.path(cf.joarkPath).build() }
+            .uri { b -> b.path(cf.arkivPath).build() }
             .contentType(APPLICATION_JSON)
             .bodyValue(journalpost)
             .retrieve()
