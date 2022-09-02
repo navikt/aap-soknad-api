@@ -54,7 +54,7 @@ class ArkivJournalpostGenerator(
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
             .also {
-                log.trace("Journalpost med ${it.dokumenter.størrelse("dokument")} er $it")
+                log.trace("Journalpost med ${it.størrelse()} er $it")
             }
 
     private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>, fnr: Fødselsnummer) =
@@ -63,7 +63,7 @@ class ArkivJournalpostGenerator(
             dokumenterFra(e.ettersending, e.vedleggType, fnr)
         }.also {
             require(it.isNotEmpty()) { "Forventet > 0 vedlegg fra dokumentlager" }
-            require(vedlegg.size == it.size) { "Forventet ${vedlegg.size} fra dokumentlager,fant ${it.size}" }
+            require(vedlegg.size == it.size) { "Forventet ${vedlegg.size} fra dokumentlager, fant ${it.size}" }
         }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
@@ -72,7 +72,7 @@ class ArkivJournalpostGenerator(
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
             .also {
-                log.trace("Journalpost med ${it.dokumenter.størrelse("dokument")} er $it")
+                log.trace("Journalpost med ${it.størrelse()} er $it")
             }
 
     fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
@@ -81,8 +81,9 @@ class ArkivJournalpostGenerator(
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
                 bruker = Bruker(søker.fnr))
             .also {
-                log.trace("Journalpost med ${it.dokumenter.størrelse("dokument")} er $it")
+                log.trace("Journalpost med ${it.størrelse())} er $it")
             }
+
 
     private fun journalpostDokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
         with(søknad) {
@@ -158,5 +159,6 @@ class ArkivJournalpostGenerator(
             }).also {
             log.trace("Dokument til arkiv $it")
         })
+    internal fun Journalpost.størrelse() = this.dokumenter.størrelse("dokument")
 
 }
