@@ -32,7 +32,7 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
                 .defaultIfEmpty(emptyMap())
                 .onErrorReturn(emptyMap())
                 .block()?.let {
-                    Kontonummer(it["kontonummer"]!!)
+                    it["kontonummer"]?.let { k -> Kontonummer(k) }
                 }
         }
         else null

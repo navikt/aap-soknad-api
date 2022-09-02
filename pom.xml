@@ -40,6 +40,7 @@
         <sonar.projectKey>navikt_aap-soknad-api</sonar.projectKey>
         <swagger.annotations.version>2.2.2</swagger.annotations.version>
         <springdoc.version>1.6.11</springdoc.version>
+        <testcontainers.version>1.17.3</testcontainers.version>
         <token.validation.version>2.1.4</token.validation.version>
         <hibernate.types.version>2.18.0</hibernate.types.version>
         <varsling.version>08271806</varsling.version>
@@ -79,12 +80,25 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>org.jolokia</groupId>
-            <artifactId>jolokia-core</artifactId>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>no.nav.teamdokumenthandtering</groupId>

@@ -1,35 +1,29 @@
 no.nav:
-  security:
-    jwt:
-      client:
-        registration:
-          localhost:
-            token-exchange:
-              audience: someaudience
-            well-known-url: ${mock-oauth2-server.baseUrl}/idporten/.well-known/openid-configuration
-            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-            authentication:
-              client-id: id
-              client-jwk: src/test/resources/jwk.json
-              client-auth-method: private_key_jwt
-      issuer:
-        idporten:
-          discovery-url: ${mock-oauth2-server.baseUrl}/idporten/.well-known/openid-configuration
-          accepted-audience: someaudience
+    security:
+        jwt:
+            client:
+                registration:
+                    localhost:
+                        token-exchange:
+                            audience: someaudience
+                        well-known-url: ${mock-oauth2-server.baseUrl}/idporten/.well-known/openid-configuration
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: id
+                            client-jwk: src/test/resources/jwk.json
+                            client-auth-method: private_key_jwt
+            issuer:
+                idporten:
+                    discovery-url: ${mock-oauth2-server.baseUrl}/idporten/.well-known/openid-configuration
+                    accepted-audience: someaudience
 pdl:
-  base-uri: ${mock-oauth2-server.baseUrl}/pdl/graphql
+    base-uri: ${mock-oauth2-server.baseUrl}/pdl/graphql
 
 spring:
-  kafka:
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      acks: 1
-    consumer:
-      properties:
-        spring:
-          json:
-             trusted:
-                packages: no.nav.aap.api.søknad.model
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    datasource:
+        url: jdbc:tc:postgresql://localhost/test
+        username: test
+        password: test
+    jpa:
+        hibernate:
+            ddl-auto: create
