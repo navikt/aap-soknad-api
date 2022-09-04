@@ -37,8 +37,7 @@ class OppslagController(val pdl: PDLClient,
             behandler.behandlere(),
             arbeid.arbeidsforhold(),
             krr.kontaktinfo(),
-            /*konto.kontoinfo()*/
-                           )
+            konto.kontoinfo())
         .also {
             log.trace("Søker er $it")
         }

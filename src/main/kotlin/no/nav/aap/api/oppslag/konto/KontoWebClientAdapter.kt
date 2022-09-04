@@ -31,9 +31,9 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
                 }
                 .defaultIfEmpty(emptyMap())
                 .onErrorReturn(emptyMap())
-                .block()?.let {
-                    it["kontonummer"]?.let { k -> Kontonummer(k) }
-                }
+                .block()?.tilKontonummer()
         }
         else null
+
+    private fun Map<String, String>.tilKontonummer() = this["kontonummer"]?.let { Kontonummer(it) }
 }
