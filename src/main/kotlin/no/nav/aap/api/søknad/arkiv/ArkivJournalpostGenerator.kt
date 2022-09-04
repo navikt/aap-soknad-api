@@ -6,8 +6,8 @@ import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
-import no.nav.aap.api.søknad.ettersendelse.Ettersending
-import no.nav.aap.api.søknad.ettersendelse.Ettersending.EttersendtVedlegg
+import no.nav.aap.api.søknad.ettersending.Ettersending
+import no.nav.aap.api.søknad.ettersending.Ettersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.StandardSøknad

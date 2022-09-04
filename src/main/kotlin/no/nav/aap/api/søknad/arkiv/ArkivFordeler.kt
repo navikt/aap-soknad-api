@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.arkiv
 
 import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
-import no.nav.aap.api.søknad.ettersendelse.Ettersending
+import no.nav.aap.api.søknad.ettersending.Ettersending
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad

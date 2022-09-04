@@ -7,7 +7,7 @@ import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivEttersendingResultat
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivSøknadResultat
-import no.nav.aap.api.søknad.ettersendelse.Ettersending
+import no.nav.aap.api.søknad.ettersending.Ettersending
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.UtlandSøknadFordeler
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager

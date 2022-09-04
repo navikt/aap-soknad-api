@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.søknad.ettersendelse.Ettersending
+import no.nav.aap.api.søknad.ettersending.Ettersending
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.apache.tika.Tika

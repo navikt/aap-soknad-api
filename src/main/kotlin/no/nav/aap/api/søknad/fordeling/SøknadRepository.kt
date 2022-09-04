@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad.fordeling
 
-import no.nav.aap.api.søknad.ettersendelse.Ettersending.EttersendtVedlegg
+import no.nav.aap.api.søknad.ettersending.Ettersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.IdentifiableTimestampedBaseEntity

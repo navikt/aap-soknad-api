@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad
 
-import no.nav.aap.api.søknad.ettersendelse.Ettersending
+import no.nav.aap.api.søknad.ettersending.Ettersending
 import no.nav.aap.api.søknad.fordeling.Fordeler
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
@@ -26,10 +26,7 @@ class InnsendingFordelingController(private val fordeler: Fordeler) {
     fun soknad(@RequestBody søknad: @Valid StandardSøknad) = fordeler.fordel(søknad)
 
     @PostMapping("/ettersend")
-    fun ettersend(@RequestBody ettersending: Ettersending): Unit {
-        log.info("Ettersender $ettersending")
-        fordeler.fordel(ettersending)
-    }
+    fun ettersend(@RequestBody ettersending: Ettersending) = fordeler.fordel(ettersending)
 
     override fun toString() = "$javaClass.simpleName [fordeler=$fordeler]"
 }

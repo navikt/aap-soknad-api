@@ -19,7 +19,6 @@ import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.springframework.core.env.Environment
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.util.UriComponentsBuilder.fromUri
@@ -28,9 +27,9 @@ import java.time.ZoneOffset.UTC
 import java.util.*
 
 @ConditionalOnGCP
-class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
+class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                     private val cfg: MinSideConfig,
-                    private val repos: MinSideRepositories, val env: Environment) {
+                    private val repos: MinSideRepositories) {
 
     private val log = getLogger(javaClass)
 
@@ -42,7 +41,7 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
         with(cfg.beskjed) {
             if (enabled) {
                 log.trace("Oppretter Min Side beskjed for $fnr, ekstern nofifikasjon $eksternNotifikasjon og eventid $eventId")
-                dittNav.send(ProducerRecord(topic,
+                minside.send(ProducerRecord(topic,
                         key(type.skjemaType, eventId, fnr),
                         beskjed("$tekst ($eventId)", type, eksternNotifikasjon)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
@@ -64,7 +63,7 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
             if (enabled) {
                 log.trace("Oppretter Min Side oppgave for $fnr, ekstern notifikasjon $eksternNotifikasjon og eventid $eventId")
                 with(key(type.skjemaType, eventId, fnr)) {
-                    dittNav.send(ProducerRecord(topic,
+                    minside.send(ProducerRecord(topic,
                             this,
                             oppgave("$tekst ($eventId)", type, eventId, eksternNotifikasjon)))
                         .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
@@ -81,7 +80,7 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun avsluttOppgave(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
         with(cfg) {
             if (oppgave.enabled) {
-                dittNav.send(ProducerRecord(done, key(type, eventId, fnr), done()))
+                minside.send(ProducerRecord(done, key(type, eventId, fnr), done()))
                     .addCallback(SendCallback("avslutt oppgave med eventid $eventId"))
                 repos.oppgaver.findByEventid(eventId)?.let { it.done = true }
                     ?: log.warn("Kunne ikke sette beskjed med eventid $eventId for fnr $fnr til done i DB, ingen rader oppdatert")
@@ -95,7 +94,7 @@ class MinSideClient(private val dittNav: KafkaOperations<NokkelInput, Any>,
     fun avsluttBeskjed(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
         with(cfg) {
             if (beskjed.enabled) {
-                dittNav.send(ProducerRecord(done, key(type, eventId, fnr), done()))
+                minside.send(ProducerRecord(done, key(type, eventId, fnr), done()))
                     .addCallback(SendCallback("avslutt beskjed med eventid $eventId"))
                 repos.beskjeder.findByEventid(eventId)?.let { it.done = true }
                     ?: log.warn("Kunne ikke sette beskjed med eventid $eventId for fnr $fnr til done i DB, ingen rader oppdatert")

@@ -6,7 +6,7 @@ import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
-import no.nav.aap.api.søknad.ettersendelse.Ettersending
+import no.nav.aap.api.søknad.ettersending.Ettersending
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.StandardSøknadFullfører
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig

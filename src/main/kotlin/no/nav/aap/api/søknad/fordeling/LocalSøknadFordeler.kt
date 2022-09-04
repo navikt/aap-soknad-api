@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad.fordeling
 
-import no.nav.aap.api.søknad.ettersendelse.Ettersending
+import no.nav.aap.api.søknad.ettersending.Ettersending
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad

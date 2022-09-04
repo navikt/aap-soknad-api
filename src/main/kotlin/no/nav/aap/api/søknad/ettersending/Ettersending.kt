@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.ettersendelse
+package no.nav.aap.api.søknad.ettersending
 
 import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.api.søknad.model.VedleggType
