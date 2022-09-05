@@ -21,7 +21,7 @@ class SøknadClient(private val repo: SøknadRepository, private val ctx: AuthCo
 
     fun søknader(pageable: Pageable) = søknader(ctx.getFnr(), pageable)
     fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
-        repo.getSøknadByFnr(fnr.fnr, pageable)
+        repo.getSøknadByFnr(fnr.fnr, pageable).map(::tilSøknad)
 
     private fun tilSøknad(s: Søknad) =
         with(s) {
