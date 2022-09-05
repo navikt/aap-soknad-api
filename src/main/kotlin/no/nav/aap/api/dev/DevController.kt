@@ -6,7 +6,6 @@ import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
-import no.nav.aap.api.søknad.ettersending.Ettersending
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.StandardSøknadFullfører
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
@@ -15,6 +14,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideRepositories
+import no.nav.aap.api.søknad.model.Ettersending
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.util.LoggerUtil

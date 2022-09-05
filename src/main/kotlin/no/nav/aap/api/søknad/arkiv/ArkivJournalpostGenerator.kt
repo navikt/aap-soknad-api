@@ -6,10 +6,10 @@ import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
-import no.nav.aap.api.søknad.ettersending.Ettersending
-import no.nav.aap.api.søknad.ettersending.Ettersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
+import no.nav.aap.api.søknad.model.Ettersending
+import no.nav.aap.api.søknad.model.Ettersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype
@@ -59,7 +59,7 @@ class ArkivJournalpostGenerator(
 
     private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>, fnr: Fødselsnummer) =
         vedlegg.flatMap { e ->
-            require(vedlegg.isNotEmpty()) { "Forventet > 0 vedlagte vedlegg" }
+            require(vedlegg.isNotEmpty()) { "Forventet > 0  vedlegg" }
             dokumenterFra(e.ettersending, e.vedleggType, fnr)
         }.also {
             require(it.isNotEmpty()) { "Forventet > 0 vedlegg fra dokumentlager" }

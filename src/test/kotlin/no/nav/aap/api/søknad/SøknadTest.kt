@@ -15,11 +15,11 @@ import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.KontaktInformasjon
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
 import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
-import no.nav.aap.api.søknad.ettersending.Ettersending
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.InMemoryDokumentlager
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
 import no.nav.aap.api.søknad.model.BarnOgInntekt
+import no.nav.aap.api.søknad.model.Ettersending
 import no.nav.aap.api.søknad.model.Ferie
 import no.nav.aap.api.søknad.model.Ferie.FerieType.DAGER
 import no.nav.aap.api.søknad.model.Medlemskap

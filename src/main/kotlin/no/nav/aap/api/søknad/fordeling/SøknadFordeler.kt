@@ -7,7 +7,6 @@ import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivEttersendingResultat
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivSøknadResultat
-import no.nav.aap.api.søknad.ettersending.Ettersending
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.UtlandSøknadFordeler
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
@@ -16,6 +15,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPUTLAND
+import no.nav.aap.api.søknad.model.Ettersending
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
@@ -90,9 +90,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
             dokumentLager.slettDokumenter(e).run {
                 søknader.getSøknadByEventidAndFnr(e.søknadId, fnr.fnr)?.let {
                     with(it) {
-                        tidligereManglendeNåEttersendte(e.ettersendteVedlegg).forEach { m ->
-                            registrerVedlagtFraEttersending(m)
-                        }
+                        tidligereManglendeNåEttersendte(e.ettersendteVedlegg).forEach(::registrerVedlagtFraEttersending)
                         avsluttMinSideOppgaveHvisKomplett(fnr)
                         // TODO lagre og returnere kvittering
                     }

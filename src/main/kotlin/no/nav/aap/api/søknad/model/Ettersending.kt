@@ -1,7 +1,5 @@
-package no.nav.aap.api.søknad.ettersending
+package no.nav.aap.api.søknad.model
 
-import no.nav.aap.api.søknad.model.Vedlegg
-import no.nav.aap.api.søknad.model.VedleggType
 import java.util.*
 
 data class Ettersending(val søknadId: UUID,

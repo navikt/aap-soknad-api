@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad
 
-import no.nav.aap.api.søknad.ettersending.Ettersending
 import no.nav.aap.api.søknad.fordeling.Fordeler
+import no.nav.aap.api.søknad.model.Ettersending
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.Constants.IDPORTEN
