@@ -59,8 +59,12 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     private val log = LoggerUtil.getLogger(javaClass)
 
     @GetMapping("/soknader")
-    fun søknader(@RequestParam fnr: Fødselsnummer, pageable: Pageable) =
-        søknad.søknader(fnr, pageable)
+    fun søknader(@RequestParam fnr: Fødselsnummer) =
+        søknad.søknader(fnr)
+
+    @GetMapping("/soknader1")
+    fun søknader1(@RequestParam fnr: Fødselsnummer, pageable: Pageable) =
+        søknad.søknader1(fnr, pageable)
 
     @PostMapping("ettersend/{fnr}")
     @ResponseStatus(CREATED)
