@@ -19,11 +19,9 @@ class SøknadClient(private val repo: SøknadRepository, private val ctx: AuthCo
     fun søknad(fnr: Fødselsnummer, uuid: UUID) =
         repo.getSøknadByEventidAndFnr(uuid, fnr.fnr)?.let(::tilSøknad)
 
-    fun søknader() = søknader(ctx.getFnr())
-    fun søknader(fnr: Fødselsnummer) =
-        repo.getSøknadByFnrOrderByCreatedDesc(fnr.fnr).map(::tilSøknad)
-
-    fun søknader1(fnr: Fødselsnummer, pageable: Pageable) = repo.getSøknadByFnr(fnr.fnr, pageable)
+    fun søknader(pageable: Pageable) = søknader(ctx.getFnr(), pageable)
+    fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
+        repo.getSøknadByFnr(fnr.fnr, pageable)
 
     private fun tilSøknad(s: Søknad) =
         with(s) {
