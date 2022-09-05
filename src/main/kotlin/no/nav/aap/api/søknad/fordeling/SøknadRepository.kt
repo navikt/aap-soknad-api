@@ -1,7 +1,5 @@
 package no.nav.aap.api.søknad.fordeling
 
-import com.fasterxml.jackson.annotation.JsonBackReference
-import com.fasterxml.jackson.annotation.JsonManagedReference
 import no.nav.aap.api.søknad.ettersending.Ettersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
@@ -23,7 +21,7 @@ import javax.persistence.OneToMany
 import javax.persistence.Table
 
 interface SøknadRepository : JpaRepository<Søknad, Long> {
-    
+
     fun getSøknadByFnr(@Param("fnr") fnr: String, pageable: Pageable): List<Søknad>
 
     fun getSøknadByEventidAndFnr(@Param("eventid") eventId: UUID, @Param("fnr") fnr: String): Søknad?
@@ -34,10 +32,8 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             fnr: String,
             val journalpostid: String,
             eventid: UUID,
-            @JsonManagedReference
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var manglendevedlegg: MutableSet<ManglendeVedlegg> = mutableSetOf(),
-            @JsonManagedReference
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var innsendtevedlegg: MutableSet<InnsendteVedlegg> = mutableSetOf(),
                 ) : BaseEntity(fnr, eventid = eventid) {
@@ -78,7 +74,6 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     @Table(name = "manglendevedlegg")
     class ManglendeVedlegg(
             @ManyToOne(optional = false)
-            @JsonBackReference
             var soknad: Søknad? = null,
             eventid: UUID,
             vedleggtype: VedleggType) : VedleggBaseEntity(eventid, vedleggtype)
@@ -87,7 +82,6 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     @Table(name = "innsendtevedlegg")
     class InnsendteVedlegg(
             @ManyToOne(optional = false)
-            @JsonBackReference
             var soknad: Søknad? = null,
             eventid: UUID,
             vedleggtype: VedleggType) : VedleggBaseEntity(eventid, vedleggtype)
