@@ -20,6 +20,7 @@ import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
+import org.springframework.data.domain.Pageable
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
@@ -58,8 +59,8 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     private val log = LoggerUtil.getLogger(javaClass)
 
     @GetMapping("/soknader")
-    fun søknader(@RequestParam fnr: Fødselsnummer) =
-        søknad.søknader(fnr)
+    fun søknader(@RequestParam fnr: Fødselsnummer, pageable: Pageable) =
+        søknad.søknader(fnr, pageable)
 
     @PostMapping("ettersend/{fnr}")
     @ResponseStatus(CREATED)
