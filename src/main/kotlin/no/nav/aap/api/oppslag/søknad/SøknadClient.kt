@@ -6,6 +6,7 @@ import no.nav.aap.api.søknad.fordeling.SøknadRepository
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.AuthContext
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.*
@@ -18,9 +19,10 @@ class SøknadClient(private val repo: SøknadRepository, private val ctx: AuthCo
     fun søknad(fnr: Fødselsnummer, uuid: UUID) =
         repo.getSøknadByEventidAndFnr(uuid, fnr.fnr)?.let(::tilSøknad)
 
-    fun søknader() = søknader(ctx.getFnr())
-    fun søknader(fnr: Fødselsnummer) =
-        repo.getSøknadByFnrOrderByCreatedDesc(fnr.fnr).map(::tilSøknad)
+    fun søknader(pageable: Pageable) = søknader(ctx.getFnr(), pageable)
+    fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
+        repo.getSøknadByFnr(fnr.fnr, pageable)
+    // repo.getSøknadByFnrOrderByCreatedDesc(fnr.fnr).map(::tilSøknad)
 
     private fun tilSøknad(s: Søknad) =
         with(s) {

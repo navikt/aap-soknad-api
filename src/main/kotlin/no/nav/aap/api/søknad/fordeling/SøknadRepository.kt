@@ -6,6 +6,7 @@ import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.IdentifiableTimestampedBaseEntity
 import no.nav.aap.api.søknad.model.VedleggType
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.query.Param
 import java.time.LocalDateTime
@@ -25,6 +26,9 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
                                                           @Param("created") fra: LocalDateTime): List<Søknad>
 
     fun getSøknadByFnrOrderByCreatedDesc(@Param("fnr") fnr: String): List<Søknad>
+
+    fun getSøknadByFnr(@Param("fnr") fnr: String, pageable: Pageable): List<Søknad>
+
     fun getSøknadByEventidAndFnr(@Param("eventid") eventId: UUID, @Param("fnr") fnr: String): Søknad?
 
     @Entity(name = "søknad")
