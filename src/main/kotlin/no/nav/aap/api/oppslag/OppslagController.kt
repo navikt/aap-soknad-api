@@ -47,7 +47,7 @@ class OppslagController(val pdl: PDLClient,
     fun søknader() = søknad.søknader()
 
     @GetMapping("/soeknad")
-    fun søknader(@PathVariable uuid: UUID) = søknad.søknad(uuid)
+    fun søknad(@PathVariable uuid: UUID) = søknad.søknad(uuid)
 
     @GetMapping("/saf")
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentInfoId: DokumentInfoId) =
