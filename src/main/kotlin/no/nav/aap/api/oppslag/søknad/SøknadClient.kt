@@ -13,6 +13,11 @@ import java.util.*
 @Component
 class SøknadClient(private val repo: SøknadRepository, private val ctx: AuthContext) {
 
+    fun søknad(uuid: UUID) = søknad(ctx.getFnr(), uuid)
+
+    fun søknad(fnr: Fødselsnummer, uuid: UUID) =
+        repo.getSøknadByEventidAndFnr(uuid, fnr.fnr)?.let(::tilSøknad)
+
     fun søknader() = søknader(ctx.getFnr())
     fun søknader(fnr: Fødselsnummer) =
         repo.getSøknadByFnrOrderByCreatedDesc(fnr.fnr).map(::tilSøknad)
