@@ -29,6 +29,7 @@ import no.nav.aap.arkiv.Dokument
 import no.nav.aap.arkiv.DokumentVariant
 import no.nav.aap.arkiv.Filtype.PDFA
 import no.nav.aap.arkiv.Journalpost
+import no.nav.aap.arkiv.encode
 import no.nav.aap.arkiv.somPDFVariant
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -37,7 +38,6 @@ import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.stereotype.Component
-import java.util.Base64.getEncoder
 
 @Component
 class ArkivJournalpostGenerator(
@@ -63,7 +63,7 @@ class ArkivJournalpostGenerator(
             dokumenterFra(e.ettersending, e.vedleggType, fnr)
         }.also {
             require(it.isNotEmpty()) { "Forventet > 0 vedlegg fra dokumentlager" }
-            require(vedlegg.size == it.size) { "Forventet ${vedlegg.size} fra dokumentlager, fant ${it.size}" }
+            require(vedlegg.size == it.size) { "Forventet   ${vedlegg.size} fra dokumentlager, fant ${it.size}" }
         }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
@@ -139,18 +139,6 @@ class ArkivJournalpostGenerator(
             log.trace("Ingen dokumenter å lese fra dokumentlager")
         }
 
-    private fun ByteArray.somDokument(tittel: String) =
-        Dokument(tittel = tittel,
-                dokumentVariant = DokumentVariant(PDFA, getEncoder().encodeToString(this))).also {
-            log.trace("Dokument konvertert fra bytes er $it")
-        }
-
-    private fun DokumentInfo.somDokument(tittel: String) =
-        Dokument(tittel = tittel, dokumentVariant = DokumentVariant(PDFA, getEncoder().encodeToString(bytes)))
-            .also {
-                log.trace("Dokument konvertert fra DokumentInfo er $it")
-            }
-
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
         listOf(Dokument(UTLAND, listOf(søknad.somJsonVariant(mapper), pdfDokument)
             .also {
@@ -160,5 +148,11 @@ class ArkivJournalpostGenerator(
         })
 
     internal fun Journalpost.størrelse() = this.dokumenter.størrelse("dokument")
+    private fun ByteArray.somDokument(tittel: String) =
+        Dokument(tittel = tittel, dokumentVariant = DokumentVariant(PDFA, encode())).also {
+            log.trace("Dokument konvertert er $it")
+        }
+
+    private fun DokumentInfo.somDokument(tittel: String) = bytes.somDokument(tittel)
 
 }
