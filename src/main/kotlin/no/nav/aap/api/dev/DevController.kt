@@ -22,6 +22,7 @@ import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort.Direction.DESC
+import org.springframework.data.web.PageableDefault
 import org.springframework.data.web.SortDefault
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
@@ -62,7 +63,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
 
     @GetMapping("/soknader")
     fun søknader(@RequestParam fnr: Fødselsnummer,
-                 @SortDefault(sort = ["created"], direction = DESC) pageable: Pageable) =
+                 @SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
         søknad.søknader(fnr, pageable)
 
     @PostMapping("ettersend/{fnr}")
