@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.fordeling
 
-import no.nav.aap.api.søknad.model.Ettersending
 import no.nav.aap.api.søknad.model.Kvittering
+import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -22,7 +22,7 @@ class LocalSøknadFordeler : Fordeler {
             log.info("Dummy-ruting av søknad til bakenforliggende systemer")
         }
 
-    override fun fordel(ettersending: Ettersending) {
+    override fun fordel(ettersending: StandardEttersending) {
         TODO("Not yet implemented")
     }
 }

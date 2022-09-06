@@ -8,8 +8,8 @@ import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
-import no.nav.aap.api.søknad.model.Ettersending
-import no.nav.aap.api.søknad.model.Ettersending.EttersendtVedlegg
+import no.nav.aap.api.søknad.model.StandardEttersending
+import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype
@@ -48,7 +48,7 @@ class ArkivJournalpostGenerator(
 
     private val log = getLogger(javaClass)
 
-    fun journalpostFra(es: Ettersending, søker: Søker): Journalpost =
+    fun journalpostFra(es: StandardEttersending, søker: Søker): Journalpost =
         Journalpost(dokumenter = dokumenterFra(es.ettersendteVedlegg, søker.fnr),
                 tittel = STANDARD_ETTERSENDING.tittel,
                 avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),

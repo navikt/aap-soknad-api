@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.arkiv
 
 import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
-import no.nav.aap.api.søknad.model.Ettersending
+import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
@@ -26,7 +26,7 @@ class ArkivFordeler(private val arkiv: ArkivClient,
             ArkivSøknadResultat(this, arkiv.journalfør(generator.journalpostFra(søknad, søker, this)))
         }
 
-    fun fordel(ettersending: Ettersending, søker: Søker) =
+    fun fordel(ettersending: StandardEttersending, søker: Søker) =
         ArkivEttersendingResultat(arkiv.journalfør(generator.journalpostFra(ettersending, søker))).also {
             log.trace("Fordeling av ettersending til arkiv OK med journalpost ${it.journalpostId}")
         }

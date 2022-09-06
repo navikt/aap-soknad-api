@@ -19,12 +19,12 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.InMemoryDokumentlager
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
 import no.nav.aap.api.søknad.model.BarnOgInntekt
-import no.nav.aap.api.søknad.model.Ettersending
 import no.nav.aap.api.søknad.model.Ferie
 import no.nav.aap.api.søknad.model.Ferie.FerieType.DAGER
 import no.nav.aap.api.søknad.model.Medlemskap
 import no.nav.aap.api.søknad.model.RadioValg
 import no.nav.aap.api.søknad.model.RadioValg.JA
+import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Startdato
 import no.nav.aap.api.søknad.model.Studier
@@ -139,7 +139,7 @@ class SøknadTest {
 
     @Test
     fun parse() {
-        val es = mapper.readValue(ettersending, Ettersending::class.java)
+        val es = mapper.readValue(ettersending, StandardEttersending::class.java)
         val journalpost = ArkivJournalpostGenerator(mapper,
                 InMemoryDokumentlager(), ctx,
                 BildeTilPDFKonverterer(BildeSkalerer())).journalpostFra(es, søker())

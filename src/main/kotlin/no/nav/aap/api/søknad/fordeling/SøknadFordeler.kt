@@ -15,8 +15,8 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPUTLAND
-import no.nav.aap.api.søknad.model.Ettersending
 import no.nav.aap.api.søknad.model.Kvittering
+import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -30,13 +30,13 @@ class SøknadFordeler(private val utland: UtlandSøknadFordeler, private val sta
     Fordeler {
     override fun fordel(søknad: UtlandSøknad) = utland.fordel(søknad)
     override fun fordel(søknad: StandardSøknad) = standard.fordel(søknad)
-    override fun fordel(ettersending: Ettersending) = standard.fordel(ettersending)
+    override fun fordel(ettersending: StandardEttersending) = standard.fordel(ettersending)
 }
 
 interface Fordeler {
     fun fordel(søknad: UtlandSøknad): Kvittering
     fun fordel(søknad: StandardSøknad): Kvittering
-    fun fordel(ettersending: Ettersending)
+    fun fordel(ettersending: StandardEttersending)
 
 }
 
@@ -55,7 +55,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
             }
         }
 
-    fun fordel(e: Ettersending) =
+    fun fordel(e: StandardEttersending) =
         pdl.søkerUtenBarn().run {
             with(arkiv.fordel(e, this)) {
                 vl.fordel(e, fnr, journalpostId, cfg.ettersending)
@@ -86,7 +86,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
             }
 
         @Transactional
-        fun fullfør(e: Ettersending, fnr: Fødselsnummer, res: ArkivEttersendingResultat) =
+        fun fullfør(e: StandardEttersending, fnr: Fødselsnummer, res: ArkivEttersendingResultat) =
             dokumentLager.slettDokumenter(e).run {
                 søknader.getSøknadByEventidAndFnr(e.søknadId, fnr.fnr)?.let {
                     with(it) {

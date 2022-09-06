@@ -14,7 +14,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideRepositories
-import no.nav.aap.api.søknad.model.Ettersending
+import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.util.LoggerUtil
@@ -64,7 +64,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
 
     @PostMapping("ettersend/{fnr}")
     @ResponseStatus(CREATED)
-    fun ettersend(@PathVariable fnr: Fødselsnummer, @RequestBody ettersending: Ettersending) {
+    fun ettersend(@PathVariable fnr: Fødselsnummer, @RequestBody ettersending: StandardEttersending) {
         log.trace("Mottok ettersendng $ettersending for $fnr")
         val søker = Søker(Navn("Dennis", "B", "Bergkamp"), fnr)
         val post = arkiv.journalpostFra(ettersending, søker)

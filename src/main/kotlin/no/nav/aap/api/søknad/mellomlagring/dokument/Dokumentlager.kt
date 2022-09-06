@@ -2,7 +2,7 @@ package no.nav.aap.api.søknad.mellomlagring.dokument
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
-import no.nav.aap.api.søknad.model.Ettersending
+import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.apache.tika.Tika
 import org.springframework.http.ContentDisposition
@@ -18,7 +18,7 @@ interface Dokumentlager {
     fun slettDokumenter(søknad: StandardSøknad)
     fun lagreDokument(dokument: DokumentInfo): UUID
     fun navn(fnr: Fødselsnummer, uuid: UUID) = "${fnr.fnr}/$uuid"
-    fun slettDokumenter(e: Ettersending) =
+    fun slettDokumenter(e: StandardEttersending) =
         e.ettersendteVedlegg.forEach { es ->
             es.ettersending.deler?.forEach { uuid ->
                 uuid?.let {
