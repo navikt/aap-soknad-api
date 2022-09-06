@@ -88,13 +88,15 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
         @Transactional
         fun fullfør(e: StandardEttersending, fnr: Fødselsnummer, res: ArkivEttersendingResultat) =
             dokumentLager.slettDokumenter(e).run {
-                søknader.getSøknadByEventidAndFnr(e.søknadId, fnr.fnr)?.let {
-                    with(it) {
-                        registrerEttersending(fnr, res, e.ettersendteVedlegg)
-                        avsluttMinSideOppgaveHvisKomplett(fnr)
-                        // TODO lagre og returnere kvittering
-                    }
-                } ?: log.warn("Ingen tidligere innsendt søknad med id ${e.søknadId} ble funnet for $fnr")
+                e.søknadId?.let { id ->
+                    søknader.getSøknadByEventidAndFnr(id, fnr.fnr)?.let {
+                        with(it) {
+                            registrerEttersending(fnr, res, e.ettersendteVedlegg)
+                            avsluttMinSideOppgaveHvisKomplett(fnr)
+                            // TODO lagre og returnere kvittering
+                        }
+                    } ?: log.warn("Ingen tidligere innsendt søknad med id ${e.søknadId} ble funnet for $fnr")
+                } ?: log.warn("Ettersending uten søknadId TODO")
             }
 
         private fun Søknad.oppdaterMinSide(erKomplett: Boolean, fnr: Fødselsnummer) =

@@ -76,8 +76,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
         fun registrerEttersending(fnr: Fødselsnummer,
                                   res: ArkivEttersendingResultat,
                                   ettersendteVedlegg: List<EttersendtVedlegg>) {
-            val es = Ettersending(fnr.fnr, res.journalpostId, callIdAsUUID(), this)
-            ettersendinger.add(es)
+            ettersendinger.add(Ettersending(fnr.fnr, res.journalpostId, callIdAsUUID(), this))
             tidligereManglendeNåEttersendte(ettersendteVedlegg)
                 .forEach(::registrerVedlagtFraEttersending)
         }
