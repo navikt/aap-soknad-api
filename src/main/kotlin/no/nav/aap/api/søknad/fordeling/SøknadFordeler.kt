@@ -8,7 +8,6 @@ import no.nav.aap.api.søknad.arkiv.ArkivFordeler
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivEttersendingResultat
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivSøknadResultat
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.UtlandSøknadFordeler
-import no.nav.aap.api.søknad.fordeling.SøknadRepository.Ettersending
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
@@ -91,10 +90,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
             dokumentLager.slettDokumenter(e).run {
                 søknader.getSøknadByEventidAndFnr(e.søknadId, fnr.fnr)?.let {
                     with(it) {
-                        val es = Ettersending(fnr.fnr, res.journalpostId, callIdAsUUID(), it)
-                        it.ettersendinger.add(es)
-                        tidligereManglendeNåEttersendte(e.ettersendteVedlegg)
-                            .forEach(::registrerVedlagtFraEttersending)
+                        registrerEttersending(fnr, res, e.ettersendteVedlegg)
                         avsluttMinSideOppgaveHvisKomplett(fnr)
                         // TODO lagre og returnere kvittering
                     }

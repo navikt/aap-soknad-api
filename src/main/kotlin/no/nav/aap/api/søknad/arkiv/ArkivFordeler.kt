@@ -16,6 +16,7 @@ class ArkivFordeler(private val arkiv: ArkivClient,
 
     fun fordel(søknad: StandardSøknad, søker: Søker) =
         with(pdf.tilPdf(søker, søknad)) {
+            log.trace("Fordeler søknad til arkiv")
             ArkivSøknadResultat(this, arkiv.journalfør(generator.journalpostFra(søknad, søker, this))).also {
                 log.trace("Fordeling til arkiv OK med journalpost ${it.journalpostId}")
             }

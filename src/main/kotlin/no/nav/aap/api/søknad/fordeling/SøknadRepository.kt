@@ -1,10 +1,13 @@
 package no.nav.aap.api.søknad.fordeling
 
+import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivEttersendingResultat
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.IdentifiableTimestampedBaseEntity
 import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.VedleggType
+import no.nav.aap.util.MDCUtil.callIdAsUUID
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -55,7 +58,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
                 }
             }
 
-        fun registrerVedlagtFraEttersending(m: ManglendeVedlegg) =
+        private fun registrerVedlagtFraEttersending(m: ManglendeVedlegg) =
             with(m) {
                 registrerSomEttersendt(this)
                 manglendevedlegg.remove(this)
@@ -67,8 +70,17 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
                 soknad = this@Søknad
             }
 
-        fun tidligereManglendeNåEttersendte(e: List<EttersendtVedlegg>) =
+        private fun tidligereManglendeNåEttersendte(e: List<EttersendtVedlegg>) =
             manglendevedlegg.filter { m -> e.any { m.vedleggtype == it.vedleggType } }
+
+        fun registrerEttersending(fnr: Fødselsnummer,
+                                  res: ArkivEttersendingResultat,
+                                  ettersendteVedlegg: List<EttersendtVedlegg>) {
+            val es = Ettersending(fnr.fnr, res.journalpostId, callIdAsUUID(), this)
+            ettersendinger.add(es)
+            tidligereManglendeNåEttersendte(ettersendteVedlegg)
+                .forEach(::registrerVedlagtFraEttersending)
+        }
     }
 
     @Entity(name = "ettersending")
