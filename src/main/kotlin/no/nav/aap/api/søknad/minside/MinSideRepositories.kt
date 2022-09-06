@@ -30,6 +30,7 @@ import javax.persistence.PreUpdate
 @NoRepositoryBean
 interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
     fun findByEventid(eventid: UUID): T?
+    fun findByFnrAndEventid(fnr: String, eventid: UUID): T?
     fun findByFnrAndDoneIsFalse(fnr: String): List<T>
 
     @MappedSuperclass

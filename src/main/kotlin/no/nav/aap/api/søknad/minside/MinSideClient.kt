@@ -80,7 +80,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     fun avsluttOppgave(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
         with(cfg) {
             if (oppgave.enabled) {
-                repos.oppgaver.findByEventid(eventId)?.let {
+                repos.oppgaver.findByFnrAndEventid(fnr.fnr, eventId)?.let {
                     if (!it.done) {
                         minside.send(ProducerRecord(done, key(type, eventId, fnr), done()))
                             .addCallback(SendCallback("avslutt oppgave med eventid $eventId"))
@@ -100,7 +100,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     fun avsluttBeskjed(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
         with(cfg) {
             if (beskjed.enabled) {
-                repos.beskjeder.findByEventid(eventId)?.let {
+                repos.beskjeder.findByFnrAndEventid(fnr.fnr, eventId)?.let {
                     if (!it.done) {
                         minside.send(ProducerRecord(done, key(type, eventId, fnr), done()))
                             .addCallback(SendCallback("avslutt beskjed med eventid $eventId"))
