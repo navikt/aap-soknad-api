@@ -33,13 +33,14 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             val journalpostid: String,
             eventid: UUID,
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
+            var ettersendinger: MutableSet<Ettersending> = mutableSetOf(),
+            @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var manglendevedlegg: MutableSet<ManglendeVedlegg> = mutableSetOf(),
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
-            var innsendtevedlegg: MutableSet<InnsendteVedlegg> = mutableSetOf(),
-                ) : BaseEntity(fnr, eventid = eventid) {
+            var innsendtevedlegg: MutableSet<InnsendteVedlegg> = mutableSetOf()) : BaseEntity(fnr, eventid = eventid) {
         fun registrerSomVedlagte(vedlagte: List<VedleggType>) {
-            vedlagte.forEach { type ->
-                with(InnsendteVedlegg(soknad = this, vedleggtype = type, eventid = eventid)) {
+            vedlagte.forEach {
+                with(InnsendteVedlegg(soknad = this, vedleggtype = it, eventid = eventid)) {
                     innsendtevedlegg.add(this)
                     soknad = this@Søknad
                 }
@@ -69,6 +70,15 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
         fun tidligereManglendeNåEttersendte(e: List<EttersendtVedlegg>) =
             manglendevedlegg.filter { m -> e.any { m.vedleggtype == it.vedleggType } }
     }
+
+    @Entity(name = "ettersending")
+    @Table(name = "ettersendinger")
+    class Ettersending(
+            fnr: String,
+            val journalpostid: String,
+            eventid: UUID,
+            @ManyToOne
+            var soknad: Søknad? = null) : BaseEntity(fnr, eventid = eventid)
 
     @Entity(name = "manglendevedlegg")
     @Table(name = "manglendevedlegg")
