@@ -21,6 +21,8 @@ import no.nav.aap.util.LoggerUtil
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort.Direction.DESC
+import org.springframework.data.web.SortDefault
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
@@ -59,7 +61,8 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     private val log = LoggerUtil.getLogger(javaClass)
 
     @GetMapping("/soknader")
-    fun søknader(@RequestParam fnr: Fødselsnummer, pageable: Pageable) =
+    fun søknader(@RequestParam fnr: Fødselsnummer,
+                 @SortDefault(sort = ["created"], direction = DESC) pageable: Pageable) =
         søknad.søknader(fnr, pageable)
 
     @PostMapping("ettersend/{fnr}")

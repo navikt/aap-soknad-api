@@ -13,6 +13,8 @@ import no.nav.aap.util.Constants
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort.Direction.DESC
+import org.springframework.data.web.SortDefault
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
@@ -45,7 +47,7 @@ class OppslagController(val pdl: PDLClient,
         }
 
     @GetMapping("/soeknader")
-    fun søknader(pageable: Pageable) = søknad.søknader(pageable)
+    fun søknader(@SortDefault(sort = ["created"], direction = DESC) pageable: Pageable) = søknad.søknader(pageable)
 
     @GetMapping("/soeknad/{uuid}")
     fun søknad(@PathVariable uuid: UUID) = søknad.søknad(uuid)
