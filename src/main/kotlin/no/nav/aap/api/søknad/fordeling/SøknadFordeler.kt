@@ -90,11 +90,9 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
             dokumentLager.slettDokumenter(e).run {
                 e.søknadId?.let { id ->
                     søknader.getSøknadByEventidAndFnr(id, fnr.fnr)?.let {
-                        with(it) {
-                            registrerEttersending(fnr, res, e.ettersendteVedlegg)
-                            avsluttMinSideOppgaveHvisKomplett(fnr)
-                            // TODO lagre og returnere kvittering
-                        }
+                        it.registrerEttersending(fnr, res, e.ettersendteVedlegg)
+                        it.avsluttMinSideOppgaveHvisKomplett(fnr)
+                        // TODO lagre og returnere kvittering
                     } ?: log.warn("Ingen tidligere innsendt søknad med id ${e.søknadId} ble funnet for $fnr")
                 } ?: log.warn("Ettersending uten søknadId TODO")
             }

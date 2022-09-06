@@ -14,10 +14,10 @@ import java.util.*
 @Component
 class SøknadClient(private val repo: SøknadRepository, private val ctx: AuthContext) {
 
-    fun søknad(uuid: UUID) = søknad(ctx.getFnr(), uuid)
+    fun søknad(søknadId: UUID) = søknad(ctx.getFnr(), søknadId)
 
-    fun søknad(fnr: Fødselsnummer, uuid: UUID) =
-        repo.getSøknadByEventidAndFnr(uuid, fnr.fnr)?.let(::tilSøknad)
+    fun søknad(fnr: Fødselsnummer, søknadId: UUID) =
+        repo.getSøknadByEventidAndFnr(søknadId, fnr.fnr)?.let(::tilSøknad)
 
     fun søknader(pageable: Pageable) = søknader(ctx.getFnr(), pageable)
     fun søknader(fnr: Fødselsnummer, pageable: Pageable) =

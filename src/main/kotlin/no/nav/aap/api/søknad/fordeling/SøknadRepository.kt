@@ -26,7 +26,6 @@ import javax.persistence.Table
 interface SøknadRepository : JpaRepository<Søknad, Long> {
 
     fun getSøknadByFnr(@Param("fnr") fnr: String, pageable: Pageable): List<Søknad>
-
     fun getSøknadByEventidAndFnr(@Param("eventid") eventId: UUID, @Param("fnr") fnr: String): Søknad?
 
     @Entity(name = "søknad")
