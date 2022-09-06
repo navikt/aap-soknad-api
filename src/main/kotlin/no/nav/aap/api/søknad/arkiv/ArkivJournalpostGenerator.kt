@@ -147,7 +147,7 @@ class ArkivJournalpostGenerator(
             log.trace("Dokument til arkiv $it")
         })
 
-    internal fun Journalpost.størrelse() = this.dokumenter.størrelse("dokument")
+    internal fun Journalpost.størrelse() = dokumenter.størrelse("dokument")
     private fun ByteArray.somDokument(tittel: String) =
         Dokument(tittel = tittel, dokumentVariant = DokumentVariant(PDFA, encode())).also {
             log.trace("Dokument konvertert er $it")

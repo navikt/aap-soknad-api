@@ -86,15 +86,14 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
         companion object {
-            fun getInstance(type: String?, fnr: String?, uuid: String?): Metadata? {
-                return if (uuid != null && fnr != null && type != null) {
+            fun getInstance(type: String?, fnr: String?, uuid: String?): Metadata? =
+                if (uuid != null && fnr != null && type != null) {
                     toMDC(NAV_CALL_ID, uuid)
                     Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(uuid))
                 }
                 else {
                     null
                 }
-            }
         }
     }
 
