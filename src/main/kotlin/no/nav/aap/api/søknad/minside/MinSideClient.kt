@@ -11,6 +11,7 @@ import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkCon
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.SØKNAD
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
@@ -35,7 +36,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
 
     @Transactional
     fun opprettBeskjed(type: MinSideNotifikasjonType,
-                       eventId: UUID,
+                       eventId: UUID = callIdAsUUID(),
                        fnr: Fødselsnummer,
                        tekst: String, eksternNotifikasjon: Boolean = false) =
         with(cfg.beskjed) {
@@ -56,7 +57,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     @Transactional
     fun opprettOppgave(type: MinSideNotifikasjonType,
                        fnr: Fødselsnummer,
-                       eventId: UUID,
+                       eventId: UUID = callIdAsUUID(),
                        tekst: String,
                        eksternNotifikasjon: Boolean = true) =
         with(cfg.oppgave) {

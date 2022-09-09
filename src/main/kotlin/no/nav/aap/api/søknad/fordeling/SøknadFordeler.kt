@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.fordeling
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
+import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler
@@ -107,7 +108,9 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
         private fun fullførEttersendingUtenSøknad(fnr: Fødselsnummer,
                                                   res: ArkivEttersendingResultat,
                                                   ettersendteVedlegg: List<StandardEttersending.EttersendtVedlegg>): Unit {
-            log.warn("Ettersending uten søknadId TODO")
+            log.warn("Registrering av ettersending i DB uten søknadId TODO")
+            minside.opprettBeskjed(MINAAPSTD, callIdAsUUID(), fnr,
+                    "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel}", true)
         }
 
         private fun Søknad.oppdaterMinSide(erKomplett: Boolean, fnr: Fødselsnummer) =
