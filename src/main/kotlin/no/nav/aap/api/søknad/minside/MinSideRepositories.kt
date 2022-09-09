@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
@@ -28,7 +29,7 @@ import javax.persistence.PreRemove
 import javax.persistence.PreUpdate
 
 @NoRepositoryBean
-interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
+interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long>, JpaSpecificationExecutor<T> {
     fun findByEventid(eventid: UUID): T?
     fun findByFnrAndEventid(fnr: String, eventid: UUID): T?
     fun findByFnrAndDoneIsFalse(fnr: String): List<T>

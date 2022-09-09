@@ -11,6 +11,7 @@ import no.nav.aap.util.MDCUtil.callIdAsUUID
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.repository.query.Param
 import java.time.LocalDateTime
 import java.util.*
@@ -23,7 +24,7 @@ import javax.persistence.MappedSuperclass
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
-interface SøknadRepository : JpaRepository<Søknad, Long> {
+interface SøknadRepository : JpaRepository<Søknad, Long>, JpaSpecificationExecutor<Søknad> {
 
     fun getSøknadByFnr(@Param("fnr") fnr: String, pageable: Pageable): List<Søknad>
     fun getSøknadByEventidAndFnr(@Param("eventid") eventId: UUID, @Param("fnr") fnr: String): Søknad?

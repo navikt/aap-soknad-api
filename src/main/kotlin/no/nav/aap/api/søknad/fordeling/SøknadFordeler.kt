@@ -108,7 +108,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
         private fun fullførEttersendingUtenSøknad(fnr: Fødselsnummer,
                                                   res: ArkivEttersendingResultat,
                                                   ettersendteVedlegg: List<StandardEttersending.EttersendtVedlegg>): Unit {
-            log.warn("Registrering av ettersending i DB uten søknadId TODO")
+            log.warn("Registrering av ettersending i DB uten søknadId")
             minside.opprettBeskjed(MINAAPSTD, callIdAsUUID(), fnr,
                     "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel}", true)
         }
