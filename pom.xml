@@ -43,7 +43,7 @@
         <testcontainers.version>1.17.3</testcontainers.version>
         <token.validation.version>2.1.4</token.validation.version>
         <hibernate.types.version>2.18.0</hibernate.types.version>
-        <varsling.version>08271806</varsling.version>
+        <eksternvarsling.version>08271806</eksternvarsling.version>
         <tika.version>2.4.1</tika.version>
 
     </properties>
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>no.nav.teamdokumenthandtering</groupId>
             <artifactId>teamdokumenthandtering-avro-schemas</artifactId>
-            <version>${varsling.version}</version>
+            <version>${eksternvarsling.version}</version>
         </dependency>
         <dependency>
             <groupId>com.vladmihalcea</groupId>
@@ -400,14 +400,6 @@
                         <version>${kotlin.version}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
             </plugin>
         </plugins>
     </build>

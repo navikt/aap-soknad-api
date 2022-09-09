@@ -24,6 +24,7 @@ import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @ConditionalOnGCP
 class SøknadFordeler(private val utland: UtlandSøknadFordeler, private val standard: StandardSøknadFordeler) :
@@ -88,14 +89,26 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
         @Transactional
         fun fullfør(e: StandardEttersending, fnr: Fødselsnummer, res: ArkivEttersendingResultat) =
             dokumentLager.slettDokumenter(e).run {
-                e.søknadId?.let { id ->
-                    søknader.getSøknadByEventidAndFnr(id, fnr.fnr)?.let {
-                        it.registrerEttersending(fnr, res, e.ettersendteVedlegg)
-                        it.avsluttMinSideOppgaveHvisKomplett(fnr)
-                        // TODO lagre og returnere kvittering
-                    } ?: log.warn("Ingen tidligere innsendt søknad med id ${e.søknadId} ble funnet for $fnr")
-                } ?: log.warn("Ettersending uten søknadId TODO")
-            }
+                e.søknadId?.let {
+                    fullførEttersending(it, fnr, res, e.ettersendteVedlegg)
+                }
+            } ?: fullførEttersendingUtenSøknad(fnr, res, e.ettersendteVedlegg)
+
+        private fun fullførEttersending(id: UUID, fnr: Fødselsnummer,
+                                        res: ArkivEttersendingResultat,
+                                        e: List<StandardEttersending.EttersendtVedlegg>): Unit {
+            søknader.getSøknadByEventidAndFnr(id, fnr.fnr)?.let {
+                it.registrerEttersending(fnr, res, e)
+                it.avsluttMinSideOppgaveHvisKomplett(fnr)
+                // TODO lagre og returnere kvittering
+            } ?: log.warn("Ingen tidligere innsendt søknad med id $id ble funnet for $fnr (dette skal aldri skje)")
+        }
+
+        private fun fullførEttersendingUtenSøknad(fnr: Fødselsnummer,
+                                                  res: ArkivEttersendingResultat,
+                                                  ettersendteVedlegg: List<StandardEttersending.EttersendtVedlegg>): Unit {
+            log.warn("Ettersending uten søknadId TODO")
+        }
 
         private fun Søknad.oppdaterMinSide(erKomplett: Boolean, fnr: Fødselsnummer) =
             if (erKomplett) {
