@@ -62,6 +62,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
 
     fun fordel(e: StandardEttersending) =
         pdl.søkerUtenBarn().run {
+            log.trace("Fordeler $e")
             with(arkiv.fordel(e, this)) {
                 vl.fordel(e, fnr, journalpostId, cfg.ettersending)
                 fullfører.fullfør(e, this@run.fnr, this)
