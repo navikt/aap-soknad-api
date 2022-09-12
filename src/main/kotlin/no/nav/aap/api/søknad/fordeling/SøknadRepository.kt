@@ -31,7 +31,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long>, JpaSpecificationExec
     fun getSøknadByFnr(@Param("fnr") fnr: String, pageable: Pageable): List<Søknad>
     fun getSøknadByEventidAndFnr(@Param("eventid") eventId: UUID, @Param("fnr") fnr: String): Søknad?
 
-    fun getSisteSøknad(fnr: Fødselsnummer) =
+    fun sisteSøknad(fnr: Fødselsnummer) =
         getSøknadByFnr(fnr.fnr, PageRequest.of(0, 1, Sort.by("created").descending())).firstOrNull()
 
     @Entity(name = "søknad")

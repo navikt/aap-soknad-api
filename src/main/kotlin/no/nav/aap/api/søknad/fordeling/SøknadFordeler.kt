@@ -110,7 +110,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
                                                   res: ArkivResultat,
                                                   e: List<StandardEttersending.EttersendtVedlegg>) {
             log.warn("Registrering av ettersending i DB uten eksplisitt søknadId")
-            søknader.getSisteSøknad(fnr)?.let {
+            søknader.sisteSøknad(fnr)?.let {
                 log.warn("Knytter ettersending til siste søknad ${it.eventid} med journalpost ${it.journalpostid}")
                 it.registrerEttersending(fnr, res, e)
             } ?: log.warn("Fant ingen sist innsendt søknad for $fnr")
