@@ -44,7 +44,7 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
         problem(e, UNSUPPORTED_MEDIA_TYPE, req)
 
     @ExceptionHandler(StorageException::class, IllegalArgumentException::class)
-    fun bøtte(e: RuntimeException, req: NativeWebRequest) = problem(e, BAD_REQUEST, req)
+    fun illegal(e: RuntimeException, req: NativeWebRequest) = problem(e, BAD_REQUEST, req)
 
     @ExceptionHandler(NotFound::class)
     fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = problem(e, NOT_FOUND, req)
