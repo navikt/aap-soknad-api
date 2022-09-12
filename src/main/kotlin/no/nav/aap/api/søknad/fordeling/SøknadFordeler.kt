@@ -7,6 +7,7 @@ import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivEttersendingResultat
+import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivResultat
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivSøknadResultat
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.UtlandSøknadFordeler
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
@@ -96,8 +97,8 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
             } ?: fullførEttersendingUtenSøknad(fnr, res, e.ettersendteVedlegg)
 
         private fun fullførEttersending(id: UUID, fnr: Fødselsnummer,
-                                        res: ArkivEttersendingResultat,
-                                        e: List<StandardEttersending.EttersendtVedlegg>): Unit {
+                                        res: ArkivResultat,
+                                        e: List<StandardEttersending.EttersendtVedlegg>) {
             søknader.getSøknadByEventidAndFnr(id, fnr.fnr)?.let {
                 it.registrerEttersending(fnr, res, e)
                 it.avsluttMinSideOppgaveHvisKomplett(fnr)
@@ -106,9 +107,13 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
         }
 
         private fun fullførEttersendingUtenSøknad(fnr: Fødselsnummer,
-                                                  res: ArkivEttersendingResultat,
-                                                  ettersendteVedlegg: List<StandardEttersending.EttersendtVedlegg>): Unit {
-            log.warn("Registrering av ettersending i DB uten søknadId")
+                                                  res: ArkivResultat,
+                                                  e: List<StandardEttersending.EttersendtVedlegg>) {
+            log.warn("Registrering av ettersending i DB uten eksplisitt søknadId")
+            søknader.getSisteSøknad(fnr)?.let {
+                log.warn("Knytter ettersending til siste søknad ${it.eventid} med journalpost ${it.journalpostid}")
+                it.registrerEttersending(fnr, res, e)
+            } ?: log.warn("Fant ingen sist innsendt søknad for $fnr")
             minside.opprettBeskjed(MINAAPSTD, callIdAsUUID(), fnr,
                     "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel}", true)
         }

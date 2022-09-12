@@ -32,7 +32,11 @@ class ArkivFordeler(private val arkiv: ArkivClient,
             log.trace("Fordeling av ettersending til arkiv OK med journalpost ${it.journalpostId}")
         }
 
-    data class ArkivSøknadResultat(val pdf: ByteArray, val journalpostId: String)
-    data class ArkivEttersendingResultat(val journalpostId: String)
+    abstract class ArkivResultat(val journalpostId: String) {
+        override fun toString() = "ArkivResultat(journalpostId='$journalpostId')"
+    }
+
+    class ArkivSøknadResultat(val pdf: ByteArray, journalpostId: String) : ArkivResultat(journalpostId)
+    class ArkivEttersendingResultat(journalpostId: String) : ArkivResultat(journalpostId)
 
 }

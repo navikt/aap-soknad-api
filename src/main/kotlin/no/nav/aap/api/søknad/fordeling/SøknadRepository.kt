@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.fordeling
 
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivEttersendingResultat
+import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivResultat
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.IdentifiableTimestampedBaseEntity
@@ -9,7 +9,9 @@ import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.repository.query.Param
@@ -28,6 +30,9 @@ interface SøknadRepository : JpaRepository<Søknad, Long>, JpaSpecificationExec
 
     fun getSøknadByFnr(@Param("fnr") fnr: String, pageable: Pageable): List<Søknad>
     fun getSøknadByEventidAndFnr(@Param("eventid") eventId: UUID, @Param("fnr") fnr: String): Søknad?
+
+    fun getSisteSøknad(fnr: Fødselsnummer) =
+        getSøknadByFnr(fnr.fnr, PageRequest.of(0, 1, Sort.by("created").descending())).firstOrNull()
 
     @Entity(name = "søknad")
     @Table(name = "soknader")
@@ -74,7 +79,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long>, JpaSpecificationExec
             manglendevedlegg.filter { m -> e.any { m.vedleggtype == it.vedleggType } }
 
         fun registrerEttersending(fnr: Fødselsnummer,
-                                  res: ArkivEttersendingResultat,
+                                  res: ArkivResultat,
                                   ettersendteVedlegg: List<EttersendtVedlegg>) {
             ettersendinger.add(Ettersending(fnr.fnr, res.journalpostId, soknad = this))
             tidligereManglendeNåEttersendte(ettersendteVedlegg)
