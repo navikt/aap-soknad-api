@@ -50,7 +50,9 @@ class OppslagController(
     }
 
     @GetMapping("/saker")
-    fun saker() = saf.saker().also { log.trace("Saker $it") }
+    fun saker() = saf.saker().also {
+        log.trace("Saker $this")
+    }
 
     @GetMapping("/soeknader")
     fun søknader(@SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
