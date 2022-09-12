@@ -114,9 +114,9 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
         private fun fullførEttersendingUtenSøknad(fnr: Fødselsnummer,
                                                   res: ArkivResultat,
                                                   e: List<StandardEttersending.EttersendtVedlegg>) {
-            log.warn("Registrering av ettersending i DB uten eksplisitt søknadId")
+            log.trace("Registrering av ettersending i DB uten eksplisitt søknadId")
             søknader.getSøknadByFnr(fnr.fnr, PageRequest.of(0, 1, Sort.by("created").descending())).firstOrNull()?.let {
-                log.warn("Knytter ettersending til siste søknad ${it.eventid} med journalpost ${it.journalpostid}")
+                log.trace("Knytter ettersending til siste søknad ${it.eventid} med journalpost ${it.journalpostid}")
                 it.registrerEttersending(fnr, res, e)
             } ?: log.warn("Fant ingen sist innsendt søknad for $fnr")
             minside.opprettBeskjed(MINAAPSTD, callIdAsUUID(), fnr,
