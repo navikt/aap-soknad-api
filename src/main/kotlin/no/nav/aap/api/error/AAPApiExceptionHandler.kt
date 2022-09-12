@@ -35,16 +35,16 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
     fun auth(e: RuntimeException, req: NativeWebRequest) =
         problem(e, UNAUTHORIZED, req)
 
-    @ExceptionHandler(IntegrationException::class)
-    fun inegration(e: IntegrationException, req: NativeWebRequest) =
+    @ExceptionHandler(IntegrationException::class, StorageException::class)
+    fun inegration(e: RuntimeException, req: NativeWebRequest) =
         problem(e, UNPROCESSABLE_ENTITY, req)
 
     @ExceptionHandler(ContentTypeException::class)
     fun ukjent(e: ContentTypeException, req: NativeWebRequest) =
         problem(e, UNSUPPORTED_MEDIA_TYPE, req)
 
-    @ExceptionHandler(StorageException::class, IllegalArgumentException::class)
-    fun illegal(e: RuntimeException, req: NativeWebRequest) = problem(e, BAD_REQUEST, req)
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun illegal(e: IllegalArgumentException, req: NativeWebRequest) = problem(e, BAD_REQUEST, req)
 
     @ExceptionHandler(NotFound::class)
     fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = problem(e, NOT_FOUND, req)
