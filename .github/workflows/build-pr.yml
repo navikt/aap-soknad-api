@@ -1,33 +1,33 @@
 name: Build PR or branch
 
 on:
-  pull_request:
-    branches:
-      - main
+    pull_request:
+        branches:
+            - main
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  kompiler:
-    runs-on: ubuntu-latest
-    steps:
+    kompiler:
+        runs-on: ubuntu-latest
+        steps:
 
-      - name: Sjekk ut kode
-        uses: actions/checkout@v3
+            -   name: Sjekk ut kode
+                uses: actions/checkout@v3
 
-      - name: Hent Maven cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
+            -   name: Hent Maven cache
+                uses: actions/cache@v3
+                with:
+                    path: ~/.m2/repository
+                    key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+                    restore-keys: ${{ runner.os }}-maven-
 
-      - name: Sett opp Java 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: 'temurin'
+            -   name: Sett opp Java 17
+                uses: actions/setup-java@v3
+                with:
+                    java-version: 17
+                    distribution: 'temurin'
 
-      - name: Kompiler
-        run: |
-          mvn test --batch-mode --quiet --settings .github/.m2/settings.xml
+            -   name: Kompiler
+                run: |
+                    ./mvnw test --batch-mode --quiet --settings .github/.m2/settings.xml
