@@ -35,8 +35,8 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
     fun auth(e: RuntimeException, req: NativeWebRequest) =
         problem(e, UNAUTHORIZED, req)
 
-    @ExceptionHandler(DokumentException::class, IntegrationException::class)
-    fun dokument(e: RuntimeException, req: NativeWebRequest) =
+    @ExceptionHandler(IntegrationException::class)
+    fun inegration(e: IntegrationException, req: NativeWebRequest) =
         problem(e, UNPROCESSABLE_ENTITY, req)
 
     @ExceptionHandler(ContentTypeException::class)
