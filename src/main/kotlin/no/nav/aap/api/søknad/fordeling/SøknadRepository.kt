@@ -9,9 +9,7 @@ import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import org.springframework.data.annotation.LastModifiedDate
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.repository.query.Param
@@ -30,9 +28,6 @@ interface SøknadRepository : JpaRepository<Søknad, Long>, JpaSpecificationExec
 
     fun getSøknadByFnr(@Param("fnr") fnr: String, pageable: Pageable): List<Søknad>
     fun getSøknadByEventidAndFnr(@Param("eventid") eventId: UUID, @Param("fnr") fnr: String): Søknad?
-
-    fun sisteSøknad(fnr: Fødselsnummer) =
-        getSøknadByFnr(fnr.fnr, PageRequest.of(0, 1, Sort.by("created").descending())).firstOrNull()
 
     @Entity(name = "søknad")
     @Table(name = "soknader")
