@@ -32,16 +32,13 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
     private val log = getLogger(javaClass)
 
     @ExceptionHandler(JwtTokenMissingException::class, JwtTokenUnauthorizedException::class)
-    fun auth(e: RuntimeException, req: NativeWebRequest) =
-        problem(e, UNAUTHORIZED, req)
+    fun auth(e: RuntimeException, req: NativeWebRequest) = problem(e, UNAUTHORIZED, req)
 
     @ExceptionHandler(IntegrationException::class, StorageException::class)
-    fun inegration(e: RuntimeException, req: NativeWebRequest) =
-        problem(e, UNPROCESSABLE_ENTITY, req)
+    fun inegration(e: RuntimeException, req: NativeWebRequest) = problem(e, UNPROCESSABLE_ENTITY, req)
 
     @ExceptionHandler(ContentTypeException::class)
-    fun ukjent(e: ContentTypeException, req: NativeWebRequest) =
-        problem(e, UNSUPPORTED_MEDIA_TYPE, req)
+    fun ukjent(e: ContentTypeException, req: NativeWebRequest) = problem(e, UNSUPPORTED_MEDIA_TYPE, req)
 
     @ExceptionHandler(IllegalArgumentException::class)
     fun illegal(e: IllegalArgumentException, req: NativeWebRequest) = problem(e, BAD_REQUEST, req)
@@ -58,7 +55,7 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
         with(builder().withStatus(status).withDetail(t.message).with(NAV_CALL_ID, callId())) {
             substatus?.let { with("substatus", it).build() } ?: build()
         }.also {
-            log.trace("Lagd problem fra ${t.javaClass} ${t.message} ${it.message}, returnerer $status")
+            log.trace("Problem fra ${t.javaClass} ${t.message} ${it.message}, returnerer $status")
         }
 
     override fun isCausalChainsEnabled() = isDevOrLocal(env)
