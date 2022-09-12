@@ -20,13 +20,13 @@ class InnsendingFordelingController(private val fordeler: Fordeler) {
     private val log = LoggerUtil.getLogger(javaClass)
 
     @PostMapping("/utland")
-    fun utland(@RequestBody søknad: @Valid UtlandSøknad) = fordeler.fordel(søknad)
+    fun utland(@RequestBody @Valid søknad: UtlandSøknad) = fordeler.fordel(søknad)
 
     @PostMapping("/soknad")
-    fun soknad(@RequestBody søknad: @Valid StandardSøknad) = fordeler.fordel(søknad)
+    fun soknad(@RequestBody @Valid søknad: StandardSøknad) = fordeler.fordel(søknad)
 
     @PostMapping("/ettersend")
-    fun ettersend(@RequestBody ettersending: StandardEttersending) = fordeler.fordel(ettersending)
+    fun ettersend(@RequestBody @Valid ettersending: StandardEttersending) = fordeler.fordel(ettersending)
 
     override fun toString() = "$javaClass.simpleName [fordeler=$fordeler]"
 }
