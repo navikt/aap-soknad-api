@@ -39,6 +39,10 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
     fun missing(e: JwtTokenMissingException, req: NativeWebRequest) =
         problem(e, UNAUTHORIZED, req)
 
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun illegal(e: IllegalArgumentException, req: NativeWebRequest) =
+        problem(e, BAD_REQUEST, req)
+
     @ExceptionHandler(IntegrationException::class)
     fun integrasjon(e: IntegrationException, req: NativeWebRequest) =
         problem(e, UNPROCESSABLE_ENTITY, req)
