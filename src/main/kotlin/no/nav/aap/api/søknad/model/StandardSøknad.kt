@@ -15,6 +15,7 @@ import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.AnnenBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
+import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.AVBRUTT
 import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.AFP
@@ -61,7 +62,7 @@ data class StandardSøknad(
         val innsendte = mutableListOf<VedleggType>()
 
         log.trace("Sjekker om det er manglende vedlegg for studier $studier")
-        if (studier.erStudent == AVBRUTT && manglerVedlegg(studier)) {
+        if (studier.erStudent == AVBRUTT && studier.kommeTilbake == JA && manglerVedlegg(studier)) {
             log.trace("Det er manglende vedlegg for ${STUDIER.tittel}").also {
                 manglende += STUDIER
             }

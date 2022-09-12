@@ -55,7 +55,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
 
     fun fordel(søknad: StandardSøknad) =
         pdl.søkerMedBarn().run {
-            log.trace("Fordeler $s")
+            log.trace("Fordeler $søknad")
             with(arkiv.fordel(søknad, this)) {
                 vl.fordel(søknad, fnr, journalpostId, cfg.standard)
                 fullfører.fullfør(søknad, this@run.fnr, this)
