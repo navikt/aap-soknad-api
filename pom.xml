@@ -364,24 +364,6 @@
                 <version>${kotlin.version}</version>
                 <executions>
                     <execution>
-                        <id>kapt</id>
-                        <goals>
-                            <goal>kapt</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirs>
-                                <sourceDir>src/main/kotlin</sourceDir>
-                            </sourceDirs>
-                            <annotationProcessorPaths>
-                                <annotationProcessorPath>
-                                    <groupId>org.hibernate</groupId>
-                                    <artifactId>hibernate-jpamodelgen</artifactId>
-                                    <version>${hibernate.version}</version>
-                                </annotationProcessorPath>
-                            </annotationProcessorPaths>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>compile</id>
                         <phase>compile</phase>
                         <goals>
@@ -397,7 +379,6 @@
                     </execution>
                 </executions>
                 <configuration>
-
                     <args>
                         <arg>-Xjsr305=strict</arg>
                     </args>
