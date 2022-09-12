@@ -115,13 +115,16 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
                                                   res: ArkivResultat,
                                                   e: List<StandardEttersending.EttersendtVedlegg>) {
             log.trace("Registrering av ettersending i DB uten eksplisitt søknadId")
-            søknader.getSøknadByFnr(fnr.fnr, PageRequest.of(0, 1, Sort.by("created").descending())).firstOrNull()?.let {
+            søknader.sisteSøknad(fnr)?.let {
                 log.trace("Knytter ettersending til siste søknad ${it.eventid} med journalpost ${it.journalpostid}")
                 it.registrerEttersending(fnr, res, e)
             } ?: log.warn("Fant ingen sist innsendt søknad for $fnr")
             minside.opprettBeskjed(MINAAPSTD, callIdAsUUID(), fnr,
                     "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel}", true)
         }
+
+        private fun SøknadRepository.sisteSøknad(fnr: Fødselsnummer) =
+            getSøknadByFnr(fnr.fnr, PageRequest.of(0, 1, Sort.by("created").descending())).firstOrNull()
 
         private fun Søknad.oppdaterMinSide(erKomplett: Boolean, fnr: Fødselsnummer) =
             if (erKomplett) {
