@@ -119,6 +119,7 @@ class ArkivJournalpostGenerator(
         v?.let { vl ->
             val vedlegg = (vl.deler?.mapNotNull {
                 it?.let { uuid ->
+                    log.trace("Leser dokument $uuid fra dokkumentlager")
                     lager.lesDokument(uuid, fnr)
                 }
             } ?: emptyList())
