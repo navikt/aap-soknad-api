@@ -47,7 +47,7 @@ class OppslagController(
         konto.kontoinfo()
     )
         .also {
-            saf.sakerMetadata().also { log.trace("Saker $it") }
+            saf.saker().also { log.trace("Saker $it") }
             log.trace("Søker er $it")
         }
 
