@@ -5,7 +5,7 @@ import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.DokumentException.Substatus
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager.ContentTypeDokumentSjekker.ContentTypeException
-import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
@@ -29,7 +29,7 @@ import org.zalando.problem.spring.web.advice.ProblemHandling
 
 @ControllerAdvice
 class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
-    private val log = LoggerUtil.getLogger(javaClass)
+    private val log = getLogger(javaClass)
 
     @ExceptionHandler(JwtTokenMissingException::class, JwtTokenUnauthorizedException::class)
     fun auth(e: RuntimeException, req: NativeWebRequest) =
