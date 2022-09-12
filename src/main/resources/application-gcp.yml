@@ -1,196 +1,196 @@
 info:
-    nais:
-        clientid: ${nais.client.id}
-        project: ${gcp.team.project.id}
-        cluster: ${nais.cluster.name}
-        image: ${nais.app.image}
-        app: ${nais.app.name}
-        namespace: ${nais.namespace}
+  nais:
+    clientid: ${nais.client.id}
+    project: ${gcp.team.project.id}
+    cluster: ${nais.cluster.name}
+    image: ${nais.app.image}
+    app: ${nais.app.name}
+    namespace: ${nais.namespace}
 management:
-    endpoint:
-        env:
-            additional-keys-to-sanitize: "client-jwk,jwk,jwks"
+  endpoint:
+    env:
+      additional-keys-to-sanitize: "client-jwk,jwk,jwks"
 
 spring:
-    cloud:
-        gcp:
-            project-id: ${gcp.team.project.id}
-    jpa:
-        properties:
-            hibernate:
-                types:
-                    jackson:
-                        object:
-                            mapper: no.nav.aap.api.config.HibernateObjectMapperSupplier
-        hibernate:
-            ddl-auto: none
-        show-sql: false
+  cloud:
+    gcp:
+      project-id: ${gcp.team.project.id}
+  jpa:
+    properties:
+      hibernate:
+        types:
+          jackson:
+            object:
+              mapper: no.nav.aap.api.config.HibernateObjectMapperSupplier
+    hibernate:
+      ddl-auto: none
+    show-sql: false
 
-    datasource:
-        url: jdbc:postgresql://${db.host}:${db.port}/${db.database}
-        username: ${db.username}
-        password: ${db.password}
-        hikari:
-            connection-test-query: SELECT 1
-            maximum-pool-size: 2
-    devtools:
-        restart:
-            enabled: false
-        add-properties: false
-        livereload:
-            enabled: false
-    flyway:
-        enabled: true
-    kafka:
-        bootstrap-servers: ${kafka.brokers}
-        properties:
-            basic:
-                auth:
-                    user:
-                        info: ${kafka.schema.registry.user}:${kafka.schema.registry.password}
-                    credentials:
-                        source: USER_INFO
-            schema:
-                registry:
-                    url: ${kafka.schema.registry}
-            endpoint:
-                identification:
-                    algorithm: ''
-        security:
-            protocol: SSL
-        ssl:
-            trust-store-location: file:${kafka.truststore.path}
-            trust-store-type: JKS
-            trust-store-password: ${kafka.credstore.password}
-            key-store-location: file:${kafka.keystore.path}
-            key-store-type: PKCS12
-            key-store-password: ${kafka.credstore.password}
-        consumer:
-            group-id: ${spring.application.name}-dev
-            value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-        producer:
-            acks: all
-            client-id: ${spring.application.name}
-            key-serializer: org.apache.kafka.common.serialization.StringSerializer
-            value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-no.nav:
+  datasource:
+    url: jdbc:postgresql://${db.host}:${db.port}/${db.database}
+    username: ${db.username}
+    password: ${db.password}
+    hikari:
+      connection-test-query: SELECT 1
+      maximum-pool-size: 2
+  devtools:
+    restart:
+      enabled: false
+    add-properties: false
+    livereload:
+      enabled: false
+  flyway:
+    enabled: true
+  kafka:
+    bootstrap-servers: ${kafka.brokers}
+    properties:
+      basic:
+        auth:
+          user:
+            info: ${kafka.schema.registry.user}:${kafka.schema.registry.password}
+          credentials:
+            source: USER_INFO
+      schema:
+        registry:
+          url: ${kafka.schema.registry}
+      endpoint:
+        identification:
+          algorithm: ''
     security:
-        jwt:
-            client:
-                registration:
-                    safselvbetjening:
-                        token-exchange:
-                            audience: ${onprem}:teamdokumenthandtering:safselvbetjening
-                        well-known-url: ${token.x.well.known.url}
-                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-                        authentication:
-                            client-id: ${token.x.client.id}
-                            client-jwk: ${token.x.private.jwk}
-                            client-auth-method: private_key_jwt
-                    aareg-services-q1:
-                        well-known-url: ${token.x.well.known.url}
-                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-                        authentication:
-                            client-id: ${token.x.client.id}
-                            client-jwk: ${token.x.private.jwk}
-                            client-auth-method: private_key_jwt
+      protocol: SSL
+    ssl:
+      trust-store-location: file:${kafka.truststore.path}
+      trust-store-type: JKS
+      trust-store-password: ${kafka.credstore.password}
+      key-store-location: file:${kafka.keystore.path}
+      key-store-type: PKCS12
+      key-store-password: ${kafka.credstore.password}
+    consumer:
+      group-id: ${spring.application.name}-dev
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    producer:
+      acks: all
+      client-id: ${spring.application.name}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+no.nav:
+  security:
+    jwt:
+      client:
+        registration:
+          safselvbetjening:
+            token-exchange:
+              audience: ${onprem}:teamdokumenthandtering:safselvbetjening
+            well-known-url: ${token.x.well.known.url}
+            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+            authentication:
+              client-id: ${token.x.client.id}
+              client-jwk: ${token.x.private.jwk}
+              client-auth-method: private_key_jwt
+          aareg-services-q1:
+            well-known-url: ${token.x.well.known.url}
+            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+            authentication:
+              client-id: ${token.x.client.id}
+              client-jwk: ${token.x.private.jwk}
+              client-auth-method: private_key_jwt
 
-                    aap-fss-proxy:
-                        token-exchange:
-                            audience: ${onprem}:aap:fss-proxy
-                        well-known-url: ${token.x.well.known.url}
-                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-                        authentication:
-                            client-id: ${token.x.client.id}
-                            client-jwk: ${token.x.private.jwk}
-                            client-auth-method: private_key_jwt
+          aap-fss-proxy:
+            token-exchange:
+              audience: ${onprem}:aap:fss-proxy
+            well-known-url: ${token.x.well.known.url}
+            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+            authentication:
+              client-id: ${token.x.client.id}
+              client-jwk: ${token.x.private.jwk}
+              client-auth-method: private_key_jwt
 
-                    digdir-krr-proxy:
-                        token-exchange:
-                            audience: ${nais.cluster.name}:team-rocket:digdir-krr-proxy
-                        well-known-url: ${token.x.well.known.url}
-                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-                        authentication:
-                            client-id: ${token.x.client.id}
-                            client-jwk: ${token.x.private.jwk}
-                            client-auth-method: private_key_jwt
+          digdir-krr-proxy:
+            token-exchange:
+              audience: ${nais.cluster.name}:team-rocket:digdir-krr-proxy
+            well-known-url: ${token.x.well.known.url}
+            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+            authentication:
+              client-id: ${token.x.client.id}
+              client-jwk: ${token.x.private.jwk}
+              client-auth-method: private_key_jwt
 
-                    client-credentials-pdl:
-                        token-endpoint-url: ${azure.openid.config.token.endpoint}
-                        grant-type: client_credentials
-                        scope: ${pdl.scope}
-                        authentication:
-                            client-id: ${azure.app.client.id}
-                            client-jwk: ${azure.app.jwk}
-                            client-auth-method: private_key_jwt
+          client-credentials-pdl:
+            token-endpoint-url: ${azure.openid.config.token.endpoint}
+            grant-type: client_credentials
+            scope: ${pdl.scope}
+            authentication:
+              client-id: ${azure.app.client.id}
+              client-jwk: ${azure.app.jwk}
+              client-auth-method: private_key_jwt
 
-                    isdialogmelding:
-                        token-exchange:
-                            audience: ${nais.cluster.name}:teamsykefravr:isdialogmelding
-                        well-known-url: ${token.x.well.known.url}
-                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-                        authentication:
-                            client-id: ${token.x.client.id}
-                            client-jwk: ${token.x.private.jwk}
-                            client-auth-method: private_key_jwt
+          isdialogmelding:
+            token-exchange:
+              audience: ${nais.cluster.name}:teamsykefravr:isdialogmelding
+            well-known-url: ${token.x.well.known.url}
+            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+            authentication:
+              client-id: ${token.x.client.id}
+              client-jwk: ${token.x.private.jwk}
+              client-auth-method: private_key_jwt
 
-                    pdl-api:
-                        token-exchange:
-                            audience: ${onprem}:pdl:pdl-api
-                        well-known-url: ${token.x.well.known.url}
-                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-                        authentication:
-                            client-id: ${token.x.client.id}
-                            client-jwk: ${token.x.private.jwk}
-                            client-auth-method: private_key_jwt
+          pdl-api:
+            token-exchange:
+              audience: ${onprem}:pdl:pdl-api
+            well-known-url: ${token.x.well.known.url}
+            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+            authentication:
+              client-id: ${token.x.client.id}
+              client-jwk: ${token.x.private.jwk}
+              client-auth-method: private_key_jwt
 
-                    sokos-kontoregister-person:
-                        token-exchange:
-                            audience: ${nais.cluster.name}:okonomi:sokos-kontoregister-person
-                        well-known-url: ${token.x.well.known.url}
-                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-                        authentication:
-                            client-id: ${token.x.client.id}
-                            client-jwk: ${token.x.private.jwk}
-                            client-auth-method: private_key_jwt
+          sokos-kontoregister-person:
+            token-exchange:
+              audience: ${nais.cluster.name}:okonomi:sokos-kontoregister-person
+            well-known-url: ${token.x.well.known.url}
+            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+            authentication:
+              client-id: ${token.x.client.id}
+              client-jwk: ${token.x.private.jwk}
+              client-auth-method: private_key_jwt
 
-            issuer:
-                idporten:
-                    discovery-url: ${token.x.well.known.url}
-                    accepted-audience: ${token.x.client.id}
+      issuer:
+        idporten:
+          discovery-url: ${token.x.well.known.url}
+          accepted-audience: ${token.x.client.id}
 
 pdl:
-    base-uri: https://pdl-api.${onprem}-pub.nais.io/graphql
-    scope: api://${onprem}.pdl.pdl-api/.default
+  base-uri: https://pdl-api.${onprem}-pub.nais.io/graphql
+  scope: api://${onprem}.pdl.pdl-api/.default
 joark:
-    base-uri: https://aap-fss-proxy.${onprem}-pub.nais.io
+  base-uri: https://aap-fss-proxy.${onprem}-pub.nais.io
 saf:
-    base-uri: https://safselvbetjening.${onprem}-pub.nais.io
+  base-uri: https://safselvbetjening.${onprem}-pub.nais.io/graphql
 minside:
-    nais:
-        app: ${nais.app.name}
-        namespace: ${nais.namespace}
-    beskjed:
-        topic: min-side.aapen-brukernotifikasjon-beskjed-v1
-    oppgave:
-        topic: min-side.aapen-brukernotifikasjon-oppgave-v1
-        preferertekanaler:
-            - SMS
-            - EPOST
+  nais:
+    app: ${nais.app.name}
+    namespace: ${nais.namespace}
+  beskjed:
+    topic: min-side.aapen-brukernotifikasjon-beskjed-v1
+  oppgave:
+    topic: min-side.aapen-brukernotifikasjon-oppgave-v1
+    preferertekanaler:
+      - SMS
+      - EPOST
 
 buckets:
-    project: ${gcp.team.project.id}
-    kms:
-        ring: ${mellomlagring.navn}-kms
-        key: ${mellomlagring.navn}-kmskey
-    mellom:
-        navn: ${mellomlagring.navn}
-        subscription:
-            navn: ${mellomlagring.navn}-subscription2
-            topic: ${mellomlagring.navn}-topic2
-    vedlegg:
-        navn: ${vedlegg.navn}
-        typer:
-            - application/pdf
-            - image/jpeg
-            - image/png
+  project: ${gcp.team.project.id}
+  kms:
+    ring: ${mellomlagring.navn}-kms
+    key: ${mellomlagring.navn}-kmskey
+  mellom:
+    navn: ${mellomlagring.navn}
+    subscription:
+      navn: ${mellomlagring.navn}-subscription2
+      topic: ${mellomlagring.navn}-topic2
+  vedlegg:
+    navn: ${vedlegg.navn}
+    typer:
+      - application/pdf
+      - image/jpeg
+      - image/png

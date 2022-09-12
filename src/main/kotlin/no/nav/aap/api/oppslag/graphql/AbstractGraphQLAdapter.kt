@@ -7,20 +7,20 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.web.reactive.function.client.WebClient
 
-abstract class AbstractGraphQLAdapter(client: WebClient,
-                                      cf: AbstractRestConfig,
-                                      private val errorHandler: GraphQLErrorHandler) :
+abstract class AbstractGraphQLAdapter(
+    client: WebClient,
+    cf: AbstractRestConfig,
+    private val errorHandler: GraphQLErrorHandler
+) :
     AbstractWebClientAdapter(client, cf) {
 
     protected fun <T> oppslag(oppslag: () -> T, type: String): T {
         return try {
             oppslag.invoke()
-        }
-        catch (e: GraphQLErrorsException) {
+        } catch (e: GraphQLErrorsException) {
             errorHandler.handleError(e)
-        }
-        catch (e: Exception) {
-            log.warn("PDL oppslag {} feilet med uventet feil", type, e)
+        } catch (e: Exception) {
+            log.warn("Oppslag {} feilet med uventet feil", type, e)
             throw e
         }
     }
