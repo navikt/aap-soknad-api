@@ -31,32 +31,20 @@ import org.zalando.problem.spring.web.advice.ProblemHandling
 class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
     private val log = LoggerUtil.getLogger(javaClass)
 
-    @ExceptionHandler(JwtTokenUnauthorizedException::class)
-    fun unauthorized(e: JwtTokenUnauthorizedException, req: NativeWebRequest) =
+    @ExceptionHandler(JwtTokenMissingException::class, JwtTokenUnauthorizedException::class)
+    fun auth(e: RuntimeException, req: NativeWebRequest) =
         problem(e, UNAUTHORIZED, req)
 
-    @ExceptionHandler(JwtTokenMissingException::class)
-    fun missing(e: JwtTokenMissingException, req: NativeWebRequest) =
-        problem(e, UNAUTHORIZED, req)
-
-    @ExceptionHandler(IllegalArgumentException::class)
-    fun illegal(e: IllegalArgumentException, req: NativeWebRequest) =
-        problem(e, BAD_REQUEST, req)
-
-    @ExceptionHandler(IntegrationException::class)
-    fun integrasjon(e: IntegrationException, req: NativeWebRequest) =
-        problem(e, UNPROCESSABLE_ENTITY, req)
-
-    @ExceptionHandler(DokumentException::class)
-    fun dokument(e: DokumentException, req: NativeWebRequest) =
+    @ExceptionHandler(DokumentException::class, IntegrationException::class)
+    fun dokument(e: RuntimeException, req: NativeWebRequest) =
         problem(e, UNPROCESSABLE_ENTITY, req)
 
     @ExceptionHandler(ContentTypeException::class)
     fun ukjent(e: ContentTypeException, req: NativeWebRequest) =
         problem(e, UNSUPPORTED_MEDIA_TYPE, req)
 
-    @ExceptionHandler(StorageException::class)
-    fun bøtte(e: StorageException, req: NativeWebRequest) = problem(e, BAD_REQUEST, req)
+    @ExceptionHandler(StorageException::class, IllegalArgumentException::class)
+    fun bøtte(e: RuntimeException, req: NativeWebRequest) = problem(e, BAD_REQUEST, req)
 
     @ExceptionHandler(NotFound::class)
     fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = problem(e, NOT_FOUND, req)
