@@ -1,0 +1,16 @@
+{
+    "name": "SAF",
+    "schemaPath": "saf.graphql",
+    "extensions": {
+        "endpoints": {
+            "SAF GraphQL Endpoint": {
+                "url": "https://safselvbetjening-q1.dev.intern.nav.no/graphql",
+                "headers": {
+                    "Authorization": "Bearer eyJraWQiOiIyN2EyZTcyNC0xOWM2LTRkMDktODI3NS1kOTQ0NWQ3ZTRlMDUiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJDeHBmNTlnV01oeGViRmJQSlJ6Yk9uMElDenp1Qm0zcVB1a0VYcmdFLTB3XHUwMDNkIiwiaXNzIjoiaHR0cHM6Ly90b2tlbmRpbmdzLmRldi1nY3AubmFpcy5pbyIsImNsaWVudF9hbXIiOiJwcml2YXRlX2tleV9qd3QiLCJwaWQiOiIwNzA2MzAwMDI1MCIsInRva2VuX3R5cGUiOiJCZWFyZXIiLCJjbGllbnRfaWQiOiJkZXYtZ2NwOm1pbi1zaWRlOm1pbmUtc2FrZXItYXBpIiwiYXVkIjoiZGV2LWZzczp0ZWFtZG9rdW1lbnRoYW5kdGVyaW5nOnNhZnNlbHZiZXRqZW5pbmctcTEiLCJhY3IiOiJMZXZlbDQiLCJuYmYiOjE2NjI5ODI2MzQsImlkcCI6Imh0dHBzOi8vb2lkYy12ZXIyLmRpZmkubm8vaWRwb3J0ZW4tb2lkYy1wcm92aWRlci8iLCJzY29wZSI6Im9wZW5pZCIsImV4cCI6MTY2Mjk4MzUzNCwiaWF0IjoxNjYyOTgyNjM0LCJjbGllbnRfb3Jnbm8iOiI4ODk2NDA3ODIiLCJqdGkiOiJiOTdhNmU3ZS1hMzBhLTQ0ZDAtOGVkMC0xZTE3YTI2NWZjZjAiLCJjb25zdW1lciI6eyJhdXRob3JpdHkiOiJpc282NTIzLWFjdG9yaWQtdXBpcyIsIklEIjoiMDE5Mjo4ODk2NDA3ODIifX0.hvTitpBfqxyfmQ797r53PbWTG2NT2Dn7QKTS_Zv6Y-bitWYVWn_mcodL8JLtd4z-1NJ2V8ldyDX4ImScf_QCDco65zTVSB02Qhlf_QI2J4awfgb-Ks6vIA03cU-pp0tCLQ3IHslvogU3GsfNUVRQIjBO1ARLV4QRztBZcj0wi6w6JmxAlnDZWRS3i0RK_FVOVt4V_fo0VWMUnWFmzW_j6DF2O6lXGxMO-kKrwZezHVZdzDXML2XJ6EOBxApZPWPOLbgMBuog7F0txi-uyLBYqskW7MftzurEHvsVppZ3WdEQlUfFbDOlLTF61eY1NQnSSIMmbjyPFWXyOSzF83uqcQ",
+                    "user-agent": "JS GraphQL"
+                },
+                "introspect": true
+            }
+        }
+    }
+}

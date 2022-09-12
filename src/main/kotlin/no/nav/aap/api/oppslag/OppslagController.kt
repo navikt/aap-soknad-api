@@ -26,24 +26,28 @@ import org.springframework.web.bind.annotation.PathVariable
 import java.util.*
 
 @ProtectedRestController(value = ["/oppslag"], issuer = Constants.IDPORTEN)
-class OppslagController(val pdl: PDLClient,
-                        val behandler: BehandlerClient,
-                        val arbeid: ArbeidClient,
-                        val krr: KRRClient,
-                        val søknad: SøknadClient,
-                        val konto: KontoClient,
-                        val saf: SafClient) {
+class OppslagController(
+    val pdl: PDLClient,
+    val behandler: BehandlerClient,
+    val arbeid: ArbeidClient,
+    val krr: KRRClient,
+    val søknad: SøknadClient,
+    val konto: KontoClient,
+    val saf: SafClient
+) {
 
     val log = getLogger(javaClass)
 
     @GetMapping("/soeker")
     fun søker() = SøkerInfo(
-            pdl.søkerMedBarn(),
-            behandler.behandlerinfo(),
-            arbeid.arbeidinfo(),
-            krr.kontaktinfo(),
-            konto.kontoinfo())
+        pdl.søkerMedBarn(),
+        behandler.behandlerinfo(),
+        arbeid.arbeidinfo(),
+        krr.kontaktinfo(),
+        konto.kontoinfo()
+    )
         .also {
+            saf.sakerMetadata().also { log.trace("Saker $this") }
             log.trace("Søker er $it")
         }
 

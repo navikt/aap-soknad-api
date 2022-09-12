@@ -1,18 +1,23 @@
-query ($ident:String!, $tema: [ Tema ]!) {
-    dokumentoversiktSelvbetjening(ident: $ident, tema: $tema) {
-                                                                  journalposter {
-      journalpostId
-      tittel
+query dokumentoversiktSelvbetjening($ident: String!) {
+  dokumentoversiktSelvbetjening(ident: $ident, tema: [AAP]) {
+    journalposter {
       journalposttype
-      tema
-      dokumenter {
-      dokumentInfoId
       tittel
-      dokumentvarianter {
-      variantformat
-      brukerHarTilgang
+      journalpostId
+      relevanteDatoer {
+        dato
+        datotype
+      }
+      dokumenter {
+        dokumentInfoId
+        brevkode
+        tittel
+        dokumentvarianter {
+          variantformat
+          filtype
+          brukerHarTilgang
+        }
+      }
     }
-    }
-    }
-    }
+  }
 }

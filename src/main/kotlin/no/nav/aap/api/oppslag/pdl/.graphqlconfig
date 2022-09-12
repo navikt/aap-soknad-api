@@ -9,13 +9,6 @@
                     "user-agent": "JS GraphQL"
                 },
                 "introspect": true
-            },
-            "SAF GraphQL Endpoint": {
-                "url": "https://navikt.github.io/safselvbetjening/schema.graphqls",
-                "headers": {
-                    "user-agent": "JS GraphQL"
-                },
-                "introspect": true
             }
         }
     }
