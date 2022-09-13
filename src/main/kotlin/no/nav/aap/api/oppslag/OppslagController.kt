@@ -47,11 +47,17 @@ class OppslagController(
         konto.kontoinfo()
     ).also {
         log.trace("Søker er $it")
+        try {
+            val saker = saker()
+        }
+        catch (e: Exception){
+            log.warn("OOPS",e)
+        }
     }
 
     @GetMapping("/saker")
     fun saker() = saf.saker().also {
-        log.trace("Saker $this")
+        log.trace("Saker er $this")
     }
 
     @GetMapping("/soeknader")
