@@ -3,7 +3,7 @@ package no.nav.aap.api.oppslag.saf
 import java.time.LocalDateTime
 
 class SafDTOs {
-    data class SafJournalpost(val journalpostid: String,
+    data class SafJournalpost(val journalpostId: String,
                               val journalposttype: SafJournalpostType,
                               val journalstatus: SafJournalStatus,
                               val tittel: String,
