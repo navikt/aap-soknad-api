@@ -154,6 +154,15 @@ no.nav:
               client-jwk: ${token.x.private.jwk}
               client-auth-method: private_key_jwt
 
+          client-credentials-arkiv:
+            token-endpoint-url: ${azure.openid.config.token.endpoint}
+            grant-type: client_credentials
+            scope: ${joark.scope}
+            authentication:
+              client-id: ${azure.app.client.id}
+              client-jwk: ${azure.app.jwk}
+              client-auth-method: private_key_jwt
+
       issuer:
         idporten:
           discovery-url: ${token.x.well.known.url}
@@ -163,7 +172,9 @@ pdl:
   base-uri: https://pdl-api.${onprem}-pub.nais.io/graphql
   scope: api://${onprem}.pdl.pdl-api/.default
 joark:
-  base-uri: https://aap-fss-proxy.${onprem}-pub.nais.io
+  base-uri: https://dokarkiv.${onprem}-pub.nais.io
+  scope: api://${onprem}.teamdokumenthandtering.dokarkiv-q1/.default
+
 saf:
   base-uri: https://safselvbetjening.${onprem}-pub.nais.io/graphql
 minside:

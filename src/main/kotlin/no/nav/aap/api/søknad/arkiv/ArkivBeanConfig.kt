@@ -13,12 +13,22 @@ import org.springframework.web.reactive.function.client.WebClient
 class ArkivBeanConfig {
     @Qualifier(JOARK)
     @Bean
-    fun webClientArkiv(builder: WebClient.Builder, cfg: ArkivConfig, tokenXFilterFunction: TokenXFilterFunction) =
+    fun webClientArkiv(builder: WebClient.Builder, cfg: ArkivConfig, @Qualifier(JOARK) arkivClientCredentialFilterFunction:) =
         builder
             .baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
-            .filter(tokenXFilterFunction)
+            .filter(arkivClientCredentialFilterFunction)
             .build()
+
+    @Bean
+    @Qualifier(JOARK)
+    fun arkivClientCredentialFilterFunction(cfgs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
+        ExchangeFilterFunction { req, next ->
+            next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.systemBearerToken(cfgs)).build())
+        }
+
+    private fun OAuth2AccessTokenService.systemBearerToken(cfgs: ClientConfigurationProperties) =
+        getAccessToken(cfgs.registration[CLIENT_CREDENTIALS_ARKIV]).accessToken.asBearer()
 
     @Bean
     fun arkivHealthIndicator(adapter: ArkivWebClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {}

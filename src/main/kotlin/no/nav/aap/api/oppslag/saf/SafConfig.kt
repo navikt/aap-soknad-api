@@ -10,21 +10,23 @@ import java.net.URI
 
 @ConfigurationProperties(SAF)
 @ConstructorBinding
-class SafConfig(baseUri: URI,
-                @DefaultValue(PINGPATH) pingPath: String,
-                @DefaultValue(DOKPATH) private val dokPath: String,
-                @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, SAF, enabled) {
+class SafConfig(
+    baseUri: URI,
+    @DefaultValue(PINGPATH) pingPath: String,
+    @DefaultValue(DOKPATH) private val dokPath: String,
+    @DefaultValue("true") enabled: Boolean
+) : AbstractRestConfig(baseUri, pingPath, SAF, enabled) {
 
     fun dokUri(b: UriBuilder, journalpostId: String, dokumentInfoId: String, variant: String) =
-            b.path(dokPath).build(journalpostId, dokumentInfoId, variant)
+        b.path(dokPath).build(journalpostId, dokumentInfoId, variant)
 
     override fun toString() =
-            "$javaClass.simpleName [baseUri=$baseUri,  dokPath=$dokPath, pingEndpoint=$pingEndpoint]"
+        "$javaClass.simpleName [baseUri=$baseUri,  dokPath=$dokPath, pingEndpoint=$pingEndpoint]"
 
     companion object {
         const val SAKER_QUERY = "query-saf.graphql"
         const val SAF = "saf"
-        private const val PINGPATH = "graphql"
+        private const val PINGPATH = ""
         private const val DOKPATH = "rest/hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}"
     }
 }

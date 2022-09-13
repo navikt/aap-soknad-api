@@ -41,18 +41,21 @@ import org.springframework.stereotype.Component
 
 @Component
 class ArkivJournalpostGenerator(
-        private val mapper: ObjectMapper,
-        private val lager: Dokumentlager,
-        private val ctx: AuthContext,
-        private val konverterer: BildeTilPDFKonverterer) {
+    private val mapper: ObjectMapper,
+    private val lager: Dokumentlager,
+    private val ctx: AuthContext,
+    private val konverterer: BildeTilPDFKonverterer
+) {
 
     private val log = getLogger(javaClass)
 
     fun journalpostFra(es: StandardEttersending, søker: Søker): Journalpost =
-        Journalpost(dokumenter = dokumenterFra(es.ettersendteVedlegg, søker.fnr),
-                tittel = STANDARD_ETTERSENDING.tittel,
-                avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
-                bruker = Bruker(søker.fnr))
+        Journalpost(
+            dokumenter = dokumenterFra(es.ettersendteVedlegg, søker.fnr),
+            tittel = STANDARD_ETTERSENDING.tittel,
+            avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
+            bruker = Bruker(søker.fnr)
+        )
             .also {
                 log.trace("Journalpost med ${it.størrelse()} er $it")
             }
@@ -67,19 +70,23 @@ class ArkivJournalpostGenerator(
         }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
-        Journalpost(dokumenter = dokumenterFra(søknad, pdf.somPDFVariant()),
-                tittel = UTLAND.tittel,
-                avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
-                bruker = Bruker(søker.fnr))
+        Journalpost(
+            dokumenter = dokumenterFra(søknad, pdf.somPDFVariant()),
+            tittel = UTLAND.tittel,
+            avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
+            bruker = Bruker(søker.fnr)
+        )
             .also {
                 log.trace("Journalpost med ${it.størrelse()} er $it")
             }
 
     fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
-        Journalpost(dokumenter = journalpostDokumenterFra(søknad, pdf.somPDFVariant()),
-                tittel = STANDARD.tittel,
-                avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
-                bruker = Bruker(søker.fnr))
+        Journalpost(
+            dokumenter = journalpostDokumenterFra(søknad, pdf.somPDFVariant()),
+            tittel = STANDARD.tittel,
+            avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
+            bruker = Bruker(søker.fnr)
+        )
             .also {
                 log.trace("Journalpost med ${it.størrelse()} er $it")
             }
@@ -90,8 +97,12 @@ class ArkivJournalpostGenerator(
                 addAll(dokumenterFra(studier, STUDIER))
                 addAll(dokumenterFra(andreBarn, ANDREBARN))
                 addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER))
-                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == AnnenStønadstype.UTLAND },
-                        VedleggType.UTLAND))
+                addAll(
+                    dokumenterFra(
+                        utbetalinger?.andreStønader?.find { it.type == AnnenStønadstype.UTLAND },
+                        VedleggType.UTLAND
+                    )
+                )
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD }, OMSORG))
                 addAll(dokumenterFra(this@with, ANNET))
             }.also {
