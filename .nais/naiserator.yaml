@@ -67,9 +67,6 @@ spec:
         - application: pdfgen
           namespace: aap
           cluster: {{cluster}}
-        - application: fss-proxy
-          namespace: aap
-          cluster: dev-fss
         - application: digdir-krr-proxy
           namespace: team-rocket
           cluster: {{cluster}}
