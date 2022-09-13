@@ -12,10 +12,10 @@ class SafDTOs {
                               val relevanteDatoer: List<SafRelevantDato>,
                               val dokumenter: List<SafDokumentInfo>) {
 
-        enum class SafJournalpostType() {
+        enum class SafJournalpostType {
             I,U,N
         }
-        enum class SafJournalStatus() {
+        enum class SafJournalStatus {
             MOTTATT,
             JOURNALFOERT
             ,EKSPEDERT,
@@ -31,7 +31,7 @@ class SafDTOs {
         }
         data class SafRelevantDato(val dato: LocalDateTime, val datotype: SafDatoType) {
 
-            enum class SafDatoType() {
+            enum class SafDatoType {
                 DATO_OPPRETTET,
                 DATO_SENDT_PRINT,
                 DATO_EKSPEDERT,
@@ -41,12 +41,12 @@ class SafDTOs {
                 DATO_DOKUMENT
             }
         }
-        data class SafDokumentInfo(val dokumentInfoId: String, val brevkode: String, val tittel: String, val dokumentvarianter: List<SafDokumentVariant>){
+        data class SafDokumentInfo(val dokumentInfoId: String, val brevkode: String?, val tittel: String, val dokumentvarianter: List<SafDokumentVariant>){
             data class SafDokumentVariant(val variantformat: Format, val filtype: SafFiltype, val brukerHarTilgang: Boolean) {
-                enum class Format() {
+                enum class Format {
                     ARKIV,SLADDET
                 }
-                enum class SafFiltype() {
+                enum class SafFiltype {
                     PDF,JPG,PNG
                 }
 
