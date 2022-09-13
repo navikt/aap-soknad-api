@@ -10,15 +10,17 @@ import java.net.URI
 @ConfigurationProperties(JOARK)
 @ConstructorBinding
 class ArkivConfig(
-        @DefaultValue(DEFAULT_OPPRETT_PATH) val arkivPath: String,
-        @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
-        @DefaultValue("true") enabled: Boolean,
-        baseUri: URI) : AbstractRestConfig(baseUri, pingPath, JOARK, enabled) {
+    @DefaultValue(DEFAULT_OPPRETT_PATH) val arkivPath: String,
+    @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
+    @DefaultValue("true") enabled: Boolean,
+    baseUri: URI
+) : AbstractRestConfig(baseUri, pingPath, JOARK, enabled) {
 
     override fun toString() =
         "${javaClass.simpleName} [pingPath=$pingPath,arkivPath=$arkivPath,enabled=$isEnabled,baseUri=$baseUri]"
 
     companion object {
+        private const val CLIENT_CREDENTIALS_ARKIV = "client-credentials-arkiv"
         private const val DEFAULT_OPPRETT_PATH = "joark/opprett"
         private const val DEFAULT_PING_PATH = "joark/ping"
     }
