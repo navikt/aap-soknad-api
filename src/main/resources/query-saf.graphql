@@ -1,9 +1,10 @@
 query dokumentoversiktSelvbetjening($ident: String!) {
   dokumentoversiktSelvbetjening(ident: $ident, tema: [AAP]) {
     journalposter {
-      journalposttype
-      tittel
       journalpostId
+      journalposttype
+      journalstatus
+      tittel
       relevanteDatoer {
         dato
         datotype
