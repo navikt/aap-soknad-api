@@ -8,7 +8,7 @@ class SafDTOs {
     data class SafJournalpost(val journalpostId: String,
                               val journalposttype: SafJournalpostType,
                               val journalstatus: SafJournalStatus,
-                              val tittel: String,
+                              val tittel: String?,
                               val relevanteDatoer: List<SafRelevantDato>,
                               val dokumenter: List<SafDokumentInfo>) {
 
@@ -41,7 +41,7 @@ class SafDTOs {
                 DATO_DOKUMENT
             }
         }
-        data class SafDokumentInfo(val dokumentInfoId: String, val brevkode: String?, val tittel: String, val dokumentvarianter: List<SafDokumentVariant>){
+        data class SafDokumentInfo(val dokumentInfoId: String, val brevkode: String?, val tittel: String?, val dokumentvarianter: List<SafDokumentVariant>){
             data class SafDokumentVariant(val variantformat: Format, val filtype: SafFiltype, val brukerHarTilgang: Boolean) {
                 enum class Format {
                     ARKIV,SLADDET
