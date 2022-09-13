@@ -8,6 +8,7 @@ import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler
 import no.nav.aap.api.oppslag.saf.SafConfig.Companion.SAF
 import no.nav.aap.api.oppslag.saf.SafConfig.Companion.SAKER_QUERY
 import no.nav.aap.api.oppslag.saf.SafDTOs.SafJournalpost
+import no.nav.aap.api.oppslag.saf.SafDTOs.SafJournalposter
 import no.nav.aap.arkiv.VariantFormat.ARKIV
 import no.nav.aap.util.AuthContext
 import org.springframework.beans.factory.annotation.Qualifier
@@ -36,10 +37,9 @@ class SafWebClientAdapter(
             .block()
 
     fun saker() = oppslag({
-         graphQL.post(GraphQLRequest.builder().resource(SAKER_QUERY)
-             .variables(mapOf(IDENT to ctx.getFnr().fnr))
-             .build())
-             .block()?.getFirstList(SafJournalpost::class.java)
+         graphQL.post(SAKER_QUERY,
+             mapOf(IDENT to ctx.getFnr().fnr),SafJournalposter::class.java)
+             .block()
     }, "saker")
 
 }
