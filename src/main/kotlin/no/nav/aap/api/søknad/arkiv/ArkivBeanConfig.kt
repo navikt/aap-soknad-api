@@ -1,7 +1,9 @@
 package no.nav.aap.api.søknad.arkiv
 
 import no.nav.aap.api.oppslag.saf.SafConfig.Companion.CLIENT_CREDENTIALS_ARKIV
+import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.CLIENT_CREDENTIALS_ARKIV
 import no.nav.aap.health.AbstractPingableHealthIndicator
+import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.util.Constants.JOARK
@@ -23,7 +25,8 @@ class ArkivBeanConfig {
     fun webClientArkiv(builder: WebClient.Builder, cfg: ArkivConfig, @Qualifier(JOARK) arkivClientCredentialFilterFunction: ExchangeFilterFunction) =
         builder
             .baseUrl("${cfg.baseUri}")
-            .filter(temaFilterFunction())
+           // .filter(temaFilterFunction())
+          //  .filter(correlatingFilterFunction())
             .filter(arkivClientCredentialFilterFunction)
             .build()
 

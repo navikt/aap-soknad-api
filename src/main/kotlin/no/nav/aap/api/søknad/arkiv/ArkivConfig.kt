@@ -20,8 +20,8 @@ class ArkivConfig(
         "${javaClass.simpleName} [pingPath=$pingPath,arkivPath=$arkivPath,enabled=$isEnabled,baseUri=$baseUri]"
 
     companion object {
-        private const val CLIENT_CREDENTIALS_ARKIV = "client-credentials-arkiv"
-        private const val DEFAULT_OPPRETT_PATH = "joark/opprett"
+        const val CLIENT_CREDENTIALS_ARKIV = "client-credentials-arkiv"
+        private const val DEFAULT_OPPRETT_PATH = "rest/journalpostapi/v1/journalpost"
         private const val DEFAULT_PING_PATH = "joark/ping"
     }
 }
