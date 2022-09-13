@@ -40,9 +40,9 @@ class ArkivBeanConfig {
         }
 
     private fun OAuth2AccessTokenService.systemBearerToken(properties: ClientProperties?) =
-        properties?.let {
+        properties?.let {p ->
             getAccessToken(properties).accessToken.asBearer().also {
-                log.trace(CONFIDENTIAL,"Token exchange for $this  OK, token er $it")
+                log.trace(CONFIDENTIAL,"Token exchange for $p  OK, token er $it")
             }
         } ?: throw IllegalArgumentException("Ingen konfigurasjon for $CLIENT_CREDENTIALS_ARKIV, sjekk konfigurasjonen")
 
