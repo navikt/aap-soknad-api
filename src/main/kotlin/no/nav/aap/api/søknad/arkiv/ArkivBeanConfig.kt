@@ -36,15 +36,15 @@ class ArkivBeanConfig {
     fun arkivClientCredentialFilterFunction(cfgs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
         ExchangeFilterFunction { req, next ->
             log.trace(CONFIDENTIAL, "Gjør token exchange for ${req.url()}")
-            next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.systemBearerToken(cfgs.registration[CLIENT_CREDENTIALS_ARKIV])).build())
+            next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.bearerToken(cfgs.registration[CLIENT_CREDENTIALS_ARKIV])).build())
         }
 
-    private fun OAuth2AccessTokenService.systemBearerToken(properties: ClientProperties?) =
+    private fun OAuth2AccessTokenService.bearerToken(properties: ClientProperties?) =
         properties?.let {p ->
-            getAccessToken(properties).accessToken.asBearer().also {
-                log.trace(CONFIDENTIAL,"Token exchange for $p  OK, token er $it")
+            getAccessToken(p).accessToken.asBearer().also {
+                log.trace(CONFIDENTIAL,"Token exchange for $p OK, token er $it")
             }
-        } ?: throw IllegalArgumentException("Ingen konfigurasjon for $CLIENT_CREDENTIALS_ARKIV, sjekk konfigurasjonen")
+        } ?: throw IllegalArgumentException("Ingen konfigurasjon for $CLIENT_CREDENTIALS_ARKIV")
 
 
     @Bean
