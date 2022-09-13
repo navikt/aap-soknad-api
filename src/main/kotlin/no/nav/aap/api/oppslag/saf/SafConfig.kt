@@ -24,6 +24,7 @@ class SafConfig(
         "$javaClass.simpleName [baseUri=$baseUri,  dokPath=$dokPath, pingEndpoint=$pingEndpoint]"
 
     companion object {
+        const val CLIENT_CREDENTIALS_ARKIV = "client-credentials-arkiv"
         const val SAKER_QUERY = "query-saf.graphql"
         const val SAF = "saf"
         private const val PINGPATH = ""
