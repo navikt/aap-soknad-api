@@ -32,8 +32,12 @@ arbeidsforhold:
 organisasjon:
     base-uri: https://ereg-services-q1.dev-fss-pub.nais.io
     enabled: false
+saf:
+    base-uri: https://safselvbetjening-q1.${onprem}-pub.nais.io/graphql
 konto:
     enabled: true
+joark:
+    scope: api://${onprem}.teamdokumenthandtering.dokarkiv-q1/.default
 minside:
     backlinks:
         innsyn: https://aap-innsyn.dev.nav.no/aap/innsyn

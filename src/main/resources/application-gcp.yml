@@ -163,10 +163,7 @@ pdl:
   scope: api://${onprem}.pdl.pdl-api/.default
 joark:
   base-uri: https://dokarkiv.${onprem}-pub.nais.io
-  scope: api://${onprem}.teamdokumenthandtering.dokarkiv-q1/.default
 
-saf:
-  base-uri: https://safselvbetjening.${onprem}-pub.nais.io/graphql
 minside:
   nais:
     app: ${nais.app.name}
