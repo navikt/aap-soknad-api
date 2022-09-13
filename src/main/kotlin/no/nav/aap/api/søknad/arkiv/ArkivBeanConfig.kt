@@ -25,15 +25,15 @@ class ArkivBeanConfig {
 
     @Qualifier(JOARK)
     @Bean
-    fun webClientArkiv(builder: WebClient.Builder, cfg: ArkivConfig, @Qualifier(JOARK) arkivClientCredentialFilterFunction: ExchangeFilterFunction) =
+    fun webClientArkiv(builder: WebClient.Builder, cfg: ArkivConfig, @Qualifier(JOARK) clientCredentialFilterFunction: ExchangeFilterFunction) =
         builder
             .baseUrl("${cfg.baseUri}")
-            .filter(arkivClientCredentialFilterFunction)
+            .filter(clientCredentialFilterFunction)
             .build()
 
     @Bean
     @Qualifier(JOARK)
-    fun arkivClientCredentialFilterFunction(cfgs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
+    fun clientCredentialFilterFunction(cfgs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
         ExchangeFilterFunction { req, next ->
             log.trace(CONFIDENTIAL, "Gjør token exchange for ${req.url()}")
             next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.bearerToken(cfgs.registration[CLIENT_CREDENTIALS_ARKIV])).build())
