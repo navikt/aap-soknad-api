@@ -56,7 +56,7 @@ class OppslagController(
 
     @GetMapping("/saker")
     fun saker() = arkiv.saker().also {
-        log.trace("Saker er $this")
+        log.trace("Saker er $it")
     }
 
     @GetMapping("/soeknader")
