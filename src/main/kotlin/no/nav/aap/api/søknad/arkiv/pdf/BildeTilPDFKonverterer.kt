@@ -37,9 +37,7 @@ class BildeTilPDFKonverterer(private val scaler: BildeSkalerer) {
         catch (e: Exception) {
             throw DokumentException(msg = "Konvertering av ${bilder.størrelse("bildefil")} av type $bildeType feilet", cause = e)
         }
-
-    fun <T> Array<T>.størrelse() = null
-
+    
     private fun pdfFraBilde(doc: PDDocument, bilde: ByteArray, fmt: String) =
         PDPage(A4).apply {
             doc.addPage(this)
@@ -51,7 +49,7 @@ class BildeTilPDFKonverterer(private val scaler: BildeSkalerer) {
                 }
             }
             catch (e: Exception) {
-                throw DokumentException(msg = "Konvertering av vedlegg feilet", cause = e)
+                throw DokumentException(msg = "Konvertering av bilde feilet", cause = e)
             }
         }
 }
