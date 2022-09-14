@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class ArkivOppslagClient(private val a: ArkivOppslagWebClientAdapter) {
-    fun dokument(journalpostId: String, dokumentId: DokumentInfoId) =
-        a.dokument(journalpostId, dokumentId.dokumentInfoId)
+    fun dokument(journalpostId: String, dokumentId: String) =
+        a.dokument(journalpostId, dokumentId)
 
     fun dokumenter() = a.dokumenter()
 }
