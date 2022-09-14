@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.arkiv.pdf
 
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.StringExtensions.størrelse
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.PDPageContentStream
@@ -24,7 +25,7 @@ class BildeTilPDFKonverterer(private val scaler: BildeSkalerer) {
 
     private fun slåSammen(bildeType: String, vararg bilder: ByteArray) =
         try {
-            log.trace("Slår sammen ${bilder.size} fil(er) for $bildeType")
+            log.trace("Slår sammen ${bilder.størrelse("fil")} til PDF for $bildeType")
             PDDocument().use { doc ->
                 ByteArrayOutputStream().use { os ->
                     bilder.forEach { pdfFraBilde(doc, it, parseMediaType(bildeType).subtype) }
@@ -36,6 +37,8 @@ class BildeTilPDFKonverterer(private val scaler: BildeSkalerer) {
         catch (e: Exception) {
             throw DokumentException(msg = "Sammenslåing/konvertering av vedlegg feilet", cause = e)
         }
+
+    fun <T> Array<T>.størrelse() = null
 
     private fun pdfFraBilde(doc: PDDocument, bilde: ByteArray, fmt: String) =
         PDPage(A4).apply {
