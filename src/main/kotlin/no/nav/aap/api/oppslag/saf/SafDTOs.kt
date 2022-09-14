@@ -15,6 +15,7 @@ class SafDTOs {
         enum class SafJournalpostType {
             I,U,N
         }
+        
         enum class SafJournalStatus {
             MOTTATT,
             JOURNALFOERT
