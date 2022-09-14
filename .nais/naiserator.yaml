@@ -108,4 +108,4 @@ spec:
     - name: VEDLEGG_NAVN
       value: '{{vedlegg-navn}}'
     - name: INGRESS
-      value: '{ingress}}'
+      value: '{{ingress}}'
