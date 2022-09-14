@@ -1,10 +1,7 @@
 package no.nav.aap.api.oppslag.arkiv
 
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
-import no.nav.aap.api.oppslag.OppslagController
-import no.nav.aap.api.oppslag.OppslagController.Companion.DOKUMENT
 import no.nav.aap.api.oppslag.OppslagController.Companion.DOKUMENT_PATH
-import no.nav.aap.api.oppslag.OppslagController.Companion.OPPSLAG_BASE
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
@@ -18,10 +15,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import org.springframework.web.util.UriBuilder
-import org.springframework.web.util.UriComponents
 import org.springframework.web.util.UriComponentsBuilder
-import java.net.URI
 import java.net.URL
 import java.time.LocalDateTime
 
