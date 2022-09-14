@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag.arkiv
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.LocalDateTime
 
     data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournalpost>) {
@@ -66,3 +67,10 @@ import java.time.LocalDateTime
             }
         }
     }
+
+data class DokumentInfoId(val dokumentInfoId: String)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class ArkivResponse(val journalpostId: String,
+                         val journalpostferdigstilt: Boolean,
+                         val dokumenter: List<DokumentInfoId>)

@@ -6,9 +6,9 @@ import no.nav.aap.api.oppslag.konto.KontoClient
 import no.nav.aap.api.oppslag.krr.KRRClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
+import no.nav.aap.api.oppslag.arkiv.DokumentInfoId
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.model.SøkerInfo
-import no.nav.aap.arkiv.DokumentInfoId
 import no.nav.aap.util.Constants
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.security.token.support.spring.ProtectedRestController

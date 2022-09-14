@@ -2,12 +2,12 @@ package no.nav.aap.api.arkiv
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.søknad.SøknadTest
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpost.Dokument.DokumentVariant.Filtype.PDFA
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
 import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
-import no.nav.aap.arkiv.Filtype.PDFA
 import no.nav.aap.util.AuthContext
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.mockito.Mock
