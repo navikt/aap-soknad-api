@@ -23,5 +23,6 @@ class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) 
             .doOnError { t: Throwable ->
                 log.warn("Krr oppslag feilet", t)
             }
+            .onErrorReturn(KontaktinformasjonDTO())
             .block()?.tilKontaktinfo()
 }
