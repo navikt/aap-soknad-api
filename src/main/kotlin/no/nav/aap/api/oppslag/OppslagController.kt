@@ -48,7 +48,7 @@ class OppslagController(
     ).also {
         log.trace("Søker er $it")
         try {
-            val saker = saker()
+            val saker = saker()  // TODO midlertidig tet
         }
         catch (e: Exception){
             log.warn("OOPS",e)
@@ -67,7 +67,7 @@ class OppslagController(
     @GetMapping("/soeknad/{uuid}")
     fun søknad(@PathVariable uuid: UUID) = søknad.søknad(uuid)
 
-    @GetMapping("/saf")
+    @GetMapping("/dokument")
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentInfoId: DokumentInfoId) =
         saf.dokument(journalpostId, dokumentInfoId)
             ?.let {
