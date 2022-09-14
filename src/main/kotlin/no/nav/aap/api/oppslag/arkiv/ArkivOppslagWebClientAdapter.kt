@@ -9,7 +9,6 @@ import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAKER_QUERY
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagRelevantDato.ArkivOppslagDatoType.DATO_OPPRETTET
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagMapper.DokumentOversiktInnslag
-import no.nav.aap.api.oppslag.arkiv.ArkivOppslagWebClientAdapter.DokumentOversiktInnslag
 import no.nav.aap.arkiv.VariantFormat.ARKIV
 import no.nav.aap.util.AuthContext
 import org.springframework.beans.factory.annotation.Qualifier
