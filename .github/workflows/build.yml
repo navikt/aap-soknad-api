@@ -38,7 +38,7 @@ jobs:
             -   name: Setter image-navn
                 run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
 
-            -   name: Kompilerer og bygger image 
+            -   name: Kompilerer og bygger image
                 run: ./mvnw --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
 
             -   name: Deployer til dev

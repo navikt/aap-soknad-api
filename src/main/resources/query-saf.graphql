@@ -9,6 +9,11 @@ query dokumentoversiktSelvbetjening($ident: String!) {
         dato
         datotype
       }
+      sak {
+        fagsakId
+        fagsaksystem
+        sakstype
+      }
       dokumenter {
         dokumentInfoId
         brevkode
