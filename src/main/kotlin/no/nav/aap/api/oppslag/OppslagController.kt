@@ -33,8 +33,7 @@ class OppslagController(
     val krr: KRRClient,
     val søknad: SøknadClient,
     val konto: KontoClient,
-    val saf: ArkivOppslagClient
-) {
+    val arkiv: ArkivOppslagClient) {
 
     val log = getLogger(javaClass)
 
@@ -56,7 +55,7 @@ class OppslagController(
     }
 
     @GetMapping("/saker")
-    fun saker() = saf.saker().also {
+    fun saker() = arkiv.saker().also {
         log.trace("Saker er $this")
     }
 
@@ -69,7 +68,7 @@ class OppslagController(
 
     @GetMapping("/dokument")
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentInfoId: DokumentInfoId) =
-        saf.dokument(journalpostId, dokumentInfoId)
+        arkiv.dokument(journalpostId, dokumentInfoId)
             ?.let {
                 ok()
                     .cacheControl(noCache().mustRevalidate())
