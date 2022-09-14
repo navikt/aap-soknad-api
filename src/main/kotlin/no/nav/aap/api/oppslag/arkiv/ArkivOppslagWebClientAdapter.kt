@@ -47,7 +47,7 @@ class ArkivOppslagWebClientAdapter(
 }
 
 @Component
-class ArkivOppslagMapper(@Value("ingress") private val  ingress: String) {
+class ArkivOppslagMapper(@Value("\${ingress}") private val  ingress: String) {
     fun tilDokumenter(j: ArkivOppslagJournalpost) = j.dokumenter.map {
         dok -> DokumentOversiktInnslag(uriFra(j.journalpostId,dok.dokumentInfoId),dok.tittel,j.relevanteDatoer.first {
         it.datotype == DATO_OPPRETTET}.dato)
