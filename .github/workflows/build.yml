@@ -30,8 +30,7 @@ jobs:
                     cosign-release: 'v1.3.1'
 
             -   name: Verifiserer distroless base-image
-                run: |
-                    cosign verify --key distroless.pub gcr.io/distroless/java17
+                run:  cosign verify --key distroless.pub gcr.io/distroless/java17
 
             -   name: Setter tag-navn
                 run: echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
@@ -39,7 +38,7 @@ jobs:
             -   name: Setter image-navn
                 run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
 
-            -   name: Kompilerer og bygger image med jib
+            -   name: Kompilerer og bygger image 
                 run: ./mvnw --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
 
             -   name: Deployer til dev
