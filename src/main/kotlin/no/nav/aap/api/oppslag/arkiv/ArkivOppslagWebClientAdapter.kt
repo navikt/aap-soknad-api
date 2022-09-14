@@ -56,9 +56,10 @@ class ArkivOppslagMapper(@Value("\${ingress}") private val  ingress: URI) {
                     uri(journalpostId,dok.dokumentInfoId),
                     dok.tittel,
                     relevanteDatoer.first {
-                        it.datotype == DATO_OPPRETTET}.dato)
+                        it.datotype == DATO_OPPRETTET
+                    }.dato)
+            }
         }
-    }
     private fun uri(journalpostId: String, dokumentId: String) =
         UriComponentsBuilder.newInstance()
             .uri(ingress)
