@@ -14,35 +14,35 @@ jobs:
         runs-on: ubuntu-latest
         steps:
 
-            -   name: Sjekk ut kode
+            -   name: Sjekker ut kode
                 uses: actions/checkout@v3
 
-            -   name: Sett opp Java 17
+            -   name: Setter opp Java 17
                 uses: actions/setup-java@v3
                 with:
                     java-version: 17
                     distribution: temurin
                     cache: maven
 
-            -   name: Installer cosign
+            -   name: Installerer cosign
                 uses: sigstore/cosign-installer@main
                 with:
                     cosign-release: 'v1.3.1'
 
-            -   name: Verifiser distroless base image
+            -   name: Verifiserer distroless base-image
                 run: |
                     cosign verify --key distroless.pub gcr.io/distroless/java17
 
-            -   name: Setter TAG
+            -   name: Setter tag-navn
                 run: echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
 
-            -   name: Setter IMAGE
+            -   name: Setter image-navn
                 run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
 
-            -   name: Kompiler og deploy image med jib
+            -   name: Kompilerer og bygger image med jib
                 run: ./mvnw --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
 
-            -   name: Deploy
+            -   name: Deployer ti dev
                 uses: nais/deploy/actions/deploy@master
                 env:
                     PRINT_PAYLOAD: true
