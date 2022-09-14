@@ -42,7 +42,7 @@ jobs:
             -   name: Kompilerer og bygger image med jib
                 run: ./mvnw --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
 
-            -   name: Deployer ti dev
+            -   name: Deployer til dev
                 uses: nais/deploy/actions/deploy@master
                 env:
                     PRINT_PAYLOAD: true
