@@ -47,7 +47,7 @@ class OppslagController(
     ).also {
         log.trace("Søker er $it")
         try {
-            val saker = saker()  // TODO midlertidig test
+            dokumenter()  // TODO midlertidig test
         }
         catch (e: Exception){
             log.warn("OOPS",e)
@@ -55,8 +55,8 @@ class OppslagController(
     }
 
     @GetMapping("/dokumenter")
-    fun saker() = arkiv.dokumenter().also {
-        log.trace("Journalposter med dokumenter er $it")
+    fun dokumenter() = arkiv.dokumenter().also {
+        log.trace("Dokumenter er $it")
     }
 
     @GetMapping("/soeknader")
