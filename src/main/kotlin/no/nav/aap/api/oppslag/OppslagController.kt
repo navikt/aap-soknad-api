@@ -5,7 +5,7 @@ import no.nav.aap.api.oppslag.behandler.BehandlerClient
 import no.nav.aap.api.oppslag.konto.KontoClient
 import no.nav.aap.api.oppslag.krr.KRRClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
-import no.nav.aap.api.oppslag.saf.SafClient
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.model.SøkerInfo
 import no.nav.aap.arkiv.DokumentInfoId
@@ -33,7 +33,7 @@ class OppslagController(
     val krr: KRRClient,
     val søknad: SøknadClient,
     val konto: KontoClient,
-    val saf: SafClient
+    val saf: ArkivOppslagClient
 ) {
 
     val log = getLogger(javaClass)

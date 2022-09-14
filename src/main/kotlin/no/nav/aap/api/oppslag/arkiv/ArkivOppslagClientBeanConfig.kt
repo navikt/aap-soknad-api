@@ -1,8 +1,8 @@
-package no.nav.aap.api.oppslag.saf
+package no.nav.aap.api.oppslag.arkiv
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
-import no.nav.aap.api.oppslag.saf.SafConfig.Companion.SAF
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import org.springframework.beans.factory.annotation.Qualifier
@@ -12,20 +12,20 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
-class SafClientBeanConfig {
+class ArkivOppslagClientBeanConfig {
 
     @Qualifier(SAF)
     @Bean
-    fun safWebClient(b: Builder, cfg: SafConfig, tokenXFilterFunction: TokenXFilterFunction) =
+    fun arkivOppslagWebClient(b: Builder, cfg: ArkivOppslagConfig, tokenXFilterFunction: TokenXFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
             .filter(tokenXFilterFunction)
             .build()
 
     @Bean
-    fun safHealthIndicator(a: SafWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
+    fun arkivOppslagHealthIndicator(a: ArkivOppslagWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 
     @Qualifier(SAF)
     @Bean
-    fun graphQLSafWebClient(@Qualifier(SAF) client: WebClient, mapper: ObjectMapper) =
+    fun arkivOppslagGraphQLWebClient(@Qualifier(SAF) client: WebClient, mapper: ObjectMapper) =
         GraphQLWebClient.newInstance(client, mapper)
 }
