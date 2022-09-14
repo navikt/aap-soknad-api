@@ -2,6 +2,7 @@ package no.nav.aap.api.oppslag.krr
 
 import no.nav.aap.api.oppslag.krr.KRRConfig.Companion.KRR
 import no.nav.aap.rest.AbstractWebClientAdapter
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
@@ -18,10 +19,10 @@ class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) 
             .retrieve()
             .bodyToMono<KontaktinformasjonDTO>()
             .doOnSuccess {
-                log.trace("Kontaktinformasjon er $it")
+                log.trace(CONFIDENTIAL,"Kontaktinformasjon fra KRR er $it")
             }
             .doOnError { t: Throwable ->
-                log.warn("Krr oppslag feilet", t)
+                log.warn("KRR oppslag feilet", t)
             }
             .onErrorReturn(KontaktinformasjonDTO())
             .block()?.tilKontaktinfo()

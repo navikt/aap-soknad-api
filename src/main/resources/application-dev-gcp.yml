@@ -20,10 +20,10 @@ no.nav:
                             client-id: ${token.x.client.id}
                             client-jwk: ${token.x.private.jwk}
                             client-auth-method: private_key_jwt
-                            
+
                     safselvbetjening-q1:
                         token-exchange:
-                            audience: ${onprem}:teamdokumenthandtering:safselvbetjening
+                            audience: ${onprem}:teamdokumenthandtering:safselvbetjening-q1
                         well-known-url: ${token.x.well.known.url}
                         grant-type: urn:ietf:params:oauth:grant-type:token-exchange
                         authentication:
