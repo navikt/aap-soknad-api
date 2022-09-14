@@ -8,9 +8,12 @@ import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAKER_QUERY
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagRelevantDato.ArkivOppslagDatoType.DATO_OPPRETTET
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagMapper.DokumentOversiktInnslag
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagWebClientAdapter.DokumentOversiktInnslag
 import no.nav.aap.arkiv.VariantFormat.ARKIV
 import no.nav.aap.util.AuthContext
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -25,6 +28,7 @@ class ArkivOppslagWebClientAdapter(
     @Qualifier(SAF) private val graphQL: GraphQLWebClient,
     errorHandler: GraphQLErrorHandler,
     private val ctx: AuthContext,
+    private val mapper: ArkivOppslagMapper,
     val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(client, cf, errorHandler) {
 
     fun dokument(journalpostId: String, dokumentInfoId: String) =
@@ -40,19 +44,20 @@ class ArkivOppslagWebClientAdapter(
     fun dokumenter(): List<DokumentOversiktInnslag> = oppslag(graphQL.post(SAKER_QUERY, fnr(ctx), ArkivOppslagJournalposter::class.java)
         .block()
         ?.journalposter
-        ?.flatMap { it.tilDokumenter() }::orEmpty, "saker")
+        ?.flatMap { mapper.tilDokumenter(it) }::orEmpty, "saker")
+}
 
-    fun ArkivOppslagJournalpost.tilDokumenter() = dokumenter.map {
-        dok -> DokumentOversiktInnslag(uriFra(journalpostId,dok.dokumentInfoId),dok.tittel,relevanteDatoer.first {
-        it.datotype == DATO_OPPRETTET
-        }.dato)
+@Component
+class ArkivOppslagMapper(@Value("ingress") private val  ingress: String) {
+    fun tilDokumenter(j: ArkivOppslagJournalpost) = j.dokumenter.map {
+        dok -> DokumentOversiktInnslag(uriFra(j.journalpostId,dok.dokumentInfoId),dok.tittel,j.relevanteDatoer.first {
+        it.datotype == DATO_OPPRETTET}.dato)
     }
-
     private fun uriFra(journalpostId: String, dokumentId: String) =
         UriComponentsBuilder.newInstance()
-        .scheme("https")
-        .host("aap-soknad-api.dev.intern.nav.no")
-        .path(DOKUMENT_PATH).build(journalpostId,dokumentId).toURL()
+            .scheme("https")
+            .host(ingress)
+            .path(DOKUMENT_PATH).build(journalpostId,dokumentId).toURL()
 
     data class DokumentOversiktInnslag(val url: URL, val tittel: String?, val dato: LocalDateTime)
 
