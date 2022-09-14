@@ -5,7 +5,7 @@ import no.nav.aap.api.oppslag.OppslagController.Companion.DOKUMENT_PATH
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
-import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAKER_QUERY
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.DOKUMENTER_QUERY
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagRelevantDato.ArkivOppslagDatoType.DATO_OPPRETTET
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagMapper.DokumentOversiktInnslag
@@ -41,7 +41,7 @@ class ArkivOppslagWebClientAdapter(
             .doOnError { t: Throwable -> log.warn("Arkivoppslag feilet", t) }
             .block()
 
-    fun dokumenter(): List<DokumentOversiktInnslag> = oppslag(graphQL.post(SAKER_QUERY, fnr(ctx), ArkivOppslagJournalposter::class.java)
+    fun dokumenter() = oppslag(graphQL.post(DOKUMENTER_QUERY, fnr(ctx), ArkivOppslagJournalposter::class.java)
         .block()
         ?.journalposter
         ?.flatMap { mapper.tilDokumenter(it) }::orEmpty, "saker")
@@ -49,15 +49,22 @@ class ArkivOppslagWebClientAdapter(
 
 @Component
 class ArkivOppslagMapper(@Value("\${ingress}") private val  ingress: URI) {
-    fun tilDokumenter(j: ArkivOppslagJournalpost) = j.dokumenter.map {
-        dok -> DokumentOversiktInnslag(uriFra(j.journalpostId,dok.dokumentInfoId),dok.tittel,j.relevanteDatoer.first {
-        it.datotype == DATO_OPPRETTET}.dato)
+    fun tilDokumenter(journalpost: ArkivOppslagJournalpost) =
+        with(journalpost) {
+            dokumenter.map {
+                dok -> DokumentOversiktInnslag(
+                    uri(journalpostId,dok.dokumentInfoId),
+                    dok.tittel,
+                    relevanteDatoer.first {
+                        it.datotype == DATO_OPPRETTET}.dato)
+        }
     }
-    private fun uriFra(journalpostId: String, dokumentId: String) =
+    private fun uri(journalpostId: String, dokumentId: String) =
         UriComponentsBuilder.newInstance()
             .uri(ingress)
-            .path(DOKUMENT_PATH).build(journalpostId,dokumentId).toURL()
+            .path(DOKUMENT_PATH)
+            .build(journalpostId,dokumentId)
 
-    data class DokumentOversiktInnslag(val url: URL, val tittel: String?, val dato: LocalDateTime)
+    data class DokumentOversiktInnslag(val uri: URI, val tittel: String?, val dato: LocalDateTime)
 
 }

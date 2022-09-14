@@ -24,7 +24,7 @@ class ArkivOppslagConfig(
         "$javaClass.simpleName [baseUri=$baseUri,  dokPath=$dokPath, pingEndpoint=$pingEndpoint]"
 
     companion object {
-        const val SAKER_QUERY = "query-saf.graphql"
+        const val DOKUMENTER_QUERY = "query-dokumenter.graphql"
         const val SAF = "saf"
         private const val PINGPATH = ""
         private const val DOKPATH = "rest/hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}"
