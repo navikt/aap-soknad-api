@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.util.UriComponentsBuilder
+import java.net.URI
 import java.net.URL
 import java.time.LocalDateTime
 
@@ -47,15 +48,14 @@ class ArkivOppslagWebClientAdapter(
 }
 
 @Component
-class ArkivOppslagMapper(@Value("\${ingress}") private val  ingress: String) {
+class ArkivOppslagMapper(@Value("\${ingress}") private val  ingress: URI) {
     fun tilDokumenter(j: ArkivOppslagJournalpost) = j.dokumenter.map {
         dok -> DokumentOversiktInnslag(uriFra(j.journalpostId,dok.dokumentInfoId),dok.tittel,j.relevanteDatoer.first {
         it.datotype == DATO_OPPRETTET}.dato)
     }
     private fun uriFra(journalpostId: String, dokumentId: String) =
         UriComponentsBuilder.newInstance()
-            .scheme("https")
-            .host(ingress)
+            .uri(ingress)
             .path(DOKUMENT_PATH).build(journalpostId,dokumentId).toURL()
 
     data class DokumentOversiktInnslag(val url: URL, val tittel: String?, val dato: LocalDateTime)
