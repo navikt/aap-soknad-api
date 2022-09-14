@@ -45,18 +45,18 @@ class PDLWebClientAdapter(
     } ?: throw JwtTokenMissingException()
 
     private fun søkerOppslag(fnr: String) = oppslag({
-        userWebClient.post(PERSON_QUERY, idFra(fnr), PDLWrappedSøker::class.java).block()
+        userWebClient.post(PERSON_QUERY, fnr(fnr), PDLWrappedSøker::class.java).block()
             ?.active
     }, "søker")
 
     private fun foreldreansvarOppslag(fnr: String) = oppslag({
-        userWebClient.post(ANSVAR_QUERY, idFra(fnr), PDLWrappedSøkerForeldreansvar::class.java).block()
+        userWebClient.post(ANSVAR_QUERY, fnr(fnr), PDLWrappedSøkerForeldreansvar::class.java).block()
             ?.active
     }, "søkerMedForeldreansvar")
 
     private fun barnOppslag(fnr: String) =
         oppslag({
-            systemWebClient.post(BARN_QUERY, idFra(fnr), PDLBarn::class.java).block()
+            systemWebClient.post(BARN_QUERY, fnr(fnr), PDLBarn::class.java).block()
         }, "barn")
             ?.let { barn ->
                 val b = Barn(navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
@@ -121,7 +121,6 @@ class PDLWebClientAdapter(
         private const val ANSVAR_QUERY = "query-foreldreansvar.graphql"
         private const val PERSON_QUERY = "query-person.graphql"
         private const val BARN_QUERY = "query-barn.graphql"
-        private fun idFra(fnr: String) = mapOf(IDENT to fnr)
 
     }
 

@@ -3,6 +3,7 @@ package no.nav.aap.api.oppslag.graphql
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.rest.AbstractWebClientAdapter
+import no.nav.aap.util.AuthContext
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.web.reactive.function.client.WebClient
@@ -20,7 +21,7 @@ abstract class AbstractGraphQLAdapter(
         } catch (e: GraphQLErrorsException) {
             errorHandler.handleError(e)
         } catch (e: Exception) {
-            log.warn("Oppslag {} feilet med uventet feil", type, e)
+            log.warn("Oppslag $type feilet med uventet feil", e)
             throw e
         }
     }
@@ -34,6 +35,10 @@ abstract class AbstractGraphQLAdapter(
             .toBodilessEntity()
             .block()
     }
+
+    protected fun fnr(ctx: AuthContext) = fnr(ctx.getFnr().fnr)
+    protected fun fnr(fnr: String) = mapOf(IDENT to fnr)
+
 
     companion object {
         const val IDENT = "ident"

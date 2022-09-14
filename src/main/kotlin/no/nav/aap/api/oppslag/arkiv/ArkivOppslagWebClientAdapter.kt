@@ -19,8 +19,7 @@ class ArkivOppslagWebClientAdapter(
     @Qualifier(SAF) private val graphQL: GraphQLWebClient,
     errorHandler: GraphQLErrorHandler,
     private val ctx: AuthContext,
-    val cf: ArkivOppslagConfig
-                                  ) : AbstractGraphQLAdapter(client, cf, errorHandler) {
+    val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(client, cf, errorHandler) {
 
     fun dokument(journalpostId: String, dokumentInfoId: String) =
         webClient.get()
@@ -28,14 +27,10 @@ class ArkivOppslagWebClientAdapter(
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono<ByteArray>()
-            .doOnSuccess { log.trace("SAF returnerte ${it.size} bytes") }
-            .doOnError { t: Throwable -> log.warn("SAF oppslag feilet", t) }
+            .doOnSuccess { log.trace("Arkiv oppslag returnerte ${it.size} bytes") }
+            .doOnError { t: Throwable -> log.warn("Arkiv oppslag feilet", t) }
             .block()
 
-    fun saker() = oppslag({
-         graphQL.post(SAKER_QUERY,
-             mapOf(IDENT to ctx.getFnr().fnr),ArkivOppslagJournalposter::class.java)
-             .block()
-    }, "saker")
+    fun saker() = oppslag({ graphQL.post(SAKER_QUERY, fnr(ctx),ArkivOppslagJournalposter::class.java).block() }, "saker")
 
 }
