@@ -53,7 +53,7 @@ class ArkivOppslagWebClientAdapter(
         UriComponentsBuilder.newInstance()
         .scheme("http")
         .host("aap-soknad-api.dev.intern.nav.no")
-        .path("oppslag/dokument/$journalpostId/$dokumentId").build().toUri()
+        .path("oppslag/dokument/$dokumentId/$journalpostId").build().toUri()
 
     data class DokumentOversiktInnslag(val uri: URI, val tittel: String?, val dato: LocalDateTime)
 
