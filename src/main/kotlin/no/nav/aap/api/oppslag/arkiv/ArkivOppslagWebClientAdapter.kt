@@ -3,6 +3,7 @@ package no.nav.aap.api.oppslag.arkiv
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.oppslag.OppslagController
 import no.nav.aap.api.oppslag.OppslagController.Companion.DOKUMENT
+import no.nav.aap.api.oppslag.OppslagController.Companion.DOKUMENT_PATH
 import no.nav.aap.api.oppslag.OppslagController.Companion.OPPSLAG_BASE
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler
@@ -57,7 +58,7 @@ class ArkivOppslagWebClientAdapter(
         UriComponentsBuilder.newInstance()
         .scheme("https")
         .host("aap-soknad-api.dev.intern.nav.no")
-        .path("${OPPSLAG_BASE}${DOKUMENT}").build(journalpostId,dokumentId).toURL()
+        .path(DOKUMENT_PATH).build(journalpostId,dokumentId).toURL()
 
     data class DokumentOversiktInnslag(val url: URL, val tittel: String?, val dato: LocalDateTime)
 

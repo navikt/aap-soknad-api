@@ -83,6 +83,7 @@ class OppslagController(
 
     companion object {
         const val OPPSLAG_BASE = "/oppslag"
-        const val DOKUMENT = "/dokument/{journalpostId}/{dokumentInfoId}"
+        private const val DOKUMENT = "/dokument/{journalpostId}/{dokumentInfoId}"
+        const val DOKUMENT_PATH = "$OPPSLAG_BASE$DOKUMENT"
     }
 }
