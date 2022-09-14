@@ -31,6 +31,6 @@ class ArkivOppslagWebClientAdapter(
             .doOnError { t: Throwable -> log.warn("Arkiv oppslag feilet", t) }
             .block()
 
-    fun saker() = oppslag({ graphQL.post(SAKER_QUERY, fnr(ctx),ArkivOppslagJournalposter::class.java).block() }, "saker")
+    fun dokumenter() = oppslag({ graphQL.post(SAKER_QUERY, fnr(ctx),ArkivOppslagJournalposter::class.java).block() }, "saker")
 
 }

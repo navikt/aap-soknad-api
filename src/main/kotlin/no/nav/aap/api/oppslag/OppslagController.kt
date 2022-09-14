@@ -55,7 +55,7 @@ class OppslagController(
     }
 
     @GetMapping("/dokumenter")
-    fun saker() = arkiv.saker().also {
+    fun saker() = arkiv.dokumenter().also {
         log.trace("Journalposter med dokumenter er $it")
     }
 
