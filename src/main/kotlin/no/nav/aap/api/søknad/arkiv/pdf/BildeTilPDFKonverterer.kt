@@ -25,7 +25,7 @@ class BildeTilPDFKonverterer(private val scaler: BildeSkalerer) {
 
     private fun slåSammen(bildeType: String, vararg bilder: ByteArray) =
         try {
-            log.trace("Slår sammen ${bilder.størrelse("fil")} til PDF for $bildeType")
+            log.trace("Konverterer ${bilder.størrelse("bildefil")} til PDF for $bildeType")
             PDDocument().use { doc ->
                 ByteArrayOutputStream().use { os ->
                     bilder.forEach { pdfFraBilde(doc, it, parseMediaType(bildeType).subtype) }
@@ -35,7 +35,7 @@ class BildeTilPDFKonverterer(private val scaler: BildeSkalerer) {
             }
         }
         catch (e: Exception) {
-            throw DokumentException(msg = "Sammenslåing/konvertering av vedlegg feilet", cause = e)
+            throw DokumentException(msg = "Konvertering av ${bilder.størrelse("bildefil")} av type $bildeType feilet", cause = e)
         }
 
     fun <T> Array<T>.størrelse() = null
