@@ -15,7 +15,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, val cf: ArkivConfig) :
     AbstractWebClientAdapter(webClient, cf) {
 
-    fun opprettJournalpost(journalpost: Journalpost) =
+    fun opprettJournalpost(journalpost: ArkivJournalpost) =
         webClient.post()
             .uri { b -> b.path(cf.arkivPath).build() }
             .contentType(APPLICATION_JSON)

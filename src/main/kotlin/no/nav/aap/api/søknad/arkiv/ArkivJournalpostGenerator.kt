@@ -5,6 +5,14 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.felles.SkjemaType.UTLAND
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpost.AvsenderMottaker
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpost.Bruker
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpost.Dokument
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpost.Dokument.DokumentVariant
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpost.Dokument.DokumentVariant.Filtype.JSON
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpost.Dokument.DokumentVariant.Filtype.PDFA
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpost.Dokument.DokumentVariant.VariantFormat.ARKIV
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpost.Dokument.DokumentVariant.VariantFormat.ORIGINAL
 import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
@@ -23,21 +31,15 @@ import no.nav.aap.api.søknad.model.VedleggType.ANNET
 import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
 import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
-import no.nav.aap.arkiv.AvsenderMottaker
-import no.nav.aap.arkiv.Bruker
-import no.nav.aap.arkiv.Dokument
-import no.nav.aap.arkiv.DokumentVariant
-import no.nav.aap.arkiv.Filtype.PDFA
-import no.nav.aap.arkiv.Journalpost
-import no.nav.aap.arkiv.encode
-import no.nav.aap.arkiv.somPDFVariant
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.størrelse
+import no.nav.aap.util.StringExtensions.toEncodedJson
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.stereotype.Component
+import java.util.*
 
 @Component
 class ArkivJournalpostGenerator(
@@ -49,8 +51,8 @@ class ArkivJournalpostGenerator(
 
     private val log = getLogger(javaClass)
 
-    fun journalpostFra(es: StandardEttersending, søker: Søker): Journalpost =
-        Journalpost(
+    fun journalpostFra(es: StandardEttersending, søker: Søker) =
+        ArkivJournalpost(
             dokumenter = dokumenterFra(es.ettersendteVedlegg, søker.fnr),
             tittel = STANDARD_ETTERSENDING.tittel,
             avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
@@ -70,7 +72,7 @@ class ArkivJournalpostGenerator(
         }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
-        Journalpost(
+        ArkivJournalpost(
             dokumenter = dokumenterFra(søknad, pdf.somPDFVariant()),
             tittel = UTLAND.tittel,
             avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
@@ -81,7 +83,7 @@ class ArkivJournalpostGenerator(
             }
 
     fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
-        Journalpost(
+        ArkivJournalpost(
             dokumenter = journalpostDokumenterFra(søknad, pdf.somPDFVariant()),
             tittel = STANDARD.tittel,
             avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
@@ -159,12 +161,16 @@ class ArkivJournalpostGenerator(
             log.trace("Dokument til arkiv $it")
         })
 
-    internal fun Journalpost.størrelse() = dokumenter.størrelse("dokument")
+    private fun ArkivJournalpost.størrelse() = dokumenter.størrelse("dokument")
     private fun ByteArray.somDokument(tittel: String) =
         Dokument(tittel = tittel, dokumentVariant = DokumentVariant(PDFA, encode())).also {
             log.trace("Dokument konvertert er $it")
         }
 
+    fun ByteArray.somPDFVariant() = DokumentVariant(PDFA, encode(), ARKIV)
+    fun StandardSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
+    fun UtlandSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
     private fun DokumentInfo.somDokument(tittel: String) = bytes.somDokument(tittel)
+    fun ByteArray.encode() = Base64.getEncoder().encodeToString(this)
 
 }

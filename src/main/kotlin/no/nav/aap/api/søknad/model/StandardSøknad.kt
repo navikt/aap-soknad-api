@@ -14,6 +14,9 @@ import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.AnnenBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpost.Dokument.DokumentVariant
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpost.Dokument.DokumentVariant.Filtype.JSON
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpost.Dokument.DokumentVariant.VariantFormat.ORIGINAL
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
 import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.AVBRUTT
@@ -26,9 +29,6 @@ import no.nav.aap.api.søknad.model.VedleggType.ANNET
 import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
 import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
-import no.nav.aap.arkiv.DokumentVariant
-import no.nav.aap.arkiv.Filtype.JSON
-import no.nav.aap.arkiv.VariantFormat.ORIGINAL
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.toEncodedJson
 import java.io.IOException
@@ -52,7 +52,6 @@ data class StandardSøknad(
 
     private val log = getLogger(javaClass)
 
-    fun somJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
 
     data class VedleggInfo(val vedlagte: List<VedleggType>, val manglende: List<VedleggType>)
 
@@ -100,7 +99,7 @@ data class StandardSøknad(
                 log.trace("Ingen manglende vedlegg for arbeidsgiver")
             }
             log.trace("Sjekker om det er manglende vedlegg for andre stønader ${this?.andreStønader}")
-            this?.andreStønader?.firstOrNull() { it.type == OMSORGSSTØNAD }?.let {
+            this?.andreStønader?.firstOrNull { it.type == OMSORGSSTØNAD }?.let {
                 if (manglerVedlegg(it)) {
                     manglende += OMSORG.also {
                         log.trace("Det er manglende vedlegg for ${OMSORG.tittel}")
@@ -114,7 +113,7 @@ data class StandardSøknad(
                     log.trace("Ingen manglende vedlegg for omsorg")
                 }
             }
-            this?.andreStønader?.firstOrNull() { it.type == UTLAND }?.let {
+            this?.andreStønader?.firstOrNull { it.type == UTLAND }?.let {
                 if (manglerVedlegg(it)) {
                     manglende += VedleggType.UTLAND.also {
                         log.trace("Det er manglende vedlegg for ${VedleggType.UTLAND.tittel}")
