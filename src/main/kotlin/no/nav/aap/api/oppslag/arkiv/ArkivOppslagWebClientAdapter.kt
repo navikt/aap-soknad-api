@@ -49,7 +49,7 @@ class ArkivOppslagWebClientAdapter(
         .block()
         ?.journalposter
         ?.filter { it.journalposttype == I || it.journalposttype == U }
-        ?.filter { it.dokumenter.any { v -> v.dokumentvarianter.any{va -> va.brukerHarTilgang && va.filtype == PDF}}}
+      //  ?.filter { it.dokumenter.any { v -> v.dokumentvarianter.any{va -> va.brukerHarTilgang && va.filtype == PDF}}}
         ?.flatMap { mapper.tilDokumenter(it) }::orEmpty, "saker")
 }
 
