@@ -8,5 +8,5 @@ class ArkivOppslagClient(private val a: ArkivOppslagWebClientAdapter) {
     fun dokument(journalpostId: String, dokumentId: String) =
         a.dokument(journalpostId, dokumentId)
 
-    fun dokumenter() = a.dokumenter()
+    fun dokumenter() = a.dokumenter().sortedByDescending { it.dato }
 }

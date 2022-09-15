@@ -67,8 +67,8 @@ class OppslagController(
     fun søknad(@PathVariable uuid: UUID) = søknad.søknad(uuid)
 
     @GetMapping(DOKUMENT)
-    fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentInfoId: String) =
-        arkiv.dokument(journalpostId, dokumentInfoId)
+    fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentId: String) =
+        arkiv.dokument(journalpostId, dokumentId)
             ?.let {
                 ok()
                     .cacheControl(noCache().mustRevalidate())
@@ -81,7 +81,7 @@ class OppslagController(
 
     companion object {
         const val OPPSLAG_BASE = "/oppslag"
-        private const val DOKUMENT = "/dokument/{journalpostId}/{dokumentInfoId}"
+        private const val DOKUMENT = "/dokument/{journalpostId}/{dokumentId}"
         const val DOKUMENT_PATH = "$OPPSLAG_BASE$DOKUMENT"
     }
 }
