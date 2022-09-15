@@ -7,15 +7,16 @@ import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.DOKUMENTER_QUERY
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost
-import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentFiltype.PDF
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentFiltype
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentFiltype.*
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentVariantFormat
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentVariantFormat.*
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagJournalpostType
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagJournalpostType.I
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagJournalpostType.U
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagRelevantDato.ArkivOppslagDatoType.DATO_OPPRETTET
-import no.nav.aap.api.oppslag.arkiv.ArkivOppslagMapper.DokumentOversiktInnslag
 import no.nav.aap.arkiv.VariantFormat.ARKIV
 import no.nav.aap.util.AuthContext
-import org.checkerframework.checker.units.qual.m
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -49,7 +50,6 @@ class ArkivOppslagWebClientAdapter(
         .block()
         ?.journalposter
         ?.filter { it.journalposttype == I || it.journalposttype == U }
-      //  ?.filter { it.dokumenter.any { v -> v.dokumentvarianter.any{va -> va.brukerHarTilgang && va.filtype == PDF}}}
         ?.flatMap { mapper.tilDokumenter(it) }::orEmpty, "saker")
 }
 
@@ -57,8 +57,9 @@ class ArkivOppslagWebClientAdapter(
 class ArkivOppslagMapper(@Value("\${ingress}") private val  ingress: URI) {
     fun tilDokumenter(journalpost: ArkivOppslagJournalpost) =
         with(journalpost) {
-            dokumenter.map {
-                dok -> DokumentOversiktInnslag(
+            dokumenter
+                .filter { v -> v.dokumentvarianter.any {it.filtype == PDF && it.brukerHarTilgang && ArkivOppslagDokumentVariantFormat.ARKIV == it.variantformat } }
+                .map { dok -> DokumentOversiktInnslag(
                     uri(journalpostId,dok.dokumentInfoId),
                     dok.tittel,
                     journalposttype,
