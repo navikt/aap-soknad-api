@@ -7,6 +7,7 @@ import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.DOKUMENTER_QUERY
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagJournalpostType.I
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagRelevantDato.ArkivOppslagDatoType.DATO_OPPRETTET
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagMapper.DokumentOversiktInnslag
 import no.nav.aap.arkiv.VariantFormat.ARKIV
@@ -19,7 +20,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
-import java.net.URL
 import java.time.LocalDateTime
 
 @Component
@@ -44,6 +44,7 @@ class ArkivOppslagWebClientAdapter(
     fun dokumenter() = oppslag(graphQL.post(DOKUMENTER_QUERY, fnr(ctx), ArkivOppslagJournalposter::class.java)
         .block()
         ?.journalposter
+        ?.filter { it.journalposttype == I }
         ?.flatMap { mapper.tilDokumenter(it) }::orEmpty, "saker")
 }
 
