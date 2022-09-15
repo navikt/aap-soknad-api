@@ -9,11 +9,8 @@ import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.model.SøkerInfo
-import no.nav.aap.arkiv.DokumentInfoId
-import no.nav.aap.util.Constants
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.aap.util.StringExtensions.størrelse
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort.Direction.DESC
@@ -59,8 +56,8 @@ class OppslagController(
 
     @GetMapping("/dokumenter")
     fun dokumenter() = arkiv.dokumenter().also {
-        log.trace("${it.størrelse("dokument")} er ${it.forEachIndexed { index, innslag -> log.trace("$index -> $innslag") })
-    
+         it.forEachIndexed { index, innslag -> log.trace("$index -> $innslag") }
+    }
 
     @GetMapping("/soeknader")
     fun søknader(@SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
