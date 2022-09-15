@@ -8,6 +8,7 @@ import java.time.LocalDateTime
                                            val journalposttype: ArkivOppslagJournalpostType,
                                            val journalstatus: ArkivOppslagJournalStatus,
                                            val tittel: String?,
+                                           val eksternReferanseId: String? = null,
                                            val relevanteDatoer: List<ArkivOppslagRelevantDato>,
                                            val sak: ArkivOppslagSak?,
                                            val dokumenter: List<ArkivOppslagDokumentInfo>) {

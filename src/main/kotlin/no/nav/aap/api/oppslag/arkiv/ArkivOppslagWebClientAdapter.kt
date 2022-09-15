@@ -64,6 +64,7 @@ class ArkivOppslagMapper(@Value("\${ingress}") private val ingress: URI) {
                         uri(journalpostId, dok.dokumentInfoId),
                         dok.tittel,
                         journalposttype,
+                        eksternReferanseId,
                         relevanteDatoer.first {
                             it.datotype == DATO_OPPRETTET
                         }.dato)
@@ -79,6 +80,7 @@ class ArkivOppslagMapper(@Value("\${ingress}") private val ingress: URI) {
     data class DokumentOversiktInnslag(val uri: URI,
                                        val tittel: String?,
                                        val type: ArkivOppslagJournalpostType,
+                                       val eventId: String?,
                                        val dato: LocalDateTime)
 
 }
