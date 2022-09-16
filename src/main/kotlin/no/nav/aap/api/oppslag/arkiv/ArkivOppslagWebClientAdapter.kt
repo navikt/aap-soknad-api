@@ -80,7 +80,7 @@ class ArkivOppslagMapper(@Value("\${ingress}") private val ingress: URI) {
     data class DokumentOversiktInnslag(val uri: URI,
                                        val tittel: String?,
                                        val type: ArkivOppslagJournalpostType,
-                                       val eventId: String?,
+                                       val innsendingId: String?,
                                        val dato: LocalDateTime)
 
 }
