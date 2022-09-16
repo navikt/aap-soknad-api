@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag.arkiv
 
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagJournalpostType.I
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.stereotype.Component
 import java.util.*
@@ -12,9 +13,10 @@ class ArkivOppslagClient(private val adapter: ArkivOppslagWebClientAdapter) {
         adapter.dokument(journalpostId, dokumentId)
 
     fun dokumenter() = adapter.dokumenter()
-    fun dokumenter(vararg innsendingIds: UUID) = dokumenter().filter {
-        it.innsendingId in innsendingIds
-    }.also {
-        log.trace("Slo opp $it fra $innsendingIds")
+    fun innsendteDokumenter(vararg innsendingIds: UUID) = dokumenter()
+        .filter {
+            it.innsendingId in innsendingIds }
+        .also {
+            log.trace("Slo opp $it fra $innsendingIds")
     }
 }

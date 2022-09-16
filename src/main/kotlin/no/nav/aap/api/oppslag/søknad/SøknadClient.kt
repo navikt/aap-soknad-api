@@ -49,12 +49,11 @@ class SøknadClient(private val repo: SøknadRepository, private val arkivClient
                            val innsendteVedlegg: List<DokumentOversiktInnslag>,
                            val manglendeVedlegg: List<VedleggType>)
 
-    private fun tilSøknadNy(s: Søknad) = // TODO hva med ettersendte vedlegg
+    private fun tilSøknadNy(s: Søknad) =
         with(s) {
-            val ids = (s.ettersendinger.map(Ettersending::eventid) + eventid).toTypedArray()
             SøknadDTONy(created,
                     eventid,
-                    arkivClient.dokumenter(*ids), // TODO, for tung, slå opp alle først og plukk ut
+                    arkivClient.innsendteDokumenter(*(ettersendinger.map(Ettersending::eventid) + eventid).toTypedArray()), // TODO, for tung, slå opp alle først og plukk ut
                     manglendevedlegg.map { it.vedleggtype })
         }
 }
