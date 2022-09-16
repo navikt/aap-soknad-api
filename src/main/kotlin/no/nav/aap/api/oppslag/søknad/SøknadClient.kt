@@ -53,7 +53,7 @@ class SøknadClient(private val repo: SøknadRepository, private val arkivClient
         with(s) {
             SøknadDTONy(created,
                     eventid,
-                    arkivClient.dokumenter(eventid),
+                    arkivClient.dokumenter(eventid), // TODO, for tung, slå opp alle først og plukk ut
                     manglendevedlegg.map { it.vedleggtype })
         }
 }

@@ -54,7 +54,7 @@ class ArkivJournalpostGenerator(
     fun journalpostFra(es: StandardEttersending, søker: Søker): Journalpost =
         Journalpost(
             dokumenter = dokumenterFra(es.ettersendteVedlegg, søker.fnr),
-            tittel = STANDARD_ETTERSENDING.tittel, eksternReferanseId= callIdAsUUID(),
+            tittel = STANDARD_ETTERSENDING.tittel, eksternReferanseId = callIdAsUUID(),
             avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
             bruker = Bruker(søker.fnr)
         )
@@ -74,7 +74,7 @@ class ArkivJournalpostGenerator(
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(
             dokumenter = dokumenterFra(søknad, pdf.somPDFVariant()),
-            tittel = UTLAND.tittel, eksternReferanseId=callIdAsUUID(),
+            tittel = UTLAND.tittel, eksternReferanseId = callIdAsUUID(),
             avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
             bruker = Bruker(søker.fnr))
             .also {
@@ -84,7 +84,7 @@ class ArkivJournalpostGenerator(
     fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
         Journalpost(
             dokumenter = journalpostDokumenterFra(søknad, pdf.somPDFVariant()),
-            tittel = STANDARD.tittel, eksternReferanseId=callIdAsUUID(),
+            tittel = STANDARD.tittel, eksternReferanseId = callIdAsUUID(),
             avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
             bruker = Bruker(søker.fnr))
             .also {
