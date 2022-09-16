@@ -24,6 +24,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.time.LocalDateTime
+import java.util.*
 
 @Component
 class ArkivOppslagWebClientAdapter(
@@ -49,6 +50,10 @@ class ArkivOppslagWebClientAdapter(
         ?.journalposter
         ?.filter { it.journalposttype in listOf(I, U) }
         ?.flatMap { mapper.tilDokumenter(it) }::orEmpty, "saker")
+        .sortedByDescending { it.dato }
+
+    fun dokumenter(innsendingId: UUID) = dokumenter().filter { innsendingId == it.innsendingId  }
+
 }
 
 @Component
@@ -80,7 +85,7 @@ class ArkivOppslagMapper(@Value("\${ingress}") private val ingress: URI) {
     data class DokumentOversiktInnslag(val uri: URI,
                                        val tittel: String?,
                                        val type: ArkivOppslagJournalpostType,
-                                       val innsendingId: String?,
+                                       val innsendingId: UUID?,
                                        val dato: LocalDateTime)
 
 }

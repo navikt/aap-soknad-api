@@ -1,14 +1,15 @@
 package no.nav.aap.api.oppslag.arkiv
 
 import java.time.LocalDateTime
+import java.util.*
 
-    data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournalpost>) {
+data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournalpost>) {
 
         data class ArkivOppslagJournalpost(val journalpostId: String,
                                            val journalposttype: ArkivOppslagJournalpostType,
                                            val journalstatus: ArkivOppslagJournalStatus,
                                            val tittel: String?,
-                                           val eksternReferanseId: String? = null,
+                                           val eksternReferanseId: UUID?,
                                            val relevanteDatoer: List<ArkivOppslagRelevantDato>,
                                            val sak: ArkivOppslagSak?,
                                            val dokumenter: List<ArkivOppslagDokumentInfo>) {
