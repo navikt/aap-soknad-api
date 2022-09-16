@@ -100,7 +100,7 @@ data class StandardSøknad(
                 log.trace("Ingen manglende vedlegg for arbeidsgiver")
             }
             log.trace("Sjekker om det er manglende vedlegg for andre stønader ${this?.andreStønader}")
-            this?.andreStønader?.firstOrNull() { it.type == OMSORGSSTØNAD }?.let {
+            this?.andreStønader?.firstOrNull { it.type == OMSORGSSTØNAD }?.let {
                 if (manglerVedlegg(it)) {
                     manglende += OMSORG.also {
                         log.trace("Det er manglende vedlegg for ${OMSORG.tittel}")
@@ -114,7 +114,7 @@ data class StandardSøknad(
                     log.trace("Ingen manglende vedlegg for omsorg")
                 }
             }
-            this?.andreStønader?.firstOrNull() { it.type == UTLAND }?.let {
+            this?.andreStønader?.firstOrNull { it.type == UTLAND }?.let {
                 if (manglerVedlegg(it)) {
                     manglende += VedleggType.UTLAND.also {
                         log.trace("Det er manglende vedlegg for ${VedleggType.UTLAND.tittel}")

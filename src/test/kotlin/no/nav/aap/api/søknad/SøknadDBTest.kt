@@ -27,6 +27,6 @@ class DBTest {
             start()
         }
         userRepository.findByFnrAndDoneIsFalse("03016536325")
-        assertThat(postgresqlContainer.isRunning).isTrue;
+        assertThat(postgresqlContainer.isRunning).isTrue
     }
 }

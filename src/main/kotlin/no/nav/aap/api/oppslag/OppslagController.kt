@@ -12,6 +12,7 @@ import no.nav.aap.api.søknad.model.SøkerInfo
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.security.token.support.spring.ProtectedRestController
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort.Direction.DESC
 import org.springframework.data.web.PageableDefault
@@ -47,7 +48,7 @@ class OppslagController(
     ).also {
         log.trace("Søker er $it")
         try {
-            dokumenter()  // TODO midlertidig test
+            søknaderNy(PageRequest.of(0,100,DESC,"created"))  // TODO midlertidig test
         }
         catch (e: Exception){
             log.warn("OOPS",e)
@@ -55,13 +56,15 @@ class OppslagController(
     }
 
     @GetMapping("/dokumenter")
-    fun dokumenter() = arkiv.dokumenter().also {
-         it.forEachIndexed { index, innslag -> log.trace("$index -> $innslag") }
-    }
+    fun dokumenter() = arkiv.dokumenter()
 
     @GetMapping("/soeknader")
     fun søknader(@SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
         søknad.søknader(pageable)
+
+    @GetMapping("/soeknaderNy")
+    fun søknaderNy(@SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
+        søknad.søknaderNy(pageable).also { log.trace("Søknader ny er $it") }
 
     @GetMapping("/soeknad/{uuid}")
     fun søknad(@PathVariable uuid: UUID) = søknad.søknad(uuid)
