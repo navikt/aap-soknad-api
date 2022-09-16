@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.fordeling
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivResultat
+import no.nav.aap.api.søknad.fordeling.SøknadRepository.Ettersending
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.IdentifiableTimestampedBaseEntity
@@ -11,8 +12,8 @@ import no.nav.aap.util.MDCUtil.callIdAsUUID
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.repository.query.Param
+import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.CascadeType.ALL
@@ -24,7 +25,7 @@ import javax.persistence.MappedSuperclass
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
-interface SøknadRepository : JpaRepository<Søknad, Long>, JpaSpecificationExecutor<Søknad> {
+interface SøknadRepository : JpaRepository<Søknad, Long> {
 
     fun getSøknadByFnr(@Param("fnr") fnr: String, pageable: Pageable): List<Søknad>
     fun getSøknadByEventidAndFnr(@Param("eventid") eventId: UUID, @Param("fnr") fnr: String): Søknad?

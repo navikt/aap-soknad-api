@@ -1,14 +1,20 @@
 package no.nav.aap.api.oppslag.arkiv
 
-import no.nav.aap.arkiv.DokumentInfoId
+import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class ArkivOppslagClient(private val a: ArkivOppslagWebClientAdapter) {
-    fun dokument(journalpostId: String, dokumentId: String) =
-        a.dokument(journalpostId, dokumentId)
+class ArkivOppslagClient(private val adapter: ArkivOppslagWebClientAdapter) {
+    private val log = getLogger(javaClass)
 
-    fun dokumenter() = a.dokumenter()
-    fun dokumenter(innsendingId: UUID) = a.dokumenter(innsendingId)
+    fun dokument(journalpostId: String, dokumentId: String) =
+        adapter.dokument(journalpostId, dokumentId)
+
+    fun dokumenter() = adapter.dokumenter()
+    fun dokumenter(vararg innsendingIds: UUID) = dokumenter().filter {
+        it.innsendingId in innsendingIds
+    }.also {
+        log.trace("Slo opp $it fra $innsendingIds")
+    }
 }

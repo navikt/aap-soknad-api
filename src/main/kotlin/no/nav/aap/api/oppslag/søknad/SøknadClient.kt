@@ -2,10 +2,10 @@ package no.nav.aap.api.oppslag.søknad
 
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
-import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagMapper.DokumentOversiktInnslag
 import no.nav.aap.api.oppslag.søknad.SøknadClient.SøknadDTO.VedleggInfo
 import no.nav.aap.api.søknad.fordeling.SøknadRepository
+import no.nav.aap.api.søknad.fordeling.SøknadRepository.Ettersending
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.AuthContext
@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Component
-class SøknadClient(private val repo: SøknadRepository, private val arkivClient: ArkivOppslagClient,private val ctx: AuthContext) {
+class SøknadClient(private val repo: SøknadRepository, private val arkivClient: ArkivOppslagClient, private val ctx: AuthContext) {
 
     fun søknad(søknadId: UUID) = søknad(ctx.getFnr(), søknadId)
 
@@ -49,11 +49,12 @@ class SøknadClient(private val repo: SøknadRepository, private val arkivClient
                            val innsendteVedlegg: List<DokumentOversiktInnslag>,
                            val manglendeVedlegg: List<VedleggType>)
 
-    private fun tilSøknadNy(s: Søknad) =
+    private fun tilSøknadNy(s: Søknad) = // TODO hva med ettersendte vedlegg
         with(s) {
+            val ids = (s.ettersendinger.map(Ettersending::eventid) + eventid).toTypedArray()
             SøknadDTONy(created,
                     eventid,
-                    arkivClient.dokumenter(eventid), // TODO, for tung, slå opp alle først og plukk ut
+                    arkivClient.dokumenter(*ids), // TODO, for tung, slå opp alle først og plukk ut
                     manglendevedlegg.map { it.vedleggtype })
         }
 }

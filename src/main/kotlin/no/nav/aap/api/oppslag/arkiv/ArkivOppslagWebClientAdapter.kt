@@ -51,9 +51,6 @@ class ArkivOppslagWebClientAdapter(
         ?.filter { it.journalposttype in listOf(I, U) }
         ?.flatMap { mapper.tilDokumenter(it) }::orEmpty, "saker")
         .sortedByDescending { it.dato }
-
-    fun dokumenter(innsendingId: UUID) = dokumenter().filter { innsendingId == it.innsendingId  }
-
 }
 
 @Component
