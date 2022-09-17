@@ -53,7 +53,7 @@ class SøknadClient(private val repo: SøknadRepository, private val arkivClient
         with(s) {
             SøknadDTONy(created,
                     eventid,
-                    arkivClient.innsendteDokumenter(*(ettersendinger.map(Ettersending::eventid) + eventid).toTypedArray()), // TODO, for tung, slå opp alle først og plukk ut
+                    arkivClient.innsendteDokumenter(ettersendinger.map(Ettersending::eventid) + eventid), // TODO, for tung, slå opp alle først og plukk ut
                     manglendevedlegg.map { it.vedleggtype })
         }
 }

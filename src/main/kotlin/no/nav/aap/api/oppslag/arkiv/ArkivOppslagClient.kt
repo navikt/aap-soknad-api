@@ -14,10 +14,10 @@ class ArkivOppslagClient(private val adapter: ArkivOppslagWebClientAdapter) {
         adapter.dokument(journalpostId, dokumentId)
 
     fun dokumenter() = adapter.dokumenter()
-    fun innsendteDokumenter(vararg innsendingIds: UUID) = dokumenter()
+    fun innsendteDokumenter(innsendingIds: List<UUID>) = dokumenter()
         .filter {
             it.innsendingId in innsendingIds }
         .also {
-            log.trace("Slo opp ${it.størrelse("dokument")} fra ${innsendingIds.asList()} ($it)")
+            log.trace("Slo opp ${it.størrelse("dokument")} fra $innsendingIds ($it)")
     }
 }
