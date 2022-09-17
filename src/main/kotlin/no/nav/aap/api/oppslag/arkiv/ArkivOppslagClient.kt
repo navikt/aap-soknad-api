@@ -18,6 +18,6 @@ class ArkivOppslagClient(private val adapter: ArkivOppslagWebClientAdapter) {
         .filter {
             it.innsendingId in innsendingIds }
         .also {
-            log.trace("Slo opp ${it.størrelse("innsendte dokument")} fra ${innsendingIds.asList()}")
+            log.trace("Slo opp ${it.størrelse("dokument")} fra ${innsendingIds.asList()}")
     }
 }
