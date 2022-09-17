@@ -64,7 +64,8 @@ class OppslagController(
 
     @GetMapping("/soeknaderNy")
     fun søknaderNy(@SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
-        søknad.søknaderNy(pageable).also { log.trace("Søknader ny er $it") }
+        søknad.søknaderNy(pageable).also {
+            it.forEachIndexed{ i,s -> log.trace("$i Ny  -> $s")}
 
     @GetMapping("/soeknad/{uuid}")
     fun søknad(@PathVariable uuid: UUID) = søknad.søknad(uuid)
