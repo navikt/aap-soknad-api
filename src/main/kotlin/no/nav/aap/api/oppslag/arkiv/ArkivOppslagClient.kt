@@ -2,6 +2,7 @@ package no.nav.aap.api.oppslag.arkiv
 
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagJournalpostType.I
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.StringExtensions.størrelse
 import org.springframework.stereotype.Component
 import java.util.*
 
@@ -17,6 +18,6 @@ class ArkivOppslagClient(private val adapter: ArkivOppslagWebClientAdapter) {
         .filter {
             it.innsendingId in innsendingIds }
         .also {
-            log.trace("Slo opp $it fra $innsendingIds")
+            log.trace("Slo opp ${it.størrelse("innsendte dokument")} fra ${innsendingIds.asList()}")
     }
 }
