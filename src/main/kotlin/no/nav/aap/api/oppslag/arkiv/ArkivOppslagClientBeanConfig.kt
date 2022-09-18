@@ -16,9 +16,9 @@ class ArkivOppslagClientBeanConfig {
 
     @Qualifier(SAF)
     @Bean
-    fun arkivOppslagWebClient(b: Builder, cfg: ArkivOppslagConfig, tokenXFilterFunction: TokenXFilterFunction) =
+    fun arkivOppslagWebClient(b: Builder, cfg: ArkivOppslagConfig, tokenX: TokenXFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
-            .filter(tokenXFilterFunction)
+            .filter(tokenX)
             .build()
 
     @Bean

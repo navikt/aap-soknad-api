@@ -13,7 +13,7 @@ class ArbeidWebClientAdapter(
         @Qualifier(ARBEID) webClient: WebClient,
         private val cf: ArbeidConfig) : AbstractWebClientAdapter(webClient, cf) {
 
-    fun arbeidsforhold() =
+    fun arbeidInfo() =
         if (cf.isEnabled) {
             webClient
                 .get()

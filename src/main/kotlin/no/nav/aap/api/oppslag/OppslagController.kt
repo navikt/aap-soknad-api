@@ -41,10 +41,10 @@ class OppslagController(
     @GetMapping("/soeker")
     fun søker() = SøkerInfo(
         pdl.søkerMedBarn(),
-        behandler.behandlerinfo(),
-        arbeid.arbeidinfo(),
-        krr.kontaktinfo(),
-        konto.kontoinfo()
+        behandler.behandlerInfo(),
+        arbeid.arbeidInfo(),
+        krr.kontaktInfo(),
+        konto.kontoInfo()
     ).also {
         log.trace("Søker er $it")
         try {
@@ -73,7 +73,7 @@ class OppslagController(
     @GetMapping(DOKUMENT)
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentId: String) =
         arkiv.dokument(journalpostId, dokumentId)
-            ?.let {
+            .let {
                 ok()
                     .cacheControl(noCache().mustRevalidate())
                     .headers(HttpHeaders().apply {
@@ -81,7 +81,7 @@ class OppslagController(
                             .build()
                     })
                     .body(it)
-            } ?: notFound().build()
+            }
 
     companion object {
         const val OPPSLAG_BASE = "/oppslag"

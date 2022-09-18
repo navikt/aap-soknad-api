@@ -49,10 +49,10 @@ class PDLClientBeanConfig {
 
     @Qualifier(PDL_USER)
     @Bean
-    fun pdlUserWebClient(b: Builder, cfg: PDLConfig, tokenXFilterFunction: TokenXFilterFunction) =
+    fun pdlUserWebClient(b: Builder, cfg: PDLConfig, tokenX: TokenXFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
-            .filter(tokenXFilterFunction)
+            .filter(tokenX)
             .build()
 
     @Qualifier(PDL_USER)

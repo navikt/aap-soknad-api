@@ -14,10 +14,10 @@ class BehandlerClientBeanConfig(@Value("\${spring.application.name}") val applic
 
     @Qualifier(BEHANDLER)
     @Bean
-    fun behandlereWebClient(builder: Builder, cfg: BehandlerConfig, filter: TokenXFilterFunction) =
+    fun behandlereWebClient(builder: Builder, cfg: BehandlerConfig, tokenX: TokenXFilterFunction) =
         builder
             .baseUrl("${cfg.baseUri}")
-            .filter(filter)
+            .filter(tokenX)
             .build()
 
     @Bean

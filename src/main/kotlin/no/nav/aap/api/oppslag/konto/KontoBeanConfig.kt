@@ -13,11 +13,9 @@ class KontoClientBeanConfig {
 
     @Qualifier(KONTO)
     @Bean
-    fun kontoWebClient(
-            b: Builder, cfg: KontoConfig,
-            tokenXFilterFunction: TokenXFilterFunction) =
+    fun kontoWebClient(b: Builder, cfg: KontoConfig, tokenX: TokenXFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
-            .filter(tokenXFilterFunction)
+            .filter(tokenX)
             .build()
 
     @Bean

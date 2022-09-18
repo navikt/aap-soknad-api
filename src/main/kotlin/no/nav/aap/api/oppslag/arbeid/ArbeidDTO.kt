@@ -8,7 +8,7 @@ import no.nav.aap.api.felles.Periode
 data class ArbeidsforholdDTO(val ansettelsesperiode: AnsettelsesperiodeDTO,
                              val arbeidsavtaler: List<ArbeidsavtaleDTO>,
                              val arbeidsgiver: ArbeidsgiverDTO) {
-    fun tilArbeidsforhold(orgNavn: String) =
+    fun tilArbeidInfo(orgNavn: String) =
         Arbeidsforhold(orgNavn, arbeidsavtaler.map {
             it.tilAvtale(ansettelsesperiode.periode)
         })
