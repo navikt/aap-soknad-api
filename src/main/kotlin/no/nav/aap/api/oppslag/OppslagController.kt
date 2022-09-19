@@ -70,6 +70,9 @@ class OppslagController(
     @GetMapping("/soeknad/{uuid}")
     fun søknad(@PathVariable uuid: UUID) = søknad.søknad(uuid)
 
+    @GetMapping("/soeknad/{journalpostId}")
+    fun søknad(@PathVariable journalpostId: String) = TODO()
+
     @GetMapping(DOKUMENT)
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentId: String) =
         arkiv.dokument(journalpostId, dokumentId)

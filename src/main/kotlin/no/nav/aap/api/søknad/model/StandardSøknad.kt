@@ -154,7 +154,6 @@ data class Studier(val erStudent: StudieSvar?,
         NEI,
         AVBRUTT
     }
-
 }
 
 data class Startdato(val beskrivelse: String?)
