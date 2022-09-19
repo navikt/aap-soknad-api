@@ -11,7 +11,7 @@ Applikasjonen har en database for metadata vedrørende:
 # Komme i gang
 ___
 Bygger på JAVA 17 og maven. 
-Se detaljer under [Backend for teamets oppsett](https://github.com/navikt/utvikler_aap_innbygger/blob/main/dokumentasjon/docs/Utviklerdokumentasjon/komme-i-gang.md)
+Se detaljer under [Backend for teamets oppsett](https://aap-team-innbygger.intern.nav.no/docs/Komme%20i%20gang/komme-i-gang-med-utvikling)
 - å bygge lokalt, krever enten koblig mot GCP-dev db eller å [kommentere ut testene i](src/test/kotlin/no/nav/aap/api/søknad/SøknadDBTest.kt)
 
 ## Henvendelser
