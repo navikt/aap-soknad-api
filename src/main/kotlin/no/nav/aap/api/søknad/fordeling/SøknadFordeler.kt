@@ -7,13 +7,10 @@ import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler
-import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivEttersendingResultat
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivResultat
-import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivSøknadResultat
 import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.UtlandSøknadFordeler
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
-import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
@@ -42,7 +39,7 @@ class SøknadFordeler(private val utland: UtlandSøknadFordeler, private val sta
 interface Fordeler {
     fun fordel(søknad: UtlandSøknad): Kvittering
     fun fordel(søknad: StandardSøknad): Kvittering
-    fun fordel(ettersending: StandardEttersending)
+    fun fordel(ettersending: StandardEttersending): Kvittering
 
 }
 
@@ -82,7 +79,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
         private val log = getLogger(javaClass)
 
         @Transactional
-        fun fullfør(søknad: StandardSøknad, fnr: Fødselsnummer, res: ArkivSøknadResultat) =
+        fun fullfør(søknad: StandardSøknad, fnr: Fødselsnummer, res: ArkivResultat) =
             dokumentLager.slettDokumenter(søknad).run {
                 mellomlager.slett()
                 with(søknad.vedlegg()) {
@@ -93,16 +90,17 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
                     }
                 }
                 log.trace("Oppslag av søknad etter arkivering er ${oppslag.søknad(res.journalpostId)}")
-                Kvittering(dokumentLager.lagreDokument(DokumentInfo(res.pdf, "kvittering.pdf")))
+                Kvittering(res.journalpostId)
             }
 
         @Transactional
-        fun fullfør(e: StandardEttersending, fnr: Fødselsnummer, res: ArkivEttersendingResultat) =
+        fun fullfør(e: StandardEttersending, fnr: Fødselsnummer, res: ArkivResultat) =
             dokumentLager.slettDokumenter(e).run {
                 e.søknadId?.let {
                     fullførEttersending(it, fnr, res, e.ettersendteVedlegg)
-                }
-            } ?: fullførEttersendingUtenSøknad(fnr, res, e.ettersendteVedlegg)
+                } ?: fullførEttersendingUtenSøknad(fnr, res, e.ettersendteVedlegg)
+                Kvittering(res.journalpostId)
+            }
 
         private fun fullførEttersending(id: UUID, fnr: Fødselsnummer,
                                         res: ArkivResultat,
@@ -110,14 +108,12 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
             søknader.getSøknadByEventidAndFnr(id, fnr.fnr)?.let {
                 it.registrerEttersending(fnr, res, e)
                 it.avsluttMinSideOppgaveHvisKomplett(fnr)
-                // TODO lagre og returnere kvittering
             } ?: log.warn("Ingen tidligere innsendt søknad med id $id ble funnet for $fnr (dette skal aldri skje)")
         }
 
         private fun fullførEttersendingUtenSøknad(fnr: Fødselsnummer,
                                                   res: ArkivResultat,
                                                   e: List<StandardEttersending.EttersendtVedlegg>) {
-            log.trace("Registrering av ettersending i DB uten eksplisitt søknadId")
             søknader.sisteSøknad(fnr)?.let {
                 log.trace("Knytter ettersending til siste søknad ${it.eventid} med journalpost ${it.journalpostid}")
                 it.registrerEttersending(fnr, res, e)
@@ -167,7 +163,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
                 with(arkiv.fordel(søknad, this)) {
                     vl.fordel(søknad, fnr, journalpostId, cfg.utland)
                     dittnav.opprettBeskjed(MINAAPUTLAND, callIdAsUUID(), fnr, "Vi har mottatt ${UTLAND.tittel}", true)
-                    Kvittering(lager.lagreDokument(DokumentInfo(pdf, "kvittering-utland.pdf")))
+                    Kvittering(journalpostId)
                 }
             }
     }

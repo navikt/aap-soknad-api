@@ -5,5 +5,5 @@ import org.springframework.stereotype.Component
 @Component
 class ArkivClient(private val adapter: ArkivWebClientAdapter) {
     fun journalfør(journalpost: Journalpost) =
-        adapter.opprettJournalpost(journalpost).journalpostId
+        adapter.opprettJournalpost(journalpost)
 }

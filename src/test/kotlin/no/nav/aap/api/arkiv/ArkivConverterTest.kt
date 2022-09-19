@@ -6,6 +6,7 @@ import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
 import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
 import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
+import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.util.AuthContext
@@ -35,6 +36,9 @@ class ArkivConverterTest {
     @Mock
     lateinit var ctx: TokenValidationContextHolder
 
+    @Mock
+    lateinit var pdf: PDFClient
+
     // @Test
     fun convert() {
         val bytes = bytesFra("pdf/test123.pdf")
@@ -57,8 +61,8 @@ class ArkivConverterTest {
 
         val søknad = SøknadTest.standardSøknad()
         val søker = SøknadTest.søker()
-        val c = ArkivJournalpostGenerator(mapper, lager, AuthContext(ctx), BildeTilPDFKonverterer(BildeSkalerer()))
-        val converted = c.journalpostFra(søknad, søker, bytes)
+        val c = ArkivJournalpostGenerator(mapper, lager, pdf,AuthContext(ctx), BildeTilPDFKonverterer(BildeSkalerer()))
+        val converted = c.journalpostFra(søknad, søker)
         converted.dokumenter.forEach { doc ->
             doc?.dokumentVarianter?.forEach {
                 if (it?.filtype == PDFA.name)

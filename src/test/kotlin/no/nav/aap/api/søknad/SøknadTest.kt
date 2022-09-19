@@ -15,6 +15,7 @@ import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.KontaktInformasjon
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
 import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
+import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.InMemoryDokumentlager
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
@@ -57,6 +58,9 @@ class SøknadTest {
 
     @Mock
     lateinit var ctx: AuthContext
+
+    @Mock
+    lateinit var pdf: PDFClient
 
     val v2 = """
         [ "07e35799-4db5-4ba3-81cc-3681dd1dec60" ]
@@ -141,7 +145,7 @@ class SøknadTest {
     fun parse() {
         val es = mapper.readValue(ettersending, StandardEttersending::class.java)
         val journalpost = ArkivJournalpostGenerator(mapper,
-                InMemoryDokumentlager(), ctx,
+                InMemoryDokumentlager(),pdf, ctx,
                 BildeTilPDFKonverterer(BildeSkalerer())).journalpostFra(es, søker())
         assertEquals(1, journalpost.dokumenter.size)
     }

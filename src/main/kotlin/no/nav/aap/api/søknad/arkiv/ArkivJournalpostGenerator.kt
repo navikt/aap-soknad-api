@@ -31,6 +31,7 @@ import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.JSON
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ARKIV
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ORIGINAL
+import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
@@ -44,10 +45,11 @@ import java.util.*
 
 @Component
 class ArkivJournalpostGenerator(
-    private val mapper: ObjectMapper,
-    private val lager: Dokumentlager,
-    private val ctx: AuthContext,
-    private val konverterer: BildeTilPDFKonverterer
+        private val mapper: ObjectMapper,
+        private val lager: Dokumentlager,
+        private val pdf: PDFClient,
+        private val ctx: AuthContext,
+        private val konverterer: BildeTilPDFKonverterer
 ) {
 
     private val log = getLogger(javaClass)
@@ -72,9 +74,9 @@ class ArkivJournalpostGenerator(
             require(vedlegg.size == it.size) { "Forventet  ${vedlegg.size} fra dokumentlager, fant ${it.size}" }
         }
 
-    fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
+    fun journalpostFra(søknad: UtlandSøknad, søker: Søker) =
         Journalpost(
-            dokumenter = dokumenterFra(søknad, pdf.somPDFVariant()),
+            dokumenter = dokumenterFra(søknad,  pdf.tilPdf(søker,søknad).somPDFVariant()),
             tittel = UTLAND.tittel, eksternReferanseId = callIdAsUUID(),
             avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
             bruker = Bruker(søker.fnr))
@@ -82,9 +84,9 @@ class ArkivJournalpostGenerator(
                 log.trace("Journalpost med ${it.størrelse()} er $it")
             }
 
-    fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
+    fun journalpostFra(søknad: StandardSøknad, søker: Søker) =
         Journalpost(
-            dokumenter = journalpostDokumenterFra(søknad, pdf.somPDFVariant()),
+            dokumenter = journalpostDokumenterFra(søknad, pdf.tilPdf(søker,søknad).somPDFVariant()),
             tittel = STANDARD.tittel, eksternReferanseId = callIdAsUUID(),
             avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
             bruker = Bruker(søker.fnr))
