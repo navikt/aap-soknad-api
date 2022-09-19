@@ -16,7 +16,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @Testcontainers
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+//@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @DataJpaTest
 class DBTest {
 
