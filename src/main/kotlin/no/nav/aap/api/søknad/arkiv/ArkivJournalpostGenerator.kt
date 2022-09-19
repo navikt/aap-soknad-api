@@ -23,17 +23,9 @@ import no.nav.aap.api.søknad.model.VedleggType.ANNET
 import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
 import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
-import no.nav.aap.arkiv.AvsenderMottaker
-import no.nav.aap.arkiv.Bruker
-import no.nav.aap.arkiv.Dokument
-import no.nav.aap.arkiv.DokumentVariant
-import no.nav.aap.arkiv.Filtype.PDFA
-import no.nav.aap.arkiv.Journalpost
-import no.nav.aap.arkiv.encode
-import no.nav.aap.arkiv.somPDFVariant
+import no.nav.aap.api.søknad.arkiv.Filtype.PDFA
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.aap.util.MDCUtil.callId
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.aap.util.StringExtensions.størrelse
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
@@ -64,11 +56,11 @@ class ArkivJournalpostGenerator(
 
     private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>, fnr: Fødselsnummer) =
         vedlegg.flatMap { e ->
-            require(vedlegg.isNotEmpty()) { "Forventet > 0  vedlegg" }
+            require(vedlegg.isNotEmpty()) { "Forventet > 0 vedlegg" }
             dokumenterFra(e.ettersending, e.vedleggType, fnr)
         }.also {
             require(it.isNotEmpty()) { "Forventet > 0 vedlegg fra dokumentlager" }
-            require(vedlegg.size == it.size) { "Forventet   ${vedlegg.size} fra dokumentlager, fant ${it.size}" }
+            require(vedlegg.size == it.size) { "Forventet  ${vedlegg.size} fra dokumentlager, fant ${it.size}" }
         }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =

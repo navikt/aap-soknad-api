@@ -7,7 +7,7 @@ import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
 import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
-import no.nav.aap.arkiv.Filtype.PDFA
+import no.nav.aap.api.søknad.arkiv.Filtype.PDFA
 import no.nav.aap.util.AuthContext
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.mockito.Mock

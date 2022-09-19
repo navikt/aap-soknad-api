@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.arkiv
 
-import no.nav.aap.arkiv.Journalpost
 import org.springframework.stereotype.Component
 
 @Component
