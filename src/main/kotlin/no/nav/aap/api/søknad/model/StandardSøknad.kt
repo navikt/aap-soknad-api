@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.TreeNode
 import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ArrayNode
@@ -14,9 +13,6 @@ import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.AnnenBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
-import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant
-import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.JSON
-import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ORIGINAL
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
 import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.AVBRUTT
@@ -30,7 +26,6 @@ import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
 import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.aap.util.StringExtensions.toEncodedJson
 import java.io.IOException
 import java.util.*
 
@@ -140,9 +135,8 @@ data class StandardSøknad(
 }
 
 fun manglerVedlegg(v: VedleggAware) = v.vedlegg?.deler?.isEmpty() == true
-fun harVedlegg(v: VedleggAware) = v.vedlegg?.deler?.isNotEmpty() == true
-
-private fun harVedlegg(v: List<VedleggAware>) = v.find { harVedlegg(it) } != null
+fun harVedlegg(v: VedleggAware) = !manglerVedlegg(v)
+private fun harVedlegg(v: List<VedleggAware>) = v.any { harVedlegg(it) }
 
 @JsonDeserialize(using = VedleggDeserializer::class)
 data class Vedlegg(val tittel: String? = null, @JsonValue val deler: List<UUID?>? = null)
@@ -247,12 +241,9 @@ enum class VedleggType(val tittel: String) {
 
 internal class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.java) {
 
-    private val log = getLogger(javaClass)
-
     @Throws(IOException::class)
     override fun deserialize(p: JsonParser, ctx: DeserializationContext) =
         with(p.codec.readTree(p) as TreeNode) {
-            log.trace("Deserialiserer $this")
             when (this) {
                 is ArrayNode -> Vedlegg(deler = filterNotNull().map { (it as TextNode).textValue() }
                     .map { UUID.fromString(it) })
