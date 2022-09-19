@@ -14,6 +14,9 @@ import com.neovisionaries.i18n.CountryCode
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.AnnenBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.JSON
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ORIGINAL
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
 import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.AVBRUTT
@@ -26,9 +29,6 @@ import no.nav.aap.api.søknad.model.VedleggType.ANNET
 import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
 import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
-import no.nav.aap.api.søknad.arkiv.DokumentVariant
-import no.nav.aap.api.søknad.arkiv.Filtype.JSON
-import no.nav.aap.api.søknad.arkiv.VariantFormat.ORIGINAL
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.toEncodedJson
 import java.io.IOException
@@ -51,8 +51,6 @@ data class StandardSøknad(
         @JsonAlias("andreVedlegg") override val vedlegg: Vedlegg? = null) : VedleggAware {
 
     private val log = getLogger(javaClass)
-
-    fun somJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
 
     data class VedleggInfo(val vedlagte: List<VedleggType>, val manglende: List<VedleggType>)
 

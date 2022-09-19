@@ -23,15 +23,24 @@ import no.nav.aap.api.søknad.model.VedleggType.ANNET
 import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
 import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
-import no.nav.aap.api.søknad.arkiv.Filtype.PDFA
+import no.nav.aap.api.søknad.arkiv.Journalpost.AvsenderMottaker
+import no.nav.aap.api.søknad.arkiv.Journalpost.Bruker
+import no.nav.aap.api.søknad.arkiv.Journalpost.Dokument
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.JSON
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ARKIV
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ORIGINAL
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.aap.util.StringExtensions.størrelse
+import no.nav.aap.util.StringExtensions.toEncodedJson
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.stereotype.Component
+import java.util.*
 
 @Component
 class ArkivJournalpostGenerator(
@@ -151,12 +160,17 @@ class ArkivJournalpostGenerator(
             log.trace("Dokument til arkiv $it")
         })
 
-    internal fun Journalpost.størrelse() = dokumenter.størrelse("dokument")
+    private fun Journalpost.størrelse() = dokumenter.størrelse("dokument")
     private fun ByteArray.somDokument(tittel: String) =
-        Dokument(tittel = tittel, dokumentVariant = DokumentVariant(PDFA, encode())).also {
+        Dokument(tittel, DokumentVariant(PDFA, encode())).also {
             log.trace("Dokument konvertert er $it")
         }
 
     private fun DokumentInfo.somDokument(tittel: String) = bytes.somDokument(tittel)
+    private fun ByteArray.somPDFVariant() = DokumentVariant(PDFA, encode(), ARKIV)
+    private fun ByteArray.encode() = Base64.getEncoder().encodeToString(this)
+    fun StandardSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
+    fun UtlandSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
+
 
 }
