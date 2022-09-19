@@ -21,10 +21,9 @@ class KontoConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
         "$javaClass.simpleName [baseUri=$baseUri,  kontoPath=$kontoPath, pingEndpoint=$pingEndpoint]"
 
     companion object {
-        const val KONTO_CREDENTIALS = "client-credentials-sokos"
         const val KONTO = "konto"
         private const val DEFAULT_URI = "http://sokos-kontoregister-person.okonomi"
         private const val PINGPATH = "internal/is_alive"
-        private const val DEFAULT_KONTO_PATH = "kontoregister/api/borger/v1/hent-aktiv-konto"
+        private const val DEFAULT_KONTO_PATH = "api/borger/v1/hent-aktiv-konto"
     }
 }

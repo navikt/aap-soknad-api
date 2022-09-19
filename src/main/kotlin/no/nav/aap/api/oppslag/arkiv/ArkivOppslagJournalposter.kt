@@ -2,13 +2,15 @@ package no.nav.aap.api.oppslag.arkiv
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.LocalDateTime
+import java.util.*
 
-    data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournalpost>) {
+data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournalpost>) {
 
         data class ArkivOppslagJournalpost(val journalpostId: String,
                                            val journalposttype: ArkivOppslagJournalpostType,
                                            val journalstatus: ArkivOppslagJournalStatus,
                                            val tittel: String?,
+                                           val eksternReferanseId: UUID?,
                                            val relevanteDatoer: List<ArkivOppslagRelevantDato>,
                                            val sak: ArkivOppslagSak?,
                                            val dokumenter: List<ArkivOppslagDokumentInfo>) {
@@ -74,3 +76,5 @@ data class DokumentInfoId(val dokumentInfoId: String)
 data class ArkivResponse(val journalpostId: String,
                          val journalpostferdigstilt: Boolean,
                          val dokumenter: List<DokumentInfoId>)
+
+    }

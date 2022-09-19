@@ -107,3 +107,5 @@ spec:
       value: '{{mellomlagring-navn}}'
     - name: VEDLEGG_NAVN
       value: '{{vedlegg-navn}}'
+    - name: INGRESS
+      value: '{{ingress}}'

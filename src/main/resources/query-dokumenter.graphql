@@ -5,6 +5,7 @@ query dokumentoversiktSelvbetjening($ident: String!) {
       journalposttype
       journalstatus
       tittel
+      eksternReferanseId
       relevanteDatoer {
         dato
         datotype

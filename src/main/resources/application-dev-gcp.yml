@@ -14,6 +14,22 @@ no.nav:
                     aareg-services-q1:
                         token-exchange:
                             audience: ${onprem}:arbeidsforhold:aareg-services-nais-q1
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
+
+                    safselvbetjening-q1:
+                        token-exchange:
+                            audience: ${onprem}:teamdokumenthandtering:safselvbetjening-q1
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
 spring:
     jpa:
         show-sql: true
@@ -33,7 +49,7 @@ organisasjon:
     base-uri: https://ereg-services-q1.dev-fss-pub.nais.io
     enabled: false
 saf:
-    base-uri: https://safselvbetjening.${onprem}-pub.nais.io/graphql
+    base-uri: https://safselvbetjening-q1.${onprem}-pub.nais.io/graphql
 konto:
     enabled: true
 joark:

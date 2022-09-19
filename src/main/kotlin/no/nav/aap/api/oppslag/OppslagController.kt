@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag
 
+import no.nav.aap.api.oppslag.OppslagController.Companion.OPPSLAG_BASE
 import no.nav.aap.api.oppslag.arbeid.ArbeidClient
 import no.nav.aap.api.oppslag.behandler.BehandlerClient
 import no.nav.aap.api.oppslag.konto.KontoClient
@@ -9,9 +10,10 @@ import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.arkiv.DokumentInfoId
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.model.SøkerInfo
-import no.nav.aap.util.Constants
+import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.security.token.support.spring.ProtectedRestController
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort.Direction.DESC
 import org.springframework.data.web.PageableDefault
@@ -25,7 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import java.util.*
 
-@ProtectedRestController(value = ["/oppslag"], issuer = Constants.IDPORTEN)
+@ProtectedRestController(value = [OPPSLAG_BASE], issuer = IDPORTEN)
 class OppslagController(
     val pdl: PDLClient,
     val behandler: BehandlerClient,
@@ -40,36 +42,39 @@ class OppslagController(
     @GetMapping("/soeker")
     fun søker() = SøkerInfo(
         pdl.søkerMedBarn(),
-        behandler.behandlerinfo(),
-        arbeid.arbeidinfo(),
-        krr.kontaktinfo(),
-        konto.kontoinfo()
+        behandler.behandlerInfo(),
+        arbeid.arbeidInfo(),
+        krr.kontaktInfo(),
+        konto.kontoInfo()
     ).also {
         log.trace("Søker er $it")
         try {
-            val saker = saker()  // TODO midlertidig tet
+            søknaderNy(PageRequest.of(0,100,DESC,"created"))  // TODO midlertidig test
         }
         catch (e: Exception){
             log.warn("OOPS",e)
         }
     }
 
-    @GetMapping("/saker")
-    fun saker() = arkiv.saker().also {
-        log.trace("Saker er $this")
-    }
+    @GetMapping("/dokumenter")
+    fun dokumenter() = arkiv.dokumenter()
 
     @GetMapping("/soeknader")
     fun søknader(@SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
         søknad.søknader(pageable)
 
+    @GetMapping("/soeknaderNy")
+    fun søknaderNy(@SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
+        søknad.søknaderNy(pageable).also {
+            it.forEachIndexed{ i,s -> log.trace("$i Ny  -> $s")}
+        }
     @GetMapping("/soeknad/{uuid}")
     fun søknad(@PathVariable uuid: UUID) = søknad.søknad(uuid)
 
-    @GetMapping("/dokument")
-    fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentInfoId: DokumentInfoId) =
-        arkiv.dokument(journalpostId, dokumentInfoId)
-            ?.let {
+    @GetMapping(DOKUMENT)
+    fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentId: String) =
+        arkiv.dokument(journalpostId, dokumentId)
+            .let {
                 ok()
                     .cacheControl(noCache().mustRevalidate())
                     .headers(HttpHeaders().apply {
@@ -77,5 +82,11 @@ class OppslagController(
                             .build()
                     })
                     .body(it)
-            } ?: notFound().build()
+            }
+
+    companion object {
+        const val OPPSLAG_BASE = "/oppslag"
+        private const val DOKUMENT = "/dokument/{journalpostId}/{dokumentId}"
+        const val DOKUMENT_PATH = "$OPPSLAG_BASE$DOKUMENT"
+    }
 }

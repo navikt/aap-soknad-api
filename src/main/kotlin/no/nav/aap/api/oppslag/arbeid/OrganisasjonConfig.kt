@@ -19,9 +19,6 @@ class OrganisasjonConfig(baseUri: URI,
 
     fun getOrganisasjonURI(b: UriBuilder, orgnr: OrgNummer) = b.path(organisasjonPath).build(orgnr.orgnr)
 
-    override fun toString() =
-        "${javaClass.simpleName} [organisasjonPath=" + organisasjonPath + ", pingEndpoint=" + pingEndpoint + "]"
-
     companion object {
         private const val V1_ORGANISASJON = "v1/organisasjon/{orgnr}"
         private const val TESTORG = "947064649"
@@ -31,4 +28,7 @@ class OrganisasjonConfig(baseUri: URI,
                 .build(TESTORG)
                 .toString()
     }
+    override fun toString() =
+        "${javaClass.simpleName} [organisasjonPath=" + organisasjonPath + ", pingEndpoint=" + pingEndpoint + "]"
+
 }

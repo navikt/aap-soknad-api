@@ -5,9 +5,9 @@ import org.springframework.stereotype.Component
 @Component
 class ArbeidClient(private val arbeid: ArbeidWebClientAdapter,
                    private val org: OrganisasjonWebClientAdapter) {
-    fun arbeidinfo() =
-        arbeid.arbeidsforhold()
+    fun arbeidInfo() =
+        arbeid.arbeidInfo()
             .map {
-                it.tilArbeidsforhold(org.orgNavn(it.arbeidsgiver.organisasjonsnummer))
+                it.tilArbeidInfo(org.orgNavn(it.arbeidsgiver.organisasjonsnummer))
             }
 }

@@ -5,7 +5,6 @@ import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.Constants
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -19,10 +18,12 @@ class OrganisasjonWebClientAdapter(@Qualifier(Constants.ORGANISASJON) val client
         if (cf.isEnabled) {
             webClient
                 .get()
-                .uri { b -> cf.getOrganisasjonURI(b, orgnr) }
+                .uri { b ->
+                    cf.getOrganisasjonURI(b, orgnr)
+                }
                 .accept(APPLICATION_JSON)
                 .retrieve()
-                .onStatus({ obj: HttpStatus -> obj.isError }) { Mono.empty() }
+                .onStatus({ it.isError }) { Mono.empty() }
                 .bodyToMono(OrganisasjonDTO::class.java)
                 .doOnError { t: Throwable ->
                     log.warn("Organisasjon oppslag feilet", t)

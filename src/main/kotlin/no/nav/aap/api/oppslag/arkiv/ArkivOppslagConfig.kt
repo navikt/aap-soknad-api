@@ -1,6 +1,7 @@
 package no.nav.aap.api.oppslag.arkiv
 
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
+import no.nav.aap.arkiv.VariantFormat.ARKIV
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -14,17 +15,16 @@ class ArkivOppslagConfig(
     baseUri: URI,
     @DefaultValue(PINGPATH) pingPath: String,
     @DefaultValue(DOKPATH) private val dokPath: String,
-    @DefaultValue("true") enabled: Boolean
-                        ) : AbstractRestConfig(baseUri, pingPath, SAF, enabled) {
+    @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, SAF, enabled) {
 
-    fun dokUri(b: UriBuilder, journalpostId: String, dokumentInfoId: String, variant: String) =
+    fun dokUri(b: UriBuilder, journalpostId: String, dokumentInfoId: String, variant: String = ARKIV.name) =
         b.path(dokPath).build(journalpostId, dokumentInfoId, variant)
 
     override fun toString() =
         "$javaClass.simpleName [baseUri=$baseUri,  dokPath=$dokPath, pingEndpoint=$pingEndpoint]"
 
     companion object {
-        const val SAKER_QUERY = "query-saf.graphql"
+        const val DOKUMENTER_QUERY = "query-dokumenter.graphql"
         const val SAF = "saf"
         private const val PINGPATH = ""
         private const val DOKPATH = "rest/hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}"

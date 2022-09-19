@@ -33,6 +33,8 @@ import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.MDCUtil.callId
+import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.aap.util.StringExtensions.størrelse
 import no.nav.aap.util.StringExtensions.toEncodedJson
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
@@ -54,7 +56,7 @@ class ArkivJournalpostGenerator(
     fun journalpostFra(es: StandardEttersending, søker: Søker) =
         ArkivJournalpost(
             dokumenter = dokumenterFra(es.ettersendteVedlegg, søker.fnr),
-            tittel = STANDARD_ETTERSENDING.tittel,
+            tittel = STANDARD_ETTERSENDING.tittel, eksternReferanseId = callIdAsUUID(),
             avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
             bruker = Bruker(søker.fnr)
         )
@@ -74,10 +76,9 @@ class ArkivJournalpostGenerator(
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
         ArkivJournalpost(
             dokumenter = dokumenterFra(søknad, pdf.somPDFVariant()),
-            tittel = UTLAND.tittel,
+            tittel = UTLAND.tittel, eksternReferanseId = callIdAsUUID(),
             avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
-            bruker = Bruker(søker.fnr)
-        )
+            bruker = Bruker(søker.fnr))
             .also {
                 log.trace("Journalpost med ${it.størrelse()} er $it")
             }
@@ -85,10 +86,9 @@ class ArkivJournalpostGenerator(
     fun journalpostFra(søknad: StandardSøknad, søker: Søker, pdf: ByteArray) =
         ArkivJournalpost(
             dokumenter = journalpostDokumenterFra(søknad, pdf.somPDFVariant()),
-            tittel = STANDARD.tittel,
+            tittel = STANDARD.tittel, eksternReferanseId = callIdAsUUID(),
             avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
-            bruker = Bruker(søker.fnr)
-        )
+            bruker = Bruker(søker.fnr))
             .also {
                 log.trace("Journalpost med ${it.størrelse()} er $it")
             }
