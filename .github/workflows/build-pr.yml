@@ -4,6 +4,8 @@ on:
     pull_request:
         branches:
             - main
+        paths-ignore:
+            - '**.md'
 env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
