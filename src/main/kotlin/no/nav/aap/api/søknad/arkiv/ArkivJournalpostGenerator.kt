@@ -23,23 +23,24 @@ import no.nav.aap.api.søknad.model.VedleggType.ANNET
 import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
 import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
-import no.nav.aap.arkiv.AvsenderMottaker
-import no.nav.aap.arkiv.Bruker
-import no.nav.aap.arkiv.Dokument
-import no.nav.aap.arkiv.DokumentVariant
-import no.nav.aap.arkiv.Filtype.PDFA
-import no.nav.aap.arkiv.Journalpost
-import no.nav.aap.arkiv.encode
-import no.nav.aap.arkiv.somPDFVariant
+import no.nav.aap.api.søknad.arkiv.Journalpost.AvsenderMottaker
+import no.nav.aap.api.søknad.arkiv.Journalpost.Bruker
+import no.nav.aap.api.søknad.arkiv.Journalpost.Dokument
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.JSON
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ARKIV
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ORIGINAL
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.aap.util.MDCUtil.callId
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.aap.util.StringExtensions.størrelse
+import no.nav.aap.util.StringExtensions.toEncodedJson
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.stereotype.Component
+import java.util.*
 
 @Component
 class ArkivJournalpostGenerator(
@@ -64,11 +65,11 @@ class ArkivJournalpostGenerator(
 
     private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>, fnr: Fødselsnummer) =
         vedlegg.flatMap { e ->
-            require(vedlegg.isNotEmpty()) { "Forventet > 0  vedlegg" }
+            require(vedlegg.isNotEmpty()) { "Forventet > 0 vedlegg" }
             dokumenterFra(e.ettersending, e.vedleggType, fnr)
         }.also {
             require(it.isNotEmpty()) { "Forventet > 0 vedlegg fra dokumentlager" }
-            require(vedlegg.size == it.size) { "Forventet   ${vedlegg.size} fra dokumentlager, fant ${it.size}" }
+            require(vedlegg.size == it.size) { "Forventet  ${vedlegg.size} fra dokumentlager, fant ${it.size}" }
         }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker, pdf: ByteArray) =
@@ -159,12 +160,17 @@ class ArkivJournalpostGenerator(
             log.trace("Dokument til arkiv $it")
         })
 
-    internal fun Journalpost.størrelse() = dokumenter.størrelse("dokument")
+    private fun Journalpost.størrelse() = dokumenter.størrelse("dokument")
     private fun ByteArray.somDokument(tittel: String) =
-        Dokument(tittel = tittel, dokumentVariant = DokumentVariant(PDFA, encode())).also {
+        Dokument(tittel, DokumentVariant(PDFA, encode())).also {
             log.trace("Dokument konvertert er $it")
         }
 
     private fun DokumentInfo.somDokument(tittel: String) = bytes.somDokument(tittel)
+    private fun ByteArray.somPDFVariant() = DokumentVariant(PDFA, encode(), ARKIV)
+    private fun ByteArray.encode() = Base64.getEncoder().encodeToString(this)
+    fun StandardSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
+    fun UtlandSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
+
 
 }
