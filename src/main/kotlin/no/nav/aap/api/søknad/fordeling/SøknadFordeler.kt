@@ -4,6 +4,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.felles.SkjemaType.UTLAND
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivEttersendingResultat
@@ -74,6 +75,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
     @Component
     class StandardSøknadFullfører(private val dokumentLager: Dokumentlager,
                                   private val minside: MinSideClient,
+                                  private val oppslag: ArkivOppslagClient,
                                   private val søknader: SøknadRepository,
                                   private val mellomlager: Mellomlager) {
 
@@ -90,6 +92,7 @@ class StandardSøknadFordeler(private val arkiv: ArkivFordeler,
                         oppdaterMinSide(manglende.isEmpty(), fnr)
                     }
                 }
+                log.trace("Oppslag av søknad etter arkivering er ${oppslag.søknad(res.journalpostId)}")
                 Kvittering(dokumentLager.lagreDokument(DokumentInfo(res.pdf, "kvittering.pdf")))
             }
 

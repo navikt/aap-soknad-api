@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag.arkiv
 
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.størrelse
 import org.springframework.stereotype.Component
@@ -19,4 +20,7 @@ class ArkivOppslagClient(private val adapter: ArkivOppslagWebClientAdapter) {
         .also {
             log.trace("Slo opp ${it.størrelse("dokument")} fra $innsendingIds ($it)")
     }
+
+    fun søknad(journalpostId: String) =
+        adapter.søknad(journalpostId)
 }

@@ -48,7 +48,15 @@ class ArkivOppslagWebClientAdapter(
         ?.filter { it.journalposttype in listOf(I, U) }
         ?.flatMap { mapper.tilDokumenter(it) }
         .orEmpty()
-}
+
+    fun søknad(journalpostId: String) : Unit{
+        query(graphQL,DOKUMENTER_QUERY, ctx.getFnr(),  ArkivOppslagJournalposter::class)
+            ?.journalposter
+            ?.firstOrNull { it.journalpostId == journalpostId }?.let {
+                log.info("Slo opp $it for $journalpostId")
+                } ?: log.warn("Ingen journalpost for $journalpostId")
+            }
+        }
 
 @Component
 class ArkivOppslagMapper(@Value("\${ingress}") private val ingress: URI) {

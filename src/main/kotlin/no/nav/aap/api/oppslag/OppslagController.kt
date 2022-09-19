@@ -8,6 +8,7 @@ import no.nav.aap.api.oppslag.krr.KRRClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.søknad.SøknadClient
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.model.SøkerInfo
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -71,7 +72,9 @@ class OppslagController(
     fun søknad(@PathVariable uuid: UUID) = søknad.søknad(uuid)
 
     @GetMapping("/soeknad/{journalpostId}")
-    fun søknad(@PathVariable journalpostId: String): Nothing = TODO()
+    fun søknad(@PathVariable journalpostId: String): Nothing {
+        TODO()
+    }
 
     @GetMapping(DOKUMENT)
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentId: String) =
