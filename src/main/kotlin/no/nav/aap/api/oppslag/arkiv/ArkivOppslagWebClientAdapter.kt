@@ -20,7 +20,6 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.time.LocalDateTime
 import java.util.*
@@ -64,7 +63,7 @@ class ArkivOppslagMapper(@Value("\${ingress}") private val ingress: URI) {
                 }
             }.map { dok ->
                 DokumentOversiktInnslag(
-                        uri(journalpostId, dok.dokumentInfoId),
+                        journalpostId, dok.dokumentInfoId,
                         dok.tittel,
                         journalposttype,
                         eksternReferanseId,
@@ -74,13 +73,8 @@ class ArkivOppslagMapper(@Value("\${ingress}") private val ingress: URI) {
             }.sortedByDescending { it.dato }
         }
 
-    private fun uri(journalpostId: String, dokumentId: String) =
-        UriComponentsBuilder.newInstance()
-            .uri(ingress)
-            .path(DOKUMENT_PATH)
-            .build(journalpostId, dokumentId)
-
-    data class DokumentOversiktInnslag(val uri: URI,
+    data class DokumentOversiktInnslag(val journalpostId: String,
+                                       val dokumentId: String,
                                        val tittel: String?,
                                        val type: ArkivOppslagJournalpostType,
                                        val innsendingId: UUID?,
