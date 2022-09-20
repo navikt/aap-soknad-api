@@ -11,8 +11,10 @@ Applikasjonen har en database for metadata vedrørende:
 # Komme i gang
 ___
 Bygger på JAVA 17 og maven. 
-Se detaljer under [Backend for teamets oppsett](https://aap-team-innbygger.intern.nav.no/docs/Komme%20i%20gang/komme-i-gang-med-utvikling)
+- Se nødvendig oppsett under [Backend for teamet](https://aap-team-innbygger.intern.nav.no/docs/Komme%20i%20gang/komme-i-gang-med-utvikling)
 - å bygge lokalt, krever enten koblig mot GCP-dev db eller å [kommentere ut testene i](src/test/kotlin/no/nav/aap/api/søknad/SøknadDBTest.kt)
+- `mvn clean install`
+
 
 ## Henvendelser
 ___
