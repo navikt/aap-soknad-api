@@ -27,7 +27,6 @@ import java.util.*
 @Component
 class SøknadFullfører(private val dokumentLager: Dokumentlager,
                       private val minside: MinSideClient,
-                      private val oppslag: ArkivOppslagClient,
                       private val søknader: SøknadRepository,
                       private val mellomlager: Mellomlager) {
 
@@ -49,7 +48,6 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                     oppdaterMinSide(manglende.isEmpty(), fnr)
                 }
             }
-            log.trace("Oppslag av søknad etter arkivering er ${oppslag.søknad(res.journalpostId)}")
             Kvittering(res.journalpostId)
         }
 

@@ -49,11 +49,10 @@ class ArkivOppslagWebClientAdapter(
         ?.flatMap { mapper.tilDokumenter(it) }
         .orEmpty()
 
-    fun søknad(journalpostId: String) =
-        query(graphQL,DOKUMENTER_QUERY, ctx.getFnr(),  ArkivOppslagJournalposter::class)
-            ?.journalposter
-            ?.firstOrNull { it.journalpostId == journalpostId }
-
+    fun søknadDokumentId(journalPostId: String) =query(graphQL,DOKUMENTER_QUERY, ctx.getFnr(),  ArkivOppslagJournalposter::class)
+        ?.journalposter
+        ?.firstOrNull { it.journalpostId == journalPostId }
+        ?.dokumenter?.firstOrNull()?.dokumentInfoId
 }
 @Component
 class ArkivOppslagMapper(@Value("\${ingress}") private val ingress: URI) {
