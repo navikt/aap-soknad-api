@@ -71,7 +71,6 @@ class ArkivJournalpostGenerator(
             dokumenterFra(e.ettersending, e.vedleggType, fnr)
         }.also {
             require(it.isNotEmpty()) { "Forventet > 0 vedlegg fra dokumentlager" }
-            require(vedlegg.size == it.size) { "Forventet  ${vedlegg.size} fra dokumentlager, fant ${it.size}" }
         }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker) =
