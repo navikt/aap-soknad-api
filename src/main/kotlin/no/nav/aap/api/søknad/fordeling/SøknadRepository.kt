@@ -10,7 +10,9 @@ import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Component
@@ -116,6 +118,10 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             @LastModifiedDate var updated: LocalDateTime? = null) : IdentifiableTimestampedBaseEntity() {
         override fun toString() =
             "${javaClass.simpleName} [created=$created, updated=$updated, eventid=$eventid, vedleggType=$vedleggtype, id=$id)]"
+    }
 
+    companion object {
+         private val CREATED_DESC = Sort.by("created").descending()
+         val SISTE_SØKNAD = PageRequest.of(0, 1, CREATED_DESC)
     }
 }
