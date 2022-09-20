@@ -49,7 +49,7 @@ organisasjon:
     base-uri: https://ereg-services-q1.dev-fss-pub.nais.io
     enabled: false
 saf:
-    base-uri: https://safselvbetjening-q1.${onprem}-pub.nais.io/graphql
+    base-uri: https://safselvbetjening-q1.${onprem}-pub.nais.io
 konto:
     enabled: true
 joark:

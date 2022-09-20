@@ -1,11 +1,14 @@
 package no.nav.aap.api.oppslag.arkiv
 
+import no.nav.aap.api.oppslag.arbeid.ArbeidConfig.Companion.PINGPATH
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentVariantFormat.ARKIV
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClient.*
 import org.springframework.web.util.UriBuilder
 import java.net.URI
 
@@ -26,7 +29,8 @@ class ArkivOppslagConfig(
     companion object {
         const val DOKUMENTER_QUERY = "query-dokumenter.graphql"
         const val SAF = "saf"
+        const val SAFQL = "safql"
         private const val PINGPATH = ""
-        private const val DOKPATH = "rest/hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}"
+        private const val DOKPATH = "/rest/hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}"
     }
 }

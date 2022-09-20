@@ -3,6 +3,7 @@ package no.nav.aap.api.oppslag.arkiv
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAFQL
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import org.springframework.beans.factory.annotation.Qualifier
@@ -21,11 +22,18 @@ class ArkivOppslagClientBeanConfig {
             .filter(tokenX)
             .build()
 
+    @Qualifier(SAFQL)
+    @Bean
+    fun arkivOppslagQLWebClient(b: Builder, cfg: ArkivOppslagConfig, tokenX: TokenXFilterFunction) =
+        b.baseUrl("${cfg.baseUri}/graphql")
+            .filter(tokenX)
+            .build()
+
     @Bean
     fun arkivOppslagHealthIndicator(a: ArkivOppslagWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 
     @Qualifier(SAF)
     @Bean
-    fun arkivOppslagGraphQLWebClient(@Qualifier(SAF) client: WebClient, mapper: ObjectMapper) =
+    fun arkivOppslagGraphQLWebClient(@Qualifier(SAFQL) client: WebClient, mapper: ObjectMapper) =
         GraphQLWebClient.newInstance(client, mapper)
 }

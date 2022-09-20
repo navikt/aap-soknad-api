@@ -11,7 +11,6 @@ import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.AuthContext
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
-import java.lang.IllegalStateException
 import java.time.LocalDateTime
 import java.util.*
 
@@ -47,13 +46,14 @@ class SøknadClient(private val repo: SøknadRepository, private val arkivClient
     }
     data class SøknadDTONy(val innsendtDato: LocalDateTime?,
                            val søknadId: UUID,
+                           val journalpostId: String,
                            val innsendteVedlegg: List<DokumentOversiktInnslag>,
                            val manglendeVedlegg: List<VedleggType>)
 
     private fun tilSøknadNy(s: Søknad) =
         with(s) {
             SøknadDTONy(created,
-                    eventid,
+                    eventid, journalpostid,
                     arkivClient.innsendteDokumenter(ettersendinger.map(Ettersending::eventid) + eventid), // TODO, for tung, slå opp alle først og plukk ut
                     manglendevedlegg.map { it.vedleggtype })
         }
