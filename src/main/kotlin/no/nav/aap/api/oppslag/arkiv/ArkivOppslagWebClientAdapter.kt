@@ -54,7 +54,7 @@ class ArkivOppslagWebClientAdapter(
         ?.dokumenter?.firstOrNull()?.dokumentInfoId
 }
 @Component
-class ArkivOppslagMapper(@Value("\${ingress}") private val ingress: URI) {
+class ArkivOppslagMapper {
     fun tilDokumenter(journalpost: ArkivOppslagJournalpost) =
         with(journalpost) {
             dokumenter.filter { v ->
