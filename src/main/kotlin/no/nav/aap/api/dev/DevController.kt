@@ -6,7 +6,7 @@ import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
-import no.nav.aap.api.søknad.fordeling.StandardSøknadFordeler.StandardSøknadFullfører
+import no.nav.aap.api.søknad.fordeling.SøknadFullfører
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
 import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
@@ -55,7 +55,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
                              private val vl: SøknadVLFordeler,
                              private val dittNav: MinSideClient,
                              private val søknad: SøknadClient,
-                             private val fullfører: StandardSøknadFullfører,
+                             private val fullfører: SøknadFullfører,
                              private val arkiv: ArkivJournalpostGenerator,
                              private val repos: MinSideRepositories) {
 

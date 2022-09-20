@@ -12,17 +12,16 @@ import java.util.*
 class LocalSøknadFordeler : Fordeler {
     private val log = getLogger(javaClass)
     override fun fordel(søknad: UtlandSøknad) =
-        Kvittering(UUID.randomUUID())
+        Kvittering("42")
             .also {
                 log.info("Dummy-ruting av utenlandssøknad til bakenforliggende systemer")
             }
 
     override fun fordel(søknad: StandardSøknad) =
-        Kvittering(UUID.randomUUID()).also {
+        Kvittering("42").also {
             log.info("Dummy-ruting av søknad til bakenforliggende systemer")
         }
 
-    override fun fordel(ettersending: StandardEttersending) {
-        TODO("Not yet implemented")
-    }
+    override fun fordel(ettersending: StandardEttersending) =
+        Kvittering("42")
 }

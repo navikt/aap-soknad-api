@@ -11,6 +11,7 @@ import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.AuthContext
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import java.lang.IllegalStateException
 import java.time.LocalDateTime
 import java.util.*
 

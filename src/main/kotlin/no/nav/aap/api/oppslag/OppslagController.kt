@@ -69,12 +69,10 @@ class OppslagController(
             it.forEachIndexed{ i,s -> log.trace("$i Ny  -> $s")}
         }
     @GetMapping("/soeknad/{uuid}")
-    fun søknad(@PathVariable uuid: UUID) = søknad.søknad(uuid)
+    fun søknadForUUID(@PathVariable uuid: UUID) = søknad.søknad(uuid)
 
-    @GetMapping("/soeknad/{journalpostId}")
-    fun søknad(@PathVariable journalpostId: String): Nothing {
-        TODO()
-    }
+    @GetMapping("/soeknad/journalpost/{journalpostId}")
+    fun søknadForJournalpost(@PathVariable journalpostId: String) = dokument(journalpostId,arkiv.søknadDokumentId(journalpostId))
 
     @GetMapping(DOKUMENT)
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentId: String) =
