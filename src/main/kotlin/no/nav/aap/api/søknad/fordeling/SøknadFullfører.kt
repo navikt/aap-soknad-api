@@ -4,7 +4,6 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.felles.SkjemaType.UTLAND
-import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivResultat
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Companion.SISTE_SØKNAD
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
@@ -23,6 +22,7 @@ import no.nav.aap.util.MDCUtil
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
+import java.util.Locale.getDefault
 
 @Component
 class SøknadFullfører(private val dokumentLager: Dokumentlager,
@@ -73,7 +73,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
             it.registrerEttersending(fnr, res, e)
         } ?: log.warn("Fant ingen sist innsendt søknad for $fnr")
         minside.opprettBeskjed(MinSideNotifikasjonType.MINAAPSTD, MDCUtil.callIdAsUUID(), fnr,
-                "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel.decap()}", true)
+                "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel.decapitalize()}", true)
     }
 
     private fun SøknadRepository.sisteSøknad(fnr: Fødselsnummer) =
@@ -82,11 +82,11 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
     private fun Søknad.oppdaterMinSide(erKomplett: Boolean, fnr: Fødselsnummer) =
         if (erKomplett) {
             minside.opprettBeskjed(MinSideNotifikasjonType.MINAAPSTD, eventid, fnr,
-                    "Vi har mottatt din ${STANDARD.tittel.decap()}", true)
+                    "Vi har mottatt din ${STANDARD.tittel.decapitalize()}", true)
         }
         else {
             minside.opprettOppgave(MinSideNotifikasjonType.MINAAPSTD, fnr, eventid,
-                    "Vi har mottatt din ${STANDARD.tittel.decap()}. Du må ettersende dokumentasjon")
+                    "Vi har mottatt din ${STANDARD.tittel.decapitalize()}. Du må ettersende dokumentasjon")
         }
 
     private fun Søknad.avsluttMinSideOppgaveHvisKomplett(fnr: Fødselsnummer) {
@@ -103,4 +103,4 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
     }
 }
 
-private fun String.decap()  = replaceFirstChar { it.lowercase(Locale.getDefault())}
+private fun String.decapitalize()  = replaceFirstChar { it.lowercase(getDefault())}
