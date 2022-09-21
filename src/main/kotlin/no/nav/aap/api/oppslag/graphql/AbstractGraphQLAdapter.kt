@@ -2,22 +2,21 @@ package no.nav.aap.api.oppslag.graphql
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
-import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.rest.AbstractWebClientAdapter
+import org.apache.pdfbox.cos.COSName.T
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.web.reactive.function.client.WebClient
 import java.io.File
-import kotlin.reflect.KClass
 
-abstract class AbstractGraphQLAdapter(client: WebClient, cf: AbstractRestConfig, val errorHandler: GraphQLErrorHandler = GraphQLExceptionThrowingErrorHandler()) : AbstractWebClientAdapter(client, cf) {
+abstract class AbstractGraphQLAdapter(client: WebClient, cf: AbstractRestConfig, val  errorHandler: GraphQLErrorHandler = GraphQLExceptionThrowingErrorHandler()) : AbstractWebClientAdapter(client, cf) {
 
     protected inline fun  <reified T: Any> query(client: GraphQLWebClient, query: String, fnr: String) =
         try {
             client.post(query, fnr.toIdent(), T::class.java).block()
         } catch (e: GraphQLErrorsException) {
-            errorHandler.handleError(e)
+            errorHandler.handle(e)
         } catch (e: Exception) {
             log.warn("Oppslag ${File(query).nameWithoutExtension.split("-")[0]} feilet med uventet feil", e)
             throw e
