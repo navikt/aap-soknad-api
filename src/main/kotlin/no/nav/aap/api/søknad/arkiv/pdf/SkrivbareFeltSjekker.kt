@@ -16,6 +16,7 @@ class SkrivbareFeltSjekker : DokumentSjekker {
         with(dokument) {
             if (APPLICATION_PDF_VALUE == contentType) {
                 try {
+                    log.trace("Sjekker $filnavn for skrivbare felter")
                     ByteArrayInputStream(bytes).use { inputStream ->
                         PDDocument.load(inputStream).use { pdfDocument ->
                             pdfDocument.documentCatalog.acroForm?.let {
@@ -24,7 +25,7 @@ class SkrivbareFeltSjekker : DokumentSjekker {
                         }
                     }
                 } catch (e: Exception) {
-                   log.warn("Feil ved sjekking av skrivbare felti $filnavn",e)
+                   log.warn("Feil ved sjekking av skrivbare felt i $filnavn",e)
                 }
             }
             else {
