@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono
 class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient, private val cf: KontoConfig) :
     AbstractWebClientAdapter(client, cf) {
 
-    fun kontoInformasjon(historikk: Boolean = false) =
+    fun kontoInfo(historikk: Boolean = false) =
         if (cf.isEnabled) {
             webClient.get()
                 .uri(cf::kontoUri)

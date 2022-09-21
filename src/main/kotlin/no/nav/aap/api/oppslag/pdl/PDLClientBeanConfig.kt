@@ -26,15 +26,15 @@ class PDLClientBeanConfig {
 
     @Bean
     @Qualifier(PDL_SYSTEM)
-    fun pdlSystemWebClient(b: Builder, cfg: PDLConfig, @Qualifier(PDL_SYSTEM) aadPDLFilterFunction: ExchangeFilterFunction) =
+    fun pdlSystemWebClient(b: Builder, cfg: PDLConfig, @Qualifier(PDL_SYSTEM) pdlClientCredentialFilterFunction: ExchangeFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
-            .filter(aadPDLFilterFunction)
+            .filter(pdlClientCredentialFilterFunction)
             .build()
 
     @Bean
     @Qualifier(PDL_SYSTEM)
-    fun aadPdlClientCredentialFilterFunction(cfgs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
+    fun pdlClientCredentialFilterFunction(cfgs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
         ExchangeFilterFunction { req, next ->
             next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.systemBearerToken(cfgs)).build())
         }
@@ -44,8 +44,7 @@ class PDLClientBeanConfig {
 
     @Qualifier(PDL_SYSTEM)
     @Bean
-    fun graphQlSystemWebClient(@Qualifier(PDL_SYSTEM) client: WebClient, mapper: ObjectMapper)  =
-        GraphQLWebClient.newInstance(client, mapper)
+    fun graphQLSystemWebClient(@Qualifier(PDL_SYSTEM) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
 
     @Qualifier(PDL_USER)
     @Bean
@@ -57,10 +56,8 @@ class PDLClientBeanConfig {
 
     @Qualifier(PDL_USER)
     @Bean
-    fun graphQlUserWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper) =
-        GraphQLWebClient.newInstance(client, mapper)
+    fun graphQLUserWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
 
     @Bean
-    fun pdlHealthIndicator(a: PDLWebClientAdapter) =
-        object : AbstractPingableHealthIndicator(a) {}
+    fun pdlHealthIndicator(a: PDLWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 }

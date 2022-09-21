@@ -18,22 +18,6 @@ data class PDLWrappedSøker(val navn: Set<PDLNavn>,
             } ?: emptyList())
 }
 
-data class PDLWrappedSøkerForeldreansvar(val navn: Set<PDLNavn>,
-                                         @JsonProperty("foedsel") val fødsel: Set<PDLFødsel>,
-                                         val bostedsadresse: List<PDLBostedadresse>,
-                                         val foreldreansvar: Set<PDLForeldreansvar>?) {
-    val active = PDLSøkerForeldreansvar(navn.first(),
-            fødsel.firstOrNull(),
-            bostedsadresse.firstOrNull()?.vegadresse,
-            foreldreansvar)
-}
-
-data class PDLSøkerForeldreansvar(val navn: PDLNavn,
-                                  val fødsel: PDLFødsel?,
-                                  val vegadresse: PDLVegadresse?,
-                                  val foreldreansvar: Set<PDLForeldreansvar>?)
-
-data class PDLForeldreansvar(val ansvar: String, val ansvarlig: String?, val ansvarssubjekt: String)
 data class PDLNavn(val fornavn: String, val mellomnavn: String?, val etternavn: String)
 
 data class PDLSøker(val navn: PDLNavn,

@@ -67,5 +67,4 @@ data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournal
                 }
             }
         }
-
     }
