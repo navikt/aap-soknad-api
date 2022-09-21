@@ -32,7 +32,7 @@ import java.util.*
 data class StandardSøknad(
         val studier: Studier,
         val startdato: Startdato,
-        val ferie: Ferie,
+        val ferie: Ferie?,
         val medlemsskap: Medlemskap,
         @JsonAlias("behandlere")
         val registrerteBehandlere: List<RegistrertBehandler> = emptyList(),
