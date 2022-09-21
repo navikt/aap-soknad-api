@@ -2,7 +2,6 @@ package no.nav.aap.api.oppslag.arkiv
 
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.oppslag.OppslagController.Companion.DOKUMENT_PATH
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.DOKUMENTER_QUERY
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost
@@ -15,12 +14,10 @@ import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJourna
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.util.AuthContext
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import java.net.URI
 import java.time.LocalDateTime
 import java.util.*
 
