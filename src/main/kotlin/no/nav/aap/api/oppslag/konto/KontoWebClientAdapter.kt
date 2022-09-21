@@ -21,7 +21,10 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient, private val cf:
                 .uri(cf::kontoUri)
                 .accept(APPLICATION_JSON)
                 .retrieve()
-                .onStatus({ NOT_FOUND == it }, { Mono.empty() })
+                .onStatus({ NOT_FOUND == it }, {
+                    log.trace("Kontoinformasjon ikke funnet")
+                    Mono.empty()
+                })
                 .bodyToMono<Map<String, String>>()
                 .doOnSuccess {
                     log.trace("Kontoinformasjon er $it")
