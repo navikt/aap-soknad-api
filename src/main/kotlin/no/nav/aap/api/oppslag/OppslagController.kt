@@ -81,7 +81,7 @@ class OppslagController(
                 ok()
                     .cacheControl(noCache().mustRevalidate())
                     .headers(HttpHeaders().apply {
-                        contentDisposition = attachment()
+                        contentDisposition = attachment().filename("$journalpostId-$dokumentId.pdf")
                             .build()
                     })
                     .body(it)

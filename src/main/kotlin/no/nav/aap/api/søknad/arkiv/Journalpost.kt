@@ -6,18 +6,19 @@ import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.*
 import no.nav.aap.util.Constants.AAP
+import no.nav.aap.util.MDCUtil
 import java.util.*
 
 data class Journalpost(
-        val journalposttype: String = "INNGAAENDE",
-        val tema: String = AAP.uppercase(),
-        val eksternReferanseId: UUID,
-        val kanal: String = KANAL,
         val tittel: String,
         val avsenderMottaker: AvsenderMottaker,
         val bruker: Bruker,
         val dokumenter: List<Dokument?> = mutableListOf(),
-        val tilleggsopplysninger: List<Tilleggsopplysning> = mutableListOf()) {
+        val eksternReferanseId: UUID = MDCUtil.callIdAsUUID(),
+        val tilleggsopplysninger: List<Tilleggsopplysning> = mutableListOf(),
+        val kanal: String = KANAL,
+        val journalposttype: String = INNGÅENDE,
+        val tema: String = AAP.uppercase()) {
 
 
 
@@ -46,9 +47,10 @@ data class DokumentVariant private constructor(val filtype: String, val fysiskDo
     }
 }
 data class Bruker(val id: Fødselsnummer, val idType: String = ID_TYPE)
-data class AvsenderMottaker(val id: Fødselsnummer, val idType: String = ID_TYPE, val navn: String?)
+data class AvsenderMottaker(val id: Fødselsnummer,  val navn: String?,val idType: String = ID_TYPE,)
 
     companion object{
+        private const val INNGÅENDE = "INNGAAENDE"
         private const val KANAL = "NAV_NO"
         private const val ID_TYPE = "FNR"
     }

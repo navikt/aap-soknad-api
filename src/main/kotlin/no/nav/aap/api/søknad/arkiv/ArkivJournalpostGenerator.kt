@@ -34,7 +34,6 @@ import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.OR
 import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.aap.util.StringExtensions.størrelse
 import no.nav.aap.util.StringExtensions.toEncodedJson
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
@@ -49,22 +48,57 @@ class ArkivJournalpostGenerator(
         private val lager: Dokumentlager,
         private val pdf: PDFClient,
         private val ctx: AuthContext,
-        private val konverterer: BildeTilPDFKonverterer
-) {
+        private val konverterer: BildeTilPDFKonverterer) {
 
     private val log = getLogger(javaClass)
 
     fun journalpostFra(es: StandardEttersending, søker: Søker): Journalpost =
-        Journalpost(
-            dokumenter = dokumenterFra(es.ettersendteVedlegg, søker.fnr),
-            tittel = STANDARD_ETTERSENDING.tittel, eksternReferanseId = callIdAsUUID(),
-            avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
-            bruker = Bruker(søker.fnr)
-        )
+        with(søker) {
+            Journalpost(STANDARD_ETTERSENDING.tittel,
+                AvsenderMottaker(fnr, navn.navn),
+                Bruker(fnr),
+                dokumenterFra(es.ettersendteVedlegg, fnr))
             .also {
                 log.trace("Journalpost med ${it.størrelse()} er $it")
             }
+        }
 
+    fun journalpostFra(søknad: UtlandSøknad, søker: Søker) =
+        with(søker) {
+        Journalpost(UTLAND.tittel,
+                AvsenderMottaker(fnr, navn.navn),
+                Bruker(fnr),
+                dokumenterFra(søknad,  pdf.tilPdf(this,søknad).somPDFVariant()))
+            .also {
+                log.trace("Journalpost med ${it.størrelse()} er $it")
+            }
+        }
+
+    fun journalpostFra(søknad: StandardSøknad, søker: Søker) =
+        with(søker) {
+            Journalpost(STANDARD.tittel,
+                AvsenderMottaker(fnr,navn.navn),
+                Bruker(fnr),
+                journalpostDokumenterFra(søknad, pdf.tilPdf(this,søknad).somPDFVariant()))
+            .also {
+                log.trace("Journalpost med ${it.størrelse()} er $it")
+            }
+        }
+
+
+    private fun journalpostDokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
+        with(søknad) {
+            dokumenterFra(this, pdfVariant).apply {
+                addAll(dokumenterFra(studier, STUDIER))
+                addAll(dokumenterFra(andreBarn, ANDREBARN))
+                addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER))
+                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == AnnenStønadstype.UTLAND }, VedleggType.UTLAND))
+                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD }, OMSORG))
+                addAll(dokumenterFra(this@with, ANNET))
+            }.also {
+                log.trace("Sender ${it.størrelse("dokument")} til arkiv $it")
+            }
+        }
     private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>, fnr: Fødselsnummer) =
         vedlegg.flatMap { e ->
             require(vedlegg.isNotEmpty()) { "Forventet > 0 vedlegg" }
@@ -73,52 +107,13 @@ class ArkivJournalpostGenerator(
             require(it.isNotEmpty()) { "Forventet > 0 vedlegg fra dokumentlager" }
         }
 
-    fun journalpostFra(søknad: UtlandSøknad, søker: Søker) =
-        Journalpost(
-            dokumenter = dokumenterFra(søknad,  pdf.tilPdf(søker,søknad).somPDFVariant()),
-            tittel = UTLAND.tittel, eksternReferanseId = callIdAsUUID(),
-            avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
-            bruker = Bruker(søker.fnr))
-            .also {
-                log.trace("Journalpost med ${it.størrelse()} er $it")
-            }
-
-    fun journalpostFra(søknad: StandardSøknad, søker: Søker) =
-        Journalpost(
-            dokumenter = journalpostDokumenterFra(søknad, pdf.tilPdf(søker,søknad).somPDFVariant()),
-            tittel = STANDARD.tittel, eksternReferanseId = callIdAsUUID(),
-            avsenderMottaker = AvsenderMottaker(søker.fnr, navn = søker.navn.navn),
-            bruker = Bruker(søker.fnr))
-            .also {
-                log.trace("Journalpost med ${it.størrelse()} er $it")
-            }
-
-    private fun journalpostDokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
-        with(søknad) {
-            dokumenterFra(this, pdfVariant).apply {
-                addAll(dokumenterFra(studier, STUDIER))
-                addAll(dokumenterFra(andreBarn, ANDREBARN))
-                addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER))
-                addAll(
-                    dokumenterFra(
-                        utbetalinger?.andreStønader?.find { it.type == AnnenStønadstype.UTLAND },
-                        VedleggType.UTLAND
-                    )
-                )
-                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD }, OMSORG))
-                addAll(dokumenterFra(this@with, ANNET))
-            }.also {
-                log.trace("Sender ${it.størrelse("dokument")} til arkiv  $it")
-            }
-        }
-
     private fun dokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
         mutableListOf(Dokument(STANDARD, listOf(søknad.somJsonVariant(mapper), pdfVariant)))
 
     private fun dokumenterFra(a: List<VedleggAware?>?, type: VedleggType) =
-        a?.map {
+        a?.flatMap {
             dokumenterFra(it?.vedlegg, type)
-        }?.flatten() ?: emptyList()
+        } ?: emptyList()
 
     private fun dokumenterFra(a: VedleggAware?, type: VedleggType): List<Dokument> =
         a?.let { v ->
