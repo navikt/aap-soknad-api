@@ -54,7 +54,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
 
     override fun lesDokument(uuid: UUID) = lesDokument(uuid, ctx.getFnr())
 
-    override fun lesDokument(uuid: UUID, fnr: Fødselsnummer) =
+    private fun lesDokument(uuid: UUID, fnr: Fødselsnummer) =
         lager.get(cfg.vedlegg.navn, navn(fnr, uuid), fields(CONTENT_TYPE, CONTENT_DISPOSITION, TIME_CREATED, SIZE))
             ?.let { blob ->
                 with(blob) {

@@ -43,7 +43,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
         dokumentLager.slettDokumenter(søknad).run {
             mellomlager.slett()
             with(søknad.vedlegg()) {
-                with(søknader.save(Søknad(fnr.fnr, res.journalpostId, MDCUtil.callIdAsUUID()))) {
+                with(søknader.save(Søknad(fnr.fnr, res.journalpostId, callIdAsUUID()))) {
                     registrerSomManglende(manglende)
                     registrerSomVedlagte(vedlagte)
                     oppdaterMinSide(manglende.isEmpty(), fnr)

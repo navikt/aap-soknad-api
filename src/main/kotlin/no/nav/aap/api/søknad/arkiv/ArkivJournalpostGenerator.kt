@@ -128,14 +128,7 @@ class ArkivJournalpostGenerator(
 
     private fun dokumenterFra(v: Vedlegg?, type: VedleggType, fnr: Fødselsnummer) =
         v?.let { vl ->
-            val vedlegg = (vl.deler?.mapNotNull {
-                it?.let { uuid ->
-                    log.trace("Leser dokument $uuid fra dokkumentlager")
-                    lager.lesDokument(uuid, fnr)
-                }
-            } ?: emptyList())
-                .sortedBy { it.createTime }
-                .groupBy { it.contentType }
+            val vedlegg = grupperteOgSorterteVedlegg(vl, fnr)
             val pdfs = vedlegg[APPLICATION_PDF_VALUE] ?: mutableListOf()
             val jpgs = vedlegg[IMAGE_JPEG_VALUE] ?: emptyList()
             val pngs = vedlegg[IMAGE_PNG_VALUE] ?: emptyList()
@@ -150,6 +143,16 @@ class ArkivJournalpostGenerator(
         } ?: emptyList<Dokument>().also {
             log.trace("Ingen dokumenter å lese fra dokumentlager")
         }
+
+    private fun grupperteOgSorterteVedlegg(vl: Vedlegg,
+                    fnr: Fødselsnummer) = (vl.deler?.mapNotNull {
+        it?.let {
+            log.trace("Leser dokument $it fra dokkumentlager")
+            lager.lesDokument(it)
+        }
+    } ?: emptyList())
+        .sortedBy { it.createTime }
+        .groupBy { it.contentType }
 
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
         listOf(Dokument(UTLAND, listOf(søknad.somJsonVariant(mapper), pdfDokument)

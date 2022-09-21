@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.arkiv
 
 import no.nav.aap.api.felles.error.IntegrationException
+import no.nav.aap.api.søknad.arkiv.Journalpost.ArkivResponse
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.Constants.JOARK
 import org.springframework.beans.factory.annotation.Qualifier

@@ -9,28 +9,25 @@ import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
 
 @Component
-class SkrivbareFeltSjekker : DokumentSjekker {
+class EditerbareFeltSjekker : DokumentSjekker {
     private val log = getLogger(javaClass)
 
     override fun sjekk(dokument: DokumentInfo) =
         with(dokument) {
             if (APPLICATION_PDF_VALUE == contentType) {
-                try {
+                runCatching {
                     log.trace("Sjekker $filnavn for skrivbare felter")
                     ByteArrayInputStream(bytes).use { inputStream ->
-                        PDDocument.load(inputStream).use { pdfDocument ->
-                            pdfDocument.documentCatalog.acroForm?.let {
-                                log.warn("Fant skrivbare felter i $filnavn")
-                            } ?: log.info("Ingen skrivbare felter i $filnavn")
+                        PDDocument.load(inputStream).use {
+                            it.documentCatalog.acroForm?.let {
+                                log.warn("Fant editerbare felter i $filnavn")
+                            } ?: log.info("Ingen editerbare felter i $filnavn")
                         }
                     }
-                } catch (e: Exception) {
-                   log.warn("Feil ved sjekking av skrivbare felt i $filnavn",e)
-                }
+                }.getOrElse {log.warn("Feil ved sjekking av editerbare felt i $filnavn",it) }
             }
             else {
-                log.trace("Ingen skrivbare-felt validering av $filnavn med type $contentType")
+                log.trace("Ingen editerbare-felt validering av $filnavn med type $contentType")
             }
-            Unit
         }
 }

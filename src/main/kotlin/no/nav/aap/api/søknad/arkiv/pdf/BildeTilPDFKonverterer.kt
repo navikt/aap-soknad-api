@@ -24,7 +24,7 @@ class BildeTilPDFKonverterer(private val scaler: BildeSkalerer) {
     fun tilPdf(bildeType: String, vararg bilder: ByteArray) = slåSammen(bildeType, *bilder)
 
     private fun slåSammen(bildeType: String, vararg bilder: ByteArray) =
-        try {
+        runCatching {
             log.trace("Konverterer ${bilder.størrelse("bildefil")} til PDF for $bildeType")
             PDDocument().use { doc ->
                 ByteArrayOutputStream().use { os ->
@@ -33,23 +33,16 @@ class BildeTilPDFKonverterer(private val scaler: BildeSkalerer) {
                     os.toByteArray()
                 }
             }
-        }
-        catch (e: Exception) {
-            throw DokumentException(msg = "Konvertering av ${bilder.størrelse("bildefil")} av type $bildeType feilet", cause = e)
-        }
+        }.getOrElse {throw DokumentException(msg = "Konvertering av ${bilder.størrelse("bildefil")} av type $bildeType feilet", cause = it) }
 
     private fun pdfFraBilde(doc: PDDocument, bilde: ByteArray, fmt: String) =
         PDPage(A4).apply {
             doc.addPage(this)
-            try {
+            runCatching {
                 PDPageContentStream(doc, this).use {
                     it.drawImage(createFromByteArray(doc, scaler.tilA4(bilde, fmt), "img"),
                             A4.lowerLeftX,
                             A4.lowerLeftY)
                 }
-            }
-            catch (e: Exception) {
-                throw DokumentException(msg = "Konvertering av bilde feilet", cause = e)
-            }
+            }.getOrElse { throw DokumentException(msg = "Konvertering av bilde feilet", cause = it)} }
         }
-}

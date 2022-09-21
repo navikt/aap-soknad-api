@@ -37,7 +37,7 @@ data class BucketConfig(val project: String,
     }
 }
 
-open class DokumentException(val substatus: Substatus? = null, msg: String?, cause: Exception? = null) :
+open class DokumentException(val substatus: Substatus? = null, msg: String?, cause: Throwable? = null) :
     RuntimeException(msg, cause) {
     enum class Substatus {
         PASSWORD_PROTECTED,

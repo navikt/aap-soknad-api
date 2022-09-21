@@ -24,7 +24,7 @@ import javax.imageio.ImageIO.write
 class BildeSkalerer {
     private val log = getLogger(javaClass)
     fun tilA4(origImage: ByteArray, format: String) =
-        try {
+        runCatching {
             with(tilPortrett(read(ByteArrayInputStream(origImage)))) {
                 val origDim = Dimension(width, height)
                 val newDim = skalertDimensjon(origDim, Dimension(A4.width.toInt(), A4.height.toInt()))
@@ -35,10 +35,8 @@ class BildeSkalerer {
                     bytes(skalerNed(this, newDim), format)
                 }
             }
-        }
-        catch (e: IOException) {
-            throw DokumentException(msg = "Konvertering av vedlegg feilet", cause = e)
-        }
+        }.getOrElse {throw DokumentException(msg = "Konvertering av vedlegg feilet", cause = it) }
+
 
     private fun tilPortrett(image: BufferedImage): BufferedImage {
         if (image.height >= image.width) {

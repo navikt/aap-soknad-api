@@ -18,6 +18,7 @@ import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
 import org.springframework.data.domain.Pageable
@@ -59,22 +60,12 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
                              private val arkiv: ArkivJournalpostGenerator,
                              private val repos: MinSideRepositories) {
 
-    private val log = LoggerUtil.getLogger(javaClass)
+    private val log = getLogger(javaClass)
 
     @GetMapping("/soknader")
     fun søknader(@RequestParam fnr: Fødselsnummer,
                  @SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
         søknad.søknader(fnr, pageable)
-
-    @PostMapping("ettersend/{fnr}")
-    @ResponseStatus(CREATED)
-    fun ettersend(@PathVariable fnr: Fødselsnummer, @RequestBody ettersending: StandardEttersending) {
-        log.trace("Mottok ettersendng $ettersending for $fnr")
-        val søker = Søker(Navn("Dennis", "B", "Bergkamp"), fnr)
-        val post = arkiv.journalpostFra(ettersending, søker)
-        //log.trace("Lagde journalpost $post for $fnr")
-        // fullfører.fullfør(ettersending, søker.fnr, JoarkEttersendingResultat("42"))
-    }
 
     @GetMapping("/dittnav/avsluttalle")
     fun avsluttAlle(@RequestParam fnr: Fødselsnummer) {
@@ -116,19 +107,6 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
         with(vedlegg) {
             dokumentLager.lagreDokument(DokumentInfo(bytes, originalFilename, contentType), fnr)
         }
-
-    @GetMapping("vedlegg/les/{fnr}/{uuid}")
-    fun lesDokument(@PathVariable fnr: Fødselsnummer, @PathVariable uuid: UUID) =
-        dokumentLager.lesDokument(uuid, fnr)
-            ?.let {
-                ok().contentType(parseMediaType(it.contentType!!))
-                    .cacheControl(noCache().mustRevalidate())
-                    .headers(HttpHeaders()
-                        .apply {
-                            contentDisposition = attachment().filename(it.filnavn!!).build()
-                        })
-                    .body(it.bytes)
-            } ?: notFound().build()
 
     @DeleteMapping("vedlegg/slett/{fnr}")
     @ResponseStatus(NO_CONTENT)

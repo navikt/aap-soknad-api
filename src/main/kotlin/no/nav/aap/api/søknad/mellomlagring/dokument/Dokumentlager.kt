@@ -11,9 +11,6 @@ import java.util.*
 
 interface Dokumentlager {
     fun lesDokument(uuid: UUID): DokumentInfo?
-
-    fun lesDokument(uuid: UUID, fnr: Fødselsnummer): DokumentInfo?
-
     fun slettDokumenter(vararg uuids: UUID): Unit?
     fun slettDokumenter(søknad: StandardSøknad)
     fun lagreDokument(dokument: DokumentInfo): UUID

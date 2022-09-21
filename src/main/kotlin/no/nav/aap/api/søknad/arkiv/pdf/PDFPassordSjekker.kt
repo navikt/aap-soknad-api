@@ -18,12 +18,13 @@ class PDFPassordSjekker : DokumentSjekker {
     override fun sjekk(dokument: DokumentInfo) =
         with(dokument) {
             if (APPLICATION_PDF_VALUE == contentType) {
-                try {
+                runCatching {
                     log.trace(CONFIDENTIAL, "Sjekker om  $filnavn er passord-beskyttet")
                     PDDocument.load(bytes).use { }
-                }
-                catch (e: InvalidPasswordException) {
-                    throw PassordBeskyttetException("$filnavn er passord-beskyttet", e)
+                }.getOrElse {
+                    if (it is InvalidPasswordException) {
+                        throw PassordBeskyttetException("$filnavn er passord-beskyttet", it)
+                    }
                 }
             }
             else {
