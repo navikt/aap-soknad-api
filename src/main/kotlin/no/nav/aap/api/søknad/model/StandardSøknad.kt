@@ -28,7 +28,6 @@ import java.util.*
 
 data class StandardSøknad(
         val studier: Studier,
-        val startdato: Startdato?,
         val ferie: Ferie,
         val medlemsskap: Medlemskap,
         val registrerteBehandlere: List<RegistrertBehandler> = emptyList(),
@@ -165,8 +164,6 @@ data class Studier(val erStudent: StudieSvar?,
         AVBRUTT
     }
 }
-
-data class Startdato(val beskrivelse: String?)
 
 data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
                       val jobbetUtenforNorgeFørSyk: Boolean?,

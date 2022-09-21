@@ -27,7 +27,6 @@ import no.nav.aap.api.søknad.model.RadioValg
 import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.api.søknad.model.Startdato
 import no.nav.aap.api.søknad.model.Studier
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.NEI
 import no.nav.aap.api.søknad.model.Søker
@@ -162,7 +161,6 @@ class SøknadTest {
 
         fun standardSøknad() = StandardSøknad(
                 Studier(NEI, RadioValg.NEI),
-                Startdato("Noe annet"),
                 Ferie(DAGER, dager = 20),
                 Medlemskap(true, null, null, null,
                         listOf(Utenlandsopphold(SE,
