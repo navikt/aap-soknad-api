@@ -28,7 +28,7 @@ import java.util.*
 
 data class StandardSøknad(
         val studier: Studier,
-        val ferie: Ferie,
+        val ferie: Ferie?,
         val medlemsskap: Medlemskap,
         val registrerteBehandlere: List<RegistrertBehandler> = emptyList(),
         val andreBehandlere: List<AnnenBehandler> = emptyList(),
