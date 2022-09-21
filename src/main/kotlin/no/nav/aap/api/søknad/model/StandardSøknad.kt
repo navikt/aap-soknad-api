@@ -31,8 +31,8 @@ import java.util.*
 
 data class StandardSøknad(
         val studier: Studier,
-        val startdato: Startdato,
-        val ferie: Ferie?,
+        val startdato: Startdato?,
+        val ferie: Ferie,
         val medlemsskap: Medlemskap,
         @JsonAlias("behandlere")
         val registrerteBehandlere: List<RegistrertBehandler> = emptyList(),
@@ -181,11 +181,11 @@ data class Ferie(val ferieType: FerieType, val periode: Periode? = null, val dag
     }
 }
 
-data class BarnOgInntekt(val merEnnIG: Boolean? = false, val barnepensjon: Boolean = false)
+data class BarnOgInntekt(val merEnnIG: Boolean? = false, val barnepensjon: Boolean?)
 data class AnnetBarnOgInntekt(val barn: Barn,
                               val relasjon: Relasjon = FORELDER,
                               val merEnnIG: Boolean? = false,
-                              val barnepensjon: Boolean = false,
+                              val barnepensjon: Boolean?,
                               override val vedlegg: Vedlegg? = null) : VedleggAware {
 
     enum class Relasjon {
