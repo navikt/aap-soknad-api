@@ -28,7 +28,6 @@ import java.util.*
 
 data class StandardSøknad(
         val studier: Studier,
-        val ferie: Ferie?,
         val medlemsskap: Medlemskap,
         val registrerteBehandlere: List<RegistrertBehandler> = emptyList(),
         val andreBehandlere: List<AnnenBehandler> = emptyList(),
@@ -177,15 +176,6 @@ data class Utenlandsopphold(val land: CountryCode,
                             val id: String?) {
 
     val landnavn = land.toLocale().displayCountry
-}
-
-data class Ferie(val ferieType: FerieType, val periode: Periode? = null, val dager: Int? = null) {
-    enum class FerieType {
-        PERIODE,
-        DAGER,
-        NEI,
-        VET_IKKE
-    }
 }
 
 data class BarnOgInntekt(val merEnnIG: Boolean? = false, val barnepensjon: Boolean? = null)

@@ -20,8 +20,6 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.InMemoryDokumentlager
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
 import no.nav.aap.api.søknad.model.BarnOgInntekt
-import no.nav.aap.api.søknad.model.Ferie
-import no.nav.aap.api.søknad.model.Ferie.FerieType.DAGER
 import no.nav.aap.api.søknad.model.Medlemskap
 import no.nav.aap.api.søknad.model.RadioValg
 import no.nav.aap.api.søknad.model.RadioValg.JA
@@ -161,7 +159,6 @@ class SøknadTest {
 
         fun standardSøknad() = StandardSøknad(
                 Studier(NEI, RadioValg.NEI),
-                Ferie(DAGER, dager = 20),
                 Medlemskap(true, null, null, null,
                         listOf(Utenlandsopphold(SE,
                                 Periode(now(), now().plusDays(2)),
