@@ -9,18 +9,21 @@ import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.web.reactive.function.client.WebClient
 import java.io.File
 
-abstract class AbstractGraphQLAdapter(client: WebClient, cf: AbstractRestConfig, val  errorHandler: GraphQLErrorHandler = GraphQLExceptionThrowingErrorHandler()) : AbstractWebClientAdapter(client, cf) {
+abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig, val errorHandler: GraphQLErrorHandler = GraphQLDefaultErrorHandler()) :
+    AbstractWebClientAdapter(client, cfg) {
 
-    protected inline fun  <reified T: Any> query(client: GraphQLWebClient, query: String, fnr: String) =
-        try {
-            client.post(query, fnr.toIdent(), T::class.java).block()
-        } catch (e: GraphQLErrorsException) {
-            errorHandler.handle(e)
-        } catch (e: Exception) {
-            log.warn("Oppslag ${File(query).nameWithoutExtension.split("-")[0]} feilet med uventet feil", e)
-            throw e
+    protected inline fun <reified T : Any> query(graphQLClient: GraphQLWebClient, query: String, fnr: String) =
+        runCatching {
+            graphQLClient.post(query, fnr.toIdent(), T::class.java).block()
+        }.getOrElse {
+            if (it is GraphQLErrorsException) {
+                errorHandler.handle(it)
+            }
+            else {
+                log.warn("Oppslag ${File(query).nameWithoutExtension.split("-")[0]} feilet med uventet feil", it)
+                throw it
+            }
         }
-
     override fun ping() {
         webClient
             .options()
@@ -32,7 +35,7 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cf: AbstractRestConfig,
     }
 
     companion object {
-        fun String.toIdent() =  mapOf(IDENT to this)
+        fun String.toIdent() = mapOf(IDENT to this)
         private const val IDENT = "ident"
     }
 }
