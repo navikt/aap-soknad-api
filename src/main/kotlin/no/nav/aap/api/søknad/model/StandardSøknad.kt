@@ -178,11 +178,10 @@ data class Utenlandsopphold(val land: CountryCode,
     val landnavn = land.toLocale().displayCountry
 }
 
-data class BarnOgInntekt(val merEnnIG: Boolean? = false, val barnepensjon: Boolean? = null)
+data class BarnOgInntekt(val merEnnIG: Boolean? = false)
 data class AnnetBarnOgInntekt(val barn: Barn,
                               val relasjon: Relasjon = FORELDER,
                               val merEnnIG: Boolean? = false,
-                              val barnepensjon: Boolean? = null,
                               override val vedlegg: Vedlegg? = null) : VedleggAware {
 
     enum class Relasjon {
