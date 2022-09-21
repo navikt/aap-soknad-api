@@ -41,7 +41,7 @@ data class StandardSøknad(
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
         val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         val tilleggsopplysninger: String?,
-        @JsonAlias("andreVedlegg") override val vedlegg: Vedlegg? = null) : VedleggAware {
+        override val vedlegg: Vedlegg? = null) : VedleggAware {
 
     private val log = getLogger(javaClass)
 
