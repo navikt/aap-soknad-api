@@ -73,7 +73,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
             it.registrerEttersending(fnr, res, e)
         } ?: log.warn("Fant ingen sist innsendt søknad for $fnr")
         minside.opprettBeskjed(MinSideNotifikasjonType.MINAAPSTD, MDCUtil.callIdAsUUID(), fnr,
-                "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel}", true)
+                "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel.decap()}", true)
     }
 
     private fun SøknadRepository.sisteSøknad(fnr: Fødselsnummer) =
@@ -82,11 +82,11 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
     private fun Søknad.oppdaterMinSide(erKomplett: Boolean, fnr: Fødselsnummer) =
         if (erKomplett) {
             minside.opprettBeskjed(MinSideNotifikasjonType.MINAAPSTD, eventid, fnr,
-                    "Vi har mottatt din ${STANDARD.tittel}", true)
+                    "Vi har mottatt din ${STANDARD.tittel.decap()}", true)
         }
         else {
             minside.opprettOppgave(MinSideNotifikasjonType.MINAAPSTD, fnr, eventid,
-                    "Vi har mottatt din ${STANDARD.tittel}. Du må ettersende dokumentasjon")
+                    "Vi har mottatt din ${STANDARD.tittel.decap()}. Du må ettersende dokumentasjon")
         }
 
     private fun Søknad.avsluttMinSideOppgaveHvisKomplett(fnr: Fødselsnummer) {
@@ -102,3 +102,5 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
         }
     }
 }
+
+private fun String.decap()  = replaceFirstChar { it.lowercase(Locale.getDefault())}
