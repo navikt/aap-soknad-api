@@ -34,9 +34,7 @@ data class StandardSøknad(
         val startdato: Startdato?,
         val ferie: Ferie,
         val medlemsskap: Medlemskap,
-        @JsonAlias("behandlere")
         val registrerteBehandlere: List<RegistrertBehandler> = emptyList(),
-        @JsonAlias("manuelleBehandlere")
         val andreBehandlere: List<AnnenBehandler> = emptyList(),
         val yrkesskadeType: RadioValg,
         val utbetalinger: Utbetalinger?,

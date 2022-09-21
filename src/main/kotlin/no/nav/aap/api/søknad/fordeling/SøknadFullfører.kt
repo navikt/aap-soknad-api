@@ -11,6 +11,7 @@ import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType
+import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPUTLAND
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardEttersending
@@ -19,6 +20,7 @@ import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil
+import no.nav.aap.util.MDCUtil.callIdAsUUID
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -72,7 +74,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
             log.trace("Knytter ettersending til siste søknad ${it.eventid} med journalpost ${it.journalpostid}")
             it.registrerEttersending(fnr, res, e)
         } ?: log.warn("Fant ingen sist innsendt søknad for $fnr")
-        minside.opprettBeskjed(MinSideNotifikasjonType.MINAAPSTD, MDCUtil.callIdAsUUID(), fnr,
+        minside.opprettBeskjed(MINAAPSTD, callIdAsUUID(), fnr,
                 "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel.decapitalize()}", true)
     }
 
@@ -81,12 +83,10 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
 
     private fun Søknad.oppdaterMinSide(erKomplett: Boolean, fnr: Fødselsnummer) =
         if (erKomplett) {
-            minside.opprettBeskjed(MinSideNotifikasjonType.MINAAPSTD, eventid, fnr,
-                    "Vi har mottatt din ${STANDARD.tittel.decapitalize()}", true)
+            minside.opprettBeskjed(MINAAPSTD, eventid, fnr, "Vi har mottatt din ${STANDARD.tittel.decapitalize()}", true)
         }
         else {
-            minside.opprettOppgave(MinSideNotifikasjonType.MINAAPSTD, fnr, eventid,
-                    "Vi har mottatt din ${STANDARD.tittel.decapitalize()}. Du må ettersende dokumentasjon")
+            minside.opprettOppgave(MINAAPSTD, fnr, eventid, "Vi har mottatt din ${STANDARD.tittel.decapitalize()}. Du må ettersende dokumentasjon")
         }
 
     private fun Søknad.avsluttMinSideOppgaveHvisKomplett(fnr: Fødselsnummer) {
