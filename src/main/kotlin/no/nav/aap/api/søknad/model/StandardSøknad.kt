@@ -181,11 +181,11 @@ data class Ferie(val ferieType: FerieType, val periode: Periode? = null, val dag
     }
 }
 
-data class BarnOgInntekt(val merEnnIG: Boolean? = false, val barnepensjon: Boolean?)
+data class BarnOgInntekt(val merEnnIG: Boolean? = false, val barnepensjon: Boolean? = null)
 data class AnnetBarnOgInntekt(val barn: Barn,
                               val relasjon: Relasjon = FORELDER,
                               val merEnnIG: Boolean? = false,
-                              val barnepensjon: Boolean?,
+                              val barnepensjon: Boolean? = null,
                               override val vedlegg: Vedlegg? = null) : VedleggAware {
 
     enum class Relasjon {
