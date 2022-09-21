@@ -8,7 +8,6 @@ import no.nav.aap.api.oppslag.krr.KRRClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.søknad.SøknadClient
-import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.model.SøkerInfo
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -21,7 +20,6 @@ import org.springframework.data.web.SortDefault
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
-import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -63,11 +61,6 @@ class OppslagController(
     fun søknader(@SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
         søknad.søknader(pageable)
 
-    @GetMapping("/soeknaderNy")
-    fun søknaderNy(@SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
-        søknad.søknaderNy(pageable).also {
-            it.forEachIndexed{ i,s -> log.trace("$i Ny  -> $s")}
-        }
     @GetMapping("/soeknad/{uuid}")
     fun søknadForUUID(@PathVariable uuid: UUID) = søknad.søknad(uuid)
 
@@ -90,6 +83,5 @@ class OppslagController(
     companion object {
         const val OPPSLAG_BASE = "/oppslag"
         private const val DOKUMENT = "/dokument/{journalpostId}/{dokumentId}"
-        const val DOKUMENT_PATH = "$OPPSLAG_BASE$DOKUMENT"
     }
 }
