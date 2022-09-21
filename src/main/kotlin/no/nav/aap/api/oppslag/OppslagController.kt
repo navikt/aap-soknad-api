@@ -43,16 +43,7 @@ class OppslagController(
         behandler.behandlerInfo(),
         arbeid.arbeidInfo(),
         krr.kontaktInfo(),
-        konto.kontoInfo()
-    ).also {
-        log.trace("Søker er $it")
-        try {
-            søknaderNy(PageRequest.of(0,100,DESC,"created"))  // TODO midlertidig test
-        }
-        catch (e: Exception){
-            log.warn("OOPS",e)
-        }
-    }
+        konto.kontoInfo())
 
     @GetMapping("/dokumenter")
     fun dokumenter() = arkiv.dokumenter()

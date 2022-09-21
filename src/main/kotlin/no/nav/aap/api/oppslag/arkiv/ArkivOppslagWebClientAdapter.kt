@@ -39,16 +39,17 @@ class ArkivOppslagWebClientAdapter(
             .doOnError { t: Throwable -> log.warn("Arkivoppslag feilet", t) }
             .block() ?: throw IntegrationException("Null response fra arkiv")
 
-    fun dokumenter() = query(graphQL,DOKUMENTER_QUERY, ctx.getFnr(),  ArkivOppslagJournalposter::class)
-        ?.journalposter
+    fun dokumenter() = query()
         ?.filter { it.journalposttype in listOf(I, U) }
         ?.flatMap { mapper.tilDokumenter(it) }
         .orEmpty()
 
-    fun søknadDokumentId(journalPostId: String) =query(graphQL,DOKUMENTER_QUERY, ctx.getFnr(),  ArkivOppslagJournalposter::class)
-        ?.journalposter
+    fun søknadDokumentId(journalPostId: String) =query()
         ?.firstOrNull { it.journalpostId == journalPostId }
         ?.dokumenter?.firstOrNull()?.dokumentInfoId
+
+    private fun query() = query<ArkivOppslagJournalposter>(graphQL,DOKUMENTER_QUERY, ctx.getFnr().fnr)
+        ?.journalposter
 }
 @Component
 class ArkivOppslagMapper {

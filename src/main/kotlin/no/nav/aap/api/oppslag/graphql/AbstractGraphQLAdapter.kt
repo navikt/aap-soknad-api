@@ -11,12 +11,11 @@ import org.springframework.web.reactive.function.client.WebClient
 import java.io.File
 import kotlin.reflect.KClass
 
-abstract class AbstractGraphQLAdapter(client: WebClient, cf: AbstractRestConfig, private val errorHandler: GraphQLErrorHandler = GraphQLExceptionThrowingErrorHandler()) : AbstractWebClientAdapter(client, cf) {
+abstract class AbstractGraphQLAdapter(client: WebClient, cf: AbstractRestConfig, val errorHandler: GraphQLErrorHandler = GraphQLExceptionThrowingErrorHandler()) : AbstractWebClientAdapter(client, cf) {
 
-    protected fun  <T: Any> query(client: GraphQLWebClient, query: String, fnr: Fødselsnummer,  clazz: KClass<T>) = query(client,query,fnr.fnr,clazz)
-    protected fun  <T: Any> query(client: GraphQLWebClient, query: String, fnr: String,clazz: KClass<T>) =
+    protected inline fun  <reified T: Any> query(client: GraphQLWebClient, query: String, fnr: String) =
         try {
-            client.post(query, fnr.toIdent(), clazz.java).block()
+            client.post(query, fnr.toIdent(), T::class.java).block()
         } catch (e: GraphQLErrorsException) {
             errorHandler.handleError(e)
         } catch (e: Exception) {

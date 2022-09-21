@@ -32,7 +32,7 @@ class PDLWebClientAdapter(
 
     fun søker(medBarn: Boolean = false) =
         with(ctx.getFnr()) {
-            query(userWebClient, PERSON_QUERY, this,  PDLWrappedSøker::class)?.active?.let {
+            query<PDLWrappedSøker>(userWebClient, PERSON_QUERY, this.fnr)?.active?.let {
                 søkerFra(it,this, medBarn)
             } ?: throw JwtTokenMissingException()
         }
@@ -62,7 +62,7 @@ class PDLWebClientAdapter(
 
     private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean): List<Barn?> =
         if (medBarn) r.map { it ->
-            query(systemWebClient, BARN_QUERY, it.relatertPersonsIdent,  PDLBarn::class)
+            query<PDLBarn>(systemWebClient, BARN_QUERY, it.relatertPersonsIdent)
                 ?.let { barn ->
                     val b = Barn(navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
                     b.fødseldato?.let {
