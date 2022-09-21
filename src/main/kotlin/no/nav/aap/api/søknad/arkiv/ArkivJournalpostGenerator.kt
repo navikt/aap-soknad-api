@@ -32,6 +32,8 @@ import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ARKIV
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ORIGINAL
 import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
+import no.nav.aap.api.søknad.model.VedleggType.SYKESTIPEND
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.størrelse
@@ -94,6 +96,7 @@ class ArkivJournalpostGenerator(
                 addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER))
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == AnnenStønadstype.UTLAND }, VedleggType.UTLAND))
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD }, OMSORG))
+                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == STIPEND }, SYKESTIPEND))
                 addAll(dokumenterFra(this@with, ANNET))
             }.also {
                 log.trace("Sender ${it.størrelse("dokument")} til arkiv $it")

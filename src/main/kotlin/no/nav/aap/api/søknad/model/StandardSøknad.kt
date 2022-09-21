@@ -19,12 +19,9 @@ import no.nav.aap.api.søknad.model.Studier.StudieSvar.AVBRUTT
 import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.AFP
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
-import no.nav.aap.api.søknad.model.VedleggType.ANDREBARN
-import no.nav.aap.api.søknad.model.VedleggType.ANNET
-import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
-import no.nav.aap.api.søknad.model.VedleggType.OMSORG
-import no.nav.aap.api.søknad.model.VedleggType.STUDIER
+import no.nav.aap.api.søknad.model.VedleggType.*
 import no.nav.aap.util.LoggerUtil.getLogger
 import java.io.IOException
 import java.util.*
@@ -119,6 +116,22 @@ data class StandardSøknad(
                     log.trace("Ingen manglende vedlegg for utland")
                 }
             }
+
+            this?.andreStønader?.firstOrNull { it.type == STIPEND }?.let {
+                if (manglerVedlegg(it)) {
+                    manglende += SYKESTIPEND.also {
+                        log.trace("Det er manglende vedlegg for ${SYKESTIPEND.tittel}")
+                    }
+                }
+                else {
+                    if (harVedlegg(it)) {
+                        log.trace("Sykestipend har vedlegg")
+                        innsendte += SYKESTIPEND
+                    }
+                    log.trace("Ingen manglende vedlegg for sykestipend")
+                }
+            }
+
         }
         log.trace("Sjekker om det er andre vedlegg")
         if (vedlegg?.deler?.isNotEmpty() == true) {
@@ -230,6 +243,7 @@ data class Utbetalinger(val ekstraFraArbeidsgiver: FraArbeidsgiver,
 enum class VedleggType(val tittel: String) {
     ARBEIDSGIVER("Dokumentasjon av ekstra utbetaling fra arbeidsgiver"),
     STUDIER("Dokumentasjon av studier"),
+    SYKESTIPEND("Dokumentasjon av sykestipend"),
     ANDREBARN("Dokumentasjon av andre barn"),
     OMSORG("Dokumentasjon av omsorgsstønad fra kommunen"),
     UTLAND("Dokumentasjon av ytelser fra utenlandske trygdemyndigheter"),
