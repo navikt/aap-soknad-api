@@ -16,7 +16,6 @@ class PDFA1BSjekker : DokumentSjekker {
     private val log = getLogger(javaClass)
 
     override fun sjekk(dokument: DokumentInfo) =
-
         with(dokument) {
             if (APPLICATION_PDF_VALUE == contentType) {
                 PreflightParser(ByteArrayDataSource(ByteArrayInputStream(bytes))).apply {

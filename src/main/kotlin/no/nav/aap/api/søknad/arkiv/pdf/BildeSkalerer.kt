@@ -78,7 +78,6 @@ class BildeSkalerer {
         return scaledImg
     }
 
-    @Throws(IOException::class)
     private fun bytes(img: BufferedImage, format: String) =
         with(ByteArrayOutputStream()) {
             write(img, format, this)
