@@ -4,7 +4,6 @@ import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.rest.AbstractWebClientAdapter
-import org.apache.pdfbox.cos.COSName.T
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.web.reactive.function.client.WebClient
