@@ -46,7 +46,7 @@ class ArkivOppslagWebClientAdapter(
 
     fun søknadDokumentId(journalPostId: String) =query()
         ?.firstOrNull { it.journalpostId == journalPostId }
-        ?.dokumenter?.firstOrNull()?.dokumentInfoId
+        ?.dokumenter?.firstOrNull()?.dokumentInfoId   // Søknaden er alltid det første elementet
 
     private fun query() = query<ArkivOppslagJournalposter>(graphQL,DOKUMENTER_QUERY, ctx.getFnr().fnr)
         ?.journalposter

@@ -21,7 +21,7 @@ class GraphQLExceptionThrowingErrorHandler : GraphQLErrorHandler {
     private val secureLogger = getSecureLogger()
 
     override fun handle(e: GraphQLErrorsException) : Nothing {
-        log.warn("GraphQL feilet, se secure logs for mer detaljer")
+        log.warn("GraphQL feilet, se secure logs for flere detaljer")
         secureLogger.error("GraphQL oppslag returnerte ${e.errors.size} feil. ${e.errors}", e)
         log.trace(CONFIDENTIAL,"GraphQL oppslag returnerte ${e.errors.size} feil. ${e.errors}", e)
         throw e.httpClientException()
