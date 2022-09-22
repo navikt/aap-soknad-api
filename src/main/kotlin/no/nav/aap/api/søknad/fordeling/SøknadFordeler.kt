@@ -29,7 +29,7 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
         pdl.søkerMedBarn().run {
             log.trace("Fordeler $søknad")
             with(arkiv.fordel(søknad, this)) {
-                vl.fordel(søknad, fnr, journalpostId, cfg.standard)
+                vl.fordel(søknad.søknad, fnr, journalpostId, cfg.standard)
                 fullfører.fullfør(søknad.søknad, this@run.fnr, this)
             }
         }
