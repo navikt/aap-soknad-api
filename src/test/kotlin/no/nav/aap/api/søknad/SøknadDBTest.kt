@@ -23,7 +23,7 @@ class DBTest {
     @Autowired
     lateinit var userRepository: MinSideBeskjedRepository
 
-    @Test
+  //  @Test
     fun test() {
         val postgresqlContainer = PostgreSQLContainer<Nothing>("postgres:14:5").apply {
             start()
