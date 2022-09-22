@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.model
 
+import com.fasterxml.jackson.annotation.JsonAlias
 import java.time.LocalDateTime
 
 data class SøknadPdfKvittering(
@@ -17,6 +18,7 @@ data class Blokk(val type: String,
                  val tekst: String?,
                  val tittel: String?,
                  val punkter: List<String>?,
+                 @JsonAlias("felter")
                  val felt: String?,
                  val indent: Boolean?,
                  val verdi: String?)
