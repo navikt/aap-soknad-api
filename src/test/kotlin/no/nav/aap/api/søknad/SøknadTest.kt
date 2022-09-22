@@ -173,7 +173,7 @@ class SøknadTest {
                 Utbetalinger(
                         FraArbeidsgiver(true, Vedlegg(deler = listOf(UUID.randomUUID(),
                                 UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD))),
-                listOf(BarnOgInntekt(true,  false)),
+                listOf(BarnOgInntekt(true)),
                 listOf(AnnetBarnOgInntekt(Barn(Navn("Et", "ekstra", "Barn"), now().minusYears(14)))), Vedlegg(deler = listOf(UUID.randomUUID(),
                 UUID.randomUUID())))
     }

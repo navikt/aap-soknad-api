@@ -9,6 +9,8 @@ import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
 import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
+import no.nav.aap.api.søknad.model.StandardSøknadMedKvittering
+import no.nav.aap.api.søknad.model.SøknadPdfKvittering
 import no.nav.aap.util.AuthContext
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.mockito.Mock
@@ -21,6 +23,7 @@ import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.util.StreamUtils.copyToByteArray
 import java.io.FileOutputStream
+import java.time.LocalDateTime
 import java.util.*
 
 //@ExtendWith(MockitoExtension::class)
@@ -59,7 +62,7 @@ class ArkivConverterTest {
             .thenReturn(dokinfo1)
             .thenReturn(dokinfo2)
 
-        val søknad = SøknadTest.standardSøknad()
+        val søknad = StandardSøknadMedKvittering(SøknadTest.standardSøknad(), SøknadPdfKvittering(listOf(),LocalDateTime.now()))
         val søker = SøknadTest.søker()
         val c = ArkivJournalpostGenerator(mapper, lager, pdf,AuthContext(ctx), BildeTilPDFKonverterer(BildeSkalerer()))
         val converted = c.journalpostFra(søknad, søker)

@@ -28,7 +28,7 @@ import java.util.*
 
 data class StandardSøknadMedKvittering(
         val søknad: StandardSøknad,
-        val kvittering: SøknadPdfKvittering?
+        val kvittering: SøknadPdfKvittering
 )
 data class StandardSøknad(
         val studier: Studier,

@@ -1,8 +1,10 @@
 package no.nav.aap.api.søknad.model
 
+import java.time.LocalDateTime
+
 data class SøknadPdfKvittering(
         val temaer: List<Tema>,
-        val mottattdato: String?
+        val mottattdato: LocalDateTime
 ) {
 }
 
