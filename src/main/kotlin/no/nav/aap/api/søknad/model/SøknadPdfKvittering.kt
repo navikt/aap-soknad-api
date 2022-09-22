@@ -18,6 +18,7 @@ data class Blokk(val type: String,
                  val tekst: String?,
                  val tittel: String?,
                  val punkter: List<String>?,
-                 val felter: List<String>?,
+                 val felt: String?,
+                 val felter: List<Blokk>?,
                  val indent: Boolean?,
                  val verdi: String?)
