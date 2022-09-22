@@ -42,7 +42,7 @@ class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
             }
             .block() ?: throw IntegrationException("O bytes i retur fra pdfgen, pussig")
 
-    private data class StandardData(val søker: Søker, val søknad: SøknadPdfKvittering)
+    private data class StandardData(val søker: Søker, val temaer: SøknadPdfKvittering)
     private data class UtlandData constructor(val fødselsnummer: Fødselsnummer,
                                               val landKode: CountryCode,
                                               val land: String,
