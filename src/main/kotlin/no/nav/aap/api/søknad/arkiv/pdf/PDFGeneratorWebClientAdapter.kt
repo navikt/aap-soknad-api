@@ -7,9 +7,9 @@ import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.arkiv.pdf.PDFGeneratorConfig.Companion.PDF
-import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.SøknadPdfKvittering
+import no.nav.aap.api.søknad.model.Tema
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.beans.factory.annotation.Qualifier
@@ -24,7 +24,7 @@ import java.time.LocalDate.now
 class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
                                    private val cf: PDFGeneratorConfig,
                                    private val mapper: ObjectMapper) : AbstractWebClientAdapter(client, cf) {
-    fun generate(søker: Søker, kvittering: SøknadPdfKvittering) = generate(cf.standardPath, StandardData(søker, kvittering))
+    fun generate(søker: Søker, kvittering: SøknadPdfKvittering) = generate(cf.standardPath, StandardData(søker, kvittering.temaer))
     fun generate(søker: Søker, søknad: UtlandSøknad) = generate(cf.utlandPath, UtlandData(søker, søknad))
     private fun generate(path: String, data: Any) =
         webClient.post()
@@ -42,7 +42,7 @@ class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
             }
             .block() ?: throw IntegrationException("O bytes i retur fra pdfgen, pussig")
 
-    private data class StandardData(val søker: Søker, val temaer: SøknadPdfKvittering)
+    private data class StandardData(val søker: Søker, val temaer: List<Tema>)
     private data class UtlandData constructor(val fødselsnummer: Fødselsnummer,
                                               val landKode: CountryCode,
                                               val land: String,
