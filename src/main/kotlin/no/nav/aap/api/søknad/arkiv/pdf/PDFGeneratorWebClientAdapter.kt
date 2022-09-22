@@ -12,6 +12,7 @@ import no.nav.aap.api.søknad.model.SøknadPdfKvittering
 import no.nav.aap.api.søknad.model.Tema
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.rest.AbstractWebClientAdapter
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
@@ -37,7 +38,7 @@ class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
                 log.warn("PDF-generering mot $path feiler", t)
             }
             .doOnSuccess {
-                log.trace("Sendte json ${mapper.writeValueAsString(data)}")
+                log.trace(CONFIDENTIAL,"Sendte json ${mapper.writeValueAsString(data)}")
                 log.trace("PDF-generering OK")
             }
             .block() ?: throw IntegrationException("O bytes i retur fra pdfgen, pussig")
