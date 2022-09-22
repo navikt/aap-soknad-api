@@ -19,7 +19,7 @@ class OrganisasjonWebClientAdapter(@Qualifier(Constants.ORGANISASJON) val client
             webClient
                 .get()
                 .uri { b ->
-                    cf.getOrganisasjonURI(b, orgnr)
+                    cf.organisasjonURI(b, orgnr)
                 }
                 .accept(APPLICATION_JSON)
                 .retrieve()

@@ -21,6 +21,5 @@ class BehandlerClientBeanConfig(@Value("\${spring.application.name}") val applic
             .build()
 
     @Bean
-    fun behandlerHealthIndicator(a: BehandlerWebClientAdapter) =
-        object : AbstractPingableHealthIndicator(a) {}
+    fun behandlerHealthIndicator(a: BehandlerWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 }

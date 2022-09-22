@@ -13,7 +13,7 @@ class BehandlerWebClientAdapter(
         @Qualifier(BEHANDLER) webClient: WebClient,
         val cf: BehandlerConfig) : AbstractWebClientAdapter(webClient, cf) {
 
-    fun behandlere() = webClient
+    fun behandlerInfo() = webClient
         .get()
         .uri(cf::path)
         .accept(APPLICATION_JSON)

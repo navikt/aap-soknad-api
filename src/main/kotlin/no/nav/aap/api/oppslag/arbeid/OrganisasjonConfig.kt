@@ -17,7 +17,7 @@ class OrganisasjonConfig(baseUri: URI,
                          @DefaultValue("true") enabled: Boolean) :
     AbstractRestConfig(baseUri, pingPath(organisasjonPath), ORGANISASJON, enabled) {
 
-    fun getOrganisasjonURI(b: UriBuilder, orgnr: OrgNummer) = b.path(organisasjonPath).build(orgnr.orgnr)
+    fun organisasjonURI(b: UriBuilder, orgnr: OrgNummer) = b.path(organisasjonPath).build(orgnr.orgnr)
 
     companion object {
         private const val V1_ORGANISASJON = "v1/organisasjon/{orgnr}"
@@ -30,5 +30,4 @@ class OrganisasjonConfig(baseUri: URI,
     }
     override fun toString() =
         "${javaClass.simpleName} [organisasjonPath=" + organisasjonPath + ", pingEndpoint=" + pingEndpoint + "]"
-
 }

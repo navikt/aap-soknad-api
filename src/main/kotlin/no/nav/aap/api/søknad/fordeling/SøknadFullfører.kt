@@ -34,7 +34,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
     private val log = getLogger(javaClass)
 
     fun fullfør(søknad: UtlandSøknad, fnr: Fødselsnummer, res: ArkivResultat) =
-        minside.opprettBeskjed(type = MINAAPUTLAND, fnr = fnr, tekst = "Vi har mottatt ${UTLAND.tittel}", eksternNotifikasjon = true).run {
+        minside.opprettBeskjed(type = MINAAPUTLAND, fnr = fnr, tekst = "Vi har mottatt ${UTLAND.tittel.decapitalize()}", eksternNotifikasjon = true).run {
              Kvittering(res.journalpostId)
         }
 

@@ -5,7 +5,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.api.felles.Periode
-import no.nav.aap.api.oppslag.arbeid.ArbeidsgiverType.Organisasjon
+import no.nav.aap.api.oppslag.arbeid.ArbeidsforholdDTO.AnsettelsesperiodeDTO
+import no.nav.aap.api.oppslag.arbeid.ArbeidsforholdDTO.ArbeidsavtaleDTO
+import no.nav.aap.api.oppslag.arbeid.ArbeidsforholdDTO.ArbeidsgiverDTO
+import no.nav.aap.api.oppslag.arbeid.ArbeidsforholdDTO.ArbeidsgiverDTO.ArbeidsgiverType.Organisasjon
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

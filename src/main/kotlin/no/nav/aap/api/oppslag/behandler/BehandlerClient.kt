@@ -4,5 +4,5 @@ import org.springframework.stereotype.Component
 
 @Component
 class BehandlerClient(private val adapter: BehandlerWebClientAdapter) {
-    fun behandlerInfo() = adapter.behandlere()
+    fun behandlerInfo() = adapter.behandlerInfo()
 }

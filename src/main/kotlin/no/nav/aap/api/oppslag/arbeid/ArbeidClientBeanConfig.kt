@@ -16,9 +16,7 @@ class ArbeidClientBeanConfig {
 
     @Bean
     @Qualifier(ARBEID)
-    fun webClientArbeidsforhold(builder: Builder, cfg: ArbeidConfig,
-                                tokenX: TokenXFilterFunction,
-                                ctx: AuthContext) =
+    fun webClientArbeidsforhold(builder: Builder, cfg: ArbeidConfig, tokenX: TokenXFilterFunction, ctx: AuthContext) =
         builder
             .baseUrl("${cfg.baseUri}")
             .filter(navPersonIdentFunction(ctx))

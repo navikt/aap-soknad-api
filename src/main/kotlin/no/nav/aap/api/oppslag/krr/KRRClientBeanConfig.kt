@@ -23,6 +23,5 @@ class KRRClientBeanConfig {
             .build()
 
     @Bean
-    fun krrHealthIndicator(a: KRRWebClientAdapter) =
-        object : AbstractPingableHealthIndicator(a) {}
+    fun krrHealthIndicator(a: KRRWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 }
