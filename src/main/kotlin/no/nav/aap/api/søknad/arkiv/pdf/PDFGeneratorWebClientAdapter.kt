@@ -24,7 +24,7 @@ import java.time.LocalDate.now
 class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
                                    private val cf: PDFGeneratorConfig,
                                    private val mapper: ObjectMapper) : AbstractWebClientAdapter(client, cf) {
-    fun generate(søker: Søker, søknad: SøknadPdfKvittering) = generate(cf.standardPath, StandardData(søker, søknad))
+    fun generate(søker: Søker, kvittering: SøknadPdfKvittering) = generate(cf.standardPath, StandardData(søker, kvittering))
     fun generate(søker: Søker, søknad: UtlandSøknad) = generate(cf.utlandPath, UtlandData(søker, søknad))
     private fun generate(path: String, data: Any) =
         webClient.post()
@@ -37,6 +37,7 @@ class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
                 log.warn("PDF-generering mot $path feiler", t)
             }
             .doOnSuccess {
+                log.trace("Sendte json ${mapper.writeValueAsString(data)}")
                 log.trace("PDF-generering OK")
             }
             .block() ?: throw IntegrationException("O bytes i retur fra pdfgen, pussig")
