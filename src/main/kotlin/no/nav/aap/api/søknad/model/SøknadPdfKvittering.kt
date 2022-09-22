@@ -18,7 +18,6 @@ data class Blokk(val type: String,
                  val tekst: String?,
                  val tittel: String?,
                  val punkter: List<String>?,
-                 @JsonAlias("felter")
-                 val felt: String?,
+                 val felter: List<String>,
                  val indent: Boolean?,
                  val verdi: String?)
