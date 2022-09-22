@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 data class SøknadPdfKvittering(
         val temaer: List<Tema>,
-        val mottattdato: LocalDateTime
+        val mottattdato: LocalDateTime = LocalDateTime.now()
 ) {
 }
 
