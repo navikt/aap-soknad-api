@@ -14,21 +14,21 @@ class ArkivFordeler(private val arkiv: ArkivClient, private val generator: Arkiv
 
     fun fordel(søknad: StandardSøknadMedKvittering, søker: Søker) =
         with(arkiv.journalfør(generator.journalpostFra(søknad, søker))) {
-            ArkivResultat(journalpostId, dokumenter).also {
+            ArkivResultat(journalpostId, dokIder).also {
                 log.trace("Fordeling av søknad til arkiv OK med journalpost ${it.journalpostId}")
             }
         }
 
     fun fordel(søknad: UtlandSøknad, søker: Søker) =
         with(arkiv.journalfør(generator.journalpostFra(søknad, søker))) {
-            ArkivResultat(journalpostId, dokumenter).also {
+            ArkivResultat(journalpostId, dokIder).also {
                 log.trace("Fordeling av utlandsøknad til arkiv OK med journalpost ${it.journalpostId}")
             }
         }
 
     fun fordel(ettersending: StandardEttersending, søker: Søker) =
         with(arkiv.journalfør(generator.journalpostFra(ettersending, søker))){
-            ArkivResultat(journalpostId, dokumenter).also {
+            ArkivResultat(journalpostId, dokIder).also {
                 log.trace("Fordeling av ettersending til arkiv OK med journalpost ${it.journalpostId}")
             }
         }

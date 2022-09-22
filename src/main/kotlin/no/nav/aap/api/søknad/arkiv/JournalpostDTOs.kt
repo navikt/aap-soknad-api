@@ -66,7 +66,12 @@ data class Journalpost(
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class ArkivResponse(val journalpostId: String,
                              val journalpostferdigstilt: Boolean,
-                             val dokumenter: List<String>)
+                             val dokumenter: List<DokumentId>) {
+
+        val dokIder = dokumenter.map { it.dokumentInfoId }
+        data class DokumentId(val dokumentInfoId: String)
+    }
+
 
     companion object {
         private const val INNGÅENDE = "INNGAAENDE"
