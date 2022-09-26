@@ -129,7 +129,7 @@ class ArkivJournalpostGenerator(
 
     private fun dokumenterFra(v: Vedlegg?, type: VedleggType, fnr: Fødselsnummer) =
         v?.let { vl ->
-            val vedlegg = grupperteOgSorterteVedlegg(vl, fnr)
+            val vedlegg = grupperteOgSorterteVedlegg(vl)
             val pdfs = vedlegg[APPLICATION_PDF_VALUE] ?: mutableListOf()
             val jpgs = vedlegg[IMAGE_JPEG_VALUE] ?: emptyList()
             val pngs = vedlegg[IMAGE_PNG_VALUE] ?: emptyList()
@@ -145,8 +145,7 @@ class ArkivJournalpostGenerator(
             log.trace("Ingen dokumenter å lese fra dokumentlager")
         }
 
-    private fun grupperteOgSorterteVedlegg(vl: Vedlegg,
-                    fnr: Fødselsnummer) = (vl.deler?.mapNotNull {
+    private fun grupperteOgSorterteVedlegg(vl: Vedlegg) = (vl.deler?.mapNotNull {
         it?.let {
             log.trace("Leser dokument $it fra dokkumentlager")
             lager.lesDokument(it)
