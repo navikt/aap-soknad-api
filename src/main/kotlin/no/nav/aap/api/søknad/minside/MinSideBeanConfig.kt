@@ -8,6 +8,7 @@ import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Compani
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
 import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -27,7 +28,7 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VA
 
 @Configuration
 class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNavn: String) {
-    private val log = LoggerUtil.getLogger(javaClass)
+    private val log = getLogger(javaClass)
 
     @Bean
     fun minSideKafkaOperations(props: KafkaProperties) =
