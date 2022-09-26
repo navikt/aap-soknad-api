@@ -49,7 +49,7 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
                     setRecordFilterStrategy(::recordFilterStrategy)
                 })
         }
-    fun recordFilterStrategy(payload: ConsumerRecord<String, DoknotifikasjonStatus>): Boolean {
+    private fun recordFilterStrategy(payload: ConsumerRecord<String, DoknotifikasjonStatus>): Boolean {
         with(payload.value()) {
             when (bestillerId) {
                 appNavn -> {
