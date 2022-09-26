@@ -7,6 +7,9 @@ import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse
+import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.FORTROLIG
+import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
+import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLFødsel
@@ -66,13 +69,17 @@ class PDLWebClientAdapter(
             query<PDLBarn>(systemWebClient, BARN_QUERY, it.relatertPersonsIdent)
                 ?.let { barn ->
                     log.trace(CONFIDENTIAL,"Barn er $barn")
+                    if (barn.adressebeskyttelse?.any { it in listOf(FORTROLIG,STRENGT_FORTROLIG,STRENGT_FORTROLIG_UTLAND)} == true) {
+                        null
+                    }
                     val b = Barn(navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
                     b.fødseldato?.let {
                         if (it.isBefore(LocalDate.now().minusYears(18))) {
                             null
                         }
                         else b
-                    } ?: b
+                    }
+                        ?: b
                 }
                 .also { b -> log.trace(CONFIDENTIAL, "Barn er $b") }
         }
