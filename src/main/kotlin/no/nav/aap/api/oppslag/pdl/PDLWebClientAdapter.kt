@@ -68,7 +68,6 @@ class PDLWebClientAdapter(
         if (medBarn) r.map { it ->
             query<PDLBarn>(systemWebClient, BARN_QUERY, it.relatertPersonsIdent)
                 ?.let { barn ->
-                    log.trace(CONFIDENTIAL,"Barn er $barn")
                     if (barn.adressebeskyttelse?.any { it in listOf(FORTROLIG,STRENGT_FORTROLIG,STRENGT_FORTROLIG_UTLAND)} == true) {
                         null
                     }
