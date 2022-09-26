@@ -3,7 +3,6 @@ package no.nav.aap.api.søknad.minside
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import io.confluent.kafka.serializers.KafkaAvroSerializer
-import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.DOKNOTIFIKASJON
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FEILET
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
