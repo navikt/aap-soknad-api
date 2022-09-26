@@ -54,7 +54,7 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
             when (bestillerId) {
                 appNavn -> {
                     when (status) {
-                        FERDIGSTILT -> !melding.contains(no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.NOTIFIKASJON_SENDT)
+                        FERDIGSTILT -> !melding.contains(NOTIFIKASJON_SENDT)
 
                         FEILET ->
                             true.also {
