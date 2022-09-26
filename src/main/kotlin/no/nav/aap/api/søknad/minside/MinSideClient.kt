@@ -38,10 +38,10 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     fun opprettBeskjed(type: MinSideNotifikasjonType,
                        eventId: UUID = callIdAsUUID(),
                        fnr: Fødselsnummer,
-                       tekst: String, eksternNotifikasjon: Boolean = false) =
+                       tekst: String, eksternNotifikasjon: Boolean = true) =
         with(cfg.beskjed) {
             if (enabled) {
-                log.trace("Oppretter Min Side beskjed for $fnr, ekstern nofifikasjon $eksternNotifikasjon og eventid $eventId")
+                log.trace(CONFIDENTIAL,"Oppretter Min Side beskjed $tekst for $fnr, ekstern nofifikasjon $eksternNotifikasjon og eventid $eventId")
                 minside.send(ProducerRecord(topic,
                         key(type.skjemaType, eventId, fnr),
                         beskjed(tekst, type, eksternNotifikasjon)))
