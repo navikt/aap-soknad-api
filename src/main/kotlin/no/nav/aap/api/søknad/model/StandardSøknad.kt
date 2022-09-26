@@ -28,7 +28,7 @@ import java.util.*
 
 data class Innsending(
         val søknad: StandardSøknad,
-        val PDFKvittering: PDFKvittering)
+        val kvittering: PDFKvittering)
 data class StandardSøknad(
         val studier: Studier,
         val medlemsskap: Medlemskap,

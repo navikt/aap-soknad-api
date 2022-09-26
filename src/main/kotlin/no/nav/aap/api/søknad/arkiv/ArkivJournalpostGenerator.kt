@@ -82,7 +82,7 @@ class ArkivJournalpostGenerator(
             Journalpost(STANDARD.tittel,
                 AvsenderMottaker(fnr,navn.navn),
                 Bruker(fnr),
-                journalpostDokumenterFra(søknad.søknad, pdf.tilPdf(this,søknad.PDFKvittering).somPDFVariant()))
+                journalpostDokumenterFra(søknad.søknad, pdf.tilPdf(this,søknad.kvittering).somPDFVariant()))
             .also {
                 log.trace("Journalpost med ${it.størrelse()} er $it")
             }
