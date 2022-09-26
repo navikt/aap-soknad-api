@@ -69,16 +69,15 @@ class PDLWebClientAdapter(
             query<PDLBarn>(systemWebClient, BARN_QUERY, it.relatertPersonsIdent)
                 ?.let { barn ->
                     if (barn.adressebeskyttelse?.any { it in listOf(FORTROLIG,STRENGT_FORTROLIG,STRENGT_FORTROLIG_UTLAND)} == true) {
-                        null
+                        null  // kode 6 og 7
                     }
                     val b = Barn(navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
                     b.fødseldato?.let {
                         if (it.isBefore(LocalDate.now().minusYears(18))) {
-                            null
+                            null// myndig
                         }
                         else b
-                    }
-                        ?: b
+                    } ?: b
                 }
                 .also { b -> log.trace(CONFIDENTIAL, "Barn er $b") }
         }

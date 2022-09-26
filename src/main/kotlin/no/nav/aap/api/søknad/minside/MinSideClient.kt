@@ -44,9 +44,9 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 log.trace("Oppretter Min Side beskjed for $fnr, ekstern nofifikasjon $eksternNotifikasjon og eventid $eventId")
                 minside.send(ProducerRecord(topic,
                         key(type.skjemaType, eventId, fnr),
-                        beskjed("$tekst ($eventId)", type, eksternNotifikasjon)))
+                        beskjed(tekst, type, eksternNotifikasjon)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
-                repos.beskjeder.save(Beskjed(fnr = fnr.fnr, eventid = eventId)).eventid
+                repos.beskjeder.save(Beskjed(fnr.fnr, eventId)).eventid
             }
             else {
                 log.info("Sender ikke opprett beskjed til Ditt Nav for $fnr")
@@ -66,9 +66,9 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 with(key(type.skjemaType, eventId, fnr)) {
                     minside.send(ProducerRecord(topic,
                             this,
-                            oppgave("$tekst ($eventId)", type, eventId, eksternNotifikasjon)))
+                            oppgave(tekst, type, eventId, eksternNotifikasjon)))
                         .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
-                    repos.oppgaver.save(Oppgave(fnr = fnr.fnr, eventid = eventId)).eventid
+                    repos.oppgaver.save(Oppgave(fnr.fnr, eventId)).eventid
                 }
             }
             else {
