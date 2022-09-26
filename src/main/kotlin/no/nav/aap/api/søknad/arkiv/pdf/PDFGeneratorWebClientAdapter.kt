@@ -9,7 +9,6 @@ import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.arkiv.pdf.PDFGeneratorConfig.Companion.PDF
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.PDFKvittering
-import no.nav.aap.api.søknad.model.PDFKvittering.Tema
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
