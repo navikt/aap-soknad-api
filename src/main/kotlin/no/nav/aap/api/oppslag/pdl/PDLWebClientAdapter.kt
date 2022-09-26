@@ -6,6 +6,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
+import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLFødsel
@@ -64,6 +65,7 @@ class PDLWebClientAdapter(
         if (medBarn) r.map { it ->
             query<PDLBarn>(systemWebClient, BARN_QUERY, it.relatertPersonsIdent)
                 ?.let { barn ->
+                    log.trace(CONFIDENTIAL,"Barn er $barn")
                     val b = Barn(navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
                     b.fødseldato?.let {
                         if (it.isBefore(LocalDate.now().minusYears(18))) {
