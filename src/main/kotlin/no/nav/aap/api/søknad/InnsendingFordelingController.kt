@@ -2,8 +2,7 @@ package no.nav.aap.api.søknad
 
 import no.nav.aap.api.søknad.fordeling.Fordeler
 import no.nav.aap.api.søknad.model.StandardEttersending
-import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.api.søknad.model.StandardSøknadMedKvittering
+import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil
@@ -24,7 +23,7 @@ class InnsendingFordelingController(private val fordeler: Fordeler) {
     fun utland(@RequestBody @Valid søknad: UtlandSøknad) = fordeler.fordel(søknad)
 
     @PostMapping("/soknad")
-    fun soknad(@RequestBody @Valid søknad: StandardSøknadMedKvittering) = fordeler.fordel(søknad)
+    fun soknad(@RequestBody @Valid innsending: Innsending) = fordeler.fordel(innsending)
 
     @PostMapping("/ettersend")
     fun ettersend(@RequestBody @Valid ettersending: StandardEttersending) = fordeler.fordel(ettersending)

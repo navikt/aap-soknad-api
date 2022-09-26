@@ -26,10 +26,9 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import java.io.IOException
 import java.util.*
 
-data class StandardSøknadMedKvittering(
+data class Innsending(
         val søknad: StandardSøknad,
-        val kvittering: SøknadPdfKvittering
-)
+        val PDFKvittering: PDFKvittering)
 data class StandardSøknad(
         val studier: Studier,
         val medlemsskap: Medlemskap,

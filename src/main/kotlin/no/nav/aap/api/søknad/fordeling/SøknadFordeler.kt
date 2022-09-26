@@ -4,15 +4,14 @@ import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardEttersending
-import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.api.søknad.model.StandardSøknadMedKvittering
+import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.stereotype.Component
 
 interface Fordeler {
     fun fordel(søknad: UtlandSøknad): Kvittering
-    fun fordel(søknad: StandardSøknadMedKvittering): Kvittering
+    fun fordel(innsending: Innsending): Kvittering
     fun fordel(ettersending: StandardEttersending): Kvittering
 
 }
@@ -25,12 +24,12 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
                      private val vl: SøknadVLFordeler) : Fordeler {
     private val log = getLogger(javaClass)
 
-    override fun fordel(søknad: StandardSøknadMedKvittering) =
+    override fun fordel(innsending: Innsending) =
         pdl.søkerMedBarn().run {
-            log.trace("Fordeler $søknad")
-            with(arkiv.fordel(søknad, this)) {
-                vl.fordel(søknad.søknad, fnr, journalpostId, cfg.standard)
-                fullfører.fullfør(søknad.søknad, this@run.fnr, this)
+            log.trace("Fordeler $innsending")
+            with(arkiv.fordel(innsending, this)) {
+                vl.fordel(innsending.søknad, fnr, journalpostId, cfg.standard)
+                fullfører.fullfør(innsending.søknad, this@run.fnr, this)
             }
         }
 

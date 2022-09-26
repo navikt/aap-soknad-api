@@ -32,7 +32,7 @@ import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ARKIV
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ORIGINAL
 import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
-import no.nav.aap.api.søknad.model.StandardSøknadMedKvittering
+import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
 import no.nav.aap.api.søknad.model.VedleggType.SYKESTIPEND
 import no.nav.aap.util.AuthContext
@@ -77,12 +77,12 @@ class ArkivJournalpostGenerator(
             }
         }
 
-    fun journalpostFra(søknad: StandardSøknadMedKvittering, søker: Søker) =
+    fun journalpostFra(søknad: Innsending, søker: Søker) =
         with(søker) {
             Journalpost(STANDARD.tittel,
                 AvsenderMottaker(fnr,navn.navn),
                 Bruker(fnr),
-                journalpostDokumenterFra(søknad.søknad, pdf.tilPdf(this,søknad.kvittering).somPDFVariant()))
+                journalpostDokumenterFra(søknad.søknad, pdf.tilPdf(this,søknad.PDFKvittering).somPDFVariant()))
             .also {
                 log.trace("Journalpost med ${it.størrelse()} er $it")
             }
