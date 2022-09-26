@@ -15,7 +15,7 @@ import javax.validation.Valid
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 @ResponseStatus(CREATED)
-class InnsendingFordelingController(private val fordeler: Fordeler) {
+class InnsendingController(private val fordeler: Fordeler) {
 
     private val log = LoggerUtil.getLogger(javaClass)
 
