@@ -65,6 +65,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
         søknader.getSøknadByEventidAndFnr(søknadId, fnr.fnr)?.let {
             it.registrerEttersending(fnr, res, e)
             it.avsluttMinSideOppgaveHvisKomplett(fnr)
+            minside.opprettBeskjed(MINAAPSTD, callIdAsUUID(), fnr, "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel.decapitalize()}", true)
         } ?: log.warn("Ingen tidligere innsendt søknad med id $søknadId ble funnet for $fnr (dette skal aldri skje)")
     }
 
