@@ -81,11 +81,10 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
         getSøknadByFnr(fnr.fnr, SISTE_SØKNAD).firstOrNull()
 
     private fun Søknad.oppdaterMinSide(erKomplett: Boolean, fnr: Fødselsnummer) =
-        if (erKomplett) {
-            minside.opprettBeskjed(MINAAPSTD, eventid, fnr, "Vi har mottatt din ${STANDARD.tittel.decapitalize()}", true)
-        }
-        else {
-            minside.opprettOppgave(MINAAPSTD, fnr, eventid, "Vi har mottatt din ${STANDARD.tittel.decapitalize()}. Du må ettersende dokumentasjon")
+        minside.opprettBeskjed(MINAAPSTD, eventid, fnr, "Vi har mottatt din ${STANDARD.tittel.decapitalize()}", true).also {
+            if (!erKomplett) {
+                minside.opprettOppgave(MINAAPSTD, fnr, eventid, "Vi har mottatt din ${STANDARD.tittel.decapitalize()}. Du må ettersende dokumentasjon")
+            }
         }
 
     private fun Søknad.avsluttMinSideOppgaveHvisKomplett(fnr: Fødselsnummer) {
