@@ -46,7 +46,7 @@ class ArkivOppslagWebClientAdapter(
 
     fun søknadDokumentId(journalPostId: String) =query()
         ?.firstOrNull { it.journalpostId == journalPostId }
-        ?.dokumenter?.firstOrNull()?.dokumentInfoId   // Søknaden er alltid det første elementet
+        ?.dokumenter?.firstOrNull()?.dokumentInfoId   // Søknaden er alltid  første elementet
 
     private fun query() = query<ArkivOppslagJournalposter>(graphQL,DOKUMENTER_QUERY, ctx.getFnr().fnr)
         ?.journalposter
@@ -57,7 +57,9 @@ class ArkivOppslagMapper {
         with(journalpost) {
             dokumenter.filter { v ->
                 v.dokumentvarianter.any {
-                    it.filtype == PDF && it.brukerHarTilgang && ARKIV == it.variantformat
+                    with(it){
+                        filtype == PDF && brukerHarTilgang && ARKIV == variantformat
+                    }
                 }
             }.map { dok ->
                 DokumentOversiktInnslag(
