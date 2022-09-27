@@ -33,4 +33,4 @@ class PDFPassordSjekker : DokumentSjekker {
         }
 }
 
-class PassordBeskyttetException(msg: String, cause: Exception) : DokumentException(PASSWORD_PROTECTED, msg, cause)
+class PassordBeskyttetException(msg: String, cause: Exception) : DokumentException(msg, cause, PASSWORD_PROTECTED)

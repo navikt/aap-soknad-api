@@ -1,7 +1,6 @@
 package no.nav.aap.api.søknad.mellomlagring
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.cloud.spring.pubsub.core.subscriber.PubSubSubscriberTemplate
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
@@ -26,6 +25,7 @@ import java.util.*
 @ConditionalOnGCP
 class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                                    private val cfg: BucketConfig,
+                                   private val mapper: ObjectMapper,
                                    private val subscriber: PubSubSubscriberTemplate) {
 
     private val log = getLogger(javaClass)
@@ -41,8 +41,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                 event.ack()
                 with(event.pubsubMessage) {
                     val type = eventType()
-                    log.trace(CONFIDENTIAL,
-                            "Data i $type event er ${data.toStringUtf8()}, attributter er $attributesMap")
+                    log.trace(CONFIDENTIAL, "Data i $type event er ${data.toStringUtf8()}, attributter er $attributesMap")
                     when (type) {
                         OBJECT_FINALIZE -> opprettet(metadata())
                         OBJECT_DELETE -> slettet(metadata())
@@ -56,7 +55,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
         metadata?.let {
             with(it) {
                 log.trace(CONFIDENTIAL, "Oppretter beskjed fra metadata $it")
-                dittNav.opprettBeskjed(SØKNADSTD, uuid, fnr, "Du har en påbegynt ${type.tittel}")
+                dittNav.opprettBeskjed(fnr, "Du har en påbegynt ${type.tittel}", eventId, SØKNADSTD)
             }
         } ?: log.warn("Fant ikke forventede metadata")
 
@@ -64,16 +63,16 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
         metadata?.let {
             with(it) {
                 log.trace(CONFIDENTIAL, "Sletter beskjed fra metadata $it")
-                dittNav.avsluttBeskjed(type, fnr, uuid)
+                dittNav.avsluttBeskjed(type, fnr, eventId)
             }
         } ?: log.warn("Fant ikke forventede metadata")
 
-    private fun PubsubMessage.data() = MAPPER.readValue<Map<String, Any>>(data.toStringUtf8())
+    private fun PubsubMessage.data() = mapper.readValue<Map<String, Any>>(data.toStringUtf8())
     private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
     private fun PubsubMessage.eventType() =
         attributesMap[EVENT_TYPE]?.let { valueOf(it) }
 
-    private fun PubsubMessage.metadata(): Metadata? =
+    private fun PubsubMessage.metadata() =
         with(objektNavn()) {
             if (this?.size == 2) {
                 data()[METADATA]?.let {
@@ -84,12 +83,12 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
             else null
         }
 
-    private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val uuid: UUID) {
+    private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val eventId: UUID) {
         companion object {
-            fun getInstance(type: String?, fnr: String?, uuid: String?): Metadata? =
-                if (uuid != null && fnr != null && type != null) {
-                    toMDC(NAV_CALL_ID, uuid)
-                    Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(uuid))
+            fun getInstance(type: String?, fnr: String?, eventId: String?) =
+                if (eventId != null && fnr != null && type != null) {
+                    toMDC(NAV_CALL_ID, eventId)
+                    Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(eventId))
                 }
                 else {
                     null
@@ -98,7 +97,6 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
     }
 
     companion object {
-        private val MAPPER = ObjectMapper().registerModule(KotlinModule.Builder().build())
         private const val EVENT_TYPE = "eventType"
         private const val METADATA = "metadata"
         private const val OBJECTID = "objectId"

@@ -1,8 +1,7 @@
 package no.nav.aap.api.søknad.fordeling
 
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.søknad.arkiv.ArkivFordeler.ArkivResultat
-import no.nav.aap.api.søknad.fordeling.SøknadRepository.Ettersending
+import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.IdentifiableTimestampedBaseEntity
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.query.Param
-import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.CascadeType.ALL
@@ -37,25 +35,25 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     class Søknad(
             fnr: String,
             val journalpostid: String,
-            eventid: UUID,
+            eventid: UUID = callIdAsUUID(),
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var ettersendinger: MutableSet<Ettersending> = mutableSetOf(),
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var manglendevedlegg: MutableSet<ManglendeVedlegg> = mutableSetOf(),
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
-            var innsendtevedlegg: MutableSet<InnsendteVedlegg> = mutableSetOf()) : BaseEntity(fnr, eventid = eventid) {
-        fun registrerSomVedlagte(vedlagte: List<VedleggType>) {
+            var innsendtevedlegg: MutableSet<InnsendteVedlegg> = mutableSetOf()) : BaseEntity(fnr, eventid) {
+        fun registrerVedlagte(vedlagte: List<VedleggType>) {
             vedlagte.forEach {
-                with(InnsendteVedlegg(soknad = this, vedleggtype = it, eventid = eventid)) {
+                with(InnsendteVedlegg( this, eventid, it)) {
                     innsendtevedlegg.add(this)
                     soknad = this@Søknad
                 }
             }
         }
 
-        fun registrerSomManglende(manglende: List<VedleggType>) =
-            manglende.forEach { type ->
-                with(ManglendeVedlegg(soknad = this, vedleggtype = type, eventid = eventid)) {
+        fun registrerManglende(manglende: List<VedleggType>) =
+            manglende.forEach {
+                with(ManglendeVedlegg( this, eventid,it)) {
                     manglendevedlegg.add(this)
                     soknad = this@Søknad
                 }
@@ -68,7 +66,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             }
 
         private fun registrerSomEttersendt(m: ManglendeVedlegg) =
-            with(InnsendteVedlegg(soknad = this, vedleggtype = m.vedleggtype, eventid = eventid)) {
+            with(InnsendteVedlegg(this, eventid,m.vedleggtype)) {
                 innsendtevedlegg.add(this)
                 soknad = this@Søknad
             }
@@ -79,7 +77,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
         fun registrerEttersending(fnr: Fødselsnummer,
                                   res: ArkivResultat,
                                   ettersendteVedlegg: List<EttersendtVedlegg>) {
-            ettersendinger.add(Ettersending(fnr.fnr, res.journalpostId, soknad = this))
+            ettersendinger.add(Ettersending(fnr.fnr, res.journalpostId, this))
             tidligereManglendeNåEttersendte(ettersendteVedlegg)
                 .forEach(::registrerVedlagtFraEttersending)
         }
@@ -90,9 +88,9 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     class Ettersending(
             fnr: String,
             val journalpostid: String,
-            eventid: UUID = callIdAsUUID(),
             @ManyToOne
-            var soknad: Søknad? = null) : BaseEntity(fnr, eventid = eventid)
+            var soknad: Søknad? = null,
+            eventid: UUID = callIdAsUUID()) : BaseEntity(fnr, eventid)
 
     @Entity(name = "manglendevedlegg")
     @Table(name = "manglendevedlegg")
@@ -121,7 +119,6 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     }
 
     companion object {
-         private val CREATED_DESC = Sort.by("created").descending()
-         val SISTE_SØKNAD = PageRequest.of(0, 1, CREATED_DESC)
+        val SISTE_SØKNAD = PageRequest.of(0, 1, Sort.by("created").descending())
     }
 }

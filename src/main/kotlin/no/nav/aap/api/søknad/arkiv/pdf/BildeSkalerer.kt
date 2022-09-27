@@ -15,7 +15,6 @@ import java.awt.image.BufferedImage.TYPE_3BYTE_BGR
 import java.awt.image.BufferedImage.TYPE_CUSTOM
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 import java.lang.Math.toRadians
 import javax.imageio.ImageIO.read
 import javax.imageio.ImageIO.write
@@ -35,14 +34,14 @@ class BildeSkalerer {
                     bytes(skalerNed(this, newDim), format)
                 }
             }
-        }.getOrElse {throw DokumentException(msg = "Konvertering av vedlegg feilet", cause = it) }
+        }.getOrElse {throw DokumentException("Konvertering av vedlegg feilet",  it) }
 
 
     private fun tilPortrett(image: BufferedImage): BufferedImage {
         if (image.height >= image.width) {
             return image
         }
-        if (image.type == TYPE_CUSTOM) {
+        if (TYPE_CUSTOM == image.type ) {
             log.warn("Kan ikke rotere bilde med ukjent type")
             return image
         }
