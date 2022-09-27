@@ -20,4 +20,4 @@ class ClamAvVirusScanner(private val a: VirusScanWebClientAdapter) : DokumentSje
         }
 }
 
-class VirusException(msg: String) : DokumentException(VIRUS, msg)
+class VirusException(msg: String) : DokumentException(msg, null, VIRUS)

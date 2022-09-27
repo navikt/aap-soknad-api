@@ -28,8 +28,6 @@ import no.nav.aap.api.søknad.arkiv.Journalpost.Bruker
 import no.nav.aap.api.søknad.arkiv.Journalpost.Dokument
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.JSON
-import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
-import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ARKIV
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ORIGINAL
 import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
 import no.nav.aap.api.søknad.model.Innsending
@@ -112,7 +110,7 @@ class ArkivJournalpostGenerator(
         }
 
     private fun dokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
-        mutableListOf(Dokument(STANDARD, listOf(søknad.somJsonVariant(mapper), pdfVariant)))
+        mutableListOf(Dokument(listOf(søknad.somJsonVariant(mapper), pdfVariant)))
 
     private fun dokumenterFra(a: List<VedleggAware?>?, type: VedleggType) =
         a?.flatMap {
@@ -155,24 +153,24 @@ class ArkivJournalpostGenerator(
         .groupBy { it.contentType }
 
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
-        listOf(Dokument(UTLAND, listOf(søknad.somJsonVariant(mapper), pdfDokument)
+        listOf(Dokument(listOf(søknad.somJsonVariant(mapper), pdfDokument)
             .also {
                 log.trace("${it.størrelse("dokumentvariant")}) ($it)")
-            }).also {
+            }, UTLAND).also {
             log.trace("Dokument til arkiv $it")
         })
 
     private fun Journalpost.størrelse() = dokumenter.størrelse("dokument")
     private fun ByteArray.somDokument(tittel: String) =
-        Dokument(tittel, DokumentVariant(PDFA, encode())).also {
+        Dokument(tittel, DokumentVariant(encode())).also {
             log.trace("Dokument konvertert er $it")
         }
 
     private fun DokumentInfo.somDokument(tittel: String) = bytes.somDokument(tittel)
-    private fun ByteArray.somPDFVariant() = DokumentVariant(PDFA, encode(), ARKIV)
+    private fun ByteArray.somPDFVariant() = DokumentVariant(encode())
     private fun ByteArray.encode() = Base64.getEncoder().encodeToString(this)
-    fun StandardSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
-    fun UtlandSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(JSON, toEncodedJson(mapper), ORIGINAL)
+    fun StandardSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
+    fun UtlandSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
 
 
 }

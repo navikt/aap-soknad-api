@@ -130,6 +130,6 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 }
             }
 
-        class ContentTypeException(msg: String) : DokumentException(UNSUPPORTED, msg = msg)
+        class ContentTypeException(msg: String) : DokumentException(msg = msg, substatus = UNSUPPORTED)
     }
 }

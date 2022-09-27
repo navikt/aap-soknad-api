@@ -21,15 +21,15 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
                      private val pdl: PDLClient,
                      private val fullfører: SøknadFullfører,
                      private val cfg: VLFordelingConfig,
-                     private val vl: SøknadVLFordeler) : Fordeler {
+                     private val vlFordeler: SøknadVLFordeler) : Fordeler {
     private val log = getLogger(javaClass)
 
     override fun fordel(innsending: Innsending) =
         pdl.søkerMedBarn().run {
             log.trace("Fordeler $innsending")
             with(arkiv.fordel(innsending, this)) {
-                vl.fordel(innsending.søknad, fnr, journalpostId, cfg.standard)
-                fullfører.fullfør(innsending.søknad, this@run.fnr, this)
+                vlFordeler.fordel(innsending.søknad, fnr, journalpostId, cfg.standard)
+                fullfører.fullfør(this@run.fnr, innsending.søknad, this)
             }
         }
 
@@ -37,17 +37,16 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
         pdl.søkerUtenBarn().run {
             log.trace("Fordeler $e")
             with(arkiv.fordel(e, this)) {
-                vl.fordel(e, fnr, journalpostId, cfg.ettersending)
-                fullfører.fullfør(e, this@run.fnr, this)
+                vlFordeler.fordel(e, fnr, journalpostId, cfg.ettersending)
+                fullfører.fullfør(this@run.fnr, e, this)
             }
         }
 
     override fun fordel(søknad: UtlandSøknad) =
         pdl.søkerUtenBarn().run {
-            log.trace("Fordeler $søknad")
             with(arkiv.fordel(søknad, this)) {
-                vl.fordel(søknad, fnr, journalpostId, cfg.utland)
-                fullfører.fullfør(søknad, this@run.fnr, this)
+                vlFordeler.fordel(søknad, fnr, journalpostId, cfg.utland)
+                fullfører.fullfør(this@run.fnr, søknad, this)
             }
         }
 }

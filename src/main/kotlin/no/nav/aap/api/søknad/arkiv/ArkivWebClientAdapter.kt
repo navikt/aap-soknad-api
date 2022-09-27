@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.arkiv
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.søknad.arkiv.Journalpost.ArkivResponse
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.Constants.JOARK
 import org.springframework.beans.factory.annotation.Qualifier
@@ -28,4 +28,11 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, val cf: Arki
                 log.trace("Journalført $it OK")
             }
             .block() ?: throw IntegrationException("Null respons fra arkiv")
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class ArkivResponse(val journalpostId: String, val journalpostferdigstilt: Boolean, val dokumenter: List<DokumentId>) {
+
+        val dokIder = dokumenter.map { it.dokumentInfoId }
+         data class DokumentId(val dokumentInfoId: String)
+    }
 }

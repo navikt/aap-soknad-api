@@ -7,6 +7,7 @@ import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.SendCallback
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
 import no.nav.aap.api.søknad.minside.MinSideConfig.BacklinksConfig
+import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.MINAAP
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.SØKNAD
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
@@ -35,16 +36,14 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     private val log = getLogger(javaClass)
 
     @Transactional
-    fun opprettBeskjed(type: MinSideNotifikasjonType,
-                       eventId: UUID = callIdAsUUID(),
-                       fnr: Fødselsnummer,
-                       tekst: String, eksternNotifikasjon: Boolean = true) =
+    fun opprettBeskjed(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(),
+                       type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
             if (enabled) {
-                log.trace(CONFIDENTIAL,"Oppretter Min Side beskjed $tekst for $fnr, ekstern nofifikasjon $eksternNotifikasjon og eventid $eventId")
+                log.trace(CONFIDENTIAL,"Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic,
                         key(type.skjemaType, eventId, fnr),
-                        beskjed(tekst, type, eksternNotifikasjon)))
+                        beskjed(tekst, type, eksternVarsling)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
                 repos.beskjeder.save(Beskjed(fnr.fnr, eventId)).eventid
             }
@@ -55,21 +54,19 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
-    fun opprettOppgave(type: MinSideNotifikasjonType,
-                       fnr: Fødselsnummer,
+    fun opprettOppgave(fnr: Fødselsnummer,
                        eventId: UUID = callIdAsUUID(),
                        tekst: String,
-                       eksternNotifikasjon: Boolean = true) =
+                       type: MinSideNotifikasjonType = MINAAPSTD,
+                       eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
-                log.trace("Oppretter Min Side oppgave for $fnr, ekstern notifikasjon $eksternNotifikasjon og eventid $eventId")
-                with(key(type.skjemaType, eventId, fnr)) {
+                log.trace("Oppretter Min Side oppgave for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
                     minside.send(ProducerRecord(topic,
-                            this,
-                            oppgave(tekst, type, eventId, eksternNotifikasjon)))
+                            key(type.skjemaType, eventId, fnr),
+                            oppgave(tekst, type, eventId, eksternVarsling)))
                         .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
                     repos.oppgaver.save(Oppgave(fnr.fnr, eventId)).eventid
-                }
             }
             else {
                 log.info("Sender ikke opprett oppgave til Min Side for $fnr")
@@ -78,7 +75,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
-    fun avsluttOppgave(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
+    fun avsluttOppgave(fnr: Fødselsnummer, eventId: UUID, type: SkjemaType = STANDARD) =
         with(cfg) {
             if (oppgave.enabled) {
                 repos.oppgaver.findByFnrAndEventid(fnr.fnr, eventId)?.let {
@@ -118,7 +115,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-    private fun beskjed(tekst: String, type: MinSideNotifikasjonType, eksternNotifikasjon: Boolean) =
+    private fun beskjed(tekst: String, type: MinSideNotifikasjonType, eksternVarsling: Boolean) =
         with(cfg.beskjed) {
             BeskjedInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
@@ -126,7 +123,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 .withSynligFremTil(now(UTC).plus(varighet))
                 .withLink(type.link(cfg.backlinks)?.toURL())
                 .withTekst(tekst)
-                .withEksternVarsling(eksternNotifikasjon)
+                .withEksternVarsling(eksternVarsling)
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
                 .build().also { m ->
                     log.trace(CONFIDENTIAL,
@@ -134,7 +131,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 }
         }
 
-    private fun oppgave(tekst: String, type: MinSideNotifikasjonType, eventId: UUID, eksternNotifikasjon: Boolean) =
+    private fun oppgave(tekst: String, type: MinSideNotifikasjonType, eventId: UUID, eksternVarsling: Boolean) =
         with(cfg.oppgave) {
             OppgaveInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
@@ -142,7 +139,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 .withSynligFremTil(now(UTC).plus(varighet))
                 .withLink(type.link(cfg.backlinks, eventId)?.toURL())
                 .withTekst(tekst)
-                .withEksternVarsling(eksternNotifikasjon)
+                .withEksternVarsling(eksternVarsling)
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
                 .build().also { o ->
                     log.trace(CONFIDENTIAL,
@@ -196,9 +193,6 @@ data class MinSideNotifikasjonType private constructor(val skjemaType: SkjemaTyp
 
     companion object {
         val MINAAPSTD = MinSideNotifikasjonType(STANDARD, MINAAP)
-        val MINAAPUTLAND = MinSideNotifikasjonType(UTLAND, MINAAP)
         val SØKNADSTD = MinSideNotifikasjonType(STANDARD, SØKNAD)
-        val SØKNADUTLAND = MinSideNotifikasjonType(UTLAND, SØKNAD)
-
     }
 }
