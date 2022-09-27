@@ -30,11 +30,11 @@ data class WebClients(
         @Qualifier(PDL_USER)  val user: GraphQLWebClient,
         @Qualifier(PDL_SYSTEM) val system: GraphQLWebClient)
 @Component
-class PDLWebClientAdapter(private val webClients: WebClients, cfg: PDLConfig, private val ctx: AuthContext) : AbstractGraphQLAdapter(webClients.client, cfg) {
+class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, private val ctx: AuthContext) : AbstractGraphQLAdapter(clients.client, cfg) {
 
     fun søker(medBarn: Boolean = false) =
         with(ctx.getFnr()) {
-            query<PDLWrappedSøker>(webClients.user, PERSON_QUERY, this.fnr)?.active?.let {
+            query<PDLWrappedSøker>(clients.user, PERSON_QUERY, this.fnr)?.active?.let {
                 søkerFra(it,this, medBarn)
             } ?: throw JwtTokenMissingException()
         }
@@ -54,7 +54,7 @@ class PDLWebClientAdapter(private val webClients: WebClients, cfg: PDLConfig, pr
     private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) =
         if (medBarn) {
             r.asSequence().map {
-                query<PDLBarn>(webClients.system, BARN_QUERY, it.relatertPersonsIdent)
+                query<PDLBarn>(clients.system, BARN_QUERY, it.relatertPersonsIdent)
             }.filterNotNull()
                 .filterNot(::myndig)
                 .filterNot(::beskyttet)
@@ -73,7 +73,7 @@ class PDLWebClientAdapter(private val webClients: WebClients, cfg: PDLConfig, pr
 
     private fun myndig(pdlBarn: PDLBarn) = fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
     private fun beskyttet(pdlBarn: PDLBarn) = pdlBarn.adressebeskyttelse?.any { it !in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND,STRENGT_FORTROLIG) } == true
-    override fun toString() = "${javaClass.simpleName} [webClient=$webClient,webClients=$webClients,authContext=$ctx, cfg=$cfg]"
+    override fun toString() = "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
 
     companion object {
         private const val PERSON_QUERY = "query-person.graphql"
