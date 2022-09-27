@@ -6,7 +6,6 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
-import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse
 import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.FORTROLIG
 import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
 import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
@@ -23,7 +22,6 @@ import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import java.time.Instant.now
 import java.time.LocalDate
 
 @Component
@@ -40,9 +38,6 @@ class PDLWebClientAdapter(
                 søkerFra(it,this, medBarn)
             } ?: throw JwtTokenMissingException()
         }
-
-
-        else emptyList()
     private fun fødselsdatoFra(fødsel: Set<PDLFødsel>?) = fødselsdatoFra(fødsel?.firstOrNull())
 
     private fun fødselsdatoFra(fødsel: PDLFødsel?) = fødsel?.fødselsdato
