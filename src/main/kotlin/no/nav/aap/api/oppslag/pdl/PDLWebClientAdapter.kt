@@ -56,7 +56,7 @@ class PDLWebClientAdapter(private val webClients: WebClients, cfg: PDLConfig, pr
             r.asSequence().map { b -> query<PDLBarn>(webClients.system, BARN_QUERY, b.relatertPersonsIdent)
             }.filterNotNull()
                 .filter(::umyndig)
-                .filter(::ubeskyttet)
+                .filterNot(::beskyttet)
                 .map { barn ->  Barn(navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato)) }.toList()
         }
         else emptyList()
@@ -72,7 +72,7 @@ class PDLWebClientAdapter(private val webClients: WebClients, cfg: PDLConfig, pr
         .also { log.trace(CONFIDENTIAL, "Navn er $it") }
 
     fun umyndig(pdlBarn: PDLBarn) = fødselsdatoFra(pdlBarn.fødselsdato)?.isAfter(LocalDate.now().minusYears(18)) ?: true
-    fun ubeskyttet(pdlBarn: PDLBarn) = (pdlBarn.adressebeskyttelse?.any { it !in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND,STRENGT_FORTROLIG) } == true)
+    fun beskyttet(pdlBarn: PDLBarn) = (pdlBarn.adressebeskyttelse?.any { it !in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND,STRENGT_FORTROLIG) } == true)
         .also { log.trace("Beskyttet fra ${pdlBarn.adressebeskyttelse} er $it")
         }
 
