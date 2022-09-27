@@ -34,7 +34,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
 
     fun søker(medBarn: Boolean = false) =
         with(ctx.getFnr()) {
-            query<PDLWrappedSøker>(clients.user, PERSON_QUERY, this.fnr)?.active?.let {
+            query<PDLWrappedSøker>(clients.user, PERSON_QUERY, fnr)?.active?.let {
                 søkerFra(it,this, medBarn)
             } ?: throw JwtTokenMissingException()
         }
