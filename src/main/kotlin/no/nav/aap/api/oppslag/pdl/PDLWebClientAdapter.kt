@@ -53,17 +53,17 @@ class PDLWebClientAdapter(private val webClients: WebClients, cfg: PDLConfig, pr
 
     private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) =
         if (medBarn) {
-            r.asSequence().map { b -> query<PDLBarn>(webClients.system, BARN_QUERY, b.relatertPersonsIdent)
+            r.asSequence().map {
+                query<PDLBarn>(webClients.system, BARN_QUERY, it.relatertPersonsIdent)
             }.filterNotNull()
                 .filterNot(::myndig)
                 .filterNot(::beskyttet)
-                .map { barn ->  Barn(navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato)) }.toList()
+                .map { Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato)) }.toList()
         }
         else emptyList()
 
     private fun adresseFra(a: PDLVegadresse?) = a?.let {
         Adresse(a.adressenavn, a.husbokstav, a.husnummer, PostNummer(a.postnummer))
-            .also { log.trace(CONFIDENTIAL, "Adresse er $it") }
     }
 
     private fun navnFra(n: Set<PDLNavn>) = navnFra(n.first())
@@ -71,13 +71,9 @@ class PDLWebClientAdapter(private val webClients: WebClients, cfg: PDLConfig, pr
     private fun navnFra(n: PDLNavn) = Navn(n.fornavn, n.mellomnavn, n.etternavn)
         .also { log.trace(CONFIDENTIAL, "Navn er $it") }
 
-    fun myndig(pdlBarn: PDLBarn) = fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
-    fun beskyttet(pdlBarn: PDLBarn) = pdlBarn.adressebeskyttelse?.any { it !in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND,STRENGT_FORTROLIG) } == true
-
-
-
-override fun toString() =
-        "${javaClass.simpleName} [webClient=$webClient,webClients=$webClients,authContext=$ctx, cfg=$cfg]"
+    private fun myndig(pdlBarn: PDLBarn) = fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
+    private fun beskyttet(pdlBarn: PDLBarn) = pdlBarn.adressebeskyttelse?.any { it !in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND,STRENGT_FORTROLIG) } == true
+    override fun toString() = "${javaClass.simpleName} [webClient=$webClient,webClients=$webClients,authContext=$ctx, cfg=$cfg]"
 
     companion object {
         private const val PERSON_QUERY = "query-person.graphql"
