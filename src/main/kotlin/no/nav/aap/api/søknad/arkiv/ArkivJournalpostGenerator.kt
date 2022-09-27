@@ -35,13 +35,13 @@ import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
 import no.nav.aap.api.søknad.model.VedleggType.SYKESTIPEND
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.StringExtensions.encode
 import no.nav.aap.util.StringExtensions.størrelse
 import no.nav.aap.util.StringExtensions.toEncodedJson
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class ArkivJournalpostGenerator(
@@ -69,7 +69,7 @@ class ArkivJournalpostGenerator(
         Journalpost(UTLAND.tittel,
                 AvsenderMottaker(fnr, navn.navn),
                 Bruker(fnr),
-                dokumenterFra(søknad,  pdf.tilPdf(this,søknad).somPDFVariant()))
+                dokumenterFra(søknad,  pdf.somPdfVariant(this,søknad)))
             .also {
                 log.trace("Journalpost med ${it.størrelse()} er $it")
             }
@@ -80,7 +80,7 @@ class ArkivJournalpostGenerator(
             Journalpost(STANDARD.tittel,
                 AvsenderMottaker(fnr,navn.navn),
                 Bruker(fnr),
-                journalpostDokumenterFra(søknad.søknad, pdf.tilPdf(this,søknad.kvittering).somPDFVariant()))
+                journalpostDokumenterFra(søknad.søknad, pdf.somPdfVariant(this,søknad.kvittering)))
             .also {
                 log.trace("Journalpost med ${it.størrelse()} er $it")
             }
@@ -167,8 +167,6 @@ class ArkivJournalpostGenerator(
         }
 
     private fun DokumentInfo.somDokument(tittel: String) = bytes.somDokument(tittel)
-    private fun ByteArray.somPDFVariant() = DokumentVariant(encode())
-    private fun ByteArray.encode() = Base64.getEncoder().encodeToString(this)
     fun StandardSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
     fun UtlandSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
 
