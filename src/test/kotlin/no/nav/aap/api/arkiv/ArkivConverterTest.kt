@@ -11,7 +11,6 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.PDFKvittering
-import no.nav.aap.util.AuthContext
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.mockito.Mock
 import org.mockito.Mockito.any
@@ -67,8 +66,8 @@ class ArkivConverterTest {
         val c = ArkivJournalpostGenerator(mapper, lager, pdf, BildeTilPDFKonverterer(BildeSkalerer()))
         val converted = c.journalpostFra(søknad, søker)
         converted.dokumenter.forEach { doc ->
-            doc.varianter.forEach {
-                if (it?.filtype == PDFA.name)
+            doc.dokumentVarianter.forEach {
+                if (it.filtype == PDFA.name)
                     FileOutputStream("${it.hashCode()}.pdf").use { fos ->
                         fos.write(Base64.getDecoder().decode(it.fysiskDokument))
                     }

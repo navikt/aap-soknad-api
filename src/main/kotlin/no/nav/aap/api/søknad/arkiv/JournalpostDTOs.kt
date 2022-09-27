@@ -20,8 +20,8 @@ data class Journalpost(
         val journalposttype: String = INNGÅENDE,
         val tema: String = AAP.uppercase()) {
 
-    data class Dokument private constructor(val tittel: String?, val brevkode: String? = null, val varianter: List<DokumentVariant>) {
-        constructor(varianter: List<DokumentVariant>, type: SkjemaType = STANDARD) : this(type.tittel, type.kode, varianter)
+    data class Dokument private constructor(val tittel: String?, val brevkode: String? = null, val dokumentVarianter: List<DokumentVariant>) {
+        constructor(dokumentVarianter: List<DokumentVariant>, type: SkjemaType = STANDARD) : this(type.tittel, type.kode, dokumentVarianter)
         constructor(tittel: String? = null, variant: DokumentVariant) : this(tittel, null, listOf(variant))
     }
 

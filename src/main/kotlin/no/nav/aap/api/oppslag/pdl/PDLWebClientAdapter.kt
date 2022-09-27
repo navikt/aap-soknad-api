@@ -67,7 +67,8 @@ class PDLWebClientAdapter(
     private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean): List<Barn?> =
         if (medBarn) r.map { it ->
             query<PDLBarn>(systemWebClient, BARN_QUERY, it.relatertPersonsIdent)
-                ?.let { barn ->
+
+                .let { barn ->
                     if (barn.adressebeskyttelse?.any { it in listOf(FORTROLIG,STRENGT_FORTROLIG,STRENGT_FORTROLIG_UTLAND)} == true) {
                         null  // kode 6 og 7
                     }
