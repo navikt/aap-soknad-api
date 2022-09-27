@@ -25,6 +25,7 @@ import no.nav.aap.api.søknad.model.RadioValg
 import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.model.StandardSøknad.Yrkesskade
 import no.nav.aap.api.søknad.model.Studier
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.NEI
 import no.nav.aap.api.søknad.model.Søker
@@ -168,7 +169,7 @@ class SøknadTest {
                                 Adresse("Legegata", "17", "A",
                                         PostNummer("2600", "Lillehammer")),
                                 "22222222"))), emptyList(),
-                JA,
+                Yrkesskade.JA,
                 Utbetalinger(
                         FraArbeidsgiver(true, Vedlegg(deler = listOf(UUID.randomUUID(),
                                 UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD))),
