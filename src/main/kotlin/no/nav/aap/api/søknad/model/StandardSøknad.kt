@@ -34,11 +34,13 @@ data class StandardSøknad(
         val medlemsskap: Medlemskap,
         val registrerteBehandlere: List<RegistrertBehandler> = emptyList(),
         val andreBehandlere: List<AnnenBehandler> = emptyList(),
-        val yrkesskadeType: RadioValg,
+        val yrkesskadeType: Yrkesskade,
         val utbetalinger: Utbetalinger?,
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
         val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         override val vedlegg: Vedlegg? = null) : VedleggAware {
+
+    enum class Yrkesskade { JA, NEI }
 
     private val log = getLogger(javaClass)
 

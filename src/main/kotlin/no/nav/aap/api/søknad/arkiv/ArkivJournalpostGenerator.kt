@@ -32,7 +32,6 @@ import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
 import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
 import no.nav.aap.api.søknad.model.VedleggType.SYKESTIPEND
-import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.encode
 import no.nav.aap.util.StringExtensions.størrelse
@@ -64,7 +63,7 @@ class ArkivJournalpostGenerator(
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker) =
         with(søker) {
-        Journalpost(UTLAND.tittel,
+            Journalpost(UTLAND.tittel,
                 AvsenderMottaker(fnr, navn),
                 Bruker(fnr),
                 dokumenterFra(søknad,  pdf.somPdfVariant(this,søknad)))
