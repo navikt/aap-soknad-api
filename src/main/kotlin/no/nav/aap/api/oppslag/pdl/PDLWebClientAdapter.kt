@@ -73,7 +73,7 @@ class PDLWebClientAdapter(private val webClients: WebClients, cfg: PDLConfig, pr
 
     fun myndig(pdlBarn: PDLBarn) = fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
     fun beskyttet(pdlBarn: PDLBarn) = (pdlBarn.adressebeskyttelse?.any { it !in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND,STRENGT_FORTROLIG) } == true)
-        .also { log.trace("Beskyttet fra ${pdlBarn.adressebeskyttelse} er $it")
+        .also { log.trace(CONFIDENTIAL,"Beskyttet fra ${pdlBarn.adressebeskyttelse} er $it")
         }
 
 
