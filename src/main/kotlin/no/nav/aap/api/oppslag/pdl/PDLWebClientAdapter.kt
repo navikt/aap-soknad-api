@@ -25,16 +25,16 @@ import org.springframework.web.reactive.function.client.WebClient
 import java.time.LocalDate
 
 @Component
-class PDLWebClientAdapter(
-        @Qualifier(PDL_USER) private val userWebClient: GraphQLWebClient,
-        @Qualifier(PDL_USER) client: WebClient,
-        @Qualifier(PDL_SYSTEM) private val systemWebClient: GraphQLWebClient,
-        cfg: PDLConfig,
-        private val ctx: AuthContext) : AbstractGraphQLAdapter(client, cfg) {
+data class WebClients(
+        @Qualifier(PDL_USER) val client: WebClient,
+        @Qualifier(PDL_USER)  val user: GraphQLWebClient,
+        @Qualifier(PDL_SYSTEM) val system: GraphQLWebClient)
+@Component
+class PDLWebClientAdapter(private val webClients: WebClients, cfg: PDLConfig, private val ctx: AuthContext) : AbstractGraphQLAdapter(webClients.client, cfg) {
 
     fun søker(medBarn: Boolean = false) =
         with(ctx.getFnr()) {
-            query<PDLWrappedSøker>(userWebClient, PERSON_QUERY, this.fnr)?.active?.let {
+            query<PDLWrappedSøker>(webClients.user, PERSON_QUERY, this.fnr)?.active?.let {
                 søkerFra(it,this, medBarn)
             } ?: throw JwtTokenMissingException()
         }
@@ -53,11 +53,11 @@ class PDLWebClientAdapter(
 
     private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) =
         if (medBarn) {
-            r.map { b -> query<PDLBarn>(systemWebClient, BARN_QUERY, b.relatertPersonsIdent)
+            r.asSequence().map { b -> query<PDLBarn>(webClients.system, BARN_QUERY, b.relatertPersonsIdent)
             }.filterNotNull()
                 .filter(::umyndig)
-                .filterNot(::beskyttet)
-                .map { barn ->  Barn(navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato)) }
+                .filter(::ubeskyttet)
+                .map { barn ->  Barn(navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato)) }.toList()
         }
         else emptyList()
 
@@ -72,11 +72,11 @@ class PDLWebClientAdapter(
         .also { log.trace(CONFIDENTIAL, "Navn er $it") }
 
     fun umyndig(pdlBarn: PDLBarn) = fødselsdatoFra(pdlBarn.fødselsdato)?.isAfter(LocalDate.now().minusYears(18)) ?: true
-    fun beskyttet(pdlBarn: PDLBarn) = pdlBarn.adressebeskyttelse?.any { it in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND,STRENGT_FORTROLIG) } == true
+    fun ubeskyttet(pdlBarn: PDLBarn) = pdlBarn.adressebeskyttelse?.any { it !in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND,STRENGT_FORTROLIG) } == true
 
 
 override fun toString() =
-        "${javaClass.simpleName} [webClient=$webClient,graphQLWebClient=$userWebClient,authContext=$ctx, cfg=$cfg]"
+        "${javaClass.simpleName} [webClient=$webClient,webClients=$webClients,authContext=$ctx, cfg=$cfg]"
 
     companion object {
         private const val PERSON_QUERY = "query-person.graphql"
