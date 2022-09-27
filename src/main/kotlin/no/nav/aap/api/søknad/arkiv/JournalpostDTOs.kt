@@ -25,9 +25,9 @@ data class Journalpost(
         constructor(tittel: String? = null, variant: DokumentVariant) : this(tittel, null, listOf(variant))
     }
 
-    data class DokumentVariant private constructor(val filtype: String, val fysiskDokument: String, val format: String) {
-        constructor(fysiskDokument: String, format: VariantFormat = ARKIV, filtype: Filtype = PDFA) : this(filtype.name, fysiskDokument, format.name)
-        override fun toString() = "${javaClass.simpleName} [filtype=$filtype,format=$format,fysiskDokument=${fysiskDokument.length} bytes]"
+    data class DokumentVariant private constructor(val filtype: String, val fysiskDokument: String, val variantformat: String) {
+        constructor(fysiskDokument: String, variantformat: VariantFormat = ARKIV, filtype: Filtype = PDFA) : this(filtype.name, fysiskDokument, variantformat.name)
+        override fun toString() = "${javaClass.simpleName} [filtype=$filtype,format=$variantformat,fysiskDokument=${fysiskDokument.length} bytes]"
         enum class VariantFormat { ORIGINAL, ARKIV, FULLVERSJON }
         enum class Filtype { PDFA, JPEG, PNG, JSON }
     }
