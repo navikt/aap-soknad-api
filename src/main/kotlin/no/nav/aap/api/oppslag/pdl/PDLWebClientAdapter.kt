@@ -42,13 +42,14 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
 
     private fun fødselsdatoFra(fødsel: PDLFødsel?) = fødsel?.fødselsdato
 
-    private fun søkerFra(søker: PDLSøker?, fnr: Fødselsnummer, medBarn: Boolean) = søker?.let { s ->
-        Søker(navnFra(s.navn),
-                fnr,
-                adresseFra(s.vegadresse),
-                fødselsdatoFra(s.fødsel),
-                barnFra(s.forelderBarnRelasjon, medBarn))
-            .also { log.trace(CONFIDENTIAL, "Søker er $it") }
+    private fun søkerFra(søker: PDLSøker?, fnr: Fødselsnummer, medBarn: Boolean) = søker?.let {
+        with(it) {
+            Søker(navnFra(navn), fnr,
+                    adresseFra(vegadresse),
+                    fødselsdatoFra(fødsel),
+                    barnFra(forelderBarnRelasjon, medBarn))
+                .also { log.trace(CONFIDENTIAL, "Søker er $it") }
+        }
     }
 
     private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) =
@@ -62,14 +63,19 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         }
         else emptyList()
 
-    private fun adresseFra(a: PDLVegadresse?) = a?.let {
-        Adresse(a.adressenavn, a.husbokstav, a.husnummer, PostNummer(a.postnummer))
+    private fun adresseFra(adresse: PDLVegadresse?) = adresse?.let {
+        with(it) {
+            Adresse(adressenavn, husbokstav, husnummer, PostNummer(postnummer))
+        }
     }
 
-    private fun navnFra(n: Set<PDLNavn>) = navnFra(n.first())
+    private fun navnFra(navn: Set<PDLNavn>) = navnFra(navn.first())
 
-    private fun navnFra(n: PDLNavn) = Navn(n.fornavn, n.mellomnavn, n.etternavn)
-        .also { log.trace(CONFIDENTIAL, "Navn er $it") }
+    private fun navnFra(navn: PDLNavn) =
+        with(navn) {
+            Navn(fornavn, mellomnavn, etternavn)
+                .also { log.trace(CONFIDENTIAL, "Navn er $it") }
+        }
 
     private fun myndig(pdlBarn: PDLBarn) = fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
     private fun beskyttet(pdlBarn: PDLBarn) = pdlBarn.adressebeskyttelse?.any { it !in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND,STRENGT_FORTROLIG) } == true
