@@ -64,10 +64,10 @@ class ArkivConverterTest {
 
         val søknad = Innsending(SøknadTest.standardSøknad(), PDFKvittering(listOf(),LocalDateTime.now()))
         val søker = SøknadTest.søker()
-        val c = ArkivJournalpostGenerator(mapper, lager, pdf,AuthContext(ctx), BildeTilPDFKonverterer(BildeSkalerer()))
+        val c = ArkivJournalpostGenerator(mapper, lager, pdf, BildeTilPDFKonverterer(BildeSkalerer()))
         val converted = c.journalpostFra(søknad, søker)
         converted.dokumenter.forEach { doc ->
-            doc?.varianter?.forEach {
+            doc.varianter.forEach {
                 if (it?.filtype == PDFA.name)
                     FileOutputStream("${it.hashCode()}.pdf").use { fos ->
                         fos.write(Base64.getDecoder().decode(it.fysiskDokument))

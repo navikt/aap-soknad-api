@@ -142,8 +142,7 @@ class SøknadTest {
     fun parse() {
         val es = mapper.readValue(ettersending, StandardEttersending::class.java)
         val journalpost = ArkivJournalpostGenerator(mapper,
-                InMemoryDokumentlager(),pdf, ctx,
-                BildeTilPDFKonverterer(BildeSkalerer())).journalpostFra(es, søker())
+                InMemoryDokumentlager(),pdf, BildeTilPDFKonverterer(BildeSkalerer())).journalpostFra(es, søker())
         assertEquals(1, journalpost.dokumenter.size)
     }
 

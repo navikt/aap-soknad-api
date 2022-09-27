@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.arkiv
 
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
@@ -19,8 +20,8 @@ data class Journalpost(
         val journalposttype: String = INNGÅENDE,
         val tema: String = AAP.uppercase()) {
 
-    data class Dokument private constructor(val tittel: String?, val brevkode: String? = null, val varianter: List<DokumentVariant?>) {
-        constructor(varianter: List<DokumentVariant?>, type: SkjemaType = STANDARD) : this(type.tittel, type.kode, varianter)
+    data class Dokument private constructor(val tittel: String?, val brevkode: String? = null, val varianter: List<DokumentVariant>) {
+        constructor(varianter: List<DokumentVariant>, type: SkjemaType = STANDARD) : this(type.tittel, type.kode, varianter)
         constructor(tittel: String? = null, variant: DokumentVariant) : this(tittel, null, listOf(variant))
     }
 
@@ -32,7 +33,9 @@ data class Journalpost(
     }
 
     data class Bruker(val id: Fødselsnummer, val idType: String = ID_TYPE)
-    data class AvsenderMottaker(val id: Fødselsnummer, val navn: String?, val idType: String = ID_TYPE)
+    data class AvsenderMottaker private constructor (val id: Fødselsnummer, val navn: String?, val idType: String = ID_TYPE) {
+        constructor (id: Fødselsnummer, navn: Navn): this(id,navn.navn)
+    }
 
 
     companion object {

@@ -1,7 +1,6 @@
 package no.nav.aap.api.søknad.arkiv
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.felles.SkjemaType.UTLAND
@@ -48,7 +47,6 @@ class ArkivJournalpostGenerator(
         private val mapper: ObjectMapper,
         private val lager: Dokumentlager,
         private val pdf: PDFClient,
-        private val ctx: AuthContext,
         private val konverterer: BildeTilPDFKonverterer) {
 
     private val log = getLogger(javaClass)
@@ -56,9 +54,9 @@ class ArkivJournalpostGenerator(
     fun journalpostFra(es: StandardEttersending, søker: Søker): Journalpost =
         with(søker) {
             Journalpost(STANDARD_ETTERSENDING.tittel,
-                AvsenderMottaker(fnr, navn.navn),
+                AvsenderMottaker(fnr, navn),
                 Bruker(fnr),
-                dokumenterFra(es.ettersendteVedlegg, fnr))
+                dokumenterFra(es.ettersendteVedlegg))
             .also {
                 log.trace("Journalpost med ${it.størrelse()} er $it")
             }
@@ -67,7 +65,7 @@ class ArkivJournalpostGenerator(
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker) =
         with(søker) {
         Journalpost(UTLAND.tittel,
-                AvsenderMottaker(fnr, navn.navn),
+                AvsenderMottaker(fnr, navn),
                 Bruker(fnr),
                 dokumenterFra(søknad,  pdf.somPdfVariant(this,søknad)))
             .also {
@@ -78,7 +76,7 @@ class ArkivJournalpostGenerator(
     fun journalpostFra(søknad: Innsending, søker: Søker) =
         with(søker) {
             Journalpost(STANDARD.tittel,
-                AvsenderMottaker(fnr,navn.navn),
+                AvsenderMottaker(fnr,navn),
                 Bruker(fnr),
                 journalpostDokumenterFra(søknad.søknad, pdf.somPdfVariant(this,søknad.kvittering)))
             .also {
@@ -101,10 +99,10 @@ class ArkivJournalpostGenerator(
                 log.trace("Sender ${it.størrelse("dokument")} til arkiv $it")
             }
         }
-    private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>, fnr: Fødselsnummer) =
+    private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>) =
         vedlegg.flatMap { e ->
             require(vedlegg.isNotEmpty()) { "Forventet > 0 vedlegg" }
-            dokumenterFra(e.ettersending, e.vedleggType, fnr)
+            dokumenterFra(e.ettersending, e.vedleggType)
         }.also {
             require(it.isNotEmpty()) { "Forventet > 0 vedlegg fra dokumentlager" }
         }
@@ -123,9 +121,6 @@ class ArkivJournalpostGenerator(
         } ?: emptyList()
 
     private fun dokumenterFra(v: Vedlegg?, type: VedleggType) =
-        dokumenterFra(v, type, ctx.getFnr())
-
-    private fun dokumenterFra(v: Vedlegg?, type: VedleggType, fnr: Fødselsnummer) =
         v?.let { vl ->
             val vedlegg = grupperteOgSorterteVedlegg(vl)
             val pdfs = vedlegg[APPLICATION_PDF_VALUE] ?: mutableListOf()
