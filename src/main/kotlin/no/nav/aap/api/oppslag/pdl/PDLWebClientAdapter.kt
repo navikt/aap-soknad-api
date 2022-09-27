@@ -6,10 +6,6 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
-import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse
-import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.FORTROLIG
-import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
-import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLFødsel
@@ -67,11 +63,7 @@ class PDLWebClientAdapter(
     private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean): List<Barn?> =
         if (medBarn) r.map { it ->
             query<PDLBarn>(systemWebClient, BARN_QUERY, it.relatertPersonsIdent)
-
-                .let { barn ->
-                    if (barn.adressebeskyttelse?.any { it in listOf(FORTROLIG,STRENGT_FORTROLIG,STRENGT_FORTROLIG_UTLAND)} == true) {
-                        null  // kode 6 og 7
-                    }
+                ?.let { barn ->
                     val b = Barn(navnFra(barn.navn), fødselsdatoFra(barn.fødselsdato))
                     b.fødseldato?.let {
                         if (it.isBefore(LocalDate.now().minusYears(18))) {

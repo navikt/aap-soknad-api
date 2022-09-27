@@ -11,6 +11,6 @@ data class Søker(val navn: Navn,
                  val fødseldato: LocalDate? = null,
                  val barn: List<Barn?>? = null) {
 
-    data class Barn(val navn: Navn? = null,
+    data class Barn(val navn: Navn,
                     val fødseldato: LocalDate? = null)
 }
