@@ -61,6 +61,6 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
 
     override fun isCausalChainsEnabled() = isDevOrLocal(env)
     override fun log(t: Throwable, problem: Problem, request: NativeWebRequest, status: HttpStatus) {
-        log.warn("${t.message} $problem", t)
+        log.warn("OOPS $problem", t)
     }
 }
