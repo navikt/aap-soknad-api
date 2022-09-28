@@ -20,11 +20,11 @@ abstract class AbstractPDFSjekker : DokumentSjekker {
                 log.trace("Sjekker ${dokument.filnavn}")
                 doSjekk(dokument)
             }.getOrElse {
+                log.warn(" ${dokument.filnavn} feilet sjekk", it)
                 when (it) {
                     is InvalidPasswordException ->  {
                         log.warn(" ${dokument.filnavn} er passord-beskyttet", it)
-                        throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet",
-                                it)
+                        throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet", it)
                     }
                     else -> throw it
                 }
