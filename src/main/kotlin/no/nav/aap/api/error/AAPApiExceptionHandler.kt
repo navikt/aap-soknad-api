@@ -46,6 +46,7 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
     @ExceptionHandler(NotFound::class)
     fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = problem(e, NOT_FOUND, req)
 
+    @ExceptionHandler(DokumentException::class)
     fun dokument(t: DokumentException, status: Status, req: NativeWebRequest) = create(t, problem(t, status, t.substatus), req)
 
     fun problem(t: Throwable, status: Status, req: NativeWebRequest) = create(t, problem(t, status), req)
