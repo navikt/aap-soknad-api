@@ -20,11 +20,11 @@ abstract class AbstractPDFSjekker: DokumentSjekker {
                 log.trace("Sjekker ${dokument.filnavn}")
                 doSjekk(dokument)
             }.onFailure {
-                log.warn("Feil ved sjekking av  ${dokument.filnavn}",it)
+                log.warn("Feil ved sjekking av ${dokument.filnavn}",it)
                 if (it is InvalidPasswordException) {
                     throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet",it)
                 }
-            }.getOrElse {log.warn("Feil ved sjekking av  ${dokument.filnavn}",it) }
+            }
 
         }
         else {
