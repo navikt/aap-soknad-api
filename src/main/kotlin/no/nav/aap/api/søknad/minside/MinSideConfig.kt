@@ -24,7 +24,7 @@ data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConf
     data class TopicConfig(val topic: String,
                            @DefaultValue(DEFAULT_VARIGHET) val varighet: Duration,
                            @DefaultValue("true") val enabled: Boolean,
-                           val preferertekanaler: List<PreferertKanal> = listOf(),
+                           val preferertekanaler: List<PreferertKanal> = emptyList(),
                            @DefaultValue(DEFAULT_LEVEL) val sikkerhetsnivaa: Int)
 
     data class NAISConfig(val namespace: String, val app: String)
