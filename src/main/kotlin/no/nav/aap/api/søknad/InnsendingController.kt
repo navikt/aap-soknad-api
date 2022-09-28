@@ -16,7 +16,7 @@ import javax.validation.Valid
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 @ResponseStatus(CREATED)
 class InnsendingController(private val fordeler: Fordeler) {
-    
+
     @PostMapping("/utland")
     fun utland(@RequestBody @Valid søknad: UtlandSøknad) = fordeler.fordel(søknad)
 

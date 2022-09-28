@@ -47,8 +47,7 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
     fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = problem(e, NOT_FOUND, req)
 
     @ExceptionHandler(DokumentException::class)
-    fun dokument(t: DokumentException, req: NativeWebRequest) =
-        create(t, problem(t, UNPROCESSABLE_ENTITY, t.substatus), req)
+    fun dokument(e: DokumentException, req: NativeWebRequest) = create(e, problem(e, UNPROCESSABLE_ENTITY, e.substatus), req)
 
     fun problem(t: Throwable, status: Status, req: NativeWebRequest) = create(t, problem(t, status), req)
 
@@ -59,7 +58,7 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
                 with("substatus", it).build()
             } ?: build()
         }.also {
-            log.trace("Problem fra ${t.javaClass} ${it.message}, returnerer $status")
+            log.trace("Problem fra ${t.javaClass} ${it.message}. Returnerer $status")
         }
 
     override fun isCausalChainsEnabled() = isDevOrLocal(env)

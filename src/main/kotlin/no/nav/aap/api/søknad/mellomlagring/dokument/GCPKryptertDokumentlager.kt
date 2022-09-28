@@ -41,8 +41,8 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
         callIdAsUUID().apply {
             with(dokument) {
                 val navn = navn(fnr, this@apply)
-                log.trace("Lagrer $this")
                 sjekkere.forEach { it.sjekk(this) }
+                log.trace("Lagrer $this")
                 lager.create(newBuilder(cfg.vedlegg.navn, navn)
                     .setContentType(contentType)
                     .setContentDisposition("$contentDisposition")
