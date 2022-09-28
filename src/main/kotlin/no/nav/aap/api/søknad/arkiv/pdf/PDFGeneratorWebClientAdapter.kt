@@ -24,6 +24,7 @@ import java.time.LocalDate.now
 class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
                                    private val cf: PDFGeneratorConfig,
                                    private val mapper: ObjectMapper) : AbstractWebClientAdapter(client, cf) {
+    fun generate(søker: Søker, kvittering: PDFKvittering) = generate(cf.standardPath, StandardData(søker, kvittering))
     fun generate(søker: Søker, søknad: UtlandSøknad) = generate(cf.utlandPath, UtlandData(søker, søknad))
     private fun generate(path: String, data: Any) =
         webClient.post()
