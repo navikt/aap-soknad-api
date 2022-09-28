@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.mellomlagring
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
@@ -18,6 +19,7 @@ import java.nio.charset.StandardCharsets.UTF_8
 @ConditionalOnGCP
 internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
                                       private val lager: Storage,
+                                      private val mapper: ObjectMapper,
                                       private val ctx: AuthContext) : Mellomlager {
     val log = getLogger(javaClass)
 
@@ -40,11 +42,13 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
             with(navn(fnr, type)) {
                 lager.get(navn, this)?.let { blob ->
                     String(blob.getContent()).also {
-                        log.trace(CONFIDENTIAL, "Lest mellomlagret verdi $it fra $this og bøtte $navn")
+                        log.trace(CONFIDENTIAL, "Lest mellomlagret verdi ${it.jsonPrettify(mapper)} fra $this og bøtte $navn")
                     }
                 }
             }
         }
+
+    internal fun String.jsonPrettify(mapper: ObjectMapper) = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapper.readValue(this,Any::class.java))
 
     override fun slett(type: SkjemaType) = slett(type, ctx.getFnr())
 
