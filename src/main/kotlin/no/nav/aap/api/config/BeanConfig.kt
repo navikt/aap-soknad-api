@@ -47,6 +47,7 @@ import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
 import org.springframework.http.MediaType
+import org.springframework.http.MediaType.*
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.server.ServerHttpRequest
@@ -166,11 +167,14 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         private val log = getLogger(javaClass)
         override fun beforeBodyWrite(body: Any?,
                                      returnType: MethodParameter,
-                                     selectedContentType: MediaType,
+                                     contentType: MediaType,
                                      selectedConverterType: Class<out HttpMessageConverter<*>>,
                                      request: ServerHttpRequest,
                                      response: ServerHttpResponse): Any? {
-            log.trace(CONFIDENTIAL,"Response body ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body)}")
+            log.trace("Content type $contentType")
+            if (contentType in listOf(APPLICATION_JSON)) {
+                log.trace(CONFIDENTIAL,"Response body ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body)}")
+            }
             return body
         }
 
