@@ -19,9 +19,8 @@ abstract class AbstractPDFSjekker: DokumentSjekker {
             runCatching {
                 log.trace("Sjekker ${dokument.filnavn}")
                 doSjekk(dokument)
-            }.onFailure {
+              }.getOrElse {
                 log.warn("Feil ved sjekking av ${dokument.filnavn}",it)
-            }.getOrElse {
                 when(it) {
                     is InvalidPasswordException -> throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet",it)
                     else -> throw it
