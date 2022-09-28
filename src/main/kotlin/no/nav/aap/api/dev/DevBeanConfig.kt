@@ -1,11 +1,7 @@
 package no.nav.aap.api.dev
 
-import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.sun.jndi.ldap.LdapPoolManager.trace
 import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
-import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
