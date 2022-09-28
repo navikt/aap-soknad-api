@@ -13,15 +13,16 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ConditionalOnDevOrLocal
 class DevBeanConfig
 
 
 @Bean
+@ConditionalOnDevOrLocal
 fun actuatorIgnoringTraceRequestFilter(repo: HttpTraceRepository, tracer: HttpExchangeTracer) =
     ActuatorIgnoringTraceRequestFilter(repo, tracer)
 
 @Bean
+@ConditionalOnDevOrLocal
 fun httpTraceRepository(mapper: ObjectMapper) = object : InMemoryHttpTraceRepository() {
         private  val log = getLogger(javaClass)
         override fun add(trace: HttpTrace)  {
