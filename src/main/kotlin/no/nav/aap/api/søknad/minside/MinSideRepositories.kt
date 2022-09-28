@@ -31,7 +31,10 @@ import javax.persistence.PreUpdate
 interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
     fun findByEventid(eventid: UUID): T?
     fun findByFnrAndEventid(fnr: String, eventid: UUID): T?
-    fun findByFnrAndDoneIsFalse(fnr: String): List<T>
+
+    fun findByFnrAndEventidAndDoneIsFalse(fnr: String,eventid: UUID): T?
+
+    fun findByFnrAndDoneIsFalse(fnr: String): List<T>  // test only
 
     @MappedSuperclass
     abstract class MinSideBaseEntity(fnr: String, eventid: UUID, var done: Boolean) : BaseEntity(fnr, eventid) {

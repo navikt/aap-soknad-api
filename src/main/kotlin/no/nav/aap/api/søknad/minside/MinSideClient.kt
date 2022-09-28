@@ -36,14 +36,11 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     private val log = getLogger(javaClass)
 
     @Transactional
-    fun opprettBeskjed(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(),
-                       type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
+    fun opprettBeskjed(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
             if (enabled) {
                 log.trace(CONFIDENTIAL, "Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic,
-                        key(type.skjemaType, eventId, fnr),
-                        beskjed(tekst, type, eksternVarsling)))
+                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), beskjed(tekst, type, eksternVarsling)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
                 repos.beskjeder.save(Beskjed(fnr.fnr, eventId)).eventid
             }
@@ -54,17 +51,11 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
-    fun opprettOppgave(fnr: Fødselsnummer,
-                       eventId: UUID = callIdAsUUID(),
-                       tekst: String,
-                       type: MinSideNotifikasjonType = MINAAPSTD,
-                       eksternVarsling: Boolean = true) =
+    fun opprettOppgave(fnr: Fødselsnummer, eventId: UUID = callIdAsUUID(), tekst: String, type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
                 log.trace("Oppretter Min Side oppgave for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic,
-                        key(type.skjemaType, eventId, fnr),
-                        oppgave(tekst, type, eventId, eksternVarsling)))
+                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), oppgave(tekst, type, eventId, eksternVarsling)))
                     .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
                 repos.oppgaver.save(Oppgave(fnr.fnr, eventId)).eventid
             }
@@ -78,16 +69,11 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     fun avsluttOppgave(fnr: Fødselsnummer, eventId: UUID, type: SkjemaType = STANDARD) =
         with(cfg) {
             if (oppgave.enabled) {
-                repos.oppgaver.findByFnrAndEventid(fnr.fnr, eventId)?.let {
-                    if (!it.done) {
+                repos.oppgaver.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
                         minside.send(ProducerRecord(done, key(type, eventId, fnr), done()))
                             .addCallback(SendCallback("avslutt oppgave med eventid $eventId"))
                         it.done = true
-                    }
-                    else {
-                        log.trace("Oppgave $eventId er allerede avsluttet")
-                    }
-                } ?: log.warn("Kunne ikke avslutte oppgave med eventid $eventId for fnr $fnr i DB")
+                } ?: log.warn("Kunne ikke avslutte oppgave med eventid $eventId for fnr $fnr i DB, allerede avsluttet?")
             }
             else {
                 log.info("Sender ikke avslutt oppgave til Ditt Nav for $fnr")
@@ -98,17 +84,12 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     fun avsluttBeskjed(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
         with(cfg) {
             if (beskjed.enabled) {
-                repos.beskjeder.findByFnrAndEventid(fnr.fnr, eventId)?.let {
-                    if (!it.done) {
+                repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
                         minside.send(ProducerRecord(done, key(type, eventId, fnr), done()))
                             .addCallback(SendCallback("avslutt beskjed med eventid $eventId"))
                         it.done = true
-                    }
-                    else {
-                        log.trace("Beskjed $eventId er allerede avsluttet")
-                    }
 
-                } ?: log.warn("Kunne ikke avslutte beskjed med eventid $eventId for fnr $fnr i DB")
+                } ?: log.warn("Kunne ikke avslutte beskjed med eventid $eventId for fnr $fnr i DB, allerede avsluttet?")
             }
             else {
                 log.info("Sender ikke avslutt beskjed til Min Side for beskjed for $fnr")
