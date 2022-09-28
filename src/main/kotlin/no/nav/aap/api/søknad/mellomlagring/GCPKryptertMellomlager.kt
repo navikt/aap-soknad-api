@@ -31,7 +31,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
                 .setMetadata(mapOf(SKJEMATYPE to type.name, UUID_ to callId()))
                 .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName("$key"))
                 .also {
-                    log.trace(CONFIDENTIAL, "Lagret mellomlagret $value som ${it.name} i bøtte ${mellom.navn}")
+                    log.trace(CONFIDENTIAL, "Lagret mellomlagret ${value.jsonPrettify(mapper)} som ${it.name} i bøtte ${mellom.navn}")
                 }
         }.name
 
