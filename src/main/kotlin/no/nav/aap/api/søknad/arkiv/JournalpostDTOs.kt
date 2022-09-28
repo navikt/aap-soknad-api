@@ -23,42 +23,23 @@ data class Journalpost(
     data class Dokument private constructor(val tittel: String?,
                                             val brevkode: String? = null,
                                             val dokumentVarianter: List<DokumentVariant>) {
-        constructor(dokumentVarianter: List<DokumentVariant>, type: SkjemaType = STANDARD) : this(type.tittel,
-                type.kode,
-                dokumentVarianter)
+        constructor(dokumentVarianter: List<DokumentVariant>, type: SkjemaType = STANDARD) : this(type.tittel, type.kode, dokumentVarianter)
 
         constructor(tittel: String? = null, variant: DokumentVariant) : this(tittel, null, listOf(variant))
     }
 
-    data class DokumentVariant private constructor(val filtype: String,
-                                                   val fysiskDokument: String,
-                                                   val variantformat: String) {
-        constructor(fysiskDokument: String, variantformat: VariantFormat = ARKIV, filtype: Filtype = PDFA) : this(
-                filtype.name,
-                fysiskDokument,
-                variantformat.name)
+    data class DokumentVariant private constructor(val filtype: String, val fysiskDokument: String, val variantformat: String) {
+        constructor(fysiskDokument: String, variantformat: VariantFormat = ARKIV, filtype: Filtype = PDFA) : this(filtype.name, fysiskDokument, variantformat.name)
 
-        override fun toString() =
-            "${javaClass.simpleName} [filtype=$filtype,format=$variantformat,fysiskDokument=${fysiskDokument.length} bytes]"
+        override fun toString() = "${javaClass.simpleName} [filtype=$filtype,format=$variantformat,fysiskDokument=${fysiskDokument.length} bytes]"
 
-        enum class VariantFormat {
-            ORIGINAL,
-            ARKIV,
-            FULLVERSJON
-        }
+        enum class VariantFormat { ORIGINAL, ARKIV, FULLVERSJON }
 
-        enum class Filtype {
-            PDFA,
-            JPEG,
-            PNG,
-            JSON
-        }
+        enum class Filtype { PDFA, JPEG, PNG, JSON }
     }
 
     data class Bruker(val id: Fødselsnummer, val idType: String = ID_TYPE)
-    data class AvsenderMottaker private constructor(val id: Fødselsnummer,
-                                                    val navn: String?,
-                                                    val idType: String = ID_TYPE) {
+    data class AvsenderMottaker private constructor(val id: Fødselsnummer, val navn: String?, val idType: String = ID_TYPE) {
         constructor (id: Fødselsnummer, navn: Navn) : this(id, navn.navn)
     }
 

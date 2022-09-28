@@ -66,7 +66,7 @@ class ArkivJournalpostGenerator(
             Journalpost(UTLAND.tittel,
                     AvsenderMottaker(fnr, navn),
                     Bruker(fnr),
-                    dokumenterFra(søknad, pdf.somPdfVariant(this, søknad)))
+                    dokumenterFra(søknad, pdf.pdfVariant(this, søknad)))
                 .also {
                     log.trace("Journalpost med ${it.størrelse()} er $it")
                 }
@@ -85,7 +85,7 @@ class ArkivJournalpostGenerator(
 
     private fun journalpostDokumenterFra(innsendng: Innsending, søker: Søker) =
         with(innsendng.søknad) {
-            dokumenterFra(this, pdf.somPdfVariant(innsendng.kvittering, søker)).apply {
+            dokumenterFra(this, pdf.pdfVariant(innsendng.kvittering, søker)).apply {
                 addAll(dokumenterFra(studier, STUDIER))
                 addAll(dokumenterFra(andreBarn, ANDREBARN))
                 addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER))

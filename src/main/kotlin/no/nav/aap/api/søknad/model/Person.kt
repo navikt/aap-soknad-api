@@ -9,8 +9,7 @@ data class Søker(val navn: Navn,
                  val fnr: Fødselsnummer,
                  val adresse: Adresse? = null,
                  val fødseldato: LocalDate? = null,
-                 val barn: List<Barn?>? = null) {
+                 val barn: List<Barn> = listOf()) {
 
-    data class Barn(val navn: Navn,
-                    val fødseldato: LocalDate? = null)
+    data class Barn(val navn: Navn, val fødseldato: LocalDate? = null)
 }

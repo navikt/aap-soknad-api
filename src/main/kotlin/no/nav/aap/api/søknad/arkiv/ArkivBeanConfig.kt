@@ -42,7 +42,7 @@ class ArkivBeanConfig {
 
     private fun OAuth2AccessTokenService.bearerToken(properties: ClientProperties?, url: URI) =
         properties?.let { p ->
-            log.trace("Gjør token exchange for $url med konfigurasjon fra $p")
+            log.trace(CONFIDENTIAL,"Gjør token exchange for $url med konfigurasjon fra $p")
             getAccessToken(p).accessToken.asBearer().also {
                 log.trace("Token exchange for $url OK")
                 log.trace(CONFIDENTIAL, "Token er $it")

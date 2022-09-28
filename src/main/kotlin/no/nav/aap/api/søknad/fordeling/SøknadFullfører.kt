@@ -61,10 +61,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
             }
         }
 
-    private fun fullførEttersending(fnr: Fødselsnummer,
-                                    søknadId: UUID,
-                                    e: List<EttersendtVedlegg>,
-                                    res: ArkivResultat) =
+    private fun fullførEttersending(fnr: Fødselsnummer, søknadId: UUID, e: List<EttersendtVedlegg>, res: ArkivResultat) =
         repo.getSøknadByEventidAndFnr(søknadId, fnr.fnr)?.let {
             it.registrerEttersending(fnr, res, e)
             it.avsluttMinSideOppgaveHvisKomplett(fnr)
@@ -82,9 +79,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
     private fun Søknad.oppdaterMinSide(fnr: Fødselsnummer, erKomplett: Boolean) =
         minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}", eventid).also {
             if (!erKomplett) {
-                minside.opprettOppgave(fnr,
-                        eventid,
-                        "Vi har mottatt din ${STANDARD.tittel.decap()}. Du må ettersende dokumentasjon")
+                minside.opprettOppgave(fnr, eventid, "Vi har mottatt din ${STANDARD.tittel.decap()}. Du må ettersende dokumentasjon")
             }
         }
 
