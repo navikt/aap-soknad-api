@@ -50,8 +50,8 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
     @ExceptionHandler(DokumentException::class)
     fun dokument(e: DokumentException, req: NativeWebRequest) = create(e, problem(e, UNPROCESSABLE_ENTITY, e.substatus), req)
 
-    @ExceptionHandler(Throwable::class)
-    fun catchAll(e: Throwable, req: NativeWebRequest) = create(e, problem(e, INTERNAL_SERVER_ERROR), req)
+    @ExceptionHandler(Exception::class)
+    fun catchAll(e: Exception, req: NativeWebRequest) = create(e, problem(e, INTERNAL_SERVER_ERROR), req)
 
     fun problem(t: Throwable, status: Status, req: NativeWebRequest) = create(t, problem(t, status), req)
 
