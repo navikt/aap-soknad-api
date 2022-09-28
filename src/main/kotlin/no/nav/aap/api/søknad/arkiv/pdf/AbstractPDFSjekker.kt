@@ -27,13 +27,14 @@ abstract class AbstractPDFSjekker : DokumentSjekker {
                         log.warn(" ${dokument.filnavn} er passord-beskyttet", it)
                         throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet", it)
                     }
-                    else -> {
+                    is Exception -> {
                         if (ExceptionUtils.hasCause(it,InvalidPasswordException::class.java))  {
                             throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet", it)
                         }
-                        log.warn(" ${dokument.filnavn} kaster ${it.javaClass.name}")
+                    }
+                    else -> {
+                        log.warn("${dokument.filnavn} kaster ${it.javaClass.name}",it)
                         throw it
-
                     }
                 }
             }
