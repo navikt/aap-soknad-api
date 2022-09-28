@@ -21,6 +21,7 @@ import org.zalando.problem.Problem
 import org.zalando.problem.Problem.builder
 import org.zalando.problem.Status
 import org.zalando.problem.Status.BAD_REQUEST
+import org.zalando.problem.Status.INTERNAL_SERVER_ERROR
 import org.zalando.problem.Status.NOT_FOUND
 import org.zalando.problem.Status.UNAUTHORIZED
 import org.zalando.problem.Status.UNPROCESSABLE_ENTITY
@@ -48,6 +49,9 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
 
     @ExceptionHandler(DokumentException::class)
     fun dokument(e: DokumentException, req: NativeWebRequest) = create(e, problem(e, UNPROCESSABLE_ENTITY, e.substatus), req)
+
+    @ExceptionHandler(Throwable::class)
+    fun catchAll(e: DokumentException, req: NativeWebRequest) = create(e, problem(e, INTERNAL_SERVER_ERROR), req)
 
     fun problem(t: Throwable, status: Status, req: NativeWebRequest) = create(t, problem(t, status), req)
 
