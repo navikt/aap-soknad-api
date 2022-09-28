@@ -134,27 +134,3 @@ class JTIFilter(private val ctx: AuthContext) : Filter {
         chain.doFilter(request, response)
     }
 }
-
-class HibernateObjectMapperSupplier : ObjectMapperSupplier {
-    override fun get() = ObjectMapperHolder.mapper
-}
-
-@Component
-class ObjectMapperHolder(objectMapper: ObjectMapper) {
-    init {
-        mapper = objectMapper
-    }
-
-    companion object {
-        lateinit var mapper: ObjectMapper
-    }
-}
-
-@Component
-class ObjectMapperDependencyFixer : BeanFactoryPostProcessor {
-    override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory) {
-        beanFactory.getBeanDefinition("entityManagerFactory").apply {
-            setDependsOn(*(dependsOn ?: emptyArray()) + "objectMapperHolder")
-        }
-    }
-}

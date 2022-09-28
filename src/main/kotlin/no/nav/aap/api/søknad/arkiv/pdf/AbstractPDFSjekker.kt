@@ -6,7 +6,6 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
-import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.commons.lang3.exception.ExceptionUtils.*
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
