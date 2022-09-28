@@ -63,8 +63,4 @@ class AAPApiExceptionHandler : ProblemHandling {
         }.also {
             log.trace("Returnerer $status",it)
         }
-
-    override fun log(t: Throwable, problem: Problem, request: NativeWebRequest, status: HttpStatus) {
-        log.warn("OOPS $problem", t)
-    }
 }

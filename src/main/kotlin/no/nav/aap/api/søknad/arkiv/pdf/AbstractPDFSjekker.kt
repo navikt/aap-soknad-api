@@ -18,7 +18,7 @@ abstract class AbstractPDFSjekker : DokumentSjekker {
     override fun sjekk(dokument: DokumentInfo) {
         if (APPLICATION_PDF_VALUE == dokument.contentType) {
             runCatching {
-                log.trace("Sjekker ${dokument.filnavn}")
+                log.trace("${javaClass.simpleName} sjekker ${dokument.filnavn}")
                 doSjekk(dokument)
             }.getOrElse {
                 when (it) {
