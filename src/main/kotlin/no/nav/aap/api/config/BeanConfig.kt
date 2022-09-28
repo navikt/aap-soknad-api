@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
-import com.vladmihalcea.hibernate.type.util.ObjectMapperSupplier
 import io.netty.handler.logging.LogLevel.TRACE
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
@@ -20,19 +19,17 @@ import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.aap.util.StartupInfoContributor
-import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.boot.conditionals.ConditionalOnProd
-import no.nav.boot.conditionals.EnvUtil
+import no.nav.boot.conditionals.EnvUtil.*
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTrace
 import org.springframework.boot.actuate.trace.http.HttpTraceRepository
@@ -45,11 +42,17 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.MethodParameter
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
+import org.springframework.http.MediaType
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
-import org.springframework.stereotype.Component
+import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.http.server.ServerHttpRequest
+import org.springframework.http.server.ServerHttpResponse
+import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
@@ -144,7 +147,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         private  val log = LoggerUtil.getLogger(javaClass)
         override fun add(trace: HttpTrace)  {
             runCatching {
-                log.trace(EnvUtil.CONFIDENTIAL,mapper.writerWithDefaultPrettyPrinter().writeValueAsString(trace))
+                log.trace(CONFIDENTIAL,mapper.writerWithDefaultPrettyPrinter().writeValueAsString(trace))
                 super.add(trace)
             }.getOrNull()
         }
@@ -155,5 +158,21 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
             toMDC(JWT_ID, ctx.getClaim(IDPORTEN, JWT_ID), "Ingen JTI")
             chain.doFilter(request, response)
         }
+    }
+
+    @ControllerAdvice
+    class LoggingResponseBodyAdvice(private val mapper: ObjectMapper) : ResponseBodyAdvice<Any?> {
+
+        private val log = getLogger(javaClass)
+        override fun beforeBodyWrite(body: Any?,
+                                     returnType: MethodParameter,
+                                     selectedContentType: MediaType,
+                                     selectedConverterType: Class<out HttpMessageConverter<*>>,
+                                     request: ServerHttpRequest,
+                                     response: ServerHttpResponse): Any? {
+            log.trace(CONFIDENTIAL,"Response body ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body)}")
+        }
+
+        override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>) = true
     }
 }
