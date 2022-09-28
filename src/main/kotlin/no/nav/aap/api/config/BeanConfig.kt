@@ -13,14 +13,18 @@ import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
+import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
 import no.nav.aap.rest.HeadersToMDCFilter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
+import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.aap.util.StartupInfoContributor
+import no.nav.boot.conditionals.ConditionalOnDevOrLocal
 import no.nav.boot.conditionals.ConditionalOnProd
+import no.nav.boot.conditionals.EnvUtil
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
@@ -28,6 +32,10 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
+import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
+import org.springframework.boot.actuate.trace.http.HttpTrace
+import org.springframework.boot.actuate.trace.http.HttpTraceRepository
+import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
@@ -124,13 +132,27 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
     @ConditionalOnProd()
     @Bean
     fun prodHttpClient() = HttpClient.create()
-}
 
-class JTIFilter(private val ctx: AuthContext) : Filter {
+    @Bean
+    @ConditionalOnDevOrLocal
+    fun actuatorIgnoringTraceRequestFilter(repo: HttpTraceRepository, tracer: HttpExchangeTracer) =
+        ActuatorIgnoringTraceRequestFilter(repo, tracer)
 
-    @Throws(IOException::class, ServletException::class)
-    override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
-        toMDC(JWT_ID, ctx.getClaim(IDPORTEN, JWT_ID), "Ingen JTI")
-        chain.doFilter(request, response)
+    @ConditionalOnDevOrLocal
+    class HttpTraceRepository(private val mapper: ObjectMapper)  : InMemoryHttpTraceRepository() {
+        private  val log = LoggerUtil.getLogger(javaClass)
+        override fun add(trace: HttpTrace)  {
+            runCatching {
+                log.trace(EnvUtil.CONFIDENTIAL,mapper.writerWithDefaultPrettyPrinter().writeValueAsString(trace))
+                super.add(trace)
+            }.getOrNull()
+        }
+    }
+    class JTIFilter(private val ctx: AuthContext) : Filter {
+        @Throws(IOException::class, ServletException::class)
+        override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
+            toMDC(JWT_ID, ctx.getClaim(IDPORTEN, JWT_ID), "Ingen JTI")
+            chain.doFilter(request, response)
+        }
     }
 }
