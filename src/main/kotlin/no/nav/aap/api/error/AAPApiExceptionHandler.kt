@@ -61,7 +61,7 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
                 with("substatus", it).build()
             } ?: build()
         }.also {
-            log.trace("Problem fra ${t.javaClass} ${it.message}. Returnerer $status")
+            log.trace("Returnerer $status",it)
         }
 
     override fun isCausalChainsEnabled() = false //isDevOrLocal(env)

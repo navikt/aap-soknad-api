@@ -69,7 +69,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b ->
-        b.modules(ProblemModule().withStackTraces(),
+        b.modules(ProblemModule().withStackTraces(false),
                 JavaTimeModule(),
                 TokenXJacksonModule(),
                 KotlinModule.Builder().build())
@@ -171,9 +171,8 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                                      selectedConverterType: Class<out HttpMessageConverter<*>>,
                                      request: ServerHttpRequest,
                                      response: ServerHttpResponse): Any? {
-            log.trace("Content type $contentType request ${request.uri}")
             if (contentType in listOf(APPLICATION_JSON, parseMediaType("application/problem+json"))) {
-                log.trace(CONFIDENTIAL,"Response body ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body)}")
+                log.trace(CONFIDENTIAL,"Response body for ${request.uri} er ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body)}")
             }
             return body
         }
