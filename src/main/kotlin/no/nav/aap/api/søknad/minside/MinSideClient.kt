@@ -29,9 +29,7 @@ import java.time.ZoneOffset.UTC
 import java.util.*
 
 @ConditionalOnGCP
-class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
-                    private val cfg: MinSideConfig,
-                    private val repos: MinSideRepositories) {
+class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>, private val cfg: MinSideConfig, private val repos: MinSideRepositories) {
 
     private val log = getLogger(javaClass)
 
@@ -128,10 +126,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 }
         }
 
-    private fun done() =
-        DoneInputBuilder()
-            .withTidspunkt(now(UTC))
-            .build()
+    private fun done() = DoneInputBuilder().withTidspunkt(now(UTC)).build()
 
     private fun key(type: SkjemaType, eventId: UUID, fnr: Fødselsnummer) =
         with(cfg) {
@@ -147,13 +142,9 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         }
 }
 
-data class MinSideNotifikasjonType private constructor(val skjemaType: SkjemaType,
-                                                       private val ctx: MinSideBacklinkContext) {
+data class MinSideNotifikasjonType private constructor(val skjemaType: SkjemaType, private val ctx: MinSideBacklinkContext) {
 
-    private enum class MinSideBacklinkContext {
-        MINAAP,
-        SØKNAD
-    }
+    private enum class MinSideBacklinkContext { MINAAP, SØKNAD }
 
     fun link(cfg: BacklinksConfig, eventId: UUID? = null) =
         when (skjemaType) {
