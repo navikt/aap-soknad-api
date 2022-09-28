@@ -58,7 +58,6 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
     private fun problem(t: Throwable, status: Status, substatus: Substatus? = null) =
         with(builder().withStatus(status).withDetail(t.message).with(NAV_CALL_ID, callId())) {
             substatus?.let {
-                log.trace("Har substatus $it")
                 with("substatus", it).build()
             } ?: build()
         }.also {
