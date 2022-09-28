@@ -171,6 +171,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                                      request: ServerHttpRequest,
                                      response: ServerHttpResponse): Any? {
             log.trace(CONFIDENTIAL,"Response body ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body)}")
+            return body
         }
 
         override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>) = true
