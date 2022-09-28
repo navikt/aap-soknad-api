@@ -12,12 +12,10 @@ import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
 
 @Component
-class PDFA1BSjekker : DokumentSjekker {
-    private val log = getLogger(javaClass)
+class PDFA1BSjekker : AbstractPDFSjekker() {
 
-    override fun sjekk(dokument: DokumentInfo) =
+    override fun doSjekk(dokument: DokumentInfo) =
         with(dokument) {
-            if (APPLICATION_PDF_VALUE == contentType) {
                 PreflightParser(ByteArrayDataSource(ByteArrayInputStream(bytes))).apply {
                     parse(PDF_A1B)
                     preflightDocument.use {
@@ -30,10 +28,6 @@ class PDFA1BSjekker : DokumentSjekker {
                         }
                     }
                 }
-            }
-            else {
-                log.trace("Ingen PDF-A1B validering av $contentType")
-            }
             Unit
         }
 }
