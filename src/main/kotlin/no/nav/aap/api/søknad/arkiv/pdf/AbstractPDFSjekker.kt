@@ -24,7 +24,7 @@ abstract class AbstractPDFSjekker: DokumentSjekker {
                 if (it is InvalidPasswordException) {
                     throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet",it)
                 }
-            }
+            }.getOrThrow()
 
         }
         else {
