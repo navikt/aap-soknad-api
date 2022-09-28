@@ -171,7 +171,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                                      selectedConverterType: Class<out HttpMessageConverter<*>>,
                                      request: ServerHttpRequest,
                                      response: ServerHttpResponse): Any? {
-            log.trace("Content type $contentType")
+            log.trace("Content type $contentType request ${request.uri}")
             if (contentType in listOf(APPLICATION_JSON)) {
                 log.trace(CONFIDENTIAL,"Response body ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body)}")
             }
