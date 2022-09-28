@@ -6,6 +6,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 
@@ -27,8 +28,12 @@ abstract class AbstractPDFSjekker : DokumentSjekker {
                         throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet", it)
                     }
                     else -> {
+                        if (ExceptionUtils.hasCause(it,InvalidPasswordException::class.java))  {
+                            throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet", it)
+                        }
                         log.warn(" ${dokument.filnavn} kaster ${it.javaClass.name}")
                         throw it
+
                     }
                 }
             }
