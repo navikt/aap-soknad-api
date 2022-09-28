@@ -5,7 +5,7 @@ import no.nav.aap.api.søknad.SøknadTest
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
 import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
-import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
+import no.nav.aap.api.søknad.arkiv.pdf.PDFFraBildeFKonverterer
 import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
@@ -63,7 +63,7 @@ class ArkivConverterTest {
 
         val søknad = Innsending(SøknadTest.standardSøknad(), PDFKvittering(listOf(),LocalDateTime.now()))
         val søker = SøknadTest.søker()
-        val c = ArkivJournalpostGenerator(mapper, lager, pdf, BildeTilPDFKonverterer(BildeSkalerer()))
+        val c = ArkivJournalpostGenerator(mapper, lager, pdf, PDFFraBildeFKonverterer(BildeSkalerer()))
         val converted = c.journalpostFra(søknad, søker)
         converted.dokumenter.forEach { doc ->
             doc.dokumentVarianter.forEach {

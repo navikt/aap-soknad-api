@@ -14,14 +14,16 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Component
-class SøknadClient(private val repo: SøknadRepository, private val arkivClient: ArkivOppslagClient, private val ctx: AuthContext) {
+class SøknadClient(private val repo: SøknadRepository,
+                   private val arkivClient: ArkivOppslagClient,
+                   private val ctx: AuthContext) {
 
     fun søknad(søknadId: UUID) = søknad(ctx.getFnr(), søknadId)
 
     fun søknad(fnr: Fødselsnummer, søknadId: UUID) =
         repo.getSøknadByEventidAndFnr(søknadId, fnr.fnr)?.let(::tilSøknad)
 
-    fun søknader(pageable: Pageable) = søknader(ctx.getFnr(),pageable)
+    fun søknader(pageable: Pageable) = søknader(ctx.getFnr(), pageable)
     internal fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
         repo.getSøknadByFnr(fnr.fnr, pageable).map(::tilSøknad)
 

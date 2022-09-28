@@ -1,7 +1,7 @@
 package no.nav.aap.api.arkiv.pdf
 
 import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
-import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
+import no.nav.aap.api.søknad.arkiv.pdf.PDFFraBildeFKonverterer
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import org.apache.tika.Tika
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -14,7 +14,7 @@ import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 
 class ImageByteArray2PDFConverterTest {
 
-    private val converter: BildeTilPDFKonverterer = BildeTilPDFKonverterer(BildeSkalerer())
+    private val converter: PDFFraBildeFKonverterer = PDFFraBildeFKonverterer(BildeSkalerer())
 
     private fun isPdf(bytes: ByteArray) = APPLICATION_PDF_VALUE == TIKA.detect(bytes)
 

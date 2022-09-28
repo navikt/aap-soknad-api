@@ -21,7 +21,12 @@ import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.AFP
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
-import no.nav.aap.api.søknad.model.VedleggType.*
+import no.nav.aap.api.søknad.model.VedleggType.ANDREBARN
+import no.nav.aap.api.søknad.model.VedleggType.ANNET
+import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
+import no.nav.aap.api.søknad.model.VedleggType.OMSORG
+import no.nav.aap.api.søknad.model.VedleggType.STUDIER
+import no.nav.aap.api.søknad.model.VedleggType.SYKESTIPEND
 import no.nav.aap.util.LoggerUtil.getLogger
 import java.io.IOException
 import java.util.*
@@ -29,6 +34,7 @@ import java.util.*
 data class Innsending(
         val søknad: StandardSøknad,
         val kvittering: PDFKvittering)
+
 data class StandardSøknad(
         val studier: Studier,
         val medlemsskap: Medlemskap,
@@ -40,7 +46,10 @@ data class StandardSøknad(
         val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         override val vedlegg: Vedlegg? = null) : VedleggAware {
 
-    enum class Yrkesskade { JA, NEI }
+    enum class Yrkesskade {
+        JA,
+        NEI
+    }
 
     private val log = getLogger(javaClass)
 

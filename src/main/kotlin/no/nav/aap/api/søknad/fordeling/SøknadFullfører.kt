@@ -22,13 +22,16 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Component
-class SøknadFullfører(private val dokumentLager: Dokumentlager, private val minside: MinSideClient, private val repo: SøknadRepository, private val mellomlager: Mellomlager) {
+class SøknadFullfører(private val dokumentLager: Dokumentlager,
+                      private val minside: MinSideClient,
+                      private val repo: SøknadRepository,
+                      private val mellomlager: Mellomlager) {
 
     private val log = getLogger(javaClass)
 
     fun fullfør(fnr: Fødselsnummer, søknad: UtlandSøknad, res: ArkivResultat) =
         minside.opprettBeskjed(fnr, "Vi har mottatt din ${UTLAND.tittel.decap()}").run {
-             Kvittering(res.journalpostId)
+            Kvittering(res.journalpostId)
         }
 
     @Transactional
@@ -58,7 +61,10 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager, private val mi
             }
         }
 
-    private fun fullførEttersending(fnr: Fødselsnummer, søknadId: UUID, e: List<EttersendtVedlegg>, res: ArkivResultat) =
+    private fun fullførEttersending(fnr: Fødselsnummer,
+                                    søknadId: UUID,
+                                    e: List<EttersendtVedlegg>,
+                                    res: ArkivResultat) =
         repo.getSøknadByEventidAndFnr(søknadId, fnr.fnr)?.let {
             it.registrerEttersending(fnr, res, e)
             it.avsluttMinSideOppgaveHvisKomplett(fnr)
@@ -76,7 +82,9 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager, private val mi
     private fun Søknad.oppdaterMinSide(fnr: Fødselsnummer, erKomplett: Boolean) =
         minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}", eventid).also {
             if (!erKomplett) {
-                minside.opprettOppgave(fnr, eventid, "Vi har mottatt din ${STANDARD.tittel.decap()}. Du må ettersende dokumentasjon")
+                minside.opprettOppgave(fnr,
+                        eventid,
+                        "Vi har mottatt din ${STANDARD.tittel.decap()}. Du må ettersende dokumentasjon")
             }
         }
 

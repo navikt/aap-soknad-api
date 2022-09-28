@@ -27,17 +27,20 @@ import java.time.LocalDate
 @Component
 data class WebClients(
         @Qualifier(PDL_USER) val client: WebClient,
-        @Qualifier(PDL_USER)  val user: GraphQLWebClient,
+        @Qualifier(PDL_USER) val user: GraphQLWebClient,
         @Qualifier(PDL_SYSTEM) val system: GraphQLWebClient)
+
 @Component
-class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, private val ctx: AuthContext) : AbstractGraphQLAdapter(clients.client, cfg) {
+class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, private val ctx: AuthContext) :
+    AbstractGraphQLAdapter(clients.client, cfg) {
 
     fun søker(medBarn: Boolean = false) =
         with(ctx.getFnr()) {
             query<PDLWrappedSøker>(clients.user, PERSON_QUERY, fnr)?.active?.let {
-                søkerFra(it,this, medBarn)
+                søkerFra(it, this, medBarn)
             } ?: throw JwtTokenMissingException()
         }
+
     private fun fødselsdatoFra(fødsel: Set<PDLFødsel>?) = fødselsdatoFra(fødsel?.firstOrNull())
 
     private fun fødselsdatoFra(fødsel: PDLFødsel?) = fødsel?.fødselsdato
@@ -77,9 +80,17 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                 .also { log.trace(CONFIDENTIAL, "Navn er $it") }
         }
 
-    private fun myndig(pdlBarn: PDLBarn) = fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
-    private fun beskyttet(pdlBarn: PDLBarn) = pdlBarn.adressebeskyttelse?.any { it !in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND,STRENGT_FORTROLIG) } == true
-    override fun toString() = "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
+    private fun myndig(pdlBarn: PDLBarn) =
+        fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
+
+    private fun beskyttet(pdlBarn: PDLBarn) = pdlBarn.adressebeskyttelse?.any {
+        it !in listOf(FORTROLIG,
+                STRENGT_FORTROLIG_UTLAND,
+                STRENGT_FORTROLIG)
+    } == true
+
+    override fun toString() =
+        "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
 
     companion object {
         private const val PERSON_QUERY = "query-person.graphql"

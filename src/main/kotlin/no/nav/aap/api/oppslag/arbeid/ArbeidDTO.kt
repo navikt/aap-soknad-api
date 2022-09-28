@@ -31,6 +31,6 @@ data class ArbeidsforholdDTO(val ansettelsesperiode: AnsettelsesperiodeDTO,
         })
 }
 
-data class Arbeidsforhold(val navn: String, val avtaler: List<Arbeidsavtale>)  {
+data class Arbeidsforhold(val navn: String, val avtaler: List<Arbeidsavtale>) {
     data class Arbeidsavtale(val stillingsprosent: Double, val antallTimerPrUke: Double, val periode: Periode)
 }

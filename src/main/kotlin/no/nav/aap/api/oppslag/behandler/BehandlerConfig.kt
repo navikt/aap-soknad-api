@@ -24,6 +24,7 @@ class BehandlerConfig(
         const val DEFAULT_PATH = "api/person/v1/behandler/self"
         const val DEFAULT_PING_PATH = "is_alive"
     }
+
     override fun toString() = "$javaClass.simpleName [baseUri=$baseUri,  path=$path, pingEndpoint=$pingEndpoint]"
 
 }

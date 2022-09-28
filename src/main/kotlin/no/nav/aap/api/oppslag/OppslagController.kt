@@ -2,17 +2,16 @@ package no.nav.aap.api.oppslag
 
 import no.nav.aap.api.oppslag.OppslagController.Companion.OPPSLAG_BASE
 import no.nav.aap.api.oppslag.arbeid.ArbeidClient
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.behandler.BehandlerClient
 import no.nav.aap.api.oppslag.konto.KontoClient
 import no.nav.aap.api.oppslag.krr.KRRClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
-import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.model.SøkerInfo
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.security.token.support.spring.ProtectedRestController
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort.Direction.DESC
 import org.springframework.data.web.PageableDefault
@@ -27,23 +26,23 @@ import java.util.*
 
 @ProtectedRestController(value = [OPPSLAG_BASE], issuer = IDPORTEN)
 class OppslagController(
-    val pdl: PDLClient,
-    val behandler: BehandlerClient,
-    val arbeid: ArbeidClient,
-    val krr: KRRClient,
-    val søknad: SøknadClient,
-    val konto: KontoClient,
-    val arkiv: ArkivOppslagClient) {
+        val pdl: PDLClient,
+        val behandler: BehandlerClient,
+        val arbeid: ArbeidClient,
+        val krr: KRRClient,
+        val søknad: SøknadClient,
+        val konto: KontoClient,
+        val arkiv: ArkivOppslagClient) {
 
     val log = getLogger(javaClass)
 
     @GetMapping("/soeker")
     fun søker() = SøkerInfo(
-        pdl.søkerMedBarn(),
-        behandler.behandlerInfo(),
-        arbeid.arbeidInfo(),
-        krr.kontaktInfo(),
-        konto.kontoInfo())
+            pdl.søkerMedBarn(),
+            behandler.behandlerInfo(),
+            arbeid.arbeidInfo(),
+            krr.kontaktInfo(),
+            konto.kontoInfo())
 
     @GetMapping("/dokumenter")
     fun dokumenter() = arkiv.dokumenter()
@@ -56,7 +55,8 @@ class OppslagController(
     fun søknadForUUID(@PathVariable uuid: UUID) = søknad.søknad(uuid)
 
     @GetMapping("/soeknad/journalpost/{journalpostId}")
-    fun søknadForJournalpost(@PathVariable journalpostId: String) = dokument(journalpostId,arkiv.søknadDokumentId(journalpostId))
+    fun søknadForJournalpost(@PathVariable journalpostId: String) =
+        dokument(journalpostId, arkiv.søknadDokumentId(journalpostId))
 
     @GetMapping(DOKUMENT)
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentId: String) =

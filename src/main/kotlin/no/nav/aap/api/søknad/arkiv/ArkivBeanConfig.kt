@@ -5,7 +5,7 @@ import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.util.Constants.JOARK
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.asBearer
-import no.nav.boot.conditionals.EnvUtil.*
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
@@ -16,7 +16,6 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
-import java.lang.IllegalArgumentException
 import java.net.URI
 
 @Configuration
@@ -26,7 +25,9 @@ class ArkivBeanConfig {
 
     @Qualifier(JOARK)
     @Bean
-    fun webClientArkiv(builder: WebClient.Builder, cfg: ArkivConfig, @Qualifier(JOARK) clientCredentialFilterFunction: ExchangeFilterFunction) =
+    fun webClientArkiv(builder: WebClient.Builder,
+                       cfg: ArkivConfig,
+                       @Qualifier(JOARK) clientCredentialFilterFunction: ExchangeFilterFunction) =
         builder
             .baseUrl("${cfg.baseUri}")
             .filter(clientCredentialFilterFunction)
@@ -36,18 +37,19 @@ class ArkivBeanConfig {
     @Qualifier(JOARK)
     fun clientCredentialFilterFunction(cfgs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
         ExchangeFilterFunction { req, next ->
-            next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.bearerToken(cfgs.registration[CLIENT_CREDENTIALS_ARKIV],req.url())).build())
+            next.exchange(ClientRequest.from(req)
+                .header(AUTHORIZATION, service.bearerToken(cfgs.registration[CLIENT_CREDENTIALS_ARKIV], req.url()))
+                .build())
         }
 
     private fun OAuth2AccessTokenService.bearerToken(properties: ClientProperties?, url: URI) =
-        properties?.let {p ->
+        properties?.let { p ->
             log.trace("Gjør token exchange for $url med konfigurasjon fra $p")
             getAccessToken(p).accessToken.asBearer().also {
                 log.trace("Token exchange for $url OK")
-                log.trace(CONFIDENTIAL,"Token er $it")
+                log.trace(CONFIDENTIAL, "Token er $it")
             }
         } ?: throw IllegalArgumentException("Ingen konfigurasjon for $url")
-
 
     @Bean
     fun arkivHealthIndicator(adapter: ArkivWebClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {}

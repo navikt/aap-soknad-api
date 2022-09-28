@@ -1,8 +1,8 @@
 package no.nav.aap.api.søknad.fordeling
 
+import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardEttersending
-import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean

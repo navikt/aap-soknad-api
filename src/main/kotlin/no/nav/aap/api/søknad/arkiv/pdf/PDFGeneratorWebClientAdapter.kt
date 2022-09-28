@@ -7,8 +7,8 @@ import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.arkiv.pdf.PDFGeneratorConfig.Companion.PDF
-import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.PDFKvittering
+import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
@@ -24,7 +24,6 @@ import java.time.LocalDate.now
 class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
                                    private val cf: PDFGeneratorConfig,
                                    private val mapper: ObjectMapper) : AbstractWebClientAdapter(client, cf) {
-    fun generate(søker: Søker, kvittering: PDFKvittering) = generate(cf.standardPath, StandardData(søker, kvittering))
     fun generate(søker: Søker, søknad: UtlandSøknad) = generate(cf.utlandPath, UtlandData(søker, søknad))
     private fun generate(path: String, data: Any) =
         webClient.post()
@@ -37,7 +36,8 @@ class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
                 log.warn("PDF-generering mot $path feiler", t)
             }
             .doOnSuccess {
-                log.trace(CONFIDENTIAL,"Sendte json ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data)}")
+                log.trace(CONFIDENTIAL,
+                        "Sendte json ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data)}")
                 log.info("PDF-generering OK")
             }
             .block() ?: throw IntegrationException("O bytes i retur fra pdfgen, pussig")

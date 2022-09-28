@@ -7,7 +7,6 @@ import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Compani
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FEILET
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
-import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
@@ -49,6 +48,7 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
                     setRecordFilterStrategy(::recordFilterStrategy)
                 })
         }
+
     private fun recordFilterStrategy(payload: ConsumerRecord<String, DoknotifikasjonStatus>) =
         with(payload.value()) {
             when (bestillerId) {
@@ -60,12 +60,14 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
                             true.also {
                                 log.warn("Ekstern notifikasjon feilet for bestillingid $bestillingsId, ($melding)")
                             }
+
                         else ->
                             true.also {
                                 log.trace("Ekstern notifikasjon status $status filtrert vekk for bestillingid $bestillingsId")
                             }
                     }
                 }
+
                 else -> true
             }
         }

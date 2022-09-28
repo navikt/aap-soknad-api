@@ -1,24 +1,21 @@
 package no.nav.aap.api.oppslag.arkiv
 
-import no.nav.aap.api.oppslag.arbeid.ArbeidConfig.Companion.PINGPATH
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentVariantFormat.ARKIV
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.WebClient.*
 import org.springframework.web.util.UriBuilder
 import java.net.URI
 
 @ConfigurationProperties(SAF)
 @ConstructorBinding
 class ArkivOppslagConfig(
-    baseUri: URI,
-    @DefaultValue(PINGPATH) pingPath: String,
-    @DefaultValue(DOKPATH) private val dokPath: String,
-    @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, SAF, enabled) {
+        baseUri: URI,
+        @DefaultValue(PINGPATH) pingPath: String,
+        @DefaultValue(DOKPATH) private val dokPath: String,
+        @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, SAF, enabled) {
 
     fun dokUri(b: UriBuilder, journalpostId: String, dokumentInfoId: String, variant: String = ARKIV.name) =
         b.path(dokPath).build(journalpostId, dokumentInfoId, variant)

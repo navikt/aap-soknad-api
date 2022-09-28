@@ -30,9 +30,12 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, val cf: Arki
             .block() ?: throw IntegrationException("Null respons fra arkiv")
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    data class ArkivResponse(val journalpostId: String, val journalpostferdigstilt: Boolean, val dokumenter: List<DokumentId>) {
+    data class ArkivResponse(val journalpostId: String,
+                             val journalpostferdigstilt: Boolean,
+                             val dokumenter: List<DokumentId>) {
 
         val dokIder = dokumenter.map { it.dokumentInfoId }
-         data class DokumentId(val dokumentInfoId: String)
+
+        data class DokumentId(val dokumentInfoId: String)
     }
 }

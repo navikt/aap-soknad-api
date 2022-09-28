@@ -20,13 +20,14 @@ import org.springframework.web.reactive.function.client.ExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
-
 @Configuration
 class PDLClientBeanConfig {
 
     @Bean
     @Qualifier(PDL_SYSTEM)
-    fun pdlSystemWebClient(b: Builder, cfg: PDLConfig, @Qualifier(PDL_SYSTEM) pdlClientCredentialFilterFunction: ExchangeFilterFunction) =
+    fun pdlSystemWebClient(b: Builder,
+                           cfg: PDLConfig,
+                           @Qualifier(PDL_SYSTEM) pdlClientCredentialFilterFunction: ExchangeFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
             .filter(pdlClientCredentialFilterFunction)
@@ -44,7 +45,8 @@ class PDLClientBeanConfig {
 
     @Qualifier(PDL_SYSTEM)
     @Bean
-    fun graphQLSystemWebClient(@Qualifier(PDL_SYSTEM) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
+    fun graphQLSystemWebClient(@Qualifier(PDL_SYSTEM) client: WebClient, mapper: ObjectMapper) =
+        GraphQLWebClient.newInstance(client, mapper)
 
     @Qualifier(PDL_USER)
     @Bean
@@ -56,7 +58,8 @@ class PDLClientBeanConfig {
 
     @Qualifier(PDL_USER)
     @Bean
-    fun graphQLUserWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
+    fun graphQLUserWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper) =
+        GraphQLWebClient.newInstance(client, mapper)
 
     @Bean
     fun pdlHealthIndicator(a: PDLWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}

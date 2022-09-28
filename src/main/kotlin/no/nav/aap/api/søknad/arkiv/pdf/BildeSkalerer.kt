@@ -34,14 +34,13 @@ class BildeSkalerer {
                     bytes(skalerNed(this, newDim), format)
                 }
             }
-        }.getOrElse {throw DokumentException("Konvertering av vedlegg feilet",  it) }
-
+        }.getOrElse { throw DokumentException("Konvertering av vedlegg feilet", it) }
 
     private fun tilPortrett(image: BufferedImage): BufferedImage {
         if (image.height >= image.width) {
             return image
         }
-        if (TYPE_CUSTOM == image.type ) {
+        if (TYPE_CUSTOM == image.type) {
             log.warn("Kan ikke rotere bilde med ukjent type")
             return image
         }

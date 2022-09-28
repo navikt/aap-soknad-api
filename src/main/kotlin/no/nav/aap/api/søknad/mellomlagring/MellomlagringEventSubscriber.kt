@@ -41,7 +41,8 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                 event.ack()
                 with(event.pubsubMessage) {
                     val type = eventType()
-                    log.trace(CONFIDENTIAL, "Data i $type event er ${data.toStringUtf8()}, attributter er $attributesMap")
+                    log.trace(CONFIDENTIAL,
+                            "Data i $type event er ${data.toStringUtf8()}, attributter er $attributesMap")
                     when (type) {
                         OBJECT_FINALIZE -> opprettet(metadata())
                         OBJECT_DELETE -> slettet(metadata())
@@ -55,7 +56,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
         metadata?.let {
             with(it) {
                 log.trace(CONFIDENTIAL, "Oppretter beskjed fra metadata $it")
-                dittNav.opprettBeskjed(fnr, "Du har en påbegynt ${type.tittel}", eventId, SØKNADSTD,false)
+                dittNav.opprettBeskjed(fnr, "Du har en påbegynt ${type.tittel}", eventId, SØKNADSTD, false)
             }
         } ?: log.warn("Fant ikke forventede metadata")
 

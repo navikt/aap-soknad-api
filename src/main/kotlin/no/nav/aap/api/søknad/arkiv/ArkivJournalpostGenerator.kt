@@ -4,15 +4,24 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.felles.SkjemaType.UTLAND
-import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
+import no.nav.aap.api.søknad.arkiv.Journalpost.AvsenderMottaker
+import no.nav.aap.api.søknad.arkiv.Journalpost.Bruker
+import no.nav.aap.api.søknad.arkiv.Journalpost.Dokument
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.JSON
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ORIGINAL
+import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
+import no.nav.aap.api.søknad.arkiv.pdf.PDFFraBildeFKonverterer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
+import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.api.søknad.model.VedleggAware
@@ -22,15 +31,6 @@ import no.nav.aap.api.søknad.model.VedleggType.ANNET
 import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
 import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
-import no.nav.aap.api.søknad.arkiv.Journalpost.AvsenderMottaker
-import no.nav.aap.api.søknad.arkiv.Journalpost.Bruker
-import no.nav.aap.api.søknad.arkiv.Journalpost.Dokument
-import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant
-import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.JSON
-import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ORIGINAL
-import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
-import no.nav.aap.api.søknad.model.Innsending
-import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
 import no.nav.aap.api.søknad.model.VedleggType.SYKESTIPEND
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.encode
@@ -46,51 +46,51 @@ class ArkivJournalpostGenerator(
         private val mapper: ObjectMapper,
         private val lager: Dokumentlager,
         private val pdf: PDFClient,
-        private val konverterer: BildeTilPDFKonverterer) {
+        private val konverterer: PDFFraBildeFKonverterer) {
 
     private val log = getLogger(javaClass)
 
-    fun journalpostFra(es: StandardEttersending, søker: Søker): Journalpost =
+    fun journalpostFra(es: StandardEttersending, søker: Søker) =
         with(søker) {
             Journalpost(STANDARD_ETTERSENDING.tittel,
-                AvsenderMottaker(fnr, navn),
-                Bruker(fnr),
-                dokumenterFra(es.ettersendteVedlegg))
-            .also {
-                log.trace("Journalpost med ${it.størrelse()} er $it")
-            }
+                    AvsenderMottaker(fnr, navn),
+                    Bruker(fnr),
+                    dokumenterFra(es.ettersendteVedlegg))
+                .also {
+                    log.trace("Journalpost med ${it.størrelse()} er $it")
+                }
         }
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker) =
         with(søker) {
             Journalpost(UTLAND.tittel,
-                AvsenderMottaker(fnr, navn),
-                Bruker(fnr),
-                dokumenterFra(søknad,  pdf.somPdfVariant(this,søknad)))
-            .also {
-                log.trace("Journalpost med ${it.størrelse()} er $it")
-            }
+                    AvsenderMottaker(fnr, navn),
+                    Bruker(fnr),
+                    dokumenterFra(søknad, pdf.somPdfVariant(this, søknad)))
+                .also {
+                    log.trace("Journalpost med ${it.størrelse()} er $it")
+                }
         }
 
-    fun journalpostFra(søknad: Innsending, søker: Søker) =
+    fun journalpostFra(innsendng: Innsending, søker: Søker) =
         with(søker) {
             Journalpost(STANDARD.tittel,
-                AvsenderMottaker(fnr,navn),
-                Bruker(fnr),
-                journalpostDokumenterFra(søknad.søknad, pdf.somPdfVariant(this,søknad.kvittering)))
-            .also {
-                log.trace("Journalpost med ${it.størrelse()} er $it")
-            }
+                    AvsenderMottaker(fnr, navn),
+                    Bruker(fnr),
+                    journalpostDokumenterFra(innsendng, this))
+                .also {
+                    log.trace("Journalpost med ${it.størrelse()} er $it")
+                }
         }
 
-
-    private fun journalpostDokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
-        with(søknad) {
-            dokumenterFra(this, pdfVariant).apply {
+    private fun journalpostDokumenterFra(innsendng: Innsending, søker: Søker) =
+        with(innsendng.søknad) {
+            dokumenterFra(this, pdf.somPdfVariant(innsendng.kvittering, søker)).apply {
                 addAll(dokumenterFra(studier, STUDIER))
                 addAll(dokumenterFra(andreBarn, ANDREBARN))
                 addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER))
-                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == AnnenStønadstype.UTLAND }, VedleggType.UTLAND))
+                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == AnnenStønadstype.UTLAND },
+                        VedleggType.UTLAND))
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD }, OMSORG))
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == STIPEND }, SYKESTIPEND))
                 addAll(dokumenterFra(this@with, ANNET))
@@ -98,6 +98,7 @@ class ArkivJournalpostGenerator(
                 log.trace("Sender ${it.størrelse("dokument")} til arkiv $it")
             }
         }
+
     private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>) =
         vedlegg.flatMap { e ->
             require(vedlegg.isNotEmpty()) { "Forventet > 0 vedlegg" }
@@ -163,6 +164,5 @@ class ArkivJournalpostGenerator(
     private fun DokumentInfo.somDokument(tittel: String) = bytes.somDokument(tittel)
     fun StandardSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
     fun UtlandSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
-
 
 }

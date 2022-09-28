@@ -28,6 +28,7 @@ class OrganisasjonConfig(baseUri: URI,
                 .build(TESTORG)
                 .toString()
     }
+
     override fun toString() =
         "${javaClass.simpleName} [organisasjonPath=" + organisasjonPath + ", pingEndpoint=" + pingEndpoint + "]"
 }

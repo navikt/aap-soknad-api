@@ -14,7 +14,7 @@ import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerType.FASTLE
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.KontaktInformasjon
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
-import no.nav.aap.api.søknad.arkiv.pdf.BildeTilPDFKonverterer
+import no.nav.aap.api.søknad.arkiv.pdf.PDFFraBildeFKonverterer
 import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.InMemoryDokumentlager
@@ -22,7 +22,6 @@ import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
 import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Medlemskap
 import no.nav.aap.api.søknad.model.RadioValg
-import no.nav.aap.api.søknad.model.RadioValg.JA
 import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.StandardSøknad.Yrkesskade
@@ -37,7 +36,6 @@ import no.nav.aap.api.søknad.model.Utbetalinger.FraArbeidsgiver
 import no.nav.aap.api.søknad.model.Utenlandsopphold
 import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.util.AuthContext
-import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -143,7 +141,7 @@ class SøknadTest {
     fun parse() {
         val es = mapper.readValue(ettersending, StandardEttersending::class.java)
         val journalpost = ArkivJournalpostGenerator(mapper,
-                InMemoryDokumentlager(),pdf, BildeTilPDFKonverterer(BildeSkalerer())).journalpostFra(es, søker())
+                InMemoryDokumentlager(),pdf, PDFFraBildeFKonverterer(BildeSkalerer())).journalpostFra(es, søker())
         assertEquals(1, journalpost.dokumenter.size)
     }
 

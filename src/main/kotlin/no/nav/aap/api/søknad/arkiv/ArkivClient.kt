@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component
 class ArkivClient(private val adapter: ArkivWebClientAdapter) {
     private val log = getLogger(javaClass)
 
-    fun journalfør(journalpost: Journalpost) =
-        with(adapter.opprettJournalpost(journalpost))  {
-            ArkivResultat(journalpostId,dokIder)
+    fun arkiver(journalpost: Journalpost) =
+        with(adapter.opprettJournalpost(journalpost)) {
+            ArkivResultat(journalpostId, dokIder)
         }.also {
             log.trace("Fordeling av journalpost $journalpost til arkiv OK med id ${it.journalpostId}")
         }

@@ -44,7 +44,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             var innsendtevedlegg: MutableSet<InnsendteVedlegg> = mutableSetOf()) : BaseEntity(fnr, eventid) {
         fun registrerVedlagte(vedlagte: List<VedleggType>) {
             vedlagte.forEach {
-                with(InnsendteVedlegg( this, eventid, it)) {
+                with(InnsendteVedlegg(this, eventid, it)) {
                     innsendtevedlegg.add(this)
                     soknad = this@Søknad
                 }
@@ -53,7 +53,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
 
         fun registrerManglende(manglende: List<VedleggType>) =
             manglende.forEach {
-                with(ManglendeVedlegg( this, eventid,it)) {
+                with(ManglendeVedlegg(this, eventid, it)) {
                     manglendevedlegg.add(this)
                     soknad = this@Søknad
                 }
@@ -66,7 +66,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             }
 
         private fun registrerSomEttersendt(m: ManglendeVedlegg) =
-            with(InnsendteVedlegg(this, eventid,m.vedleggtype)) {
+            with(InnsendteVedlegg(this, eventid, m.vedleggtype)) {
                 innsendtevedlegg.add(this)
                 soknad = this@Søknad
             }

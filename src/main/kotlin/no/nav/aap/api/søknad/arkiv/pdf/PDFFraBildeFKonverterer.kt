@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 import java.io.ByteArrayOutputStream
 
 @Component
-class BildeTilPDFKonverterer(private val scaler: BildeSkalerer) {
+class PDFFraBildeFKonverterer(private val scaler: BildeSkalerer) {
 
     private val log = getLogger(javaClass)
     fun tilPdf(bildeType: String, images: List<ByteArray>) = slåSammen(bildeType, *images.toTypedArray())
@@ -33,7 +33,10 @@ class BildeTilPDFKonverterer(private val scaler: BildeSkalerer) {
                     os.toByteArray()
                 }
             }
-        }.getOrElse {throw DokumentException("Konvertering av ${bilder.størrelse("bildefil")} av type $bildeType feilet", it) }
+        }.getOrElse {
+            throw DokumentException("Konvertering av ${bilder.størrelse("bildefil")} av type $bildeType feilet",
+                    it)
+        }
 
     private fun pdfFraBilde(doc: PDDocument, bilde: ByteArray, fmt: String) =
         PDPage(A4).apply {
@@ -44,5 +47,6 @@ class BildeTilPDFKonverterer(private val scaler: BildeSkalerer) {
                             A4.lowerLeftX,
                             A4.lowerLeftY)
                 }
-            }.getOrElse { throw DokumentException("Konvertering av bilde feilet", it)} }
+            }.getOrElse { throw DokumentException("Konvertering av bilde feilet", it) }
         }
+}

@@ -9,7 +9,7 @@ import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 
-abstract class AbstractPDFSjekker: DokumentSjekker {
+abstract class AbstractPDFSjekker : DokumentSjekker {
     protected val log = getLogger(javaClass)
 
     abstract fun doSjekk(dokument: DokumentInfo)
@@ -19,10 +19,12 @@ abstract class AbstractPDFSjekker: DokumentSjekker {
             runCatching {
                 log.trace("Sjekker ${dokument.filnavn}")
                 doSjekk(dokument)
-              }.getOrElse {
-                log.warn("Feil ved sjekking av ${dokument.filnavn}",it)
-                when(it) {
-                    is InvalidPasswordException -> throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet",it)
+            }.getOrElse {
+                log.warn("Feil ved sjekking av ${dokument.filnavn}", it)
+                when (it) {
+                    is InvalidPasswordException -> throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet",
+                            it)
+
                     else -> throw it
                 }
             }
@@ -32,5 +34,6 @@ abstract class AbstractPDFSjekker: DokumentSjekker {
             log.trace(CONFIDENTIAL, "Sjekker ikke ${dokument.contentType}")
         }
     }
+
     class PassordBeskyttetException(msg: String, cause: Exception) : DokumentException(msg, cause, PASSWORD_PROTECTED)
 }

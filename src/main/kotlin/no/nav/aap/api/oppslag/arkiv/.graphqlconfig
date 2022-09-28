@@ -1,15 +1,15 @@
 {
-  "name": "SAF",
-  "schemaPath": "saf.graphql",
-  "extensions": {
-    "endpoints": {
-      "SAF GraphQL Endpoint": {
-        "url": "https://safselvbetjening-q1.dev.intern.nav.no/graphql",
-        "headers": {
-          "user-agent": "JS GraphQL"
-        },
-        "introspect": false
-      }
+    "name": "SAF",
+    "schemaPath": "saf.graphql",
+    "extensions": {
+        "endpoints": {
+            "SAF GraphQL Endpoint": {
+                "url": "https://safselvbetjening-q1.dev.intern.nav.no/graphql",
+                "headers": {
+                    "user-agent": "JS GraphQL"
+                },
+                "introspect": false
+            }
+        }
     }
-  }
 }

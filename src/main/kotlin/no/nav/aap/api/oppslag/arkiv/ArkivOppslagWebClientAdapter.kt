@@ -6,7 +6,7 @@ import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.DOKUMENTER_QUER
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentFiltype.PDF
-import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentVariantFormat.*
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentVariantFormat.ARKIV
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagJournalpostType
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagJournalpostType.I
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagJournalpostType.U
@@ -44,20 +44,21 @@ class ArkivOppslagWebClientAdapter(
         ?.flatMap { mapper.tilDokumenter(it) }
         .orEmpty()
 
-    fun søknadDokumentId(journalPostId: String) =query()
+    fun søknadDokumentId(journalPostId: String) = query()
         ?.firstOrNull { it.journalpostId == journalPostId }
         ?.dokumenter?.firstOrNull()?.dokumentInfoId   // Søknaden er alltid  første elementet
 
-    private fun query() = query<ArkivOppslagJournalposter>(graphQL,DOKUMENTER_QUERY, ctx.getFnr().fnr)
+    private fun query() = query<ArkivOppslagJournalposter>(graphQL, DOKUMENTER_QUERY, ctx.getFnr().fnr)
         ?.journalposter
 }
+
 @Component
 class ArkivOppslagMapper {
     fun tilDokumenter(journalpost: ArkivOppslagJournalpost) =
         with(journalpost) {
             dokumenter.filter { v ->
                 v.dokumentvarianter.any {
-                    with(it){
+                    with(it) {
                         filtype == PDF && brukerHarTilgang && ARKIV == variantformat
                     }
                 }

@@ -1,10 +1,8 @@
 package no.nav.aap.api.oppslag.arkiv
 
-import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.størrelse
 import org.springframework.stereotype.Component
-import java.lang.IllegalStateException
 import java.util.*
 
 @Component
@@ -16,11 +14,14 @@ class ArkivOppslagClient(private val adapter: ArkivOppslagWebClientAdapter) {
 
     fun dokumenter() = adapter.dokumenter()
 
-    fun søknadDokumentId(journalpostId: String) = adapter.søknadDokumentId(journalpostId) ?: throw IllegalStateException("Fant ikke  søknadens dokumentId for $journalpostId")
+    fun søknadDokumentId(journalpostId: String) = adapter.søknadDokumentId(journalpostId)
+        ?: throw IllegalStateException("Fant ikke  søknadens dokumentId for $journalpostId")
+
     fun innsendteDokumenter(innsendingIds: List<UUID>) = dokumenter()
         .filter {
-            it.innsendingId in innsendingIds }
+            it.innsendingId in innsendingIds
+        }
         .also {
             log.trace("Slo opp ${it.størrelse("dokument")} fra $innsendingIds ($it)")
-    }
+        }
 }
