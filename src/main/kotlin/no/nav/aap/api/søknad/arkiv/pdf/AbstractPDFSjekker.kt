@@ -7,6 +7,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils.*
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 
@@ -21,20 +22,17 @@ abstract class AbstractPDFSjekker : DokumentSjekker {
                 log.trace("Sjekker ${dokument.filnavn}")
                 doSjekk(dokument)
             }.getOrElse {
-                log.warn(" ${dokument.filnavn} feilet sjekk", it)
                 when (it) {
                     is InvalidPasswordException ->  {
-                        log.warn(" ${dokument.filnavn} er passord-beskyttet", it)
                         throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet", it)
                     }
                     is Exception -> {
-                        if (ExceptionUtils.hasCause(it,InvalidPasswordException::class.java))  {
+                        if (hasCause(it,InvalidPasswordException::class.java))  {
                             throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet", it)
                         }
                     }
                     else -> {
-                        log.warn("${dokument.filnavn} kaster ${it.javaClass.name}",it)
-                        throw it
+                        throw DokumentException("Uventet feil ved sjekk av ${dokument.filnavn}",it)
                     }
                 }
             }
