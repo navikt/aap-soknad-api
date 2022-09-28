@@ -23,6 +23,7 @@ import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.aap.util.StartupInfoContributor
 import no.nav.boot.conditionals.ConditionalOnDevOrLocal
+import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.boot.conditionals.ConditionalOnProd
 import no.nav.boot.conditionals.EnvUtil
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
@@ -134,11 +135,11 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
     fun prodHttpClient() = HttpClient.create()
 
     @Bean
-    @ConditionalOnDevOrLocal
+    @ConditionalOnNotProd
     fun actuatorIgnoringTraceRequestFilter(repo: HttpTraceRepository, tracer: HttpExchangeTracer) =
         ActuatorIgnoringTraceRequestFilter(repo, tracer)
 
-    @ConditionalOnDevOrLocal
+    @ConditionalOnNotProd
     class HttpTraceRepository(private val mapper: ObjectMapper)  : InMemoryHttpTraceRepository() {
         private  val log = LoggerUtil.getLogger(javaClass)
         override fun add(trace: HttpTrace)  {
