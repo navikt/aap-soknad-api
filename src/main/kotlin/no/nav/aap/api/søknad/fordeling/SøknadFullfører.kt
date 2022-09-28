@@ -5,12 +5,12 @@ import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.felles.SkjemaType.UTLAND
 import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
+import no.nav.aap.api.søknad.fordeling.SøknadFordeler.Kvittering
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Companion.SISTE_SØKNAD
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
-import no.nav.aap.api.søknad.model.Kvittering
 import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.StandardSøknad
