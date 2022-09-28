@@ -46,13 +46,15 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
     @ExceptionHandler(NotFound::class)
     fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = problem(e, NOT_FOUND, req)
 
-    fun dokument(e: DokumentException, status: Status, req: NativeWebRequest) = create(e, problem(e, status, e.substatus), req)
+    fun dokument(t: DokumentException, status: Status, req: NativeWebRequest) = create(t, problem(t, status, t.substatus), req)
 
-    fun problem(t: Throwable, status: Status, req: NativeWebRequest) = create(t, problem(t, status, null), req)
+    fun problem(t: Throwable, status: Status, req: NativeWebRequest) = create(t, problem(t, status), req)
 
     private fun problem(t: Throwable, status: Status, substatus: Substatus? = null) =
         with(builder().withStatus(status).withDetail(t.message).with(NAV_CALL_ID, callId())) {
-            substatus?.let { with("substatus", it).build() } ?: build()
+            substatus?.let {
+                log.trace("Har substatus $it")
+                with("substatus", it).build() } ?: build()
         }.also {
             log.trace("Problem fra ${t.javaClass} ${t.message} ${it.message}, returnerer $status")
         }
