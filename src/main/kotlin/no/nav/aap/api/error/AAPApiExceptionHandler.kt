@@ -29,7 +29,7 @@ import org.zalando.problem.Status.UNSUPPORTED_MEDIA_TYPE
 import org.zalando.problem.spring.web.advice.ProblemHandling
 
 @ControllerAdvice
-class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
+class AAPApiExceptionHandler : ProblemHandling {
     private val log = getLogger(javaClass)
 
     @ExceptionHandler(JwtTokenMissingException::class, JwtTokenUnauthorizedException::class)
@@ -64,7 +64,6 @@ class AAPApiExceptionHandler(private val env: Environment) : ProblemHandling {
             log.trace("Returnerer $status",it)
         }
 
-    override fun isCausalChainsEnabled() = false //isDevOrLocal(env)
     override fun log(t: Throwable, problem: Problem, request: NativeWebRequest, status: HttpStatus) {
         log.warn("OOPS $problem", t)
     }
