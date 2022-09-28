@@ -40,8 +40,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                        type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
             if (enabled) {
-                log.trace(CONFIDENTIAL,
-                        "Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
+                log.trace(CONFIDENTIAL, "Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic,
                         key(type.skjemaType, eventId, fnr),
                         beskjed(tekst, type, eksternVarsling)))

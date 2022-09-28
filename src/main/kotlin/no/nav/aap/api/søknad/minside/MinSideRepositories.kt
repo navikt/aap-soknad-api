@@ -40,30 +40,18 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
     }
 
     @MappedSuperclass
-    abstract class BaseEntity(val fnr: String,
-                              val eventid: UUID,
-                              @LastModifiedDate var updated: LocalDateTime? = null) :
-        IdentifiableTimestampedBaseEntity() {
-        override fun toString() =
-            "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, id=$id)]"
+    abstract class BaseEntity(val fnr: String, val eventid: UUID, @LastModifiedDate var updated: LocalDateTime? = null) : IdentifiableTimestampedBaseEntity() {
+        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, id=$id)]"
     }
 
     @MappedSuperclass
-    abstract class EksternNotifikasjonBaseEntity(
-            val eventid: UUID,
-            val distribusjonid: Long,
-            val distribusjonkanal: String) : IdentifiableTimestampedBaseEntity() {
-        override fun toString() =
-            "${javaClass.simpleName} [(distribusjonid=$distribusjonid,created=$created,distribusjonkanal=$distribusjonkanal,id=$id]"
+    abstract class EksternNotifikasjonBaseEntity(val eventid: UUID, val distribusjonid: Long, val distribusjonkanal: String) : IdentifiableTimestampedBaseEntity() {
+        override fun toString() = "${javaClass.simpleName} [(distribusjonid=$distribusjonid,created=$created,distribusjonkanal=$distribusjonkanal,id=$id]"
     }
 
     @MappedSuperclass
     @EntityListeners(LoggingEntityListener::class, AuditingEntityListener::class)
-    abstract class IdentifiableTimestampedBaseEntity(
-            @CreatedDate
-            var created: LocalDateTime? = null,
-            @Id @GeneratedValue(strategy = IDENTITY)
-            val id: Long = 0)
+    abstract class IdentifiableTimestampedBaseEntity(@CreatedDate var created: LocalDateTime? = null, @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0)
 
 }
 
@@ -102,6 +90,4 @@ class LoggingEntityListener {
 }
 
 @Component
-data class MinSideRepositories(val beskjeder: MinSideBeskjedRepository,
-                               val oppgaver: MinSideOppgaveRepository,
-                               var søknader: SøknadRepository)
+data class MinSideRepositories(val beskjeder: MinSideBeskjedRepository, val oppgaver: MinSideOppgaveRepository, var søknader: SøknadRepository)
