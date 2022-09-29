@@ -39,10 +39,10 @@ jobs:
                 run: echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
 
             -   name: Setter image-navn
-                id: step1
                 run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
 
             -   name: Kompilerer og bygger image
+                id: step1
                 run: |
                     echo "::set-output name=image::${{ env.IMAGE }}"                    
                     ./mvnw --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
