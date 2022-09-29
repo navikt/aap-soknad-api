@@ -13,8 +13,6 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
-import org.apache.commons.text.StringEscapeUtils
-import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import java.nio.charset.StandardCharsets.UTF_8
 
@@ -44,8 +42,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
             with(navn(fnr, type)) {
                 lager.get(navn, this)?.let { blob ->
                     String(blob.getContent()).also {
-                        log.trace(CONFIDENTIAL,
-                                "Lest mellomlagret verdi ${unescapeJson(it).jsonPrettify(mapper)} fra $this og bøtte $navn")
+                        log.trace(CONFIDENTIAL, "Lest mellomlagret verdi ${it.jsonPrettify(mapper)} fra $this og bøtte $navn")
                     }
                 }
             }

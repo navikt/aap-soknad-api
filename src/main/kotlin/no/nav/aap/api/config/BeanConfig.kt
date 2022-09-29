@@ -29,10 +29,11 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import org.apache.commons.text.StringEscapeUtils
+import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTrace
-import org.springframework.boot.actuate.trace.http.HttpTraceRepository
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
@@ -172,7 +173,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                                      request: ServerHttpRequest,
                                      response: ServerHttpResponse): Any? {
             if (contentType in listOf(APPLICATION_JSON, parseMediaType("application/problem+json"))) {
-                log.trace(CONFIDENTIAL,"$selectedConverterType Response body for ${request.uri} er ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body)}")
+                log.trace(CONFIDENTIAL, "Response body for ${request.uri} er ${unescapeJson(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body))}")
             }
             return body
         }
