@@ -65,4 +65,4 @@ jobs:
         steps:
             - run:  echo "IMAGE=$(echo $IMG)" >> $GITHUB_ENV
             - name: Next
-              run: echo ${{IMAGE}}
+              run: echo $IMAGE
