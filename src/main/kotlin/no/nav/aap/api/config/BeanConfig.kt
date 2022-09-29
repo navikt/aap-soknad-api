@@ -22,6 +22,7 @@ import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.aap.util.StartupInfoContributor
+import no.nav.aap.util.StringExtensions.jsonPrettify
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.boot.conditionals.ConditionalOnProd
 import no.nav.boot.conditionals.EnvUtil.*
@@ -29,7 +30,6 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
-import org.apache.commons.text.StringEscapeUtils
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
@@ -173,7 +173,8 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                                      request: ServerHttpRequest,
                                      response: ServerHttpResponse): Any? {
             if (contentType in listOf(APPLICATION_JSON, parseMediaType("application/problem+json"))) {
-                log.trace(CONFIDENTIAL, "Response body for ${request.uri} er ${unescapeJson(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body))}")
+                log.trace(CONFIDENTIAL,
+                        "Response body for ${request.uri} er ${unescapeJson(body as String).jsonPrettify(mapper)}")
             }
             return body
         }
