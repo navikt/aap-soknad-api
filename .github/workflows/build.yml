@@ -15,7 +15,7 @@ jobs:
     bygg:
         runs-on: ubuntu-latest
         outputs:
-            image: ${{ steps.step1.outputs.image }}
+            image: ${{ steps.kompiler.outputs.image }}
         steps:
             -   name: Sjekker ut kode
                 uses: actions/checkout@v3
@@ -42,7 +42,7 @@ jobs:
                 run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
 
             -   name: Kompilerer og bygger image
-                id: step1
+                id: kompiler
                 run: |
                     echo "::set-output name=image::${{ env.IMAGE }}"                    
                     ./mvnw --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
@@ -57,7 +57,24 @@ jobs:
            VARS: .nais/dev.json
            IMAGE: ${{needs.bygg.outputs.image}}
         runs-on: ubuntu-latest
+        outputs:
+            image: ${{ env.IMAGE }}
         needs: bygg
         steps:
             - uses: actions/checkout@v3
             - uses: nais/deploy/actions/deploy@master
+
+    prod-deploy:
+        name: Deploy to prod
+        env:
+            PRINT_PAYLOAD: true
+            APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+            CLUSTER: prod-gcp
+            RESOURCE: .nais/naiserator.yaml,.nais/alerts.yaml
+            VARS: .nais/prod.json
+            IMAGE: ${{needs.dev-deploy.outputs.image}}
+        runs-on: ubuntu-latest
+        needs: dev-deploy
+        steps:
+            -   uses: actions/checkout@v3
+            -   uses: nais/deploy/actions/deploy@master
