@@ -68,8 +68,8 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>, priv
         with(cfg) {
             if (oppgave.enabled) {
                 repos.oppgaver.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
-                        minside.send(ProducerRecord(done, key(type, eventId, fnr), done()))
-                            .addCallback(SendCallback("avslutt oppgave med eventid $eventId"))
+                        minside.send(ProducerRecord(done, key(type, it.eventid, fnr), done()))
+                            .addCallback(SendCallback("avslutt oppgave med eventid ${it.eventid}"))
                         it.done = true
                 } ?: log.warn("Kunne ikke avslutte oppgave med eventid $eventId for fnr $fnr i DB, allerede avsluttet?")
             }
@@ -83,8 +83,8 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>, priv
         with(cfg) {
             if (beskjed.enabled) {
                 repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
-                        minside.send(ProducerRecord(done, key(type, eventId, fnr), done()))
-                            .addCallback(SendCallback("avslutt beskjed med eventid $eventId"))
+                        minside.send(ProducerRecord(done, key(type, it.eventid, fnr), done()))
+                            .addCallback(SendCallback("avslutt beskjed med eventid ${it.eventid}"))
                         it.done = true
 
                 } ?: log.warn("Kunne ikke avslutte beskjed med eventid $eventId for fnr $fnr i DB, allerede avsluttet?")
