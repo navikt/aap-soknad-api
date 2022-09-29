@@ -44,7 +44,7 @@ jobs:
 
             -   name: Kompilerer og bygger image
                 run: |
-                    echo "::set-output name=image::$(echo $IMAGE)"                    
+                    echo "::set-output name=image::$IMAGE"                    
                     ./mvnw --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
 
             -   name: Deployer til dev
