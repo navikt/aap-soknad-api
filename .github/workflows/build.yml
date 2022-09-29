@@ -40,12 +40,12 @@ jobs:
 
             -   name: Setter image-navn
                 id: step1
-                run: |
-                   echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
-                   echo "::set-output name=image::$(echo $IMAGE)"
+                run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
 
             -   name: Kompilerer og bygger image
-                run: ./mvnw --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
+                run: |
+                    echo "::set-output name=image::$(echo $IMAGE)"                    
+                    ./mvnw --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
 
             -   name: Deployer til dev
                 uses: nais/deploy/actions/deploy@master
