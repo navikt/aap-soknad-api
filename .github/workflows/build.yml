@@ -60,4 +60,5 @@ jobs:
         needs: bygg
         steps:
             - name: deploy
-              uses: nais/deploy/actions/deploy@master
+            - uses: actions/checkout@v3
+            - uses: nais/deploy/actions/deploy@master
