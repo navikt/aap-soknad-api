@@ -42,7 +42,7 @@ jobs:
                 id: step1
                 run: |
                    echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
-                   echo "::set-output name=image::hello"
+                   echo "::set-output name=image::$(echo $IMAGE)"
 
             -   name: Kompilerer og bygger image
                 run: ./mvnw --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
