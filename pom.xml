@@ -18,6 +18,7 @@
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
         <conditionals.version>3.1.0</conditionals.version>
         <confluent.version>7.2.2</confluent.version>
+        <commons-text.version>1.9</commons-text.version>
         <domain.version>1.0.8</domain.version>
         <gcp.version>0.179.0</gcp.version>
         <gcp.libraries.version>26.1.2</gcp.libraries.version>
@@ -90,6 +91,11 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
