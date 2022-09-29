@@ -28,7 +28,7 @@
         <java.version>17</java.version>
         <jib.version>3.3.0</jib.version>
         <kotlinx.coroutines.version>1.6.4</kotlinx.coroutines.version>
-        <kotlin.version>1.7.10</kotlin.version>
+        <kotlin.version>1.7.20</kotlin.version>
         <logstash.version>7.2</logstash.version>
         <mock-oauth2-server.version>0.3.6</mock-oauth2-server.version>
         <okhttp3.version>4.9.1</okhttp3.version>
