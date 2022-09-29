@@ -32,7 +32,7 @@ class AAPApiExceptionHandler : ProblemHandling {
     fun auth(e: RuntimeException, req: NativeWebRequest) = problem(e, UNAUTHORIZED, req)
 
     @ExceptionHandler(IntegrationException::class, StorageException::class)
-    fun inegration(e: RuntimeException, req: NativeWebRequest) = problem(e, UNPROCESSABLE_ENTITY, req)
+    fun inegration(e: RuntimeException, req: NativeWebRequest) = problem(e, INTERNAL_SERVER_ERROR, req)
 
     @ExceptionHandler(ContentTypeException::class)
     fun ukjent(e: ContentTypeException, req: NativeWebRequest) = problem(e, UNSUPPORTED_MEDIA_TYPE, req)
