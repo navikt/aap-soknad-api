@@ -175,9 +175,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                                      response: ServerHttpResponse): Any? {
             if (contentType in listOf(APPLICATION_JSON, parseMediaType("application/problem+json"))) {
                 val b = mapper.writeValueAsString(body).also { log.trace("asString $it") }
-                val u = unescapeJson(b).also { log.trace("Unescaped $it") }
-                val p= u.jsonPrettify(mapper).also { log.trace("Prettified $it") }
-                log.trace(CONFIDENTIAL, "Response body for ${request.uri} er $p")
+                log.trace(CONFIDENTIAL, "Response body for ${request.uri} er $b")
             }
             return body
         }
