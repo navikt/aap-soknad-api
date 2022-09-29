@@ -30,6 +30,7 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import org.apache.commons.text.StringEscapeUtils
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
@@ -173,12 +174,15 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                                      request: ServerHttpRequest,
                                      response: ServerHttpResponse): Any? {
             if (contentType in listOf(APPLICATION_JSON, parseMediaType("application/problem+json"))) {
-                log.trace(CONFIDENTIAL,
-                        "Response body for ${request.uri} er ${unescapeJson(body as String).jsonPrettify(mapper)}")
+                val b = mapper.writeValueAsString(body).also { log.trace("asString $it") }
+                val u = unescapeJson(b).also { log.trace("Unescaped $it") }
+                val p= u.jsonPrettify(mapper).also { log.trace("Prettified $it") }
+                log.trace(CONFIDENTIAL, "Response body for ${request.uri} er $p")
             }
             return body
         }
 
         override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>) = true
     }
+
 }
