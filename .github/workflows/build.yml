@@ -15,7 +15,7 @@ jobs:
     bygg:
         runs-on: ubuntu-latest
         outputs:
-            output1: ${{ steps.step1.outputs.test }}
+            image: ${{ steps.step1.outputs.image }}
         steps:
             -   name: Sjekker ut kode
                 uses: actions/checkout@v3
@@ -42,7 +42,7 @@ jobs:
                 id: step1
                 run: |
                    echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
-                   echo "::set-output name=test::hello"
+                   echo "::set-output name=image::hello"
 
             -   name: Kompilerer og bygger image
                 run: ./mvnw --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
@@ -58,9 +58,11 @@ jobs:
 
     var-test:
         env:
-          IMAGE: ${{needs.bygg.outputs.output1}}
+          IMG: ${{needs.bygg.outputs.image}}
         name: var passing test
         runs-on: ubuntu-latest
         needs: bygg
         steps:
-            - run: echo ${{IMAGE}}
+            - run:  echo "IMAGE=$(echo $IMG)" >> $GITHUB_ENV
+            - name: Next
+              run: echo ${{IMAGE}}
