@@ -8,16 +8,12 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager.Co
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
-import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
-import org.springframework.core.env.Environment
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException.NotFound
 import org.springframework.web.context.request.NativeWebRequest
-import org.zalando.problem.Problem
 import org.zalando.problem.Problem.builder
 import org.zalando.problem.Status
 import org.zalando.problem.Status.BAD_REQUEST
