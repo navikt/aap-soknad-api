@@ -1,4 +1,4 @@
-# aap-soeknad-api
+# aap-soknad-api
 ___
 
 Applikasjonen er backend for frontend-applikajsonene [ AAP søknader](https://github.com/navikt/aap-soknad) og [Mine arbeidsavklaringspenger](https://github.com/navikt/aap-innsyn).
