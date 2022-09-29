@@ -172,7 +172,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                                      request: ServerHttpRequest,
                                      response: ServerHttpResponse): Any? {
             if (contentType in listOf(APPLICATION_JSON, parseMediaType("application/problem+json"))) {
-                log.trace(CONFIDENTIAL,"Response body for ${request.uri} er ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body)}")
+                log.trace(CONFIDENTIAL,"$selectedConverterType Response body for ${request.uri} er ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(body)}")
             }
             return body
         }
