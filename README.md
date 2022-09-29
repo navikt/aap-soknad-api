@@ -3,10 +3,10 @@ ___
 
 Applikasjonen er backend for frontend-applikajsonene [ AAP søknader](https://github.com/navikt/aap-soknad) og [Mine arbeidsavklaringspenger](https://github.com/navikt/aap-innsyn).
 
-Den benytter seg av felles forretningslogikk samlet i  [AAP-Domain](https://github.com/navikt/aap-domain)
+Den benytter seg av felles verdiobjekter samlet i  [AAP-Domain](https://github.com/navikt/aap-domain). Dette repoet vil fjernes når [AAP-fss-proxy](https://github.com/navikt/aap-fss-proxy) kan pensjoneres.
 
 Applikasjonen har en database for metadata vedrørende:
-- metadata knyttet til søknader, eksterne oppgaver og beskjerder på mine aap samt kvitteringer på eksterne notifikasjoner.
+- metadata knyttet til søknader, eksterne oppgaver og beskjeder på mine aap samt kvitteringer for eksterne notifikasjoner.
 
 # Komme i gang
 ___
