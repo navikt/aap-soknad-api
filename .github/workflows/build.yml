@@ -44,8 +44,7 @@ jobs:
 
             -   name: Kompilerer og bygger image
                 run: |
-                    MYIMG = $(echo $IMAGE_BASE)
-                    echo "::set-output name=image::$MYIMG"                    
+                    echo "::set-output name=image::${{ env.IMAGE }}"                    
                     ./mvnw --settings .github/.m2/settings.xml -Drevision=${TAG} package jib:build
 
             -   name: Deployer til dev
