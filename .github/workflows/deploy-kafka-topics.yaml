@@ -46,7 +46,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod-gcp:aap
     steps:
-
       -   name: Checkout code
           uses: actions/checkout@v3
       -   name: deploy utland-soknad-sendt-topic to prod
