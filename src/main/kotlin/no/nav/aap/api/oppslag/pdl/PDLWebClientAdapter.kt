@@ -62,6 +62,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
             }.filterNotNull()
                 .filterNot(::myndig)
                 .filterNot(::beskyttet)
+                .filterNot(::død)
                 .map { Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato)) }.toList()
         }
         else emptyList()
@@ -84,10 +85,11 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
 
     private fun beskyttet(pdlBarn: PDLBarn) = pdlBarn.adressebeskyttelse?.any {
-        it in listOf(FORTROLIG,
-                STRENGT_FORTROLIG_UTLAND,
-                STRENGT_FORTROLIG)
+        it in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND, STRENGT_FORTROLIG)
     } == true
+
+    private fun død(pdlBarn: PDLBarn) = pdlBarn.dødsfall?.any() ?: false
+
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
 
