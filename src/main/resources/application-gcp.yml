@@ -15,9 +15,6 @@ spring:
   cloud:
     gcp:
       project-id: ${gcp.team.project.id}
-  jpa:
-    hibernate:
-      ddl-auto: none
 
   datasource:
     url: jdbc:postgresql://${db.host}:${db.port}/${db.database}
@@ -32,8 +29,6 @@ spring:
     add-properties: false
     livereload:
       enabled: false
-  flyway:
-    enabled: true
   kafka:
     bootstrap-servers: ${kafka.brokers}
     properties:
