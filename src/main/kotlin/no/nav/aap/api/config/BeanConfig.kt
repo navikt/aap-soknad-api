@@ -132,7 +132,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                 .filter(correlatingFilterFunction(applicationName))
         }
 
-    @ConditionalOnMissingBean(HttpClient::class)
+    @ConditionalOnNotProd
     @Bean
     fun notProdHttpClient() = HttpClient.create().wiretap(javaClass.name, TRACE, TEXTUAL)
 
