@@ -51,7 +51,6 @@ jobs:
         name: Deploy to dev
         env:
            PRINT_PAYLOAD: true
-           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
            CLUSTER: dev-gcp
            RESOURCE: .nais/naiserator.yaml,.nais/alerts.yaml
            VARS: .nais/dev.json
@@ -68,7 +67,6 @@ jobs:
         name: Deploy to prod
         env:
             PRINT_PAYLOAD: true
-            APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
             CLUSTER: prod-gcp
             RESOURCE: .nais/naiserator.yaml,.nais/alerts.yaml
             VARS: .nais/prod.json

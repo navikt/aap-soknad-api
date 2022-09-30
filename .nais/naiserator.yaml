@@ -16,8 +16,6 @@ spec:
   azure:
     application:
       enabled: true
-  envFrom:
-    - secret: srvaap-selvbetjening
   gcp:
     permissions:
       - resource:
