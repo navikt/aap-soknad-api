@@ -37,7 +37,9 @@ import no.nav.aap.util.StringExtensions.encode
 import no.nav.aap.util.StringExtensions.størrelse
 import no.nav.aap.util.StringExtensions.toEncodedJson
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
+import org.springframework.http.MediaType.IMAGE_JPEG
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
+import org.springframework.http.MediaType.IMAGE_PNG
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.stereotype.Component
 
@@ -128,10 +130,10 @@ class ArkivJournalpostGenerator(
             val pngs = vedlegg[IMAGE_PNG_VALUE] ?: emptyList()
             pdfs.map { it.somDokument(type.tittel) }.toMutableList().apply {
                 if (jpgs.isNotEmpty()) {
-                    add(konverterer.tilPdf(IMAGE_JPEG_VALUE, jpgs.map(DokumentInfo::bytes)).somDokument(type.tittel))
+                    add(konverterer.tilPdf(IMAGE_JPEG, jpgs.map(DokumentInfo::bytes)).somDokument(type.tittel))
                 }
                 if (pngs.isNotEmpty()) {
-                    add(konverterer.tilPdf(IMAGE_PNG_VALUE, pngs.map(DokumentInfo::bytes)).somDokument(type.tittel))
+                    add(konverterer.tilPdf(IMAGE_PNG, pngs.map(DokumentInfo::bytes)).somDokument(type.tittel))
                 }
             }
         } ?: emptyList<Dokument>().also {

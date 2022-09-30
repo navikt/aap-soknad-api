@@ -22,20 +22,16 @@ abstract class AbstractPDFSjekker : DokumentSjekker {
                 doSjekk(dokument)
             }.getOrElse {
                 when (it) {
-                    is InvalidPasswordException ->  {
-                        throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet, og vil ikke kunne leses av en saksbehandler, fjern beskyttelsen og prøv igjen", it)
-                    }
-                    is Exception -> {
+                    is InvalidPasswordException -> throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet, og vil ikke kunne leses av en saksbehandler, fjern beskyttelsen og prøv igjen", it)
+
+                    is Exception ->
                         if (hasCause(it,InvalidPasswordException::class.java))  {
                             throw PassordBeskyttetException(" ${dokument.filnavn} er passord-beskyttet, og vil ikke kunne leses av en saksbehandler, fjern beskyttelsen og prøv igjen", it)
                         }
-                    }
-                    else -> {
-                        throw DokumentException("Uventet feil ved sjekk av ${dokument.filnavn}",it)
-                    }
+
+                    else -> throw DokumentException("Uventet feil ved sjekk av ${dokument.filnavn}",it)
                 }
             }
-
         }
         else {
             log.trace(CONFIDENTIAL, "Sjekker ikke ${dokument.contentType}")

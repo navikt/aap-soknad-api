@@ -19,6 +19,5 @@ class KontoClientBeanConfig {
             .build()
 
     @Bean
-    fun kontoHealthIndicator(a: KontoWebClientAdapter) =
-        object : AbstractPingableHealthIndicator(a) {}
+    fun kontoHealthIndicator(a: KontoWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 }

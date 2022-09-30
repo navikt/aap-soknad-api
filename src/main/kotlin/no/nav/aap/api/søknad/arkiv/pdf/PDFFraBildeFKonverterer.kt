@@ -9,7 +9,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.common.PDRectangle.A4
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject.createFromByteArray
 import org.springframework.core.io.ClassPathResource
-import org.springframework.http.MediaType.parseMediaType
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import java.io.ByteArrayOutputStream
 
@@ -17,24 +17,24 @@ import java.io.ByteArrayOutputStream
 class PDFFraBildeFKonverterer(private val scaler: BildeSkalerer) {
 
     private val log = getLogger(javaClass)
-    fun tilPdf(bildeType: String, images: List<ByteArray>) = slåSammen(bildeType, *images.toTypedArray())
-    fun tilPdf(bildeType: String, fil: String) =
-        tilPdf(bildeType, ClassPathResource(fil).inputStream.readBytes()) // testing only
+    fun tilPdf(mediaType: MediaType, images: List<ByteArray>) = slåSammen(mediaType, *images.toTypedArray())
+    fun tilPdf(mediaType: MediaType, fil: String) =
+        tilPdf(mediaType, ClassPathResource(fil).inputStream.readBytes()) // testing only
 
-    fun tilPdf(bildeType: String, vararg bilder: ByteArray) = slåSammen(bildeType, *bilder)
+    fun tilPdf(mediaType: MediaType, vararg bilder: ByteArray) = slåSammen(mediaType, *bilder)
 
-    private fun slåSammen(bildeType: String, vararg bilder: ByteArray) =
+    private fun slåSammen(mediaType: MediaType, vararg bilder: ByteArray) =
         runCatching {
-            log.trace("Konverterer ${bilder.størrelse("bildefil")} til PDF for $bildeType")
+            log.trace("Konverterer ${bilder.størrelse("bildefil")} til PDF for $mediaType")
             PDDocument().use { doc ->
                 ByteArrayOutputStream().use { os ->
-                    bilder.forEach { pdfFraBilde(doc, it, parseMediaType(bildeType).subtype) }
+                    bilder.forEach { pdfFraBilde(doc, it, mediaType.subtype) }
                     doc.save(os)
                     os.toByteArray()
                 }
             }
         }.getOrElse {
-            throw DokumentException("Konvertering av ${bilder.størrelse("bildefil")} av type $bildeType feilet",
+            throw DokumentException("Konvertering av ${bilder.størrelse("bildefil")} av type $mediaType feilet",
                     it)
         }
 

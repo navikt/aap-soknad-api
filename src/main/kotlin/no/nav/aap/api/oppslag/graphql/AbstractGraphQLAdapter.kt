@@ -9,10 +9,8 @@ import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.web.reactive.function.client.WebClient
 import java.io.File
 
-abstract class AbstractGraphQLAdapter(client: WebClient,
-                                      cfg: AbstractRestConfig,
-                                      val errorHandler: GraphQLErrorHandler = GraphQLDefaultErrorHandler()) :
-    AbstractWebClientAdapter(client, cfg) {
+abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig,
+                                      val errorHandler: GraphQLErrorHandler = GraphQLDefaultErrorHandler()) : AbstractWebClientAdapter(client, cfg) {
 
     protected inline fun <reified T : Any> query(graphQLClient: GraphQLWebClient, query: String, fnr: String) =
         runCatching {

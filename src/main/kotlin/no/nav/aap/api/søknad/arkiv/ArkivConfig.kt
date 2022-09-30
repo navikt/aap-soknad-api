@@ -13,8 +13,7 @@ class ArkivConfig(
         @DefaultValue(DEFAULT_OPPRETT_PATH) val arkivPath: String,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
         @DefaultValue("true") enabled: Boolean,
-        baseUri: URI
-                 ) : AbstractRestConfig(baseUri, pingPath, JOARK, enabled) {
+        baseUri: URI) : AbstractRestConfig(baseUri, pingPath, JOARK, enabled) {
 
     override fun toString() =
         "${javaClass.simpleName} [pingPath=$pingPath,arkivPath=$arkivPath,enabled=$isEnabled,baseUri=$baseUri]"
