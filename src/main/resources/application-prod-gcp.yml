@@ -1,0 +1,61 @@
+management:
+    endpoints:
+        web:
+            exposure:
+                include: '*'
+    endpoint:
+        health:
+            show-details: always
+no.nav:
+    security:
+        jwt:
+            client:
+                registration:
+                    aareg-services-q1:
+                        token-exchange:
+                            audience: ${onprem}:arbeidsforhold:aareg-services-nais
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
+
+                    safselvbetjening-q1:
+                        token-exchange:
+                            audience: ${onprem}:teamdokumenthandtering:safselvbetjening
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
+spring:
+    jpa:
+        show-sql: true
+        properties:
+            hibernate:
+                format_sql: true
+    mvc:
+        log-request-details: true
+server:
+    error:
+        whitelabel:
+            enabled: false
+arbeidsforhold:
+    base-uri: https://aareg-services.${onprem}-pub.nais.io
+    enabled: false
+organisasjon:
+    base-uri: https://ereg-services.${onprem}-fss-pub.nais.io
+    enabled: false
+saf:
+    base-uri: https://safselvbetjening.${onprem}-pub.nais.io
+konto:
+    enabled: true
+joark:
+    scope: api://${onprem}.teamdokumenthandtering.dokarkiv/.default
+minside:
+    backlinks:
+        innsyn: https://aap-innsyn.intern.nav.no/aap/innsyn
+        standard: https://aap-soknad.intern.nav.no/aap/soknad/standard
+        utland: https://aap-soknad.intern.nav.no/aap/soknad/utland
