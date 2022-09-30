@@ -84,13 +84,12 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
 
     private fun beskyttet(pdlBarn: PDLBarn) = pdlBarn.adressebeskyttelse?.any {
-        it !in listOf(FORTROLIG,
+        it in listOf(FORTROLIG,
                 STRENGT_FORTROLIG_UTLAND,
                 STRENGT_FORTROLIG)
     } == true
 
-    override fun toString() =
-        "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
+    override fun toString() = "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
 
     companion object {
         private const val PERSON_QUERY = "query-person.graphql"
