@@ -7,9 +7,13 @@ import org.apache.tika.Tika
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.http.MediaType.APPLICATION_PDF
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
+import org.springframework.http.MediaType.IMAGE_GIF
 import org.springframework.http.MediaType.IMAGE_GIF_VALUE
+import org.springframework.http.MediaType.IMAGE_JPEG
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
+import org.springframework.http.MediaType.IMAGE_PNG
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 
 class ImageByteArray2PDFConverterTest {
@@ -19,17 +23,17 @@ class ImageByteArray2PDFConverterTest {
     private fun isPdf(bytes: ByteArray) = APPLICATION_PDF_VALUE == TIKA.detect(bytes)
 
     @Test
-    fun jpg2Pdf() = assertTrue(isPdf(converter.tilPdf(IMAGE_JPEG_VALUE, "pdf/jks.jpg")))
+    fun jpg2Pdf() = assertTrue(isPdf(converter.tilPdf(IMAGE_JPEG, "pdf/jks.jpg")))
 
     @Test
-    fun png2Pdf() = assertTrue(isPdf(converter.tilPdf(IMAGE_PNG_VALUE, "pdf/nav-logo.png")))
+    fun png2Pdf() = assertTrue(isPdf(converter.tilPdf(IMAGE_PNG, "pdf/nav-logo.png")))
 
     @Test
-    fun gifFeil() = assertThrows<DokumentException> { converter.tilPdf(IMAGE_GIF_VALUE, "pdf/loading.gif") }
+    fun gifFeil() = assertThrows<DokumentException> { converter.tilPdf(IMAGE_GIF, "pdf/loading.gif") }
 
     @Test
     fun junkFeil() =
-        assertThrows<DokumentException> { converter.tilPdf(APPLICATION_PDF_VALUE, byteArrayOf(1, 2, 3, 4)) }
+        assertThrows<DokumentException> { converter.tilPdf(APPLICATION_PDF, byteArrayOf(1, 2, 3, 4)) }
 
     companion object {
         private val TIKA = Tika()
