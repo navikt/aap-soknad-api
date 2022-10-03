@@ -38,7 +38,7 @@ class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
                 log.warn("PDF-generering mot $path feiler", t)
             }
             .doOnSuccess {
-                log.trace(CONFIDENTIAL, "Sendte json $data")
+                log.trace(CONFIDENTIAL, "Sendte JSON $data")
                 log.info("PDF-generering OK")
             }
             .block() ?: throw IntegrationException("O bytes i retur fra pdfgen, pussig")
