@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
 
 @Component
-class PDFEditerbarSjekker : AbstractPDFSjekker() {
+class PDFEditerbarSjekker : PDFSjekker() {
     override fun doSjekk(dokument: DokumentInfo) =
         with(dokument) {
             ByteArrayInputStream(bytes).use { inputStream ->

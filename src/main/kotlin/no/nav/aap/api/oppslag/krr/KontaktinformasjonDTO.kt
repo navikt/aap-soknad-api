@@ -6,7 +6,7 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import javax.validation.constraints.Email
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class KontaktinformasjonDTO(@JsonAlias("spraak") val målform: Målform? = Målform.standard(),
+data class KontaktinformasjonDTO(@JsonAlias("spraak") val målform: Målform? = Målform.NB,
                                  val reservert: Boolean? = null,
                                  val kanVarsles: Boolean? = false,
                                  val aktiv: Boolean? = false,
@@ -35,12 +35,5 @@ data class KontaktinformasjonDTO(@JsonAlias("spraak") val målform: Målform? = 
 
 data class Kontaktinformasjon(val epost: String? = null, val mobil: String? = null)
 
-enum class Målform {
-    NB,
-    NN,
-    EN;
-
-    companion object {
-        fun standard() = NB
-    }
+enum class Målform { NB, NN, EN
 }

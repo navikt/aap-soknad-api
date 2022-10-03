@@ -5,6 +5,6 @@ import org.apache.pdfbox.pdmodel.PDDocument.load
 import org.springframework.stereotype.Component
 
 @Component
-class PDFLastbarhetSjekker : AbstractPDFSjekker() {
+class PDFLastbarhetSjekker : PDFSjekker() {
     override fun doSjekk(dokument: DokumentInfo) = load(dokument.bytes).use { }
 }

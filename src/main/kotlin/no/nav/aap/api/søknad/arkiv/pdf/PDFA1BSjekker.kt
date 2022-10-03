@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
 
 @Component
-class PDFA1BSjekker : AbstractPDFSjekker() {
+class PDFA1BSjekker : PDFSjekker() {
 
     override fun doSjekk(dokument: DokumentInfo) =
         with(dokument) {
