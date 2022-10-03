@@ -20,6 +20,8 @@ import no.nav.aap.util.Constants.PDL_USER
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import java.time.LocalDate
@@ -33,6 +35,17 @@ data class WebClients(
 @Component
 class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, private val ctx: AuthContext) :
     AbstractGraphQLAdapter(clients.client, cfg) {
+
+
+    override fun ping() {
+        webClient
+            .options()
+            .uri(baseUri)
+            .accept(APPLICATION_JSON, TEXT_PLAIN)
+            .retrieve()
+            .toBodilessEntity()
+            .block()
+    }
 
     fun søker(medBarn: Boolean = false) =
         with(ctx.getFnr()) {

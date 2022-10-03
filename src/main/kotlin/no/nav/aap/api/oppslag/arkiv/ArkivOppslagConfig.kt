@@ -27,7 +27,7 @@ class ArkivOppslagConfig(
         const val DOKUMENTER_QUERY = "query-dokumenter.graphql"
         const val SAF = "saf"
         const val SAFQL = "safql"
-        private const val PINGPATH = ""
+        private const val PINGPATH = "/actuator/health/liveness"
         private const val DOKPATH = "/rest/hentdokument/{journalpostId}/{dokumentInfoId}/{variantFormat}"
     }
 }
