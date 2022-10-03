@@ -4,6 +4,7 @@ import no.nav.aap.api.oppslag.konto.KontoConfig.Companion.KONTO
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient.Builder
@@ -19,5 +20,6 @@ class KontoClientBeanConfig {
             .build()
 
     @Bean
+    @ConditionalOnProperty("konto.enabled", havingValue = "true")
     fun kontoHealthIndicator(a: KontoWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 }

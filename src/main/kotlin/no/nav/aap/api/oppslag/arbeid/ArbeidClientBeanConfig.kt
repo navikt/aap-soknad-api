@@ -7,6 +7,7 @@ import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.MDCUtil.NAV_PERSON_IDENT
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient.Builder
@@ -28,6 +29,7 @@ class ArbeidClientBeanConfig {
     }
 
     @Bean
+    @ConditionalOnProperty("arbeidsforhold.enabled", havingValue = "true")
     fun arbeidsforholdHealthIndicator(a: ArbeidWebClientAdapter) =
         object : AbstractPingableHealthIndicator(a) {}
 
