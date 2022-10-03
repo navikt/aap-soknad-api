@@ -20,6 +20,7 @@ import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.LÅN
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
 import no.nav.aap.api.søknad.model.UtlandSøknad
@@ -29,9 +30,10 @@ import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.api.søknad.model.VedleggType.ANDREBARN
 import no.nav.aap.api.søknad.model.VedleggType.ANNET
 import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
+import no.nav.aap.api.søknad.model.VedleggType.LÅNEKASSEN_LÅN
 import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
-import no.nav.aap.api.søknad.model.VedleggType.SYKESTIPEND
+import no.nav.aap.api.søknad.model.VedleggType.LÅNEKASSEN_STIPEND
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.encode
 import no.nav.aap.util.StringExtensions.størrelse
@@ -94,7 +96,8 @@ class ArkivJournalpostGenerator(
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == AnnenStønadstype.UTLAND },
                         VedleggType.UTLAND))
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD }, OMSORG))
-                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == STIPEND }, SYKESTIPEND))
+                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == STIPEND }, LÅNEKASSEN_STIPEND))
+                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == LÅN }, LÅNEKASSEN_LÅN))
                 addAll(dokumenterFra(this@with, ANNET))
             }.also {
                 log.trace("Sender ${it.størrelse("dokument")} til arkiv $it")
