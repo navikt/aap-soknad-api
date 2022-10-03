@@ -31,7 +31,8 @@ class SendCallback<K, V>(private val msg: String) : KafkaSendCallback<K, V> {
 
     private fun log(fnr: String, recordMetadata: RecordMetadata?) {
         with(recordMetadata) {
-            log.info(CONFIDENTIAL,"Sendte $msg for $fnr, offset ${this?.offset()}, partition ${this?.partition()} på topic ${this?.topic()}")
+            log.info(CONFIDENTIAL,
+                    "Sendte $msg for $fnr, offset ${this?.offset()}, partition ${this?.partition()} på topic ${this?.topic()}")
         }
     }
 

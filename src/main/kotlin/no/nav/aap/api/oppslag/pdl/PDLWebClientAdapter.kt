@@ -90,8 +90,8 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
 
     private fun død(pdlBarn: PDLBarn) = pdlBarn.dødsfall?.any() ?: false
 
-
-    override fun toString() = "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
+    override fun toString() =
+        "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
 
     companion object {
         private const val PERSON_QUERY = "query-person.graphql"

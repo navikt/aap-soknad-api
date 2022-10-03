@@ -106,7 +106,7 @@ class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, pri
         fun iacOperation() =
             with(cfg) {
                 mutableMapOf("bøtte" to mellom,
-                        "notification" to storage.listNotifications(mellom.navn).map { it -> it.topic },
+                        "notification" to storage.listNotifications(mellom.navn).map { it.topic },
                         "nøkkel" to kms.key,
                         "ring" to kms.ring)
             }

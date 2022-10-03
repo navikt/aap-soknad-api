@@ -44,7 +44,8 @@ class AAPApiExceptionHandler : ProblemHandling {
     fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = problem(e, NOT_FOUND, req)
 
     @ExceptionHandler(DokumentException::class)
-    fun dokument(e: DokumentException, req: NativeWebRequest) = create(e, problem(e, UNPROCESSABLE_ENTITY, e.substatus), req)
+    fun dokument(e: DokumentException, req: NativeWebRequest) =
+        create(e, problem(e, UNPROCESSABLE_ENTITY, e.substatus), req)
 
     @ExceptionHandler(Exception::class)
     fun catchAll(e: Exception, req: NativeWebRequest) = create(e, problem(e, INTERNAL_SERVER_ERROR), req)
@@ -57,6 +58,6 @@ class AAPApiExceptionHandler : ProblemHandling {
                 with("substatus", it).build()
             } ?: build()
         }.also {
-            log.trace("Returnerer $status",it)
+            log.trace("Returnerer $status", it)
         }
 }

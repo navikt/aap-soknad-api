@@ -49,5 +49,6 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
                 fullfører.fullfør(this@run.fnr, søknad, this)
             }
         }
+
     data class Kvittering(val journalpostId: String)
 }

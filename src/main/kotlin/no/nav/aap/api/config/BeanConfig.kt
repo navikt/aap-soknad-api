@@ -18,11 +18,9 @@ import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
-import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.aap.util.StartupInfoContributor
-import no.nav.aap.util.StringExtensions.jsonPrettify
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.boot.conditionals.ConditionalOnProd
 import no.nav.boot.conditionals.EnvUtil.*
@@ -30,13 +28,11 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
-import org.apache.commons.text.StringEscapeUtils
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTrace
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
@@ -146,15 +142,16 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         ActuatorIgnoringTraceRequestFilter(repo, tracer)
 
     @ConditionalOnNotProd
-    class HttpTraceRepository(private val mapper: ObjectMapper)  : InMemoryHttpTraceRepository() {
-        private  val log = LoggerUtil.getLogger(javaClass)
-        override fun add(trace: HttpTrace)  {
+    class HttpTraceRepository(private val mapper: ObjectMapper) : InMemoryHttpTraceRepository() {
+        private val log = getLogger(javaClass)
+        override fun add(trace: HttpTrace) {
             runCatching {
-                log.trace(CONFIDENTIAL,mapper.writerWithDefaultPrettyPrinter().writeValueAsString(trace))
+                log.trace(CONFIDENTIAL, mapper.writerWithDefaultPrettyPrinter().writeValueAsString(trace))
                 super.add(trace)
             }.getOrNull()
         }
     }
+
     class JTIFilter(private val ctx: AuthContext) : Filter {
         @Throws(IOException::class, ServletException::class)
         override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {

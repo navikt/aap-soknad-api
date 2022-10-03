@@ -15,7 +15,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.query.Param
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 import javax.persistence.CascadeType.ALL
 import javax.persistence.Entity
 import javax.persistence.EnumType.STRING

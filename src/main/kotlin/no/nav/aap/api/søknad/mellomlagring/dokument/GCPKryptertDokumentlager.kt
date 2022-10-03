@@ -24,7 +24,7 @@ import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.context.annotation.Primary
 import org.springframework.http.ContentDisposition.parse
 import org.springframework.stereotype.Component
-import java.util.UUID
+import java.util.*
 
 @ConditionalOnGCP
 @Primary

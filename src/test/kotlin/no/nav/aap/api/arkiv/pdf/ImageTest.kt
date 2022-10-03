@@ -10,11 +10,8 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.http.MediaType.APPLICATION_PDF
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.MediaType.IMAGE_GIF
-import org.springframework.http.MediaType.IMAGE_GIF_VALUE
 import org.springframework.http.MediaType.IMAGE_JPEG
-import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG
-import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 
 class ImageByteArray2PDFConverterTest {
 

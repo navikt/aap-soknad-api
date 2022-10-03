@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 @Component
 class ArkivOppslagWebClientAdapter(

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.multipart.MultipartFile
-import java.util.UUID
+import java.util.*
 
 @ProtectedRestController(value = [BASEPATH], issuer = IDPORTEN)
 internal class DokumentlagerController(private val lager: Dokumentlager) {

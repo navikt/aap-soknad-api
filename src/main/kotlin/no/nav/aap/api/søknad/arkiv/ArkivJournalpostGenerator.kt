@@ -28,9 +28,9 @@ import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.api.søknad.model.VedleggAware
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.api.søknad.model.VedleggType.ANDREBARN
-import no.nav.aap.api.søknad.model.VedleggType.LÅNEKASSEN_LÅN
 import no.nav.aap.api.søknad.model.VedleggType.ANNET
 import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
+import no.nav.aap.api.søknad.model.VedleggType.LÅNEKASSEN_LÅN
 import no.nav.aap.api.søknad.model.VedleggType.LÅNEKASSEN_STIPEND
 import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER

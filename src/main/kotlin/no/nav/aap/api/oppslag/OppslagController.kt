@@ -22,7 +22,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import java.util.UUID
+import java.util.*
 
 @ProtectedRestController(value = [OPPSLAG_BASE], issuer = IDPORTEN)
 class OppslagController(

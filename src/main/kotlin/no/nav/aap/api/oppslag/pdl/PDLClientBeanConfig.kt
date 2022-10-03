@@ -25,7 +25,9 @@ class PDLClientBeanConfig {
 
     @Bean
     @Qualifier(PDL_SYSTEM)
-    fun pdlSystemWebClient(b: Builder, cfg: PDLConfig, @Qualifier(PDL_SYSTEM) pdlClientCredentialFilterFunction: ExchangeFilterFunction) =
+    fun pdlSystemWebClient(b: Builder,
+                           cfg: PDLConfig,
+                           @Qualifier(PDL_SYSTEM) pdlClientCredentialFilterFunction: ExchangeFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
             .filter(pdlClientCredentialFilterFunction)

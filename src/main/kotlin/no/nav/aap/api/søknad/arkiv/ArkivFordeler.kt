@@ -13,5 +13,6 @@ class ArkivFordeler(private val arkiv: ArkivClient, private val generator: Arkiv
 
     fun fordel(søknad: UtlandSøknad, søker: Søker) = arkiv.arkiver(generator.journalpostFra(søknad, søker))
 
-    fun fordel(ettersending: StandardEttersending, søker: Søker) = arkiv.arkiver(generator.journalpostFra(ettersending, søker))
+    fun fordel(ettersending: StandardEttersending, søker: Søker) =
+        arkiv.arkiver(generator.journalpostFra(ettersending, søker))
 }

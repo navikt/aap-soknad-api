@@ -31,7 +31,8 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
                 .setMetadata(mapOf(SKJEMATYPE to type.name, UUID_ to callId()))
                 .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName("$key"))
                 .also {
-                    log.trace(CONFIDENTIAL, "Lagret mellomlagret ${value.jsonPrettify(mapper)} som ${it.name} i bøtte ${mellom.navn}")
+                    log.trace(CONFIDENTIAL,
+                            "Lagret mellomlagret ${value.jsonPrettify(mapper)} som ${it.name} i bøtte ${mellom.navn}")
                 }
         }.name
 
@@ -42,13 +43,15 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
             with(navn(fnr, type)) {
                 lager.get(navn, this)?.let { blob ->
                     String(blob.getContent()).also {
-                        log.trace(CONFIDENTIAL, "Lest mellomlagret verdi ${it.jsonPrettify(mapper)} fra $this og bøtte $navn")
+                        log.trace(CONFIDENTIAL,
+                                "Lest mellomlagret verdi ${it.jsonPrettify(mapper)} fra $this og bøtte $navn")
                     }
                 }
             }
         }
 
-    internal fun String.jsonPrettify(mapper: ObjectMapper) = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapper.readValue(this,Any::class.java))
+    internal fun String.jsonPrettify(mapper: ObjectMapper) =
+        mapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapper.readValue(this, Any::class.java))
 
     override fun slett(type: SkjemaType) = slett(type, ctx.getFnr())
 

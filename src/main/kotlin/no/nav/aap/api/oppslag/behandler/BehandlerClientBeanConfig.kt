@@ -4,13 +4,12 @@ import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLER
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
-class BehandlerClientBeanConfig(@Value("\${spring.application.name}") val applicationName: String) {
+class BehandlerClientBeanConfig {
 
     @Qualifier(BEHANDLER)
     @Bean

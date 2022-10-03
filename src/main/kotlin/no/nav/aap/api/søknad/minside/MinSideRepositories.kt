@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter
 import javax.persistence.EntityListeners
@@ -30,27 +30,36 @@ import javax.persistence.PreUpdate
 @NoRepositoryBean
 interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
     fun findByEventid(eventid: UUID): T?
-    fun findByFnrAndEventidAndDoneIsFalse(fnr: String,eventid: UUID): T?
+    fun findByFnrAndEventidAndDoneIsFalse(fnr: String, eventid: UUID): T?
     fun findByFnrAndDoneIsFalse(fnr: String): List<T>  // test only
 
     @MappedSuperclass
     abstract class MinSideBaseEntity(fnr: String, eventid: UUID, var done: Boolean) : BaseEntity(fnr, eventid) {
-        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id]"
+        override fun toString() =
+            "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id]"
     }
 
     @MappedSuperclass
-    abstract class BaseEntity(val fnr: String, val eventid: UUID, @LastModifiedDate var updated: LocalDateTime? = null) : IdentifiableTimestampedBaseEntity() {
-        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, id=$id)]"
+    abstract class BaseEntity(val fnr: String,
+                              val eventid: UUID,
+                              @LastModifiedDate var updated: LocalDateTime? = null) :
+        IdentifiableTimestampedBaseEntity() {
+        override fun toString() =
+            "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, id=$id)]"
     }
 
     @MappedSuperclass
-    abstract class EksternNotifikasjonBaseEntity(val eventid: UUID, val distribusjonid: Long, val distribusjonkanal: String) : IdentifiableTimestampedBaseEntity() {
-        override fun toString() = "${javaClass.simpleName} [(distribusjonid=$distribusjonid,created=$created,distribusjonkanal=$distribusjonkanal,id=$id]"
+    abstract class EksternNotifikasjonBaseEntity(val eventid: UUID,
+                                                 val distribusjonid: Long,
+                                                 val distribusjonkanal: String) : IdentifiableTimestampedBaseEntity() {
+        override fun toString() =
+            "${javaClass.simpleName} [(distribusjonid=$distribusjonid,created=$created,distribusjonkanal=$distribusjonkanal,id=$id]"
     }
 
     @MappedSuperclass
     @EntityListeners(LoggingEntityListener::class, AuditingEntityListener::class)
-    abstract class IdentifiableTimestampedBaseEntity(@CreatedDate var created: LocalDateTime? = null, @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0)
+    abstract class IdentifiableTimestampedBaseEntity(@CreatedDate var created: LocalDateTime? = null,
+                                                     @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0)
 
 }
 
@@ -89,4 +98,6 @@ class LoggingEntityListener {
 }
 
 @Component
-data class MinSideRepositories(val beskjeder: MinSideBeskjedRepository, val oppgaver: MinSideOppgaveRepository, var søknader: SøknadRepository)
+data class MinSideRepositories(val beskjeder: MinSideBeskjedRepository,
+                               val oppgaver: MinSideOppgaveRepository,
+                               var søknader: SøknadRepository)

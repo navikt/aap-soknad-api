@@ -7,7 +7,7 @@ import no.nav.aap.api.søknad.model.StandardSøknad
 import org.apache.tika.Tika
 import org.springframework.http.ContentDisposition
 import org.springframework.http.ContentDisposition.attachment
-import java.util.UUID
+import java.util.*
 
 interface Dokumentlager {
     fun lesDokument(uuid: UUID): DokumentInfo?

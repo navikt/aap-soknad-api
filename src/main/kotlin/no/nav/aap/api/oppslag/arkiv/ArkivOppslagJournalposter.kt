@@ -1,7 +1,7 @@
 package no.nav.aap.api.oppslag.arkiv
 
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournalpost>) {
 

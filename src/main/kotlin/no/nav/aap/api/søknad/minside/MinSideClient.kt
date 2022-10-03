@@ -11,7 +11,6 @@ import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPST
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.MINAAP
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.SØKNAD
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
-import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -30,16 +29,25 @@ import java.time.ZoneOffset.UTC
 import java.util.*
 
 @ConditionalOnGCP
-class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>, private val cfg: MinSideConfig, private val repos: MinSideRepositories) {
+class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
+                    private val cfg: MinSideConfig,
+                    private val repos: MinSideRepositories) {
 
     private val log = getLogger(javaClass)
 
     @Transactional
-    fun opprettBeskjed(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
+    fun opprettBeskjed(fnr: Fødselsnummer,
+                       tekst: String,
+                       eventId: UUID = callIdAsUUID(),
+                       type: MinSideNotifikasjonType = MINAAPSTD,
+                       eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
             if (enabled) {
-                log.trace(CONFIDENTIAL, "Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), beskjed(tekst, type, eksternVarsling)))
+                log.trace(CONFIDENTIAL,
+                        "Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
+                minside.send(ProducerRecord(topic,
+                        key(type.skjemaType, eventId, fnr),
+                        beskjed(tekst, type, eksternVarsling)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
                 repos.beskjeder.save(Beskjed(fnr.fnr, eventId)).eventid
             }
@@ -50,11 +58,17 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>, priv
         }
 
     @Transactional
-    fun opprettOppgave(fnr: Fødselsnummer, eventId: UUID = callIdAsUUID(), tekst: String, type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
+    fun opprettOppgave(fnr: Fødselsnummer,
+                       eventId: UUID = callIdAsUUID(),
+                       tekst: String,
+                       type: MinSideNotifikasjonType = MINAAPSTD,
+                       eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
                 log.trace("Oppretter Min Side oppgave for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), oppgave(tekst, type, eventId, eksternVarsling)))
+                minside.send(ProducerRecord(topic,
+                        key(type.skjemaType, eventId, fnr),
+                        oppgave(tekst, type, eventId, eksternVarsling)))
                     .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
                 repos.oppgaver.save(Oppgave(fnr.fnr, eventId)).eventid
             }
@@ -69,9 +83,9 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>, priv
         with(cfg) {
             if (oppgave.enabled) {
                 repos.oppgaver.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
-                        minside.send(ProducerRecord(done, key(type, it.eventid, fnr), done()))
-                            .addCallback(SendCallback("avslutt oppgave med eventid ${it.eventid}"))
-                        it.done = true
+                    minside.send(ProducerRecord(done, key(type, it.eventid, fnr), done()))
+                        .addCallback(SendCallback("avslutt oppgave med eventid ${it.eventid}"))
+                    it.done = true
                 } ?: log.warn("Kunne ikke avslutte oppgave med eventid $eventId for fnr $fnr i DB, allerede avsluttet?")
             }
             else {
@@ -84,9 +98,9 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>, priv
         with(cfg) {
             if (beskjed.enabled) {
                 repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
-                        minside.send(ProducerRecord(done, key(type, it.eventid, fnr), done()))
-                            .addCallback(SendCallback("avslutt beskjed med eventid ${it.eventid}"))
-                        it.done = true
+                    minside.send(ProducerRecord(done, key(type, it.eventid, fnr), done()))
+                        .addCallback(SendCallback("avslutt beskjed med eventid ${it.eventid}"))
+                    it.done = true
 
                 } ?: log.warn("Kunne ikke avslutte beskjed med eventid $eventId for fnr $fnr i DB, allerede avsluttet?")
             }
@@ -143,9 +157,13 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>, priv
         }
 }
 
-data class MinSideNotifikasjonType private constructor(val skjemaType: SkjemaType, private val ctx: MinSideBacklinkContext) {
+data class MinSideNotifikasjonType private constructor(val skjemaType: SkjemaType,
+                                                       private val ctx: MinSideBacklinkContext) {
 
-    private enum class MinSideBacklinkContext { MINAAP, SØKNAD }
+    private enum class MinSideBacklinkContext {
+        MINAAP,
+        SØKNAD
+    }
 
     fun link(cfg: BacklinksConfig, eventId: UUID? = null) =
         when (skjemaType) {
