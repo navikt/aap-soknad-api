@@ -3,7 +3,7 @@ package no.nav.aap.api.søknad.arkiv
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
-import no.nav.aap.api.felles.SkjemaType.UTLAND
+import no.nav.aap.api.felles.SkjemaType.UTLAND_SØKNAD
 import no.nav.aap.api.søknad.arkiv.Journalpost.AvsenderMottaker
 import no.nav.aap.api.søknad.arkiv.Journalpost.Bruker
 import no.nav.aap.api.søknad.arkiv.Journalpost.Dokument
@@ -19,21 +19,22 @@ import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
-import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.LÅN
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.api.søknad.model.VedleggAware
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.api.søknad.model.VedleggType.ANDREBARN
+import no.nav.aap.api.søknad.model.VedleggType.LÅNEKASSEN_LÅN
 import no.nav.aap.api.søknad.model.VedleggType.ANNET
 import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
-import no.nav.aap.api.søknad.model.VedleggType.LÅNEKASSEN_LÅN
+import no.nav.aap.api.søknad.model.VedleggType.LÅNEKASSEN_STIPEND
 import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
-import no.nav.aap.api.søknad.model.VedleggType.LÅNEKASSEN_STIPEND
+import no.nav.aap.api.søknad.model.VedleggType.UTENLANDSKE
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.encode
 import no.nav.aap.util.StringExtensions.størrelse
@@ -67,7 +68,7 @@ class ArkivJournalpostGenerator(
 
     fun journalpostFra(søknad: UtlandSøknad, søker: Søker) =
         with(søker) {
-            Journalpost(UTLAND.tittel,
+            Journalpost(UTLAND_SØKNAD.tittel,
                     AvsenderMottaker(fnr, navn),
                     Bruker(fnr),
                     dokumenterFra(søknad, pdf.pdfVariant(this, søknad)))
@@ -93,8 +94,7 @@ class ArkivJournalpostGenerator(
                 addAll(dokumenterFra(studier, STUDIER))
                 addAll(dokumenterFra(andreBarn, ANDREBARN))
                 addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER))
-                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == AnnenStønadstype.UTLAND },
-                        VedleggType.UTLAND))
+                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == UTLAND }, UTENLANDSKE))
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD }, OMSORG))
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == STIPEND }, LÅNEKASSEN_STIPEND))
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == LÅN }, LÅNEKASSEN_LÅN))
@@ -113,7 +113,7 @@ class ArkivJournalpostGenerator(
         }
 
     private fun dokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
-        mutableListOf(Dokument(listOf(søknad.somJsonVariant(mapper), pdfVariant)))
+        mutableListOf(Dokument(listOf(søknad.somOriginal(mapper), pdfVariant)))
 
     private fun dokumenterFra(a: List<VedleggAware?>?, type: VedleggType) =
         a?.flatMap {
@@ -153,21 +153,17 @@ class ArkivJournalpostGenerator(
         .groupBy { it.contentType }
 
     private fun dokumenterFra(søknad: UtlandSøknad, pdfDokument: DokumentVariant) =
-        listOf(Dokument(listOf(søknad.somJsonVariant(mapper), pdfDokument)
+        listOf(Dokument(listOf(søknad.somOriginal(mapper), pdfDokument)
             .also {
                 log.trace("${it.størrelse("dokumentvariant")}) ($it)")
-            }, UTLAND).also {
+            }, UTLAND_SØKNAD).also {
             log.trace("Dokument til arkiv $it")
         })
 
     private fun Journalpost.størrelse() = dokumenter.størrelse("dokument")
-    private fun ByteArray.somDokument(tittel: String) =
-        Dokument(tittel, DokumentVariant(encode())).also {
-            log.trace("Dokument konvertert er $it")
-        }
-
+    private fun ByteArray.somDokument(tittel: String) = Dokument(tittel, DokumentVariant(encode()))
     private fun DokumentInfo.somDokument(tittel: String) = bytes.somDokument(tittel)
-    fun StandardSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
-    fun UtlandSøknad.somJsonVariant(mapper: ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
+    fun StandardSøknad.somOriginal(mapper: ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
+    fun UtlandSøknad.somOriginal(mapper: ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
 
 }

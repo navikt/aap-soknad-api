@@ -3,7 +3,7 @@ package no.nav.aap.api.søknad.minside
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
-import no.nav.aap.api.felles.SkjemaType.UTLAND
+import no.nav.aap.api.felles.SkjemaType.UTLAND_SØKNAD
 import no.nav.aap.api.søknad.SendCallback
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
 import no.nav.aap.api.søknad.minside.MinSideConfig.BacklinksConfig
@@ -11,6 +11,7 @@ import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPST
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.MINAAP
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.SØKNAD
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -155,7 +156,7 @@ data class MinSideNotifikasjonType private constructor(val skjemaType: SkjemaTyp
                 SØKNAD -> cfg.standard
             }
 
-            UTLAND -> when (ctx) {
+            UTLAND_SØKNAD -> when (ctx) {
                 MINAAP -> cfg.innsyn
                 SØKNAD -> cfg.utland
             }

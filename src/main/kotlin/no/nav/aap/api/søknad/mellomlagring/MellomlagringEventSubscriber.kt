@@ -19,7 +19,7 @@ import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
-import java.util.*
+import java.util.UUID
 
 @Suppress("BlockingMethodInNonBlockingContext")
 @ConditionalOnGCP

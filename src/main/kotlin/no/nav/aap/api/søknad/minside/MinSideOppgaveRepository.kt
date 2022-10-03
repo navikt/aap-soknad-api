@@ -3,7 +3,7 @@ package no.nav.aap.api.søknad.minside
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.api.søknad.minside.MinSideRepository.EksternNotifikasjonBaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
-import java.util.*
+import java.util.UUID
 import javax.persistence.CascadeType.ALL
 import javax.persistence.Entity
 import javax.persistence.ManyToOne

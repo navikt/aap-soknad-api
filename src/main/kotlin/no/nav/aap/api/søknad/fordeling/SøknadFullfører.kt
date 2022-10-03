@@ -3,7 +3,7 @@ package no.nav.aap.api.søknad.fordeling
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
-import no.nav.aap.api.felles.SkjemaType.UTLAND
+import no.nav.aap.api.felles.SkjemaType.UTLAND_SØKNAD
 import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
 import no.nav.aap.api.søknad.fordeling.SøknadFordeler.Kvittering
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Companion.SISTE_SØKNAD
@@ -19,7 +19,7 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.decap
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
+import java.util.UUID
 
 @Component
 class SøknadFullfører(private val dokumentLager: Dokumentlager,
@@ -30,7 +30,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
     private val log = getLogger(javaClass)
 
     fun fullfør(fnr: Fødselsnummer, søknad: UtlandSøknad, res: ArkivResultat) =
-        minside.opprettBeskjed(fnr, "Vi har mottatt din ${UTLAND.tittel.decap()}").run {
+        minside.opprettBeskjed(fnr, "Vi har mottatt din ${UTLAND_SØKNAD.tittel.decap()}").run {
             Kvittering(res.journalpostId)
         }
 

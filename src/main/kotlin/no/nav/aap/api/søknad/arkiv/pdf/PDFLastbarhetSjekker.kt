@@ -1,8 +1,7 @@
 package no.nav.aap.api.søknad.arkiv.pdf
 
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
-import org.apache.pdfbox.pdmodel.PDDocument
-import org.apache.pdfbox.pdmodel.PDDocument.*
+import org.apache.pdfbox.pdmodel.PDDocument.load
 import org.springframework.stereotype.Component
 
 @Component

@@ -117,14 +117,14 @@ data class StandardSøknad(
             }
             this?.andreStønader?.firstOrNull { it.type == UTLAND }?.let {
                 if (manglerVedlegg(it)) {
-                    manglende += VedleggType.UTLAND.also {
-                        log.trace("Det er manglende vedlegg for ${VedleggType.UTLAND.tittel}")
+                    manglende += VedleggType.UTENLANDSKE.also {
+                        log.trace("Det er manglende vedlegg for ${VedleggType.UTENLANDSKE.tittel}")
                     }
                 }
                 else {
                     if (harVedlegg(it)) {
                         log.trace("Utland har vedlegg")
-                        innsendte += VedleggType.UTLAND
+                        innsendte += VedleggType.UTENLANDSKE
                     }
                     log.trace("Ingen manglende vedlegg for utland")
                 }
@@ -263,7 +263,7 @@ enum class VedleggType(val tittel: String) {
     LÅNEKASSEN_LÅN("Dokumentasjon av lån fra Lånekassen"),
     ANDREBARN("Dokumentasjon av andre barn"),
     OMSORG("Dokumentasjon av omsorgsstønad fra kommunen"),
-    UTLAND("Dokumentasjon av ytelser fra utenlandske trygdemyndigheter"),
+    UTENLANDSKE("Dokumentasjon av ytelser fra utenlandske trygdemyndigheter"),
     ANNET("Annen dokumentasjon")
 }
 

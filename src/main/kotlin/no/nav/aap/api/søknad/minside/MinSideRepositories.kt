@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter
 import javax.persistence.EntityListeners

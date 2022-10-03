@@ -8,7 +8,7 @@ import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ARKIV
 import no.nav.aap.util.Constants.AAP
 import no.nav.aap.util.MDCUtil.callIdAsUUID
-import java.util.*
+import java.util.UUID
 
 data class Journalpost(
         val tittel: String,
