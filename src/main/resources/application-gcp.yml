@@ -135,6 +135,9 @@ pdl:
 joark:
   base-uri: https://dokarkiv.${onprem}-pub.nais.io
 
+virus:
+  enabled: true
+  
 minside:
   nais:
     app: ${nais.app.name}
