@@ -44,6 +44,15 @@ class OppslagController(
             krr.kontaktInfo(),
             konto.kontoInfo())
 
+    @GetMapping("/soekermedbarn")
+    fun søkerMedBarn() = pdl.søkerMedBarn()
+
+    @GetMapping("/behandlere")
+    fun behandlere() = behandler.behandlerInfo()
+
+    @GetMapping("/krr")
+    fun krr() =  krr.kontaktInfo()
+
     @GetMapping("/dokumenter")
     fun dokumenter() = arkiv.dokumenter()
 
