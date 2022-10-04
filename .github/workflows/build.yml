@@ -9,7 +9,6 @@ on:
 env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     IMAGE_BASE: ghcr.io/${{ github.repository }}
-    APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
 
 jobs:
     bygg:
@@ -56,6 +55,7 @@ jobs:
         needs: bygg
         runs-on: ubuntu-latest
         env:
+            APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
             RESOURCE: .nais/naiserator.yaml,.nais/alerts.yaml
             CLUSTER: ${{ matrix.cluster }}
             VARS: .nais/${{ matrix.cluster }}.json
