@@ -145,6 +145,8 @@ saf:
   enabled: true
 pdf:
   enabled: true
+joark:
+  enabled: true
 minside:
   nais:
     app: ${nais.app.name}
