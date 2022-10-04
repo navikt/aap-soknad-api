@@ -146,6 +146,8 @@ saf:
   enabled: true
 pdf:
   enabled: true
+krr:
+  enabled: true
 minside:
   nais:
     app: ${nais.app.name}
