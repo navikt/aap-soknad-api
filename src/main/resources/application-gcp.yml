@@ -137,7 +137,8 @@ joark:
 
 virus:
   enabled: true
-
+saf:
+  enabled: true
 minside:
   nais:
     app: ${nais.app.name}
