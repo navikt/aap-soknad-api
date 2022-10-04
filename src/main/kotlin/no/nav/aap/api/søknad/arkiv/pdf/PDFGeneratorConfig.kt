@@ -22,6 +22,6 @@ class PDFGeneratorConfig(
         private const val DEFAULT_BASE_URI = "http://pdfgen"
         private const val UTLAND_PATH = "api/v1/genpdf/aap-pdfgen/soknad-utland"
         private const val STANDARD_PATH = "api/v1/genpdf/aap-pdfgen/soknad"
-        private const val DEFAULT_PING_PATH = ""
+        private const val DEFAULT_PING_PATH = "internal/is_alive"
     }
 }
