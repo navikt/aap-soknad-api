@@ -2,13 +2,11 @@ package no.nav.aap.api.søknad.arkiv.pdf
 
 import no.nav.aap.api.søknad.arkiv.pdf.PDFGeneratorConfig.Companion.PDF
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
-@ConditionalOnProperty("$PDF.enabled", havingValue = "true")
 class PDFGeneratorClientConfig {
     @Qualifier(PDF)
     @Bean

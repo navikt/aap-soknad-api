@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
-@ConditionalOnProperty("$KRR.enabled", havingValue = "true")
 class KRRClientBeanConfig {
 
     @Qualifier(KRR)
@@ -25,5 +24,6 @@ class KRRClientBeanConfig {
             .build()
 
     @Bean
+    @ConditionalOnProperty("$KRR.enabled", havingValue = "true")
     fun krrHealthIndicator(a: KRRWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 }

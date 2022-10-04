@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
-@ConditionalOnProperty("$KONTO.enabled", havingValue = "true")
 class KontoClientBeanConfig {
 
     @Qualifier(KONTO)
@@ -21,5 +20,6 @@ class KontoClientBeanConfig {
             .build()
 
     @Bean
+    @ConditionalOnProperty("$KONTO.enabled", havingValue = "true")
     fun kontoHealthIndicator(a: KontoWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 }

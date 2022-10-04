@@ -2,8 +2,7 @@ package no.nav.aap.api.oppslag.pdl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
-import no.nav.aap.api.oppslag.krr.KRRConfig
-import no.nav.aap.api.oppslag.pdl.PDLConfig.Companion.PDL
+import no.nav.aap.api.oppslag.konto.KontoConfig
 import no.nav.aap.api.oppslag.pdl.PDLConfig.Companion.PDL_CREDENTIALS
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
@@ -24,7 +23,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
-@ConditionalOnProperty("$PDL.enabled", havingValue = "true")
 class PDLClientBeanConfig {
 
     @Bean
@@ -66,5 +64,6 @@ class PDLClientBeanConfig {
         GraphQLWebClient.newInstance(client, mapper)
 
     @Bean
+    @ConditionalOnProperty("${KontoConfig.KONTO}.enabled", havingValue = "true")
     fun pdlHealthIndicator(a: PDLWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 }

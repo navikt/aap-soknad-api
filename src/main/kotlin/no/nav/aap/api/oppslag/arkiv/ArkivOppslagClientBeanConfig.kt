@@ -14,7 +14,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
-@ConditionalOnProperty("$SAF.enabled", havingValue = "true")
 class ArkivOppslagClientBeanConfig {
 
     @Qualifier(SAF)
@@ -32,6 +31,7 @@ class ArkivOppslagClientBeanConfig {
             .build()
 
     @Bean
+    @ConditionalOnProperty("$SAF.enabled", havingValue = "true")
     fun arkivOppslagHealthIndicator(a: ArkivOppslagWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 
     @Qualifier(SAF)

@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
-@ConditionalOnProperty("$ORGANISASJON.enabled", havingValue = "true")
 internal class OrganisasjonClientBeanConfig {
 
     @Bean
@@ -20,5 +19,6 @@ internal class OrganisasjonClientBeanConfig {
             .build()
 
     @Bean
+    @ConditionalOnProperty("$ORGANISASJON.enabled", havingValue = "true")
     fun organisasjonHealthIndicator(a: OrganisasjonWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 }

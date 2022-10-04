@@ -20,7 +20,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import java.net.URI
 
 @Configuration
-@ConditionalOnProperty("$JOARK.enabled", havingValue = "true")
 class ArkivBeanConfig {
 
     private val log = getLogger(javaClass)
@@ -59,5 +58,6 @@ class ArkivBeanConfig {
         } ?: throw IllegalArgumentException("Ingen konfigurasjon for $url")
 
     @Bean
+    @ConditionalOnProperty("$JOARK.enabled", havingValue = "true")
     fun arkivHealthIndicator(adapter: ArkivWebClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {}
 }
