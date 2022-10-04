@@ -135,7 +135,10 @@ pdl:
   scope: api://${onprem}.pdl.pdl-api/.default
 joark:
   base-uri: https://dokarkiv.${onprem}-pub.nais.io
-
+arbeidsforhold:
+  enabled: false
+organisasjon:
+  enabled: false
 virus:
   enabled: true
 saf:

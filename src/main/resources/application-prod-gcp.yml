@@ -44,10 +44,8 @@ server:
             enabled: false
 arbeidsforhold:
     base-uri: https://aareg-services.${onprem}-pub.nais.io
-    enabled: false
 organisasjon:
     base-uri: https://ereg-services.${onprem}-fss-pub.nais.io
-    enabled: false
 saf:
     base-uri: https://safselvbetjening.${onprem}-pub.nais.io
 konto:
