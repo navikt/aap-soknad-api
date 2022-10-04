@@ -15,7 +15,7 @@ import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.KontaktInformasjon
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
 import no.nav.aap.api.søknad.arkiv.pdf.PDFFraBildeFKonverterer
-import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
+import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.InMemoryDokumentlager
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
@@ -56,7 +56,7 @@ class SøknadTest {
     lateinit var ctx: AuthContext
 
     @Mock
-    lateinit var pdf: PDFClient
+    lateinit var pdf: PDFGenerator
 
     val v2 = """
         [ "07e35799-4db5-4ba3-81cc-3681dd1dec60" ]

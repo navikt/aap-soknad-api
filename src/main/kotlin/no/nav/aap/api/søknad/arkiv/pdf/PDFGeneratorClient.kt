@@ -8,12 +8,12 @@ import no.nav.aap.util.StringExtensions.encode
 import org.springframework.stereotype.Component
 
 @Component
-class PDFGenerator(val adapter: PDFGeneratorWebClientAdapter) : PDFClient {
+class PDFGeneratorClient(val adapter: PDFGeneratorWebClientAdapter) : PDFGenerator {
     override fun tilPdf(søker: Søker, søknad: UtlandSøknad) = adapter.generate(søker, søknad)
     override fun tilPdf(søker: Søker, kvitteringData: PDFKvittering) = adapter.generate(søker, kvitteringData)
 }
 
-interface PDFClient {
+interface PDFGenerator {
     fun tilPdf(søker: Søker, søknad: PDFKvittering): ByteArray
     fun pdfVariant(søknad: PDFKvittering, søker: Søker): DokumentVariant = tilPdf(søker, søknad).somPDFVariant()
 

@@ -6,7 +6,7 @@ import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
 import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
 import no.nav.aap.api.søknad.arkiv.pdf.PDFFraBildeFKonverterer
-import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
+import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.Innsending
@@ -39,7 +39,7 @@ class ArkivConverterTest {
     lateinit var ctx: TokenValidationContextHolder
 
     @Mock
-    lateinit var pdf: PDFClient
+    lateinit var pdf: PDFGenerator
 
     // @Test
     fun convert() {

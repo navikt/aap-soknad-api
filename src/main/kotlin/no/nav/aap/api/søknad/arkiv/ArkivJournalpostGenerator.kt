@@ -10,7 +10,7 @@ import no.nav.aap.api.søknad.arkiv.Journalpost.Dokument
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.JSON
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ORIGINAL
-import no.nav.aap.api.søknad.arkiv.pdf.PDFClient
+import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
 import no.nav.aap.api.søknad.arkiv.pdf.PDFFraBildeFKonverterer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
@@ -50,7 +50,7 @@ import org.springframework.stereotype.Component
 class ArkivJournalpostGenerator(
         private val mapper: ObjectMapper,
         private val lager: Dokumentlager,
-        private val pdf: PDFClient,
+        private val pdf: PDFGenerator,
         private val konverterer: PDFFraBildeFKonverterer) {
 
     private val log = getLogger(javaClass)
