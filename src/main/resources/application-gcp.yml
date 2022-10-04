@@ -134,6 +134,7 @@ pdl:
   base-uri: https://pdl-api.${onprem}-pub.nais.io/graphql
   scope: api://${onprem}.pdl.pdl-api/.default
 joark:
+  enabled: true
   base-uri: https://dokarkiv.${onprem}-pub.nais.io
 arbeidsforhold:
   enabled: false
@@ -144,8 +145,6 @@ virus:
 saf:
   enabled: true
 pdf:
-  enabled: true
-joark:
   enabled: true
 minside:
   nais:
