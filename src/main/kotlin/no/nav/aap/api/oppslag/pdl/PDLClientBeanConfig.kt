@@ -2,6 +2,8 @@ package no.nav.aap.api.oppslag.pdl
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
+import no.nav.aap.api.oppslag.krr.KRRConfig
+import no.nav.aap.api.oppslag.pdl.PDLConfig.Companion.PDL
 import no.nav.aap.api.oppslag.pdl.PDLConfig.Companion.PDL_CREDENTIALS
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
@@ -12,6 +14,7 @@ import no.nav.aap.util.StringExtensions.asBearer
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders.AUTHORIZATION
@@ -21,6 +24,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
+@ConditionalOnProperty("$PDL.enabled", havingValue = "true")
 class PDLClientBeanConfig {
 
     @Bean

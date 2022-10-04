@@ -7,12 +7,14 @@ import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAFQL
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
+@ConditionalOnProperty("$SAF.enabled", havingValue = "true")
 class ArkivOppslagClientBeanConfig {
 
     @Qualifier(SAF)
@@ -34,6 +36,5 @@ class ArkivOppslagClientBeanConfig {
 
     @Qualifier(SAF)
     @Bean
-    fun arkivOppslagGraphQLWebClient(@Qualifier(SAFQL) client: WebClient, mapper: ObjectMapper) =
-        GraphQLWebClient.newInstance(client, mapper)
+    fun arkivOppslagGraphQLWebClient(@Qualifier(SAFQL) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
 }

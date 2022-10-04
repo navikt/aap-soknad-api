@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
+@ConditionalOnProperty("$ARBEID.enabled", havingValue = "true")
 class ArbeidClientBeanConfig {
 
     @Bean
@@ -29,8 +30,6 @@ class ArbeidClientBeanConfig {
     }
 
     @Bean
-    @ConditionalOnProperty("arbeidsforhold.enabled", havingValue = "true")
-    fun arbeidsforholdHealthIndicator(a: ArbeidWebClientAdapter) =
-        object : AbstractPingableHealthIndicator(a) {}
+    fun arbeidsforholdHealthIndicator(a: ArbeidWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
 
 }

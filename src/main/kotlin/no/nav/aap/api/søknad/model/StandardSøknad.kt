@@ -259,7 +259,7 @@ data class Utbetalinger(val ekstraFraArbeidsgiver: FraArbeidsgiver,
 enum class VedleggType(val tittel: String) {
     ARBEIDSGIVER("Dokumentasjon av ekstra utbetaling fra arbeidsgiver"),
     STUDIER("Dokumentasjon av studier"),
-    LÅNEKASSEN_STIPEND("Dokumentasjon av sykestipend fra Lånekassen"),
+    LÅNEKASSEN_STIPEND("Dokumentasjon av vedtak eller søknad om sykestipend fra Lånekassen"),
     LÅNEKASSEN_LÅN("Dokumentasjon av lån fra Lånekassen"),
     ANDREBARN("Dokumentasjon av andre barn"),
     OMSORG("Dokumentasjon av omsorgsstønad fra kommunen"),

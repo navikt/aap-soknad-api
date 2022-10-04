@@ -4,6 +4,7 @@ import no.nav.aap.api.søknad.virus.VirusScanConfig.Companion.VIRUS
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
@@ -13,6 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient.Builder
 import java.net.URI
 
 @Configuration
+@ConditionalOnProperty("$VIRUS.enabled", havingValue = "true")
 class VirusScanBeanConfg {
     @Bean
     @Qualifier(VIRUS)

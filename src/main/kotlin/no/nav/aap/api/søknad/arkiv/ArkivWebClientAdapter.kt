@@ -11,7 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
-class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("arkivping") pingClient: WebClient,val cf: ArkivConfig) :
+class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("${JOARK}ping") pingClient: WebClient, val cf: ArkivConfig) :
     AbstractWebClientAdapter(webClient, cf,pingClient) {
 
     fun opprettJournalpost(journalpost: Journalpost) =
