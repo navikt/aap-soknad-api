@@ -21,6 +21,7 @@ import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.aap.util.StartupInfoContributor
+import no.nav.aap.util.StringExtensions.toJson
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.boot.conditionals.ConditionalOnProd
 import no.nav.boot.conditionals.EnvUtil.*
@@ -171,8 +172,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                                      request: ServerHttpRequest,
                                      response: ServerHttpResponse): Any? {
             if (contentType in listOf(APPLICATION_JSON, parseMediaType("application/problem+json"))) {
-                val b = mapper.writeValueAsString(body).also { log.trace("asString $it") }
-                log.trace(CONFIDENTIAL, "Response body for ${request.uri} er $b")
+                log.trace(CONFIDENTIAL, "Response body for ${request.uri} er ${body?.toJson(mapper)}")
             }
             return body
         }
