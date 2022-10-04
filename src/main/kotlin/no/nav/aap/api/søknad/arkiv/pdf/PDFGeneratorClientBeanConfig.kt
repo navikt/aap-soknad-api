@@ -20,5 +20,5 @@ class PDFGeneratorClientBeanConfig {
 
     @Bean
     @ConditionalOnProperty("${PDF}.enabled", havingValue = "true")
-    fun arkivHealthIndicator(adapter: PDFGeneratorWebClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {}
+    fun pdfGenHealthIndicator(adapter: PDFGeneratorWebClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {}
 }
