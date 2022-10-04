@@ -10,7 +10,6 @@ import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
-import org.springframework.validation.BindException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException.NotFound
@@ -38,8 +37,8 @@ class AAPApiExceptionHandler : ProblemHandling {
     @ExceptionHandler(ContentTypeException::class)
     fun ukjent(e: ContentTypeException, req: NativeWebRequest) = problem(e, UNSUPPORTED_MEDIA_TYPE, req)
 
-    @ExceptionHandler(IllegalArgumentException::class, BindException::class)
-    fun illegal(e: Exception, req: NativeWebRequest) = problem(e, BAD_REQUEST, req)
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun illegal(e: IllegalArgumentException, req: NativeWebRequest) = problem(e, BAD_REQUEST, req)
 
     @ExceptionHandler(NotFound::class)
     fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = problem(e, NOT_FOUND, req)
