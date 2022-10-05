@@ -21,6 +21,7 @@ import org.zalando.problem.Status
 import org.zalando.problem.Status.BAD_REQUEST
 import org.zalando.problem.Status.INTERNAL_SERVER_ERROR
 import org.zalando.problem.Status.NOT_FOUND
+import org.zalando.problem.Status.SERVICE_UNAVAILABLE
 import org.zalando.problem.Status.UNAUTHORIZED
 import org.zalando.problem.Status.UNPROCESSABLE_ENTITY
 import org.zalando.problem.Status.UNSUPPORTED_MEDIA_TYPE
@@ -34,7 +35,7 @@ class AAPApiExceptionHandler : ProblemHandling {
     fun auth(e: RuntimeException, req: NativeWebRequest) = problem(e, UNAUTHORIZED, req)
 
     @ExceptionHandler(IntegrationException::class, StorageException::class)
-    fun inegration(e: RuntimeException, req: NativeWebRequest) = problem(e, INTERNAL_SERVER_ERROR, req)
+    fun inegration(e: RuntimeException, req: NativeWebRequest) = problem(e, SERVICE_UNAVAILABLE, req)
 
     @ExceptionHandler(ContentTypeException::class)
     fun ukjent(e: ContentTypeException, req: NativeWebRequest) = problem(e, UNSUPPORTED_MEDIA_TYPE, req)
