@@ -34,31 +34,31 @@ class AAPApiExceptionHandling : ProblemHandling {
     private val log = getLogger(javaClass)
 
     @ExceptionHandler(JwtTokenMissingException::class, JwtTokenUnauthorizedException::class)
-    fun auth(e: RuntimeException, req: NativeWebRequest) = createProblem(UNAUTHORIZED, e, req)
+    fun auth(e: RuntimeException, req: NativeWebRequest) = createProblem(e, req, UNAUTHORIZED)
 
     @ExceptionHandler(IntegrationException::class, StorageException::class)
-    fun integration(e: RuntimeException, req: NativeWebRequest) = createProblem(SERVICE_UNAVAILABLE, e, req)
+    fun integration(e: RuntimeException, req: NativeWebRequest) = createProblem(e, req, SERVICE_UNAVAILABLE)
 
     @ExceptionHandler(ContentTypeException::class)
-    fun ukjent(e: ContentTypeException, req: NativeWebRequest) = createProblem(UNSUPPORTED_MEDIA_TYPE, e, req)
+    fun ukjent(e: ContentTypeException, req: NativeWebRequest) = createProblem(e, req, UNSUPPORTED_MEDIA_TYPE)
 
     @ExceptionHandler(IllegalArgumentException::class, DatabindException::class)
-    fun illegal(e: Exception, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
+    fun illegal(e: Exception, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
 
     @ExceptionHandler(NotFound::class)
-    fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = createProblem(NOT_FOUND, e, req)
+    fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = createProblem(e, req, NOT_FOUND)
 
     @ExceptionHandler(DokumentException::class)
-    fun dokument(e: DokumentException, req: NativeWebRequest) = createProblem(UNPROCESSABLE_ENTITY,e, req, e.substatus)
+    fun dokument(e: DokumentException, req: NativeWebRequest) = createProblem(e, req, UNPROCESSABLE_ENTITY, e.substatus)
 
     @ExceptionHandler(HttpMessageConversionException::class)
-    fun messageConversion(e: HttpMessageConversionException, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
+    fun messageConversion(e: HttpMessageConversionException, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
 
     @ExceptionHandler(Exception::class)
-    fun catchAll(e: Exception, req: NativeWebRequest) = createProblem(INTERNAL_SERVER_ERROR, e, req)
+    fun catchAll(e: Exception, req: NativeWebRequest) = createProblem(e, req, INTERNAL_SERVER_ERROR)
 
-    override fun handleMessageNotReadableException(e: HttpMessageNotReadableException, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
-     private fun createProblem(status: Status, t: Throwable, req: NativeWebRequest, substatus: Substatus? = null)  =
+    override fun handleMessageNotReadableException(e: HttpMessageNotReadableException, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
+     private fun createProblem(t: Throwable, req: NativeWebRequest, status: Status, substatus: Substatus? = null)  =
          create(t,toProblem(t, status, substatus), req)
 
     private fun toProblem(t: Throwable, status: Status, substatus: Substatus?) =
