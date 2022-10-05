@@ -11,10 +11,12 @@ import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException.NotFound
 import org.springframework.web.context.request.NativeWebRequest
+import org.zalando.problem.Problem
 import org.zalando.problem.Problem.builder
 import org.zalando.problem.Status
 import org.zalando.problem.Status.BAD_REQUEST
@@ -52,9 +54,17 @@ class AAPApiExceptionHandling : ProblemHandling {
     fun catchAll(e: Exception, req: NativeWebRequest) = createProblem(INTERNAL_SERVER_ERROR, e, req)
 
      fun createProblem(status: Status, t: Throwable, request: NativeWebRequest, substatus: Substatus? = null)  =
-         create(t,problem(t,status,substatus), request)
+         create(t,toProblem(t,status,substatus), request)
 
-    private fun problem(t: Throwable, status: Status, substatus: Substatus? = null) =
+    override fun log(throwable: Throwable, problem: Problem, request: NativeWebRequest, status: HttpStatus) {
+        if (status.is4xxClientError) {
+            log.error("XX {}: {}", status.reasonPhrase, throwable.message)
+        }
+        else if (status.is5xxServerError) {
+            log.error("XX " + status.reasonPhrase, throwable)
+        }
+    }
+    private fun toProblem(t: Throwable, status: Status, substatus: Substatus? = null) =
         with(builder().withStatus(status).withDetail(t.message).with(NAV_CALL_ID, callId())) {
             substatus?.let {
                 with("substatus", it).build()
