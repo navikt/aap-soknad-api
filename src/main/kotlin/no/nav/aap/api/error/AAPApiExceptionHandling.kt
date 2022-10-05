@@ -58,7 +58,7 @@ class AAPApiExceptionHandling : ProblemHandling {
 
     override fun log(throwable: Throwable, problem: Problem, request: NativeWebRequest, status: HttpStatus) {
         if (status.is4xxClientError) {
-            log.error("XX {}: {}", status.reasonPhrase, throwable.message)
+            log.error("XX {}: {}", status.reasonPhrase, throwable.message,throwable)
         }
         else if (status.is5xxServerError) {
             log.error("XX " + status.reasonPhrase, throwable)
