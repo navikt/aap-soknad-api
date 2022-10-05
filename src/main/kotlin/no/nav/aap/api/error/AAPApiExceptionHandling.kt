@@ -1,8 +1,7 @@
 package no.nav.aap.api.error
 
-import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.DatabindException
-import com.fasterxml.jackson.databind.exc.MismatchedInputException
+import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
@@ -14,6 +13,7 @@ import no.nav.aap.util.MDCUtil.callId
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException.NotFound
@@ -53,18 +53,11 @@ class AAPApiExceptionHandling : ProblemHandling {
     fun dokument(e: DokumentException, req: NativeWebRequest) =
         create(e, problem(e, UNPROCESSABLE_ENTITY, e.substatus), req)
 
-    /**
-     * Handle [JsonParseException]s, thrown when JSON cannot be parsed because of invalid syntax.
-     */
     @ExceptionHandler
-    fun handle(e: JsonParseException, request: NativeWebRequest): ResponseEntity<Problem> =
+    fun handle(e: MethodArgumentNotValidException, request: NativeWebRequest): ResponseEntity<Problem> =
         create(e,problem(e,BAD_REQUEST), request)
-
-    /**
-     * Handle [MismatchedInputException]s, thrown when JSON input cannot be mapped to the target type.
-     */
     @ExceptionHandler
-    fun handle(e: MismatchedInputException, request: NativeWebRequest): ResponseEntity<Problem> =
+    fun handle(e: InvalidFormatException, request: NativeWebRequest): ResponseEntity<Problem> =
         create(e,problem(e,BAD_REQUEST), request)
 
     @ExceptionHandler(Exception::class)
