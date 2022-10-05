@@ -61,7 +61,7 @@ class AAPApiExceptionHandling : ProblemHandling {
      private fun createProblem(status: Status, t: Throwable, request: NativeWebRequest, substatus: Substatus? = null)  =
          create(t,toProblem(t,status,substatus), request)
 
-    private fun toProblem(t: Throwable, status: Status, substatus: Substatus? = null) =
+    private fun toProblem(t: Throwable, status: Status, substatus: Substatus? ) =
         with(builder().withStatus(status).withDetail(t.message).with(NAV_CALL_ID, callId())) {
             substatus?.let {
                 with("substatus", it).build()
