@@ -10,6 +10,7 @@ import no.nav.boot.conditionals.EnvUtil.PROD_FSS
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
 import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
@@ -19,7 +20,7 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.retry.annotation.EnableRetry
 
-@SpringBootApplication
+@SpringBootApplication(exclude= [ErrorMvcAutoConfiguration::class])
 @EnableJwtTokenValidation(ignore = ["org.springdoc", "org.springframework"])
 @EnableOAuth2Client(cacheEnabled = true)
 @ConfigurationPropertiesScan
@@ -28,6 +29,7 @@ import org.springframework.retry.annotation.EnableRetry
 @EnableCaching
 @EnableJpaAuditing
 @EnableSpringDataWebSupport
+
 class AAPSøknadApiApplication
 
 private const val NAIS_ENV = "nais.env"

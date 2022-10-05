@@ -39,7 +39,7 @@ class AAPApiExceptionHandler : ProblemHandling {
     @ExceptionHandler(ContentTypeException::class)
     fun ukjent(e: ContentTypeException, req: NativeWebRequest) = problem(e, UNSUPPORTED_MEDIA_TYPE, req)
 
-    @ExceptionHandler(IllegalArgumentException::class, DatabindException::class, InvalidFormatException::class)
+    @ExceptionHandler(IllegalArgumentException::class, DatabindException::class)
     fun illegal(e: Exception, req: NativeWebRequest) = problem(e, BAD_REQUEST, req)
 
     @ExceptionHandler(NotFound::class)
