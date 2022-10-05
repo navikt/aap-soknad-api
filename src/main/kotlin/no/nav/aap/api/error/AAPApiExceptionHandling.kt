@@ -1,7 +1,6 @@
 package no.nav.aap.api.error
 
 import com.fasterxml.jackson.databind.DatabindException
-import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
@@ -13,6 +12,7 @@ import no.nav.aap.util.MDCUtil.callId
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException.NotFound
@@ -51,9 +51,9 @@ class AAPApiExceptionHandling : ProblemHandling {
     @ExceptionHandler(DokumentException::class)
     fun dokument(e: DokumentException, req: NativeWebRequest) =
         create(e, problem(e, UNPROCESSABLE_ENTITY, e.substatus), req)
-    
+
     @ExceptionHandler
-    fun handle(e: InvalidFormatException, request: NativeWebRequest): ResponseEntity<Problem> =
+    fun handle(e: HttpMessageNotReadableException, request: NativeWebRequest): ResponseEntity<Problem> =
         create(e,problem(e,BAD_REQUEST), request)
 
     @ExceptionHandler(Exception::class)
