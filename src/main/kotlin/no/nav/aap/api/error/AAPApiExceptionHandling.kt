@@ -65,6 +65,7 @@ class AAPApiExceptionHandling : ProblemHandling {
 
     private fun toProblem(t: Throwable, uri: String?,status: Status, substatus: Substatus? ) =
         with(builder()
+            .withTitle(status.reasonPhrase)
             .withType(URI(uri!!))
             .withStatus(status)
             .withDetail(t.message)
