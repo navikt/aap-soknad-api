@@ -61,17 +61,14 @@ class AAPApiExceptionHandling : ProblemHandling {
      fun createProblem(status: Status, t: Throwable, request: NativeWebRequest, substatus: Substatus? = null)  =
          create(t,toProblem(t,status,substatus), request)
 
-    override fun log(t: Throwable, problem: Problem, request: NativeWebRequest, status: HttpStatus) {
-        if (status.isError) {
-            log.warn("${status.reasonPhrase}: ${t.message}",t)
-        }
-    }
+
     private fun toProblem(t: Throwable, status: Status, substatus: Substatus? = null) =
         with(builder().withStatus(status).withDetail(t.message).with(NAV_CALL_ID, callId())) {
             substatus?.let {
                 with("substatus", it).build()
             } ?: build()
-        }.also {
-            log.trace("Returnerer $status", it)
         }
+
+    override fun log(t: Throwable, problem: Problem, request: NativeWebRequest, status: HttpStatus) =
+        log.warn("${status.reasonPhrase}: ${t.message}",t)
 }
