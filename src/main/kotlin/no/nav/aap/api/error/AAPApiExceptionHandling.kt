@@ -28,6 +28,8 @@ import org.zalando.problem.Status.UNAUTHORIZED
 import org.zalando.problem.Status.UNPROCESSABLE_ENTITY
 import org.zalando.problem.Status.UNSUPPORTED_MEDIA_TYPE
 import org.zalando.problem.spring.web.advice.ProblemHandling
+import java.net.URI
+import javax.servlet.http.HttpServletRequest
 
 @ControllerAdvice
 class AAPApiExceptionHandling : ProblemHandling {
@@ -56,13 +58,17 @@ class AAPApiExceptionHandling : ProblemHandling {
 
     @ExceptionHandler(Exception::class)
     fun catchAll(e: Exception, req: NativeWebRequest) = createProblem(INTERNAL_SERVER_ERROR, e, req)
-    
-    override fun handleMessageNotReadableException(e: HttpMessageNotReadableException, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
-     private fun createProblem(status: Status, t: Throwable, request: NativeWebRequest, substatus: Substatus? = null)  =
-         create(t,toProblem(t,status,substatus), request)
 
-    private fun toProblem(t: Throwable, status: Status, substatus: Substatus? ) =
-        with(builder().withStatus(status).withDetail(t.message).with(NAV_CALL_ID, callId())) {
+    override fun handleMessageNotReadableException(e: HttpMessageNotReadableException, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
+     private fun createProblem(status: Status, t: Throwable, req: NativeWebRequest, substatus: Substatus? = null)  =
+         create(t,toProblem(t,req.getNativeRequest(HttpServletRequest::class.java)?.requestURI,status,substatus), req)
+
+    private fun toProblem(t: Throwable, uri: String?,status: Status, substatus: Substatus? ) =
+        with(builder()
+            .withType(URI(uri!!))
+            .withStatus(status)
+            .withDetail(t.message)
+            .with(NAV_CALL_ID, callId())) {
             substatus?.let {
                 with("substatus", it).build()
             } ?: build()
