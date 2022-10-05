@@ -1,5 +1,6 @@
 package no.nav.aap.api.error
 
+import com.fasterxml.jackson.databind.DatabindException
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
@@ -37,8 +38,8 @@ class AAPApiExceptionHandler : ProblemHandling {
     @ExceptionHandler(ContentTypeException::class)
     fun ukjent(e: ContentTypeException, req: NativeWebRequest) = problem(e, UNSUPPORTED_MEDIA_TYPE, req)
 
-    @ExceptionHandler(IllegalArgumentException::class)
-    fun illegal(e: IllegalArgumentException, req: NativeWebRequest) = problem(e, BAD_REQUEST, req)
+    @ExceptionHandler(IllegalArgumentException::class, DatabindException::class)
+    fun illegal(e: Exception, req: NativeWebRequest) = problem(e, BAD_REQUEST, req)
 
     @ExceptionHandler(NotFound::class)
     fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = problem(e, NOT_FOUND, req)
