@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.mellomlagring
 import com.google.cloud.kms.v1.CryptoKeyName
 import com.google.cloud.kms.v1.KeyRingName
 import com.google.cloud.kms.v1.LocationName
+import no.nav.aap.api.error.Substatus
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.BUCKETS
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -37,12 +38,4 @@ data class BucketConfig(val project: String,
     }
 }
 
-open class DokumentException(msg: String?, cause: Throwable? = null, val substatus: Substatus? = null) :
-    RuntimeException(msg, cause) {
-    enum class Substatus {
-        PASSWORD_PROTECTED,
-        VIRUS,
-        UNSUPPORTED,
-    }
-
-}
+open class DokumentException(msg: String?, cause: Throwable? = null, val substatus: Substatus? = null) : RuntimeException(msg, cause)

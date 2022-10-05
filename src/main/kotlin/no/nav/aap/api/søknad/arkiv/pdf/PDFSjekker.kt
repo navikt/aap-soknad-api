@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.arkiv.pdf
 
+import no.nav.aap.api.error.Substatus.PASSWORD_PROTECTED
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
-import no.nav.aap.api.søknad.mellomlagring.DokumentException.Substatus.PASSWORD_PROTECTED
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker
 import no.nav.aap.util.LoggerUtil.getLogger

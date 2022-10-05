@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.virus
 
+import no.nav.aap.api.error.Substatus.VIRUS
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
-import no.nav.aap.api.søknad.mellomlagring.DokumentException.Substatus.VIRUS
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker
 import no.nav.aap.api.søknad.virus.ScanResult.Result.FOUND
