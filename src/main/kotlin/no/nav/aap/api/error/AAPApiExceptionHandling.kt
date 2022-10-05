@@ -13,7 +13,6 @@ import no.nav.aap.util.MDCUtil.callId
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException.NotFound
@@ -52,10 +51,7 @@ class AAPApiExceptionHandling : ProblemHandling {
     @ExceptionHandler(DokumentException::class)
     fun dokument(e: DokumentException, req: NativeWebRequest) =
         create(e, problem(e, UNPROCESSABLE_ENTITY, e.substatus), req)
-
-    @ExceptionHandler
-    fun handle(e: MethodArgumentNotValidException, request: NativeWebRequest): ResponseEntity<Problem> =
-        create(e,problem(e,BAD_REQUEST), request)
+    
     @ExceptionHandler
     fun handle(e: InvalidFormatException, request: NativeWebRequest): ResponseEntity<Problem> =
         create(e,problem(e,BAD_REQUEST), request)
