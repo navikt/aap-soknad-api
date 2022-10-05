@@ -1,7 +1,6 @@
 package no.nav.aap.api.error
 
 import com.fasterxml.jackson.databind.DatabindException
-import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
@@ -13,6 +12,7 @@ import no.nav.aap.util.MDCUtil.callId
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.http.HttpStatus
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException.NotFound
@@ -54,8 +54,9 @@ class AAPApiExceptionHandling : ProblemHandling {
     @ExceptionHandler(Exception::class)
     fun catchAll(e: Exception, req: NativeWebRequest) = createProblem(INTERNAL_SERVER_ERROR, e, req)
 
-    @ExceptionHandler(InvalidFormatException::class)
-    fun invalidFormat(e: InvalidFormatException, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
+    override fun handleMessageNotReadableException(e: HttpMessageNotReadableException, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun invalidFormat(e: HttpMessageNotReadableException, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
      fun createProblem(status: Status, t: Throwable, request: NativeWebRequest, substatus: Substatus? = null)  =
          create(t,toProblem(t,status,substatus), request)
 
