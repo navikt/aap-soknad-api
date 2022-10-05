@@ -11,13 +11,10 @@ import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
-import org.springframework.http.ResponseEntity
-import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException.NotFound
 import org.springframework.web.context.request.NativeWebRequest
-import org.zalando.problem.Problem
 import org.zalando.problem.Problem.builder
 import org.zalando.problem.Status
 import org.zalando.problem.Status.BAD_REQUEST
@@ -34,32 +31,28 @@ class AAPApiExceptionHandling : ProblemHandling {
     private val log = getLogger(javaClass)
 
     @ExceptionHandler(JwtTokenMissingException::class, JwtTokenUnauthorizedException::class)
-    fun auth(e: RuntimeException, req: NativeWebRequest) = problem(e, UNAUTHORIZED, req)
+    fun auth(e: RuntimeException, req: NativeWebRequest) = createProblem(UNAUTHORIZED, e, req)
 
     @ExceptionHandler(IntegrationException::class, StorageException::class)
-    fun inegration(e: RuntimeException, req: NativeWebRequest) = problem(e, SERVICE_UNAVAILABLE, req)
+    fun inegration(e: RuntimeException, req: NativeWebRequest) = createProblem(SERVICE_UNAVAILABLE, e, req)
 
     @ExceptionHandler(ContentTypeException::class)
-    fun ukjent(e: ContentTypeException, req: NativeWebRequest) = problem(e, UNSUPPORTED_MEDIA_TYPE, req)
+    fun ukjent(e: ContentTypeException, req: NativeWebRequest) = createProblem(UNSUPPORTED_MEDIA_TYPE, e, req)
 
     @ExceptionHandler(IllegalArgumentException::class, DatabindException::class)
-    fun illegal(e: Exception, req: NativeWebRequest) = problem(e, BAD_REQUEST, req)
+    fun illegal(e: Exception, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
 
     @ExceptionHandler(NotFound::class)
-    fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = problem(e, NOT_FOUND, req)
+    fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = createProblem(NOT_FOUND, e, req)
 
     @ExceptionHandler(DokumentException::class)
-    fun dokument(e: DokumentException, req: NativeWebRequest) =
-        create(e, problem(e, UNPROCESSABLE_ENTITY, e.substatus), req)
-
-    @ExceptionHandler
-    fun handle(e: HttpMessageNotReadableException, request: NativeWebRequest): ResponseEntity<Problem> =
-        create(e,problem(e,BAD_REQUEST), request)
+    fun dokument(e: DokumentException, req: NativeWebRequest) = createProblem(UNPROCESSABLE_ENTITY,e, req, e.substatus)
 
     @ExceptionHandler(Exception::class)
-    fun catchAll(e: Exception, req: NativeWebRequest) = create(e, problem(e, INTERNAL_SERVER_ERROR), req)
+    fun catchAll(e: Exception, req: NativeWebRequest) = createProblem(INTERNAL_SERVER_ERROR, e, req)
 
-    fun problem(t: Throwable, status: Status, req: NativeWebRequest) = create(t, problem(t, status), req)
+     fun createProblem(status: Status, t: Throwable, request: NativeWebRequest, substatus: Substatus? = null)  =
+         create(t,problem(t,status,substatus), request)
 
     private fun problem(t: Throwable, status: Status, substatus: Substatus? = null) =
         with(builder().withStatus(status).withDetail(t.message).with(NAV_CALL_ID, callId())) {
