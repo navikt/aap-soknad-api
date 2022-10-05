@@ -37,7 +37,7 @@ class AAPApiExceptionHandling : ProblemHandling {
     fun auth(e: RuntimeException, req: NativeWebRequest) = createProblem(UNAUTHORIZED, e, req)
 
     @ExceptionHandler(IntegrationException::class, StorageException::class)
-    fun inegration(e: RuntimeException, req: NativeWebRequest) = createProblem(SERVICE_UNAVAILABLE, e, req)
+    fun integration(e: RuntimeException, req: NativeWebRequest) = createProblem(SERVICE_UNAVAILABLE, e, req)
 
     @ExceptionHandler(ContentTypeException::class)
     fun ukjent(e: ContentTypeException, req: NativeWebRequest) = createProblem(UNSUPPORTED_MEDIA_TYPE, e, req)
