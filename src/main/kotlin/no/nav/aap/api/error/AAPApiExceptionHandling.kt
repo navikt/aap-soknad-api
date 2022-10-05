@@ -51,12 +51,12 @@ class AAPApiExceptionHandling : ProblemHandling {
     @ExceptionHandler(DokumentException::class)
     fun dokument(e: DokumentException, req: NativeWebRequest) = createProblem(UNPROCESSABLE_ENTITY,e, req, e.substatus)
 
-    @ExceptionHandler(Exception::class)
-    fun catchAll(e: Exception, req: NativeWebRequest) = createProblem(INTERNAL_SERVER_ERROR, e, req)
-
     @ExceptionHandler(HttpMessageConversionException::class)
     fun messageConversion(e: HttpMessageConversionException, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
 
+    @ExceptionHandler(Exception::class)
+    fun catchAll(e: Exception, req: NativeWebRequest) = createProblem(INTERNAL_SERVER_ERROR, e, req)
+    
     override fun handleMessageNotReadableException(e: HttpMessageNotReadableException, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
      private fun createProblem(status: Status, t: Throwable, request: NativeWebRequest, substatus: Substatus? = null)  =
          create(t,toProblem(t,status,substatus), request)
