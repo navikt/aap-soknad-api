@@ -68,10 +68,14 @@ class AAPApiExceptionHandling : ProblemHandling {
             .withDetail(t.message)
             .with(NAV_CALL_ID, callId())) {
             substatus?.let {
-                with("substatus", it).build()
+                with(SUBSTATUS, it).build()
             } ?: build()
         }
 
     override fun log(t: Throwable, problem: Problem, request: NativeWebRequest, status: HttpStatus) =
         log.warn("${status.reasonPhrase}: ${t.message}",t)
+
+    companion object {
+        private const val SUBSTATUS = "substatus"
+    }
 }
