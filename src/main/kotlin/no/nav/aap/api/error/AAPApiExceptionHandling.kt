@@ -62,12 +62,9 @@ class AAPApiExceptionHandling : ProblemHandling {
      fun createProblem(status: Status, t: Throwable, request: NativeWebRequest, substatus: Substatus? = null)  =
          create(t,toProblem(t,status,substatus), request)
 
-    override fun log(throwable: Throwable, problem: Problem, request: NativeWebRequest, status: HttpStatus) {
-        if (status.is4xxClientError) {
-            log.error("XX {}: {}", status.reasonPhrase, throwable.message,throwable)
-        }
-        else if (status.is5xxServerError) {
-            log.error("XX " + status.reasonPhrase, throwable)
+    override fun log(t: Throwable, problem: Problem, request: NativeWebRequest, status: HttpStatus) {
+        if (status.isError) {
+            log.warn("${status.reasonPhrase}: ${t.message}",t)
         }
     }
     private fun toProblem(t: Throwable, status: Status, substatus: Substatus? = null) =
