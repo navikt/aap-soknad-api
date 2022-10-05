@@ -1,6 +1,7 @@
 package no.nav.aap.api.error
 
 import com.fasterxml.jackson.databind.DatabindException
+import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
@@ -53,6 +54,8 @@ class AAPApiExceptionHandling : ProblemHandling {
     @ExceptionHandler(Exception::class)
     fun catchAll(e: Exception, req: NativeWebRequest) = createProblem(INTERNAL_SERVER_ERROR, e, req)
 
+    @ExceptionHandler(InvalidFormatException::class)
+    fun invalidFormat(e: InvalidFormatException, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
      fun createProblem(status: Status, t: Throwable, request: NativeWebRequest, substatus: Substatus? = null)  =
          create(t,toProblem(t,status,substatus), request)
 
