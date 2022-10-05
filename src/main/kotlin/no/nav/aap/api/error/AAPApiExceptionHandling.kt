@@ -55,8 +55,6 @@ class AAPApiExceptionHandling : ProblemHandling {
     fun catchAll(e: Exception, req: NativeWebRequest) = createProblem(INTERNAL_SERVER_ERROR, e, req)
 
     override fun handleMessageNotReadableException(e: HttpMessageNotReadableException, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
-    @ExceptionHandler(HttpMessageNotReadableException::class)
-    fun invalidFormat(e: HttpMessageNotReadableException, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
      fun createProblem(status: Status, t: Throwable, request: NativeWebRequest, substatus: Substatus? = null)  =
          create(t,toProblem(t,status,substatus), request)
 
