@@ -58,9 +58,8 @@ class AAPApiExceptionHandling : ProblemHandling {
     fun messageConversion(e: HttpMessageConversionException, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
 
     override fun handleMessageNotReadableException(e: HttpMessageNotReadableException, req: NativeWebRequest) = createProblem(BAD_REQUEST, e, req)
-     fun createProblem(status: Status, t: Throwable, request: NativeWebRequest, substatus: Substatus? = null)  =
+     private fun createProblem(status: Status, t: Throwable, request: NativeWebRequest, substatus: Substatus? = null)  =
          create(t,toProblem(t,status,substatus), request)
-
 
     private fun toProblem(t: Throwable, status: Status, substatus: Substatus? = null) =
         with(builder().withStatus(status).withDetail(t.message).with(NAV_CALL_ID, callId())) {
