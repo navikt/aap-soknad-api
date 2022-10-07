@@ -41,7 +41,7 @@
         <sonar.projectKey>navikt_aap-soknad-api</sonar.projectKey>
         <swagger.annotations.version>2.2.3</swagger.annotations.version>
         <springdoc.version>1.6.11</springdoc.version>
-        <testcontainers.version>1.17.4</testcontainers.version>
+        <testcontainers.version>1.17.5</testcontainers.version>
         <token.validation.version>2.1.6</token.validation.version>
         <hibernate.types.version>2.19.2</hibernate.types.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
