@@ -10,12 +10,13 @@ import com.google.cloud.storage.Storage
 import com.google.iam.v1.Binding
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig
 import no.nav.aap.util.LoggerUtil
+import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
 
 @Component
-class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage) {
+class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage) : CommandLineRunner {
 
-    init {
+    override fun run(vararg args: String?) {
         with(cfg) {
             if (harRing()) {
                 log.info("KeyRing $ring finnes allerede")
@@ -32,7 +33,6 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
             setAksessForBucketServiceAccount(project)
         }
     }
-
     private final fun harRing() =
         KeyManagementServiceClient.create().use { client ->
             with(cfg) {
@@ -96,4 +96,6 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
         private const val ENCRYPT_DECRYPT_ROLE = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
         private val log = LoggerUtil.getLogger(EncryptionIAC::class.java)
     }
+
+
 }

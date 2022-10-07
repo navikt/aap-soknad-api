@@ -15,13 +15,15 @@ import com.google.pubsub.v1.TopicName
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.MellomlagringBucketConfig.SubscriptionConfig
 import no.nav.aap.util.LoggerUtil.getLogger
+import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
 import org.springframework.stereotype.Component
 
 @Component
-class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, private val admin: PubSubAdmin) {
-    init {
+class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, private val admin: PubSubAdmin) : CommandLineRunner {
+
+    override fun run(vararg args: String?) {
         with(cfg.mellom.subscription) {
             if (!harTopic(topic)) {
                 lagTopic(topic)
@@ -45,6 +47,8 @@ class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, pri
             }
         }
     }
+
+
 
     private fun harTopic(topic: String) =
         admin.getTopic(topic) != null
@@ -115,4 +119,6 @@ class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, pri
     companion object {
         private val log = getLogger(PubSubIAC::class.java)
     }
+
+
 }
