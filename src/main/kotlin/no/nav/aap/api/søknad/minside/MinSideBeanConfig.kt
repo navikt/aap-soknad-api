@@ -10,6 +10,7 @@ import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Compani
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
+import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
@@ -24,10 +25,12 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS
+import org.springframework.stereotype.Component
 
 @Configuration
 class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNavn: String) {
     private val log = getLogger(javaClass)
+
 
     @Bean
     fun minSideKafkaOperations(props: KafkaProperties) =
@@ -70,4 +73,9 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
                 else -> true
             }
         }
+
+    @Component
+    class KafkaHealthIndcator(admin: AdminClient)  {
+        
+    }
 }
