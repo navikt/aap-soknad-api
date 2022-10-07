@@ -20,7 +20,7 @@
         <confluent.version>7.2.2</confluent.version>
         <commons-text.version>1.10.0</commons-text.version>
         <domain.version>1.0.16</domain.version>
-        <gcp.version>0.179.0</gcp.version>
+        <gcp.version>0.180.0</gcp.version>
         <gcp.libraries.version>26.1.2</gcp.libraries.version>
         <spring-cloud-gcp.version>3.3.0</spring-cloud-gcp.version>
         <graphql.version>1.0.0</graphql.version>
