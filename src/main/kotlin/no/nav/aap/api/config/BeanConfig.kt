@@ -31,7 +31,6 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.apache.commons.text.StringEscapeUtils.*
-import org.apache.kafka.clients.admin.TopicDescription
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTrace
@@ -190,7 +189,8 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         override fun name() = cfg.name
 
         override fun ping() =
-            admin.describeTopics(*cfg.topics().toTypedArray()).entries.withIndex()
+            admin.describeTopics(*cfg.topics().toTypedArray()).entries
+                .withIndex()
                 .associate { "topic-${it.index}" to it.value.value.name() }
 
         abstract class AbstractKafkaConfig(val name: String, val isEnabled: Boolean) {
