@@ -135,7 +135,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
     @Bean
     fun notProdHttpClient() = HttpClient.create().wiretap(javaClass.name, TRACE, TEXTUAL)
 
-    @ConditionalOnProd()
+    @ConditionalOnProd
     @Bean
     fun prodHttpClient() = HttpClient.create()
 
