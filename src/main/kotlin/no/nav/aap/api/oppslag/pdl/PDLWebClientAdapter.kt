@@ -37,7 +37,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
     AbstractGraphQLAdapter(clients.client, cfg) {
 
 
-    override fun ping() {
+    override fun ping() :Map<String,String>{
         webClient
             .options()
             .uri(baseUri)
@@ -45,6 +45,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
             .retrieve()
             .toBodilessEntity()
             .block()
+        return emptyMap()
     }
 
     fun søker(medBarn: Boolean = false) =

@@ -16,10 +16,10 @@ import org.springframework.web.reactive.function.client.bodyToMono
 @Component
 class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: VirusScanConfig) :
     AbstractWebClientAdapter(client, cf) {
-    override fun ping() =
+    override fun ping() : Map<String,String> =
         when (harVirus(PDF).result) {
             NONE -> throw VirusException("Uventet ping respons ${NONE.name}")
-            FOUND, OK -> Unit
+            FOUND, OK -> emptyMap()
         }
 
     fun harVirus(bytes: ByteArray) =

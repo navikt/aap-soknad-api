@@ -28,7 +28,6 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS
 import org.springframework.stereotype.Component
-import java.net.URI
 
 @Configuration
 class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNavn: String) {
@@ -81,12 +80,12 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
     @Component
     class KafkaPingable(private val admin: KafkaAdmin,private val props: KafkaProperties,private val cfg: MinSideConfig) : Pingable {
         override fun isEnabled() = cfg.enabled
-        override fun pingEndpoint() = URI.create("kafka://brokers")
+        override fun pingEndpoint() = "${props.bootstrapServers}"
         override fun name() = "MinSide"
 
         override fun ping() =
             with(cfg) {
-                    val status =  admin.describeTopics(beskjed.topic,oppgave.topic,done)
+                admin.describeTopics(beskjed.topic,oppgave.topic,done).mapValues { it.value.name() }
             }
 
     }
