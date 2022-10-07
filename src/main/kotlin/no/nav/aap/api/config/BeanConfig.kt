@@ -11,6 +11,7 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP
+import net.logstash.logback.argument.StructuredArguments.v
 import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
@@ -31,6 +32,7 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.apache.commons.text.StringEscapeUtils.*
+import org.apache.kafka.clients.admin.TopicDescription
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTrace
@@ -58,12 +60,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
+import sun.jvm.hotspot.oops.CellTypeState.value
 import java.io.IOException
 import javax.servlet.Filter
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
+import kotlin.collections.MutableMap.MutableEntry
 
 @Configuration
 class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String) {
@@ -189,9 +193,15 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         override fun name() = cfg.name
 
         override fun ping() =
-            admin.describeTopics(*cfg.topics().toTypedArray())
-                .mapKeys { "topic" }
-                .mapValues { it.value.name() }
+            admin.describeTopics(*cfg.topics().toTypedArray()).entries.mapIndexed {
+                index, entry -> index.toString() to entry.value.name()
+            }.toMap()
+
+
+
+
+
+
         abstract class AbstractKafkaConfig(val name: String, val isEnabled: Boolean) {
             abstract fun  topics(): List<String>
         }
