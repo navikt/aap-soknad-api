@@ -191,7 +191,9 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         override fun ping() =
             admin.describeTopics(*cfg.topics().toTypedArray()).entries
                 .withIndex()
-                .associate { "topic-${it.index}" to it.value.value.name() }
+                .associate { with(it) {
+                    "topic-${index}" to "${value.value.name()} (${value.value.partitions().count()}  partitions)"
+                } }
 
         abstract class AbstractKafkaConfig(val name: String, val isEnabled: Boolean) {
             abstract fun  topics(): List<String>
