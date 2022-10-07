@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.TextNode
 import com.neovisionaries.i18n.CountryCode
+import java.io.IOException
+import java.util.*
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.AnnenBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
@@ -30,8 +32,6 @@ import no.nav.aap.api.søknad.model.VedleggType.LÅNEKASSEN_STIPEND
 import no.nav.aap.api.søknad.model.VedleggType.OMSORG
 import no.nav.aap.api.søknad.model.VedleggType.STUDIER
 import no.nav.aap.util.LoggerUtil.getLogger
-import java.io.IOException
-import java.util.*
 
 data class Innsending(
         val søknad: StandardSøknad,

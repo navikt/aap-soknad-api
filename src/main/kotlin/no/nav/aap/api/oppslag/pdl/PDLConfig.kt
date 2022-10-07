@@ -1,11 +1,11 @@
 package no.nav.aap.api.oppslag.pdl
 
+import java.net.URI
 import no.nav.aap.api.oppslag.pdl.PDLConfig.Companion.PDL
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
-import java.net.URI
 
 @ConfigurationProperties(PDL)
 @ConstructorBinding

@@ -1,5 +1,7 @@
 package no.nav.aap.api.oppslag.søknad
 
+import java.time.LocalDateTime
+import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagMapper.DokumentOversiktInnslag
@@ -10,8 +12,6 @@ import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.AuthContext
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
-import java.time.LocalDateTime
-import java.util.*
 
 @Component
 class SøknadClient(private val repo: SøknadRepository,

@@ -1,9 +1,9 @@
 package no.nav.aap.api.søknad.mellomlagring
 
+import java.util.Objects.hash
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
-import java.util.Objects.hash
 
 interface Mellomlager {
     fun lagre(value: String, type: SkjemaType): String

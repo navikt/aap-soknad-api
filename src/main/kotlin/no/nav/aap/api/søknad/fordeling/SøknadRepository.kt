@@ -1,5 +1,15 @@
 package no.nav.aap.api.søknad.fordeling
 
+import java.time.LocalDateTime
+import java.util.*
+import javax.persistence.CascadeType.ALL
+import javax.persistence.Entity
+import javax.persistence.EnumType.STRING
+import javax.persistence.Enumerated
+import javax.persistence.ManyToOne
+import javax.persistence.MappedSuperclass
+import javax.persistence.OneToMany
+import javax.persistence.Table
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
@@ -14,16 +24,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.query.Param
-import java.time.LocalDateTime
-import java.util.*
-import javax.persistence.CascadeType.ALL
-import javax.persistence.Entity
-import javax.persistence.EnumType.STRING
-import javax.persistence.Enumerated
-import javax.persistence.ManyToOne
-import javax.persistence.MappedSuperclass
-import javax.persistence.OneToMany
-import javax.persistence.Table
 
 interface SøknadRepository : JpaRepository<Søknad, Long> {
 

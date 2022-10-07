@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.arkiv
 
+import java.net.URI
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.CLIENT_CREDENTIALS_ARKIV
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.util.Constants.JOARK
@@ -17,7 +18,6 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
-import java.net.URI
 
 @Configuration
 class ArkivBeanConfig {

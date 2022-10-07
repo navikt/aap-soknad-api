@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
+import java.nio.charset.StandardCharsets.UTF_8
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
@@ -14,7 +15,6 @@ import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
-import java.nio.charset.StandardCharsets.UTF_8
 
 @ConditionalOnGCP
 internal class GCPKryptertMellomlager(private val cfg: BucketConfig,

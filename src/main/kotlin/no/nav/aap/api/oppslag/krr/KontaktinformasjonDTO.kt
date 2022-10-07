@@ -2,8 +2,8 @@ package no.nav.aap.api.oppslag.krr
 
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import no.nav.aap.util.LoggerUtil.getLogger
 import javax.validation.constraints.Email
+import no.nav.aap.util.LoggerUtil.getLogger
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class KontaktinformasjonDTO(@JsonAlias("spraak") val målform: Målform? = Målform.NB,

@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag
 
+import java.util.*
 import no.nav.aap.api.oppslag.OppslagController.Companion.OPPSLAG_BASE
 import no.nav.aap.api.oppslag.arbeid.ArbeidClient
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
@@ -22,7 +23,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import java.util.*
 
 @ProtectedRestController(value = [OPPSLAG_BASE], issuer = IDPORTEN)
 class OppslagController(

@@ -1,8 +1,8 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
+import java.util.*
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
-import java.util.*
 
 @ConditionalOnMissingBean(GCPKryptertDokumentlager::class)
 class InMemoryDokumentlager : Dokumentlager {

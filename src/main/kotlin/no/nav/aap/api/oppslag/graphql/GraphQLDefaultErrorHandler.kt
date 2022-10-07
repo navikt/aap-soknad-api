@@ -1,6 +1,7 @@
 package no.nav.aap.api.oppslag.graphql
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
+import java.nio.charset.Charset.defaultCharset
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.LoggerUtil.getSecureLogger
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
@@ -13,7 +14,6 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException.create
-import java.nio.charset.Charset.defaultCharset
 
 @Component
 class GraphQLDefaultErrorHandler : GraphQLErrorHandler {

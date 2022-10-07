@@ -1,9 +1,5 @@
 package no.nav.aap.api.søknad.arkiv.pdf
 
-import no.nav.aap.api.søknad.mellomlagring.DokumentException
-import no.nav.aap.util.LoggerUtil.getLogger
-import org.apache.pdfbox.pdmodel.common.PDRectangle.A4
-import org.springframework.stereotype.Component
 import java.awt.Dimension
 import java.awt.Graphics2D
 import java.awt.geom.AffineTransform
@@ -18,6 +14,10 @@ import java.io.ByteArrayOutputStream
 import java.lang.Math.toRadians
 import javax.imageio.ImageIO.read
 import javax.imageio.ImageIO.write
+import no.nav.aap.api.søknad.mellomlagring.DokumentException
+import no.nav.aap.util.LoggerUtil.getLogger
+import org.apache.pdfbox.pdmodel.common.PDRectangle.A4
+import org.springframework.stereotype.Component
 
 @Component
 class BildeSkalerer {

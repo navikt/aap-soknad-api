@@ -1,5 +1,8 @@
 package no.nav.aap.api.søknad.minside
 
+import java.time.LocalDateTime.now
+import java.time.ZoneOffset.UTC
+import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
@@ -24,9 +27,6 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.util.UriComponentsBuilder.fromUri
-import java.time.LocalDateTime.now
-import java.time.ZoneOffset.UTC
-import java.util.*
 
 @ConditionalOnGCP
 class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,

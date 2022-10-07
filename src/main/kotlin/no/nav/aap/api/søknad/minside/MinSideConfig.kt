@@ -1,5 +1,7 @@
 package no.nav.aap.api.søknad.minside
 
+import java.net.URI
+import java.time.Duration
 import no.nav.aap.api.config.BeanConfig.AbstractKafkaHealthIndicator.AbstractKafkaConfig
 import no.nav.aap.api.søknad.minside.MinSideConfig.Companion.MINSIDE
 import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
@@ -7,8 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
-import java.net.URI
-import java.time.Duration
 
 @ConfigurationProperties(MINSIDE)
 @ConstructorBinding

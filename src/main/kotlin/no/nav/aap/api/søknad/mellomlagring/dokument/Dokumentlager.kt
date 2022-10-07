@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
+import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
 import no.nav.aap.api.søknad.model.StandardEttersending
@@ -7,7 +8,6 @@ import no.nav.aap.api.søknad.model.StandardSøknad
 import org.apache.tika.Tika
 import org.springframework.http.ContentDisposition
 import org.springframework.http.ContentDisposition.attachment
-import java.util.*
 
 interface Dokumentlager {
     fun lesDokument(uuid: UUID): DokumentInfo?

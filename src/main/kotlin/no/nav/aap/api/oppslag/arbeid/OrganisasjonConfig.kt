@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag.arbeid
 
+import java.net.URI
 import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.util.Constants.ORGANISASJON
@@ -8,7 +9,6 @@ import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.web.util.UriBuilder
 import org.springframework.web.util.UriComponentsBuilder
-import java.net.URI
 
 @ConfigurationProperties(ORGANISASJON)
 @ConstructorBinding

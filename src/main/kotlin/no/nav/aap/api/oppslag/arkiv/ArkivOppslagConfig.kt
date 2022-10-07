@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag.arkiv
 
+import java.net.URI
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentVariantFormat.ARKIV
 import no.nav.aap.rest.AbstractRestConfig
@@ -7,7 +8,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.web.util.UriBuilder
-import java.net.URI
 
 @ConfigurationProperties(SAF)
 @ConstructorBinding

@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.virus
 
+import java.net.URI
 import no.nav.aap.api.søknad.virus.VirusScanConfig.Companion.VIRUS
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractRestConfig
@@ -11,7 +12,6 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient.Builder
-import java.net.URI
 
 @Configuration
 @ConditionalOnProperty("$VIRUS.enabled", havingValue = "true")

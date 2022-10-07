@@ -1,12 +1,12 @@
 package no.nav.aap.api.søknad.arkiv.pdf
 
+import java.io.ByteArrayInputStream
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.apache.pdfbox.preflight.Format.PDF_A1B
 import org.apache.pdfbox.preflight.parser.PreflightParser
 import org.apache.pdfbox.preflight.utils.ByteArrayDataSource
 import org.springframework.stereotype.Component
-import java.io.ByteArrayInputStream
 
 @Component
 class PDFA1BSjekker : PDFSjekker() {

@@ -2,6 +2,8 @@ package no.nav.aap.api.søknad.arkiv.pdf
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.neovisionaries.i18n.CountryCode
+import java.time.LocalDate
+import java.time.LocalDate.now
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.Periode
@@ -18,8 +20,6 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import java.time.LocalDate
-import java.time.LocalDate.now
 
 @Component
 class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,

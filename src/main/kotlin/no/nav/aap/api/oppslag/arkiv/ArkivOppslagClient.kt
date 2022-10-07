@@ -1,9 +1,9 @@
 package no.nav.aap.api.oppslag.arkiv
 
+import java.util.*
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.størrelse
 import org.springframework.stereotype.Component
-import java.util.*
 
 @Component
 class ArkivOppslagClient(private val adapter: ArkivOppslagWebClientAdapter) {

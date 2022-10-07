@@ -10,8 +10,8 @@ import no.nav.aap.api.søknad.arkiv.Journalpost.Dokument
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.JSON
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ORIGINAL
-import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
 import no.nav.aap.api.søknad.arkiv.pdf.PDFFraBildeFKonverterer
+import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.Innsending

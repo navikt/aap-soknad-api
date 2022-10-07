@@ -1,12 +1,12 @@
 package no.nav.aap.api.oppslag.krr
 
+import java.net.URI
 import no.nav.aap.api.oppslag.krr.KRRConfig.Companion.KRR
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.web.util.UriBuilder
-import java.net.URI
 
 @ConfigurationProperties(KRR)
 @ConstructorBinding

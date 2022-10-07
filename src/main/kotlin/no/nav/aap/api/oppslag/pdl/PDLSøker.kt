@@ -1,12 +1,12 @@
 package no.nav.aap.api.oppslag.pdl
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.LocalDate
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon.PDLRelasjonsRolle.BARN
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLFødsel
-import java.time.LocalDate
 
 data class PDLWrappedSøker(val navn: Set<PDLNavn>,
                            @JsonProperty("foedsel") val fødsel: Set<PDLFødsel>,

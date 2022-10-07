@@ -2,10 +2,10 @@ package no.nav.aap.api.oppslag.graphql
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
+import java.io.File
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.web.reactive.function.client.WebClient
-import java.io.File
 
 abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig,
                                       val errorHandler: GraphQLErrorHandler = GraphQLDefaultErrorHandler()) :

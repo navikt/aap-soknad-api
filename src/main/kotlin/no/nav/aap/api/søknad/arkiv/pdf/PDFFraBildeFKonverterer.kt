@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.arkiv.pdf
 
+import java.io.ByteArrayOutputStream
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.størrelse
@@ -11,7 +12,6 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject.createFromByteArr
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import java.io.ByteArrayOutputStream
 
 @Component
 class PDFFraBildeFKonverterer(private val scaler: BildeSkalerer) {
