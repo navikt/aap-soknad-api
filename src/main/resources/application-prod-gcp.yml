@@ -11,7 +11,7 @@ no.nav:
         jwt:
             client:
                 registration:
-                    aareg-services-q1:
+                    aareg-services:
                         token-exchange:
                             audience: ${onprem}:arbeidsforhold:aareg-services-nais
                         well-known-url: ${token.x.well.known.url}
@@ -21,7 +21,7 @@ no.nav:
                             client-jwk: ${token.x.private.jwk}
                             client-auth-method: private_key_jwt
 
-                    safselvbetjening-q1:
+                    safselvbetjening:
                         token-exchange:
                             audience: ${onprem}:teamdokumenthandtering:safselvbetjening
                         well-known-url: ${token.x.well.known.url}
