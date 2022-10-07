@@ -85,7 +85,7 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
                 try {
                     val status =  admin.describeTopics(beskjed.topic,oppgave.topic,done)
                     log.trace("Status kafka health $status")
-                    Health.up().withDetail(status.toString()).build()
+                    Health.up().withDetails(status).build()
                 }
                 catch(e: Exception) {
                     Health.down().withException(e).build()
