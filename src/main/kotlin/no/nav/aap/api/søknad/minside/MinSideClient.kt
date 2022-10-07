@@ -45,8 +45,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
             if (enabled) {
                 log.trace(CONFIDENTIAL,
                         "Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic,
-                        key(type.skjemaType, eventId, fnr),
+                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         beskjed(tekst, type, eksternVarsling)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
                 repos.beskjeder.save(Beskjed(fnr.fnr, eventId)).eventid
@@ -66,8 +65,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         with(cfg.oppgave) {
             if (enabled) {
                 log.trace("Oppretter Min Side oppgave for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic,
-                        key(type.skjemaType, eventId, fnr),
+                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         oppgave(tekst, type, eventId, eksternVarsling)))
                     .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
                 repos.oppgaver.save(Oppgave(fnr.fnr, eventId)).eventid
@@ -120,8 +118,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 .withEksternVarsling(eksternVarsling)
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
                 .build().also { m ->
-                    log.trace(CONFIDENTIAL,
-                            "Melding ${m.tekst}, prefererte kanaler ${m.prefererteKanaler} og ekstern notifikasjon ${m.eksternVarsling}")
+                    log.trace(CONFIDENTIAL, "Melding ${m.tekst}, prefererte kanaler ${m.prefererteKanaler} og ekstern notifikasjon ${m.eksternVarsling}")
                 }
         }
 
@@ -136,8 +133,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 .withEksternVarsling(eksternVarsling)
                 .withPrefererteKanaler(*preferertekanaler.toTypedArray())
                 .build().also { o ->
-                    log.trace(CONFIDENTIAL,
-                            "Oppgave  ${o.tekst}, prefererte kanaler ${o.prefererteKanaler} og ekstern notifikasjon ${o.eksternVarsling}")
+                    log.trace(CONFIDENTIAL, "Oppgave  ${o.tekst}, prefererte kanaler ${o.prefererteKanaler} og ekstern notifikasjon ${o.eksternVarsling}")
                 }
         }
 
