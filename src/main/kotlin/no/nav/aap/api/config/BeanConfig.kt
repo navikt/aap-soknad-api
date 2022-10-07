@@ -189,7 +189,9 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         override fun name() = cfg.name
 
         override fun ping() =
-            admin.describeTopics(*cfg.topics().toTypedArray()).mapValues { it.value.name() }
+            admin.describeTopics(*cfg.topics().toTypedArray())
+                .mapKeys { "topic" }
+                .mapValues { it.value.name() }
         abstract class AbstractKafkaConfig(val name: String, val isEnabled: Boolean) {
             abstract fun  topics(): List<String>
         }
