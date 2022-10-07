@@ -192,7 +192,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
             admin.describeTopics(*cfg.topics().toTypedArray()).entries
                 .withIndex()
                 .associate { with(it) {
-                    "topic-${index}" to "${value.value.name()} (${value.value.partitions().count()}  partitions)"
+                    "topic-${index}" to "${value.value.name()} (${value.value.partitions().count()} partitions)"
                 } }
 
         abstract class AbstractKafkaConfig(val name: String, val isEnabled: Boolean) {
