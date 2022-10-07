@@ -34,10 +34,10 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
     private val log = getLogger(javaClass)
 
     @Component
-    class MinsidePingable(private val admin: KafkaAdmin, private val p: KafkaProperties, private val cfg: MinSideConfig) : AbstractKafkaHealthIndicator(admin,p.bootstrapServers,cfg)
+    class MinsidePingable(val admin: KafkaAdmin, val p: KafkaProperties, val cfg: MinSideConfig) : AbstractKafkaHealthIndicator(admin,p.bootstrapServers,cfg)
 
     @Bean
-    fun kafkaHealthIndicator(adapter: MinsidePingable) = object : AbstractPingableHealthIndicator(adapter) {}
+    fun minsideHealthIndicator(adapter: MinsidePingable) = object : AbstractPingableHealthIndicator(adapter) {}
     @Bean
     fun minSideKafkaOperations(props: KafkaProperties) =
         KafkaTemplate(DefaultKafkaProducerFactory<NokkelInput, Any>(props.buildProducerProperties()
