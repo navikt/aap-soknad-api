@@ -3,12 +3,12 @@ package no.nav.aap.api.søknad.minside
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import io.confluent.kafka.serializers.KafkaAvroSerializer
+import no.nav.aap.api.config.BeanConfig.AbstractKafkaHealthIndicator
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.DOKNOTIFIKASJON
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FEILET
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
 import no.nav.aap.health.AbstractPingableHealthIndicator
-import no.nav.aap.health.Pingable
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
@@ -33,8 +33,11 @@ import org.springframework.stereotype.Component
 class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNavn: String) {
     private val log = getLogger(javaClass)
 
+    @Component
+    class MinsidePingable(private val admin: KafkaAdmin, private val p: KafkaProperties, private val cfg: MinSideConfig) : AbstractKafkaHealthIndicator(admin,p.bootstrapServers,cfg)
+
     @Bean
-    fun kafkaHealthIndicator(adapter: KafkaPingable) = object : AbstractPingableHealthIndicator(adapter) {}
+    fun kafkaHealthIndicator(adapter: MinsidePingable) = object : AbstractPingableHealthIndicator(adapter) {}
     @Bean
     fun minSideKafkaOperations(props: KafkaProperties) =
         KafkaTemplate(DefaultKafkaProducerFactory<NokkelInput, Any>(props.buildProducerProperties()
@@ -77,16 +80,4 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
             }
         }
 
-    @Component
-    class KafkaPingable(private val admin: KafkaAdmin,private val props: KafkaProperties,private val cfg: MinSideConfig) : Pingable {
-        override fun isEnabled() = cfg.enabled
-        override fun pingEndpoint() = "${props.bootstrapServers}"
-        override fun name() = "MinSide"
-
-        override fun ping() =
-            with(cfg) {
-                admin.describeTopics(beskjed.topic,oppgave.topic,done).mapValues { it.value.name() }
-            }
-
-    }
-}
+  }

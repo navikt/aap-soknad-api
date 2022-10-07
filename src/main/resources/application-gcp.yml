@@ -149,6 +149,7 @@ pdf:
 krr:
   enabled: true
 minside:
+  enabled: true
   nais:
     app: ${nais.app.name}
     namespace: ${nais.namespace}

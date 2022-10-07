@@ -11,6 +11,7 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP
+import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
 import no.nav.aap.rest.HeadersToMDCFilter
@@ -51,6 +52,7 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
+import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import org.zalando.problem.jackson.ProblemModule
@@ -178,6 +180,19 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         }
 
         override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>) = true
+    }
+
+    abstract class AbstractKafkaHealthIndicator(private val admin: KafkaAdmin, private val bootstrapServers: List<String>, private val cfg: AbstractKafkaConfig) :
+        Pingable {
+        override fun isEnabled() = cfg.isEnabled
+        override fun pingEndpoint() = "$bootstrapServers"
+        override fun name() = cfg.name
+
+        override fun ping() =
+            admin.describeTopics(*cfg.topics().toTypedArray()).mapValues { it.value.name() }
+        abstract class AbstractKafkaConfig(val name: String, val isEnabled: Boolean) {
+            abstract fun  topics(): List<String>
+        }
     }
 
 }
