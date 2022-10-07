@@ -7,6 +7,8 @@ import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Compani
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FEILET
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
 import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
+import no.nav.aap.health.AbstractPingableHealthIndicator
+import no.nav.aap.health.Pingable
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
@@ -15,8 +17,6 @@ import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CON
 import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.actuate.health.Health
-import org.springframework.boot.actuate.health.HealthIndicator
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -28,12 +28,14 @@ import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS
 import org.springframework.stereotype.Component
+import java.net.URI
 
 @Configuration
 class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNavn: String) {
     private val log = getLogger(javaClass)
 
-
+    @Bean
+    fun kafkaHealthIndicator(adapter: KafkaPingable) = object : AbstractPingableHealthIndicator(adapter) {}
     @Bean
     fun minSideKafkaOperations(props: KafkaProperties) =
         KafkaTemplate(DefaultKafkaProducerFactory<NokkelInput, Any>(props.buildProducerProperties()
@@ -77,19 +79,15 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
         }
 
     @Component
-    class KafkaHealthIndcator(private val admin: KafkaAdmin,private val cfg: MinSideConfig) : HealthIndicator {
+    class KafkaPingable(private val admin: KafkaAdmin,private val props: KafkaProperties,private val cfg: MinSideConfig) : Pingable {
+        override fun isEnabled() = cfg.enabled
+        override fun pingEndpoint() = URI.create("kafka://brokers")
+        override fun name() = "MinSide"
 
-        private val log = getLogger(javaClass)
-        override fun health() =
+        override fun ping() =
             with(cfg) {
-                try {
                     val status =  admin.describeTopics(beskjed.topic,oppgave.topic,done)
-                    log.trace("Status kafka health $status")
-                    Health.up().withDetails(status).build()
-                }
-                catch(e: Exception) {
-                    Health.down().withException(e).build()
-                }
             }
+
     }
 }
