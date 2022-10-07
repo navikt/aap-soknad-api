@@ -182,7 +182,9 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>) = true
     }
 
-    abstract class AbstractKafkaHealthIndicator(private val admin: KafkaAdmin, private val bootstrapServers: List<String>, private val cfg: AbstractKafkaConfig) :
+    abstract class AbstractKafkaHealthIndicator(private val admin: KafkaAdmin,
+                                                private val bootstrapServers: List<String>,
+                                                private val cfg: AbstractKafkaConfig) :
         Pingable {
         override fun isEnabled() = cfg.isEnabled
         override fun pingEndpoint() = "$bootstrapServers"
@@ -191,12 +193,14 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         override fun ping() =
             admin.describeTopics(*cfg.topics().toTypedArray()).entries
                 .withIndex()
-                .associate { with(it) {
-                    "topic-${index}" to "${value.value.name()} (${value.value.partitions().count()} partitions)"
-                } }
+                .associate {
+                    with(it) {
+                        "topic-${index}" to "${value.value.name()} (${value.value.partitions().count()} partisjoner)"
+                    }
+                }
 
         abstract class AbstractKafkaConfig(val name: String, val isEnabled: Boolean) {
-            abstract fun  topics(): List<String>
+            abstract fun topics(): List<String>
         }
     }
 

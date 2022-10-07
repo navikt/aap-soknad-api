@@ -22,7 +22,7 @@ class BehandlerClientBeanConfig {
 
     @Qualifier("${BEHANDLER}ping")
     @Bean
-    fun pingBehandlerWebClientArkiv(builder: Builder, cfg: ArkivConfig) =
+    fun pingBehandlerWebClient(builder: Builder, cfg: ArkivConfig) =
         builder
             .baseUrl("${cfg.baseUri}")
             .build()
