@@ -10,7 +10,6 @@ import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Compani
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
-import org.apache.kafka.clients.admin.AdminClient
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
@@ -24,6 +23,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
+import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS
@@ -77,10 +77,20 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
         }
 
     @Component
-    class KafkaHealthIndcator(private val admin: AdminClient) : HealthIndicator {
+    class KafkaHealthIndcator(private val admin: KafkaAdmin,private val cfg: MinSideConfig) : HealthIndicator {
+
+        private val log = getLogger(javaClass)
         override fun health(): Health {
-            admin.listTopics()
-            return Health.up().build()
+            with(cfg) {
+                try {
+                   val status =  admin.describeTopics(beskjed.topic,oppgave.topic,done)
+                    log.trace("Status kafka health $status")
+                    return Health.up().build()
+                }
+                catch(e: Exception) {
+                    return Health.down().withException(e).build()
+                }
+            }
         }
     }
 }
