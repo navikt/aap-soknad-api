@@ -1,6 +1,7 @@
 package no.nav.aap.api.oppslag.behandler
 
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLER
+import no.nav.aap.api.søknad.arkiv.ArkivConfig
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import org.springframework.beans.factory.annotation.Qualifier
@@ -17,6 +18,13 @@ class BehandlerClientBeanConfig {
         builder
             .baseUrl("${cfg.baseUri}")
             .filter(tokenX)
+            .build()
+
+    @Qualifier("${BEHANDLER}ping")
+    @Bean
+    fun pingBehandlerWebClientArkiv(builder: Builder, cfg: ArkivConfig) =
+        builder
+            .baseUrl("${cfg.baseUri}")
             .build()
 
     @Bean

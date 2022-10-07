@@ -11,7 +11,8 @@ import org.springframework.web.reactive.function.client.bodyToMono
 @Component
 class BehandlerWebClientAdapter(
         @Qualifier(BEHANDLER) webClient: WebClient,
-        val cf: BehandlerConfig) : AbstractWebClientAdapter(webClient, cf) {
+        @Qualifier("${BEHANDLER}ping") pingClient: WebClient,
+        val cf: BehandlerConfig) : AbstractWebClientAdapter(webClient, cf,pingClient) {
 
     fun behandlerInfo() = webClient
         .get()
