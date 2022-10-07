@@ -5,7 +5,7 @@ config:
     partitions: 12
     replication: 3
     retentionBytes: -1
-    retentionHours: 120
+    retentionHours: 121
 acl:
     -   team: aap
         application: soknad-api
