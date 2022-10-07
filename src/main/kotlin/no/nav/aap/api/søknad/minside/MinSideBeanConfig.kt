@@ -16,6 +16,8 @@ import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CON
 import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.actuate.health.Health
+import org.springframework.boot.actuate.health.HealthIndicator
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -75,7 +77,10 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
         }
 
     @Component
-    class KafkaHealthIndcator(admin: AdminClient)  {
-        
+    class KafkaHealthIndcator(private val admin: AdminClient) : HealthIndicator {
+        override fun health(): Health {
+            admin.listTopics()
+            return Health.up().build()
+        }
     }
 }
