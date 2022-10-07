@@ -184,8 +184,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
 
     abstract class AbstractKafkaHealthIndicator(private val admin: KafkaAdmin,
                                                 private val bootstrapServers: List<String>,
-                                                private val cfg: AbstractKafkaConfig) :
-        Pingable {
+                                                private val cfg: AbstractKafkaConfig) : Pingable {
         override fun isEnabled() = cfg.isEnabled
         override fun pingEndpoint() = "$bootstrapServers"
         override fun name() = cfg.name

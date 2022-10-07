@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Component
-class EksternNotifikasjonStatusKonsument(private val repos: MinSideRepositories) {
+class MinSideEksternNotifikasjonStatusKonsument(private val repos: MinSideRepositories) {
     private val log = getLogger(javaClass)
 
     @KafkaListener(topics = ["teamdokumenthandtering.aapen-dok-notifikasjon-status"],

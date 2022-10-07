@@ -4,10 +4,10 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.aap.api.config.BeanConfig.AbstractKafkaHealthIndicator
-import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.DOKNOTIFIKASJON
-import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FEILET
-import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
-import no.nav.aap.api.søknad.minside.EksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
+import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.DOKNOTIFIKASJON
+import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.FEILET
+import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
+import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
