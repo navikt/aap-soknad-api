@@ -80,17 +80,16 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
     class KafkaHealthIndcator(private val admin: KafkaAdmin,private val cfg: MinSideConfig) : HealthIndicator {
 
         private val log = getLogger(javaClass)
-        override fun health(): Health {
+        override fun health() =
             with(cfg) {
                 try {
-                   val status =  admin.describeTopics(beskjed.topic,oppgave.topic,done)
+                    val status =  admin.describeTopics(beskjed.topic,oppgave.topic,done)
                     log.trace("Status kafka health $status")
-                    return Health.up().build()
+                    Health.up().withDetail(status.toString()).build()
                 }
                 catch(e: Exception) {
-                    return Health.down().withException(e).build()
+                    Health.down().withException(e).build()
                 }
             }
-        }
     }
 }
