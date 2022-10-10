@@ -48,7 +48,6 @@ data class PDLSøker(val navn: PDLNavn,
 
 data class PDLBarn(@JsonProperty("foedsel") val fødselsdato: Set<PDLFødsel>,
                    val navn: Set<PDLNavn>,
-                   @JsonProperty("kjoenn") val kjønn: Set<PDLKjønn>,
                    val adressebeskyttelse: Set<PDLAdresseBeskyttelse>?,
                    @JsonProperty("doedsfall") val dødsfall: Set<PDLDødsfall>?) {
 
@@ -60,13 +59,5 @@ data class PDLBarn(@JsonProperty("foedsel") val fødselsdato: Set<PDLFødsel>,
         STRENGT_FORTROLIG,
         FORTROLIG,
         UGRADERT
-    }
-}
-
-data class PDLKjønn(val kjoenn: Kjoenn) {
-    enum class Kjoenn {
-        MANN,
-        KVINNE,
-        UKJENT
     }
 }

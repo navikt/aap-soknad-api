@@ -8,9 +8,6 @@ query($ident: ID!){
            mellomnavn
            etternavn
         },
-        kjoenn {
-           kjoenn
-        },
         adressebeskyttelse {
            gradering
         },

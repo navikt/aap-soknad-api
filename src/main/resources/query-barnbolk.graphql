@@ -10,9 +10,6 @@ query($identer: [ID!]!) {
         mellomnavn
         etternavn
         }
-        kjoenn {
-        kjoenn
-        }
         adressebeskyttelse {
         gradering
         }
