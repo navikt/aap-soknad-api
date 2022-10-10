@@ -14,5 +14,8 @@ acl:
         application: vedtak
         access: read
     -   team: aap
+        application: sink
+        access: read
+    -   team: aap
         application: personopplysninger
         access: read
