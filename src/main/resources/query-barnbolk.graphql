@@ -1,4 +1,4 @@
-query($ident: ID!) {
+query($identer: ID!) {
         hentPersonBolk(identer: $identer) {
         ident
         person {
