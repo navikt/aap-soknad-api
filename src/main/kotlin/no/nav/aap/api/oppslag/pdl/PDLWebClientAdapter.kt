@@ -71,8 +71,19 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         }
     }
 
-
     private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) =
+        if (medBarn) {
+            r.asSequence().map {
+                query<PDLBarn>(clients.system, BARN_QUERY, it.relatertPersonsIdent)
+            }.filterNotNull()
+                .filterNot(::myndig)
+                .filterNot(::beskyttet)
+                .filterNot(::død)
+                .map { Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato)) }.toList()
+        }
+        else emptyList()
+
+    private fun barnBolkFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) =
         if (medBarn) {
             query<List<PDLBarnBolk>>(clients.system, BARN_BOLK_QUERY, r.map { it.relatertPersonsIdent })
                 ?.groupBy { it.code }
