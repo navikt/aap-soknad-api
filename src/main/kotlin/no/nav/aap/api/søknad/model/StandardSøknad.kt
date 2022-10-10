@@ -48,10 +48,7 @@ data class StandardSøknad(
         val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         override val vedlegg: Vedlegg? = null) : VedleggAware {
 
-    enum class Yrkesskade {
-        JA,
-        NEI
-    }
+    enum class Yrkesskade { JA, NEI }
 
     private val log = getLogger(javaClass)
 

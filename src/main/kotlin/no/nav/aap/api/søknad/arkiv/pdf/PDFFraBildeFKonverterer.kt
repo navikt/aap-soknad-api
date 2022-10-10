@@ -18,8 +18,7 @@ class PDFFraBildeFKonverterer(private val scaler: BildeSkalerer) {
 
     private val log = getLogger(javaClass)
     fun tilPdf(mediaType: MediaType, images: List<ByteArray>) = slåSammen(mediaType, *images.toTypedArray())
-    fun tilPdf(mediaType: MediaType, fil: String) =
-        tilPdf(mediaType, ClassPathResource(fil).inputStream.readBytes()) // testing only
+    fun tilPdf(mediaType: MediaType, fil: String) = tilPdf(mediaType, ClassPathResource(fil).inputStream.readBytes()) // testing only
 
     fun tilPdf(mediaType: MediaType, vararg bilder: ByteArray) = slåSammen(mediaType, *bilder)
 

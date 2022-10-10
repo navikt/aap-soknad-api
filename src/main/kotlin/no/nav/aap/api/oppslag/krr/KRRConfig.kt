@@ -17,8 +17,7 @@ class KRRConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
 
     fun kontaktUri(b: UriBuilder) = b.path(personPath).build()
 
-    override fun toString() =
-        "$javaClass.simpleName [baseUri=$baseUri,  personPath=$personPath, pingEndpoint=$pingEndpoint]"
+    override fun toString() = "$javaClass.simpleName [baseUri=$baseUri,  personPath=$personPath, pingEndpoint=$pingEndpoint]"
 
     companion object {
         const val KRR = "krr"

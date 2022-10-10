@@ -10,10 +10,10 @@ import no.nav.aap.api.søknad.virus.ScanResult.Result.OK
 import org.springframework.stereotype.Component
 
 @Component
-class ClamAvVirusSjekker(private val a: VirusScanWebClientAdapter) : DokumentSjekker {
+class ClamAvVirusSjekker(private val adapter: VirusScanWebClientAdapter) : DokumentSjekker {
     override fun sjekk(dokument: DokumentInfo) =
         with(dokument) {
-            when (a.harVirus(bytes).result) {
+            when (adapter.harVirus(bytes).result) {
                 FOUND -> throw VirusException("Virus funnet i $filnavn, kan ikke lastes opp")
                 NONE, OK -> Unit
             }

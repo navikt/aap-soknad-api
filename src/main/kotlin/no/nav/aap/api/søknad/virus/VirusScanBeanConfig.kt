@@ -21,7 +21,7 @@ class VirusScanBeanConfg {
     fun webClientVirusScqn(b: Builder, cfg: VirusScanConfig) = b.baseUrl("${cfg.baseUri}").build()
 
     @Bean
-    fun virusHealthIndicator(a: VirusScanWebClientAdapter) = object : AbstractPingableHealthIndicator(a) {}
+    fun virusHealthIndicator(adapter: VirusScanWebClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {}
 }
 
 @ConfigurationProperties(VIRUS)

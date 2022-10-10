@@ -69,8 +69,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
 
     private fun PubsubMessage.data() = mapper.readValue<Map<String, Any>>(data.toStringUtf8())
     private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
-    private fun PubsubMessage.eventType() =
-        attributesMap[EVENT_TYPE]?.let { valueOf(it) }
+    private fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { valueOf(it) }
 
     private fun PubsubMessage.metadata() =
         with(objektNavn()) {

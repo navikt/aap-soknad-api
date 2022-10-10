@@ -15,8 +15,7 @@ class ArkivConfig(
         @DefaultValue("true") enabled: Boolean,
         baseUri: URI) : AbstractRestConfig(baseUri, pingPath, JOARK, enabled) {
 
-    override fun toString() =
-        "${javaClass.simpleName} [pingPath=$pingPath,arkivPath=$arkivPath,enabled=$isEnabled,baseUri=$baseUri]"
+    override fun toString() = "${javaClass.simpleName} [pingPath=$pingPath,arkivPath=$arkivPath,enabled=$isEnabled,baseUri=$baseUri]"
 
     companion object {
         const val CLIENT_CREDENTIALS_ARKIV = "client-credentials-arkiv"

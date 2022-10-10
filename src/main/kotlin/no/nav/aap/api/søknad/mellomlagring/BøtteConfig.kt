@@ -22,8 +22,7 @@ data class BucketConfig(val project: String,
 
     data class KeyConfig(internal val ring: String, internal val key: String)
 
-    data class MellomlagringBucketConfig(val navn: String,
-                                         @NestedConfigurationProperty val subscription: SubscriptionConfig) {
+    data class MellomlagringBucketConfig(val navn: String, @NestedConfigurationProperty val subscription: SubscriptionConfig) {
 
         data class SubscriptionConfig(val navn: String, val topic: String)
     }

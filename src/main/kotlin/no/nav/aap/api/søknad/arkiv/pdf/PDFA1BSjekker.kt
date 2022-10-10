@@ -18,7 +18,7 @@ class PDFA1BSjekker : PDFSjekker() {
                 preflightDocument.use {
                     it.validate()
                     if (it.result.isValid) {
-                        log.info(CONFIDENTIAL, "PDF-A1B validering resultat OK for $filnavn")
+                        log.trace(CONFIDENTIAL, "PDF-A1B validering resultat OK for $filnavn")
                     }
                     else {
                         log.trace(CONFIDENTIAL, "PDF-A1B validering feilet for $filnavn")
