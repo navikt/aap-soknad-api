@@ -17,5 +17,8 @@ acl:
       application: personopplysninger
       access: read
   -   team: aap
+      application: sink
+      access: read
+  -   team: aap
       application: devtools
       access: readwrite
