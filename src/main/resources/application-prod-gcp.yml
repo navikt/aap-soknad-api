@@ -30,18 +30,7 @@ no.nav:
                             client-id: ${token.x.client.id}
                             client-jwk: ${token.x.private.jwk}
                             client-auth-method: private_key_jwt
-spring:
-    jpa:
-        show-sql: true
-        properties:
-            hibernate:
-                format_sql: true
-    mvc:
-        log-request-details: true
-server:
-    error:
-        whitelabel:
-            enabled: false
+
 arbeidsforhold:
     base-uri: https://aareg-services.${onprem}-pub.nais.io
 organisasjon:

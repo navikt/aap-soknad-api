@@ -38,10 +38,6 @@ spring:
                 format_sql: true
     mvc:
         log-request-details: true
-server:
-    error:
-        whitelabel:
-            enabled: false
 arbeidsforhold:
     base-uri: https://aareg-services-q1.dev-fss-pub.nais.io
 organisasjon:

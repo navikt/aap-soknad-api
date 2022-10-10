@@ -1,3 +1,7 @@
+server:
+    error:
+        whitelabel:
+            enabled: false
 spring:
     application:
         name: soknad-api
