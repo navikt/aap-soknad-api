@@ -78,7 +78,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                 ?.groupBy { it.code }
                 ?.get("ok")
                 ?.asSequence()
-                ?.map(PDLBarnBolk::pdlBarn)
+                ?.map{it.pdlBarn }
                 ?.filterNot(::myndig)
                 ?.filterNot(::beskyttet)
                 ?.filterNot(::død)
