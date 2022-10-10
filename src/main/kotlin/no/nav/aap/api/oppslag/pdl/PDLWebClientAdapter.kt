@@ -68,6 +68,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                     barnFra(forelderBarnRelasjon, medBarn))
                 .also { log.trace(CONFIDENTIAL, "Søker er $it")
                     try {
+                        log.trace("Slår opp barn")
                         log.trace("BARN BOLK ${barnBolkFra(forelderBarnRelasjon)}")
                     }
                     catch (e: Exception) {
@@ -90,7 +91,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         else emptyList()
 
     private fun barnBolkFra(r: List<PDLForelderBarnRelasjon>) =
-        queryBolk<List<PDLBarnBolk>>(clients.system, BARN_BOLK_QUERTY, r.map { it.relatertPersonsIdent })
+        queryBolk<List<PDLBarnBolk>>(clients.system, BARN_BOLK_QUERY, r.map { it.relatertPersonsIdent })
 
 
 
@@ -122,7 +123,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
 
     companion object {
-        private const val BARN_BOLK_QUERTY = "query-barnbolk.graphql"
+        private const val BARN_BOLK_QUERY = "query-barnbolk.graphql"
         private const val PERSON_QUERY = "query-person.graphql"
         private const val BARN_QUERY = "query-barn.graphql"
     }
