@@ -1,6 +1,7 @@
 query($identer: [ID!]!) {
         hentPersonBolk(identer: $identer) {
         ident
+        code
         person {
         foedsel {
         foedselsdato
