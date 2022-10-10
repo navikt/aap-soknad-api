@@ -47,6 +47,9 @@ class OppslagController(
     @GetMapping("/soekermedbarn")
     fun søkerMedBarn() = pdl.søkerMedBarn()
 
+    @GetMapping("/soekerutenbarn")
+    fun søkerUtenBarn() = pdl.søkerUtenBarn()
+
     @GetMapping("/behandlere")
     fun behandlere() = behandler.behandlerInfo()
 
