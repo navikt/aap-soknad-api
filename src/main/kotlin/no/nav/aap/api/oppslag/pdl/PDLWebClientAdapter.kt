@@ -10,6 +10,7 @@ import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.FORTROLIG
 import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
 import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
+import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLBarnBolk
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLFødsel
@@ -65,7 +66,14 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                     adresseFra(vegadresse),
                     fødselsdatoFra(fødsel),
                     barnFra(forelderBarnRelasjon, medBarn))
-                .also { log.trace(CONFIDENTIAL, "Søker er $it") }
+                .also { log.trace(CONFIDENTIAL, "Søker er $it")
+                    try {
+                        log.trace("BARN BOLK ${barnBolkFra(forelderBarnRelasjon)}")
+                    }
+                    catch (e: Exception) {
+                        log.trace("OOPS",e)
+                    }
+                }
         }
     }
 
@@ -80,6 +88,12 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                 .map { Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato)) }.toList()
         }
         else emptyList()
+
+    private fun barnBolkFra(r: List<PDLForelderBarnRelasjon>) =
+        queryBolk<List<PDLBarnBolk>>(clients.system, BARN_BOLK_QUERTY, r.map { it.relatertPersonsIdent })
+
+
+
 
     private fun adresseFra(adresse: PDLVegadresse?) = adresse?.let {
         with(it) {
@@ -108,6 +122,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
 
     companion object {
+        private const val BARN_BOLK_QUERTY = "query-barnbolk.graphql"
         private const val PERSON_QUERY = "query-person.graphql"
         private const val BARN_QUERY = "query-barn.graphql"
     }

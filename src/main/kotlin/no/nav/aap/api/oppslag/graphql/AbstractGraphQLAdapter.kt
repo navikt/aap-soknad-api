@@ -23,9 +23,24 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
                 throw it
             }
         }
+    protected inline fun <reified T : Any> queryBolk(graphQLClient: GraphQLWebClient, query: String, fnrs: List<String>) =
+        runCatching {
+            graphQLClient.post(query, fnrs.toIdenter(), T::class.java).block()
+        }.getOrElse {
+            if (it is GraphQLErrorsException) {
+                errorHandler.handle(it)
+            }
+            else {
+                log.warn("Oppslag ${File(query).nameWithoutExtension.split("-")[0]} feilet med uventet feil", it)
+                throw it
+            }
+        }
 
     companion object {
-        fun String.toIdent() = mapOf(IDENT to this)
         private const val IDENT = "ident"
+        private const val IDENTER = "identer"
+
+        protected fun String.toIdent() = mapOf(IDENT to this)
+        protected fun List<String>.toIdenter() = mapOf(IDENTER to this)
     }
 }
