@@ -11,9 +11,9 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
                                       val errorHandler: GraphQLErrorHandler = GraphQLDefaultErrorHandler()) :
     AbstractWebClientAdapter(client, cfg) {
 
-    protected inline fun <reified T : Any> query(graphQLClient: GraphQLWebClient, query: String, fnr: String) =
+    protected inline fun <reified T : Any> query(graphQLClient: GraphQLWebClient, query: String, ident: String) =
         runCatching {
-            graphQLClient.post(query, fnr.toIdent(), T::class.java).block()
+            graphQLClient.post(query, ident.toIdent(), T::class.java).block()
         }.getOrElse {
             if (it is GraphQLErrorsException) {
                 errorHandler.handle(it)
@@ -23,9 +23,9 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
                 throw it
             }
         }
-    protected inline fun <reified T : Any> queryBolk(graphQLClient: GraphQLWebClient, query: String, fnrs: List<String>) =
+    protected inline fun <reified T : Any> query(graphQLClient: GraphQLWebClient, query: String, idents: List<String>) =
         runCatching {
-            graphQLClient.post(query, fnrs.toIdenter(), T::class.java).block()
+            graphQLClient.post(query, idents.toIdenter(), T::class.java).block()
         }.getOrElse {
             if (it is GraphQLErrorsException) {
                 errorHandler.handle(it)
