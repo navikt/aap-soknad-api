@@ -13,7 +13,6 @@ class ArkivClient(private val adapter: ArkivWebClientAdapter) {
         }.also {
             log.trace("Fordeling av journalpost $journalpost til arkiv OK med resultat $it")
         }
-
     data class ArkivResultat(val journalpostId: String, val dokumentIds: List<String>)
 
 }

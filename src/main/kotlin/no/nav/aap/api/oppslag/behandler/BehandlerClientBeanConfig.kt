@@ -1,6 +1,7 @@
 package no.nav.aap.api.oppslag.behandler
 
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLER
+import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLERPING
 import no.nav.aap.api.søknad.arkiv.ArkivConfig
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
@@ -20,7 +21,7 @@ class BehandlerClientBeanConfig {
             .filter(tokenX)
             .build()
 
-    @Qualifier("${BEHANDLER}ping")
+    @Qualifier(BEHANDLERPING)
     @Bean
     fun pingBehandlerWebClient(builder: Builder, cfg: ArkivConfig) =
         builder

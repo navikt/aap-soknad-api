@@ -20,6 +20,7 @@ class BehandlerConfig(
 
     companion object {
         const val BEHANDLER = "behandler"
+        const val BEHANDLERPING = "${BEHANDLER}ping"
         const val DEFAULT_URI = "http://isdialogmelding.teamsykefravr"
         const val DEFAULT_PATH = "api/person/v1/behandler/self"
         const val DEFAULT_PING_PATH = "is_alive"

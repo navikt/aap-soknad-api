@@ -17,8 +17,7 @@ class KontoConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
 
     fun kontoUri(b: UriBuilder) = b.path(kontoPath).build()
 
-    override fun toString() =
-        "$javaClass.simpleName [baseUri=$baseUri,  kontoPath=$kontoPath, pingEndpoint=$pingEndpoint]"
+    override fun toString() = "$javaClass.simpleName [baseUri=$baseUri,  kontoPath=$kontoPath, pingEndpoint=$pingEndpoint]"
 
     companion object {
         const val KONTO = "konto"

@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
-import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
 class ArkivBeanConfig {
@@ -26,7 +26,7 @@ class ArkivBeanConfig {
 
     @Qualifier(JOARK)
     @Bean
-    fun webClientArkiv(builder: WebClient.Builder, cfg: ArkivConfig, @Qualifier(JOARK) clientCredentialFilterFunction: ExchangeFilterFunction) =
+    fun webClientArkiv(builder: Builder, cfg: ArkivConfig, @Qualifier(JOARK) clientCredentialFilterFunction: ExchangeFilterFunction) =
         builder
             .baseUrl("${cfg.baseUri}")
             .filter(clientCredentialFilterFunction)
@@ -34,7 +34,7 @@ class ArkivBeanConfig {
 
     @Qualifier("${JOARK}ping")
     @Bean
-    fun pingWebClientArkiv(builder: WebClient.Builder, cfg: ArkivConfig) =
+    fun pingWebClientArkiv(builder: Builder, cfg: ArkivConfig) =
         builder
             .baseUrl("${cfg.baseUri}")
             .build()

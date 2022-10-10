@@ -20,20 +20,20 @@ import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
+import org.springframework.boot.CommandLineRunner
 
 @Suppress("BlockingMethodInNonBlockingContext")
 @ConditionalOnGCP
 class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                                    private val cfg: BucketConfig,
                                    private val mapper: ObjectMapper,
-                                   private val subscriber: PubSubSubscriberTemplate) {
+                                   private val subscriber: PubSubSubscriberTemplate) : CommandLineRunner{
 
     private val log = getLogger(javaClass)
 
-    init {
+    override fun run(vararg args: String?) {
         subscribe()
     }
-
     private fun subscribe() =
         with(cfg.mellom) {
             log.trace("Abonnererer på hendelser i $subscription")
@@ -41,8 +41,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                 event.ack()
                 with(event.pubsubMessage) {
                     val type = eventType()
-                    log.trace(CONFIDENTIAL,
-                            "Data i $type event er ${data.toStringUtf8()}, attributter er $attributesMap")
+                    log.trace(CONFIDENTIAL, "Data i $type event er ${data.toStringUtf8()}, attributter er $attributesMap")
                     when (type) {
                         OBJECT_FINALIZE -> opprettet(metadata())
                         OBJECT_DELETE -> slettet(metadata())
@@ -102,4 +101,6 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
         private const val METADATA = "metadata"
         private const val OBJECTID = "objectId"
     }
+
+
 }

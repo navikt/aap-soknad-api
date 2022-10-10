@@ -19,12 +19,10 @@ internal class MellomlagerController(private val lager: Mellomlager) {
 
     @PostMapping("/lagre/{type}")
     @ResponseStatus(CREATED)
-    fun lagre(@PathVariable type: SkjemaType, @RequestBody data: String) =
-        lager.lagre(data, type)
+    fun lagre(@PathVariable type: SkjemaType, @RequestBody data: String) = lager.lagre(data, type)
 
     @GetMapping("/les/{type}")
-    fun les(@PathVariable type: SkjemaType) =
-        lager.les(type)?.let { ok(it) } ?: notFound().build()
+    fun les(@PathVariable type: SkjemaType) = lager.les(type)?.let { ok(it) } ?: notFound().build()
 
     @DeleteMapping("/slett/{type}")
     @ResponseStatus(NO_CONTENT)

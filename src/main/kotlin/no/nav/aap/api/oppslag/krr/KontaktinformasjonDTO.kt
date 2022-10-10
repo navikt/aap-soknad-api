@@ -35,5 +35,4 @@ data class KontaktinformasjonDTO(@JsonAlias("spraak") val målform: Målform? = 
 
 data class Kontaktinformasjon(val epost: String? = null, val mobil: String? = null)
 
-enum class Målform { NB, NN, EN
-}
+enum class Målform { NB, NN, EN }

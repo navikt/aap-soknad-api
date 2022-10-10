@@ -1,7 +1,9 @@
 package no.nav.aap.api.oppslag.behandler
 
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLER
+import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLERPING
 import no.nav.aap.rest.AbstractWebClientAdapter
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
@@ -11,7 +13,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 @Component
 class BehandlerWebClientAdapter(
         @Qualifier(BEHANDLER) webClient: WebClient,
-        @Qualifier("${BEHANDLER}ping") pingClient: WebClient,
+        @Qualifier(BEHANDLERPING) pingClient: WebClient,
         val cf: BehandlerConfig) : AbstractWebClientAdapter(webClient, cf,pingClient) {
 
     fun behandlerInfo() = webClient
@@ -24,7 +26,7 @@ class BehandlerWebClientAdapter(
             log.warn("Behandler oppslag feilet", t)
         }
         .doOnSuccess {
-            log.trace("Behandlere er $it")
+            log.trace(CONFIDENTIAL,"Behandlere er $it")
         }
         .block()
         ?.map {
@@ -32,7 +34,7 @@ class BehandlerWebClientAdapter(
         }
         .orEmpty()
         .also {
-            log.trace("Behandlere mappet er $it")
+            log.trace(CONFIDENTIAL,"Behandlere mappet er $it")
         }
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cfg]"

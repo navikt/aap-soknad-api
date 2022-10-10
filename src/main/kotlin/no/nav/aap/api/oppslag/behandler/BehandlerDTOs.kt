@@ -28,7 +28,8 @@ data class BehandlerDTO(
 
     fun tilBehandler() = RegistrertBehandler(type, kategori, Navn(fornavn, mellomnavn, etternavn),
             KontaktInformasjon(kontor, orgnummer,
-                    Adresse(adresse, null, null, PostNummer(postnummer, poststed)),
+                    Adresse(adresse, null, null,
+                            PostNummer(postnummer, poststed)),
                     telefon))
 }
 
