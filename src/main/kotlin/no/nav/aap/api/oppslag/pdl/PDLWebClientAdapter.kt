@@ -89,8 +89,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
             if (medBarn) {
                 log.trace("BOLK OPPSLAG BARN")
                 query<List<PDLBarnBolk>>(clients.system, BARN_BOLK_QUERY, r.map { it.relatertPersonsIdent })
-                    ?.groupBy { it.code }
-                    ?.get("ok")
+                    ?.asSequence()
                     ?.map{it.pdlBarn }
                     ?.filterNot(::myndig)
                     ?.filterNot(::beskyttet)
@@ -101,6 +100,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         }
         catch(e: Exception) {
             log.warn("OOPS",e)
+            emptyList()
         }
 
     private fun adresseFra(adresse: PDLVegadresse?) = adresse?.let {
