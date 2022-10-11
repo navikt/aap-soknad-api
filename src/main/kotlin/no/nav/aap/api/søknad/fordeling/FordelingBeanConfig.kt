@@ -19,9 +19,9 @@ class FordelingBeanConfig {
     class VLPingable(admin: KafkaAdmin, p: KafkaProperties, cfg: VLFordelingConfig) : AbstractKafkaHealthIndicator(admin,p.bootstrapServers,cfg)
 
     @Bean
+    @ConditionalOnProperty("$VL.enabled", havingValue = "true")
     fun vlHealthIndicator(adapter: VLPingable) = object : AbstractPingableHealthIndicator(adapter) {}
 
     @Bean
-    @ConditionalOnProperty("$VL.enabled", havingValue = "true")
     fun vlFordelingTemplate(pf: ProducerFactory<String, Any>) = KafkaTemplate(pf)
 }
