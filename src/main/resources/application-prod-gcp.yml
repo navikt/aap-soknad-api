@@ -13,7 +13,7 @@ no.nav:
                 registration:
                     aareg-services:
                         token-exchange:
-                            audience: ${dev}-fss:arbeidsforhold:aareg-services-nais
+                            audience: ${env}-fss:arbeidsforhold:aareg-services-nais
                         well-known-url: ${token.x.well.known.url}
                         grant-type: urn:ietf:params:oauth:grant-type:token-exchange
                         authentication:
@@ -23,7 +23,7 @@ no.nav:
 
                     safselvbetjening:
                         token-exchange:
-                            audience: ${dev-fss}:teamdokumenthandtering:safselvbetjening
+                            audience: ${env}-fss:teamdokumenthandtering:safselvbetjening
                         well-known-url: ${token.x.well.known.url}
                         grant-type: urn:ietf:params:oauth:grant-type:token-exchange
                         authentication:
@@ -32,7 +32,7 @@ no.nav:
                             client-auth-method: private_key_jwt
 
 arbeidsforhold:
-    base-uri: https://aareg-services.${env}fss-pub.nais.io
+    base-uri: https://aareg-services.${env}-fss-pub.nais.io
 organisasjon:
     base-uri: https://ereg-services.${env}-fss-fss-pub.nais.io
 saf:
