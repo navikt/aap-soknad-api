@@ -57,7 +57,6 @@ spec:
         - host: {{dokarkiv}}
         - host: {{saf}}
         - host: {{pdl}}
-        - host: https://pdl-api.{{env}}-fss-pub.nais.io
       rules:
         - application: sokos-kontoregister-person
           namespace: okonomi
