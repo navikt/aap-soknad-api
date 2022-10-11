@@ -23,7 +23,7 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
                 throw it
             }
         }
-    protected inline fun <reified T : Any> query(graphQLClient: GraphQLWebClient, query: String, idents: List<String>) =
+    protected inline fun <reified T : Any> queryBolk(graphQLClient: GraphQLWebClient, query: String, idents: List<String>) =
         runCatching {
             graphQLClient.post(query, idents.toIdenter(), T::class.java).block()
         }.getOrElse {
