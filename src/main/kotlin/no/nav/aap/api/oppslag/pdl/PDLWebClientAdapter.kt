@@ -88,12 +88,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
     private fun barnBolkFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) =
         try  {
             if (medBarn) {
-                val x = queryBolk<List<PDLBarnBolk>>(clients.system, BARN_BOLK_QUERY, r.map { it.relatertPersonsIdent })
-                   ?.map(PDLBarnBolk::person).also {
-                        log.warn("BOLK 1 $it")
-                    }
-                x as List<PDLBarn>
-                log.warn("BOLK 2 $x")
+                val x = queryBolk<PDLBarnBolk>(clients.system, BARN_BOLK_QUERY, r.map { it.relatertPersonsIdent }).map { it.person  }
                 x
                 /*    ?.filterNot(::myndig)
                     ?.filterNot(::beskyttet)
