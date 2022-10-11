@@ -38,10 +38,10 @@ fun main(args: Array<String>) {
     runApplication<AAPSøknadApiApplication>(*args) {
         with(currentCluster().clusterName()) {
             if (contains(DEV)) {
-                setDefaultProperties(mapOf(ONPREM to DEV_FSS, NAIS_ENV to DEV))
+                setDefaultProperties(mapOf(ONPREM to DEV_FSS, /*NAIS_ENV to DEV*/))
             }
             if (contains(PROD)) {
-                setDefaultProperties(mapOf(ONPREM to PROD_FSS, NAIS_ENV to PROD))
+                setDefaultProperties(mapOf(ONPREM to PROD_FSS, /*NAIS_ENV to PROD*/))
             }
         }
 
