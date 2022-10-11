@@ -10,7 +10,6 @@ import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.FORTROLIG
 import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
 import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
-import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLBarnBolk
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLFødsel
@@ -67,8 +66,6 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                     fødselsdatoFra(fødsel),
                     barnFra(forelderBarnRelasjon, medBarn))
                 .also { log.trace(CONFIDENTIAL, "Søker er $it")
-                    val b = barnBolkFra(forelderBarnRelasjon, medBarn)
-                    log.trace("BOLK ${b?.javaClass}  $b")
                 }
         }
     }
@@ -84,28 +81,6 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                 .map { Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato)) }.toList()
         }
         else emptyList()
-
-    private fun barnBolkFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) =
-        try  {
-            if (medBarn) {
-                log.trace("BOLK 0")
-                val x = queryBolk<PDLBarnBolk>(clients.system, BARN_BOLK_QUERY, r.map { it.relatertPersonsIdent })
-                log.trace("BOLK 1 $x")
-                val y = x?.map { it.person}
-                log.trace("BOLK 2 $y")
-
-                x
-                /*    ?.filterNot(::myndig)
-                    ?.filterNot(::beskyttet)
-                    ?.filterNot(::død)
-                    ?.map { Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato)) }?.toList() ?: emptyList() */
-            }
-            else emptyList()
-        }
-        catch(e: Exception) {
-            log.warn("OOPS",e)
-            emptyList()
-        }
 
     private fun adresseFra(adresse: PDLVegadresse?) = adresse?.let {
         with(it) {

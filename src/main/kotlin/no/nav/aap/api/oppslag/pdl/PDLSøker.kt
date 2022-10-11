@@ -51,8 +51,6 @@ data class PDLBarn(@JsonProperty("foedsel") val fødselsdato: Set<PDLFødsel>,
                    val adressebeskyttelse: Set<PDLAdresseBeskyttelse>?,
                    @JsonProperty("doedsfall") val dødsfall: Set<PDLDødsfall>?) {
 
- data class PDLBarnBolk(val ident: String, val code: String,val person: PDLBarn)
-
     data class PDLDødsfall(@JsonProperty("doedsdato") val dødsdato: LocalDate)
     enum class PDLAdresseBeskyttelse {
         STRENGT_FORTROLIG_UTLAND,

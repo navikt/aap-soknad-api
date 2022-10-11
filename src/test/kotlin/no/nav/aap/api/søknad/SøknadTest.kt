@@ -15,7 +15,6 @@ import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerKategori.LEGE
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerType.FASTLEGE
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.KontaktInformasjon
-import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLBarnBolk
 import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
@@ -35,7 +34,6 @@ import no.nav.aap.api.søknad.model.Utbetalinger.FraArbeidsgiver
 import no.nav.aap.api.søknad.model.Utenlandsopphold
 import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.util.AuthContext
-import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -162,13 +160,6 @@ class SøknadTest {
    }
         
     """.trimIndent()
-
-    @Test
-    fun parse() {
-        val value = mapper.readValue(bolk, object : TypeReference<List<PDLBarnBolk>>() {})
-        print(value)
-
-    }
 
     companion object {
 
