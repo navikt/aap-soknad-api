@@ -1,13 +1,6 @@
 {
   "tenant": "trygdeetaten.no",
-  "mellomlagring-navn": "aap-mellomlagring-dev",
-  "vedlegg-navn": "aap-vedlegg-dev",
   "ingress": "https://aap-soknad-api.dev.intern.nav.no",
-  "kafka-pool": "nav-dev",
-  "mellomlagring-varighet": "10",
-  "vedlegg-varighet": "10",
   "env": "dev",
-  "dokarkiv": "https://dokarkiv.dev-fss-pub.nais.io",
-  "saf": "https://safselvbetjening-q1.dev-fss-pub.nais.io",
-  "pdl": "https://pdl-api.dev-fss-pub.nais.io"
+  "saf": "https://safselvbetjening-q1.dev-fss-pub.nais.io"
 }

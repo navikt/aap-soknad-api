@@ -50,13 +50,13 @@ jobs:
         strategy:
             matrix:
                 cluster: [ dev-gcp, prod-gcp ]
-        environment: ${{ matrix.cluster }}:aap
+        environment: ${{matrix.cluster}}:aap
         name: Deploy til ${{matrix.cluster}}
         needs: bygg
         runs-on: ubuntu-latest
         env:
             PRINT_PAYLOAD: true
-            APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+            APIKEY: ${{secrets.NAIS_DEPLOY_APIKEY}}
             RESOURCE: .nais/naiserator.yaml,.nais/alerts.yaml
             CLUSTER: ${{matrix.cluster}}
             VARS: .nais/${{matrix.cluster}}.json
