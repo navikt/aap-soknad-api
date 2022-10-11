@@ -1,7 +1,10 @@
 package no.nav.aap.api.søknad
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.neovisionaries.i18n.CountryCode.SE
+import java.time.LocalDate.now
+import java.util.*
 import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
@@ -12,17 +15,13 @@ import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerKategori.LEGE
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerType.FASTLEGE
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.KontaktInformasjon
-import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
-import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
-import no.nav.aap.api.søknad.arkiv.pdf.PDFFraBildeFKonverterer
+import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLBarnBolk
 import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
-import no.nav.aap.api.søknad.mellomlagring.dokument.InMemoryDokumentlager
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
 import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Medlemskap
 import no.nav.aap.api.søknad.model.RadioValg
-import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.StandardSøknad.Yrkesskade
 import no.nav.aap.api.søknad.model.Studier
@@ -36,13 +35,11 @@ import no.nav.aap.api.søknad.model.Utbetalinger.FraArbeidsgiver
 import no.nav.aap.api.søknad.model.Utenlandsopphold
 import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.util.AuthContext
+import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.json.JsonTest
-import java.time.LocalDate.now
-import java.util.*
-import kotlin.test.assertEquals
 
 @JsonTest
 class SøknadTest {
@@ -119,9 +116,38 @@ class SøknadTest {
              
           ]
        }
+       
         
     """.trimIndent()
 
+    val bolk = """
+     [
+   {
+      "ident":"13012064629",
+      "code":"ok",
+      "person":{
+         "foedsel":[
+            {
+               "foedselsdato":"2020-01-13"
+            }
+         ],
+         "navn":[
+            {
+               "fornavn":"LUGUBER",
+               "mellomnavn":null,
+               "etternavn":"GASELLE"
+            }
+         ],
+         "adressebeskyttelse":[
+            
+         ],
+         "doedsfall":[
+            
+         ]
+      }
+   }
+]
+        """
     val ettersending = """
     {
      "søknadId":"b86fdc45-6bbf-4891-98e8-5aed1247a301",
@@ -137,12 +163,11 @@ class SøknadTest {
         
     """.trimIndent()
 
-    //@Test
+    @Test
     fun parse() {
-        val es = mapper.readValue(ettersending, StandardEttersending::class.java)
-        val journalpost = ArkivJournalpostGenerator(mapper,
-                InMemoryDokumentlager(),pdf, PDFFraBildeFKonverterer(BildeSkalerer())).journalpostFra(es, søker())
-        assertEquals(1, journalpost.dokumenter.size)
+        val value = mapper.readValue(bolk, object : TypeReference<List<PDLBarnBolk>>() {})
+        print(value)
+
     }
 
     companion object {
