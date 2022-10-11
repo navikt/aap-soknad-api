@@ -129,6 +129,13 @@ no.nav:
           discovery-url: ${token.x.well.known.url}
           accepted-audience: ${token.x.client.id}
 
+vl:
+  standard:
+    topic: aap.soknad-sendt.v1
+  ettersending:
+    topic: aap.soknad-ettersendt.v1
+  utland:
+    topic: aap.utland-soknad-sendt.v1
 pdl:
   enabled: true
   base-uri: https://pdl-api.${onprem}-pub.nais.io/graphql

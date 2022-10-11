@@ -39,6 +39,13 @@ saf:
     base-uri: https://safselvbetjening.${onprem}-pub.nais.io
 konto:
     enabled: false
+vl:
+    standard:
+        enabled: false
+    ettersending:
+        enabled: false
+    utland:
+        enabled: false
 joark:
     scope: api://${onprem}.teamdokumenthandtering.dokarkiv/.default
 minside:
