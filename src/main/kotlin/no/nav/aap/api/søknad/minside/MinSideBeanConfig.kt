@@ -4,6 +4,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.aap.api.config.BeanConfig.AbstractKafkaHealthIndicator
+import no.nav.aap.api.søknad.minside.MinSideConfig.Companion.MINSIDE
 import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.DOKNOTIFIKASJON
 import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.FEILET
 import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
@@ -17,6 +18,7 @@ import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CON
 import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -34,13 +36,14 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
     private val log = getLogger(javaClass)
 
     @Component
-    class MinsidePingable(val admin: KafkaAdmin, val p: KafkaProperties, val cfg: MinSideConfig) : AbstractKafkaHealthIndicator(admin,p.bootstrapServers,cfg)
+    class MinsidePingable(admin: KafkaAdmin, p: KafkaProperties, cfg: MinSideConfig) : AbstractKafkaHealthIndicator(admin,p.bootstrapServers,cfg)
 
     @Bean
+    @ConditionalOnProperty("$MINSIDE.enabled", havingValue = "true")
     fun minsideHealthIndicator(adapter: MinsidePingable) = object : AbstractPingableHealthIndicator(adapter) {}
     @Bean
-    fun minSideKafkaOperations(props: KafkaProperties) =
-        KafkaTemplate(DefaultKafkaProducerFactory<NokkelInput, Any>(props.buildProducerProperties()
+    fun minSideKafkaOperations(p: KafkaProperties) =
+        KafkaTemplate(DefaultKafkaProducerFactory<NokkelInput, Any>(p.buildProducerProperties()
             .apply {
                 put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
                 put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
@@ -49,13 +52,12 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
     @Bean(DOKNOTIFIKASJON)
     fun dokNotifikasjonListenerContainerFactory(p: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, DoknotifikasjonStatus>().apply {
-            consumerFactory =
-                DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
-                    put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
-                    put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
-                    put(SPECIFIC_AVRO_READER_CONFIG, true)
-                    setRecordFilterStrategy(::recordFilterStrategy)
-                })
+            consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
+                put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
+                put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
+                put(SPECIFIC_AVRO_READER_CONFIG, true)
+                setRecordFilterStrategy(::recordFilterStrategy)
+            })
         }
 
     private fun recordFilterStrategy(payload: ConsumerRecord<String, DoknotifikasjonStatus>) =
@@ -79,5 +81,4 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
                 else -> true
             }
         }
-
   }
