@@ -55,6 +55,7 @@ jobs:
         needs: bygg
         runs-on: ubuntu-latest
         env:
+            PRINT_PAYLOAD: true
             APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
             RESOURCE: .nais/naiserator.yaml,.nais/alerts.yaml
             CLUSTER: ${{ matrix.cluster }}

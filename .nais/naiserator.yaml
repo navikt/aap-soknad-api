@@ -55,6 +55,8 @@ spec:
     outbound:
       external:
         - host: {{dokarkiv}}
+        - host: {{saf}}
+        - host: {{pdl}}
       rules:
         - application: sokos-kontoregister-person
           namespace: okonomi

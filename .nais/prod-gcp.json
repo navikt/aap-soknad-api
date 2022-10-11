@@ -6,6 +6,8 @@
     "mellomlagring-navn": "aap-mellomlagring-prod",
     "vedlegg-varighet": "10",
     "vedlegg-navn": "aap-vedlegg-prod",
+    "env": "prod",
     "dokarkiv": "https://dokarkiv.prod-fss-pub.nais.io",
-    "env": "prod"
+    "saf" : "https://safselvbetjening.prod-fss-pub.nais.io",
+    "pdl": "https://pdl-api.prod-fss-pub.nais.io"
 }
