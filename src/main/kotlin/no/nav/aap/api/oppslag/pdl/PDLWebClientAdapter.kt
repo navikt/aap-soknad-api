@@ -67,6 +67,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                     fødselsdatoFra(fødsel),
                     barnFra(forelderBarnRelasjon, medBarn))
                 .also { log.trace(CONFIDENTIAL, "Søker er $it")
+                    log.trace("BOLK ${barnBolkFra(forelderBarnRelasjon, medBarn)}")
                 }
         }
     }
@@ -84,18 +85,23 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         else emptyList()
 
     private fun barnBolkFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) =
-        if (medBarn) {
-            query<List<PDLBarnBolk>>(clients.system, BARN_BOLK_QUERY, r.map { it.relatertPersonsIdent })
-                ?.groupBy { it.code }
-                ?.get("ok")
-                ?.asSequence()
-                ?.map{it.pdlBarn }
-                ?.filterNot(::myndig)
-                ?.filterNot(::beskyttet)
-                ?.filterNot(::død)
-                ?.map { Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato)) }?.toList() ?: emptyList()
+        try  {
+            if (medBarn) {
+                log.trace("BOLK OPPSLAG BARN")
+                query<List<PDLBarnBolk>>(clients.system, BARN_BOLK_QUERY, r.map { it.relatertPersonsIdent })
+                    ?.groupBy { it.code }
+                    ?.get("ok")
+                    ?.map{it.pdlBarn }
+                    ?.filterNot(::myndig)
+                    ?.filterNot(::beskyttet)
+                    ?.filterNot(::død)
+                    ?.map { Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato)) }?.toList() ?: emptyList()
+            }
+            else emptyList()
         }
-        else emptyList()
+        catch(e: Exception) {
+            log.warn("OOPS",e)
+        }
 
     private fun adresseFra(adresse: PDLVegadresse?) = adresse?.let {
         with(it) {
