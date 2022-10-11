@@ -89,7 +89,6 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
             if (medBarn) {
                 log.trace("BOLK OPPSLAG BARN")
                 query<List<PDLBarnBolk>>(clients.system, BARN_BOLK_QUERY, r.map { it.relatertPersonsIdent })
-                    ?.asSequence()
                     ?.map{it.pdlBarn }
                     ?.filterNot(::myndig)
                     ?.filterNot(::beskyttet)
