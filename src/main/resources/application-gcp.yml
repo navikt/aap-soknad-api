@@ -97,7 +97,7 @@ no.nav:
 
           pdl-api:
             token-exchange:
-              audience: ${onprem}:pdl:pdl-api
+              audience: ${dev}-fss:pdl:pdl-api
             well-known-url: ${token.x.well.known.url}
             grant-type: urn:ietf:params:oauth:grant-type:token-exchange
             authentication:
@@ -138,11 +138,11 @@ vl:
     topic: aap.utland-soknad-sendt.v1
 pdl:
   enabled: true
-  base-uri: https://pdl-api.${onprem}-pub.nais.io/graphql
-  scope: api://${onprem}.pdl.pdl-api/.default
+  base-uri: https://pdl-api.${dev}-fss-pub.nais.io/graphql
+  scope: api://${dev}-fss.pdl.pdl-api/.default
 joark:
   enabled: true
-  base-uri: https://dokarkiv.${onprem}-pub.nais.io
+  base-uri: https://dokarkiv.${dev}-fss-pub.nais.io
 arbeidsforhold:
   enabled: false
 organisasjon:

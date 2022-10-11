@@ -13,7 +13,7 @@ no.nav:
                 registration:
                     aareg-services-q1:
                         token-exchange:
-                            audience: ${onprem}:arbeidsforhold:aareg-services-nais-q1
+                            audience: ${env}-fss:arbeidsforhold:aareg-services-nais-q1
                         well-known-url: ${token.x.well.known.url}
                         grant-type: urn:ietf:params:oauth:grant-type:token-exchange
                         authentication:
@@ -23,7 +23,7 @@ no.nav:
 
                     safselvbetjening-q1:
                         token-exchange:
-                            audience: ${onprem}:teamdokumenthandtering:safselvbetjening-q1
+                            audience: ${env}-fss:teamdokumenthandtering:safselvbetjening-q1
                         well-known-url: ${token.x.well.known.url}
                         grant-type: urn:ietf:params:oauth:grant-type:token-exchange
                         authentication:
@@ -43,11 +43,11 @@ arbeidsforhold:
 organisasjon:
     base-uri: https://ereg-services-q1.dev-fss-pub.nais.io
 saf:
-    base-uri: https://safselvbetjening-q1.${onprem}-pub.nais.io
+    base-uri: https://safselvbetjening-q1.${env}-fss-pub.nais.io
 konto:
     enabled: true
 joark:
-    scope: api://${onprem}.teamdokumenthandtering.dokarkiv-q1/.default
+    scope: api://${env}-fss.teamdokumenthandtering.dokarkiv-q1/.default
 minside:
     backlinks:
         innsyn: https://aap-innsyn.dev.nav.no/aap/innsyn
