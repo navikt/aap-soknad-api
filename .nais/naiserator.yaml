@@ -102,3 +102,5 @@ spec:
       value: aap-mellomlagring-{{env}}
     - name: VEDLEGG_NAVN
       value: aap-vedlegg-{{env}}
+    - name: ENV
+      value: {{env}}
