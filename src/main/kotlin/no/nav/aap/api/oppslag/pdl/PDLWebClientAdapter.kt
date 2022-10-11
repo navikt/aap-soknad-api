@@ -68,7 +68,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                     barnFra(forelderBarnRelasjon, medBarn))
                 .also { log.trace(CONFIDENTIAL, "Søker er $it")
                     val b = barnBolkFra(forelderBarnRelasjon, medBarn)
-                    log.trace("BOLK ${b.javaClass}  $b")
+                    log.trace("BOLK ${b?.javaClass}  $b")
                 }
         }
     }
