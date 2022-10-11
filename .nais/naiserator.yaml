@@ -60,19 +60,14 @@ spec:
       rules:
         - application: sokos-kontoregister-person
           namespace: okonomi
-          cluster: {{cluster}}
         - application: clamav
           namespace: clamav
-          cluster: {{cluster}}
         - application: pdfgen
           namespace: aap
-          cluster: {{cluster}}
         - application: digdir-krr-proxy
           namespace: team-rocket
-          cluster: {{cluster}}
         - application: isdialogmelding
           namespace: teamsykefravr
-          cluster: {{cluster}}
   tokenx:
     enabled: true
   kafka:
