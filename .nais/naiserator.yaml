@@ -37,12 +37,12 @@ spec:
           - name: aap-soknad-api-{{env}}
             envVarPrefix: DB
     buckets:
-      - name: {{vedlegg-navn}}
+      - name: aap-vedlegg-{{env}}
         cascadingDelete: true
         lifecycleCondition:
           numNewerVersions: 0
           age: 10
-      - name: {{mellomlagring-navn}}
+      - name: aap-mellomlagring-{{env}}
         cascadingDelete: true
         lifecycleCondition:
           numNewerVersions: 0
