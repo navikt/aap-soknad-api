@@ -60,7 +60,6 @@ jobs:
             RESOURCE: .nais/naiserator.yaml,.nais/alerts.yaml
             CLUSTER: ${{ matrix.cluster }}
             VARS: .nais/{{ matrix.cluster }}$.json
-            VAR: jall=https://pdl-api.{{env}}-fss-pub.nais.io
             IMAGE: ${{needs.bygg.outputs.image}}
         steps:
             - uses: actions/checkout@v3
