@@ -87,13 +87,12 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
     private fun barnBolkFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) =
         try  {
             if (medBarn) {
-                log.trace("BOLK OPPSLAG BARN")
                 query<List<PDLBarnBolk>>(clients.system, BARN_BOLK_QUERY, r.map { it.relatertPersonsIdent })
-                    ?.map{it.pdlBarn }
+                 /*   ?.map{it.pdlBarn }
                     ?.filterNot(::myndig)
                     ?.filterNot(::beskyttet)
                     ?.filterNot(::død)
-                    ?.map { Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato)) }?.toList() ?: emptyList()
+                    ?.map { Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato)) }?.toList() ?: emptyList() */
             }
             else emptyList()
         }
