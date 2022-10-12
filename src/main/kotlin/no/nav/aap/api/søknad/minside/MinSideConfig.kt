@@ -16,8 +16,7 @@ data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConf
                          @NestedConfigurationProperty val beskjed: TopicConfig,
                          @NestedConfigurationProperty val backlinks: BacklinksConfig,
                          @NestedConfigurationProperty val oppgave: TopicConfig,
-                         @DefaultValue("true") val enabled: Boolean,
-                         @DefaultValue(DEFAULT_DONE) val done: String) : AbstractKafkaConfig(MINSIDE,enabled) {
+                         val done: String) : AbstractKafkaConfig(MINSIDE,beskjed.enabled || oppgave.enabled) {
 
     val app = nais.app
     val namespace = nais.namespace
@@ -32,7 +31,6 @@ data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConf
     data class NAISConfig(val namespace: String, val app: String)
 
     companion object {
-        private const val DEFAULT_DONE = "min-side.aapen-brukernotifikasjon-done-v1"
         private const val DEFAULT_VARIGHET = "90d"
         const val MINSIDE = "minside"
         private const val DEFAULT_LEVEL = "3"

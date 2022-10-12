@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.minside
 
+import java.time.Duration
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
 import java.util.*
@@ -38,6 +39,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     @Transactional
     fun opprettBeskjed(fnr: Fødselsnummer,
                        tekst: String,
+                       varighet: Duration = cfg.beskjed.varighet,
                        eventId: UUID = callIdAsUUID(),
                        type: MinSideNotifikasjonType = MINAAPSTD,
                        eksternVarsling: Boolean = true) =
@@ -46,7 +48,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 log.trace(CONFIDENTIAL,
                         "Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
-                        beskjed(tekst, type, eksternVarsling)))
+                        beskjed(tekst, varighet,type, eksternVarsling)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
                 repos.beskjeder.save(Beskjed(fnr.fnr, eventId)).eventid
             }
@@ -58,15 +60,16 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
 
     @Transactional
     fun opprettOppgave(fnr: Fødselsnummer,
-                       eventId: UUID = callIdAsUUID(),
                        tekst: String,
+                       varighet: Duration = cfg.oppgave.varighet,
+                       eventId: UUID = callIdAsUUID(),
                        type: MinSideNotifikasjonType = MINAAPSTD,
                        eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
                 log.trace("Oppretter Min Side oppgave for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
-                        oppgave(tekst, type, eventId, eksternVarsling)))
+                        oppgave(tekst, varighet, type, eventId, eksternVarsling)))
                     .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
                 repos.oppgaver.save(Oppgave(fnr.fnr, eventId)).eventid
             }
@@ -107,7 +110,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-    private fun beskjed(tekst: String, type: MinSideNotifikasjonType, eksternVarsling: Boolean) =
+    private fun beskjed(tekst: String, varighet: Duration, type: MinSideNotifikasjonType, eksternVarsling: Boolean) =
         with(cfg.beskjed) {
             BeskjedInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)
@@ -122,7 +125,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 }
         }
 
-    private fun oppgave(tekst: String, type: MinSideNotifikasjonType, eventId: UUID, eksternVarsling: Boolean) =
+    private fun oppgave(tekst: String, varighet: Duration, type: MinSideNotifikasjonType, eventId: UUID, eksternVarsling: Boolean) =
         with(cfg.oppgave) {
             OppgaveInputBuilder()
                 .withSikkerhetsnivaa(sikkerhetsnivaa)

@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.fordeling
 
+import java.time.Duration
 import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
@@ -80,11 +81,9 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
     }
 
     private fun Søknad.oppdaterMinSide(fnr: Fødselsnummer, erKomplett: Boolean) =
-        minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}", eventid).also {
+        minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}", eventId  = eventid).also {
             if (!erKomplett) {
-                minside.opprettOppgave(fnr,
-                        eventid,
-                        "Vi har mottatt din ${STANDARD.tittel.decap()}. Du må ettersende dokumentasjon")
+                minside.opprettOppgave(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}. Du må ettersende dokumentasjon", Duration.ofDays(14),eventid)
             }
         }
 
