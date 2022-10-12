@@ -41,12 +41,12 @@ spec:
         cascadingDelete: true
         lifecycleCondition:
           numNewerVersions: 0
-          age: 10
+          age: 14
       - name: aap-mellomlagring-{{env}}
         cascadingDelete: true
         lifecycleCondition:
           numNewerVersions: 0
-          age: 10
+          age: 14
   accessPolicy:
     inbound:
       rules:
