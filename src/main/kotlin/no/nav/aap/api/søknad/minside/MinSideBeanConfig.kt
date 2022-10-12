@@ -36,6 +36,7 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
     private val log = getLogger(javaClass)
 
     @Component
+    @ConditionalOnProperty("$MINSIDE.enabled", havingValue = "true")
     class MinsidePingable(admin: KafkaAdmin, p: KafkaProperties, cfg: MinSideConfig) : AbstractKafkaHealthIndicator(admin,p.bootstrapServers,cfg)
 
     @Bean
