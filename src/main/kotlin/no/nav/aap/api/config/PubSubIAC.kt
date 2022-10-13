@@ -24,8 +24,8 @@ import org.springframework.stereotype.Component
 class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, private val admin: PubSubAdmin) : CommandLineRunner {
 
     override fun run(vararg args: String?) {
-        log.trace("IAC Pub sub init")
         with(cfg.mellom.subscription) {
+            log.trace("IAC Pub sub init")
             if (!harTopic(topic)) {
                 lagTopic(topic)
             }

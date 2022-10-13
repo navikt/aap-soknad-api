@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component
 class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage) : CommandLineRunner {
 
     override fun run(vararg args: String?) {
-        log.trace("IAC encryption init")
         with(cfg) {
+            log.trace("IAC encryption init")
             if (harRing()) {
                 log.info("KeyRing $ring finnes allerede")
             }

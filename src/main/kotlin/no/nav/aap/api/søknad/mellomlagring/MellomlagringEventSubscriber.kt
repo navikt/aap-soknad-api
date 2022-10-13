@@ -35,9 +35,8 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
     private val log = getLogger(javaClass)
 
     override fun run(vararg args: String?) {
-        log.trace("IAC mellomlagring event subscriber init")
         with(cfg.mellom) {
-            log.trace("Abonnererer på hendelser i $subscription")
+            log.trace("IAC Abonnererer på hendelser i $subscription")
             subscriber.subscribe(subscription.navn) { event ->
                 event.ack()
                 with<PubsubMessage?, Unit>(event.pubsubMessage) {
