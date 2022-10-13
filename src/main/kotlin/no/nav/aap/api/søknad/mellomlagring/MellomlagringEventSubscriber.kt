@@ -7,6 +7,7 @@ import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import com.google.cloud.storage.NotificationInfo.EventType.valueOf
 import com.google.pubsub.v1.PubsubMessage
+import io.micrometer.core.instrument.Metrics
 import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
@@ -54,6 +55,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
     private fun opprettet(metadata: Metadata?) =
         metadata?.let {
             with(it) {
+                Metrics.gauge("mellomlagring",++mellomlagrede)
                 log.trace(CONFIDENTIAL, "Oppretter beskjed fra metadata $it")
                 dittNav.opprettBeskjed(fnr, "Du har en påbegynt ${type.tittel}", eventId =  eventId, type = SØKNADSTD, eksternVarsling = false)
             }
@@ -62,6 +64,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
     private fun slettet(metadata: Metadata?) =
         metadata?.let {
             with(it) {
+                Metrics.gauge("mellomlagring",--mellomlagrede)
                 log.trace(CONFIDENTIAL, "Sletter beskjed fra metadata $it")
                 dittNav.avsluttBeskjed(type, fnr, eventId)
             }
@@ -96,6 +99,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
     }
 
     companion object {
+        private var mellomlagrede = 0
         private const val EVENT_TYPE = "eventType"
         private const val METADATA = "metadata"
         private const val OBJECTID = "objectId"
