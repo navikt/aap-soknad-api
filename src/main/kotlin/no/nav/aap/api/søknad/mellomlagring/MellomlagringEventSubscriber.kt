@@ -9,8 +9,6 @@ import com.google.cloud.storage.NotificationInfo.EventType.valueOf
 import com.google.pubsub.v1.PubsubMessage
 import io.micrometer.core.instrument.Metrics
 import java.util.*
-import no.nav.aap.api.config.EncryptionIAC
-import no.nav.aap.api.config.EncryptionIAC.Companion
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
@@ -39,7 +37,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
             log.trace("IAC Abonnererer på hendelser i $subscription")
             subscriber.subscribe(subscription.navn) { event ->
                 event.ack()
-                with<PubsubMessage?, Unit>(event.pubsubMessage) {
+                with(event.pubsubMessage) {
                     val type = eventType()
                     log.trace(CONFIDENTIAL, "Data i $type  er ${data.toStringUtf8()}, attributter er $attributesMap")
                     when (type) {
