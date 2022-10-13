@@ -9,6 +9,8 @@ import com.google.cloud.storage.NotificationInfo.EventType.valueOf
 import com.google.pubsub.v1.PubsubMessage
 import io.micrometer.core.instrument.Metrics
 import java.util.*
+import no.nav.aap.api.config.EncryptionIAC
+import no.nav.aap.api.config.EncryptionIAC.Companion
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
@@ -28,19 +30,17 @@ import org.springframework.boot.CommandLineRunner
 class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                                    private val cfg: BucketConfig,
                                    private val mapper: ObjectMapper,
-                                   private val subscriber: PubSubSubscriberTemplate) : CommandLineRunner{
+                                   private val subscriber: PubSubSubscriberTemplate) : CommandLineRunner {
 
     private val log = getLogger(javaClass)
 
     override fun run(vararg args: String?) {
-        subscribe()
-    }
-    private fun subscribe() =
+        log.trace("IAC mellomlagring event subscriber init")
         with(cfg.mellom) {
             log.trace("Abonnererer på hendelser i $subscription")
             subscriber.subscribe(subscription.navn) { event ->
                 event.ack()
-                with(event.pubsubMessage) {
+                with<PubsubMessage?, Unit>(event.pubsubMessage) {
                     val type = eventType()
                     log.trace(CONFIDENTIAL, "Data i $type  er ${data.toStringUtf8()}, attributter er $attributesMap")
                     when (type) {
@@ -51,20 +51,25 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                 }
             }
         }
+    }
 
     private fun opprettet(metadata: Metadata?) =
         metadata?.let {
             with(it) {
-                Metrics.gauge("mellomlagring",++mellomlagrede)
+                Metrics.gauge("mellomlagring", ++mellomlagrede)
                 log.trace(CONFIDENTIAL, "Oppretter beskjed fra metadata $it")
-                dittNav.opprettBeskjed(fnr, "Du har en påbegynt ${type.tittel}", eventId =  eventId, type = SØKNADSTD, eksternVarsling = false)
+                dittNav.opprettBeskjed(fnr,
+                        "Du har en påbegynt ${type.tittel}",
+                        eventId = eventId,
+                        type = SØKNADSTD,
+                        eksternVarsling = false)
             }
         } ?: log.warn("Fant ikke forventede metadata")
 
     private fun slettet(metadata: Metadata?) =
         metadata?.let {
             with(it) {
-                Metrics.gauge("mellomlagring",--mellomlagrede)
+                Metrics.gauge("mellomlagring", --mellomlagrede)
                 log.trace(CONFIDENTIAL, "Sletter beskjed fra metadata $it")
                 dittNav.avsluttBeskjed(type, fnr, eventId)
             }
@@ -104,6 +109,5 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
         private const val METADATA = "metadata"
         private const val OBJECTID = "objectId"
     }
-
 
 }

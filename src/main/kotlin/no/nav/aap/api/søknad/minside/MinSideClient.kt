@@ -53,7 +53,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 repos.beskjeder.save(Beskjed(fnr.fnr, eventId)).eventid
             }
             else {
-                log.info("Sender ikke opprett beskjed til Ditt Nav for $fnr")
+                log.info("Oppretter ikke beskjed i Ditt Nav for $fnr")
                 null
             }
         }
@@ -74,7 +74,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 repos.oppgaver.save(Oppgave(fnr.fnr, eventId)).eventid
             }
             else {
-                log.info("Sender ikke opprett oppgave til Min Side for $fnr")
+                log.info("Oppretter ikke oppgave i Min Side for $fnr")
                 null
             }
         }
