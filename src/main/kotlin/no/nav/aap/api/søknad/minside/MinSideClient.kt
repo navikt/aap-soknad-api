@@ -50,7 +50,9 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         beskjed(tekst, varighet,type, eksternVarsling)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
+                log.info("Oppretter beskjed  DB $fnr")
                 repos.beskjeder.save(Beskjed(fnr.fnr, eventId)).eventid
+                log.info("Opprettet beskjed  DB $fnr")
             }
             else {
                 log.info("Oppretter ikke beskjed i Ditt Nav for $fnr")

@@ -25,7 +25,6 @@
         <logger name="no.nav.aap" level="trace"/>
         <logger name="no.nav.aap.api.søknad.minside.MinSideBeanConfig" level="error"/>
         <logger name="org.hibernate.SQL" level="trace"/>
-        <logger name="org.hibernate.type" level="info"/>
         <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="info"/>
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="secureJson"/>
