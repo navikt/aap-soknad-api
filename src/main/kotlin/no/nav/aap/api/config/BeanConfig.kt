@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
+import io.micrometer.core.aop.CountedAspect
+import io.micrometer.core.aop.TimedAspect
+import io.micrometer.core.instrument.MeterRegistry
 import io.netty.handler.logging.LogLevel.TRACE
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
@@ -67,6 +70,11 @@ import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 
 @Configuration
 class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String) {
+
+    @Bean
+    fun countedAspect(registry: MeterRegistry) = CountedAspect(registry)
+    @Bean
+    fun timedAspect(registry: MeterRegistry) = TimedAspect(registry)
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b ->
