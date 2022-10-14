@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad.fordeling
 
-import io.micrometer.core.instrument.Metrics
+import io.micrometer.core.instrument.Metrics.counter
 import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
@@ -47,10 +47,10 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                         oppdaterMinSide(fnr, manglende.isEmpty())
                     }
                     manglende.forEach{
-                        Metrics.counter("soknad.vedlegg","manglende",it.name.lowercase()).increment()
+                        counter("soknad.vedlegg","manglende",it.name.lowercase()).increment()
                     }
-                    manglende.forEach{
-                        Metrics.counter("soknad.vedlegg","vedlagt",it.name.lowercase()).increment()
+                    vedlagte.forEach{
+                        counter("soknad.vedlegg","vedlagt",it.name.lowercase()).increment()
                     }
                 }
                 Kvittering(journalpostId)
