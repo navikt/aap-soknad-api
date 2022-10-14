@@ -41,7 +41,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     private val log = getLogger(javaClass)
 
     @Transactional
-    @Counted(value = "soknader.beskjed.opprettet", description = "Antall beskjeder opprettet")
+    @Counted(value = "soknad.beskjed.opprettet", description = "Antall beskjeder opprettet")
     fun opprettBeskjed(fnr: Fødselsnummer,
                        tekst: String,
                        eventId: UUID = callIdAsUUID(),
@@ -62,7 +62,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
-    @Counted(value = "soknader.oppgave.opprettet", description = "Antall oppgaver opprettet")
+    @Counted(value = "soknad.oppgave.opprettet", description = "Antall oppgaver opprettet")
     fun opprettOppgave(fnr: Fødselsnummer,
                        tekst: String,
                       // varighet: Duration = cfg.oppgave.varighet,
@@ -84,7 +84,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
-    @Counted(value = "soknader.oppgave.avsluttet", description = "Antall oppgaver avsluttet")
+    @Counted(value = "soknad.oppgave.avsluttet", description = "Antall oppgaver avsluttet")
     fun avsluttOppgave(fnr: Fødselsnummer, eventId: UUID, type: SkjemaType = STANDARD) =
         with(cfg.oppgave) {
             if (enabled) {
@@ -101,7 +101,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
-    @Counted(value = "soknader.beskjed.avsluttet", description = "Antall beskjeder avsluttet")
+    @Counted(value = "soknad.beskjed.avsluttet", description = "Antall beskjeder avsluttet")
     fun avsluttBeskjed(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
         with(cfg.beskjed) {
             if (enabled) {
@@ -177,8 +177,8 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         OPPGAVE,BESKJED
     }
     companion object {
-        private val oppgaverAvsluttet = Metrics.counter("soknader.oppgave.avsluttet")
-        private val beskjederAvsluttet = Metrics.counter("soknader.beskjed.avsluttet")
+        private val oppgaverAvsluttet = Metrics.counter("soknad.oppgave.avsluttet")
+        private val beskjederAvsluttet = Metrics.counter("soknad.beskjed.avsluttet")
     }
 }
 
