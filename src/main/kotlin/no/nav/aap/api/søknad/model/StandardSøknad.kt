@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.TextNode
 import com.neovisionaries.i18n.CountryCode
-import io.micrometer.core.instrument.Metrics
 import java.io.IOException
 import java.util.*
 import no.nav.aap.api.felles.Periode
@@ -166,6 +165,7 @@ data class StandardSøknad(
         else {
             log.trace("Det er ingen andre vedlegg")
         }
+        log.trace("Mangende vedlegg er $manglende, innsendte er $innsendte")
         return VedleggInfo(innsendte, manglende)
     }
 }
