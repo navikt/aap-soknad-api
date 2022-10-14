@@ -44,6 +44,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                        type: MinSideNotifikasjonType = MINAAPSTD,
                        eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
+            log.info("Oppretter kanskje beskjed  $this")
             if (enabled) {
                 log.info("Oppretter beskjed siden enabled $this")
                 log.trace(CONFIDENTIAL,
