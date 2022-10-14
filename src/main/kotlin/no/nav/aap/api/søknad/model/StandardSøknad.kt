@@ -22,7 +22,7 @@ import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.AFP
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.LÅN
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
-import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.SYKESTIPEND
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.api.søknad.model.VedleggType.ANDREBARN
 import no.nav.aap.api.søknad.model.VedleggType.ANNET
@@ -141,7 +141,7 @@ data class StandardSøknad(
                 }
             }
 
-            this?.andreStønader?.firstOrNull { it.type == SYKESTIPEND }?.let {
+            this?.andreStønader?.firstOrNull { it.type == STIPEND }?.let {
                 if (manglerVedlegg(it)) {
                     manglende += LÅNEKASSEN_STIPEND.also {
                         log.trace("Det er manglende vedlegg for ${LÅNEKASSEN_STIPEND.tittel}")
@@ -243,7 +243,7 @@ data class Utbetalinger(val ekstraFraArbeidsgiver: FraArbeidsgiver,
         ØKONOMISK_SOSIALHJELP,
         INTRODUKSJONSSTØNAD,
         OMSORGSSTØNAD,
-        SYKESTIPEND,
+        STIPEND,
         LÅN,
         AFP,
         VERV,
