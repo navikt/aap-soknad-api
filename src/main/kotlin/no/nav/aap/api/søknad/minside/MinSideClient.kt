@@ -61,7 +61,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     @Transactional
     fun opprettOppgave(fnr: Fødselsnummer,
                        tekst: String,
-                       varighet: Duration = cfg.oppgave.varighet,
+                      // varighet: Duration = cfg.oppgave.varighet,
                        eventId: UUID = callIdAsUUID(),
                        type: MinSideNotifikasjonType = MINAAPSTD,
                        eksternVarsling: Boolean = true) =
