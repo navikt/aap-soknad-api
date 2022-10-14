@@ -45,15 +45,12 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                        eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
             if (enabled) {
-                log.info("Oppretter beskjed siden enabled $this")
                 log.trace(CONFIDENTIAL,
                         "Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         beskjed(tekst, varighet,type, eksternVarsling)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
-                log.info("Oppretter beskjed  DB $fnr")
                 repos.beskjeder.save(Beskjed(fnr.fnr, eventId)).eventid
-                log.info("Opprettet beskjed  DB $fnr")
             }
             else {
                 log.info("Oppretter ikke beskjed i Ditt Nav for $fnr")
@@ -84,13 +81,14 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
 
     @Transactional
     fun avsluttOppgave(fnr: Fødselsnummer, eventId: UUID, type: SkjemaType = STANDARD) =
-        with(cfg) {
-            if (oppgave.enabled) {
+        with(cfg.oppgave) {
+            if (enabled) {
                 repos.oppgaver.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
-                    minside.send(ProducerRecord(done, key(type, it.eventid, fnr), done()))
-                        .addCallback(SendCallback("avslutt oppgave med eventid ${it.eventid}"))
+                    avsluttMinSide(type, it.eventid, fnr, "oppgave")
                     it.done = true
-                } ?: log.warn("Kunne ikke avslutte oppgave med eventid $eventId for fnr $fnr i DB, allerede avsluttet?")
+                } ?: log.warn("Kunne ikke finne oppgave med eventid $eventId for fnr $fnr i DB, allerede avsluttet?. Avslutter på Min Side likevel").also {
+                    avsluttMinSide(type, eventId, fnr, "oppgave")
+                }
             }
             else {
                 log.info("Sender ikke avslutt oppgave til Ditt Nav for $fnr")
@@ -99,19 +97,25 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
 
     @Transactional
     fun avsluttBeskjed(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
-        with(cfg) {
-            if (beskjed.enabled) {
+        with(cfg.beskjed) {
+            if (enabled) {
                 repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
-                    minside.send(ProducerRecord(done, key(type, it.eventid, fnr), done()))
-                        .addCallback(SendCallback("avslutt beskjed med eventid ${it.eventid}"))
+                    avsluttMinSide(type, it.eventid, fnr, "beskjed")
                     it.done = true
 
-                } ?: log.warn("Kunne ikke avslutte beskjed med eventid $eventId for fnr $fnr i DB, allerede avsluttet?")
+                } ?: log.warn("Kunne ikke avslutte beskjed med eventid $eventId for fnr $fnr i DB, allerede avsluttet?. Avslutter på Min Side likevel").also {
+                    avsluttMinSide(type, eventId, fnr, "beskjed")
+                }
             }
             else {
                 log.info("Sender ikke avslutt beskjed til Min Side for beskjed for $fnr")
             }
         }
+
+    private fun avsluttMinSide(type: SkjemaType, eventId: UUID, fnr: Fødselsnummer,eventType: String) =
+        minside.send(ProducerRecord(cfg.done, key(type,eventId, fnr), done()))
+            .addCallback(SendCallback("avslutt $eventType med eventid $eventId"))
+
 
     private fun beskjed(tekst: String, varighet: Duration, type: MinSideNotifikasjonType, eksternVarsling: Boolean) =
         with(cfg.beskjed) {
