@@ -47,10 +47,12 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                         oppdaterMinSide(fnr, manglende.isEmpty())
                     }
                     manglende.forEach{
-                        counter("soknad.vedlegg","manglende",it.name.lowercase()).increment()
+                        log.trace("Manglende vedlegg $it")
+                        counter("soknad.vedlegg.manglende","type",it.name.lowercase()).increment()
                     }
                     vedlagte.forEach{
-                        counter("soknad.vedlegg","vedlagt",it.name.lowercase()).increment()
+                        log.trace("Vedlagt vedlegg $it")
+                        counter("soknad.vedlegg.innsendte","type",it.name.lowercase()).increment()
                     }
                 }
                 Kvittering(journalpostId)

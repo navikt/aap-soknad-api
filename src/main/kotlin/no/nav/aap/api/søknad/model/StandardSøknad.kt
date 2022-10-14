@@ -165,7 +165,7 @@ data class StandardSøknad(
         else {
             log.trace("Det er ingen andre vedlegg")
         }
-        log.trace("Mangende vedlegg er $manglende, innsendte er $innsendte")
+        log.trace("Manglende vedlegg er $manglende, innsendte er $innsendte")
         return VedleggInfo(innsendte, manglende)
     }
 }
