@@ -59,7 +59,9 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                         "Du har en påbegynt ${type.tittel}",
                         eventId = eventId,
                         type = SØKNADSTD,
-                        eksternVarsling = false)
+                        eksternVarsling = false).also {
+                    log.trace(CONFIDENTIAL, "Opprettet beskjed fra metadata OK")
+                }
             }
         } ?: log.warn("Fant ikke forventede metadata")
 
@@ -68,7 +70,9 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
             with(it) {
                 Metrics.gauge("mellomlagring", --mellomlagrede)
                 log.trace(CONFIDENTIAL, "Sletter beskjed fra metadata $it")
-                dittNav.avsluttBeskjed(type, fnr, eventId)
+                dittNav.avsluttBeskjed(type, fnr, eventId).also {
+                    log.trace(CONFIDENTIAL, "Slettet beskjed fra metadata OK")
+                }
             }
         } ?: log.warn("Fant ikke forventede metadata")
 
