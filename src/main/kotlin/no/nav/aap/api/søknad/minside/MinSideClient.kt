@@ -45,6 +45,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                        eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
             if (enabled) {
+                log.info("Oppretter beskjed siden enabled $this")
                 log.trace(CONFIDENTIAL,
                         "Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
