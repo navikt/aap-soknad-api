@@ -21,7 +21,7 @@ import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.LÅN
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
-import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.SYKESTIPEND
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.api.søknad.model.Vedlegg
@@ -96,7 +96,7 @@ class ArkivJournalpostGenerator(
                 addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER))
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == UTLAND }, UTENLANDSKE))
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD }, OMSORG))
-                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == STIPEND }, LÅNEKASSEN_STIPEND))
+                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == SYKESTIPEND }, LÅNEKASSEN_STIPEND))
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == LÅN }, LÅNEKASSEN_LÅN))
                 addAll(dokumenterFra(this@with, ANNET))
             }.also {
