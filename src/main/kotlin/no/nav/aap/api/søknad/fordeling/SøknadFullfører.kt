@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.fordeling
 
 import io.micrometer.core.instrument.Metrics.counter
 import java.util.*
+import java.util.UUID.randomUUID
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
@@ -91,8 +92,8 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
     private fun Søknad.oppdaterMinSide(fnr: Fødselsnummer, erKomplett: Boolean) =
         if (!erKomplett) {
             minside.opprettOppgave(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}. Du må ettersende dokumentasjon",
-                    UUID.randomUUID())
-            // IKKE beskjed her foreløpig
+                   eventid)
+            minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}", eventId  = randomUUID())
         }
         else {
             minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}", eventId  = eventid)
