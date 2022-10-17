@@ -12,7 +12,7 @@ class InMemoryMellomlager : Mellomlager {
     override fun les(type: SkjemaType) = store[navn(Fødselsnummer("08089403198"), type)]
 
     override fun slett(type: SkjemaType) = store.remove(navn((Fødselsnummer("08089403198")), type)) != null
-    override fun alleBrukere(): List<String> {
+    override fun alleBrukere() =
         TODO("Not yet implemented")
-    }
+
 }

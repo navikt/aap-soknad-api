@@ -3,6 +3,8 @@ package no.nav.aap.api.søknad.mellomlagring
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
+import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
+import com.google.cloud.storage.Storage.BlobListOption
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import java.nio.charset.StandardCharsets.UTF_8
 import no.nav.aap.api.felles.Fødselsnummer
@@ -64,5 +66,6 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
         }
 
     override fun alleBrukere() =
-        lager.list(cfg.mellom.navn).iterateAll().map { it.name }
+         lager.list(cfg.mellom.navn, BlobListOption.fields(TIME_CREATED), BlobListOption.currentDirectory())
+            .iterateAll().map { Pair(it.name, it.createTime) }
 }
