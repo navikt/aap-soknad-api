@@ -35,8 +35,7 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
 
     @MappedSuperclass
     abstract class MinSideBaseEntity(fnr: String, eventid: UUID, var done: Boolean) : BaseEntity(fnr, eventid) {
-        override fun toString() =
-            "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id]"
+        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id]"
     }
 
     @MappedSuperclass
@@ -44,16 +43,12 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
                               val eventid: UUID,
                               @LastModifiedDate var updated: LocalDateTime? = null) :
         IdentifiableTimestampedBaseEntity() {
-        override fun toString() =
-            "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, id=$id)]"
+        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, id=$id)]"
     }
 
     @MappedSuperclass
-    abstract class EksternNotifikasjonBaseEntity(val eventid: UUID,
-                                                 val distribusjonid: Long,
-                                                 val distribusjonkanal: String) : IdentifiableTimestampedBaseEntity() {
-        override fun toString() =
-            "${javaClass.simpleName} [(distribusjonid=$distribusjonid,created=$created,distribusjonkanal=$distribusjonkanal,id=$id]"
+    abstract class EksternNotifikasjonBaseEntity(val eventid: UUID, val distribusjonid: Long, val distribusjonkanal: String) : IdentifiableTimestampedBaseEntity() {
+        override fun toString() = "${javaClass.simpleName} [(distribusjonid=$distribusjonid,created=$created,distribusjonkanal=$distribusjonkanal,id=$id]"
     }
 
     @MappedSuperclass
@@ -69,7 +64,7 @@ class UUIDAttributeConverter : AttributeConverter<UUID, String> {
     override fun convertToEntityAttribute(databaseValue: String?) = databaseValue?.let(UUID::fromString)
 }
 
-class LoggingEntityListener {
+private class LoggingEntityListener {
 
     @PrePersist
     private fun lagrer(entity: Any) = log.trace("Lagrer $entity i DB")

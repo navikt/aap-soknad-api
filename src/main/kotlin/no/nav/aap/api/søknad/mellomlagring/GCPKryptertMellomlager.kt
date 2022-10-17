@@ -43,8 +43,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
             with(navn(fnr, type)) {
                 lager.get(navn, this)?.let { blob ->
                     String(blob.getContent()).also {
-                        log.trace(CONFIDENTIAL,
-                                "Lest mellomlagret verdi ${it.jsonPrettify(mapper)} fra $this og bøtte $navn")
+                        log.trace(CONFIDENTIAL, "Lest mellomlagret verdi ${it.jsonPrettify(mapper)} fra $this og bøtte $navn")
                     }
                 }
             }

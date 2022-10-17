@@ -19,6 +19,7 @@ import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.MDCUtil
 import no.nav.aap.util.StringExtensions.decap
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -91,6 +92,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
 
     private fun Søknad.oppdaterMinSide(fnr: Fødselsnummer, erKomplett: Boolean) =
         if (!erKomplett) {
+            log.trace("Oppretter oppgave og beskjed siden det er manglende vedlegg ${MDCUtil.callIdAsUUID()}")
             minside.opprettOppgave(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}. Du må ettersende dokumentasjon",
                    eventid)
             minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}", eventId  = randomUUID())

@@ -17,9 +17,8 @@ interface MinSideBeskjedRepository : MinSideRepository<Beskjed> {
     class Beskjed(fnr: String,
                   eventid: UUID,
                   done: Boolean = false,
-                  @OneToMany(mappedBy = "beskjed",
-                          cascade = [ALL],
-                          orphanRemoval = true) var notifikasjoner: MutableSet<EksternBeskjedNotifikasjon> = mutableSetOf()) :
+                  @OneToMany(mappedBy = "beskjed", cascade = [ALL], orphanRemoval = true)
+                  var notifikasjoner: MutableSet<EksternBeskjedNotifikasjon> = mutableSetOf()) :
         MinSideBaseEntity(fnr, eventid, done)
 
     @Entity(name = "eksternbeskjednotifikasjon")
