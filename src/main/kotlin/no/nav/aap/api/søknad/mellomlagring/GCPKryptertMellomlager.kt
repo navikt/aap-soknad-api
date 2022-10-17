@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.mellomlagring
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
+import com.google.cloud.storage.Storage.BlobField.METADATA
 import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
 import com.google.cloud.storage.Storage.BlobListOption
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
@@ -69,10 +70,10 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
         }
 
     override fun ikkeOppdatertSiden(duration: Duration) =
-        lager.list(cfg.mellom.navn, BlobListOption.fields(TIME_CREATED))
+        lager.list(cfg.mellom.navn, BlobListOption.fields(TIME_CREATED,METADATA))
             .iterateAll()
             .map {
-                Pair(it.name.split("/")[0], ofEpochSecond(it.createTime/1000,0, UTC))
+                Triple(it.name.split("/")[0], ofEpochSecond(it.createTime/1000,0, UTC), it.metadata[("uuid")])
             }
             .filter {
                 it.second.isAfter(now().minus(duration))

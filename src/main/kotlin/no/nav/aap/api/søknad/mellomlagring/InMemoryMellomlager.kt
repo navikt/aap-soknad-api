@@ -14,7 +14,7 @@ class InMemoryMellomlager : Mellomlager {
     override fun les(type: SkjemaType) = store[navn(Fødselsnummer("08089403198"), type)]
 
     override fun slett(type: SkjemaType) = store.remove(navn((Fødselsnummer("08089403198")), type)) != null
-    override fun ikkeOppdatertSiden(duration: Duration): List<Pair<String, LocalDateTime>> {
+    override fun ikkeOppdatertSiden(duration: Duration): List<Triple<String, LocalDateTime, String?>> {
         TODO("Not yet implemented")
     }
 }

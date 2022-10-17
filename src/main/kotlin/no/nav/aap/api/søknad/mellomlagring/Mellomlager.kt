@@ -13,5 +13,5 @@ interface Mellomlager {
     fun slett(type: SkjemaType = STANDARD): Boolean
     fun navn(fnr: Fødselsnummer, type: SkjemaType) = "${fnr.fnr}/${hash(type.name, fnr)}"
 
-    fun ikkeOppdatertSiden(duration: Duration) : List<Pair<String, LocalDateTime>>
+    fun ikkeOppdatertSiden(duration: Duration) : List<Triple<String, LocalDateTime, String?>>
 }
