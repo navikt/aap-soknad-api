@@ -7,6 +7,8 @@ import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
 import com.google.cloud.storage.Storage.BlobListOption
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import java.nio.charset.StandardCharsets.UTF_8
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
@@ -67,5 +69,6 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
 
     override fun alleBrukere() =
         lager.list(cfg.mellom.navn, BlobListOption.fields(TIME_CREATED))
-            .iterateAll().map { log.trace("Entry $it").run { Pair(it.name, it.createTime) } }
+            .iterateAll().map { log.trace("Entry $it").run { Pair(it.name, LocalDateTime.ofEpochSecond(it.createTime,0,
+                    ZoneOffset.UTC)) } }
 }
