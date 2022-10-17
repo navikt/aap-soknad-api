@@ -84,7 +84,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     fun slettMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer): ResponseEntity<Void> =
         if (mellomlager.slett(type, fnr)) noContent().build() else notFound().build()
 
-    @GetMapping("mellomlager/alle}")
+    @GetMapping("mellomlager/alle")
     fun alle()= ok(mellomlager.alleBrukere())
 
     @GetMapping("mellomlager/{type}/{fnr}")
