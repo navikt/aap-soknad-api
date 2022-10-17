@@ -17,7 +17,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
         with(cfg.mellom.purring) {
             log.trace("Orphan sjekk på $alder")
             val gamle = lager.ikkeOppdatertSiden(alder)
-            log.trace("$alder skal varsles: $gamle")
+            log.trace("${alder.toHoursPart()} timer skal varsles: $gamle")
             if (enabled) {
                 gamle.forEach {
                     log.trace("Avslutter ${it.third} for ${it.first} siden opprettet er ${it.second}")
