@@ -22,7 +22,7 @@
         <domain.version>1.0.16</domain.version>
         <gcp.version>0.180.0</gcp.version>
         <gcp.libraries.version>26.1.3</gcp.libraries.version>
-        <spring-cloud-gcp.version>3.3.0</spring-cloud-gcp.version>
+        <spring-cloud-gcp.version>3.4.0</spring-cloud-gcp.version>
         <graphql.version>1.0.0</graphql.version>
         <i18n.version>1.29</i18n.version>
         <java.version>17</java.version>
