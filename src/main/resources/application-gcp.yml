@@ -178,7 +178,7 @@ buckets:
   mellom:
     navn: ${mellomlagring.navn}
     purring:
-      delay: 60000
+      delay: 60
       alder: 3d
     subscription:
       navn: ${mellomlagring.navn}-subscription2
