@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 class MellomlagringVarsler(private val minside: MinSideClient, private val lager: Mellomlager, val cfg: BucketConfig) {
     val log = getLogger(javaClass)
 
-    @Scheduled(fixedDelayString = "#{'\${cfg.mellom.purring.deplay}'}", initialDelay = 1000)
+    @Scheduled(fixedDelayString = "#{\${cfg.mellom.purring.deplay}}", initialDelay = 1000)
     fun scheduleFixedRateWithInitialDelayTask() {
         with(cfg.mellom.purring) {
             log.trace("Orphan sjekk på $alder")
