@@ -70,5 +70,5 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
     override fun alleBrukere() =
         lager.list(cfg.mellom.navn, BlobListOption.fields(TIME_CREATED))
             .iterateAll().map { log.trace("Entry $it").run { Pair(it.name, LocalDateTime.ofEpochSecond(it.createTime/1000,0,
-                    ZoneOffset.UTC)) } }
+                    ZoneOffset.UTC).toLocalTime()) } }
 }
