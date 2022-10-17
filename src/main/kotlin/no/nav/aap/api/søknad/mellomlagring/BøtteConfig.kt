@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.mellomlagring
 import com.google.cloud.kms.v1.CryptoKeyName
 import com.google.cloud.kms.v1.KeyRingName
 import com.google.cloud.kms.v1.LocationName
+import java.time.Duration
 import no.nav.aap.api.error.Substatus
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.BUCKETS
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -22,9 +23,10 @@ data class BucketConfig(val project: String,
 
     data class KeyConfig(internal val ring: String, internal val key: String)
 
-    data class MellomlagringBucketConfig(val navn: String, @NestedConfigurationProperty val subscription: SubscriptionConfig) {
+    data class MellomlagringBucketConfig(val navn: String, @NestedConfigurationProperty val purring: Purring, @NestedConfigurationProperty val subscription: SubscriptionConfig) {
 
         data class SubscriptionConfig(val navn: String, val topic: String)
+        data class Purring(val enabled: Boolean, val delay: Long, val alder: Duration  )
     }
 
     data class VedleggBucketConfig(val navn: String, val typer: List<String>)

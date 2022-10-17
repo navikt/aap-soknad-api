@@ -177,6 +177,9 @@ buckets:
     key: ${mellomlagring.navn}-kmskey
   mellom:
     navn: ${mellomlagring.navn}
+    purring:
+      delay: 1000
+      alder: 7d
     subscription:
       navn: ${mellomlagring.navn}-subscription2
       topic: ${mellomlagring.navn}-topic2
