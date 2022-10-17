@@ -12,14 +12,14 @@ import org.springframework.stereotype.Component
 class MellomlagringVarsler(private val minside: MinSideClient, private val lager: Mellomlager, val cfg: BucketConfig) {
     val log = getLogger(javaClass)
 
-    @Scheduled(fixedDelayString = "#{'\${cfg.mellom.purring.delay}'}", initialDelay = 1000)
+    @Scheduled(fixedDelayString = "#{'\${bucket.mellom.purring.delay}'}", initialDelay = 1000)
     fun scheduleFixedRateWithInitialDelayTask() {
         with(cfg.mellom.purring) {
             log.trace("Orphan sjekk på $alder")
-            val data = lager.ikkeOppdatertSiden(alder)
-            log.trace("$alder skal varsles: $data")
+            val gamle = lager.ikkeOppdatertSiden(alder)
+            log.trace("$alder skal varsles: $gamle")
             if (enabled) {
-                data.forEach {
+                gamle.forEach {
                     log.trace("Avslutter ${it.third} for ${it.first} siden opprettet er ${it.second}")
                     minside.avsluttBeskjed(STANDARD,it.first,it.third)
                     minside.opprettBeskjed(it.first,"Dette er en purring", UUID.randomUUID(), MINAAPSTD,true)
@@ -27,5 +27,4 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
             }
         }
     }
-
 }
