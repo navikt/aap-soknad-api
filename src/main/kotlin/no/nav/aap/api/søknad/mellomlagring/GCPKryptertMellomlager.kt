@@ -75,7 +75,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
                 Pair(it.name.split("/")[0], ofEpochSecond(it.createTime/1000,0, UTC))
             }
             .filter {
-                it.second.isBefore(now().minus(duration))
+                it.second.isAfter(now().minus(duration))
             }
 
 }
