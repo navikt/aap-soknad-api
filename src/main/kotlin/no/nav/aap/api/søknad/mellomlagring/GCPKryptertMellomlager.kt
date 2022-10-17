@@ -12,6 +12,7 @@ import java.time.Duration
 import java.time.LocalDateTime.now
 import java.time.LocalDateTime.ofEpochSecond
 import java.time.ZoneOffset.UTC
+import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
@@ -73,7 +74,9 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
         lager.list(cfg.mellom.navn, BlobListOption.fields(TIME_CREATED,METADATA))
             .iterateAll()
             .map {
-                Triple(it.name.split("/")[0], ofEpochSecond(it.createTime/1000,0, UTC), it.metadata[("uuid")])
+                Triple(Fødselsnummer(it.name.split("/")[0]),
+                        ofEpochSecond(it.createTime/1000,0, UTC),
+                        UUID.fromString(it.metadata[("uuid")]))
             }
             .filter {
                 it.second.isBefore(now().minus(duration))
