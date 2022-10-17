@@ -49,7 +49,7 @@ data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournal
         }
 
         data class ArkivOppslagSak(val fagsakId: String?,
-                                   val fahsaksystem: String?,
+                                   val fagsaksystem: String?,
                                    val sakstype: ArkivOppslagSakstype) {
 
             enum class ArkivOppslagSakstype {
