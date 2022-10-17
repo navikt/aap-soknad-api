@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.mellomlagring
 
+import java.time.Duration
 import java.time.LocalDateTime
 import java.util.Objects.hash
 import no.nav.aap.api.felles.Fødselsnummer
@@ -12,5 +13,5 @@ interface Mellomlager {
     fun slett(type: SkjemaType = STANDARD): Boolean
     fun navn(fnr: Fødselsnummer, type: SkjemaType) = "${fnr.fnr}/${hash(type.name, fnr)}"
 
-    fun alleBrukere() : List<Pair<String, LocalDateTime>>
+    fun ikkeOppdatertSiden(duration: Duration) : List<Pair<String, LocalDateTime>>
 }

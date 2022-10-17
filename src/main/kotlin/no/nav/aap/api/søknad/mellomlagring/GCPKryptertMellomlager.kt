@@ -7,6 +7,7 @@ import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
 import com.google.cloud.storage.Storage.BlobListOption
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import java.nio.charset.StandardCharsets.UTF_8
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import no.nav.aap.api.felles.Fødselsnummer
@@ -67,8 +68,16 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
             }
         }
 
-    override fun alleBrukere() =
+    override fun ikkeOppdatertSiden(duration: Duration) =
         lager.list(cfg.mellom.navn, BlobListOption.fields(TIME_CREATED))
-            .iterateAll().map { log.trace("Entry $it").run { Pair(it.name, LocalDateTime.ofEpochSecond(it.createTime/1000,0,
-                    ZoneOffset.UTC).toLocalTime()) } }
+            .iterateAll()
+            .map {
+                log.trace("Entry $it").run { Pair(it.name.split("/")[0], LocalDateTime.ofEpochSecond(it.createTime/1000,0,
+                    ZoneOffset.UTC))
+                }
+            }
+            .filter {
+                it.second.isBefore(LocalDateTime.now().minus(duration))
+            }
+
 }

@@ -1,5 +1,6 @@
 package no.nav.aap.api.dev
 
+import java.time.Duration
 import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
@@ -85,7 +86,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
         if (mellomlager.slett(type, fnr)) noContent().build() else notFound().build()
 
     @GetMapping("mellomlager/alle")
-    fun alle()= ok(mellomlager.alleBrukere())
+    fun alle()= ok(mellomlager.ikkeOppdatertSiden(Duration.ofDays(10)))
 
     @GetMapping("mellomlager/{type}/{fnr}")
     fun lesMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer) =
