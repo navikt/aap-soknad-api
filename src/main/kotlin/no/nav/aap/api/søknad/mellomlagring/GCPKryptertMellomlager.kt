@@ -66,6 +66,6 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
         }
 
     override fun alleBrukere() =
-         lager.list(cfg.mellom.navn, BlobListOption.fields(TIME_CREATED), BlobListOption.currentDirectory())
-            .iterateAll().map { Pair(it.name, it.createTime) }
+        lager.list(cfg.mellom.navn, BlobListOption.fields(TIME_CREATED))
+            .iterateAll().map { log.trace("Entry $it").run { Pair(it.name, it.createTime) } }
 }
