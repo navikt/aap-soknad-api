@@ -1,8 +1,10 @@
 package no.nav.aap.api.søknad.fordeling
 
+import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Metrics.counter
 import java.util.*
 import java.util.UUID.randomUUID
+import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
@@ -28,7 +30,8 @@ import org.springframework.transaction.annotation.Transactional
 class SøknadFullfører(private val dokumentLager: Dokumentlager,
                       private val minside: MinSideClient,
                       private val repo: SøknadRepository,
-                      private val mellomlager: Mellomlager) {
+                      private val mellomlager: Mellomlager,
+                     private val metrikker: MeterRegistry) {
 
     private val log = getLogger(javaClass)
 
@@ -50,11 +53,11 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                     }
                     manglende.forEach{
                         log.trace("Manglende vedlegg $it")
-                        counter("soknad.vedlegg.manglende","type",it.name.lowercase()).increment()
+                        metrikker.counter("soknad.vedlegg.manglende","type",it.name.lowercase()).increment())
                     }
                     vedlagte.forEach{
                         log.trace("Vedlagt vedlegg $it")
-                        counter("soknad.vedlegg.innsendte","type",it.name.lowercase()).increment()
+                        metrikker.counter("soknad.vedlegg.innsendte","type",it.name.lowercase()).increment())
                     }
                 }
                 Kvittering(journalpostId)
@@ -68,6 +71,11 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                 e.søknadId?.let {
                     fullførEttersending(fnr, it, e.ettersendteVedlegg, this@with)
                 } ?: fullførEttersendingUtenSøknad(fnr, e.ettersendteVedlegg, this@with)
+                e.ettersendteVedlegg.forEach{
+                    log.trace("Vedlagt vedlegg $it")
+                    metrikker.counter("soknad.vedlegg.ettersendte","type",it.vedleggType.name.lowercase()).increment())
+                    metrikker.counter("soknad.vedlegg.innsendte","type",it.vedleggType.name.lowercase()).increment())
+                }
                 Kvittering(journalpostId)
             }
         }
