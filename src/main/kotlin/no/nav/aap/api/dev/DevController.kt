@@ -86,7 +86,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
         if (mellomlager.slett(type, fnr)) noContent().build() else notFound().build()
 
     @GetMapping("mellomlager/alle")
-    fun alle()= ok(mellomlager.ikkeOppdatertSiden(Duration.ofDays(10)))
+    fun alle()= ok(mellomlager.ikkeOppdatertSiden(Duration.ofMinutes(2)))
 
     @GetMapping("mellomlager/{type}/{fnr}")
     fun lesMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer) =

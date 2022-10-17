@@ -19,8 +19,8 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
 
     @Scheduled(fixedDelayString = "\${buckets.varsel.fixed:60000}", initialDelayString = "\${buckets.varsel.initial:10000}")
     fun scheduleFixedRateWithInitialDelayTask() {
-        log.trace("Orphan sjekk : 2 dager skal varsles")
-        val data = lager.ikkeOppdatertSiden(Duration.ofDays(2))
+        log.trace("Orphan sjekk : 2 minutter skal varsles")
+        val data = lager.ikkeOppdatertSiden(Duration.ofMinutes(2))
         log.trace("2 dager skal varsles: $data")
         if (isDevOrLocal(env)) {
             data.forEach {
