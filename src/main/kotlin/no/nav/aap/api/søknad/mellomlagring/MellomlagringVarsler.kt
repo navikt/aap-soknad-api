@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component
 class MellomlagringVarsler(private val minside: MinSideClient, private val lager: Mellomlager) {
     val log = getLogger(javaClass)
 
-    @Scheduled(fixedDelay = 60*1000, initialDelay = 1000)
+    @Scheduled(fixedDelayString = "\${buckets.varsel.fixed:60000}", initialDelayString = "\${buckets.varsel.initial:10000}")
     fun scheduleFixedRateWithInitialDelayTask() {
-        log.trace("Orphan sjekk : Ikke oppdatert på 10 dager")
-        val data = lager.ikkeOppdatertSiden(Duration.ofDays(10))
-        log.trace("Ikke oppdatert på 10 dager er: $data")
+        log.trace("Orphan sjekk : 2 dager skal varsles")
+        val data = lager.ikkeOppdatertSiden(Duration.ofDays(2))
+        log.trace("2 dager skal varsles: $data")
     }
 }
