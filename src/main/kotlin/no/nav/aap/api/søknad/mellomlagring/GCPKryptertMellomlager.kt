@@ -8,8 +8,9 @@ import com.google.cloud.storage.Storage.BlobListOption
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import java.nio.charset.StandardCharsets.UTF_8
 import java.time.Duration
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.LocalDateTime.now
+import java.time.LocalDateTime.ofEpochSecond
+import java.time.ZoneOffset.UTC
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
@@ -36,8 +37,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
                 .setMetadata(mapOf(SKJEMATYPE to type.name, UUID_ to callId()))
                 .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName("$key"))
                 .also {
-                    log.trace(CONFIDENTIAL,
-                            "Lagret mellomlagret ${value.jsonPrettify(mapper)} som ${it.name} i bøtte ${mellom.navn}")
+                    log.trace(CONFIDENTIAL, "Lagret mellomlagret ${value.jsonPrettify(mapper)} som ${it.name} i bøtte ${mellom.navn}")
                 }
         }.name
 
@@ -72,12 +72,10 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
         lager.list(cfg.mellom.navn, BlobListOption.fields(TIME_CREATED))
             .iterateAll()
             .map {
-                log.trace("Entry $it").run { Pair(it.name.split("/")[0], LocalDateTime.ofEpochSecond(it.createTime/1000,0,
-                    ZoneOffset.UTC))
-                }
+                Pair(it.name.split("/")[0], ofEpochSecond(it.createTime/1000,0, UTC))
             }
             .filter {
-                it.second.isBefore(LocalDateTime.now().minus(duration))
+                it.second.isBefore(now().minus(duration))
             }
 
 }

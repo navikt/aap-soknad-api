@@ -1,5 +1,7 @@
 package no.nav.aap.api.søknad.mellomlagring
 
+import java.time.Duration
+import java.time.LocalDateTime
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -12,7 +14,7 @@ class InMemoryMellomlager : Mellomlager {
     override fun les(type: SkjemaType) = store[navn(Fødselsnummer("08089403198"), type)]
 
     override fun slett(type: SkjemaType) = store.remove(navn((Fødselsnummer("08089403198")), type)) != null
-    override fun alleBrukere() =
+    override fun ikkeOppdatertSiden(duration: Duration): List<Pair<String, LocalDateTime>> {
         TODO("Not yet implemented")
-
+    }
 }
