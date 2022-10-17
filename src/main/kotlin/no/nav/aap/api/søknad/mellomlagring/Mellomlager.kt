@@ -10,4 +10,6 @@ interface Mellomlager {
     fun les(type: SkjemaType): String?
     fun slett(type: SkjemaType = STANDARD): Boolean
     fun navn(fnr: Fødselsnummer, type: SkjemaType) = "${fnr.fnr}/${hash(type.name, fnr)}"
+
+    fun alleBrukere() : List<String>
 }

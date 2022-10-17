@@ -62,4 +62,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
                 }
             }
         }
+
+    override fun alleBrukere() =
+        lager.list(cfg.mellom.navn).iterateAll().map { it.name }
 }
