@@ -25,12 +25,13 @@
         <logger name="no.nav.aap" level="trace"/>
         <logger name="no.nav.aap.api.søknad.minside.MinSideBeanConfig" level="error"/>
         <logger name="org.hibernate.SQL" level="trace"/>
+        <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="trace"/>
         <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="info"/>
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="secureJson"/>
         </logger>
     </springProfile>
-    <springProfile name="local,test">
+    <springProfile name="local | test">
         <appender name="stdout"
                   class="ch.qos.logback.core.ConsoleAppender">
             <layout class="ch.qos.logback.classic.PatternLayout">
