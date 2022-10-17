@@ -53,11 +53,11 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                     }
                     manglende.forEach{
                         log.trace("Manglende vedlegg $it")
-                        metrikker.counter("soknad.vedlegg.manglende","type",it.name.lowercase()).increment())
+                        metrikker.counter("soknad.vedlegg.manglende","type",it.name.lowercase()).increment()
                     }
                     vedlagte.forEach{
-                        log.trace("Vedlagt vedlegg $it")
-                        metrikker.counter("soknad.vedlegg.innsendte","type",it.name.lowercase()).increment())
+                        log.trace("Innsendt vedlegg $it")
+                        metrikker.counter("soknad.vedlegg.innsendte","type",it.name.lowercase()).increment()
                     }
                 }
                 Kvittering(journalpostId)
