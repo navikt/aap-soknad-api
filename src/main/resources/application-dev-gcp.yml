@@ -51,7 +51,7 @@ joark:
 buckets:
     mellom:
       purring:
-        enabled: false
+        enabled: true
 minside:
     backlinks:
         innsyn: https://aap-innsyn.dev.nav.no/aap/mine-aap
