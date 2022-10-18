@@ -10,7 +10,6 @@ import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.MediaType
 import org.springframework.http.MediaType.*
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -43,9 +42,7 @@ class LeaderElector(@Value("\${elector.path}") private val elector: String, priv
     val log = getLogger(javaClass)
 
     fun isLeaader() =
-        with(elector.toInetSocketAddress()) {
-            log.trace("Oppslag leader $this ($hostString  $port)")
-            b.baseUrl("http://$hostString:$port").build()
+            b.baseUrl("http://$elector").build()
                 .get()
                 .accept(APPLICATION_JSON, parseMediaType("text/plain; charset=utf-8"))
                 .retrieve()
@@ -58,11 +55,7 @@ class LeaderElector(@Value("\${elector.path}") private val elector: String, priv
                 }
                 .block()?.name == (InetAddress.getLocalHost().hostName
                 ?: throw IllegalStateException("Kunne ikke slå opp leader"))
-        }
 
-    private fun String.toInetSocketAddress() = this.split(":").run {
-        createUnresolved(this[0], this[1].toInt())
-    }
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class Leader(val name: String)
 }
