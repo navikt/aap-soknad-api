@@ -5,7 +5,6 @@ import java.net.InetAddress
 import java.net.InetSocketAddress.*
 import java.util.*
 import java.util.concurrent.TimeUnit.SECONDS
-import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -27,15 +26,15 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
             if (enabled && elector.erLeder(me))  {
                 log.trace("Pod $me. Ser etter snart utgåtte mellomlagringer ikke oppdatert på ${alder.toHours()} timer")
                 val gamle = lager.ikkeOppdatertSiden(alder)
-                log.trace("Disse skal varsles: $gamle")
+                log.trace("Disse skal purres: $gamle")
                 gamle.forEach {
                     log.trace("Avslutter ${it.third} for ${it.first} siden opprettet er ${it.second}")
-                    minside.avsluttBeskjed(STANDARD,it.first,it.third)
+                    minside.avsluttBeskjed(it.first, it.third)
                     minside.opprettBeskjed(it.first,"Dette er en purring", UUID.randomUUID(), MINAAPSTD,true)
                 }
             }
             else {
-                log.trace("Pod $me. ngen sjekk av snart utgåtte mellomlagringer")
+                log.trace("Pod $me. Ingen sjekk av snart utgåtte mellomlagringer")
             }
         }
     }
