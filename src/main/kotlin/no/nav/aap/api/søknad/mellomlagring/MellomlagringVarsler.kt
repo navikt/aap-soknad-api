@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.mellomlagring
 
 import java.net.InetAddress
-import java.net.InetSocketAddress
+import java.net.InetSocketAddress.*
 import java.util.*
 import java.util.concurrent.TimeUnit.SECONDS
 import no.nav.aap.api.felles.SkjemaType.STANDARD
@@ -43,7 +43,7 @@ class LeaderElector(@Value("\${elector.path}") private val elector: String, priv
     fun isLeaader() =
         with(elector.toInetSocketAddress()) {
             log.trace("Oppslag leader $this ($hostString  $port)")
-            b.baseUrl("http:// $hostString:$port").build()
+            b.baseUrl("http://$hostString:$port").build()
                 .get()
                 .accept(APPLICATION_JSON)
                 .retrieve()
@@ -59,7 +59,7 @@ class LeaderElector(@Value("\${elector.path}") private val elector: String, priv
         }
 
     private fun String.toInetSocketAddress() = this.split(":").run {
-        InetSocketAddress(this[0], this[1].toInt())
+        createUnresolved(this[0], this[1].toInt())
     }
     data class Leader(val name: String)
 }
