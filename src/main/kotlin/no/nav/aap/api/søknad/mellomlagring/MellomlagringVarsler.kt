@@ -48,7 +48,7 @@ class LeaderElector(@Value("\${elector.path}") private val elector: String, priv
     fun erLeder() =
         b.baseUrl("http://$elector").build()
             .get()
-            .accept(APPLICATION_JSON, parseMediaType("text/plain; charset=utf-8"))
+            .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono<Leader>()
             .doOnError { t: Throwable ->
