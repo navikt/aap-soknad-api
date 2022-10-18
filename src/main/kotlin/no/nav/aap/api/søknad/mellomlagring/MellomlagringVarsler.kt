@@ -37,11 +37,12 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
 
 
     @Component
-    class LeaderElector(@Value("\${elector.path}") private val selector: URI, private val b: Builder) {
+    class LeaderElector(@Value("\${elector.path}") private val elector: URI, private val b: Builder) {
         val log = getLogger(javaClass)
 
         fun isLeaader() =
-            with(selector) {
+            with(elector) {
+                log.trace("Oppslag elector $elector")
                 b.baseUrl("http:// $host:$port").build()
                     .get()
                     .accept(APPLICATION_JSON)
