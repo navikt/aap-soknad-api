@@ -178,7 +178,6 @@ buckets:
   mellom:
     navn: ${mellomlagring.navn}
     purring:
-      leader: ${elector.path}
       delay: 60
       alder: 3d
     subscription:
