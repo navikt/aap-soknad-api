@@ -37,7 +37,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
 
 
     @Component
-    class LeaderElector(@Value("\${selector.path}") private val selector: URI, private val b: Builder) {
+    class LeaderElector(@Value("\${elector.path}") private val selector: URI, private val b: Builder) {
         val log = getLogger(javaClass)
 
         fun isLeaader() =
