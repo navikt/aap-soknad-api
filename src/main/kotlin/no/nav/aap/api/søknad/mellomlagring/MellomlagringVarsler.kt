@@ -22,16 +22,14 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
     @Scheduled(fixedDelayString = "#{'\${buckets.mellom.purring.delay}'}", initialDelay = 10, timeUnit = SECONDS)
     fun sjekkVarsling() {
         with(lager.config().purring) {
-            if (enabled)  {
-                log.trace("Ser etter snart utgåtte mellomlagringer eldre enn ${alder.toHours()} og leader status ${elector.isLeaader()}")
+            if (enabled && elector.erLeder())  {
+                log.trace("Ser etter snart utgåtte mellomlagringer eldre enn ${alder.toHours()} og leader status ${elector.erLeder()}")
                 val gamle = lager.ikkeOppdatertSiden(alder)
                 log.trace("Disse skal varsles:  $gamle")
-                if (elector.isLeaader()) {
-                    gamle.forEach {
-                        log.trace("Avslutter ${it.third} for ${it.first} siden opprettet er ${it.second}")
-                        minside.avsluttBeskjed(STANDARD,it.first,it.third)
-                        minside.opprettBeskjed(it.first,"Dette er en purring", UUID.randomUUID(), MINAAPSTD,true)
-                    }
+                gamle.forEach {
+                    log.trace("Avslutter ${it.third} for ${it.first} siden opprettet er ${it.second}")
+                    minside.avsluttBeskjed(STANDARD,it.first,it.third)
+                    minside.opprettBeskjed(it.first,"Dette er en purring", UUID.randomUUID(), MINAAPSTD,true)
                 }
             }
             else {
@@ -46,7 +44,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
 class LeaderElector(@Value("\${elector.path}") private val elector: String, private val b: Builder) {
     val log = getLogger(javaClass)
 
-    fun isLeaader() =
+    fun erLeder() =
         b.baseUrl("http://$elector").build()
             .get()
             .accept(APPLICATION_JSON, parseMediaType("text/plain; charset=utf-8"))
