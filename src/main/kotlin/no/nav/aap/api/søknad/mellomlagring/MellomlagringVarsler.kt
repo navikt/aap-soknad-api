@@ -58,8 +58,7 @@ class LeaderElector(@Value("\${elector.path}") private val elector: String, priv
             .doOnSuccess {
                 log.trace("Leader er ${it.name}, jeg er $me")
             }
-            .block()?.name == (me
-            ?: false)
+            .block()?.name == me
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class Leader(val name: String)
