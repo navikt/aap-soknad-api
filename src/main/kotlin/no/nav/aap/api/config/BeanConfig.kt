@@ -75,11 +75,8 @@ import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 
 @Configuration
-class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String) : WebMvcConfigurer {
-
-    override fun addFormatters(registry: FormatterRegistry) {
-        registry.addConverter(StringToInetSocketAddressConverter())
-    }
+class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
+    val log = getLogger(javaClass)
 
     @Bean
     fun countedAspect(registry: MeterRegistry) = CountedAspect(registry)
