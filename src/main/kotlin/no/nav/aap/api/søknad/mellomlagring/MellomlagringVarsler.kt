@@ -19,13 +19,15 @@ import org.springframework.web.reactive.function.client.bodyToMono
 @Component
 class MellomlagringVarsler(private val minside: MinSideClient, private val lager: Mellomlager, private val elector: LeaderElector) {
     val log = getLogger(javaClass)
+    private val me = InetAddress.getLocalHost().hostName
+
     @Scheduled(fixedDelayString = "#{'\${buckets.mellom.purring.delay}'}", initialDelay = 10, timeUnit = SECONDS)
     fun sjekkVarsling() {
         with(lager.config().purring) {
-            if (enabled && elector.erLeder())  {
-                log.trace("Ser etter snart utgåtte mellomlagringer eldre enn ${alder.toHours()} og leader status ${elector.erLeder()}")
+            if (enabled && elector.erLeder(me))  {
+                log.trace("Pod $me. Ser etter snart utgåtte mellomlagringer ikke oppdatert på ${alder.toHours()} timer")
                 val gamle = lager.ikkeOppdatertSiden(alder)
-                log.trace("Disse skal varsles:  $gamle")
+                log.trace("Disse skal varsles: $gamle")
                 gamle.forEach {
                     log.trace("Avslutter ${it.third} for ${it.first} siden opprettet er ${it.second}")
                     minside.avsluttBeskjed(STANDARD,it.first,it.third)
@@ -33,7 +35,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
                 }
             }
             else {
-                log.trace("Ingen sjekk av snart utgåtte mellomlagringer")
+                log.trace("Pod $me. ngen sjekk av snart utgåtte mellomlagringer")
             }
         }
     }
@@ -43,9 +45,8 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
 @Component
 class LeaderElector(@Value("\${elector.path}") private val elector: String, private val b: Builder) {
     val log = getLogger(javaClass)
-    private val me = InetAddress.getLocalHost().hostName
 
-    fun erLeder() =
+    fun erLeder(me: String) =
         b.baseUrl("http://$elector").build()
             .get()
             .accept(APPLICATION_JSON)
