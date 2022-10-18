@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.mellomlagring
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.net.InetAddress
 import java.net.InetSocketAddress.*
 import java.util.*
@@ -61,5 +62,6 @@ class LeaderElector(@Value("\${elector.path}") private val elector: String, priv
     private fun String.toInetSocketAddress() = this.split(":").run {
         createUnresolved(this[0], this[1].toInt())
     }
+    @JsonIgnoreProperties(ignoreUnknown = true)
     data class Leader(val name: String)
 }
