@@ -19,7 +19,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 class MellomlagringVarsler(private val minside: MinSideClient, private val lager: Mellomlager, private val elector: LeaderElector) {
     val log = getLogger(javaClass)
     @Scheduled(fixedDelayString = "#{'\${buckets.mellom.purring.delay}'}", initialDelay = 10, timeUnit = SECONDS)
-    fun scheduleFixedRateWithInitialDelayTask() {
+    fun sjekkVarsling() {
         with(lager.config().purring) {
             log.trace("Orphan sjekk på mellomlagringer eldre enn $alder og leader status ${elector.isLeaader()}")
             val gamle = lager.ikkeOppdatertSiden(alder)
@@ -42,7 +42,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
 
         fun isLeaader() =
             with(elector) {
-                log.trace("Oppslag leader $elector")
+                log.trace("Oppslag leader $this ($host  $port)")
                 b.baseUrl("http:// $host:$port").build()
                     .get()
                     .accept(APPLICATION_JSON)
