@@ -43,6 +43,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
 @Component
 class LeaderElector(@Value("\${elector.path}") private val elector: String, private val b: Builder) {
     val log = getLogger(javaClass)
+    private val me = InetAddress.getLocalHost().hostName
 
     fun erLeder() =
         b.baseUrl("http://$elector").build()
@@ -54,9 +55,9 @@ class LeaderElector(@Value("\${elector.path}") private val elector: String, priv
                 log.warn("Leader oppslag feilet", t)
             }
             .doOnSuccess {
-                log.trace("Leader er $it")
+                log.trace("Leader er ${it.name}, jeg er $me")
             }
-            .block()?.name == (InetAddress.getLocalHost().hostName
+            .block()?.name == (me
             ?: false)
 
     @JsonIgnoreProperties(ignoreUnknown = true)
