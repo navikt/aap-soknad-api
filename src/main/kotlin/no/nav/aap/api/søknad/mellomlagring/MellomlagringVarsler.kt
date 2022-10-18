@@ -42,7 +42,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
 
         fun isLeaader() =
             with(elector) {
-                log.trace("Oppslag elector $elector")
+                log.trace("Oppslag leader $elector")
                 b.baseUrl("http:// $host:$port").build()
                     .get()
                     .accept(APPLICATION_JSON)
