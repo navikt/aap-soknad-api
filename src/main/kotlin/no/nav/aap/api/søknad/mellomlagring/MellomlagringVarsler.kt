@@ -10,6 +10,7 @@ import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.MediaType
 import org.springframework.http.MediaType.*
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -46,7 +47,7 @@ class LeaderElector(@Value("\${elector.path}") private val elector: String, priv
             log.trace("Oppslag leader $this ($hostString  $port)")
             b.baseUrl("http://$hostString:$port").build()
                 .get()
-                .accept(APPLICATION_JSON, TEXT_PLAIN)
+                .accept(APPLICATION_JSON, parseMediaType("text/plain; charset=utf-8"))
                 .retrieve()
                 .bodyToMono<Leader>()
                 .doOnError { t: Throwable ->
