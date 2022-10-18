@@ -1,7 +1,5 @@
 package no.nav.aap.api
 
-import javax.annotation.PostConstruct
-import no.nav.aap.api.config.BeanConfig.StringToInetSocketAddressConverter
 import no.nav.boot.conditionals.Cluster.profiler
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
@@ -40,9 +38,3 @@ private lateinit var env: ConfigurableEnvironment
             applicationStartup = BufferingApplicationStartup(4096)
         }
     }
-
-    @PostConstruct
-    fun addCustomConverters() =
-        env.conversionService.apply {
-            addConverter(StringToInetSocketAddressConverter())
-        }

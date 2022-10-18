@@ -36,26 +36,30 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
 }
 
 
-    @Component
-    class LeaderElector(@Value("\${elector.path}") private val elector: InetSocketAddress, private val b: Builder) {
-        val log = getLogger(javaClass)
+@Component
+class LeaderElector(@Value("\${elector.path}") private val elector: String, private val b: Builder) {
+    val log = getLogger(javaClass)
 
-        fun isLeaader() =
-            with(elector) {
-                log.trace("Oppslag leader $this ($hostString  $port)")
-                b.baseUrl("http:// $hostString:$port").build()
-                    .get()
-                    .accept(APPLICATION_JSON)
-                    .retrieve()
-                    .bodyToMono<Leader>()
-                    .doOnError { t: Throwable ->
-                        log.warn("Leader oppslag feilet", t)
-                    }
-                    .doOnSuccess {
-                        log.trace("Leader er $it")
-                    }
-                    .block()?.name == (InetAddress.getLocalHost().hostName
-                    ?: throw IllegalStateException("Kunne ikke slå opp leader"))
+    fun isLeaader() =
+        with(elector.toInetSocketAddress()) {
+            log.trace("Oppslag leader $this ($hostString  $port)")
+            b.baseUrl("http:// $hostString:$port").build()
+                .get()
+                .accept(APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono<Leader>()
+                .doOnError { t: Throwable ->
+                    log.warn("Leader oppslag feilet", t)
+                }
+                .doOnSuccess {
+                    log.trace("Leader er $it")
+                }
+                .block()?.name == (InetAddress.getLocalHost().hostName
+                ?: throw IllegalStateException("Kunne ikke slå opp leader"))
+        }
+
+    private fun String.toInetSocketAddress() = this.split(":").run {
+        InetSocketAddress(this[0], this[1].toInt())
     }
-        data class Leader(val name: String)
-    }
+    data class Leader(val name: String)
+}

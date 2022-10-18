@@ -170,13 +170,6 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         }
     }
 
-    class StringToInetSocketAddressConverter : Converter<String, InetSocketAddress> {
-        override fun convert(source: String) =
-            source.split(":").run {
-                InetSocketAddress(this[0], this[1].toInt())
-            }
-    }
-
     class JTIFilter(private val ctx: AuthContext) : Filter {
         @Throws(IOException::class, ServletException::class)
         override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
