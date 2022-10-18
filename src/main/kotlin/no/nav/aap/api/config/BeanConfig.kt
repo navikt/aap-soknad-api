@@ -15,6 +15,8 @@ import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP
 import java.io.IOException
+import java.net.InetSocketAddress
+import java.util.*
 import javax.servlet.Filter
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
@@ -55,6 +57,7 @@ import org.springframework.core.MethodParameter
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
+import org.springframework.core.convert.converter.Converter
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.*
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
@@ -62,6 +65,7 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
 import org.springframework.kafka.core.KafkaAdmin
+import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import org.zalando.problem.jackson.ProblemModule
@@ -161,6 +165,14 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                 super.add(trace)
             }.getOrNull()
         }
+    }
+
+    @Component
+    class StringToInetSocketAddressConverter : Converter<String, InetSocketAddress> {
+        override fun convert(source: String) =
+            source.split(":").run {
+                InetSocketAddress(this[0], this[1] as Int)
+            }
     }
 
     class JTIFilter(private val ctx: AuthContext) : Filter {

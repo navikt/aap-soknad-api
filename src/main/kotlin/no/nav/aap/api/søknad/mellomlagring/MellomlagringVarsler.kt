@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.mellomlagring
 
 import java.net.InetAddress
-import java.net.URI
+import java.net.InetSocketAddress
 import java.util.*
 import java.util.concurrent.TimeUnit.SECONDS
 import no.nav.aap.api.felles.SkjemaType.STANDARD
@@ -37,13 +37,13 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
 
 
     @Component
-    class LeaderElector(@Value("\${elector.path}") private val elector: URI, private val b: Builder) {
+    class LeaderElector(@Value("\${elector.path}") private val elector: InetSocketAddress, private val b: Builder) {
         val log = getLogger(javaClass)
 
         fun isLeaader() =
             with(elector) {
-                log.trace("Oppslag leader $this ($host  $port)")
-                b.baseUrl("http:// $host:$port").build()
+                log.trace("Oppslag leader $this ($hostString  $port)")
+                b.baseUrl("http:// $hostString:$port").build()
                     .get()
                     .accept(APPLICATION_JSON)
                     .retrieve()
