@@ -29,7 +29,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EnableJpaAuditing
 @EnableSpringDataWebSupport
 @EnableScheduling
-class AAPSøknadApiApplication {
+class AAPSøknadApiApplication
 
 @Autowired
 private lateinit var env: ConfigurableEnvironment
@@ -46,4 +46,3 @@ private lateinit var env: ConfigurableEnvironment
         env.conversionService.apply {
             addConverter(StringToInetSocketAddressConverter())
         }
-}
