@@ -45,6 +45,7 @@ import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTrace
+import org.springframework.boot.actuate.trace.http.HttpTraceRepository
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
@@ -58,6 +59,7 @@ import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
 import org.springframework.core.convert.converter.Converter
+import org.springframework.format.FormatterRegistry
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.*
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
@@ -65,15 +67,19 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
 import org.springframework.kafka.core.KafkaAdmin
-import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 
 @Configuration
-class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String) {
+class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String) : WebMvcConfigurer {
+
+    override fun addFormatters(registry: FormatterRegistry) {
+        registry.addConverter(StringToInetSocketAddressConverter())
+    }
 
     @Bean
     fun countedAspect(registry: MeterRegistry) = CountedAspect(registry)
@@ -167,11 +173,10 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
         }
     }
 
-    @Component
     class StringToInetSocketAddressConverter : Converter<String, InetSocketAddress> {
         override fun convert(source: String) =
             source.split(":").run {
-                InetSocketAddress(this[0], this[1] as Int)
+                InetSocketAddress(this[0], this[1].toInt())
             }
     }
 
