@@ -45,7 +45,7 @@ class LeaderElector(@Value("\${elector.path}") private val elector: String, priv
             log.trace("Oppslag leader $this ($hostString  $port)")
             b.baseUrl("http://$hostString:$port").build()
                 .get()
-                .accept(APPLICATION_JSON)
+                .accept(APPLICATION_JSON, TEXT_PLAIN)
                 .retrieve()
                 .bodyToMono<Leader>()
                 .doOnError { t: Throwable ->
