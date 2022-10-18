@@ -10,12 +10,12 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
 @Component
-class MellomlagringVarsler(private val minside: MinSideClient, private val lager: Mellomlager, val cfg: BucketConfig) {
+class MellomlagringVarsler(private val minside: MinSideClient, private val lager: Mellomlager) {
     val log = getLogger(javaClass)
 
     @Scheduled(fixedDelayString = "#{'\${buckets.mellom.purring.delay}'}", initialDelay = 10, timeUnit = SECONDS)
     fun scheduleFixedRateWithInitialDelayTask() {
-        with(cfg.mellom.purring) {
+        with(lager.config().purring) {
             log.trace("Orphan sjekk på mellomlagringer eldre enn $alder")
             val gamle = lager.ikkeOppdatertSiden(alder)
             log.trace("${alder.toHoursPart()} timer skal varsles: $gamle")

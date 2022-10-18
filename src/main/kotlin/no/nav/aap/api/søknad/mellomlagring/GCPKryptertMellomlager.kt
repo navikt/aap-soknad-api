@@ -25,7 +25,7 @@ import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 
 @ConditionalOnGCP
-internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
+internal class GCPKryptertMellomlager(val cfg: BucketConfig,
                                       private val lager: Storage,
                                       private val mapper: ObjectMapper,
                                       private val ctx: AuthContext) : Mellomlager {
@@ -60,6 +60,7 @@ internal class GCPKryptertMellomlager(private val cfg: BucketConfig,
         mapper.writerWithDefaultPrettyPrinter().writeValueAsString(mapper.readValue(this, Any::class.java))
 
     override fun slett(type: SkjemaType) = slett(type, ctx.getFnr())
+    override fun config() = cfg.mellom
 
     fun slett(type: SkjemaType, fnr: Fødselsnummer) =
         with(cfg.mellom) {
