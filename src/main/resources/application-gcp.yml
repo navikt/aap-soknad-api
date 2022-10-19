@@ -180,6 +180,7 @@ buckets:
     purring:
       delay: 60
       alder: 3d
+      enabled: false
     subscription:
       navn: ${mellomlagring.navn}-subscription2
       topic: ${mellomlagring.navn}-topic2
