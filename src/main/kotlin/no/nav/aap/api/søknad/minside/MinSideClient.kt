@@ -53,7 +53,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         beskjed(tekst, varighet,type, eksternVarsling)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
-                repos.beskjeder.save(Beskjed(fnr.fnr, eventId)).eventid
+                repos.beskjeder.save(Beskjed(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
             }
             else {
                 log.info("Oppretter ikke beskjed i Ditt Nav for $fnr")
@@ -65,7 +65,6 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     @Counted(value = "soknad.oppgave.opprettet", description = "Antall oppgaver opprettet")
     fun opprettOppgave(fnr: Fødselsnummer,
                        tekst: String,
-                      // varighet: Duration = cfg.oppgave.varighet,
                        eventId: UUID = callIdAsUUID(),
                        type: MinSideNotifikasjonType = MINAAPSTD,
                        eksternVarsling: Boolean = true) =
@@ -75,7 +74,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         oppgave(tekst, varighet, type, eventId, eksternVarsling)))
                     .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
-                repos.oppgaver.save(Oppgave(fnr.fnr, eventId)).eventid
+                repos.oppgaver.save(Oppgave(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
             }
             else {
                 log.info("Oppretter ikke oppgave i Min Side for $fnr")
