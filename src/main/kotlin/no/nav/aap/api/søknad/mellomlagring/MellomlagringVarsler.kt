@@ -7,6 +7,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit.SECONDS
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
+import no.nav.aap.api.søknad.minside.MinSideRepositories
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType.*
@@ -16,27 +17,33 @@ import org.springframework.web.reactive.function.client.WebClient.Builder
 import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
-class MellomlagringVarsler(private val minside: MinSideClient, private val lager: Mellomlager, private val elector: LeaderElector) {
+class MellomlagringVarsler(private val minside: MinSideClient, private val lager: Mellomlager, private val elector: LeaderElector, private val repos: MinSideRepositories) {
     val log = getLogger(javaClass)
-    private val me = InetAddress.getLocalHost().hostName
 
     @Scheduled(fixedDelayString = "#{'\${buckets.mellom.purring.delay}'}", initialDelay = 10, timeUnit = SECONDS)
     fun sjekkVarsling() {
         with(lager.config().purring) {
-            if (enabled && elector.erLeder(me))  {
-                log.trace("Pod $me. Ser etter snart utgåtte mellomlagringer ikke oppdatert på ${eldreEnn.toHours()} timer")
+            if (enabled && elector.erLeder(ME))  {
+                log.trace("Pod $ME. Ser etter snart utgåtte mellomlagringer ikke oppdatert på ${eldreEnn.toHours()} timer")
                 val gamle = lager.ikkeOppdatertSiden(eldreEnn)
                 log.trace("Disse skal purres: $gamle")
                 gamle.forEach {
                     log.trace("Avslutter ${it.third} for ${it.first} siden opprettet er ${it.second}")
-                    minside.avsluttBeskjed(it.first, it.third)
-                    minside.opprettBeskjed(it.first,"Din mellomlagrede søknad fjernes snart", UUID.randomUUID(), MINAAPSTD,true)
+                    repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(it.first.fnr,it.third)?.let { _ ->
+                        log.trace("Avslutter gammel  beskjed om mellomlagring og oppretter ny om snart utgått mellomlagring")
+                        minside.avsluttBeskjed(it.first, it.third)
+                        minside.opprettBeskjed(it.first,"Din mellomlagrede søknad fjernes snart", UUID.randomUUID(), MINAAPSTD,true)
+                    } ?: log.trace("Oppretter Iigen beskjed om snart utgått mellomlagret søknad ")
                 }
             }
             else {
-                log.trace("Pod $me. Ingen sjekk av snart utgåtte mellomlagringer")
+                log.trace("Pod $ME. Ingen sjekk av snart utgåtte mellomlagringer")
             }
         }
+    }
+
+    companion object {
+         private val ME = InetAddress.getLocalHost().hostName
     }
 }
 
