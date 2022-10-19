@@ -1,2 +1,2 @@
-ALTER TABLE minsidebeskjeder ADD COLUMN done BOOLEAN;
-ALTER TABLE minsideoppgaver ADD COLUMN done BOOLEAN;
+ALTER TABLE minsidebeskjeder ADD COLUMN ekstern BOOLEAN;
+ALTER TABLE minsideoppgaver ADD COLUMN ekstern BOOLEAN;
