@@ -15,7 +15,8 @@ spring:
   cloud:
     gcp:
       project-id: ${gcp.team.project.id}
-
+  flyway:
+    out-of-order: true
   datasource:
     url: jdbc:postgresql://${db.host}:${db.port}/${db.database}
     username: ${db.username}
