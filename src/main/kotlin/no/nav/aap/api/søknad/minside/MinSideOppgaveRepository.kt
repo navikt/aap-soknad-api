@@ -17,7 +17,6 @@ interface MinSideOppgaveRepository : MinSideRepository<Oppgave> {
     class Oppgave(fnr: String,
                   eventid: UUID,
                   done: Boolean = false,
-                  ekstern: Boolean = false,
                   @OneToMany(mappedBy = "oppgave", cascade = [ALL], orphanRemoval = true)
                   var notifikasjoner: MutableSet<EksternOppgaveNotifikasjon> = mutableSetOf()) :
         MinSideBaseEntity(fnr, eventid, done)

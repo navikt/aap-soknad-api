@@ -32,7 +32,6 @@ no.nav:
                             client-auth-method: private_key_jwt
 spring:
     jpa:
-        show-sql: false
         properties:
             hibernate:
                 format_sql: true
