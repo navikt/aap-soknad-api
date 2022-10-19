@@ -24,13 +24,13 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
     fun sjekkVarsling() {
         with(lager.config().purring) {
             if (enabled && elector.erLeder(me))  {
-                log.trace("Pod $me. Ser etter snart utgåtte mellomlagringer ikke oppdatert på ${alder.toHours()} timer")
-                val gamle = lager.ikkeOppdatertSiden(alder)
+                log.trace("Pod $me. Ser etter snart utgåtte mellomlagringer ikke oppdatert på ${eldreEnn.toHours()} timer")
+                val gamle = lager.ikkeOppdatertSiden(eldreEnn)
                 log.trace("Disse skal purres: $gamle")
                 gamle.forEach {
                     log.trace("Avslutter ${it.third} for ${it.first} siden opprettet er ${it.second}")
                     minside.avsluttBeskjed(it.first, it.third)
-                    minside.opprettBeskjed(it.first,"Dette er en purring", UUID.randomUUID(), MINAAPSTD,true)
+                    minside.opprettBeskjed(it.first,"Din mellomlagrede søknad fjernes snart", UUID.randomUUID(), MINAAPSTD,true)
                 }
             }
             else {
@@ -52,7 +52,7 @@ class LeaderElector(@Value("\${elector.path}") private val elector: String, priv
             .retrieve()
             .bodyToMono<Leader>()
             .doOnError { t: Throwable ->
-                log.warn("Leader oppslag feilet", t)
+                log.warn("Leader oppslag mot $elector feilet", t)
             }
             .doOnSuccess {
                 log.trace("Leader er ${it.name}, jeg er $me")
