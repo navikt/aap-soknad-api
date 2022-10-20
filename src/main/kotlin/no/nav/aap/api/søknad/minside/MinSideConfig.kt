@@ -31,7 +31,7 @@ data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConf
     data class NAISConfig(val namespace: String, val app: String)
 
     companion object {
-        private const val DEFAULT_VARIGHET = "90d"
+        private const val DEFAULT_VARIGHET = "14d"
         const val MINSIDE = "minside"
         private const val DEFAULT_LEVEL = "3"
     }

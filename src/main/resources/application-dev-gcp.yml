@@ -32,7 +32,6 @@ no.nav:
                             client-auth-method: private_key_jwt
 spring:
     jpa:
-        show-sql: false
         properties:
             hibernate:
                 format_sql: true
@@ -48,10 +47,6 @@ konto:
     enabled: true
 joark:
     scope: api://dev-fss.teamdokumenthandtering.dokarkiv-q1/.default
-buckets:
-    mellom:
-      purring:
-        enabled: true
 minside:
     backlinks:
         innsyn: https://aap-innsyn.dev.nav.no/aap/mine-aap

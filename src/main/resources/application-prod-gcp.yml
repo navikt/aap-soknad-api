@@ -48,10 +48,6 @@ vl:
         enabled: false
 joark:
     scope: api://prod-fss.teamdokumenthandtering.dokarkiv/.default
-buckets:
-    mellom:
-       purring:
-          enabled: false
 minside:
     backlinks:
         innsyn: https://aap-innsyn.nav.no/aap/mine-aap

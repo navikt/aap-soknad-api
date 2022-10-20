@@ -26,7 +26,7 @@ data class BucketConfig(val project: String,
     data class MellomlagringBucketConfig(val navn: String, @NestedConfigurationProperty val purring: Purring, @NestedConfigurationProperty val subscription: SubscriptionConfig) {
 
         data class SubscriptionConfig(val navn: String, val topic: String)
-        data class Purring(val enabled: Boolean, val delay: Long, val alder: Duration  )
+        data class Purring(val enabled: Boolean, val delay: Long, val eldreEnn: Duration)
     }
 
     data class VedleggBucketConfig(val navn: String, val typer: List<String>)

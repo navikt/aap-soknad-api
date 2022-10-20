@@ -70,7 +70,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
 
     @GetMapping("/dittnav/avsluttbeskjed")
     fun avsluttBeskjed(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) =
-        dittNav.avsluttBeskjed(STANDARD, fnr, uuid)
+        dittNav.avsluttBeskjed(fnr, uuid, STANDARD)
 
     @GetMapping("/dittnav/avsluttoppgave")
     fun avsluttOppgave(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) =

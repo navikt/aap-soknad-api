@@ -53,7 +53,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         beskjed(tekst, varighet,type, eksternVarsling)))
                     .addCallback(SendCallback("opprett beskjed med eventid $eventId"))
-                repos.beskjeder.save(Beskjed(fnr.fnr, eventId)).eventid
+                repos.beskjeder.save(Beskjed(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
             }
             else {
                 log.info("Oppretter ikke beskjed i Ditt Nav for $fnr")
@@ -65,7 +65,6 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     @Counted(value = "soknad.oppgave.opprettet", description = "Antall oppgaver opprettet")
     fun opprettOppgave(fnr: Fødselsnummer,
                        tekst: String,
-                      // varighet: Duration = cfg.oppgave.varighet,
                        eventId: UUID = callIdAsUUID(),
                        type: MinSideNotifikasjonType = MINAAPSTD,
                        eksternVarsling: Boolean = true) =
@@ -75,7 +74,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         oppgave(tekst, varighet, type, eventId, eksternVarsling)))
                     .addCallback(SendCallback("opprett oppgave med eventid $eventId"))
-                repos.oppgaver.save(Oppgave(fnr.fnr, eventId)).eventid
+                repos.oppgaver.save(Oppgave(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
             }
             else {
                 log.info("Oppretter ikke oppgave i Min Side for $fnr")
@@ -89,10 +88,10 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         with(cfg.oppgave) {
             if (enabled) {
                 repos.oppgaver.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
-                    avsluttMinSide(type, it.eventid, fnr, OPPGAVE)
+                    avsluttMinSide(it.eventid, fnr, OPPGAVE, type)
                     it.done = true
                 } ?: log.warn("Kunne ikke finne oppgave med eventid $eventId for fnr $fnr i DB, allerede avsluttet?. Avslutter på Min Side likevel").also {
-                    avsluttMinSide(type, eventId, fnr, OPPGAVE)
+                    avsluttMinSide(eventId, fnr, OPPGAVE, type)
                 }
             }
             else {
@@ -102,15 +101,15 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
 
     @Transactional
     @Counted(value = "soknad.beskjed.avsluttet", description = "Antall beskjeder avsluttet")
-    fun avsluttBeskjed(type: SkjemaType, fnr: Fødselsnummer, eventId: UUID) =
+    fun avsluttBeskjed(fnr: Fødselsnummer, eventId: UUID, type: SkjemaType = STANDARD) =
         with(cfg.beskjed) {
             if (enabled) {
                 repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
-                    avsluttMinSide(type, it.eventid, fnr, BESKJED)
+                    avsluttMinSide(it.eventid, fnr, BESKJED, type)
                     it.done = true
 
                 } ?: log.warn("Kunne ikke avslutte beskjed med eventid $eventId for fnr $fnr i DB, allerede avsluttet?. Avslutter på Min Side likevel").also {
-                    avsluttMinSide(type, eventId, fnr, BESKJED)
+                    avsluttMinSide(eventId, fnr, BESKJED, type)
                 }
             }
             else {
@@ -118,7 +117,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-    private fun avsluttMinSide(type: SkjemaType, eventId: UUID, fnr: Fødselsnummer,notifikasjonType: NotifikasjonType) =
+    private fun avsluttMinSide(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType, type: SkjemaType = STANDARD) =
         minside.send(ProducerRecord(cfg.done, key(type,eventId, fnr), done()))
             .addCallback(SendCallback("avslutt $notifikasjonType med eventid $eventId")).also {
                 when (notifikasjonType) {

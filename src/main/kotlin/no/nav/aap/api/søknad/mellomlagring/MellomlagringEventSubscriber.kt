@@ -73,7 +73,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
             with(it) {
                 registry.gauge(MELLOMLAGRING,mellomlagrede.decIfPositive())
                 log.trace(CONFIDENTIAL, "Sletter beskjed fra metadata $it")
-                dittNav.avsluttBeskjed(type, fnr, eventId).also {
+                dittNav.avsluttBeskjed(fnr, eventId, type).also {
                     log.trace(CONFIDENTIAL, "Slettet beskjed fra metadata OK")
                 }
             }

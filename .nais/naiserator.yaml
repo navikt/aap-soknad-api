@@ -11,6 +11,7 @@ metadata:
   labels:
     team: aap
 spec:
+  leaderElection: true
   secureLogs:
     enabled: true
   azure:

@@ -15,7 +15,8 @@ spring:
   cloud:
     gcp:
       project-id: ${gcp.team.project.id}
-
+  flyway:
+    out-of-order: true
   datasource:
     url: jdbc:postgresql://${db.host}:${db.port}/${db.database}
     username: ${db.username}
@@ -179,7 +180,8 @@ buckets:
     navn: ${mellomlagring.navn}
     purring:
       delay: 60
-      alder: 3d
+      eldreEnn: 3d
+      enabled: false
     subscription:
       navn: ${mellomlagring.navn}-subscription2
       topic: ${mellomlagring.navn}-topic2
