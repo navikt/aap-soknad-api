@@ -22,3 +22,6 @@ acl:
   -   team: aap
       application: devtools
       access: readwrite
+  -   team: aap
+      application: bot
+      access: write
