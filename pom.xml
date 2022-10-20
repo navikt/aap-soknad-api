@@ -8,7 +8,6 @@
         <version>2.7.4</version>
         <relativePath/>
     </parent>
-
     <groupId>no.nav.aap.api</groupId>
     <artifactId>soknad</artifactId>
     <version>${revision}</version>
