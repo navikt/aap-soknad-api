@@ -5,6 +5,9 @@ query($ident: ID!){
            mellomnavn
            etternavn
         },
+        adressebeskyttelse {
+           gradering
+        },
         foedsel {
            foedselsdato
         },
