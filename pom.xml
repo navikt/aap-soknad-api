@@ -17,13 +17,14 @@
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
         <conditionals.version>3.1.0</conditionals.version>
         <confluent.version>7.2.2</confluent.version>
-        <commons-text.version>1.10.0</commons-text.version>
         <commit-id.version>5.0.0</commit-id.version>
+        <commons-text.version>1.10.0</commons-text.version>
         <domain.version>1.0.19</domain.version>
-        <gcp.version>0.180.0</gcp.version>
+        <eksternvarsling.version>08271806</eksternvarsling.version>
         <gcp.libraries.version>26.1.3</gcp.libraries.version>
-        <spring-cloud-gcp.version>3.4.0</spring-cloud-gcp.version>
+        <gcp.version>0.180.0</gcp.version>
         <graphql.version>1.0.0</graphql.version>
+        <hibernate.types.version>2.20.0</hibernate.types.version>
         <i18n.version>1.29</i18n.version>
         <java.version>17</java.version>
         <jib.version>3.3.0</jib.version>
@@ -39,14 +40,12 @@
         <sonar.organization>navikt</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.projectKey>navikt_aap-soknad-api</sonar.projectKey>
-        <swagger.annotations.version>2.2.4</swagger.annotations.version>
+        <spring-cloud-gcp.version>3.4.0</spring-cloud-gcp.version>
         <springdoc.version>1.6.12</springdoc.version>
+        <swagger.annotations.version>2.2.4</swagger.annotations.version>
         <testcontainers.version>1.17.5</testcontainers.version>
-        <token.validation.version>2.1.6</token.validation.version>
-        <hibernate.types.version>2.20.0</hibernate.types.version>
-        <eksternvarsling.version>08271806</eksternvarsling.version>
         <tika.version>2.5.0</tika.version>
-
+        <token.validation.version>2.1.6</token.validation.version>
     </properties>
     <repositories>
         <repository>
