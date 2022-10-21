@@ -2,6 +2,7 @@ package no.nav.aap.api.oppslag.pdl
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
+import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
@@ -23,6 +24,7 @@ data class PDLNavn(val fornavn: String, val mellomnavn: String?, val etternavn: 
 data class PDLSøker(val navn: PDLNavn,
                     val fødsel: PDLFødsel?,
                     val vegadresse: PDLVegadresse?,
+                    val adressebeskyttelse: Set<PDLAdresseBeskyttelse>,
                     val forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) {
 
     data class PDLForelderBarnRelasjon(val relatertPersonsIdent: String,
