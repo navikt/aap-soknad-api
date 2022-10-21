@@ -74,6 +74,7 @@ data class StandardSøknad(
         }
         with(andreBarn) {
             log.trace("Sjekker om det er manglende vedlegg for andre barn $andreBarn")
+            forEach { a -> log.trace("Annet barn relasjon ${a.relasjon} vedlegg ${a.vedlegg}") }
             if (count() > count { (it.vedlegg?.deler?.size ?: 0) > 0 }) {
                 manglende += ANDREBARN.also {
                     log.trace("Det er manglende vedlegg for ${ANDREBARN.tittel}")
