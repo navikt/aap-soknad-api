@@ -16,7 +16,7 @@ import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.boot.conditionals.EnvUtil.isDevOrLocal
+import no.nav.boot.conditionals.EnvUtil.isProd
 import org.springframework.context.EnvironmentAware
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
@@ -42,7 +42,7 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
 
     override fun fordel(innsending: Innsending) =
         pdl.søkerMedBarn().run {
-            if (!isDevOrLocal(env) && now().isBefore(PRODDATO)) {
+            if (isProd(env) && now().isBefore(PRODDATO)) {
                 EMPTY.also {
                     log.warn("Ingen formidling i prod før $PRODDATO")
                 }
