@@ -2,7 +2,6 @@ package no.nav.aap.api.oppslag.pdl
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
-import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLGradering
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
@@ -20,6 +19,13 @@ data class PDLWrappedSøker(val navn: Set<PDLNavn>,
             } ?: emptyList())
 }
 
+enum class PDLAdresseBeskyttelse {
+    STRENGT_FORTROLIG_UTLAND,
+    STRENGT_FORTROLIG,
+    FORTROLIG,
+    UGRADERT
+}
+data class PDLGradering(val gradering: PDLAdresseBeskyttelse)
 data class PDLNavn(val fornavn: String, val mellomnavn: String?, val etternavn: String)
 
 data class PDLSøker(val navn: PDLNavn,
@@ -55,11 +61,5 @@ data class PDLBarn(@JsonProperty("foedsel") val fødselsdato: Set<PDLFødsel>,
                    @JsonProperty("doedsfall") val dødsfall: Set<PDLDødsfall>?) {
 
     data class PDLDødsfall(@JsonProperty("doedsdato") val dødsdato: LocalDate)
-    enum class PDLAdresseBeskyttelse {
-        STRENGT_FORTROLIG_UTLAND,
-        STRENGT_FORTROLIG,
-        FORTROLIG,
-        UGRADERT
-    }
-    data class PDLGradering(val gradering: PDLAdresseBeskyttelse)
+
 }
