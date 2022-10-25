@@ -2,7 +2,7 @@ package no.nav.aap.api.oppslag.pdl
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
-import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse
+import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLGradering
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
@@ -12,7 +12,7 @@ import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLFødsel
 data class PDLWrappedSøker(val navn: Set<PDLNavn>,
                            @JsonProperty("foedsel") val fødsel: Set<PDLFødsel>,
                            val bostedsadresse: List<PDLBostedadresse>,
-                           val adressebeskyttelse: Set<PDLAdresseBeskyttelse>,
+                           val adressebeskyttelse: Set<PDLGradering>,
                            val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon>?) {
     val active = PDLSøker(navn.first(), fødsel.firstOrNull(), bostedsadresse.firstOrNull()?.vegadresse, adressebeskyttelse,
             forelderBarnRelasjon?.filter {
@@ -25,7 +25,7 @@ data class PDLNavn(val fornavn: String, val mellomnavn: String?, val etternavn: 
 data class PDLSøker(val navn: PDLNavn,
                     val fødsel: PDLFødsel?,
                     val vegadresse: PDLVegadresse?,
-                    val adressebeskyttelse: Set<PDLAdresseBeskyttelse>,
+                    val adressebeskyttelse: Set<PDLGradering>,
                     val forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) {
 
     data class PDLForelderBarnRelasjon(val relatertPersonsIdent: String,
@@ -51,7 +51,7 @@ data class PDLSøker(val navn: PDLNavn,
 
 data class PDLBarn(@JsonProperty("foedsel") val fødselsdato: Set<PDLFødsel>,
                    val navn: Set<PDLNavn>,
-                   val adressebeskyttelse: Set<PDLAdresseBeskyttelse>?,
+                   val adressebeskyttelse: Set<PDLGradering>?,
                    @JsonProperty("doedsfall") val dødsfall: Set<PDLDødsfall>?) {
 
     data class PDLDødsfall(@JsonProperty("doedsdato") val dødsdato: LocalDate)
@@ -61,4 +61,5 @@ data class PDLBarn(@JsonProperty("foedsel") val fødselsdato: Set<PDLFødsel>,
         FORTROLIG,
         UGRADERT
     }
+    data class PDLGradering(val gradering: PDLAdresseBeskyttelse)
 }

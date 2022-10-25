@@ -100,7 +100,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
 
     private fun beskyttet(pdlBarn: PDLBarn) = pdlBarn.adressebeskyttelse?.any {
-        it in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND, STRENGT_FORTROLIG)
+        it.gradering in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND, STRENGT_FORTROLIG)
     } == true
 
     private fun død(pdlBarn: PDLBarn) = pdlBarn.dødsfall?.any() ?: false
