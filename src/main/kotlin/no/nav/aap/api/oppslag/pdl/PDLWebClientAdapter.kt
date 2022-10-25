@@ -10,6 +10,7 @@ import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.FORTROLIG
 import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
 import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
+import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLGradering
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLFødsel
@@ -62,10 +63,11 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
     private fun søkerFra(søker: PDLSøker?, fnr: Fødselsnummer, medBarn: Boolean) = søker?.let {
         with(it) {
             Søker(navnFra(navn), fnr,
-                    adresseFra(vegadresse),
+                    adresseFra(vegadresse,it.beskyttet()),
                     fødselsdatoFra(fødsel),
                     barnFra(forelderBarnRelasjon, medBarn))
-                .also { log.trace(CONFIDENTIAL, "Søker er $it")
+                .also {
+                    log.trace(CONFIDENTIAL, "Søker er $it")
                 }
         }
     }
@@ -82,9 +84,12 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         }
         else emptyList()
 
-    private fun adresseFra(adresse: PDLVegadresse?) = adresse?.let {
+    private fun adresseFra(adresse: PDLVegadresse?, beskyttet: Boolean) = adresse?.let {
         with(it) {
-            Adresse(adressenavn, husbokstav, husnummer, PostNummer(postnummer))
+            if (! beskyttet) {
+                Adresse(adressenavn, husbokstav, husnummer, PostNummer(postnummer))
+            }
+            else null
         }
     }
 
@@ -99,7 +104,12 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
     private fun myndig(pdlBarn: PDLBarn) =
         fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
 
-    private fun beskyttet(pdlBarn: PDLBarn) = pdlBarn.adressebeskyttelse?.any {
+    private fun beskyttet(pdlBarn: PDLBarn) = beskyttet(pdlBarn.adressebeskyttelse)
+
+    private fun PDLSøker.beskyttet() = beskyttet(adressebeskyttelse)
+
+
+    private fun beskyttet(gradering: Set<PDLGradering>?) = gradering?.any {
         it.gradering in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND, STRENGT_FORTROLIG)
     } == true
 
