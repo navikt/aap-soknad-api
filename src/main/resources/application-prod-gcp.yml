@@ -49,6 +49,8 @@ vl:
 joark:
     scope: api://prod-fss.teamdokumenthandtering.dokarkiv/.default
 minside:
+    beskjed:
+        enabled : false
     backlinks:
         innsyn: https://aap-innsyn.nav.no/aap/mine-aap
         standard: https://aap-soknad.nav.no/aap/soknad/standard
