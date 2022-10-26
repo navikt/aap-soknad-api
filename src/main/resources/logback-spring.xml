@@ -56,6 +56,6 @@
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="secureJson"/>
         </logger>
-        <logger name="no.nav.aap" level="info"/>
+        <logger name="no.nav.aap" level="trace"/>
     </springProfile>
 </configuration>
