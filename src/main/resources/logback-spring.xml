@@ -57,5 +57,6 @@
             <appender-ref ref="secureJson"/>
         </logger>
         <logger name="no.nav.aap" level="info"/>
+        <logger name="org.apache.pdfbox.pdmodel.font.PDType1Font" level="error" />
     </springProfile>
 </configuration>
