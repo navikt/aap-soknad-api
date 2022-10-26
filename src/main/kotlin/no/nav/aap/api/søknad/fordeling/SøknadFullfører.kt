@@ -93,7 +93,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
         repo.getSøknadByFnr(fnr.fnr, SISTE_SØKNAD).firstOrNull()?.let {
             log.trace("Knytter ettersending til siste søknad ${it.eventid} med journalpost ${it.journalpostid}")
             it.registrerEttersending(fnr, res, e)
-        } ?: log.trace("Fant ingen sist innsendt søknad for $fnr")
+        } ?: log.info("Fant ingen sist innsendt søknad for $fnr")
         minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel.decap()}")
     }
 
