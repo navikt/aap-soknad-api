@@ -25,7 +25,7 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("
                 log.warn("Journalføring feilet", t)
             }
             .doOnSuccess {
-                log.info("Journalført $it OK")
+                log.info("Journalført $journalpost, OK respons er $it")
             }
             .block() ?: throw IntegrationException("Null respons fra arkiv")
 
