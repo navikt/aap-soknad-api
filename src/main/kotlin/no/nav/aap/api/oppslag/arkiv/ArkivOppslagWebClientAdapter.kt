@@ -78,7 +78,7 @@ class ArkivOppslagMapper {
                                        val dokumentId: String,
                                        val tittel: String?,
                                        val type: ArkivOppslagJournalpostType,
-                                       val innsendingId: UUID?,
+                                       val innsendingId: String?,
                                        val dato: LocalDateTime)
 
 }

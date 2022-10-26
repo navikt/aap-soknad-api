@@ -1,7 +1,6 @@
 package no.nav.aap.api.oppslag.arkiv
 
 import java.time.LocalDateTime
-import java.util.*
 
 data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournalpost>) {
 
@@ -9,7 +8,7 @@ data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournal
                                        val journalposttype: ArkivOppslagJournalpostType,
                                        val journalstatus: ArkivOppslagJournalStatus,
                                        val tittel: String?,
-                                       val eksternReferanseId: UUID?,
+                                       val eksternReferanseId: String?,
                                        val relevanteDatoer: List<ArkivOppslagRelevantDato>,
                                        val sak: ArkivOppslagSak?,
                                        val dokumenter: List<ArkivOppslagDokumentInfo>) {

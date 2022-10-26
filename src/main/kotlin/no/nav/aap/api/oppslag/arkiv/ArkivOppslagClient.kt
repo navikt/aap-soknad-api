@@ -19,7 +19,7 @@ class ArkivOppslagClient(private val adapter: ArkivOppslagWebClientAdapter) {
 
     fun innsendteDokumenter(innsendingIds: List<UUID>) = dokumenter()
         .filter {
-            it.innsendingId in innsendingIds
+            it.innsendingId in innsendingIds.map(UUID::toString)
         }
         .also {
             log.trace("Slo opp ${it.størrelse("dokument")} fra $innsendingIds ($it)")
