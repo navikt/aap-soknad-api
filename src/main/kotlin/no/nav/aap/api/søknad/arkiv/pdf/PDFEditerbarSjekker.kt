@@ -13,7 +13,7 @@ class PDFEditerbarSjekker : PDFSjekker() {
                 load(inputStream).use {
                     it.documentCatalog.acroForm?.let {
                         log.warn("Fant editerbare felter i $filnavn")
-                    } ?: log.info("Ingen editerbare felter i $filnavn")
+                    } ?: log.trace("Ingen editerbare felter i $filnavn")
                 }
             }
         }
