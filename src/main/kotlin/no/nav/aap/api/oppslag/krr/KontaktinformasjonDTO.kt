@@ -3,6 +3,7 @@ package no.nav.aap.api.oppslag.krr
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import javax.validation.constraints.Email
+import no.nav.aap.api.oppslag.krr.Kontaktinformasjon.Companion.EMPTY
 import no.nav.aap.util.LoggerUtil.getLogger
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,18 +22,22 @@ data class KontaktinformasjonDTO(@JsonAlias("spraak") val målform: Målform? = 
                     true -> Kontaktinformasjon(epost, mobil)
                     else -> {
                         log.info("Kan ikke varsles, kanVarsles er false i KRR")
-                        null
+                        EMPTY
                     }
                 }
             }
 
             else -> {
                 log.info("Er ikke aktiv i KRR")
-                null
+                EMPTY
             }
         }
 }
 
-data class Kontaktinformasjon(val epost: String? = null, val mobil: String? = null)
+data class Kontaktinformasjon(val epost: String? = null, val mobil: String? = null) {
+    companion object {
+        val EMPTY = Kontaktinformasjon()
+    }
+}
 
 enum class Målform { NB, NN, EN }

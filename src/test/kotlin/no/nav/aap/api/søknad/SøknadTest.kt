@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.neovisionaries.i18n.CountryCode.SE
 import java.time.LocalDate.now
@@ -166,6 +165,7 @@ class SøknadTest {
         fun søker(): Søker {
             return Søker(Navn("Ole", "B", "Olsen"),
                     Fødselsnummer("08089403198"),
+                    false,
                     Adresse("Gata", "17", "A",
                             PostNummer("2600", "Lillehammer")), now(), listOf(
                     Barn(Navn("Barn", "B", "Barnsben"), now())))
