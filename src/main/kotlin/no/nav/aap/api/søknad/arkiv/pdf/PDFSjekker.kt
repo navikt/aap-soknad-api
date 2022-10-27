@@ -22,8 +22,9 @@ abstract class PDFSjekker : DokumentSjekker {
                     log.trace("${javaClass.simpleName} sjekker $filnavn")
                     doSjekk(dokument)
                 }.getOrElse {
+                    log.warn("Sjekk av $filnavn feilet med ${it.javaClass.name}")
                     when (it) {
-                        is InvalidPasswordException -> beskyttet(null)
+                        is InvalidPasswordException -> beskyttet(filnavn,it)
                         is Exception -> muligensBeskyttet(filnavn,it)
                         else ->  uventet(filnavn,it)
                     }
@@ -35,17 +36,17 @@ abstract class PDFSjekker : DokumentSjekker {
         }
     }
 
-    private fun muligensBeskyttet(filnavn: String?, it: Throwable) : Nothing =
-        if (hasCause(it, InvalidPasswordException::class.java)) {
-            beskyttet(it)
+    private fun muligensBeskyttet(filnavn: String?, t: Throwable) : Nothing =
+        if (hasCause(t, InvalidPasswordException::class.java)) {
+            beskyttet(filnavn,t)
         }
         else {
-            uventet(filnavn,it)
+            uventet(filnavn,t)
         }
     private fun uventet(filnavn: String?, cause: Throwable) : Nothing = throw DokumentException("Uventet feil ved sjekk av $filnavn", cause)
 
-    private fun beskyttet(cause: Throwable?) : Nothing =
-        throw PassordBeskyttetException("filnavn er passord-beskyttet, og kan ikke leses av en saksbehandler, fjern beskyttelsen og prøv igjen", cause)
+    private fun beskyttet(filnavn: String?,cause: Throwable?) : Nothing =
+        throw PassordBeskyttetException("$filnavn er passord-beskyttet, og kan ikke leses av en saksbehandler, fjern beskyttelsen og prøv igjen", cause)
 
     class PassordBeskyttetException(msg: String, cause: Throwable?) : DokumentException(msg, cause, PASSWORD_PROTECTED)
 }
