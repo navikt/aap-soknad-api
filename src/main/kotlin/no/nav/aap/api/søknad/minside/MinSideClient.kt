@@ -52,7 +52,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 log.trace(CONFIDENTIAL, "Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         beskjed(tekst, varighet,type, eksternVarsling)))
-                    .addCallback(SendCallback("opprett beskjed med eventid $eventId og ekstern varsling $eksternVarsling"))
+                    .addCallback(SendCallback("opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling"))
                 repos.beskjeder.save(Beskjed(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
             }
             else {
@@ -73,7 +73,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 log.trace("Oppretter Min Side oppgave for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         oppgave(tekst, varighet, type, eventId, eksternVarsling)))
-                    .addCallback(SendCallback("opprett oppgave med eventid $eventId og ekstern varsling $eksternVarsling"))
+                    .addCallback(SendCallback("opprett oppgave med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling"))
                 repos.oppgaver.save(Oppgave(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
             }
             else {
