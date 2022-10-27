@@ -3,7 +3,6 @@ package no.nav.aap.api.søknad
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.partialMask
-import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.RecordMetadata
 import org.springframework.kafka.core.KafkaProducerException
@@ -31,8 +30,7 @@ class SendCallback<K, V>(private val msg: String) : KafkaSendCallback<K, V> {
 
     private fun log(fnr: String, recordMetadata: RecordMetadata?) {
         with(recordMetadata) {
-            log.info(CONFIDENTIAL,
-                    "Sendte $msg for $fnr, offset ${this?.offset()}, partition ${this?.partition()} på topic ${this?.topic()}")
+            log.info("Sendte $msg for ${fnr.partialMask()}, offset ${this?.offset()}, partition ${this?.partition()} på topic ${this?.topic()}")
         }
     }
 
