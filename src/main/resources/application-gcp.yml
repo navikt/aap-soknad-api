@@ -162,8 +162,10 @@ minside:
     namespace: ${nais.namespace}
   done: min-side.aapen-brukernotifikasjon-done-v1
   beskjed:
+    enabled: true
     topic: min-side.aapen-brukernotifikasjon-beskjed-v1
   oppgave:
+    enabled: true
     topic: min-side.aapen-brukernotifikasjon-oppgave-v1
     preferertekanaler:
       - SMS
