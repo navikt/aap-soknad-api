@@ -30,10 +30,10 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
                 gamle.forEach {
                     log.trace("Avslutter ${it.third} for ${it.first} siden opprettet er ${it.second}")
                     repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(it.first.fnr,it.third)?.let { _ ->
-                        log.trace("Avslutter gammel  beskjed om mellomlagring og oppretter ny om snart utgått mellomlagring")
+                        log.trace("Avslutter gammel beskjed om mellomlagring og oppretter ny om snart utgått mellomlagring")
                         minside.avsluttBeskjed(it.first, it.third)
                         minside.opprettBeskjed(it.first,"Din mellomlagrede søknad fjernes snart", UUID.randomUUID(), MINAAPSTD,true)
-                    } ?: log.trace("Oppretter Iigen beskjed om snart utgått mellomlagret søknad ")
+                    } ?: log.trace("Oppretter ingn beskjed om snart utgått mellomlagret søknad ")
                 }
             }
             else {

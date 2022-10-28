@@ -6,6 +6,8 @@ management:
     endpoint:
         health:
             show-details: always
+        shutdown:
+            enabled: true
 no.nav:
     security:
         jwt:
