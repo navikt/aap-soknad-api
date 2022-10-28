@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.arkiv
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.felles.SkjemaType.UTLAND_SØKNAD
@@ -107,7 +108,7 @@ class ArkivJournalpostGenerator(
     private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>) =
         vedlegg.flatMap { e ->
             require(vedlegg.isNotEmpty()) { "Forventet > 0 vedlegg" }
-            dokumenterFra(e.ettersending, e.vedleggType)
+            dokumenterFra(e.ettersending, e.vedleggType,STANDARD_ETTERSENDING)
         }.also {
             require(it.isNotEmpty()) { "Forventet > 0 vedlegg fra dokumentlager" }
         }
@@ -115,28 +116,28 @@ class ArkivJournalpostGenerator(
     private fun dokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
         mutableListOf(Dokument(listOf(søknad.somOriginal(mapper), pdfVariant)))
 
-    private fun dokumenterFra(a: List<VedleggAware?>?, type: VedleggType) =
+    private fun dokumenterFra(a: List<VedleggAware?>?, type: VedleggType, skjemaType: SkjemaType = STANDARD) =
         a?.flatMap {
-            dokumenterFra(it?.vedlegg, type)
+            dokumenterFra(it?.vedlegg, type,skjemaType)
         } ?: emptyList()
 
-    private fun dokumenterFra(a: VedleggAware?, type: VedleggType): List<Dokument> =
+    private fun dokumenterFra(a: VedleggAware?, type: VedleggType, skjemaType: SkjemaType = STANDARD): List<Dokument> =
         a?.let { v ->
-            v.vedlegg?.let { dokumenterFra(it, type) }
+            v.vedlegg?.let { dokumenterFra(it, type,skjemaType) }
         } ?: emptyList()
 
-    private fun dokumenterFra(v: Vedlegg?, type: VedleggType) =
+    private fun dokumenterFra(v: Vedlegg?, type: VedleggType, skjemaType: SkjemaType) =
         v?.let { vl ->
             val vedlegg = grupperteOgSorterteVedlegg(vl)
             val pdfs = vedlegg[APPLICATION_PDF_VALUE] ?: mutableListOf()
             val jpgs = vedlegg[IMAGE_JPEG_VALUE] ?: emptyList()
             val pngs = vedlegg[IMAGE_PNG_VALUE] ?: emptyList()
-            pdfs.map { it.somDokument(type.tittel) }.toMutableList().apply {
+            pdfs.map { it.somDokument(type.tittel,skjemaType) }.toMutableList().apply {
                 if (jpgs.isNotEmpty()) {
-                    add(konverterer.tilPdf(IMAGE_JPEG, jpgs.map(DokumentInfo::bytes)).somDokument(type.tittel))
+                    add(konverterer.tilPdf(IMAGE_JPEG, jpgs.map(DokumentInfo::bytes)).somDokument(type.tittel,skjemaType))
                 }
                 if (pngs.isNotEmpty()) {
-                    add(konverterer.tilPdf(IMAGE_PNG, pngs.map(DokumentInfo::bytes)).somDokument(type.tittel))
+                    add(konverterer.tilPdf(IMAGE_PNG, pngs.map(DokumentInfo::bytes)).somDokument(type.tittel,skjemaType))
                 }
             }
         } ?: emptyList<Dokument>().also {
@@ -161,8 +162,8 @@ class ArkivJournalpostGenerator(
         })
 
     private fun Journalpost.størrelse() = dokumenter.størrelse("dokument")
-    private fun ByteArray.somDokument(tittel: String) = Dokument(tittel, DokumentVariant(encode()))
-    private fun DokumentInfo.somDokument(tittel: String) = bytes.somDokument(tittel)
+    private fun ByteArray.somDokument(tittel: String, type: SkjemaType) = Dokument(tittel,type.kode, DokumentVariant(encode()))
+    private fun DokumentInfo.somDokument(tittel: String,type: SkjemaType) = bytes.somDokument(tittel,type)
     fun StandardSøknad.somOriginal(mapper: ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
     fun UtlandSøknad.somOriginal(mapper: ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
 
