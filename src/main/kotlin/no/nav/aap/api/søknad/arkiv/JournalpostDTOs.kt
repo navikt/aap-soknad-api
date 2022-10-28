@@ -27,7 +27,7 @@ data class Journalpost(
                 type.kode,
                 dokumentVarianter)
 
-        constructor(tittel: String? = null,  brevkode: String?,variant: DokumentVariant) : this(tittel, brevkode, listOf(variant))
+        constructor(tittel: String? = null, variant: DokumentVariant) : this(tittel, null, listOf(variant))
     }
 
     data class DokumentVariant private constructor(val filtype: String,
