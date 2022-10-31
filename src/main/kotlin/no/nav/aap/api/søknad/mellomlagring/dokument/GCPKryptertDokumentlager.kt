@@ -9,8 +9,7 @@ import com.google.cloud.storage.Storage.BlobField.SIZE
 import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
 import com.google.cloud.storage.Storage.BlobGetOption.fields
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
-import io.micrometer.core.instrument.DistributionSummary
-import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.annotation.Timed
 import java.util.*
 import no.nav.aap.api.error.Substatus.UNSUPPORTED
 import no.nav.aap.api.felles.Fødselsnummer
@@ -27,10 +26,10 @@ import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.context.annotation.Primary
 import org.springframework.http.ContentDisposition.parse
 import org.springframework.stereotype.Component
-import org.springframework.util.unit.DataSize
 
 @ConditionalOnGCP
 @Primary
+@Timed
 class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                                private val lager: Storage,
                                private val ctx: AuthContext,
@@ -41,6 +40,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     private val log = getLogger(javaClass)
 
     override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(dokument, ctx.getFnr())
+
 
     fun lagreDokument(dokument: DokumentInfo, fnr: Fødselsnummer) =
         callIdAsUUID().apply {
