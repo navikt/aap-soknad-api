@@ -27,6 +27,7 @@ import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.context.annotation.Primary
 import org.springframework.http.ContentDisposition.parse
 import org.springframework.stereotype.Component
+import org.springframework.util.unit.DataSize
 
 @ConditionalOnGCP
 @Primary
@@ -39,6 +40,8 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     val distributionSummary = DistributionSummary
             .builder("vedlegg.size")
             .baseUnit("bytes")
+            .publishPercentileHistogram()
+            .maximumExpectedValue(DataSize.ofMegabytes(250).toBytes().toDouble())
             .register(registry)
 
 
