@@ -9,7 +9,7 @@ metadata:
 spec:
   receivers:
     slack:
-      channel: '#aap-github'
+      channel: '#po-aap-innbygger-prod-varslinger'
   alerts:
     - alert: soknad-api-app-nede
       expr: kube_deployment_status_replicas_unavailable{deployment="soknad-api",job="kubernetes-service-endpoints"} > 0

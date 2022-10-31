@@ -3,6 +3,8 @@ package no.nav.aap.api.søknad
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.neovisionaries.i18n.CountryCode.SE
 import java.time.LocalDate.now
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.*
 import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
@@ -33,6 +35,7 @@ import no.nav.aap.api.søknad.model.Utbetalinger.FraArbeidsgiver
 import no.nav.aap.api.søknad.model.Utenlandsopphold
 import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.util.AuthContext
+import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -159,6 +162,13 @@ class SøknadTest {
    }
         
     """.trimIndent()
+
+
+    @Test
+    fun date() {
+        println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(LocalDateTime.now()))
+        println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(LocalDateTime.now().toInstant(ZoneOffset.UTC)))
+    }
 
     companion object {
 
