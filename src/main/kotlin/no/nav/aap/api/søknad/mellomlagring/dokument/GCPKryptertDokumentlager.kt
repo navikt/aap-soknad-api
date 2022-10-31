@@ -34,15 +34,8 @@ import org.springframework.util.unit.DataSize
 class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                                private val lager: Storage,
                                private val ctx: AuthContext,
-                               private val sjekkere: List<DokumentSjekker>,
-                               private val registry: MeterRegistry) : Dokumentlager {
+                               private val sjekkere: List<DokumentSjekker>): Dokumentlager {
 
-    val distributionSummary = DistributionSummary
-            .builder("vedlegg.size")
-            .baseUnit("bytes")
-            .publishPercentileHistogram()
-            .maximumExpectedValue(DataSize.ofMegabytes(250).toBytes().toDouble())
-            .register(registry)
 
 
     private val log = getLogger(javaClass)
@@ -55,7 +48,6 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 val navn = navn(fnr, this@apply)
                 sjekkere.forEach { it.sjekk(this) }
                 log.trace("Lagrer $this")
-                distributionSummary.record(bytes.size.toDouble())
                 lager.create(newBuilder(cfg.vedlegg.navn, navn)
                     .setContentType(contentType)
                     .setContentDisposition("$contentDisposition")
