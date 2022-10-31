@@ -7,6 +7,7 @@ import com.google.cloud.storage.Storage.BlobField.METADATA
 import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
 import com.google.cloud.storage.Storage.BlobListOption
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
+import io.micrometer.core.annotation.Timed
 import java.nio.charset.StandardCharsets.UTF_8
 import java.time.Duration
 import java.time.LocalDateTime.now
@@ -25,6 +26,7 @@ import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 
 @ConditionalOnGCP
+@Timed
 internal class GCPKryptertMellomlager(val cfg: BucketConfig,
                                       private val lager: Storage,
                                       private val mapper: ObjectMapper,
