@@ -9,6 +9,8 @@ import com.google.cloud.storage.Storage.BlobField.SIZE
 import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
 import com.google.cloud.storage.Storage.BlobGetOption.fields
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
+import io.micrometer.core.instrument.DistributionSummary
+import io.micrometer.core.instrument.MeterRegistry
 import java.util.*
 import no.nav.aap.api.error.Substatus.UNSUPPORTED
 import no.nav.aap.api.felles.Fødselsnummer
@@ -31,7 +33,14 @@ import org.springframework.stereotype.Component
 class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                                private val lager: Storage,
                                private val ctx: AuthContext,
-                               private val sjekkere: List<DokumentSjekker>) : Dokumentlager {
+                               private val sjekkere: List<DokumentSjekker>,
+                               private val registry: MeterRegistry) : Dokumentlager {
+
+    val distributionSummary = DistributionSummary
+            .builder("vedlegg.size")
+            .baseUnit("bytes")
+            .register(registry)
+
 
     private val log = getLogger(javaClass)
 
@@ -43,6 +52,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 val navn = navn(fnr, this@apply)
                 sjekkere.forEach { it.sjekk(this) }
                 log.trace("Lagrer $this")
+                distributionSummary.record(bytes.size.toDouble())
                 lager.create(newBuilder(cfg.vedlegg.navn, navn)
                     .setContentType(contentType)
                     .setContentDisposition("$contentDisposition")
