@@ -62,7 +62,7 @@ class ArkivJournalpostGenerator(
                     Bruker(fnr),
                     dokumenterFra(es.ettersendteVedlegg))
                 .also {
-                    log.trace("Journalpost med ${it.størrelse()} er $it")
+                    log.trace("Journalpost med ${it.størrelse()} er ${it.dokumenter}")
                 }
         }
 
@@ -73,7 +73,7 @@ class ArkivJournalpostGenerator(
                     Bruker(fnr),
                     dokumenterFra(søknad, pdf.pdfVariant(this, søknad)))
                 .also {
-                    log.trace("Journalpost med ${it.størrelse()} er $it")
+                    log.trace("Journalpost med ${it.størrelse()} er ${it.dokumenter}")
                 }
         }
 
@@ -84,7 +84,7 @@ class ArkivJournalpostGenerator(
                     Bruker(fnr),
                     journalpostDokumenterFra(innsendng, this))
                 .also {
-                    log.trace("Journalpost med ${it.størrelse()} er $it")
+                    log.trace("Journalpost med ${it.størrelse()} er ${it.dokumenter}")
                 }
         }
 

@@ -31,7 +31,7 @@ class ArkivOppslagWebClientAdapter(
 
     fun dokument(journalpostId: String, dokumentInfoId: String) =
         webClient.get()
-            .uri { b -> cf.dokUri(b, journalpostId, dokumentInfoId) }
+            .uri(cf.dokUri(), journalpostId, dokumentInfoId,ARKIV.name)
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono<ByteArray>()
