@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.TextNode
 import com.neovisionaries.i18n.CountryCode
 import java.io.IOException
+import java.time.LocalDate
+import java.time.LocalDateTime.now
 import java.util.*
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.AnnenBehandler
@@ -47,6 +49,9 @@ data class StandardSøknad(
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
         val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         override val vedlegg: Vedlegg? = null) : VedleggAware {
+
+    var fødselsdato : LocalDate? = null
+    val innsendingTidspunkt = now()
 
     enum class Yrkesskade { JA, NEI }
 

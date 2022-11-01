@@ -49,8 +49,8 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
             }
             else  {
                 registry.counter(SØKNADER,"type", STANDARD.name.lowercase()).increment()
-                log.trace("Fordeler $innsending")
                 with(arkiv.fordel(innsending, this)) {
+                    innsending.søknad.fødselsdato = this@run.fødseldato
                     vlFordeler.fordel(innsending.søknad, fnr, journalpostId, cfg.standard)
                     fullfører.fullfør(this@run.fnr, innsending.søknad, this)
                 }
