@@ -3,6 +3,7 @@ package no.nav.aap.api.oppslag.arkiv
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneId.systemDefault
 import java.util.*
 import no.nav.aap.api.felles.error.IntegrationException
@@ -80,7 +81,7 @@ class ArkivOppslagMapper {
             }.sortedByDescending { it.dato }
         }
 
-    private fun LocalDateTime.asInstant() = atZone(systemDefault()).toInstant()
+    private fun LocalDateTime.asInstant() = atZone(systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toInstant()
 
 
     data class DokumentOversiktInnslag(val journalpostId: String,

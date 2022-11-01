@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.neovisionaries.i18n.CountryCode.SE
 import java.time.LocalDate.now
 import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.ZoneId
 import java.util.*
 import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
@@ -166,9 +166,11 @@ class SøknadTest {
 
     @Test
     fun date() {
-        println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(LocalDateTime.now()))
-        println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(LocalDateTime.now().toInstant(ZoneOffset.UTC)))
+        println(mapper.writeValueAsString(LocalDateTime.now().asInstant()))
     }
+
+    private fun LocalDateTime.asInstant() = atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toInstant()
+
 
     companion object {
 
