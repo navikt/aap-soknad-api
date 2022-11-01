@@ -30,6 +30,8 @@ class ArkivOppslagWebClientAdapter(
         private val mapper: ArkivOppslagMapper,
         val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(client, cf) {
 
+
+
     fun dokument(journalpostId: String, dokumentInfoId: String) =
         webClient.get()
             .uri(cf.dokUri(), journalpostId, dokumentInfoId,ARKIV.name)
@@ -50,7 +52,9 @@ class ArkivOppslagWebClientAdapter(
         ?.dokumenter?.firstOrNull()?.dokumentInfoId   // Søknaden er alltid  første elementet
 
     private fun query() = query<ArkivOppslagJournalposter>(graphQL, DOKUMENTER_QUERY, ctx.getFnr().fnr)
-        ?.journalposter
+        ?.journalposter.also {
+            log.trace("GraphQL oppslag returnerte $it")
+        }
 }
 
 @Component
