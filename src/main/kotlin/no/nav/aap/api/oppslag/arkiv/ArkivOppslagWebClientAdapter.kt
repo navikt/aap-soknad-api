@@ -2,7 +2,8 @@ package no.nav.aap.api.oppslag.arkiv
 
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import java.time.Instant
-import java.time.ZoneOffset
+import java.time.LocalDateTime
+import java.time.ZoneId.systemDefault
 import java.util.*
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.DOKUMENTER_QUERY
@@ -75,9 +76,12 @@ class ArkivOppslagMapper {
                         eksternReferanseId,
                         relevanteDatoer.first {
                             it.datotype == DATO_OPPRETTET
-                        }.dato.toInstant(ZoneOffset.UTC))
+                        }.dato.asInstant())
             }.sortedByDescending { it.dato }
         }
+
+    private fun LocalDateTime.asInstant() = atZone(systemDefault()).toInstant()
+
 
     data class DokumentOversiktInnslag(val journalpostId: String,
                                        val dokumentId: String,
