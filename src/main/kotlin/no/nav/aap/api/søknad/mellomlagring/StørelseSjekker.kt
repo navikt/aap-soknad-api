@@ -14,7 +14,7 @@ class StørelseSjekker(private val lager: Storage) {
 
     fun størrelse(bøtte: String, fnr: Fødselsnummer) {
 
-        lager.list(bøtte, prefix(fnr.fnr), currentDirectory()).iterateAll().forEach {
+        lager.list(bøtte, prefix("${fnr.fnr}/"), currentDirectory()).iterateAll().forEach {
             log.info("(${fnr.fnr})  $bøtte : ${it.name} -> ${it.size}")
         }
     }
