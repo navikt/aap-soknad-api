@@ -9,6 +9,7 @@ import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.BUCKETS
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
+import org.springframework.util.unit.DataSize
 
 @ConfigurationProperties(BUCKETS)
 @ConstructorBinding
@@ -29,7 +30,7 @@ data class BucketConfig(val project: String,
         data class Purring(val enabled: Boolean, val delay: Long, val eldreEnn: Duration)
     }
 
-    data class VedleggBucketConfig(val navn: String, val typer: List<String>)
+    data class VedleggBucketConfig(val navn: String, val maxsum: DataSize, val typer: List<String>)
 
     companion object {
         private const val REGION = "europe-north1"

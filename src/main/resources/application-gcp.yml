@@ -187,6 +187,7 @@ buckets:
       topic: ${mellomlagring.navn}-topic2
   vedlegg:
     navn: ${vedlegg.navn}
+    maxsum: 200MB
     typer:
       - application/pdf
       - image/jpeg
