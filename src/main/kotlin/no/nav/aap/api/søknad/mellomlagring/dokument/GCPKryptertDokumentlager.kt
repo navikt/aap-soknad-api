@@ -15,6 +15,7 @@ import no.nav.aap.api.error.Substatus.UNSUPPORTED
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
+import no.nav.aap.api.søknad.mellomlagring.StørelseSjekker
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.VedleggAware
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Component
 class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                                private val lager: Storage,
                                private val ctx: AuthContext,
+                               private val størrelseSjekker: StørelseSjekker,
                                private val sjekkere: List<DokumentSjekker>): Dokumentlager {
 
 
@@ -45,6 +47,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     fun lagreDokument(dokument: DokumentInfo, fnr: Fødselsnummer) =
         callIdAsUUID().apply {
             with(dokument) {
+                størrelseSjekker.størrelse(cfg.vedlegg.navn,fnr)
                 val navn = navn(fnr, this@apply)
                 sjekkere.forEach { it.sjekk(this) }
                 log.trace("Lagrer $this")
