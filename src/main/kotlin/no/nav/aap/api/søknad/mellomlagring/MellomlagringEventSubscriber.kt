@@ -58,13 +58,13 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
         metadata?.let {
             with(it) {
                 registry.gauge(MELLOMLAGRING, mellomlagrede.inc())
-                log.trace(CONFIDENTIAL, "Oppretter beskjed fra metadata $it")
+                log.trace("Oppretter beskjed fra metadata $it")
                 dittNav.opprettBeskjed(fnr,
                         "Du har en påbegynt ${type.tittel}",
                         eventId = eventId,
                         type = SØKNADSTD,
                         eksternVarsling = false).also {
-                    log.trace(CONFIDENTIAL, "Opprettet beskjed fra metadata OK")
+                    log.trace("Opprettet beskjed fra metadata OK")
                 }
             }
         } ?: log.warn("Fant ikke forventede metadata")

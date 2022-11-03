@@ -56,6 +56,7 @@
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="secureJson"/>
         </logger>
+        <logger name="no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber" level="trace" />
         <logger name="no.nav.aap.api.søknad.minside.LoggingEntityListener" level="trace" />
         <logger name="no.nav.aap" level="info"/>
         <logger name="org.apache.pdfbox.pdmodel.font" level="error" />
