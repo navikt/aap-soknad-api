@@ -111,6 +111,5 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
 
     @DeleteMapping("vedlegg/slettAlle/{fnr}")
     @ResponseStatus(NO_CONTENT)
-    fun slettAlleDokumenter(@PathVariable fnr: Fødselsnummer) =
-        dokumentLager.slettAlle(fnr)
+    fun slettAlleDokumenter(@PathVariable fnr: Fødselsnummer) = dokumentLager.slettAlleDokumenter(fnr)
 }

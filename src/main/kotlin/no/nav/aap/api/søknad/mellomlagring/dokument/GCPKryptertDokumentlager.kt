@@ -124,7 +124,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
             slettDokument(id, fnr)
         }
 
-    fun slettAlle(fnr: Fødselsnummer) =
+    fun slettAlleDokumenter(fnr: Fødselsnummer) =
         lager.list(cfg.vedlegg.navn, BlobListOption.prefix("${fnr.fnr}/"), BlobListOption.currentDirectory())
             .iterateAll()
             .forEach{ it.delete() }
