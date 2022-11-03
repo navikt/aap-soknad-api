@@ -72,9 +72,9 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
         metadata?.let {
             with(it) {
                 registry.gauge(MELLOMLAGRING,mellomlagrede.decIfPositive())
-                log.trace(CONFIDENTIAL, "Sletter beskjed fra metadata $it")
+                log.info( "Sletter beskjed fra metadata $it")
                 dittNav.avsluttBeskjed(fnr, eventId, type).also {
-                    log.trace(CONFIDENTIAL, "Slettet beskjed fra metadata OK")
+                    log.info("Slettet beskjed fra metadata OK")
                 }
             }
         } ?: log.warn("Fant ikke forventede metadata")

@@ -51,7 +51,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
             if (enabled) {
                 log.trace(CONFIDENTIAL, "Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
-                        beskjed(tekst, varighet,type, eksternVarsling)))
+                        beskjed("$tekst ($eventId)", varighet,type, eksternVarsling)))
                     .addCallback(SendCallback("opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling"))
                 repos.beskjeder.save(Beskjed(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
             }
