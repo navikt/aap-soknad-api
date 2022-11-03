@@ -43,6 +43,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                 with(event.pubsubMessage) {
                     val type = eventType()
                     log.trace(CONFIDENTIAL, "Data i $type  er ${data.toStringUtf8()}, attributter er $attributesMap")
+                    log.info("PubSub event $type med metaadata ${metadata()}")
                     when (type) {
                         OBJECT_FINALIZE -> opprettet(metadata())
                         OBJECT_DELETE -> slettet(metadata())
