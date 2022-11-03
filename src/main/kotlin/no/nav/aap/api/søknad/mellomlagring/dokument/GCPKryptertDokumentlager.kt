@@ -8,6 +8,7 @@ import com.google.cloud.storage.Storage.BlobField.CONTENT_TYPE
 import com.google.cloud.storage.Storage.BlobField.SIZE
 import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
 import com.google.cloud.storage.Storage.BlobGetOption.fields
+import com.google.cloud.storage.Storage.BlobListOption
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import io.micrometer.core.annotation.Timed
 import java.util.*
@@ -122,6 +123,12 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
         uuid?.let { id ->
             slettDokument(id, fnr)
         }
+
+    fun slettAlle(fnr: Fødselsnummer) =
+        lager.list(cfg.vedlegg.navn, BlobListOption.prefix("${fnr.fnr}/"), BlobListOption.currentDirectory())
+            .iterateAll()
+            .forEach{ it.delete() }
+    }
 
     @Component
     class ContentTypeDokumentSjekker(private val cfg: BucketConfig) : DokumentSjekker {

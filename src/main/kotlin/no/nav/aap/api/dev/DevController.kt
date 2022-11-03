@@ -106,6 +106,11 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
 
     @DeleteMapping("vedlegg/slett/{fnr}")
     @ResponseStatus(NO_CONTENT)
-    fun slettDokument(@PathVariable fnr: Fødselsnummer, @RequestParam vararg uuids: UUID) =
+    fun slettDokument(@PathVariable fnr: Fødselsnummer, @RequestParam vararg uuids: UUID?) =
         dokumentLager.slettUUIDs(uuids.toList(), fnr)
+
+    @DeleteMapping("vedlegg/slettAlle/{fnr}")
+    @ResponseStatus(NO_CONTENT)
+    fun slettAlleDokumenter(@PathVariable fnr: Fødselsnummer) =
+        dokumentLager.slettAlle(fnr)
 }
