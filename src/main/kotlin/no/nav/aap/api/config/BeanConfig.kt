@@ -1,6 +1,7 @@
 package no.nav.aap.api.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
@@ -84,6 +85,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                 JavaTimeModule(),
                 TokenXJacksonModule(),
                 KotlinModule.Builder().build())
+            .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     }
 
     @Bean
