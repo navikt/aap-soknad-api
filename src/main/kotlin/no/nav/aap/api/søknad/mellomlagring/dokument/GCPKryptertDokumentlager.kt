@@ -128,7 +128,6 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
         lager.list(cfg.vedlegg.navn, BlobListOption.prefix("${fnr.fnr}/"), BlobListOption.currentDirectory())
             .iterateAll()
             .forEach{ it.delete() }
-    }
 
     @Component
     class ContentTypeDokumentSjekker(private val cfg: BucketConfig) : DokumentSjekker {
