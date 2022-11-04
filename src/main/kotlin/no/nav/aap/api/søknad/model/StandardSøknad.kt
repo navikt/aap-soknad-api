@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.model
 
 import com.fasterxml.jackson.annotation.JsonAlias
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.TreeNode
@@ -38,7 +39,7 @@ import no.nav.aap.util.LoggerUtil.getLogger
 data class Innsending(
         val søknad: StandardSøknad,
         val kvittering: PDFKvittering)
-
+@JsonIgnoreProperties(value= ["vedlegg"], allowSetters = true)
 data class StandardSøknad(
         val sykepenger: Boolean,
         val ferie: Ferie?,
@@ -222,6 +223,7 @@ data class Utenlandsopphold(val land: CountryCode,
 }
 
 data class BarnOgInntekt(val merEnnIG: Boolean? = false)
+@JsonIgnoreProperties(value= ["vedlegg"], allowSetters = true)
 data class AnnetBarnOgInntekt(val barn: Barn,
                               val relasjon: Relasjon = FORELDER,
                               val merEnnIG: Boolean? = false,
@@ -242,9 +244,11 @@ enum class RadioValg {
 data class Utbetalinger(val ekstraFraArbeidsgiver: FraArbeidsgiver,
                         @JsonAlias("stønadstyper") val andreStønader: List<AnnenStønad> = emptyList()) {
 
+    @JsonIgnoreProperties(value= ["vedlegg"], allowSetters = true)
     data class FraArbeidsgiver(val fraArbeidsgiver: Boolean,
                                override val vedlegg: Vedlegg? = null) : VedleggAware
 
+    @JsonIgnoreProperties(value= ["vedlegg"], allowSetters = true)
     data class AnnenStønad(val type: AnnenStønadstype,
                            val hvemUtbetalerAFP: String? = null,
                            override val vedlegg: Vedlegg? = null) : VedleggAware {

@@ -19,6 +19,7 @@ import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.KontaktInformasjon
 import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
+import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
 import no.nav.aap.api.søknad.model.BarnOgInntekt
 import no.nav.aap.api.søknad.model.Medlemskap
 import no.nav.aap.api.søknad.model.RadioValg
@@ -166,7 +167,7 @@ class SøknadTest {
 
     @Test
     fun date() {
-        println(mapper.writeValueAsString(LocalDateTime.now().asInstant()))
+        println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(standardSøknad()))
     }
 
     private fun LocalDateTime.asInstant() = atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toInstant()
@@ -203,7 +204,7 @@ class SøknadTest {
                                 UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD))),
                 "Tillegg",
                 listOf(BarnOgInntekt(true)),
-                listOf(AnnetBarnOgInntekt(Barn(Navn("Et", "ekstra", "Barn"), now().minusYears(14)))), Vedlegg(deler = listOf(UUID.randomUUID(),
+                listOf(AnnetBarnOgInntekt(Barn(Navn("Et", "ekstra", "Barn"), now().minusYears(14)),FORELDER,false,Vedlegg(deler = listOf(UUID.randomUUID())))), Vedlegg(deler = listOf(UUID.randomUUID(),
                 UUID.randomUUID())))
     }
 
