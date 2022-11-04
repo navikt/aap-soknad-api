@@ -26,7 +26,7 @@ class FordelingBeanConfig {
     fun vlHealthIndicator(adapter: VLPingable) = object : AbstractPingableHealthIndicator(adapter) {}
 
     @Bean
-    fun VLKafkaOperations(p: KafkaProperties, mapper: ObjectMapper): KafkaTemplate<String, Any> =
+    fun VLKafkaOperations(p: KafkaProperties, mapper: ObjectMapper) =
         KafkaTemplate(DefaultKafkaProducerFactory<String, Any>(p.buildProducerProperties()).apply {
             setValueSerializer(JsonSerializer(mapper))
         })
