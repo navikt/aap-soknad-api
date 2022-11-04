@@ -1,7 +1,6 @@
 package no.nav.aap.api.søknad.model
 
 import com.fasterxml.jackson.annotation.JsonAlias
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.TreeNode
@@ -40,20 +39,28 @@ data class Innsending(
         val søknad: StandardSøknad,
         val kvittering: PDFKvittering)
 
-@JsonIgnoreProperties(ignoreUnknown = true) // MIdlertidig
 data class StandardSøknad(
+        val sykepenger: Boolean,
+        val ferie: Ferie?,
         val studier: Studier,
         val medlemsskap: Medlemskap,
         val registrerteBehandlere: List<RegistrertBehandler> = emptyList(),
         val andreBehandlere: List<AnnenBehandler> = emptyList(),
         val yrkesskadeType: Yrkesskade,
         val utbetalinger: Utbetalinger?,
+        val tilleggsopplysninger: String?,
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
         val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         override val vedlegg: Vedlegg? = null) : VedleggAware {
 
     var fødselsdato : LocalDate? = null
     val innsendingTidspunkt = now()
+
+    data class Ferie(val ferietype: FerieType, var periode: Periode?, var dager: Int?) {
+        enum class FerieType {
+            PERIODE, DAGER,NEI
+        }
+    }
 
     enum class Yrkesskade { JA, NEI }
 

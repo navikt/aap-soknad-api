@@ -184,6 +184,8 @@ class SøknadTest {
         }
 
         fun standardSøknad() = StandardSøknad(
+                false,
+                null,
                 Studier(NEI, RadioValg.NEI),
                 Medlemskap(true, null, null, null,
                         listOf(Utenlandsopphold(SE,
@@ -199,6 +201,7 @@ class SøknadTest {
                 Utbetalinger(
                         FraArbeidsgiver(true, Vedlegg(deler = listOf(UUID.randomUUID(),
                                 UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD))),
+                "Tillegg",
                 listOf(BarnOgInntekt(true)),
                 listOf(AnnetBarnOgInntekt(Barn(Navn("Et", "ekstra", "Barn"), now().minusYears(14)))), Vedlegg(deler = listOf(UUID.randomUUID(),
                 UUID.randomUUID())))
