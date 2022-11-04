@@ -132,7 +132,7 @@ class ArkivJournalpostGenerator(
             val pdfs = vedlegg[APPLICATION_PDF_VALUE] ?: mutableListOf()
             val jpgs = vedlegg[IMAGE_JPEG_VALUE] ?: emptyList()
             val pngs = vedlegg[IMAGE_PNG_VALUE] ?: emptyList()
-            pdfs.map { it.somDokument(type.tittel) }.toMutableList().apply {
+            pdfs.map { it.somDokument(type.tittel,skjemaType?.kode) }.toMutableList().apply {
                 if (jpgs.isNotEmpty()) {
                     add(konverterer.tilPdf(IMAGE_JPEG, jpgs.map(DokumentInfo::bytes)).somDokument(type.tittel,skjemaType?.kode))
                 }
