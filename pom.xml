@@ -32,6 +32,7 @@
         <kotlin.version>1.7.20</kotlin.version>
         <logstash.version>7.2</logstash.version>
         <mock-oauth2-server.version>0.3.6</mock-oauth2-server.version>
+        <neovisionaries.version>1.29</neovisionaries.version>
         <okhttp3.version>4.9.1</okhttp3.version>
         <pdfbox.version>2.0.27</pdfbox.version>
         <problem.version>0.27.0</problem.version>
@@ -93,7 +94,7 @@
         <dependency>
             <groupId>com.neovisionaries</groupId>
             <artifactId>nv-i18n</artifactId>
-            <version>1.29</version>
+            <version>${neovisionaries.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
