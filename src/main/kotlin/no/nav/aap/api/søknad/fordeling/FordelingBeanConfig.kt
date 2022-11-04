@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.fordeling
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.config.BeanConfig.AbstractKafkaHealthIndicator
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig.Companion.VL
@@ -27,6 +28,7 @@ class FordelingBeanConfig {
     @Bean
     fun vlFordelingTemplate(p: KafkaProperties, mapper: ObjectMapper) =
         KafkaTemplate(DefaultKafkaProducerFactory<String, Any>(p.buildProducerProperties()).apply {
-            setValueSerializer(JsonSerializer(mapper))
+            setValueSerializer(JsonSerializer(mapper.copy()
+                .setDefaultPropertyInclusion(ALWAYS)))
         })
 }

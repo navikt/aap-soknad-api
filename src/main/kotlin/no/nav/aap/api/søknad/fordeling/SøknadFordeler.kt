@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.MeterRegistry
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
 import java.time.Month.NOVEMBER
+import no.nav.aap.api.config.EnvExtensions.Companion.isProd
 import no.nav.aap.api.config.Metrikker.SØKNADER
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
@@ -16,7 +17,6 @@ import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.boot.conditionals.EnvUtil.isProd
 import org.springframework.context.EnvironmentAware
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
@@ -42,7 +42,7 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
 
     override fun fordel(innsending: Innsending) =
         pdl.søkerMedBarn().run {
-            if (isProd(env) && now().isBefore(PRODDATO)) {
+            if (env.isProd() && now().isBefore(PRODDATO)) {
                 EMPTY.also {
                     log.warn("Ingen formidling i prod før $PRODDATO")
                 }
@@ -60,7 +60,6 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
     override fun fordel(e: StandardEttersending) =
     pdl.søkerUtenBarn().run {
         registry.counter(SØKNADER,"type", STANDARD_ETTERSENDING.name.lowercase()).increment()
-        log.trace("Fordeler $e")
             with(arkiv.fordel(e, this)) {
                 vlFordeler.fordel(e, fnr, journalpostId, cfg.ettersending)
                 fullfører.fullfør(this@run.fnr, e, this)
@@ -76,9 +75,9 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
             }
         }
 
-    data class Kvittering(val journalpostId: String) {
+    data class Kvittering(val journalpostId: String = "0") {
         companion object {
-            val EMPTY = Kvittering("0")
+            val EMPTY = Kvittering()
         }
     }
 
