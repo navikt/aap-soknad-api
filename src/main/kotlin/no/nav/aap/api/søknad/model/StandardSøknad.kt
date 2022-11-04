@@ -1,7 +1,6 @@
 package no.nav.aap.api.søknad.model
 
 import com.fasterxml.jackson.annotation.JsonAlias
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.core.JsonParser
@@ -12,7 +11,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.TextNode
 import com.neovisionaries.i18n.CountryCode
-import com.nimbusds.openid.connect.sdk.assurance.claims.CountryCode
 import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalDateTime.now
