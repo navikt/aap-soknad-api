@@ -12,7 +12,7 @@ env:
 
 jobs:
     bygg:
-        runs-on: ubuntu-latest-4-cores
+        runs-on: ubuntu-latest
         outputs:
             image: ${{ steps.kompiler.outputs.image }}
         steps:
