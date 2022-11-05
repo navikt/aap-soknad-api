@@ -29,12 +29,12 @@ import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.springframework.kafka.core.KafkaOperations
+import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.util.UriComponentsBuilder.fromUri
 
 @ConditionalOnGCP
-class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
+class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                     private val cfg: MinSideConfig,
                     private val repos: MinSideRepositories) {
 
@@ -50,10 +50,12 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         with(cfg.beskjed) {
             if (enabled) {
                 log.info("Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
-                        beskjed("$tekst ($eventId)", varighet,type, eksternVarsling)))
-                    .addCallback(SendCallback("opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling"))
-                repos.beskjeder.save(Beskjed(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
+                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), beskjed("$tekst ($eventId)", varighet,type, eksternVarsling)))
+                   // .addCallback(SendCallback("opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling"))
+                    .get().run {
+                        log.info("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling for $fnr, offset ${this.recordMetadata.offset()} partition${this.recordMetadata.partition()}på topic ${this.recordMetadata.topic()}")
+                        repos.beskjeder.save(Beskjed(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
+                    }
             }
             else {
                 log.info("Oppretter ikke beskjed i Ditt Nav for $fnr")
@@ -91,7 +93,6 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                     avsluttMinSide(it.eventid, fnr, OPPGAVE, type)
                     it.done = true
                 } ?: log.warn("Kunne ikke finne oppgave med eventid $eventId for fnr $fnr i DB, allerede avsluttet?. Avslutter på Min Side likevel").also {
-                    avsluttMinSide(eventId, fnr, OPPGAVE, type)
                 }
             }
             else {
@@ -104,12 +105,9 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     fun avsluttBeskjed(fnr: Fødselsnummer, eventId: UUID, type: SkjemaType = STANDARD) =
         with(cfg.beskjed) {
             if (enabled) {
+                avsluttMinSide(eventId, fnr, BESKJED, type)
                 repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
-                    avsluttMinSide(it.eventid, fnr, BESKJED, type)
                     it.done = true
-
-                } ?: log.warn("Kunne ikke avslutte beskjed med eventid $eventId for fnr $fnr i DB, allerede avsluttet?. Avslutter på Min Side likevel").also {
-                    avsluttMinSide(eventId, fnr, BESKJED, type)
                 }
             }
             else {
@@ -118,13 +116,14 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         }
 
     private fun avsluttMinSide(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType, type: SkjemaType = STANDARD) =
-        minside.send(ProducerRecord(cfg.done, key(type,eventId, fnr), done()))
-            .addCallback(SendCallback("avslutt $notifikasjonType med eventid $eventId")).also {
-                when (notifikasjonType) {
-                   OPPGAVE -> oppgaverAvsluttet.increment()
-                   BESKJED -> beskjederAvsluttet.increment()
-                }
+        minside.send(ProducerRecord(cfg.done, key(type,eventId, fnr), done())).get().also {
+            when (notifikasjonType) {
+                OPPGAVE -> oppgaverAvsluttet.increment()
+                BESKJED -> beskjederAvsluttet.increment()
             }
+        }
+    // .addCallback(SendCallback("avslutt $notifikasjonType med eventid $eventId")).also {
+
 
 
     private fun beskjed(tekst: String, varighet: Duration, type: MinSideNotifikasjonType, eksternVarsling: Boolean) =
