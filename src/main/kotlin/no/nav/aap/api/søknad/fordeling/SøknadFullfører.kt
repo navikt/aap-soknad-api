@@ -23,6 +23,7 @@ import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil
+import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.aap.util.StringExtensions.decap
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -59,7 +60,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                         registry.counter(INNSENDTE,"type",it.name.lowercase()).increment()
                     }
                 }
-                Kvittering(journalpostId)
+                Kvittering(journalpostId,søknad.innsendingTidspunkt, callIdAsUUID())
             }
         }
 

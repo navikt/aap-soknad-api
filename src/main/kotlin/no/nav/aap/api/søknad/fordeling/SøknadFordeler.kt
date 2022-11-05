@@ -4,7 +4,7 @@ import io.micrometer.core.instrument.MeterRegistry
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
 import java.time.Month.NOVEMBER
-import no.nav.aap.api.config.EnvExtensions.Companion.isProd
+import java.util.*
 import no.nav.aap.api.config.Metrikker.SØKNADER
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
@@ -16,6 +16,7 @@ import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.api.søknad.model.UtlandSøknad
+import no.nav.aap.util.EnvExtensions.isProd
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.context.EnvironmentAware
 import org.springframework.core.env.Environment
@@ -75,7 +76,7 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
             }
         }
 
-    data class Kvittering(val journalpostId: String = "0") {
+    data class Kvittering(val journalpostId: String = "0", val tidspunkt: LocalDateTime = now(),val uuid: UUID? = null) {
         companion object {
             val EMPTY = Kvittering()
         }
