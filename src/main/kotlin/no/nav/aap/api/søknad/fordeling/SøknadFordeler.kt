@@ -18,7 +18,6 @@ import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.EnvExtensions.isProd
 import no.nav.aap.util.LoggerUtil.getLogger
-import org.springframework.context.EnvironmentAware
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
 
@@ -35,11 +34,10 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
                      private val fullfører: SøknadFullfører,
                      private val cfg: VLFordelingConfig,
                      private val vlFordeler: SøknadVLFordeler,
-                     private val registry: MeterRegistry
-                     ) : Fordeler, EnvironmentAware {
+                     private val registry: MeterRegistry,
+                     private val env: Environment) : Fordeler {
     private val log = getLogger(javaClass)
 
-    private lateinit var env: Environment
 
     override fun fordel(innsending: Innsending) =
         pdl.søkerMedBarn().run {
@@ -80,10 +78,6 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
         companion object {
             val EMPTY = Kvittering()
         }
-    }
-
-    override fun setEnvironment(env: Environment) {
-        this.env  = env
     }
 
     companion object {

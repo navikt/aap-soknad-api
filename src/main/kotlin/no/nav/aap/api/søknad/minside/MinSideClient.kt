@@ -59,7 +59,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                     }
             }
             else {
-                log.info("Oppretter ikke beskjed i Ditt Nav for $fnr")
+                log.trace("Oppretter ikke beskjed i Ditt Nav for $fnr")
                 null
             }
         }
@@ -80,7 +80,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 repos.oppgaver.save(Oppgave(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
             }
             else {
-                log.info("Oppretter ikke oppgave i Min Side for $fnr")
+                log.trace("Oppretter ikke oppgave i Min Side for $fnr")
                 null
             }
         }
@@ -97,7 +97,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 }
             }
             else {
-                log.info("Sender ikke avslutt oppgave til Ditt Nav for $fnr")
+                log.trace("Sender ikke avslutt oppgave til Ditt Nav for $fnr")
             }
         }
 
@@ -112,7 +112,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 }
             }
             else {
-                log.info("Sender ikke avslutt beskjed til Min Side for beskjed for $fnr")
+                log.trace("Sender ikke avslutt beskjed til Min Side for beskjed for $fnr")
             }
         }
     @Transactional
@@ -127,7 +127,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 }
             }
             else {
-                log.info("Sender ikke avslutt tiligere ikke-avsluttede beskjeder til Min Side for beskjed for $fnr")
+                log.trace("Sender ikke avslutt tiligere ikke-avsluttede beskjeder til Min Side for beskjed for $fnr")
             }
         }
 
@@ -137,7 +137,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 OPPGAVE -> oppgaverAvsluttet.increment()
                 BESKJED -> beskjederAvsluttet.increment()
             }.also {
-                log.info("Sendte avslutt $notifikasjonType med eventid $eventId  for $fnr, offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                log.trace("Sendte avslutt $notifikasjonType med eventid $eventId  for $fnr, offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
             }
         }
     // .addCallback(SendCallback("avslutt $notifikasjonType med eventid $eventId")).also {
