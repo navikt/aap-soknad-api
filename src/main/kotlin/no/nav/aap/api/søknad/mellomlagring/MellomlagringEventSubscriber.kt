@@ -63,11 +63,12 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
             dittNav.opprettBeskjed(fnr,
                     "Du har en påbegynt ${type.tittel}",
                     eventId = eventId,
+                    mellomlagring = true,
                     type = SØKNADSTD,
                     eksternVarsling = false).also { _ ->
                 log.trace("Opprettet beskjed fra metadata $this OK")
             }
-            dittNav.avsluttAlleTidligereUavsluttedeBeskjeder(metadata.fnr,eventId)
+            dittNav.avsluttAlleTidligereUavsluttedeBeskjederOmMellomlagring(metadata.fnr,eventId)
         }
 
     private fun slettet(metadata: Metadata) =

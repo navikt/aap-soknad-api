@@ -32,7 +32,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
                     repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(it.first.fnr,it.third)?.let { _ ->
                         log.trace("Avslutter gammel beskjed om mellomlagring og oppretter ny om snart utgått mellomlagring")
                         minside.avsluttBeskjed(it.first, it.third)
-                        minside.opprettBeskjed(it.first,"Din mellomlagrede søknad fjernes snart", UUID.randomUUID(), MINAAPSTD,true)
+                        minside.opprettBeskjed(it.first,"Din mellomlagrede søknad fjernes snart",  UUID.randomUUID(),false, MINAAPSTD,true)
                     } ?: log.trace("Oppretter ingn beskjed om snart utgått mellomlagret søknad ")
                 }
             }

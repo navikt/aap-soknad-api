@@ -45,6 +45,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
     fun opprettBeskjed(fnr: Fødselsnummer,
                        tekst: String,
                        eventId: UUID = callIdAsUUID(),
+                       mellomlagring: Boolean = false,
                        type: MinSideNotifikasjonType = MINAAPSTD,
                        eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
@@ -54,7 +55,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                    // .addCallback(SendCallback("opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling"))
                     .get().run {
                         log.info("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling for $fnr, offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
-                        repos.beskjeder.save(Beskjed(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
+                        repos.beskjeder.save(Beskjed(fnr.fnr, eventId, mellomlagring = mellomlagring,ekstern = eksternVarsling)).eventid
                     }
             }
             else {
@@ -116,11 +117,11 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
         }
     @Transactional
     @Counted(value = "soknad.beskjed.avsluttet", description = "Antall beskjeder avsluttet")
-    fun avsluttAlleTidligereUavsluttedeBeskjeder(fnr: Fødselsnummer, sisteEventid: UUID, type: SkjemaType = STANDARD) =
+    fun avsluttAlleTidligereUavsluttedeBeskjederOmMellomlagring(fnr: Fødselsnummer, sisteEventid: UUID, type: SkjemaType = STANDARD) =
         with(cfg.beskjed) {
             if (enabled) {
-                repos.beskjeder.findByFnrAndDoneIsFalseAndEventidNot(fnr.fnr, sisteEventid).forEach {
-                    log.trace("Avsutter tidligere, ikke-avsluttet beskjed $it   ")
+                repos.beskjeder.findByFnrAndDoneIsFalseAndMellomlagringIsFalseAndEventidNot(fnr.fnr, sisteEventid).forEach {
+                    log.trace("Avsutter tidligere, ikke-avsluttede beskjed $it   ")
                     avsluttMinSide(it.eventid, fnr, BESKJED, type)
                     it.done = true
                 }
