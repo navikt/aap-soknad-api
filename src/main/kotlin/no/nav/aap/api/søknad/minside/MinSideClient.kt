@@ -121,7 +121,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
         with(cfg.beskjed) {
             if (enabled) {
                 repos.beskjeder.findByFnrAndDoneIsFalseAndMellomlagringIsFalseAndEventidNot(fnr.fnr, sisteEventid).forEach {
-                    log.trace("Avsutter tidligere, ikke-avsluttede beskjed $it   ")
+                    log.trace("Avsslutter tidligere, ikke-avsluttet beskjed $it")
                     avsluttMinSide(it.eventid, fnr, BESKJED, type)
                     it.done = true
                 }
