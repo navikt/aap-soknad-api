@@ -16,7 +16,7 @@ interface MinSideBeskjedRepository : MinSideRepository<Beskjed> {
     @Table(name = "minsidebeskjeder")
     class Beskjed(fnr: String,
                   eventid: UUID,
-                  mellomlagring: Boolean = false,
+                  val mellomlagring: Boolean = false,
                   done: Boolean = false,
                   ekstern: Boolean = false,
                   @OneToMany(mappedBy = "beskjed", cascade = [ALL], orphanRemoval = true)
