@@ -12,6 +12,9 @@ import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
 
 interface MinSideBeskjedRepository : MinSideRepository<Beskjed> {
 
+    fun findByFnrAndDoneIsFalseAndMellomlagringIsFalseAndEventidNot(fnr: String, eventid: UUID): List<Beskjed>
+
+
     @Entity(name = "beskjed")
     @Table(name = "minsidebeskjeder")
     class Beskjed(fnr: String,
