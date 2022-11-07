@@ -43,42 +43,40 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                 with(event.pubsubMessage) {
                     val type = eventType()
                     log.trace(CONFIDENTIAL, "Data i $type  er ${data.toStringUtf8()}, attributter er $attributesMap")
-                    log.info("PubSub event $type med metaadata ${metadata()}")
-                    when (type) {
-                        OBJECT_FINALIZE -> opprettet(metadata())
-                        OBJECT_DELETE -> slettet(metadata())
-                        else -> log.warn("Event $type ikke håndtert (dette skal aldri skje)")
-                    }
+                    metadata()?.let {
+                        log.info("PubSub event $type med metadata $it")
+                        when (type) {
+                            OBJECT_FINALIZE -> opprettet(it)
+                            OBJECT_DELETE -> slettet(it)
+                            else -> log.warn("Event $type ikke håndtert (dette skal aldri skje)")
+                        }
+                    } ?: log.warn("Fant ikke forventede metadata i event $event")
                 }
             }
         }
     }
 
-    private fun opprettet(metadata: Metadata?) =
-        metadata?.let {
-            with(it) {
-                registry.gauge(MELLOMLAGRING, mellomlagrede.inc())
-                log.trace("Oppretter beskjed fra metadata $it")
-                dittNav.opprettBeskjed(fnr,
-                        "Du har en påbegynt ${type.tittel}",
-                        eventId = eventId,
-                        type = SØKNADSTD,
-                        eksternVarsling = false).also {
-                    log.trace("Opprettet beskjed fra metadata OK")
-                }
+    private fun opprettet(metadata: Metadata) =
+        with(metadata) {
+            registry.gauge(MELLOMLAGRING, mellomlagrede.inc())
+            log.trace("Oppretter beskjed fra metadata $this")
+            dittNav.opprettBeskjed(fnr,
+                    "Du har en påbegynt ${type.tittel}",
+                    eventId = eventId,
+                    type = SØKNADSTD,
+                    eksternVarsling = false).also { _ ->
+                log.trace("Opprettet beskjed fra metadata $this OK")
             }
-        } ?: log.warn("Fant ikke forventede metadata")
+        }
 
-    private fun slettet(metadata: Metadata?) =
-        metadata?.let {
-            with(it) {
-                registry.gauge(MELLOMLAGRING,mellomlagrede.decIfPositive())
-                log.info( "Sletter beskjed fra metadata $it")
-                dittNav.avsluttBeskjed(fnr, eventId, type).also {
-                    log.info("Slettet beskjed fra metadata OK")
-                }
+    private fun slettet(metadata: Metadata) =
+        with(metadata) {
+            registry.gauge(MELLOMLAGRING,mellomlagrede.decIfPositive())
+            log.info( "Sletter beskjed fra metadata $this")
+            dittNav.avsluttBeskjed(fnr, eventId, type).also {_ ->
+                log.info("Slettet beskjed fra metadata $this OK")
             }
-        } ?: log.warn("Fant ikke forventede metadata")
+        }
 
     private fun PubsubMessage.data() = mapper.readValue<Map<String, Any>>(data.toStringUtf8())
     private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
@@ -92,7 +90,9 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                     getInstance(it[SKJEMATYPE], this[0], it[UUID_])
                 }
             }
-            else null
+            else {
+                null
+            }
         }
 
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val eventId: UUID) {
