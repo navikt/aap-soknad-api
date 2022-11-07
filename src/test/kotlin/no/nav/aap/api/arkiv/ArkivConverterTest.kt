@@ -2,6 +2,7 @@ package no.nav.aap.api.arkiv
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.nav.aap.api.OMPersoner
+import no.nav.aap.api.OMSøknad
 import no.nav.aap.api.søknad.SøknadTest
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
@@ -62,7 +63,7 @@ class ArkivConverterTest {
             .thenReturn(dokinfo1)
             .thenReturn(dokinfo2)
 
-        val søknad = Innsending(SøknadTest.standardSøknad(), PDFKvittering(listOf(),LocalDateTime.now()))
+        val søknad = Innsending(OMSøknad.standard_soknad(), PDFKvittering(listOf(),LocalDateTime.now()))
         val søker = OMPersoner.ole_olsen()
         val c = ArkivJournalpostGenerator(mapper, lager, pdf, PDFFraBildeFKonverterer(BildeSkalerer()))
         val converted = c.journalpostFra(søknad, søker)
