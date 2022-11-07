@@ -1,6 +1,10 @@
 package no.nav.aap.api.arkiv
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import no.nav.aap.api.OMDokumenter.Companion.landscape
+import no.nav.aap.api.OMDokumenter.Companion.med_passord
+import no.nav.aap.api.OMDokumenter.Companion.rdd
+import no.nav.aap.api.OMDokumenter.Companion.test123
 import no.nav.aap.api.OMPersoner
 import no.nav.aap.api.OMSøknad
 import no.nav.aap.api.søknad.SøknadTest
@@ -14,6 +18,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.PDFKvittering
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.any
 import org.mockito.Mockito.`when`
@@ -43,18 +48,12 @@ class ArkivConverterTest {
     @Mock
     lateinit var pdf: PDFGenerator
 
-    // @Test
+    //@Test
     fun convert() {
-        val bytes = bytesFra("pdf/test123.pdf")
-        val bytes1 = bytesFra("pdf/rdd.png")
-        val bytes2 = bytesFra("pdf/landscape.jpg")
 
-        val dokinfo = DokumentInfo(bytes, "test123.pdf, APPLICATION_PDF_VALUE ")
-        val dokinfo1 = DokumentInfo(bytes1, "rdd.png", IMAGE_PNG_VALUE)
-        val dokinfo2 = DokumentInfo(bytes2, "landscape.png", IMAGE_JPEG_VALUE)
-
-
-
+        val dokinfo = DokumentInfo(test123(), "test123.pdf, APPLICATION_PDF_VALUE ")
+        val dokinfo1 = DokumentInfo(rdd(), "rdd.png", IMAGE_PNG_VALUE)
+        val dokinfo2 = DokumentInfo(landscape(), "landscape.png", IMAGE_JPEG_VALUE)
 
         `when`(lager.lesDokument(anyObject()))
             .thenReturn(dokinfo)
