@@ -114,6 +114,21 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 log.info("Sender ikke avslutt beskjed til Min Side for beskjed for $fnr")
             }
         }
+    @Transactional
+    @Counted(value = "soknad.beskjed.avsluttet", description = "Antall beskjeder avsluttet")
+    fun avsluttAlleTidligereUavsluttedeBeskjeder(fnr: Fødselsnummer, sisteEventid: UUID, type: SkjemaType = STANDARD) =
+        with(cfg.beskjed) {
+            if (enabled) {
+                repos.beskjeder.findByFnrAndDoneIsFalseAndEventidNotEquals(fnr.fnr, sisteEventid).forEach {
+                    log.trace("Avsutter tidligere, ikke-avsluttet beskjed $it   ")
+                    avsluttMinSide(it.eventid, fnr, BESKJED, type)
+                    it.done = true
+                }
+            }
+            else {
+                log.info("Sender ikke avslutt tiligere ikke-avsuttede beskjed til Min Side for beskjed for $fnr")
+            }
+        }
 
     private fun avsluttMinSide(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType, type: SkjemaType = STANDARD) =
         minside.send(ProducerRecord(cfg.done, key(type,eventId, fnr), done())).get().run {

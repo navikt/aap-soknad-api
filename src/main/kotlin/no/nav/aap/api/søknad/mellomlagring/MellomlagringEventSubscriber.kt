@@ -42,7 +42,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                 event.ack()
                 with(event.pubsubMessage) {
                     val type = eventType()
-                    log.trace(CONFIDENTIAL, "Data i $type  er ${data.toStringUtf8()}, attributter er $attributesMap")
+                    log.trace(CONFIDENTIAL, "Data i $type er ${data.toStringUtf8()}, attributter er $attributesMap")
                     metadata()?.let {
                         log.info("PubSub event $type med metadata $it")
                         when (type) {
@@ -50,7 +50,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                             OBJECT_DELETE -> slettet(it)
                             else -> log.warn("Event $type ikke håndtert (dette skal aldri skje)")
                         }
-                    } ?: log.warn("Fant ikke forventede metadata i event $event")
+                    } ?: log.warn("Fant ikke forventede metadata i event ${event.pubsubMessage}")
                 }
             }
         }
@@ -67,6 +67,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                     eksternVarsling = false).also { _ ->
                 log.trace("Opprettet beskjed fra metadata $this OK")
             }
+            dittNav.avsluttAlleTidligereUavsluttedeBeskjeder(metadata.fnr,eventId)
         }
 
     private fun slettet(metadata: Metadata) =
