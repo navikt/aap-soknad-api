@@ -53,7 +53,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), beskjed("$tekst ($eventId)", varighet,type, eksternVarsling)))
                    // .addCallback(SendCallback("opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling"))
                     .get().run {
-                        log.info("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling for $fnr, offset ${this.recordMetadata.offset()} partition${this.recordMetadata.partition()}på topic ${this.recordMetadata.topic()}")
+                        log.info("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling for $fnr, offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                         repos.beskjeder.save(Beskjed(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
                     }
             }
@@ -116,10 +116,12 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
         }
 
     private fun avsluttMinSide(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType, type: SkjemaType = STANDARD) =
-        minside.send(ProducerRecord(cfg.done, key(type,eventId, fnr), done())).get().also {
+        minside.send(ProducerRecord(cfg.done, key(type,eventId, fnr), done())).get().run {
             when (notifikasjonType) {
                 OPPGAVE -> oppgaverAvsluttet.increment()
                 BESKJED -> beskjederAvsluttet.increment()
+            }.also {
+                log.info("Sendte avslutt $notifikasjonType med eventid $eventId  for $fnr, offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
             }
         }
     // .addCallback(SendCallback("avslutt $notifikasjonType med eventid $eventId")).also {
