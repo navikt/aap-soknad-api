@@ -51,7 +51,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
         with(cfg.beskjed) {
             if (enabled) {
                 log.info("Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), beskjed("$tekst ($eventId)", varighet,type, eksternVarsling)))
+                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), beskjed("$tekst", varighet,type, eksternVarsling)))
                    // .addCallback(SendCallback("opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling"))
                     .get().run {
                         log.info("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling for $fnr, offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
