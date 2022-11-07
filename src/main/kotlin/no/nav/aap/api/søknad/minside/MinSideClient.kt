@@ -120,14 +120,14 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
     fun avsluttAlleTidligereUavsluttedeBeskjederOmMellomlagring(fnr: Fødselsnummer, sisteEventid: UUID, type: SkjemaType = STANDARD) =
         with(cfg.beskjed) {
             if (enabled) {
-                repos.beskjeder.findByFnrAndDoneIsFalseAndMellomlagringIsFalseAndEventidNot(fnr.fnr, sisteEventid).forEach {
-                    log.trace("Avsslutter tidligere, ikke-avsluttet beskjed $it")
+                repos.beskjeder.findByFnrAndDoneIsFalseAndMellomlagringIsTrueAndEventidNot(fnr.fnr, sisteEventid).forEach {
+                    log.trace("Avslutter tidligere, ikke-avsluttet beskjed $it")
                     avsluttMinSide(it.eventid, fnr, BESKJED, type)
                     it.done = true
                 }
             }
             else {
-                log.info("Sender ikke avslutt tiligere ikke-avsuttede beskjed til Min Side for beskjed for $fnr")
+                log.info("Sender ikke avslutt tiligere ikke-avsluttede beskjeder til Min Side for beskjed for $fnr")
             }
         }
 

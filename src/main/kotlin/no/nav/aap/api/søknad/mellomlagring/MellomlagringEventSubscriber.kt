@@ -68,7 +68,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                     eksternVarsling = false).also { _ ->
                 log.trace("Opprettet beskjed fra metadata $this OK")
             }
-            log.trace("Avslutter tidligere melomlagrede ved opprettlse")
+            log.trace("Avslutter tidligere melomlagrede ved opprettelse")
             dittNav.avsluttAlleTidligereUavsluttedeBeskjederOmMellomlagring(fnr,eventId)
         }
 
