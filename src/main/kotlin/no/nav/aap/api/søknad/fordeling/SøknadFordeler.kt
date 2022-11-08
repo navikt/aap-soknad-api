@@ -3,7 +3,6 @@ package no.nav.aap.api.søknad.fordeling
 import io.micrometer.core.instrument.MeterRegistry
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
-import java.time.Month.NOVEMBER
 import java.util.*
 import no.nav.aap.api.config.Metrikker.SØKNADER
 import no.nav.aap.api.felles.SkjemaType.STANDARD
@@ -32,8 +31,7 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
                      private val fullfører: SøknadFullfører,
                      private val cfg: VLFordelingConfig,
                      private val vlFordeler: SøknadVLFordeler,
-                     private val registry: MeterRegistry,
-                     private val env: Environment) : Fordeler {
+                     private val registry: MeterRegistry) : Fordeler {
     private val log = getLogger(javaClass)
 
 
