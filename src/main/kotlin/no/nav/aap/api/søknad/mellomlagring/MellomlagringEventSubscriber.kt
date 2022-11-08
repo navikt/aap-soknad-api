@@ -47,7 +47,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                         log.info("PubSub event $type med metadata $it")
                         when (type) {
                             OBJECT_FINALIZE -> Unit //opprettet(it) TODO vi dropper denne foreløpig
-                            OBJECT_DELETE -> slettet(it)
+                            OBJECT_DELETE -> Unit // slettet(it)
                             else -> log.warn("Event $type ikke håndtert (dette skal aldri skje)")
                         }
                     } ?: log.warn("Fant ikke forventede metadata i event ${event.pubsubMessage}")
