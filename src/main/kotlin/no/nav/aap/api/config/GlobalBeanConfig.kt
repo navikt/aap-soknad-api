@@ -70,7 +70,7 @@ import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 
 @Configuration
-class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
+class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
     val log = getLogger(javaClass)
 
     @Bean
@@ -195,7 +195,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
     abstract class AbstractKafkaHealthIndicator(private val admin: KafkaAdmin,
                                                 private val bootstrapServers: List<String>,
                                                 private val cfg: AbstractKafkaConfig) : Pingable {
-        override fun isEnabled() = cfg.isEnabled
+        override fun isEnabled() = cfg.enabled
         override fun pingEndpoint() = "$bootstrapServers"
         override fun name() = cfg.name
 
@@ -208,7 +208,7 @@ class BeanConfig(@Value("\${spring.application.name}") private val applicationNa
                     }
                 }
 
-        abstract class AbstractKafkaConfig(val name: String, val isEnabled: Boolean) {
+        abstract class AbstractKafkaConfig(val name: String, val enabled: Boolean) {
             abstract fun topics(): List<String>
         }
     }

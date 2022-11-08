@@ -7,7 +7,6 @@ import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.behandler.BehandlerClient
 import no.nav.aap.api.oppslag.konto.KontoClient
 import no.nav.aap.api.oppslag.krr.KRRClient
-import no.nav.aap.api.oppslag.krr.Kontaktinformasjon.Companion.EMPTY
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.model.SøkerInfo
@@ -38,15 +37,7 @@ class OppslagController(
     val log = getLogger(javaClass)
 
     @GetMapping("/soeker")
-    fun søker(): SøkerInfo =
-        with(pdl.søkerMedBarn()) {
-             if (erBeskyttet) {
-                SøkerInfo(this, emptyList(), emptyList(), null, konto.kontoInfo())
-            }
-            else {
-                SøkerInfo(this, behandler.behandlerInfo(), arbeid.arbeidInfo(), krr.kontaktInfo(), konto.kontoInfo())
-            }
-        }
+    fun søker()  = SøkerInfo(pdl.søkerMedBarn(), behandler.behandlerInfo(), arbeid.arbeidInfo(), krr.kontaktInfo(), konto.kontoInfo())
 
     @GetMapping("/soekermedbarn")
     fun søkerMedBarn() = pdl.søkerMedBarn()
@@ -55,22 +46,10 @@ class OppslagController(
     fun søkerUtenBarn() = pdl.søkerUtenBarn()
 
     @GetMapping("/behandlere")
-    fun behandlere() =
-        with(pdl.søkerUtenBarn()) {
-            if (erBeskyttet) {
-                emptyList()
-            }
-            else behandler.behandlerInfo()
-        }
-
+    fun behandlere() = behandler.behandlerInfo()
+    
     @GetMapping("/krr")
-    fun krr() =
-        with(pdl.søkerUtenBarn()) {
-            if (erBeskyttet) {
-               EMPTY
-            }
-            else krr.kontaktInfo()
-        }
+    fun krr() = krr.kontaktInfo()
 
     @GetMapping("/dokumenter")
     fun dokumenter() = arkiv.dokumenter()
