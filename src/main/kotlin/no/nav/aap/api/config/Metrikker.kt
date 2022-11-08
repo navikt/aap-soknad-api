@@ -6,5 +6,9 @@ object Metrikker {
     const val MANGLENDE = "soknad.vedlegg.manglende"
     const val MELLOMLAGRING = "soknad.mellomlagring"
     const val SØKNADER = "soknad.innsendte"
+    const val SØKER_BESKYTTET = "soker.beskyttet"
+    const val BARN_BESKYTTELSE = "barn.beskyttet"
+
+
 
 }

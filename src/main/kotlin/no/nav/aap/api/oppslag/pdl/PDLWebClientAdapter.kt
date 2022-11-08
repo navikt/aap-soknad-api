@@ -1,7 +1,11 @@
 package no.nav.aap.api.oppslag.pdl
 
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Metrics.*
 import java.time.LocalDate
+import no.nav.aap.api.config.Metrikker.BARN_BESKYTTELSE
+import no.nav.aap.api.config.Metrikker.SØKER_BESKYTTET
 import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
@@ -10,6 +14,7 @@ import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.FORTROLIG
 import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
 import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
+import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.UGRADERT
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLFødsel
@@ -33,11 +38,13 @@ data class WebClients(
         @Qualifier(PDL_SYSTEM) val system: GraphQLWebClient)
 
 @Component
-class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, private val ctx: AuthContext) :
+class PDLWebClientAdapter(private val clients: WebClients,
+                          cfg: PDLConfig,
+                          private val ctx: AuthContext,
+                          private val registry: MeterRegistry) :
     AbstractGraphQLAdapter(clients.client, cfg) {
 
-
-    override fun ping() :Map<String,String>{
+    override fun ping(): Map<String, String> {
         webClient
             .options()
             .uri(baseUri)
@@ -51,6 +58,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
     fun søker(medBarn: Boolean = false) =
         with(ctx.getFnr()) {
             query<PDLWrappedSøker>(clients.user, PERSON_QUERY, fnr)?.active?.let {
+                registry.counter(SØKER_BESKYTTET, "kode", "${ it.beskyttelsesKode().kode}").increment()
                 søkerFra(it, this, medBarn)
             } ?: throw JwtTokenMissingException()
         }
@@ -71,10 +79,14 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         }
     }
 
-    private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) =
+    private fun barnFra(relasjoner: List<PDLForelderBarnRelasjon>, medBarn: Boolean) =
         if (medBarn) {
-            r.asSequence().map {
-                query<PDLBarn>(clients.system, BARN_QUERY, it.relatertPersonsIdent)
+            relasjoner.asSequence().map { r ->
+                query<PDLBarn>(clients.system, BARN_QUERY, r.relatertPersonsIdent).also { b ->
+                    b?.let {
+                        counter(BARN_BESKYTTELSE,"kode","${it.beskyttelsesKode().kode}").increment()
+                    }
+                }
             }.filterNotNull()
                 .filterNot(::myndig)
                 .filterNot(::beskyttet)
@@ -85,7 +97,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
 
     private fun adresseFra(adresse: PDLVegadresse?) = adresse?.let {
         with(it) {
-                Adresse(adressenavn, husbokstav, husnummer, PostNummer(postnummer))
+            Adresse(adressenavn, husbokstav, husnummer, PostNummer(postnummer))
         }
     }
 
@@ -101,8 +113,13 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
 
     private fun beskyttet(pdlBarn: PDLBarn) = beskyttet(pdlBarn.adressebeskyttelse)
-
     private fun PDLSøker.beskyttet() = beskyttet(adressebeskyttelse)
+
+    private fun PDLSøker.beskyttelsesKode() = beskyttelsesKode(adressebeskyttelse)
+
+    private fun PDLBarn.beskyttelsesKode() = beskyttelsesKode(adressebeskyttelse)
+
+    private fun beskyttelsesKode(adressebeskyttelse: Set<PDLGradering>?) = adressebeskyttelse?.firstOrNull()?.gradering ?: UGRADERT
 
 
     private fun beskyttet(gradering: Set<PDLGradering>?) = gradering?.any {

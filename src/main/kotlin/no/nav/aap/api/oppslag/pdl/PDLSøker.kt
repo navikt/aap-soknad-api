@@ -19,11 +19,11 @@ data class PDLWrappedSøker(val navn: Set<PDLNavn>,
             } ?: emptyList())
 }
 
-enum class PDLAdresseBeskyttelse {
-    STRENGT_FORTROLIG_UTLAND,
-    STRENGT_FORTROLIG,
-    FORTROLIG,
-    UGRADERT
+enum class PDLAdresseBeskyttelse(val kode: Int) {
+    STRENGT_FORTROLIG_UTLAND(6),
+    STRENGT_FORTROLIG(6),
+    FORTROLIG(7),
+    UGRADERT(0)
 }
 data class PDLGradering(val gradering: PDLAdresseBeskyttelse)
 data class PDLNavn(val fornavn: String, val mellomnavn: String?, val etternavn: String)
