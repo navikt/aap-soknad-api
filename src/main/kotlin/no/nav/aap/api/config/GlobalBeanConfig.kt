@@ -195,7 +195,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     abstract class AbstractKafkaHealthIndicator(private val admin: KafkaAdmin,
                                                 private val bootstrapServers: List<String>,
                                                 private val cfg: AbstractKafkaConfig) : Pingable {
-        override fun isEnabled() = cfg.enabled
+        override fun isEnabled() = cfg.isEnabled
         override fun pingEndpoint() = "$bootstrapServers"
         override fun name() = cfg.name
 
@@ -208,7 +208,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                     }
                 }
 
-        abstract class AbstractKafkaConfig(val name: String, val enabled: Boolean) {
+        abstract class AbstractKafkaConfig(val name: String, val isEnabled: Boolean) {
             abstract fun topics(): List<String>
         }
     }

@@ -16,7 +16,8 @@ data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConf
                          @NestedConfigurationProperty val beskjed: TopicConfig,
                          @NestedConfigurationProperty val backlinks: BacklinksConfig,
                          @NestedConfigurationProperty val oppgave: TopicConfig,
-                         val done: String) : AbstractKafkaConfig(MINSIDE,beskjed.enabled || oppgave.enabled) {
+                         @DefaultValue("false") val enabled: Boolean,
+                         val done: String) : AbstractKafkaConfig(MINSIDE,enabled) {
 
     val app = nais.app
     val namespace = nais.namespace
