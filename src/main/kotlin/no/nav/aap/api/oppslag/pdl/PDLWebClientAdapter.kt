@@ -59,13 +59,10 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
 
     private fun fødselsdatoFra(fødsel: PDLFødsel?) = fødsel?.fødselsdato
 
-    private fun søkerFra(søker: PDLSøker?, fnr: Fødselsnummer, medBarn: Boolean) = søker?.let {
-        with(it) {
-            Søker(navnFra(navn), fnr,
-                    søker.beskyttet(),
-                    if (!it.beskyttet()) {
-                        adresseFra(vegadresse)
-                    } else null,
+    private fun søkerFra(søker: PDLSøker?, fnr: Fødselsnummer, medBarn: Boolean) = søker?.let { søker ->
+        with(søker) {
+            Søker(navnFra(navn), fnr, søker.beskyttet(),
+                    adresseFra(vegadresse),
                     fødselsdatoFra(fødsel),
                     barnFra(forelderBarnRelasjon, medBarn))
                 .also {

@@ -15,7 +15,6 @@ import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
-import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
 
 interface Fordeler {
