@@ -29,7 +29,7 @@ class OMPersoner {
             Adresse("Gata", "17", "A",
                 PostNummer("2600", "Lillehammer")
             ), LocalDate.now(), listOf(
-                Søker.Barn(Navn("Barn", "B", "Barnsben"), LocalDate.now())
+                Søker.Barn(Navn("Livlig", "", "Sjokoladekake"), LocalDate.now())
             ))
     }
 
