@@ -47,7 +47,7 @@ class OppslagController(
 
     @GetMapping("/behandlere")
     fun behandlere() = behandler.behandlerInfo()
-    
+
     @GetMapping("/krr")
     fun krr() = krr.kontaktInfo()
 
