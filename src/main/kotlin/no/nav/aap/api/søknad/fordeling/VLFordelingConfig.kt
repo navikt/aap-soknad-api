@@ -12,7 +12,8 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 class VLFordelingConfig(
         @NestedConfigurationProperty val standard: VLTopicConfig,
         @NestedConfigurationProperty val ettersending: VLTopicConfig,
-        @NestedConfigurationProperty val utland: VLTopicConfig) : AbstractKafkaConfig(VL,standard.enabled || ettersending.enabled || utland.enabled) {
+        @NestedConfigurationProperty val utland: VLTopicConfig,
+        @DefaultValue("true") val enabled: Boolean) : AbstractKafkaConfig(VL,enabled) {
 
     data class VLTopicConfig(val topic: String, @DefaultValue("true") val enabled: Boolean)
 
