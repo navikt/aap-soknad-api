@@ -63,11 +63,13 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
             dittNav.opprettBeskjed(fnr,
                     "Du har en påbegynt ${type.tittel}",
                     eventId = eventId,
+                    mellomlagring = true,
                     type = SØKNADSTD,
                     eksternVarsling = false).also { _ ->
                 log.trace("Opprettet beskjed fra metadata $this OK")
             }
-            dittNav.avsluttAlleTidligereUavsluttedeBeskjeder(metadata.fnr,eventId)
+            log.trace("Avslutter tidligere melomlagrede ved opprettlse")
+            dittNav.avsluttAlleTidligereUavsluttedeBeskjederOmMellomlagring(fnr,eventId)
         }
 
     private fun slettet(metadata: Metadata) =
@@ -77,6 +79,8 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
             dittNav.avsluttBeskjed(fnr, eventId, type).also {_ ->
                 log.info("Slettet beskjed fra metadata $this OK")
             }
+            log.trace("Avslutter tidligere melomlagrede ved sletting")
+            dittNav.avsluttAlleTidligereUavsluttedeBeskjederOmMellomlagring(fnr,eventId)
         }
 
     private fun PubsubMessage.data() = mapper.readValue<Map<String, Any>>(data.toStringUtf8())

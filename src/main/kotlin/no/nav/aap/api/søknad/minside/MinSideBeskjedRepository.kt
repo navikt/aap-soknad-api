@@ -12,10 +12,14 @@ import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
 
 interface MinSideBeskjedRepository : MinSideRepository<Beskjed> {
 
+    fun findByFnrAndDoneIsFalseAndMellomlagringIsFalseAndEventidNot(fnr: String, eventid: UUID): List<Beskjed>
+
+
     @Entity(name = "beskjed")
     @Table(name = "minsidebeskjeder")
     class Beskjed(fnr: String,
                   eventid: UUID,
+                  val mellomlagring: Boolean = false,
                   done: Boolean = false,
                   ekstern: Boolean = false,
                   @OneToMany(mappedBy = "beskjed", cascade = [ALL], orphanRemoval = true)
