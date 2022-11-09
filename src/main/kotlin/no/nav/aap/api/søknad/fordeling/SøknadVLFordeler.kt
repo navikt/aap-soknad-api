@@ -28,7 +28,7 @@ class SøknadVLFordeler(private val fordeler: KafkaOperations<String, Any>) {
             }
         }
         else {
-            log.warn("Fordeler ikke ${søknad.javaClass.simpleName.lowercase()}  til VL")
+            log.trace("Fordeler ikke ${søknad.javaClass.simpleName.lowercase()}  til VL")
         }
 
     override fun toString() = "${javaClass.simpleName} [fordeler=$fordeler]"
