@@ -7,9 +7,8 @@ import no.nav.aap.api.søknad.model.*
 import java.time.LocalDate
 import java.util.*
 
-class OMSøknad {
+object OMSøknad {
 
-    companion object {
         fun standard_soknad(): StandardSøknad {
             return StandardSøknad(
                 false,
@@ -95,6 +94,4 @@ class OMSøknad {
                     UUID.randomUUID()))
             )
         }
-
-    }
 }

@@ -7,9 +7,7 @@ import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.søknad.model.Søker
 import java.time.LocalDate
 
-class OMPersoner {
-
-    companion object{
+object OMPersoner {
 
         fun ole_olsen(): Søker {
             return Søker(Navn("Ole", "B", "Olsen"),
@@ -82,7 +80,6 @@ class OMPersoner {
                 PostNummer("2600", "Lillehammer"),
             ))
     }
-}
 
 }
 

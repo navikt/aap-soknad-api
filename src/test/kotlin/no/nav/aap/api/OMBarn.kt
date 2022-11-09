@@ -6,12 +6,12 @@ import no.nav.aap.api.søknad.model.Søker.Barn
 import java.time.LocalDate
 
 object OMBarn {
-    fun barn(): Barn {
+    fun enkeltBarn(): Barn {
         return Barn(Navn("Barn", "B", "Barnsben"), LocalDate.now())
     }
 
-    fun listeMedPDLBarn(): List<PDLBarn>{
-        return listOf(
+    fun listeMedPDLBarn(): Sequence<PDLBarn>{
+        return sequenceOf(
             PDLBarn(
                 setOf(PDLSøker.PDLFødsel(LocalDate.now())),
                 setOf(PDLNavn("Barn", "B", "Barnsben")),

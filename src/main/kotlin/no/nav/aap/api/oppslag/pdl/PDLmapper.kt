@@ -42,7 +42,7 @@ object PDLmapper {
 
 
 
-    fun navnFra(navn: Set<PDLNavn>) = navnFra(navn.first())
+    private fun navnFra(navn: Set<PDLNavn>) = navnFra(navn.first())
 
     private fun navnFra(navn: PDLNavn) =
         with(navn) {
@@ -56,15 +56,15 @@ object PDLmapper {
         }
     }
 
-    fun fødselsdatoFra(fødsel: Set<PDLSøker.PDLFødsel>?) = fødselsdatoFra(fødsel?.firstOrNull())
+    private fun fødselsdatoFra(fødsel: Set<PDLSøker.PDLFødsel>?) = fødselsdatoFra(fødsel?.firstOrNull())
 
     private fun fødselsdatoFra(fødsel: PDLSøker.PDLFødsel?) = fødsel?.fødselsdato
 
     private fun myndig(pdlBarn: PDLBarn) = fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
 
-    fun beskyttet(pdlBarn: PDLBarn) = beskyttet(pdlBarn.adressebeskyttelse)
+    private fun beskyttet(pdlBarn: PDLBarn) = beskyttet(pdlBarn.adressebeskyttelse)
 
-    fun PDLSøker.beskyttet() = beskyttet(adressebeskyttelse)
+    private fun PDLSøker.beskyttet() = beskyttet(adressebeskyttelse)
 
     private fun død(pdlBarn: PDLBarn) = pdlBarn.dødsfall?.any() ?: false
 

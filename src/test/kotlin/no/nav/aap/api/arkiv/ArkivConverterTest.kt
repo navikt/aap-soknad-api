@@ -1,10 +1,10 @@
 package no.nav.aap.api.arkiv
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.aap.api.OMDokumenter.Companion.landscape
-import no.nav.aap.api.OMDokumenter.Companion.med_passord
-import no.nav.aap.api.OMDokumenter.Companion.rdd
-import no.nav.aap.api.OMDokumenter.Companion.test123
+import no.nav.aap.api.OMDokumenter.landscape
+import no.nav.aap.api.OMDokumenter.med_passord
+import no.nav.aap.api.OMDokumenter.rdd
+import no.nav.aap.api.OMDokumenter.test123
 import no.nav.aap.api.OMPersoner
 import no.nav.aap.api.OMSøknad
 import no.nav.aap.api.søknad.SøknadTest

@@ -3,9 +3,8 @@ package no.nav.aap.api
 import org.springframework.core.io.ClassPathResource
 import org.springframework.util.StreamUtils.copyToByteArray
 
-class OMDokumenter {
+object OMDokumenter {
 
-    companion object {
         fun lag_stor_fil():ByteArray{
             return copyToByteArray(ClassPathResource("pdf/stor.pdf").inputStream)
         }
@@ -25,6 +24,5 @@ class OMDokumenter {
         fun landscape():ByteArray{
             return copyToByteArray(ClassPathResource("pdf/landscape.jpg").inputStream)
         }
-    }
 
 }
