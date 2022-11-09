@@ -73,9 +73,12 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
 
     private fun barnFra(r: List<PDLForelderBarnRelasjon>, medBarn: Boolean) =
         if (medBarn) {
-            r.asSequence().map {
-                query<PDLBarn>(clients.system, BARN_QUERY, it.relatertPersonsIdent)
-            }.filterNotNull()
+            r.mapNotNull {
+                if (it.relatertPersonsIdent == null) {
+                    null
+                }
+               else query<PDLBarn>(clients.system, BARN_QUERY, it.relatertPersonsIdent)
+            }
                 .filterNot(::myndig)
                 .filterNot(::beskyttet)
                 .filterNot(::død)
