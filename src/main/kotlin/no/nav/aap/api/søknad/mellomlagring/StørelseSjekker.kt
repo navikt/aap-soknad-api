@@ -3,7 +3,6 @@ package no.nav.aap.api.søknad.mellomlagring
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobListOption.currentDirectory
 import com.google.cloud.storage.Storage.BlobListOption.prefix
-import no.nav.aap.api.error.Substatus.SIZE
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.VedleggBucketConfig
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
@@ -19,10 +18,10 @@ class StørelseSjekker(private val lager: Storage) {
         with(cfg) {
             val sum = lager.list(navn, prefix("${fnr.fnr}/"), currentDirectory()).iterateAll().sumOf { it.size }
             if (sum + dokument.size > maxsum.toBytes()) {
-                throw DokumentException("Opplasting av  $dokument tillates ikke, har allerede lastet opp ${DataSize.ofBytes(sum)}, max pr bruker er er $maxsum", null, SIZE)
+                log.warn("Opplasting av dokument med størrelse  ${DataSize.ofBytes(dokument.size)} burde ikke tillates, har allerede lastet opp ${DataSize.ofBytes(sum)}, max pr bruker er er $maxsum")
             }
             else {
-                log.trace("Opplasting av ${dokument.size} tillates, størrelse av vedlegg i bøtte er $sum")
+                log.trace("Opplasting av dokument med størrelse  ${DataSize.ofBytes(dokument.size)} tillates, samled størrelse av vedlegg i bøtte er ${DataSize.ofBytes(sum)}")
             }
         }
 }

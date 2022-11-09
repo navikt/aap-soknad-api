@@ -55,7 +55,7 @@ spring:
       key-store-type: PKCS12
       key-store-password: ${kafka.credstore.password}
     consumer:
-      group-id: ${spring.application.name}-dev
+      group-id: ${spring.application.name}-${env}
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
     producer:
       acks: all
@@ -157,6 +157,7 @@ pdf:
 krr:
   enabled: true
 minside:
+  enabled: true
   nais:
     app: ${nais.app.name}
     namespace: ${nais.namespace}

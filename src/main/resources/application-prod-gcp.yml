@@ -40,6 +40,7 @@ saf:
 konto:
     enabled: false
 vl:
+    enabled: false
     standard:
         enabled: false
     ettersending:

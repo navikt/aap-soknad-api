@@ -9,10 +9,11 @@ import javax.persistence.Table
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
 import no.nav.aap.api.søknad.minside.MinSideRepository.EksternNotifikasjonBaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
+import no.nav.aap.util.StringExtensions.partialMask
 
 interface MinSideBeskjedRepository : MinSideRepository<Beskjed> {
 
-    fun findByFnrAndDoneIsFalseAndMellomlagringIsFalseAndEventidNot(fnr: String, eventid: UUID): List<Beskjed>
+    fun findByFnrAndDoneIsFalseAndMellomlagringIsTrueAndEventidNot(fnr: String, eventid: UUID): List<Beskjed>
 
 
     @Entity(name = "beskjed")
@@ -24,7 +25,11 @@ interface MinSideBeskjedRepository : MinSideRepository<Beskjed> {
                   ekstern: Boolean = false,
                   @OneToMany(mappedBy = "beskjed", cascade = [ALL], orphanRemoval = true)
                   var notifikasjoner: MutableSet<EksternBeskjedNotifikasjon> = mutableSetOf()) :
-        MinSideBaseEntity(fnr, eventid, done,ekstern)
+        MinSideBaseEntity(fnr, eventid, done,ekstern)  {
+        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated,mellomlagring=$mellomlagring,ekstern=$ekstern, done=$done,id=$id]"
+    }
+
+
 
     @Entity(name = "eksternbeskjednotifikasjon")
     @Table(name = "eksternebeskjednotifikasjoner")

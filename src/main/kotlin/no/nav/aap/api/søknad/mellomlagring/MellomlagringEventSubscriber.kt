@@ -46,8 +46,8 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                     metadata()?.let {
                         log.info("PubSub event $type med metadata $it")
                         when (type) {
-                            OBJECT_FINALIZE -> opprettet(it)
-                            OBJECT_DELETE -> slettet(it)
+                            OBJECT_FINALIZE -> Unit //opprettet(it) TODO vi dropper denne foreløpig
+                            OBJECT_DELETE -> Unit // slettet(it)  // TODO også denne
                             else -> log.warn("Event $type ikke håndtert (dette skal aldri skje)")
                         }
                     } ?: log.warn("Fant ikke forventede metadata i event ${event.pubsubMessage}")
@@ -68,7 +68,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                     eksternVarsling = false).also { _ ->
                 log.trace("Opprettet beskjed fra metadata $this OK")
             }
-            log.trace("Avslutter tidligere melomlagrede ved opprettlse")
+            log.trace("Avslutter tidligere melomlagrede ved opprettelse")
             dittNav.avsluttAlleTidligereUavsluttedeBeskjederOmMellomlagring(fnr,eventId)
         }
 

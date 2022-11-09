@@ -51,7 +51,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
         with(cfg.beskjed) {
             if (enabled) {
                 log.info("Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), beskjed("$tekst ($eventId)", varighet,type, eksternVarsling)))
+                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), beskjed("$tekst", varighet,type, eksternVarsling)))
                    // .addCallback(SendCallback("opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling"))
                     .get().run {
                         log.info("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling for $fnr, offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
@@ -59,7 +59,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                     }
             }
             else {
-                log.info("Oppretter ikke beskjed i Ditt Nav for $fnr")
+                log.trace("Oppretter ikke beskjed i Ditt Nav for $fnr")
                 null
             }
         }
@@ -80,7 +80,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 repos.oppgaver.save(Oppgave(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
             }
             else {
-                log.info("Oppretter ikke oppgave i Min Side for $fnr")
+                log.trace("Oppretter ikke oppgave i Min Side for $fnr")
                 null
             }
         }
@@ -97,7 +97,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 }
             }
             else {
-                log.info("Sender ikke avslutt oppgave til Ditt Nav for $fnr")
+                log.trace("Sender ikke avslutt oppgave til Ditt Nav for $fnr")
             }
         }
 
@@ -112,7 +112,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 }
             }
             else {
-                log.info("Sender ikke avslutt beskjed til Min Side for beskjed for $fnr")
+                log.trace("Sender ikke avslutt beskjed til Min Side for beskjed for $fnr")
             }
         }
     @Transactional
@@ -120,14 +120,14 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
     fun avsluttAlleTidligereUavsluttedeBeskjederOmMellomlagring(fnr: Fødselsnummer, sisteEventid: UUID, type: SkjemaType = STANDARD) =
         with(cfg.beskjed) {
             if (enabled) {
-                repos.beskjeder.findByFnrAndDoneIsFalseAndMellomlagringIsFalseAndEventidNot(fnr.fnr, sisteEventid).forEach {
-                    log.trace("Avsslutter tidligere, ikke-avsluttet beskjed $it")
+                repos.beskjeder.findByFnrAndDoneIsFalseAndMellomlagringIsTrueAndEventidNot(fnr.fnr, sisteEventid).forEach {
+                    log.trace("Avslutter tidligere, ikke-avsluttet beskjed $it")
                     avsluttMinSide(it.eventid, fnr, BESKJED, type)
                     it.done = true
                 }
             }
             else {
-                log.info("Sender ikke avslutt tiligere ikke-avsuttede beskjed til Min Side for beskjed for $fnr")
+                log.trace("Sender ikke avslutt tiligere ikke-avsluttede beskjeder til Min Side for beskjed for $fnr")
             }
         }
 
@@ -137,7 +137,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 OPPGAVE -> oppgaverAvsluttet.increment()
                 BESKJED -> beskjederAvsluttet.increment()
             }.also {
-                log.info("Sendte avslutt $notifikasjonType med eventid $eventId  for $fnr, offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                log.trace("Sendte avslutt $notifikasjonType med eventid $eventId  for $fnr, offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
             }
         }
     // .addCallback(SendCallback("avslutt $notifikasjonType med eventid $eventId")).also {

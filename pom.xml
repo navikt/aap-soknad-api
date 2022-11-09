@@ -16,7 +16,7 @@
     <properties>
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
         <conditionals.version>4.0.3</conditionals.version>
-        <confluent.version>7.2.2</confluent.version>
+        <confluent.version>7.3.0</confluent.version>
         <commit-id.version>5.0.0</commit-id.version>
         <commons-text.version>1.10.0</commons-text.version>
         <domain.version>1.0.24</domain.version>
@@ -29,7 +29,7 @@
         <java.version>17</java.version>
         <jib.version>3.3.1</jib.version>
         <kotlinx.coroutines.version>1.6.4</kotlinx.coroutines.version>
-        <kotlin.version>1.7.20</kotlin.version>
+        <kotlin.version>1.7.21</kotlin.version>
         <logstash.version>7.2</logstash.version>
         <mock-oauth2-server.version>0.3.6</mock-oauth2-server.version>
         <neovisionaries.version>1.29</neovisionaries.version>
@@ -45,7 +45,7 @@
         <springdoc.version>1.6.12</springdoc.version>
         <swagger.annotations.version>2.2.6</swagger.annotations.version>
         <testcontainers.version>1.17.5</testcontainers.version>
-        <tika.version>2.5.0</tika.version>
+        <tika.version>2.6.0</tika.version>
         <token.validation.version>2.1.7</token.validation.version>
     </properties>
     <repositories>

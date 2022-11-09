@@ -48,7 +48,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     fun lagreDokument(dokument: DokumentInfo, fnr: Fødselsnummer) =
         callIdAsUUID().apply {
             with(dokument) {
-                //størrelseSjekker.sjekkStørrelse(cfg.vedlegg,fnr,dokument)
+                størrelseSjekker.sjekkStørrelse(cfg.vedlegg,fnr,dokument)
                 val navn = navn(fnr, this@apply)
                 sjekkere.forEach { it.sjekk(this) }
                 log.trace("Lagrer $this")

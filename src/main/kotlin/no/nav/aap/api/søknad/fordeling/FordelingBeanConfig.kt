@@ -2,7 +2,7 @@ package no.nav.aap.api.søknad.fordeling
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.aap.api.config.BeanConfig.AbstractKafkaHealthIndicator
+import no.nav.aap.api.config.GlobalBeanConfig.AbstractKafkaHealthIndicator
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig.Companion.VL
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty

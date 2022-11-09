@@ -70,7 +70,7 @@ import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 
 @Configuration
-class BeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
+class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
     val log = getLogger(javaClass)
 
     @Bean
