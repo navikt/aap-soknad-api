@@ -22,7 +22,7 @@ data class BehandlerDTO(
         val orgnummer: OrgNummer?,
         val kontor: String?,
         val adresse: String?,
-        val postnummer: String,
+        val postnummer: String?,
         val poststed: String?,
         val telefon: String?) {
 
