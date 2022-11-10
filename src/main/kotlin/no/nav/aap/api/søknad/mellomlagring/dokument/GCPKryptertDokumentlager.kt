@@ -21,11 +21,13 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.T
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.VedleggAware
 import no.nav.aap.util.AuthContext
+import no.nav.aap.util.EnvExtensions.isProd
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.context.annotation.Primary
+import org.springframework.core.env.Environment
 import org.springframework.http.ContentDisposition.parse
 import org.springframework.stereotype.Component
 
@@ -36,6 +38,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                                private val lager: Storage,
                                private val ctx: AuthContext,
                                private val størrelseSjekker: StørelseSjekker,
+                               private val env: Environment,
                                private val sjekkere: List<DokumentSjekker>): Dokumentlager {
 
 
@@ -78,14 +81,21 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
         }
 
     private fun Blob.contentDisposition() = parse(contentDisposition)
-    override fun slettDokumenter(vararg uuids: UUID) = slettUUIDs(uuids.asList(), ctx.getFnr())
+    override fun slettDokumenter(vararg uuids: UUID) = slettUUIDs(uuids.asList(), ctx.getFnr()).also {
+        log.info("Slettet ${uuids.size} dokumenter fra vedleggsbøtte")
+    }
 
     fun slettDokument(uuid: UUID, fnr: Fødselsnummer) =
         with(cfg.vedlegg) {
             with(navn(fnr, uuid)) {
                 lager.delete(navn, this)
                     .also {
-                        log.trace(CONFIDENTIAL, "Slettet dokument $this@with fra bøtte $navn")
+                        if (env.isProd()) {
+                            log.info("Slettet dokument $uuid fra bøtte $navn med status $it")
+                        }
+                        else  {
+                            log.trace("Slettet dokument $this@with fra bøtte $navn med status $it")
+                        }
                     }
             }
         }
