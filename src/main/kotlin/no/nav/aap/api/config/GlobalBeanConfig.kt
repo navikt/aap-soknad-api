@@ -73,7 +73,6 @@ import org.springframework.http.server.ServerHttpResponse
 import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ControllerAdvice
-import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -81,7 +80,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
-import reactor.util.retry.Retry
 import reactor.util.retry.Retry.fixedDelay
 import reactor.util.retry.RetryBackoffSpec
 
@@ -232,7 +230,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     @Bean
     @Primary
     @ConditionalOnNotProd
-    fun oAuth2HttpClientNy(builder: WebClient.Builder, retryBackoffSpec: RetryBackoffSpec) =
+    fun retryingOAuth2HttpClient(builder: WebClient.Builder, retryBackoffSpec: RetryBackoffSpec) =
         WebClientOAuth2HttpClient(builder.build(),retryBackoffSpec)
     @Bean
     @ConditionalOnNotProd
@@ -249,14 +247,13 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         override fun post(req: OAuth2HttpRequest) =
                 client.post()
                     .uri(req.tokenEndpointUrl)
-                    .headers { fromReq(req) }
+                    .headers { Consumer<HttpHeaders> { it.putAll(req.oAuth2HttpHeaders.headers()) } }
                     .bodyValue(LinkedMultiValueMap<String, String>().apply { setAll(req.formParameters) })
                     .retrieve()
                     .bodyToMono<OAuth2AccessTokenResponse>()
                     .doOnSuccess { log.trace(CONFIDENTIAL,"Token endpoint returnerte  $it") }
                     .retryWhen(retrySpec)
                     .block()
-                    ?: throw OAuth2ClientException("Ingen data fra  token endpoint ${req.tokenEndpointUrl}")
-        private fun fromReq(req: OAuth2HttpRequest) = Consumer<HttpHeaders> { it.putAll(req.oAuth2HttpHeaders.headers()) }
+                    ?: throw OAuth2ClientException("Ingen data fra token endpoint ${req.tokenEndpointUrl}")
     }
 }
