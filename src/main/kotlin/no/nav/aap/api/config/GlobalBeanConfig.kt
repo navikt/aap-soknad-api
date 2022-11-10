@@ -230,17 +230,17 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     @Bean
     @Primary
     @ConditionalOnNotProd
-    fun retryingOAuth2HttpClient(builder: WebClient.Builder, retryBackoffSpec: RetryBackoffSpec) =
-        WebClientOAuth2HttpClient(builder.build(),retryBackoffSpec)
+    fun retryingOAuth2HttpClient(b: WebClient.Builder, retryBackoffSpec: RetryBackoffSpec) =
+        RetryingWebClientOAuth2HttpClient(b.build(),retryBackoffSpec)
     @Bean
     @ConditionalOnNotProd
     fun retryBackoffSpec(): RetryBackoffSpec =
         fixedDelay(3, Duration.ofMillis(200))
             .filter { ex -> ex is WebClientResponseException && ex.statusCode.is5xxServerError }
-            .doBeforeRetry { s -> log.info("Kall mot token endpoint kastet exception ${s.failure()} for ${s.totalRetriesInARow() + 1} gang") }
+            .doBeforeRetry { s -> log.warn("Kall mot token endpoint kastet exception ${s.failure()} for ${s.totalRetriesInARow() + 1} gang") }
             .onRetryExhaustedThrow { _, spec ->  throw OAuth2ClientException("Token endpoint retry gir opp etter  ${spec.totalRetries()} forsøk")}
 
-    class WebClientOAuth2HttpClient(private val client: WebClient,private val retrySpec: RetryBackoffSpec) : OAuth2HttpClient {
+    class RetryingWebClientOAuth2HttpClient(private val client: WebClient, private val retrySpec: RetryBackoffSpec) : OAuth2HttpClient {
 
         private val log = getLogger(javaClass)
 
@@ -251,7 +251,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                     .bodyValue(LinkedMultiValueMap<String, String>().apply { setAll(req.formParameters) })
                     .retrieve()
                     .bodyToMono<OAuth2AccessTokenResponse>()
-                    .doOnSuccess { log.trace(CONFIDENTIAL,"Token endpoint returnerte  $it") }
+                    .doOnSuccess { log.trace("Token endpoint returnerte OK") }
                     .retryWhen(retrySpec)
                     .block()
                     ?: throw OAuth2ClientException("Ingen data fra token endpoint ${req.tokenEndpointUrl}")
