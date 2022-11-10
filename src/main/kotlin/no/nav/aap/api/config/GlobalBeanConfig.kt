@@ -236,7 +236,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     @ConditionalOnNotProd
     fun retryBackoffSpec(): RetryBackoffSpec =
         fixedDelay(3, Duration.ofMillis(200))
-            .filter { ex -> ex is WebClientResponseException && ex.statusCode.is5xxServerError }
+            .filter { e -> e is WebClientResponseException && e.statusCode.is5xxServerError }
             .doBeforeRetry { s -> log.warn("Kall mot token endpoint kastet exception ${s.failure()} for ${s.totalRetriesInARow() + 1} gang") }
             .onRetryExhaustedThrow { _, spec ->  throw OAuth2ClientException("Token endpoint retry gir opp etter  ${spec.totalRetries()} forsøk")}
 
