@@ -73,7 +73,7 @@ class AAPApiExceptionHandling : ProblemHandling {
         }
 
     override fun log(t: Throwable, problem: Problem, request: NativeWebRequest, status: HttpStatus) =
-        log.warn("${status.reasonPhrase}: ${t.message}",t)
+        log.error("${status.reasonPhrase}: ${t.message}",t)
 
     companion object {
         private const val SUBSTATUS = "substatus"
