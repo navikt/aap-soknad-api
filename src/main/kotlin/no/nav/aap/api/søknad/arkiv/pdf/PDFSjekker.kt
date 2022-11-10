@@ -26,8 +26,8 @@ abstract class PDFSjekker : DokumentSjekker {
                     log.warn("Sjekk av PDF feilet med ${e.javaClass.name}")
                     when (e) {
                         is InvalidPasswordException -> beskyttet(filnavn,e)
-                        is ValidationException -> Unit.also { log.warn("Rar pdf, feiler med ${e.message}, men vi lar den passere")}
-                        is Exception -> muligensBeskyttet(filnavn,e)
+                        is ValidationException  -> Unit.also { log.warn("Rar pdf, feiler med ${e.message}, men vi lar den passere")}
+                        else  -> muligensBeskyttet(filnavn,e)
                     }
                 }
             }

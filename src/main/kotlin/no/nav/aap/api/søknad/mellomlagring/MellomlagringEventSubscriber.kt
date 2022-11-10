@@ -43,7 +43,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                 with(event.pubsubMessage) {
                     val type = eventType()
                     log.trace(CONFIDENTIAL, "Data i $type er ${data.toStringUtf8()}, attributter er $attributesMap")
-                    metadata()?.let {
+                    metadata()?.let {P
                         log.info("PubSub event $type med metadata $it")
                         when (type) {
                             OBJECT_FINALIZE -> Unit //opprettet(it) TODO vi dropper denne foreløpig
