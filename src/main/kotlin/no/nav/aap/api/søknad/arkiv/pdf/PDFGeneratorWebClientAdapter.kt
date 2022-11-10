@@ -39,7 +39,6 @@ class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
             }
             .doOnSuccess {
                 log.trace(CONFIDENTIAL, "Sendte JSON $data")
-                log.info("PDF-generering OK")
             }
             .block() ?: throw IntegrationException("O bytes i retur fra pdfgen, pussig")
 
