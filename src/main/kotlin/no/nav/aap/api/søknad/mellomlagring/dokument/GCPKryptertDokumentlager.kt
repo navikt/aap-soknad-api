@@ -91,7 +91,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 lager.delete(navn, this)
                     .also {
                         if (env.isProd()) {
-                            log.info("Slettet dokument $uuid fra bøtte $navn med status $it")
+                            log.info("Slettet dokument $uuid fra bøtte $navn med status $it for $fnr")
                         }
                         else  {
                             log.trace("Slettet dokument $this@with fra bøtte $navn med status $it")
