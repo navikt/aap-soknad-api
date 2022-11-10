@@ -59,7 +59,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                     .setContentType(contentType)
                     .setContentDisposition("$contentDisposition")
                     .build(), bytes, kmsKeyName("${cfg.key}")).also {
-                    log.trace(CONFIDENTIAL, "Lagret $dokument som ${it.name} i bøtte ${it.bucket}")
+                    log.info("Lagret $dokument som ${this@apply} i bøtte ${it.bucket} for $fnr")
                 }
             }
         }
@@ -82,7 +82,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
 
     private fun Blob.contentDisposition() = parse(contentDisposition)
     override fun slettDokumenter(vararg uuids: UUID) = slettUUIDs(uuids.asList(), ctx.getFnr()).also {
-        log.info("Slettet ${uuids.size} dokumenter fra vedleggsbøtte")
+        log.info("Slettet ${uuids.size} dokument(er) fra vedleggsbøtte")
     }
 
     fun slettDokument(uuid: UUID, fnr: Fødselsnummer) =
