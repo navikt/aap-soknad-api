@@ -229,13 +229,13 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         }
     }
 
-   // @Bean
-   // @Primary
-   // @ConditionalOnNotProd
+    @Bean
+    @Primary
+    @ConditionalOnNotProd
     fun oAuth2HttpClientNy(builder: WebClient.Builder, retryBackoffSpec: RetryBackoffSpec) =
         WebClientOAuth2HttpClient(builder.build(),retryBackoffSpec)
-    //@Bean
-   // @ConditionalOnNotProd
+    @Bean
+    @ConditionalOnNotProd
     fun retryBackoffSpec(): RetryBackoffSpec =
         fixedDelay(3, Duration.ofMillis(200))
             .filter { ex -> ex is WebClientResponseException && ex.statusCode.is5xxServerError }
