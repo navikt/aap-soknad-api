@@ -232,7 +232,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     @Bean
     @Primary
     @ConditionalOnNotProd
-    fun oAuth2HttpClient(builder: WebClient.Builder, retryBackoffSpec: RetryBackoffSpec) =
+    fun oAuth2HttpClientNy(builder: WebClient.Builder, retryBackoffSpec: RetryBackoffSpec) =
         WebClientOAuth2HttpClient(builder.build(),retryBackoffSpec)
     @Bean
     @ConditionalOnNotProd
