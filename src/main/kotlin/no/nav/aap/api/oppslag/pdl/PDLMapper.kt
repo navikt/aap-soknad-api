@@ -10,16 +10,14 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.EnvUtil
 import java.time.LocalDate
 
-object PDLmapper {
+object PDLMapper {
     private val log = getLogger(javaClass)
 
     fun pdlSøkerTilSøker(søker: PDLSøker?, fnr: Fødselsnummer, barn: Sequence<PDLBarn>) = søker?.let {
         with(it) {
             Søker(navnFra(navn), fnr,
                 søker.beskyttet(),
-                if (!it.beskyttet()) {
-                    adresseFra(vegadresse)
-                } else null,
+                adresseFra(vegadresse),
                 fødselsdatoFra(fødsel),
                 pdlBarnTilBarn(barn)
             )
