@@ -3,7 +3,7 @@ package no.nav.aap.api.oppslag.pdl
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLForelderBarnRelasjon
-import no.nav.aap.api.oppslag.pdl.PDLmapper.pdlSøkerTilSøker
+import no.nav.aap.api.oppslag.pdl.PDLMapper.pdlSøkerTilSøker
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.PDL_SYSTEM
 import no.nav.aap.util.Constants.PDL_USER
@@ -43,7 +43,10 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         }
 
     fun barn(medBarn:Boolean,forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) = if(medBarn) { forelderBarnRelasjon.asSequence().map {
-        query<PDLBarn>(clients.system, BARN_QUERY, it.relatertPersonsIdent) }.filterNotNull()
+        if(it.relatertPersonsIdent != null){
+        query<PDLBarn>(clients.system, BARN_QUERY, it.relatertPersonsIdent)
+        } else null
+    }.filterNotNull()
     } else emptySequence()
 
     override fun toString() =
