@@ -34,7 +34,7 @@ data class PDLSøker(val navn: PDLNavn,
                     val adressebeskyttelse: Set<PDLGradering>,
                     val forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) {
 
-    data class PDLForelderBarnRelasjon(val relatertPersonsIdent: String,
+    data class PDLForelderBarnRelasjon(val relatertPersonsIdent: String?,
                                        val relatertPersonsrolle: PDLRelasjonsRolle,
                                        val minRolleForPerson: PDLRelasjonsRolle) {
         enum class PDLRelasjonsRolle {

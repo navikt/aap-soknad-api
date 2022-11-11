@@ -15,7 +15,9 @@ import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP
 import java.io.IOException
+import java.time.Duration
 import java.util.*
+import java.util.function.Consumer
 import javax.servlet.Filter
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
@@ -36,6 +38,10 @@ import no.nav.aap.util.StringExtensions.toJson
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.boot.conditionals.ConditionalOnProd
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
+import no.nav.security.token.support.client.core.OAuth2ClientException
+import no.nav.security.token.support.client.core.http.OAuth2HttpClient
+import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
@@ -52,10 +58,12 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.core.MethodParameter
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.*
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
@@ -63,11 +71,17 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
 import org.springframework.kafka.core.KafkaAdmin
+import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
+import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
+import reactor.util.retry.Retry.fixedDelay
+import reactor.util.retry.RetryBackoffSpec
 
 @Configuration
 class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
@@ -213,4 +227,33 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         }
     }
 
+    @Bean
+    @Primary
+    @ConditionalOnNotProd
+    fun retryingOAuth2HttpClient(b: WebClient.Builder, retryBackoffSpec: RetryBackoffSpec) =
+        RetryingWebClientOAuth2HttpClient(b.build(),retryBackoffSpec)
+    @Bean
+    @ConditionalOnNotProd
+    fun retryBackoffSpec(): RetryBackoffSpec =
+        fixedDelay(3, Duration.ofMillis(200))
+            .filter { e -> e is WebClientResponseException && e.statusCode.is5xxServerError }
+            .doBeforeRetry { s -> log.warn("Kall mot token endpoint kastet exception ${s.failure()} for ${s.totalRetriesInARow() + 1} gang") }
+            .onRetryExhaustedThrow { _, spec ->  throw OAuth2ClientException("Token endpoint retry gir opp etter  ${spec.totalRetries()} forsøk")}
+
+    class RetryingWebClientOAuth2HttpClient(private val client: WebClient, private val retrySpec: RetryBackoffSpec) : OAuth2HttpClient {
+
+        private val log = getLogger(javaClass)
+
+        override fun post(req: OAuth2HttpRequest) =
+                client.post()
+                    .uri(req.tokenEndpointUrl)
+                    .headers { Consumer<HttpHeaders> { it.putAll(req.oAuth2HttpHeaders.headers()) } }
+                    .bodyValue(LinkedMultiValueMap<String, String>().apply { setAll(req.formParameters) })
+                    .retrieve()
+                    .bodyToMono<OAuth2AccessTokenResponse>()
+                    .doOnSuccess { log.trace("Token endpoint returnerte OK") }
+                    .retryWhen(retrySpec)
+                    .block()
+                    ?: throw OAuth2ClientException("Ingen data fra token endpoint ${req.tokenEndpointUrl}")
+    }
 }

@@ -42,7 +42,6 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
             } ?: throw JwtTokenMissingException()
         }
 
-
     fun barn(medBarn:Boolean,forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) = if(medBarn) { forelderBarnRelasjon.asSequence().map {
         query<PDLBarn>(clients.system, BARN_QUERY, it.relatertPersonsIdent) }.filterNotNull()
     } else emptySequence()

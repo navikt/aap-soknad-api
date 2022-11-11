@@ -57,7 +57,7 @@ data class StandardSøknad(
     var fødselsdato : LocalDate? = null
     val innsendingTidspunkt = now()
 
-    data class Ferie(val ferietype: FerieType, var periode: Periode?, var dager: Int?) {
+    data class Ferie(val ferietype: FerieType, var periode: Periode?, var dager: String?) {
         enum class FerieType {
             PERIODE, DAGER,NEI
         }

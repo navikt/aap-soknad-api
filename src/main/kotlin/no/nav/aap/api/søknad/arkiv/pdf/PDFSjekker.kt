@@ -8,6 +8,7 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.apache.commons.lang3.exception.ExceptionUtils.hasCause
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException
+import org.apache.pdfbox.preflight.exception.ValidationException
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 
 abstract class PDFSjekker : DokumentSjekker {
@@ -21,12 +22,12 @@ abstract class PDFSjekker : DokumentSjekker {
                 runCatching {
                     log.trace("${javaClass.simpleName} sjekker $filnavn")
                     doSjekk(dokument)
-                }.getOrElse {
-                    log.warn("Sjekk av $filnavn feilet med ${it.javaClass.name}")
-                    when (it) {
-                        is InvalidPasswordException -> beskyttet(filnavn,it)
-                        is Exception -> muligensBeskyttet(filnavn,it)
-                        else ->  uventet(filnavn,it)
+                }.getOrElse { e ->
+                    log.warn("Sjekk av PDF feilet med ${e.javaClass.name}")
+                    when (e) {
+                        is InvalidPasswordException -> beskyttet(filnavn,e)
+                        is ValidationException  -> Unit.also { log.warn("Rar pdf, feiler validering men vi lar den passere")}
+                        else  -> muligensBeskyttet(filnavn,e)
                     }
                 }
             }
