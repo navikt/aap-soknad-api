@@ -239,8 +239,8 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     fun retry(): Retry =
         fixedDelay(3, Duration.ofMillis(100))
             .filter { e -> e is RestClientException}
-            .doBeforeRetry { s -> log.warn("Kall mot token endpoint kastet exception ${s.failure()} for ${s.totalRetriesInARow() + 1} gang") }
-            .onRetryExhaustedThrow { _, spec ->  throw OAuth2ClientException("Token endpoint retry gir opp etter  ${spec.totalRetries()} forsøk")}
+            .doBeforeRetry { s -> log.warn("Kall mot token endpoint kastet exception ${s.failure().javaClass.name} for ${s.totalRetriesInARow() + 1} gang") }
+            .onRetryExhaustedThrow { _, spec ->  throw OAuth2ClientException("Token endpoint retry gir opp etter ${spec.totalRetries()} forsøk",spec.failure())}
 
     class RetryingWebClientOAuth2HttpClient(private val client: WebClient, private val retry: Retry) : OAuth2HttpClient {
 
@@ -256,6 +256,6 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                     .doOnSuccess { log.trace("Token endpoint returnerte OK") }
                     .retryWhen(retry)
                     .block()
-                    ?: throw OAuth2ClientException("Ingen data fra token endpoint ${req.tokenEndpointUrl}")
+                    ?: throw OAuth2ClientException("Ingen respons (null)  fra token endpoint ${req.tokenEndpointUrl}")
     }
 }
