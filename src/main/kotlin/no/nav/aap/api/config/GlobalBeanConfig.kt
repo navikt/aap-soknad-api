@@ -16,7 +16,9 @@ import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP
 import java.io.IOException
 import java.time.Duration
+import java.time.Duration.*
 import java.util.*
+import java.util.Arrays.setAll
 import java.util.function.Consumer
 import javax.servlet.Filter
 import javax.servlet.FilterChain
@@ -230,13 +232,11 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     }
 
     @Bean
-    @ConditionalOnNotProd
     fun retryingOAuth2HttpClient(b: WebClient.Builder, retry: Retry) =
         RetryingWebClientOAuth2HttpClient(b.build(),retry)
     @Bean
-    @ConditionalOnNotProd
     fun retry(): Retry =
-        fixedDelay(3, Duration.ofMillis(100))
+        fixedDelay(3, ofMillis(100))
             .filter { e -> e is RestClientException}
             .doBeforeRetry { s -> log.warn("Kall mot token endpoint kastet exception ${s.failure().javaClass.name} for ${s.totalRetriesInARow() + 1} gang") }
             .onRetryExhaustedThrow { _, spec ->  throw OAuth2ClientException("Token endpoint retry gir opp etter ${spec.totalRetries()} forsøk",spec.failure())}
@@ -246,15 +246,17 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         private val log = getLogger(javaClass)
 
         override fun post(req: OAuth2HttpRequest) =
+            with(req) {
                 client.post()
-                    .uri(req.tokenEndpointUrl)
-                    .headers { Consumer<HttpHeaders> { it.putAll(req.oAuth2HttpHeaders.headers()) } }
-                    .bodyValue(LinkedMultiValueMap<String, String>().apply { setAll(req.formParameters) })
+                    .uri(tokenEndpointUrl)
+                    .headers { Consumer<HttpHeaders> { it.putAll(oAuth2HttpHeaders.headers()) } }
+                    .bodyValue(LinkedMultiValueMap<String, String>().apply { setAll(formParameters) })
                     .retrieve()
                     .bodyToMono<OAuth2AccessTokenResponse>()
                     .doOnSuccess { log.trace("Token endpoint returnerte OK") }
                     .retryWhen(retry)
                     .block()
-                    ?: throw OAuth2ClientException("Ingen respons (null)  fra token endpoint ${req.tokenEndpointUrl}")
+                    ?: throw RestClientException("Ingen respons (null) fra token endpoint $tokenEndpointUrl")
+            }
     }
 }
