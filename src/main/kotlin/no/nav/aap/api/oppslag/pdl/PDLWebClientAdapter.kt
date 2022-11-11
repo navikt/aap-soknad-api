@@ -45,7 +45,10 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
     fun barn(medBarn:Boolean,forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) = if(medBarn) { forelderBarnRelasjon.asSequence().map {
         if(it.relatertPersonsIdent != null){
         query<PDLBarn>(clients.system, BARN_QUERY, it.relatertPersonsIdent)
-        } else null
+        } else {
+            log.info("relatertPersonsIdent er null")
+            null
+        }
     }.filterNotNull()
     } else emptySequence()
 

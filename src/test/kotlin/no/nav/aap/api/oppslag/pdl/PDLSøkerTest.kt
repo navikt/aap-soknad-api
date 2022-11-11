@@ -24,7 +24,7 @@ class PDLSøkerTest {
     @Test
     fun pdlbarn_til_barn() {
         val pdlbarnList = OMBarn.listeMedPDLBarn()
-        val barnList = PDLmapper.pdlBarnTilBarn(pdlbarnList)
+        val barnList = PDLMapper.pdlBarnTilBarn(pdlbarnList)
         assertTrue { barnList.size == 1 }
     }
 }
