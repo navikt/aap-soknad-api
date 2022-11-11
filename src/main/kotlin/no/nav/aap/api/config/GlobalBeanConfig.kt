@@ -236,7 +236,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         RetryingWebClientOAuth2HttpClient(b.build(),retry)
     @Bean
     @ConditionalOnNotProd
-    fun retrySpec(): Retry =
+    fun retry(): Retry =
         fixedDelay(3, Duration.ofMillis(100))
             .filter { e -> e is RestClientException}
             .doBeforeRetry { s -> log.warn("Kall mot token endpoint kastet exception ${s.failure()} for ${s.totalRetriesInARow() + 1} gang") }
@@ -254,7 +254,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                     .retrieve()
                     .bodyToMono<OAuth2AccessTokenResponse>()
                     .doOnSuccess { log.trace("Token endpoint returnerte OK") }
-                    .retryWhen(retrySpec)
+                    .retryWhen(retry)
                     .block()
                     ?: throw OAuth2ClientException("Ingen data fra token endpoint ${req.tokenEndpointUrl}")
     }
