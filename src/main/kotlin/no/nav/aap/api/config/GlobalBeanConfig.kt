@@ -230,7 +230,6 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     }
 
     @Bean
-    @Primary
     @ConditionalOnNotProd
     fun retryingOAuth2HttpClient(b: WebClient.Builder, retry: Retry) =
         RetryingWebClientOAuth2HttpClient(b.build(),retry)

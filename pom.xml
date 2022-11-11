@@ -46,7 +46,7 @@
         <swagger.annotations.version>2.2.6</swagger.annotations.version>
         <testcontainers.version>1.17.5</testcontainers.version>
         <tika.version>2.6.0</tika.version>
-        <token.validation.version>2.1.7</token.validation.version>
+        <token.validation.version>2.1.8</token.validation.version>
     </properties>
     <repositories>
         <repository>
