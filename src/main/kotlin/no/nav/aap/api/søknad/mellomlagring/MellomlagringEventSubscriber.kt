@@ -26,7 +26,7 @@ import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.boot.CommandLineRunner
 
 @Suppress("BlockingMethodInNonBlockingContext")
-@ConditionalOnGCP
+//@ConditionalOnGCP
 class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                                    private val cfg: BucketConfig,
                                    private val mapper: ObjectMapper,
