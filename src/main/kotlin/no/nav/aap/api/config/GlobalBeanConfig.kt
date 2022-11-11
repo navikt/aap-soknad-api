@@ -73,6 +73,7 @@ import org.springframework.http.server.ServerHttpResponse
 import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.client.RestClientException
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -80,6 +81,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
+import reactor.util.retry.Retry
 import reactor.util.retry.Retry.fixedDelay
 import reactor.util.retry.RetryBackoffSpec
 
@@ -230,17 +232,17 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     @Bean
     @Primary
     @ConditionalOnNotProd
-    fun retryingOAuth2HttpClient(b: WebClient.Builder, retryBackoffSpec: RetryBackoffSpec) =
-        RetryingWebClientOAuth2HttpClient(b.build(),retryBackoffSpec)
+    fun retryingOAuth2HttpClient(b: WebClient.Builder, retry: Retry) =
+        RetryingWebClientOAuth2HttpClient(b.build(),retry)
     @Bean
     @ConditionalOnNotProd
-    fun retryBackoffSpec(): RetryBackoffSpec =
-        fixedDelay(3, Duration.ofMillis(200))
-            .filter { e -> e is WebClientResponseException && e.statusCode.is5xxServerError }
+    fun retrySpec(): Retry =
+        fixedDelay(3, Duration.ofMillis(100))
+            .filter { e -> e is RestClientException}
             .doBeforeRetry { s -> log.warn("Kall mot token endpoint kastet exception ${s.failure()} for ${s.totalRetriesInARow() + 1} gang") }
             .onRetryExhaustedThrow { _, spec ->  throw OAuth2ClientException("Token endpoint retry gir opp etter  ${spec.totalRetries()} forsøk")}
 
-    class RetryingWebClientOAuth2HttpClient(private val client: WebClient, private val retrySpec: RetryBackoffSpec) : OAuth2HttpClient {
+    class RetryingWebClientOAuth2HttpClient(private val client: WebClient, private val retry: Retry) : OAuth2HttpClient {
 
         private val log = getLogger(javaClass)
 
