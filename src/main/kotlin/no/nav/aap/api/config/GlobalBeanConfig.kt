@@ -237,7 +237,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     @Bean
     fun retry(): Retry =
         fixedDelay(3, ofMillis(100))
-            .filter { e -> e is RestClientException}
+            .filter { e -> e is OAuth2ClientException}
             .doBeforeRetry { s -> log.warn("Retry kall mot token endpoint grunnet exception ${s.failure().javaClass.name} for ${s.totalRetriesInARow() + 1} gang, prøver igjen") }
             .onRetryExhaustedThrow { _, spec ->  throw OAuth2ClientException("Retry kall mot token endpoint gir opp etter ${spec.totalRetries()} forsøk",spec.failure())}
 
@@ -253,6 +253,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                     .bodyValue(LinkedMultiValueMap<String, String>().apply { setAll(formParameters) })
                     .retrieve()
                     .bodyToMono<OAuth2AccessTokenResponse>()
+                    .onErrorMap { e -> OAuth2ClientException("Feil fra token endpoint ${req.tokenEndpointUrl}",e) }
                     .doOnSuccess { log.trace("Token endpoint returnerte OK") }
                     .retryWhen(retry)
                     .block()
