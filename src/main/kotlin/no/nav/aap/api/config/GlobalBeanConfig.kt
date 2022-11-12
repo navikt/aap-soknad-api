@@ -257,7 +257,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                     .doOnSuccess { log.trace("Token endpoint returnerte OK") }
                     .retryWhen(retry)
                     .block()
-                    ?: throw RestClientException("Ingen respons (null) fra token endpoint $tokenEndpointUrl")
+                    ?: throw OAuth2ClientException("Ingen respons (null) fra token endpoint $tokenEndpointUrl")
             }
     }
 }
