@@ -10,9 +10,11 @@ import com.google.pubsub.v1.PubsubMessage
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Metrics.*
 import java.util.*
+import java.util.UUID.*
 import no.nav.aap.api.config.Metrikker.MELLOMLAGRING
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
+import no.nav.aap.api.felles.SkjemaType.*
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber.Metadata.Companion.getInstance
@@ -21,7 +23,6 @@ import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.SØKNADS
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.toMDC
-import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.boot.CommandLineRunner
 
@@ -105,7 +106,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
             fun getInstance(type: String?, fnr: String?, eventId: String?) =
                 if (eventId != null && fnr != null && type != null) {
                     toMDC(NAV_CALL_ID, eventId)
-                    Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(eventId))
+                    Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), fromString(eventId))
                 }
                 else {
                     null
