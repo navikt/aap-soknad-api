@@ -72,8 +72,8 @@ class AAPApiExceptionHandling : ProblemHandling {
             } ?: build()
         }
 
-    override fun log(t: Throwable, problem: Problem, request: NativeWebRequest, status: HttpStatus) =
-        log.error("${status.reasonPhrase}: ${t.message}",t)
+    override fun log(t: Throwable, problem: Problem, req: NativeWebRequest, status: HttpStatus) =
+        log.error("$req ${status.reasonPhrase}: ${ t.message}",t)
 
     companion object {
         private const val SUBSTATUS = "substatus"
