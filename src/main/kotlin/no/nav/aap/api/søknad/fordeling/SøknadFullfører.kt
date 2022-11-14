@@ -92,9 +92,9 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
 
     private fun fullførEttersendingUtenSøknad(fnr: Fødselsnummer, e: List<EttersendtVedlegg>, res: ArkivResultat) {
         repo.getSøknadByFnr(fnr.fnr, SISTE_SØKNAD).firstOrNull()?.let {
-            log.trace("Knytter ettersending til siste søknad ${it.eventid} med journalpost ${it.journalpostid}")
+            log.info("Knytter ettersending til siste søknad ${it.eventid} med journalpost ${it.journalpostid}")
             it.registrerEttersending(fnr, res, e)
-        } ?: log.info("Fant ingen sist innsendt søknad for $fnr")
+        } ?: log.trace("Fant ingen sist innsendt søknad for $fnr")
         minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel.decap()}")
     }
 
