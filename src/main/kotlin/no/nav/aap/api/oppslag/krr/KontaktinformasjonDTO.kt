@@ -21,14 +21,14 @@ data class KontaktinformasjonDTO(@JsonAlias("spraak") val målform: Målform? = 
                 when (kanVarsles) {
                     true -> Kontaktinformasjon(epost, mobil)
                     else -> {
-                        log.info("Kan ikke varsles, kanVarsles er false i KRR")
+                        log.trace("Kan ikke varsles, kanVarsles er false i KRR")
                         EMPTY
                     }
                 }
             }
 
             else -> {
-                log.info("Er ikke aktiv i KRR")
+                log.trace("Er ikke aktiv i KRR")
                 EMPTY
             }
         }
