@@ -17,18 +17,14 @@
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
     <springProfile name="dev">
-        <logger name="reactor.netty.http.client.HttpClient" level="info"/>
         <logger name="no.nav.aap" level="trace"/>
-        <logger name="org.apache.kafka.clients.Metadata" level="warn" />
-        <logger name="org.apache.kafka.clients.NetworkClient" level="warn" />
         <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="trace"/>
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="secureJson"/>
         </logger>
     </springProfile>
     <springProfile name="local,test">
-        <appender name="stdout"
-                  class="ch.qos.logback.core.ConsoleAppender">
+        <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
             <layout class="ch.qos.logback.classic.PatternLayout">
                 <Pattern>%d{yyyy-MM-dd HH:mm:ss} %X{Nav-CallId} [%thread] %-5level %logger{70} - %msg%n</Pattern>
             </layout>
@@ -47,6 +43,8 @@
             <Marker>CONFIDENTIAL</Marker>
             <OnMatch>DENY</OnMatch>
         </turboFilter>
+        <logger name="org.apache.kafka.clients.Metadata" level="warn" />
+        <logger name="org.apache.kafka.clients.NetworkClient" level="warn" />
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="secureJson"/>
         </logger>
