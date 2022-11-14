@@ -42,13 +42,12 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
             } ?: throw JwtTokenMissingException()
         }
 
-    fun barn(medBarn:Boolean,forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) = if(medBarn) { forelderBarnRelasjon.asSequence().map {
-        if(it.relatertPersonsIdent != null){
-        query<PDLBarn>(clients.system, BARN_QUERY, it.relatertPersonsIdent)
-        } else {
-            log.info("relatertPersonsIdent er null")
+    fun barn(medBarn:Boolean,forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) =
+        if(medBarn) { forelderBarnRelasjon.asSequence().mapNotNull {
+        if(it.relatertPersonsIdent == null){
+            log.warn("relatertPersonsIdent er null")
             null
-        }
+        } else query<PDLBarn>(clients.system, BARN_QUERY, it.relatertPersonsIdent)
     }.filterNotNull()
     } else emptySequence()
 
