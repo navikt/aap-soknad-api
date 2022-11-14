@@ -10,7 +10,4 @@ object Metrikker {
     const val OPPRETTET_BESKJED = "soknad.beskjed.opprettet"
     const val AVSLUTTET_OPPGAVE = "soknad.oppgave.avsluttet"
     const val OPPRETTET_OPPGAVE = "soknad.oppgave.opprettet"
-
-
-
 }

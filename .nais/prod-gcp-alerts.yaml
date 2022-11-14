@@ -32,7 +32,7 @@ spec:
       action: "Sjekk om soknad-api i aap er oppe"
       sla: respond within 1h, during office hours
       severity: danger
-    - alert: høy feilrate i logger
+    - alert: høy feilrate i logger for soknad-api
       expr: (100 * sum by (log_app, log_namespace) (rate(logd_messages_total{log_app="soknad-api",log_level=~"Error"}[10m])) / sum by (log_app, log_namespace) (rate(logd_messages_total{log_app="soknad-api"}[10m]))) > 15
       for: 5m
       action: "<https://logs.adeo.no/goto/1d394a6a4c647c93c51eda75e60999ed|Check logs>"
