@@ -6,6 +6,10 @@ import java.time.Duration
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
 import java.util.*
+import no.nav.aap.api.config.Metrikker.AVSLUTTET_BESKJED
+import no.nav.aap.api.config.Metrikker.AVSLUTTET_OPPGAVE
+import no.nav.aap.api.config.Metrikker.OPPRETTET_BESKJED
+import no.nav.aap.api.config.Metrikker.OPPRETTET_OPPGAVE
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
@@ -41,7 +45,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
     private val log = getLogger(javaClass)
 
     @Transactional
-    @Counted(value = "soknad.beskjed.opprettet", description = "Antall beskjeder opprettet")
+    @Counted(value = OPPRETTET_BESKJED, description = "Antall beskjeder opprettet")
     fun opprettBeskjed(fnr: Fødselsnummer,
                        tekst: String,
                        eventId: UUID = callIdAsUUID(),
@@ -52,7 +56,6 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
             if (enabled) {
                 log.trace("Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), beskjed("$tekst", varighet,type, eksternVarsling)))
-                   // .addCallback(SendCallback("opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling"))
                     .get().run {
                         log.trace("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling for $fnr, offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                         repos.beskjeder.save(Beskjed(fnr.fnr, eventId, mellomlagring = mellomlagring,ekstern = eksternVarsling)).eventid
@@ -65,7 +68,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
         }
 
     @Transactional
-    @Counted(value = "soknad.oppgave.opprettet", description = "Antall oppgaver opprettet")
+    @Counted(value = OPPRETTET_OPPGAVE, description = "Antall oppgaver opprettet")
     fun opprettOppgave(fnr: Fødselsnummer,
                        tekst: String,
                        eventId: UUID = callIdAsUUID(),
@@ -73,7 +76,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                        eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
-                log.trace("Oppretter Min Side oppgave for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
+                log.info("Oppretter Min Side oppgave for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         oppgave(tekst, varighet, type, eventId, eksternVarsling)))
                     .addCallback(SendCallback("opprett oppgave med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling"))
@@ -86,7 +89,6 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
         }
 
     @Transactional
-    @Counted(value = "soknad.oppgave.avsluttet", description = "Antall oppgaver avsluttet")
     fun avsluttOppgave(fnr: Fødselsnummer, eventId: UUID, type: SkjemaType = STANDARD) =
         with(cfg.oppgave) {
             if (enabled) {
@@ -102,7 +104,6 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
         }
 
     @Transactional
-    @Counted(value = "soknad.beskjed.avsluttet", description = "Antall beskjeder avsluttet")
     fun avsluttBeskjed(fnr: Fødselsnummer, eventId: UUID, type: SkjemaType = STANDARD) =
         with(cfg.beskjed) {
             if (enabled) {
@@ -116,7 +117,6 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
             }
         }
     @Transactional
-    @Counted(value = "soknad.beskjed.avsluttet", description = "Antall beskjeder avsluttet")
     fun avsluttAlleTidligereUavsluttedeBeskjederOmMellomlagring(fnr: Fødselsnummer, sisteEventid: UUID, type: SkjemaType = STANDARD) =
         with(cfg.beskjed) {
             if (enabled) {
@@ -140,8 +140,6 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 log.trace("Sendte avslutt $notifikasjonType med eventid $eventId  for $fnr, offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
             }
         }
-    // .addCallback(SendCallback("avslutt $notifikasjonType med eventid $eventId")).also {
-
 
 
     private fun beskjed(tekst: String, varighet: Duration, type: MinSideNotifikasjonType, eksternVarsling: Boolean) =
@@ -193,8 +191,8 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
         OPPGAVE,BESKJED
     }
     companion object {
-        private val oppgaverAvsluttet = Metrics.counter("soknad.oppgave.avsluttet")
-        private val beskjederAvsluttet = Metrics.counter("soknad.beskjed.avsluttet")
+        private val oppgaverAvsluttet = Metrics.counter(AVSLUTTET_OPPGAVE)
+        private val beskjederAvsluttet = Metrics.counter(AVSLUTTET_BESKJED)
     }
 }
 
