@@ -54,10 +54,10 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                        eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
             if (enabled) {
-                log.trace("Oppretter Min Side beskjed $tekst for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
+                log.trace("Oppretter Min Side beskjed med ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), beskjed("$tekst", varighet,type, eksternVarsling)))
                     .get().run {
-                        log.trace("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling for $fnr, offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                        log.trace("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                         repos.beskjeder.save(Beskjed(fnr.fnr, eventId, mellomlagring = mellomlagring,ekstern = eksternVarsling)).eventid
                     }
             }
@@ -76,7 +76,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                        eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
-                log.info("Oppretter Min Side oppgave for $fnr, ekstern varsling $eksternVarsling og eventid $eventId")
+                log.info("Oppretter Min Side oppgave med ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         oppgave(tekst, varighet, type, eventId, eksternVarsling)))
                     .addCallback(SendCallback("opprett oppgave med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling"))
@@ -137,7 +137,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 OPPGAVE -> oppgaverAvsluttet.increment()
                 BESKJED -> beskjederAvsluttet.increment()
             }.also {
-                log.trace("Sendte avslutt $notifikasjonType med eventid $eventId  for $fnr, offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                log.trace("Sendte avslutt $notifikasjonType med eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
             }
         }
 

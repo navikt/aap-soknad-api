@@ -1,14 +1,18 @@
 package no.nav.aap.api.oppslag.pdl
 
+import java.time.LocalDate
 import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.PostNummer
+import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.FORTROLIG
+import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
+import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.EnvUtil
-import java.time.LocalDate
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 
 object PDLMapper {
     private val log = getLogger(javaClass)
@@ -19,9 +23,7 @@ object PDLMapper {
                 søker.beskyttet(),
                 adresseFra(vegadresse),
                 fødselsdatoFra(fødsel),
-                pdlBarnTilBarn(barn)
-            )
-                .also {
+                pdlBarnTilBarn(barn)).also {
                     log.trace(EnvUtil.CONFIDENTIAL, "Søker er $it")
                 }
         }
@@ -32,10 +34,7 @@ object PDLMapper {
             .filterNot(::beskyttet)
             .filterNot(::død)
             .map {
-                Barn(
-                    navnFra(it.navn),
-                    fødselsdatoFra(it.fødselsdato)
-                )
+                Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato))
             }.toList()
 
 
@@ -44,8 +43,9 @@ object PDLMapper {
 
     private fun navnFra(navn: PDLNavn) =
         with(navn) {
-            Navn(fornavn, mellomnavn, etternavn)
-                .also { log.trace(EnvUtil.CONFIDENTIAL, "Navn er $it") }
+            Navn(fornavn, mellomnavn, etternavn).also {
+                log.trace(CONFIDENTIAL, "Navn er $it")
+            }
         }
 
     private fun adresseFra(adresse: PDLSøker.PDLBostedadresse.PDLVegadresse?) = adresse?.let {
@@ -67,10 +67,6 @@ object PDLMapper {
     private fun død(pdlBarn: PDLBarn) = pdlBarn.dødsfall?.any() ?: false
 
     private fun beskyttet(gradering: Set<PDLGradering>?) = gradering?.any {
-            it.gradering in listOf(
-                PDLAdresseBeskyttelse.FORTROLIG,
-                PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND,
-                PDLAdresseBeskyttelse.STRENGT_FORTROLIG
-            )
+            it.gradering in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND, STRENGT_FORTROLIG)
         } == true
 }
