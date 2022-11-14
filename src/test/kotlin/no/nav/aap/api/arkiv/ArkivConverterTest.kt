@@ -1,7 +1,8 @@
 package no.nav.aap.api.arkiv
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.aap.api.søknad.SøknadTest
+import no.nav.aap.api.OMPersoner
+import no.nav.aap.api.OMSøknad
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
 import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
@@ -41,18 +42,13 @@ class ArkivConverterTest {
     @Mock
     lateinit var pdf: PDFGenerator
 
-    // @Test
+    fun hentFil(fil:String) = copyToByteArray(ClassPathResource(fil).inputStream)
+    //@Test
     fun convert() {
-        val bytes = bytesFra("pdf/test123.pdf")
-        val bytes1 = bytesFra("pdf/rdd.png")
-        val bytes2 = bytesFra("pdf/landscape.jpg")
 
-        val dokinfo = DokumentInfo(bytes, "test123.pdf, APPLICATION_PDF_VALUE ")
-        val dokinfo1 = DokumentInfo(bytes1, "rdd.png", IMAGE_PNG_VALUE)
-        val dokinfo2 = DokumentInfo(bytes2, "landscape.png", IMAGE_JPEG_VALUE)
-
-
-
+        val dokinfo = DokumentInfo(hentFil("test123.pdf"), "test123.pdf, APPLICATION_PDF_VALUE ")
+        val dokinfo1 = DokumentInfo(hentFil("rdd.pdf"), "rdd.png", IMAGE_PNG_VALUE)
+        val dokinfo2 = DokumentInfo(hentFil("landscape.pdf"), "landscape.png", IMAGE_JPEG_VALUE)
 
         `when`(lager.lesDokument(anyObject()))
             .thenReturn(dokinfo)
@@ -61,8 +57,8 @@ class ArkivConverterTest {
             .thenReturn(dokinfo1)
             .thenReturn(dokinfo2)
 
-        val søknad = Innsending(SøknadTest.standardSøknad(), PDFKvittering(listOf(),LocalDateTime.now()))
-        val søker = SøknadTest.søker()
+        val søknad = Innsending(OMSøknad.standard_soknad(), PDFKvittering(listOf(),LocalDateTime.now()))
+        val søker = OMPersoner.ole_olsen()
         val c = ArkivJournalpostGenerator(mapper, lager, pdf, PDFFraBildeFKonverterer(BildeSkalerer()))
         val converted = c.journalpostFra(søknad, søker)
         converted.dokumenter.forEach { doc ->
