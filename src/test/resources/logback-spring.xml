@@ -19,6 +19,8 @@
     <springProfile name="dev">
         <logger name="reactor.netty.http.client.HttpClient" level="info"/>
         <logger name="no.nav.aap" level="trace"/>
+        <logger name="org.apache.kafka.clients.Metadata" level="warn" />
+        <logger name="org.apache.kafka.clients.NetworkClient" level="warn" />
         <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="trace"/>
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="secureJson"/>
