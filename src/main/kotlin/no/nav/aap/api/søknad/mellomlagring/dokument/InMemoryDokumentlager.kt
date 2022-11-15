@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.mellomlagring.dokument
 
+import no.nav.aap.api.felles.Fødselsnummer
 import java.util.*
 import no.nav.aap.api.søknad.model.StandardSøknad
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -19,4 +20,11 @@ class InMemoryDokumentlager : Dokumentlager {
     }
 
     override fun lagreDokument(dokument: DokumentInfo) = UUID.randomUUID()
+    override fun slettAlleDokumenter() {
+        TODO("Not yet implemented")
+    }
+
+    override fun slettAlleDokumenter(fnr: Fødselsnummer) {
+        TODO("Not yet implemented")
+    }
 }
