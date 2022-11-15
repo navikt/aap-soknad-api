@@ -52,6 +52,11 @@ internal class DokumentlagerController(private val lager: Dokumentlager) {
     fun slettDokumenter(@RequestParam vararg uuids: UUID) =
         lager.slettDokumenter(*uuids)
 
+    @DeleteMapping("/slettAlle")
+    @ResponseStatus(NO_CONTENT)
+    fun slettAlleDokumenter() =
+        lager.slettAlleDokumenter()
+
     companion object {
         const val BASEPATH = "vedlegg"
     }

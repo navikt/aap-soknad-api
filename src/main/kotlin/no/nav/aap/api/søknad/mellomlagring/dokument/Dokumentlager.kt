@@ -23,6 +23,10 @@ interface Dokumentlager {
                 }
             }
         }
+
+    fun slettAlleDokumenter(): Unit
+
+    fun slettAlleDokumenter(fnr: Fødselsnummer): Unit
 }
 
 data class DokumentInfo(val bytes: ByteArray,

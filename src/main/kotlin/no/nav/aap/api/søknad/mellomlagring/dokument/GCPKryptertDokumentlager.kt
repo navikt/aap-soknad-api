@@ -48,6 +48,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     override fun lagreDokument(dokument: DokumentInfo) = lagreDokument(dokument, ctx.getFnr())
 
 
+
     fun lagreDokument(dokument: DokumentInfo, fnr: Fødselsnummer) =
         callIdAsUUID().apply {
             with(dokument) {
@@ -134,11 +135,12 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
             slettDokument(id, fnr)
         }
 
-    fun slettAlleDokumenter(fnr: Fødselsnummer) =
+    override fun slettAlleDokumenter() = slettAlleDokumenter(ctx.getFnr())
+
+    override fun slettAlleDokumenter(fnr: Fødselsnummer) =
         lager.list(cfg.vedlegg.navn, BlobListOption.prefix("${fnr.fnr}/"), BlobListOption.currentDirectory())
             .iterateAll()
             .forEach{ it.delete() }
-
     @Component
     class ContentTypeDokumentSjekker(private val cfg: BucketConfig) : DokumentSjekker {
 

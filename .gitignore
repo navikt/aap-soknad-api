@@ -19,3 +19,4 @@ target
 reports/
 .DS_Store
 .java-version
+.env
