@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.mellomlagring
 
 import no.nav.aap.api.felles.SkjemaType
+import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.HttpStatus.CREATED
@@ -15,16 +16,17 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseStatus
 
 @ProtectedRestController(value = ["buckets"], issuer = IDPORTEN)
-internal class MellomlagerController(private val lager: Mellomlager) {
+internal class MellomlagerController(private val mellomlager: Mellomlager, private val dokumentlager: Dokumentlager ) {
 
     @PostMapping("/lagre/{type}")
     @ResponseStatus(CREATED)
-    fun lagre(@PathVariable type: SkjemaType, @RequestBody data: String) = lager.lagre(data, type)
+    fun lagre(@PathVariable type: SkjemaType, @RequestBody data: String) = mellomlager.lagre(data, type)
 
     @GetMapping("/les/{type}")
-    fun les(@PathVariable type: SkjemaType) = lager.les(type)?.let { ok(it) } ?: notFound().build()
+    fun les(@PathVariable type: SkjemaType) = mellomlager.les(type)?.let { ok(it) } ?: notFound().build()
 
     @DeleteMapping("/slett/{type}")
     @ResponseStatus(NO_CONTENT)
-    fun slett(@PathVariable type: SkjemaType) = lager.slett(type)
+    fun slett(@PathVariable type: SkjemaType) = mellomlager.slett(type).also { dokumentlager.slettAlleDokumenter() }
+
 }
