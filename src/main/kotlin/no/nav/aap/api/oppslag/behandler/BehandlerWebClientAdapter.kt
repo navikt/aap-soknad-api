@@ -25,6 +25,7 @@ class BehandlerWebClientAdapter(
         .doOnError { t: Throwable ->
             log.warn("Behandler oppslag feilet", t)
         }
+        .onErrorReturn(listOf())
         .doOnSuccess {
             log.trace(CONFIDENTIAL,"Behandlere er $it")
         }
