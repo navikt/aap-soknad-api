@@ -8,7 +8,8 @@ import com.google.cloud.storage.Storage.BlobField.CONTENT_TYPE
 import com.google.cloud.storage.Storage.BlobField.SIZE
 import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
 import com.google.cloud.storage.Storage.BlobGetOption.fields
-import com.google.cloud.storage.Storage.BlobListOption
+import com.google.cloud.storage.Storage.BlobListOption.currentDirectory
+import com.google.cloud.storage.Storage.BlobListOption.prefix
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import io.micrometer.core.annotation.Timed
 import java.util.*
@@ -21,13 +22,11 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.T
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.VedleggAware
 import no.nav.aap.util.AuthContext
-import no.nav.aap.util.EnvExtensions.isProd
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.context.annotation.Primary
-import org.springframework.core.env.Environment
 import org.springframework.http.ContentDisposition.parse
 import org.springframework.stereotype.Component
 
@@ -38,7 +37,6 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                                private val lager: Storage,
                                private val ctx: AuthContext,
                                private val størrelseSjekker: StørelseSjekker,
-                               private val env: Environment,
                                private val sjekkere: List<DokumentSjekker>): Dokumentlager {
 
 
@@ -89,15 +87,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     fun slettDokument(uuid: UUID, fnr: Fødselsnummer) =
         with(cfg.vedlegg) {
             with(navn(fnr, uuid)) {
-                lager.delete(navn, this)
-                    .also {
-                        if (env.isProd()) {
-                            log.trace("Slettet dokument $uuid fra bøtte $navn med status $it for $fnr")
-                        }
-                        else  {
-                            log.info("Slettet dokument $this@with fra bøtte $navn med status $it")
-                        }
-                    }
+                lager.delete(navn, this).also { log.info("Slettet dokument $this@with fra bøtte $navn med status $it") }
             }
         }
 
@@ -128,19 +118,20 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     fun slettUUIDs(uuids: List<UUID?>?, fnr: Fødselsnummer) =
         uuids?.forEach {
             slettDokumenter(it, fnr)
-        }
+        } ?: Unit
 
     private fun slettDokumenter(uuid: UUID?, fnr: Fødselsnummer) =
         uuid?.let { id ->
             slettDokument(id, fnr)
-        }
+        } ?: Unit
 
     override fun slettAlleDokumenter() = slettAlleDokumenter(ctx.getFnr())
 
     override fun slettAlleDokumenter(fnr: Fødselsnummer) =
-        lager.list(cfg.vedlegg.navn, BlobListOption.prefix("${fnr.fnr}/"), BlobListOption.currentDirectory())
+        lager.list(cfg.vedlegg.navn, prefix("${fnr.fnr}/"), currentDirectory())
             .iterateAll()
-            .forEach{ it.delete() }
+            .forEach{ blob -> blob.delete().also { log.trace("Slettet ${blob.name} med status $it") }
+            }
     @Component
     class ContentTypeDokumentSjekker(private val cfg: BucketConfig) : DokumentSjekker {
 
