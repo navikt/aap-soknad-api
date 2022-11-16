@@ -87,7 +87,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     fun slettDokument(uuid: UUID, fnr: Fødselsnummer) =
         with(cfg.vedlegg) {
             with(navn(fnr, uuid)) {
-                lager.delete(navn, this).also { log.info("Slettet dokument $this@with fra bøtte $navn med status $it") }
+                lager.delete(navn, this).also { log.info("Slettet dokument $uuid fra bøtte $navn med status $it") }
             }
         }
 
