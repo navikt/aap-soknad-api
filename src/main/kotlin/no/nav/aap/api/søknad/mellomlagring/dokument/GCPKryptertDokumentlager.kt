@@ -80,8 +80,10 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
         }
 
     private fun Blob.contentDisposition() = parse(contentDisposition)
-    override fun slettDokumenter(vararg uuids: UUID) = slettUUIDs(uuids.asList(), ctx.getFnr()).also {
-        log.trace("Slettet ${uuids.size} dokument(er) fra vedleggsbøtte")
+    override fun slettDokumenter(vararg uuids: UUID) =
+        uuids.forEach { uuid -> slettDokument(uuid,ctx.getFnr()).also {
+            log.info("Slettet $uuid")
+        }
     }
 
     fun slettDokument(uuid: UUID, fnr: Fødselsnummer) =

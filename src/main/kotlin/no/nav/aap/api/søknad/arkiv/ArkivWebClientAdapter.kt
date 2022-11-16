@@ -35,7 +35,6 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("
                              val dokumenter: List<DokumentId>) {
 
         val dokIder = dokumenter.map { it.dokumentInfoId }
-
         data class DokumentId(val dokumentInfoId: String)
         override fun toString() = "${javaClass.simpleName} [journalpostId=$journalpostId, journalpostferdigstilt=$journalpostferdigstilt, dokumenter= $dokIder]"
     }
