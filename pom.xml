@@ -15,7 +15,7 @@
     <description>aap-soknad-api</description>
     <properties>
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
-        <conditionals.version>4.0.3</conditionals.version>
+        <conditionals.version>4.0.5</conditionals.version>
         <confluent.version>7.3.0</confluent.version>
         <commit-id.version>5.0.0</commit-id.version>
         <commons-text.version>1.10.0</commons-text.version>
