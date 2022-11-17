@@ -80,22 +80,16 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
         }
 
     private fun Blob.contentDisposition() = parse(contentDisposition)
-    override fun slettDokumenter(vararg uuids: UUID)  {
-        log.trace("Sletter liste ${uuids.toList()}")
-        uuids.forEach { uuid -> run {
-            log.trace("Sletter $uuid")
-            slettDokument(uuid,ctx.getFnr())
-            log.trace("Slettet $uuid")
-        }
-        }
-    }
+    override fun slettDokumenter(vararg uuids: UUID?)  =
+        slettDokumenter(uuids.toList(),ctx.getFnr())
 
-    fun slettDokument(uuid: UUID, fnr: Fødselsnummer) =
-        with(cfg.vedlegg) {
-            with(navn(fnr, uuid)) {
-                lager.delete(navn, this).also { log.trace("Slettet dokument $uuid fra bøtte $navn med status $it") }
+    override fun slettAlleDokumenter() = slettAlleDokumenter(ctx.getFnr())
+
+    override fun slettAlleDokumenter(fnr: Fødselsnummer) =
+        lager.list(cfg.vedlegg.navn, prefix("${fnr.fnr}/"), currentDirectory())
+            .iterateAll()
+            .forEach{ blob -> blob.delete().also { log.trace("Slettet ${blob.name} med status $it") }
             }
-        }
 
     override fun slettDokumenter(søknad: StandardSøknad) =
         slettDokumenter(søknad, ctx.getFnr())
@@ -118,26 +112,26 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
 
     private fun slettDokumenter(a: VedleggAware?, fnr: Fødselsnummer) =
         a?.vedlegg?.let {
-            slettUUIDs(it.deler, fnr)
+            slettDokumenter(it.deler, fnr)
         }
 
-    fun slettUUIDs(uuids: List<UUID?>?, fnr: Fødselsnummer) =
+    fun slettDokumenter(uuids: List<UUID?>?, fnr: Fødselsnummer) =
         uuids?.forEach {
-            slettDokumenter(it, fnr)
+            slettDokument(it, fnr)
         } ?: Unit
 
-    private fun slettDokumenter(uuid: UUID?, fnr: Fødselsnummer) =
+    private fun slettDokument(uuid: UUID?, fnr: Fødselsnummer) =
         uuid?.let { id ->
             slettDokument(id, fnr)
         } ?: Unit
 
-    override fun slettAlleDokumenter() = slettAlleDokumenter(ctx.getFnr())
-
-    override fun slettAlleDokumenter(fnr: Fødselsnummer) =
-        lager.list(cfg.vedlegg.navn, prefix("${fnr.fnr}/"), currentDirectory())
-            .iterateAll()
-            .forEach{ blob -> blob.delete().also { log.trace("Slettet ${blob.name} med status $it") }
+    fun slettDokument(uuid: UUID, fnr: Fødselsnummer) =
+        with(cfg.vedlegg) {
+            with(navn(fnr, uuid)) {
+                lager.delete(navn, this).also { log.trace("Slettet dokument $uuid fra bøtte $navn med status $it") }
             }
+        }
+
     @Component
     class ContentTypeDokumentSjekker(private val cfg: BucketConfig) : DokumentSjekker {
 
