@@ -7,7 +7,6 @@ import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
-import no.nav.aap.api.søknad.fordeling.SøknadFullfører
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
 import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
@@ -49,7 +48,6 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
                              private val vl: SøknadVLFordeler,
                              private val dittNav: MinSideClient,
                              private val søknad: SøknadClient,
-                             private val fullfører: SøknadFullfører,
                              private val arkiv: ArkivJournalpostGenerator,
                              private val repos: MinSideRepositories) {
 
@@ -106,8 +104,10 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
 
     @DeleteMapping("vedlegg/slett/{fnr}")
     @ResponseStatus(NO_CONTENT)
-    fun slettDokument(@PathVariable fnr: Fødselsnummer, @RequestParam vararg uuids: UUID?) =
+    fun slettDokument(@PathVariable fnr: Fødselsnummer, @RequestParam vararg uuids: UUID?) {
+        log.info("DevController sletter uuids ${uuids.toList()}")
         dokumentLager.slettDokumenter(uuids.toList(), fnr)
+    }
 
     @DeleteMapping("vedlegg/slettAlle/{fnr}")
     @ResponseStatus(NO_CONTENT)
