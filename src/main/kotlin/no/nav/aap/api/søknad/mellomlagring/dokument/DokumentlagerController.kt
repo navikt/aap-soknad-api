@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.mellomlagring.dokument
 import java.util.*
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentlagerController.Companion.BASEPATH
 import no.nav.aap.util.Constants.IDPORTEN
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.HttpHeaders
@@ -23,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile
 
 @ProtectedRestController(value = [BASEPATH], issuer = IDPORTEN)
 internal class DokumentlagerController(private val lager: Dokumentlager) {
+
+    private val log = getLogger(javaClass)
 
     @PostMapping("/lagre", consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
@@ -50,7 +53,7 @@ internal class DokumentlagerController(private val lager: Dokumentlager) {
     @DeleteMapping("/slett")
     @ResponseStatus(NO_CONTENT)
     fun slettDokumenter(@RequestParam vararg uuids: UUID) =
-        lager.slettDokumenter(*uuids)
+        lager.slettDokumenter(*uuids).also { log.info("Controller sletter uuids ${uuids.toList()}") }
 
     @DeleteMapping("/slettAlle")
     @ResponseStatus(NO_CONTENT)
