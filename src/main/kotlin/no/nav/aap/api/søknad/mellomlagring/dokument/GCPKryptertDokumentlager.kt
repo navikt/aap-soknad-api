@@ -80,15 +80,14 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
         }
 
     private fun Blob.contentDisposition() = parse(contentDisposition)
-    override fun slettDokumenter(uuids: List<UUID>)  =
-        slettDokumenter(uuids,ctx.getFnr())
+
 
     override fun slettAlleDokumenter() = slettAlleDokumenter(ctx.getFnr())
 
     override fun slettAlleDokumenter(fnr: Fødselsnummer) =
-        lager.list(cfg.vedlegg.navn, prefix("${fnr.fnr}/"), currentDirectory())
-            .iterateAll()
-            .forEach{ blob -> blob.delete().also { log.trace("Slettet ${blob.name} med status $it") }
+        lager.list(cfg.vedlegg.navn, prefix("${fnr.fnr}/"), currentDirectory()).iterateAll()
+            .forEach {
+                blob -> blob.delete().also { log.trace("Slettet ${blob.name} med status $it") }
             }
 
     override fun slettDokumenter(søknad: StandardSøknad) =
@@ -114,6 +113,8 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
         a?.vedlegg?.let {
             slettDokumenter(it.deler, fnr)
         }
+    override fun slettDokumenter(uuids: List<UUID?>?)  =
+        slettDokumenter(uuids,ctx.getFnr())
 
     fun slettDokumenter(uuids: List<UUID?>?, fnr: Fødselsnummer) =
         uuids?.forEach {
