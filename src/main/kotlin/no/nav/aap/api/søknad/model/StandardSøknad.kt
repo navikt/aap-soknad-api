@@ -48,7 +48,7 @@ data class StandardSøknad(
         val medlemsskap: Medlemskap,
         val registrerteBehandlere: List<RegistrertBehandler> = emptyList(),
         val andreBehandlere: List<AnnenBehandler> = emptyList(),
-        val yrkesskadeType: Yrkesskade = NEI,
+        val yrkesskadeType: Yrkesskade,
         val utbetalinger: Utbetalinger?,
         val tilleggsopplysninger: String?,
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
