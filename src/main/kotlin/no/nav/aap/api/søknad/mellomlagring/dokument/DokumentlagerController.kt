@@ -52,7 +52,7 @@ internal class DokumentlagerController(private val lager: Dokumentlager) {
 
     @DeleteMapping("/slett")
     @ResponseStatus(NO_CONTENT)
-    fun slettDokumenter(@RequestParam  uuids: List<UUID>) =
+    fun slettDokumenter(@RequestParam  uuids: List<String>) =
         log.info("Controller sletter uuids ${uuids.toList()}")
         //lager.slettDokumenter(*uuids).also { log.info("Controller sletter uuids ${uuids.toList()}") }
 
