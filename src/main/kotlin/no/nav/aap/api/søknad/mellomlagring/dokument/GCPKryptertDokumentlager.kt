@@ -113,7 +113,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
         a?.vedlegg?.let {
             slettDokumenter(it.deler, fnr)
         }
-    override fun slettDokumenter(uuids: List<UUID?>?)  =
+    override fun slettDokumenter(uuids: List<UUID>)  =
         slettDokumenter(uuids,ctx.getFnr())
 
     fun slettDokumenter(uuids: List<UUID?>?, fnr: Fødselsnummer) =

@@ -20,6 +20,7 @@ import no.nav.aap.api.oppslag.behandler.AnnenBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
 import no.nav.aap.api.søknad.model.RadioValg.JA
+import no.nav.aap.api.søknad.model.StandardSøknad.Yrkesskade.NEI
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.AVBRUTT
 import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.AFP
@@ -47,7 +48,7 @@ data class StandardSøknad(
         val medlemsskap: Medlemskap,
         val registrerteBehandlere: List<RegistrertBehandler> = emptyList(),
         val andreBehandlere: List<AnnenBehandler> = emptyList(),
-        val yrkesskadeType: Yrkesskade,
+        val yrkesskadeType: Yrkesskade = NEI,
         val utbetalinger: Utbetalinger?,
         val tilleggsopplysninger: String?,
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
