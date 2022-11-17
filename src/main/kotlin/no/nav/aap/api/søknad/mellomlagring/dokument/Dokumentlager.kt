@@ -11,7 +11,7 @@ import org.springframework.http.ContentDisposition.attachment
 
 interface Dokumentlager {
     fun lesDokument(uuid: UUID): DokumentInfo?
-    fun slettDokument(uuid: UUID)
+    fun slettDokumenter(vararg uuids: UUID)
     fun slettDokumenter(søknad: StandardSøknad)
     fun lagreDokument(dokument: DokumentInfo): UUID
     fun navn(fnr: Fødselsnummer, uuid: UUID) = "${fnr.fnr}/$uuid"
@@ -19,7 +19,7 @@ interface Dokumentlager {
         e.ettersendteVedlegg.forEach { es ->
             es.ettersending.deler?.forEach { uuid ->
                 uuid?.let {
-                    slettDokument(it)
+                    slettDokumenter(it)
                 }
             }
         }
