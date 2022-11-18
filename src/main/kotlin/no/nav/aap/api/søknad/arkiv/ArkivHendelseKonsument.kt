@@ -7,7 +7,6 @@ import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 @Component
 @ConditionalOnGCP
@@ -15,7 +14,6 @@ class ArkivHendelseKonsument {
         private val log = getLogger(javaClass)
 
         @KafkaListener(topics = ["#{'\${joark.hendelser.topic}'}"], groupId = "#{'\${joark.hendelser.groupid}'}", containerFactory = ARKIVHENDELSER)
-        @Transactional
         fun listen(@Payload hendelse: JournalfoeringHendelseRecord)  {
                 log.info("Mottatt arkivføringshendelse $hendelse")
         }
