@@ -4,7 +4,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.*
 import java.net.URI
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.CLIENT_CREDENTIALS_ARKIV
-import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.JOARKHENDELSER
+import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.ARKIVHENDELSER
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.util.Constants.AAP
 import no.nav.aap.util.Constants.JOARK
@@ -67,8 +67,8 @@ class ArkivBeanConfig {
             }
         } ?: throw IllegalArgumentException("Ingen konfigurasjon for $url")
 
-    @Bean(JOARKHENDELSER)
-    fun joarkHendelserListenerContainerFactory(p: KafkaProperties) =
+    @Bean(ARKIVHENDELSER)
+    fun arkivHendelserListenerContainerFactory(p: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord>().apply {
             consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
                 put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
