@@ -23,6 +23,7 @@ class MinSideEksternNotifikasjonStatusKonsument(private val repos: MinSideReposi
 
     private fun oppdaterDistribusjonStatus(status: DoknotifikasjonStatus) {
         with(status.eventId()) {
+
             repos.oppgaver.findByEventid(this)?.let {
                 oppdaterOppgave(it, status)
             } ?: repos.beskjeder.findByEventid(this)?.let {

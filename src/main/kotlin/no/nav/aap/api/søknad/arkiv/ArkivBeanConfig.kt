@@ -6,14 +6,16 @@ import java.net.URI
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.CLIENT_CREDENTIALS_ARKIV
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.JOARKHENDELSER
 import no.nav.aap.health.AbstractPingableHealthIndicator
+import no.nav.aap.util.Constants.AAP
 import no.nav.aap.util.Constants.JOARK
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.asBearer
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
-import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
+import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -68,13 +70,18 @@ class ArkivBeanConfig {
 
     @Bean(JOARKHENDELSER)
     fun joarkHendelserListenerContainerFactory(p: KafkaProperties) =
-        ConcurrentKafkaListenerContainerFactory<String, DoknotifikasjonStatus>().apply {
+        ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord>().apply {
             consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
                 put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
                 put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
                 put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true)
+                setRecordFilterStrategy(::joarkAAPHendelseFilterStrategy)
             })
         }
+
+    private fun joarkAAPHendelseFilterStrategy(payload: ConsumerRecord<String, JournalfoeringHendelseRecord>) =
+            !AAP.equals(payload.value().behandlingstema, true)
+
     @Bean
     @ConditionalOnProperty("$JOARK.enabled", havingValue = "true")
     fun arkivHealthIndicator(adapter: ArkivWebClientAdapter) = object : AbstractPingableHealthIndicator(adapter) {}
