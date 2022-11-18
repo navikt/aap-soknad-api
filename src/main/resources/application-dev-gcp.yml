@@ -48,6 +48,8 @@ saf:
 konto:
     enabled: true
 joark:
+    hendelser:
+        topic: teamdokumenthandtering.aapen-dok-journalfoering-q1
     scope: api://dev-fss.teamdokumenthandtering.dokarkiv-q1/.default
 minside:
     backlinks:
