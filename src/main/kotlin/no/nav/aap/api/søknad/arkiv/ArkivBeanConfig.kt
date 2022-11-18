@@ -15,7 +15,6 @@ import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
-import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -75,13 +74,9 @@ class ArkivBeanConfig {
                 put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
                 put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
                 put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true)
-                setRecordFilterStrategy(::joarkAAPHendelseFilterStrategy)
+                setRecordFilterStrategy { !AAP.equals(it.value().temaNytt, true) }
             })
         }
-
-    private fun joarkAAPHendelseFilterStrategy(payload: ConsumerRecord<String, JournalfoeringHendelseRecord>) =
-           // !AAP.equals(payload.value().behandlingstema, true)
-        false
 
     @Bean
     @ConditionalOnProperty("$JOARK.enabled", havingValue = "true")
