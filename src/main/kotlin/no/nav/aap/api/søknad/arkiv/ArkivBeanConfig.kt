@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.arkiv
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
-import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.*
 import java.net.URI
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.CLIENT_CREDENTIALS_ARKIV
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.JOARKHENDELSER
@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
-import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.*
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient.Builder
@@ -71,9 +71,9 @@ class ArkivBeanConfig {
     fun joarkHendelserListenerContainerFactory(p: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord>().apply {
             consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
-                put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
-                put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
-                put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true)
+                put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
+                put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
+                put(SPECIFIC_AVRO_READER_CONFIG, true)
                 setRecordFilterStrategy { !AAP.equals(it.value().temaNytt, true) }
             })
         }
