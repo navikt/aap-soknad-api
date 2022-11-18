@@ -64,6 +64,7 @@ spring:
     consumer:
       group-id: ${spring.application.name}-${env}
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
       acks: all
       client-id: ${spring.application.name}
