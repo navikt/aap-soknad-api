@@ -1,10 +1,9 @@
 package no.nav.aap.api.søknad.arkiv
 
-import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.*
 import java.net.URI
-import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.CLIENT_CREDENTIALS_ARKIV
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.ARKIVHENDELSER
+import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.CLIENT_CREDENTIALS_ARKIV
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.util.Constants.AAP
 import no.nav.aap.util.Constants.JOARK
@@ -15,7 +14,6 @@ import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
-import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
@@ -71,8 +69,8 @@ class ArkivBeanConfig {
     fun arkivHendelserListenerContainerFactory(p: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord>().apply {
             consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
-                put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
-                put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
+              //  put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
+             //   put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
                 put(SPECIFIC_AVRO_READER_CONFIG, true)
                 setRecordFilterStrategy { !AAP.equals(it.value().temaNytt, true) }
             })
