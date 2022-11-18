@@ -1,17 +1,14 @@
 package no.nav.aap.api.søknad.arkiv
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.*
-import java.net.URI
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.ARKIVHENDELSER
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.CLIENT_CREDENTIALS_ARKIV
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.util.Constants.AAP
 import no.nav.aap.util.Constants.JOARK
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.aap.util.StringExtensions.asBearer
-import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
+import no.nav.aap.util.TokenExtensions.bearerToken
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
-import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import org.springframework.beans.factory.annotation.Qualifier
@@ -56,21 +53,10 @@ class ArkivBeanConfig {
                 .build())
         }
 
-    private fun OAuth2AccessTokenService.bearerToken(properties: ClientProperties?, url: URI) =
-        properties?.let { p ->
-            log.trace(CONFIDENTIAL, "Gjør token exchange for $url med konfigurasjon fra $p")
-            getAccessToken(p).accessToken.asBearer().also {
-                log.trace("Token exchange for $url OK")
-                log.trace(CONFIDENTIAL, "Token er $it")
-            }
-        } ?: throw IllegalArgumentException("Ingen konfigurasjon for $url")
-
     @Bean(ARKIVHENDELSER)
     fun arkivHendelserListenerContainerFactory(p: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord>().apply {
             consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
-              //  put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
-             //   put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
                 put(SPECIFIC_AVRO_READER_CONFIG, true)
                 setRecordFilterStrategy { !AAP.equals(it.value().temaNytt, true) }
             })

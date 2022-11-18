@@ -50,8 +50,6 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
     fun dokNotifikasjonListenerContainerFactory(p: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, DoknotifikasjonStatus>().apply {
             consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
-              //  put(KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
-              //  put(VALUE_DESERIALIZER_CLASS, KafkaAvroDeserializer::class.java)
                 put(SPECIFIC_AVRO_READER_CONFIG, true)
                 setRecordFilterStrategy(::recordFilterStrategy)
             })

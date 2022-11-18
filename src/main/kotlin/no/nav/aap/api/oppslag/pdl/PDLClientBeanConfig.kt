@@ -8,7 +8,7 @@ import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.util.Constants.PDL_SYSTEM
 import no.nav.aap.util.Constants.PDL_USER
-import no.nav.aap.util.StringExtensions.asBearer
+import no.nav.aap.util.TokenExtensions.bearerToken
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import org.springframework.beans.factory.annotation.Qualifier
@@ -26,8 +26,7 @@ class PDLClientBeanConfig {
 
     @Bean
     @Qualifier(PDL_SYSTEM)
-    fun pdlSystemWebClient(b: Builder,
-                           cfg: PDLConfig,
+    fun pdlSystemWebClient(b: Builder, cfg: PDLConfig,
                            @Qualifier(PDL_SYSTEM) pdlClientCredentialFilterFunction: ExchangeFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
@@ -38,11 +37,8 @@ class PDLClientBeanConfig {
     @Qualifier(PDL_SYSTEM)
     fun pdlClientCredentialFilterFunction(cfgs: ClientConfigurationProperties, service: OAuth2AccessTokenService) =
         ExchangeFilterFunction { req, next ->
-            next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.systemBearerToken(cfgs)).build())
+            next.exchange(ClientRequest.from(req).header(AUTHORIZATION, service.bearerToken(cfgs.registration[PDL_CREDENTIALS], req.url())).build())
         }
-
-    private fun OAuth2AccessTokenService.systemBearerToken(cfgs: ClientConfigurationProperties) =
-        getAccessToken(cfgs.registration[PDL_CREDENTIALS]).accessToken.asBearer()
 
     @Qualifier(PDL_SYSTEM)
     @Bean

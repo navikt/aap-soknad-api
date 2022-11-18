@@ -48,8 +48,6 @@ vl:
     utland:
         enabled: false
 joark:
-    hendelser:
-        topic: teamdokumenthandtering.aapen-dok-journalfoering
     scope: api://prod-fss.teamdokumenthandtering.dokarkiv/.default
 minside:
     backlinks:
