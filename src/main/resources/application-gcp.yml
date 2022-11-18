@@ -149,6 +149,8 @@ pdl:
   base-uri: https://pdl-api.${env}-fss-pub.nais.io/graphql
   scope: api://${env}-fss.pdl.pdl-api/.default
 joark:
+  hendelser:
+    groupid: joarkhendelser
   enabled: true
   base-uri: https://dokarkiv.${env}-fss-pub.nais.io
 arbeidsforhold:

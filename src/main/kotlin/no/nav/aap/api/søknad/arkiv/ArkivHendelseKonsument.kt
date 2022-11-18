@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional
 class ArkivHendelseKonsument {
         private val log = getLogger(javaClass)
 
-        @KafkaListener(topics = ["#{'\${joark.hendelser.topic}'}"], containerFactory = JOARKHENDELSER)
+        @KafkaListener(topics = ["#{'\${joark.hendelser.topic}'}"], groupId = "#{'\${joark.hendelser.groupid}'}", containerFactory = JOARKHENDELSER)
         @Transactional
         fun listen(@Payload hendelse: JournalfoeringHendelseRecord)  {
                 log.info("Mottatt arkivføringshendelse $hendelse")
