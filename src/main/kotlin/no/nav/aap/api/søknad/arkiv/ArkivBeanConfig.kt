@@ -80,7 +80,8 @@ class ArkivBeanConfig {
         }
 
     private fun joarkAAPHendelseFilterStrategy(payload: ConsumerRecord<String, JournalfoeringHendelseRecord>) =
-            !AAP.equals(payload.value().behandlingstema, true)
+           // !AAP.equals(payload.value().behandlingstema, true)
+        false
 
     @Bean
     @ConditionalOnProperty("$JOARK.enabled", havingValue = "true")

@@ -17,6 +17,6 @@ class ArkivHendelseKonsument {
         @KafkaListener(topics = ["#{'\${joark.hendelser.topic}'}"], containerFactory = JOARKHENDELSER)
         @Transactional
         fun listen(@Payload hendelse: JournalfoeringHendelseRecord)  {
-                log.info("Mottatt arkivføringshendelse med id ${hendelse.journalpostId} for  tema ${hendelse.behandlingstema}")
+                log.info("Mottatt arkivføringshendelse $hendelse")
         }
 }
