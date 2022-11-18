@@ -20,7 +20,6 @@ import no.nav.aap.api.oppslag.behandler.AnnenBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
 import no.nav.aap.api.søknad.model.RadioValg.JA
-import no.nav.aap.api.søknad.model.StandardSøknad.Yrkesskade.NEI
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.AVBRUTT
 import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.AFP

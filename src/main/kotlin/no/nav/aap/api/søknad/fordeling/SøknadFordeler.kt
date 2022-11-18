@@ -62,9 +62,5 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
             }
         }
 
-    data class Kvittering(val journalpostId: String = "0", val tidspunkt: LocalDateTime = now(),val uuid: UUID? = null) {
-        companion object {
-            val EMPTY = Kvittering()
-        }
-    }
+    data class Kvittering(val journalpostId: String = "0", val tidspunkt: LocalDateTime = now(),val uuid: UUID? = null)
 }
