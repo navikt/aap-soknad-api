@@ -63,8 +63,8 @@ spring:
       key-store-password: ${kafka.credstore.password}
     consumer:
       group-id: ${spring.application.name}-${env}
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
     producer:
       acks: all
       client-id: ${spring.application.name}
@@ -150,8 +150,6 @@ pdl:
   base-uri: https://pdl-api.${env}-fss-pub.nais.io/graphql
   scope: api://${env}-fss.pdl.pdl-api/.default
 joark:
-  hendelser:
-    groupid: joarkhendelser
   enabled: true
   base-uri: https://dokarkiv.${env}-fss-pub.nais.io
 arbeidsforhold:
