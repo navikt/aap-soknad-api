@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.minside
 
-import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.aap.api.config.GlobalBeanConfig.AbstractKafkaHealthIndicator
 import no.nav.aap.api.søknad.minside.MinSideConfig.Companion.MINSIDE
@@ -50,7 +49,7 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
     fun dokNotifikasjonListenerContainerFactory(p: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, DoknotifikasjonStatus>().apply {
             consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
-                put(SPECIFIC_AVRO_READER_CONFIG, true)
+              //  put(SPECIFIC_AVRO_READER_CONFIG, true)
                 setRecordFilterStrategy(::recordFilterStrategy)
             })
         }

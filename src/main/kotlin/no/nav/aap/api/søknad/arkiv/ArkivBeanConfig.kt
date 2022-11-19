@@ -54,7 +54,7 @@ class ArkivBeanConfig {
     fun arkivHendelserListenerContainerFactory(p: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord>().apply {
             consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
-                put(SPECIFIC_AVRO_READER_CONFIG, true)
+               // put(SPECIFIC_AVRO_READER_CONFIG, true)
                 setRecordFilterStrategy { !AAP.equals(it.value().temaNytt, true) }
             })
         }
