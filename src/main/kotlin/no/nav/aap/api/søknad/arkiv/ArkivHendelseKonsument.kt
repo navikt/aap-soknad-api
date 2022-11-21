@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.arkiv
 
 import java.time.LocalDateTime
 import java.time.LocalDateTime.parse
+import java.time.ZoneId.of
 import java.time.ZoneId.systemDefault
 import java.time.ZoneOffset.UTC
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.ARKIVHENDELSER
@@ -27,6 +28,6 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
                 }
         }
 
-    private fun JournalfoeringHendelseRecord.tilTid()  = parse(hendelsesId.substringAfter('-')).toUTC()
-    private fun LocalDateTime.toUTC(): LocalDateTime = atZone(systemDefault()).withZoneSameInstant(UTC).toLocalDateTime()
+    private fun JournalfoeringHendelseRecord.tilTid()  = parse(hendelsesId.substringAfter('-'))
+    private fun LocalDateTime.toUTC(): LocalDateTime = atZone(of("Europe/Oslo")).withZoneSameInstant(UTC).toLocalDateTime()
 }
