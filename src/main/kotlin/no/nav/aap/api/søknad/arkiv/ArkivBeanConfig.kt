@@ -57,7 +57,11 @@ class ArkivBeanConfig {
             consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
                setRecordFilterStrategy {
                    with(it.value())  {
-                       AAP != temaNytt && hendelsesType != MOTTATT}
+                       when(temaNytt) {
+                           AAP -> hendelsesType == MOTTATT
+                           else -> true
+                       }
+                   }
                }
             })
         }
