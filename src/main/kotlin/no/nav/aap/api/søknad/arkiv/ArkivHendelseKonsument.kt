@@ -16,7 +16,7 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
       @Transactional
         @KafkaListener(topics = ["#{'\${joark.hendelser.topic:teamdokumenthandtering.aapen-dok-journalfoering}'}"], containerFactory = ARKIVHENDELSER)
         fun listen(@Payload hendelse: JournalfoeringHendelseRecord)  {
-                log.info("Mottatt en arkivføringshendelse $hendelse")
+                log.info("Mottatt arkivføringshendelse $hendelse")
                 repo.getSøknadByJournalpostid("${hendelse.journalpostId}")?.let {
                         log.info("Fant opprinnelig søknad fra arkivføringshendelse $it")
                 } ?:  log.info("Fant ikke opprinnelig søknad fra arkivføringshendelse for ${hendelse.journalpostId}")
