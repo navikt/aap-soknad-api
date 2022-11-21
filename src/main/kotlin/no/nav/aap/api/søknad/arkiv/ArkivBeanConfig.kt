@@ -62,7 +62,7 @@ class ArkivBeanConfig {
                setRecordFilterStrategy { record ->
                    with(record.value())  {
                        log.info("Mottatt arkivhendelse $temaNytt")
-                       when(temaNytt) {
+                       when(temaNytt.lowercase()) {
                            AAP -> {
                                log.info("AAP med type $hendelsesType")
                                hendelsesType == MOTTATT
