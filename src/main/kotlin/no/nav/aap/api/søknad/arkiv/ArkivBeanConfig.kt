@@ -7,6 +7,7 @@ import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.MOTTATT
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.util.Constants.AAP
 import no.nav.aap.util.Constants.JOARK
+import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.TokenExtensions.bearerToken
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
@@ -26,6 +27,9 @@ import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
 class ArkivBeanConfig {
+
+    private val log = getLogger(javaClass)
+
 
     @Qualifier(JOARK)
     @Bean
@@ -55,11 +59,11 @@ class ArkivBeanConfig {
     fun arkivHendelserListenerContainerFactory(p: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord>().apply {
             consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
-               setRecordFilterStrategy {
-                   with(it.value())  {
+               setRecordFilterStrategy { record ->
+                   with(record.value())  {
                        when(temaNytt) {
-                           AAP -> hendelsesType == MOTTATT
-                           else -> true
+                           AAP -> (hendelsesType == MOTTATT).also { log.info("AAP tema med type $hendelsesType retur $it") }
+                           else -> true.also { log.info("Ikke AAP, retur true") }
                        }
                    }
                }
