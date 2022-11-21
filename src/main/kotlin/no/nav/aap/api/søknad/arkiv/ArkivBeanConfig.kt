@@ -68,7 +68,7 @@ class ArkivBeanConfig {
                                hendelsesType == MOTTATT
                            }
                            else -> {
-                               log.info("Ikke AAP ($temaNytt), retur true")
+                               log.trace("Ikke AAP ($temaNytt), retur true")
                                true
                            }
                        }
