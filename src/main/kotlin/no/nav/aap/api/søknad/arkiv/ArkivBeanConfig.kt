@@ -63,8 +63,14 @@ class ArkivBeanConfig {
                    with(record.value())  {
                        log.info("Mottatt arkivhendelse $this")
                        when(temaNytt) {
-                           AAP -> (hendelsesType == MOTTATT).also { log.info("AAP tema med type $hendelsesType retur $it") }
-                           else -> true.also { log.trace("Ikke AAP ($temaNytt), retur true") }
+                           AAP -> {
+                               log.info("AAP med type $hendelsesType")
+                               hendelsesType == MOTTATT
+                           }
+                           else -> {
+                               log.trace("Ikke AAP ($temaNytt), retur true")
+                               true
+                           }
                        }
                    }
                }
