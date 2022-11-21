@@ -20,10 +20,10 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
                 log.info("Mottatt arkivføringshendelse $hendelse")
                 repo.getSøknadByJournalpostid("${hendelse.journalpostId}")?.let {
                         log.info("Fant opprinnelig søknad fra arkivføringshendelse $it")
-                       log.info("Tid er ${hendelse.hendelsesId.tilTid()}")
-                } ?:  log.info("Fant ikke opprinnelig søknad fra arkivføringshendelse for ${hendelse.journalpostId}")
+                        it.journalfoert = hendelse.tilTid()
+                } 
         }
 
-    private fun String.tilTid()  = parse(substringAfter('-'))
+    private fun JournalfoeringHendelseRecord.tilTid()  = parse(hendelsesId.substringAfter('-'))
 
 }
