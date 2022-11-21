@@ -27,6 +27,7 @@ import org.springframework.data.repository.query.Param
 
 interface SøknadRepository : JpaRepository<Søknad, Long> {
 
+    fun getSøknadByJournalpostid(journalpostid: String): Søknad?
     fun getSøknadByFnr(@Param("fnr") fnr: String, pageable: Pageable): List<Søknad>
     fun getSøknadByEventidAndFnr(@Param("eventid") eventId: UUID, @Param("fnr") fnr: String): Søknad?
 
