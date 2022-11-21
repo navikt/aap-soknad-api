@@ -61,6 +61,7 @@ class ArkivBeanConfig {
             consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
                setRecordFilterStrategy { record ->
                    with(record.value())  {
+                       log.trace("Mottatt arkivhendelse $this")
                        when(temaNytt) {
                            AAP -> (hendelsesType == MOTTATT).also { log.info("AAP tema med type $hendelsesType retur $it") }
                            else -> true.also { log.trace("Ikke AAP ($temaNytt), retur true") }
