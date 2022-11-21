@@ -3,6 +3,7 @@ package no.nav.aap.api.søknad.arkiv
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.*
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.ARKIVHENDELSER
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.CLIENT_CREDENTIALS_ARKIV
+import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.MOTTATT
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.util.Constants.AAP
 import no.nav.aap.util.Constants.JOARK
@@ -54,7 +55,10 @@ class ArkivBeanConfig {
     fun arkivHendelserListenerContainerFactory(p: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord>().apply {
             consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
-                setRecordFilterStrategy { !AAP.equals(it.value().temaNytt, true) }
+               setRecordFilterStrategy {
+                   with(it.value())  {
+                       AAP != temaNytt && hendelsesType == MOTTATT}
+               }
             })
         }
 
