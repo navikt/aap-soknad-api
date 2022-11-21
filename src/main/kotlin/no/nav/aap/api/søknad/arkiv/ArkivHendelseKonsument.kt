@@ -28,6 +28,6 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
                 }
         }
 
-    private fun JournalfoeringHendelseRecord.tilTid()  = parse(hendelsesId.substringAfter('-'))
+    private fun JournalfoeringHendelseRecord.tilTid()  = parse(hendelsesId.substringAfter('-')).toUTC()
     private fun LocalDateTime.toUTC(): LocalDateTime = atZone(of("Europe/Oslo")).withZoneSameInstant(UTC).toLocalDateTime()
 }
