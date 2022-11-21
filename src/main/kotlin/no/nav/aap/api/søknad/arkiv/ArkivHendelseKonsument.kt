@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.arkiv
 
+import java.time.LocalDateTime.parse
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.ARKIVHENDELSER
 import no.nav.aap.api.søknad.fordeling.SøknadRepository
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -19,6 +20,10 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
                 log.info("Mottatt arkivføringshendelse $hendelse")
                 repo.getSøknadByJournalpostid("${hendelse.journalpostId}")?.let {
                         log.info("Fant opprinnelig søknad fra arkivføringshendelse $it")
+                       log.info("Tid er ${hendelse.hendelsesId.tilTid()}")
                 } ?:  log.info("Fant ikke opprinnelig søknad fra arkivføringshendelse for ${hendelse.journalpostId}")
         }
+
+    private fun String.tilTid()  = parse(substringAfter('-'))
+
 }
