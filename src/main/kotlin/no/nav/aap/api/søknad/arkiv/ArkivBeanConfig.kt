@@ -10,7 +10,6 @@ import no.nav.aap.util.Constants.AAP
 import no.nav.aap.util.Constants.JOARK
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.TokenExtensions.bearerToken
-import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
@@ -72,8 +71,9 @@ class ArkivBeanConfig {
         }
 
 
-    @ConditionalOnGCP
+    @ConditionalOnProperty("$JOARK.enabled", havingValue = "true")
     @Qualifier(JOARK)
+    @Bean
     fun arkivHendelserPingable(admin: KafkaAdmin, p: KafkaProperties, cfg: ArkivConfig)  = object : Pingable {
         override fun isEnabled() = cfg.isEnabled
 
