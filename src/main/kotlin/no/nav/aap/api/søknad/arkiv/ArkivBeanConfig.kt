@@ -91,7 +91,8 @@ class ArkivBeanConfig {
         override fun pingEndpoint() = "${p.bootstrapServers}"
     }
 
-    @ConditionalOnGCP
+    @ConditionalOnProperty("$JOARK.enabled", havingValue = "true")
+    @Bean
     fun arkivHendelserHealthIndicator(@Qualifier(JOARK) pingable: Pingable) = object : AbstractPingableHealthIndicator(pingable) {}
 
     @Bean
