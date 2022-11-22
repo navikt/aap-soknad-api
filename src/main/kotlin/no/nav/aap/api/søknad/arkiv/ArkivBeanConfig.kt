@@ -5,10 +5,12 @@ import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.ARKIVHENDELSER
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.CLIENT_CREDENTIALS_ARKIV
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.MOTTATT
 import no.nav.aap.health.AbstractPingableHealthIndicator
+import no.nav.aap.health.Pingable
 import no.nav.aap.util.Constants.AAP
 import no.nav.aap.util.Constants.JOARK
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.TokenExtensions.bearerToken
+import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
@@ -20,6 +22,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
+import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer.*
 import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
@@ -59,16 +62,37 @@ class ArkivBeanConfig {
     fun arkivHendelserListenerContainerFactory(p: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord>().apply {
             consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
-               setRecordFilterStrategy { record ->
-                   with(record.value())  {
-                       when(temaNytt.lowercase()) {
-                           AAP -> hendelsesType == MOTTATT
-                           else -> true
-                       }
+               setRecordFilterStrategy {
+                   with(it.value())  {
+                       if (temaNytt.lowercase() == AAP) hendelsesType == MOTTATT
+                       else true
                    }
                }
             })
         }
+
+
+    @ConditionalOnGCP
+    @Qualifier(JOARK)
+    fun arkivHendelserPingable(admin: KafkaAdmin, p: KafkaProperties, cfg: ArkivConfig)  = object : Pingable {
+        override fun isEnabled() = cfg.isEnabled
+
+        override fun name() = cfg.name
+
+        override fun ping() =
+            admin.describeTopics(cfg.hendelser.topic).entries
+                .withIndex()
+                .associate {
+                    with(it) {
+                        "topic-${index}" to "${value.value.name()} (${value.value.partitions().count()} partisjoner)"
+                    }
+                }
+
+        override fun pingEndpoint() = "${p.bootstrapServers}"
+    }
+
+    @ConditionalOnGCP
+    fun arkivHendelserHealthIndicator(@Qualifier(JOARK) pingable: Pingable) = object : AbstractPingableHealthIndicator(pingable) {}
 
     @Bean
     @ConditionalOnProperty("$JOARK.enabled", havingValue = "true")
