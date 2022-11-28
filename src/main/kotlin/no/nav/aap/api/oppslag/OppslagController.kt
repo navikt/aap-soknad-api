@@ -20,6 +20,7 @@ import org.springframework.data.web.SortDefault
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType.*
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -61,11 +62,11 @@ class OppslagController(
     @GetMapping("/soeknad/{uuid}")
     fun søknadForUUID(@PathVariable uuid: UUID) = søknad.søknad(uuid)
 
-    @GetMapping("/soeknad/journalpost/{journalpostId}")
+    @GetMapping("/soeknad/journalpost/{journalpostId}",produces = [APPLICATION_PDF_VALUE])
     fun søknadForJournalpost(@PathVariable journalpostId: String) =
         dokument(journalpostId, arkiv.søknadDokumentId(journalpostId))
 
-    @GetMapping(DOKUMENT)
+    @GetMapping(DOKUMENT, produces = [APPLICATION_PDF_VALUE])
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentId: String) =
         arkiv.dokument(journalpostId, dokumentId)
             .let {
