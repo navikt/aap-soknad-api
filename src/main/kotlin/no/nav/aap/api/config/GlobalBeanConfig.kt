@@ -14,20 +14,18 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP
+import jakarta.servlet.Filter
 import java.io.IOException
 import java.time.Duration
 import java.time.Duration.*
 import java.util.*
-import java.util.Arrays.setAll
+import jakarta.servlet.FilterChain
+import jakarta.servlet.ServletException
+import jakarta.servlet.ServletRequest
+import jakarta.servlet.ServletResponse
 import java.util.function.Consumer
-import javax.servlet.Filter
-import javax.servlet.FilterChain
-import javax.servlet.ServletException
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
 import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
-import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
 import no.nav.aap.rest.HeadersToMDCFilter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
@@ -50,9 +48,6 @@ import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPro
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
-import org.springframework.boot.actuate.trace.http.HttpTrace
-import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
@@ -60,7 +55,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
 import org.springframework.core.MethodParameter
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
@@ -167,21 +161,6 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     @Bean
     fun prodHttpClient() = HttpClient.create()
 
-    @Bean
-    @ConditionalOnNotProd
-    fun actuatorIgnoringTraceRequestFilter(repo: HttpTraceRepository, tracer: HttpExchangeTracer) =
-        ActuatorIgnoringTraceRequestFilter(repo, tracer)
-
-    @ConditionalOnNotProd
-    class HttpTraceRepository(private val mapper: ObjectMapper) : InMemoryHttpTraceRepository() {
-        private val log = getLogger(javaClass)
-        override fun add(trace: HttpTrace) {
-            runCatching {
-                log.trace(CONFIDENTIAL, mapper.writerWithDefaultPrettyPrinter().writeValueAsString(trace))
-                super.add(trace)
-            }.getOrNull()
-        }
-    }
 
     class JTIFilter(private val ctx: AuthContext) : Filter {
         @Throws(IOException::class, ServletException::class)

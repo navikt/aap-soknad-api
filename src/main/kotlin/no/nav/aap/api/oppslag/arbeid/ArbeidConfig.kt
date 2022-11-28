@@ -7,14 +7,12 @@ import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 import no.nav.aap.api.oppslag.arbeid.ArbeidConfig.Companion.ARBEID
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.boot.convert.PeriodFormat
 import org.springframework.boot.convert.PeriodStyle.SIMPLE
 import org.springframework.web.util.UriBuilder
 
 @ConfigurationProperties(ARBEID)
-@ConstructorBinding
 class ArbeidConfig(baseUri: URI,
                    @DefaultValue(PATH) private val path: String,
                    @DefaultValue("true") enabled: Boolean,

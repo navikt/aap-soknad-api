@@ -20,6 +20,7 @@ import org.springframework.data.web.SortDefault
 import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -65,7 +66,7 @@ class OppslagController(
     fun søknadForJournalpost(@PathVariable journalpostId: String) =
         dokument(journalpostId, arkiv.søknadDokumentId(journalpostId))
 
-    @GetMapping(DOKUMENT)
+    @GetMapping(DOKUMENT, produces = [APPLICATION_PDF_VALUE])
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentId: String) =
         arkiv.dokument(journalpostId, dokumentId)
             .let {

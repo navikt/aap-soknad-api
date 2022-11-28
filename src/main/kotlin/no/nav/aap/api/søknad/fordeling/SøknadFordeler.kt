@@ -39,7 +39,9 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
             registry.counter(SØKNADER,"type", STANDARD.name.lowercase()).increment()
             with(arkiv.fordel(innsending, this)) {
                 innsending.søknad.fødselsdato = this@run.fødseldato
-                vlFordeler.fordel(innsending.søknad, fnr, journalpostId, cfg.standard)
+                if (cfg.standard.enabled) {
+                    vlFordeler.fordel(innsending.søknad, fnr, journalpostId, cfg.standard)
+                }
                 fullfører.fullfør(this@run.fnr, innsending.søknad, this)
             }
         }
@@ -48,7 +50,9 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
     pdl.søkerUtenBarn().run {
         registry.counter(SØKNADER,"type", STANDARD_ETTERSENDING.name.lowercase()).increment()
             with(arkiv.fordel(e, this)) {
-                vlFordeler.fordel(e, fnr, journalpostId, cfg.ettersending)
+                if (cfg.ettersending.enabled) {
+                    vlFordeler.fordel(e, fnr, journalpostId, cfg.ettersending)
+                }
                 fullfører.fullfør(this@run.fnr, e, this)
             }
         }
@@ -57,7 +61,9 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
         pdl.søkerUtenBarn().run {
             registry.counter(SØKNADER,"type", UTLAND.name.lowercase()).increment()
             with(arkiv.fordel(søknad, this)) {
-                vlFordeler.fordel(søknad, fnr, journalpostId, cfg.utland)
+                if (cfg.utland.enabled) {
+                    vlFordeler.fordel(søknad, fnr, journalpostId, cfg.utland)
+                }
                 fullfører.fullfør(this@run.fnr, søknad, this)
             }
         }

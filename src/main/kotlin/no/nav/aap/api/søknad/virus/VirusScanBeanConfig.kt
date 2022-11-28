@@ -7,7 +7,6 @@ import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -25,7 +24,6 @@ class VirusScanBeanConfg {
 }
 
 @ConfigurationProperties(VIRUS)
-@ConstructorBinding
 data class VirusScanConfig(@DefaultValue(BASE_URI) val uri: URI,
                            @DefaultValue("true") val enabled: Boolean) : AbstractRestConfig(uri, "", VIRUS, enabled) {
 

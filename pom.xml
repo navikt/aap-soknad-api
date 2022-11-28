@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.5</version>
+        <version>3.0.0</version>
         <relativePath/>
     </parent>
     <groupId>no.nav.aap.api</groupId>
@@ -15,11 +15,11 @@
     <description>aap-soknad-api</description>
     <properties>
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
-        <conditionals.version>4.0.5</conditionals.version>
+        <conditionals.version>5.0.0</conditionals.version>
         <confluent.version>7.3.0</confluent.version>
         <commit-id.version>5.0.0</commit-id.version>
         <commons-text.version>1.10.0</commons-text.version>
-        <domain.version>1.0.28</domain.version>
+        <domain.version>2.0.2</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
         <gcp.libraries.version>26.1.5</gcp.libraries.version>
         <gcp.version>0.182.0</gcp.version>
@@ -46,7 +46,7 @@
         <swagger.annotations.version>2.2.7</swagger.annotations.version>
         <testcontainers.version>1.17.6</testcontainers.version>
         <tika.version>2.6.0</tika.version>
-        <token.validation.version>2.1.8</token.validation.version>
+        <token.validation.version>3.0.0</token.validation.version>
     </properties>
     <repositories>
         <repository>

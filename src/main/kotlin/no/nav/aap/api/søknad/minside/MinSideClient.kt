@@ -14,7 +14,7 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND_SØKNAD
-import no.nav.aap.api.søknad.SendCallback
+import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
 import no.nav.aap.api.søknad.minside.MinSideClient.NotifikasjonType.BESKJED
 import no.nav.aap.api.søknad.minside.MinSideClient.NotifikasjonType.OPPGAVE
@@ -25,6 +25,7 @@ import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkCon
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
+import no.nav.aap.util.StringExtensions.partialMask
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
@@ -33,6 +34,8 @@ import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.clients.producer.RecordMetadata
+import org.springframework.kafka.core.KafkaProducerException
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.util.UriComponentsBuilder.fromUri
@@ -79,13 +82,24 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 log.info("Oppretter Min Side oppgave med ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         oppgave(tekst, varighet, type, eventId, eksternVarsling)))
-                    .addCallback(SendCallback("opprett oppgave med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling"))
+                    .whenComplete {
+                        res, e -> e?.let {
+                        failure("Kunne ikke opprette oppgave",it as KafkaProducerException)
+                    } ?: success("opprett oppgave med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling",res.producerRecord.key().fodselsnummer,res.recordMetadata)
+                    }
                 repos.oppgaver.save(Oppgave(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
             }
             else {
                 log.trace("Oppretter ikke oppgave i Min Side for $fnr")
                 null
             }
+        }
+    private fun success(msg: String, fnr: String,rec: RecordMetadata) = log(msg ,fnr,rec)
+    private fun failure(msg: String,  e: KafkaProducerException) :Nothing = throw IntegrationException(msg = msg, cause = e)
+
+    private fun log(msg: String, fnr: String, recordMetadata: RecordMetadata?) =
+        with(recordMetadata) {
+            log.info("Sendte $msg for ${fnr.partialMask()}, offset ${this?.offset()}, partition ${this?.partition()} på topic ${this?.topic()}")
         }
 
     @Transactional
