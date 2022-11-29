@@ -9,6 +9,7 @@ import no.nav.aap.api.oppslag.konto.KontoClient
 import no.nav.aap.api.oppslag.krr.KRRClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.oppslag.søknad.SøknadClient
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
 import no.nav.aap.api.søknad.model.SøkerInfo
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -70,7 +71,9 @@ class OppslagController(
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentId: String) =
         arkiv.dokument(journalpostId, dokumentId)
             .let {
+                log.info("Content type for $journalpostId/$dokumentId er ${TIKA.detect(it)}")
                 ok()
+                    .contentType(APPLICATION_PDF)
                     .cacheControl(noCache().mustRevalidate())
                     .headers(HttpHeaders().apply {
                         contentDisposition = attachment().filename("$journalpostId-$dokumentId.pdf")
