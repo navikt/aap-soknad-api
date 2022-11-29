@@ -9,6 +9,7 @@ import no.nav.aap.api.oppslag.konto.KontoClient
 import no.nav.aap.api.oppslag.krr.KRRClient
 import no.nav.aap.api.oppslag.pdl.PDLClient
 import no.nav.aap.api.oppslag.søknad.SøknadClient
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
 import no.nav.aap.api.søknad.model.SøkerInfo
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -21,6 +22,7 @@ import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
+import org.springframework.http.MediaType.*
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -62,7 +64,7 @@ class OppslagController(
     @GetMapping("/soeknad/{uuid}")
     fun søknadForUUID(@PathVariable uuid: UUID) = søknad.søknad(uuid)
 
-    @GetMapping("/soeknad/journalpost/{journalpostId}")
+    @GetMapping("/soeknad/journalpost/{journalpostId}",produces = [APPLICATION_PDF_VALUE])
     fun søknadForJournalpost(@PathVariable journalpostId: String) =
         dokument(journalpostId, arkiv.søknadDokumentId(journalpostId))
 
@@ -70,7 +72,13 @@ class OppslagController(
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentId: String) =
         arkiv.dokument(journalpostId, dokumentId)
             .let {
+                TIKA.detect(it).also { type ->
+                    if (APPLICATION_PDF_VALUE != type) {
+                        log.warn("Content type for $journalpostId/$dokumentId er $type, forventet $APPLICATION_PDF_VALUE")
+                    }
+                }
                 ok()
+                    .contentType(APPLICATION_PDF)
                     .cacheControl(noCache().mustRevalidate())
                     .headers(HttpHeaders().apply {
                         contentDisposition = attachment().filename("$journalpostId-$dokumentId.pdf")
