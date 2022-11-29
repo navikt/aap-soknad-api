@@ -10,13 +10,13 @@ import com.google.cloud.storage.Storage
 import com.google.iam.v1.Binding
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig
 import no.nav.aap.util.LoggerUtil
-import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
 
 @Component
-class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage) : CommandLineRunner {
+class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage) /* : CommandLineRunner */ {
 
-    override fun run(vararg args: String?) {
+  //  override fun run(vararg args: String?) {
+    init  {
         with(cfg) {
             log.trace("IAC encryption init")
             if (harRing()) {
