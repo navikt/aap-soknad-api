@@ -10,7 +10,7 @@ env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-    kompiler:
+    bygg:
         runs-on: ubuntu-latest
         outputs:
             image: ${{ steps.kompiler-pr.outputs.image }}
@@ -38,4 +38,20 @@ jobs:
                 id: kompiler-pr
                 run: |
                     echo "image=${{ env.IMAGE }}" >> $GITHUB_OUTPUT
-                    ./mvnw test --batch-mode --quiet --settings .github/.m2/settings.xml
+                    ./mvnw  --batch-mode --quiet --settings .github/.m2/settings.xml package jib:build 
+
+    deploy:
+        name: Deploy PR til dev-gcp
+        needs: bygg
+        runs-on: ubuntu-latest
+        environment: pr:dev-gcp:aap
+        env:
+            PRINT_PAYLOAD: true
+            APIKEY: ${{secrets.NAIS_DEPLOY_APIKEY}}
+            RESOURCE: .nais/naiserator.yaml,.nais/dev-gcp-alerts.yaml
+            CLUSTER: dev-gcp
+            VARS: .nais/dev-gcp.json
+            IMAGE: ${{needs.bygg.outputs.image}}
+        steps:
+            -   uses: actions/checkout@v3
+            -   uses: nais/deploy/actions/deploy@master
