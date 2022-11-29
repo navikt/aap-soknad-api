@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.cloud.spring.autoconfigure.storage.GcpStorageAutoConfiguration
+import com.google.cloud.spring.core.GcpProjectIdProvider
 import com.google.cloud.spring.core.UserAgentHeaderProvider
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.StorageOptions
@@ -63,6 +64,7 @@ import org.springframework.core.MethodParameter
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.*
@@ -71,6 +73,7 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
 import org.springframework.kafka.core.KafkaAdmin
+import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.reactive.function.client.WebClient
@@ -243,5 +246,12 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     @Bean
     fun storage() = StorageOptions.newBuilder().build().service
+
+
+    @Component
+     class IdProvider(@Value("\${spring.application.name}") private val id: String): GcpProjectIdProvider {
+        override fun getProjectId() = id
+
+    }
 
 }
