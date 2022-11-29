@@ -16,8 +16,8 @@ jobs:
         outputs:
             image: ${{ steps.kompiler-pr.outputs.image }}
         steps:
-            -  name: Print Title of PR
-               run: echo The Title of your PR is ${{ github.event.pull_request.title }}
+            -  name: Print number of PR
+               run: echo The Title of your PR is ${{ github.event.pull_request.number }}
 
             -   name: Sjekk ut kode
                 uses: actions/checkout@v3
