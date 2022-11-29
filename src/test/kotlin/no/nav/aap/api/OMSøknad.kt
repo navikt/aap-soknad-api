@@ -52,6 +52,7 @@ object OMSøknad {
             )
         }
 
+    
         fun er_student_søknad(): StandardSøknad{
             return StandardSøknad(
                 false,
