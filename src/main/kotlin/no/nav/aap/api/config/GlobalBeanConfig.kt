@@ -244,7 +244,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
             }
     }
 
-    @Bean
+   /* @Bean
     fun storage() = StorageOptions.newBuilder().build().service
 
 
@@ -252,6 +252,6 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
      class IdProvider(@Value("\${spring.application.name}") private val id: String): GcpProjectIdProvider {
         override fun getProjectId() = id
 
-    }
+    }*/
 
 }
