@@ -20,6 +20,7 @@ object OMPersoner {
         }
 
     fun har_barn(): Søker {
+        
         return Søker(
             Navn("Akseptabel", "", "Kveldsmat"),
             Fødselsnummer("07477222719"),
