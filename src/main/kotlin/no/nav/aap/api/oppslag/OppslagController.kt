@@ -71,7 +71,11 @@ class OppslagController(
     fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentId: String) =
         arkiv.dokument(journalpostId, dokumentId)
             .let {
-                log.info("Content type for $journalpostId/$dokumentId er ${TIKA.detect(it)}")
+                TIKA.detect(it).also { type ->
+                    if (APPLICATION_PDF_VALUE != type) {
+                        log.warn("Content type for $journalpostId/$dokumentId er $type, forventet $APPLICATION_PDF_VALUE")
+                    }
+                }
                 ok()
                     .contentType(APPLICATION_PDF)
                     .cacheControl(noCache().mustRevalidate())
