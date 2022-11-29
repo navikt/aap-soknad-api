@@ -3,6 +3,10 @@ package no.nav.aap.api.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.google.cloud.spring.autoconfigure.storage.GcpStorageAutoConfiguration
+import com.google.cloud.spring.core.UserAgentHeaderProvider
+import com.google.cloud.storage.Storage
+import com.google.cloud.storage.StorageOptions
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import io.micrometer.core.aop.CountedAspect
 import io.micrometer.core.aop.TimedAspect
@@ -15,14 +19,13 @@ import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP
 import jakarta.servlet.Filter
-import java.io.IOException
-import java.time.Duration
-import java.time.Duration.*
-import java.util.*
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
+import java.io.IOException
+import java.time.Duration.*
+import java.util.*
 import java.util.function.Consumer
 import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
@@ -48,6 +51,7 @@ import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPro
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
@@ -69,9 +73,7 @@ import org.springframework.http.server.ServerHttpResponse
 import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ControllerAdvice
-import org.springframework.web.client.RestClientException
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import org.zalando.problem.jackson.ProblemModule
@@ -79,7 +81,6 @@ import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 import reactor.util.retry.Retry
 import reactor.util.retry.Retry.fixedDelay
-import reactor.util.retry.RetryBackoffSpec
 
 @Configuration
 class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
@@ -239,4 +240,8 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                     ?: throw OAuth2ClientException("Ingen respons (null) fra token endpoint $tokenEndpointUrl")
             }
     }
+
+    @Bean
+    fun storage() = StorageOptions.newBuilder().build().service
+
 }
