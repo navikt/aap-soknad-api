@@ -1,3 +1,5 @@
+ debug:
+     true
 management:
     endpoints:
         web:
@@ -39,6 +41,9 @@ spring:
                 format_sql: true
     mvc:
         log-request-details: true
+    reactor:
+        debug-agent:
+            enabled:
 arbeidsforhold:
     base-uri: https://aareg-services-q1.dev-fss-pub.nais.io
 organisasjon:
@@ -56,3 +61,4 @@ minside:
         innsyn: https://aap-innsyn.dev.nav.no/aap/mine-aap
         standard: https://aap-soknad.dev.nav.no/aap/soknad
         utland: https://aap-soknad.dev.nav.no/aap/soknad/utland
+debug:
