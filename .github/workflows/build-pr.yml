@@ -38,7 +38,7 @@ jobs:
             -   name: Kompiler
                 id: kompiler-pr
                 run: |
-                    echo "image=${{ env.IMAGE }}" >> $GITHUB_OUTPUT
+                    echo "image=${{ env.IMAGE }}-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
                     ./mvnw  --batch-mode --quiet --settings .github/.m2/settings.xml package jib:build 
 
     deploy:
