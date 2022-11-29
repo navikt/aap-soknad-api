@@ -33,12 +33,12 @@ jobs:
                 run: echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
 
             -   name: Setter image-navn
-                run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
+                run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)-$(echo PR${{ steps.kompiler-pr.outputs.image }})" >> $GITHUB_ENV
 
             -   name: Kompiler
                 id: kompiler-pr
                 run: |
-                    echo "image=${{ env.IMAGE }}-PR${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+                    echo "image=${{ env.IMAGE }}" >> $GITHUB_OUTPUT
                     ./mvnw  --batch-mode --quiet --settings .github/.m2/settings.xml package jib:build 
 
     deploy:
