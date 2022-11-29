@@ -8,6 +8,7 @@ import java.time.LocalDate
 import java.util.*
 
 object OMSøknad {
+    
         fun standard_soknad(): StandardSøknad {
             return StandardSøknad(
                 false,
