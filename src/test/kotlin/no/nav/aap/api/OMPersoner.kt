@@ -31,6 +31,8 @@ object OMPersoner {
             ))
     }
 
+    
+
     fun gradert_strengt_fortrolig(): Søker {
         return Søker(
             Navn("Livlig", "", "Sjokoladekake"),
@@ -82,4 +84,3 @@ object OMPersoner {
     }
 
 }
-
