@@ -1,5 +1,6 @@
 package no.nav.aap.api
 
+import com.google.cloud.spring.autoconfigure.pubsub.GcpPubSubAutoConfiguration
 import no.nav.boot.conditionals.Cluster.Companion.profiler
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
@@ -10,6 +11,7 @@ import org.springframework.boot.context.metrics.buffering.BufferingApplicationSt
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
 import org.springframework.cache.annotation.EnableCaching
+import org.springframework.context.annotation.Import
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.data.web.config.EnableSpringDataWebSupport
@@ -27,6 +29,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EnableJpaAuditing
 @EnableSpringDataWebSupport
 @EnableScheduling
+@Import(GcpPubSubAutoConfiguration::class)
 class AAPSøknadApiApplication
 
 @Autowired
