@@ -1,7 +1,7 @@
 # aap-soknad-api
 ___
 
-Applikasjonen er backend for frontend-applikajsonene [ AAP søknader](https://github.com/navikt/aap-soknad) og [Mine arbeidsavklaringspenger](https://github.com/navikt/aap-innsyn).
+Applikasjonen er en backend for frontend-applikajsonene [ AAP søknader](https://github.com/navikt/aap-soknad) og [Mine arbeidsavklaringspenger](https://github.com/navikt/aap-innsyn).
 
 Den benytter seg av felles verdiobjekter samlet i  [AAP-Domain](https://github.com/navikt/aap-domain). Dette repoet vil fjernes når [AAP-fss-proxy](https://github.com/navikt/aap-fss-proxy) kan pensjoneres.
 
