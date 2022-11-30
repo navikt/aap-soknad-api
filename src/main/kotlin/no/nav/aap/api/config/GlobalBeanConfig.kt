@@ -128,16 +128,12 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                              service: OAuth2AccessTokenService,
                              matcher: ClientConfigurationPropertiesMatcher,
                              ctx: AuthContext) = TokenXFilterFunction(configs, service, matcher, ctx)
-
+    
     @Bean
-    fun springInfoContributor() = InfoContributor { builder ->
-        builder.withDetails(mapOf(Pair("Spring Boot version", SpringBootVersion.getVersion()),
-                Pair("Spring Version", SpringVersion.getVersion())))
-    }
-
-    @Bean
-    fun startupInfoContributor(ctx: ApplicationContext)  = InfoContributor { builder ->
+    fun extraInfoContributor(ctx: ApplicationContext)  = InfoContributor { builder ->
         builder.withDetail("extra-info", mapOf(Pair("Startup time",ctx.startupDate.format())))
+            .withDetails(mapOf(Pair("Spring Boot version", SpringBootVersion.getVersion()),
+                Pair("Spring Version", SpringVersion.getVersion())))
     }
 
     @Bean
