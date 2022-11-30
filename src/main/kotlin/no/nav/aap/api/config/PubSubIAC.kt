@@ -20,7 +20,7 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation
 import org.springframework.stereotype.Component
 
-@Component
+//@Component
 class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, private val admin: PubSubAdmin) : CommandLineRunner {
 
     override fun run(vararg args: String?) {
