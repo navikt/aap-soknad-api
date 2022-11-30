@@ -36,6 +36,7 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.toMDC
 import no.nav.aap.util.StartupInfoContributor
 import no.nav.aap.util.StringExtensions.toJson
+import no.nav.aap.util.TimeExtensions.format
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.boot.conditionals.ConditionalOnProd
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
@@ -49,6 +50,8 @@ import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPro
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.SpringBootVersion
+import org.springframework.boot.actuate.info.InfoContributor
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
@@ -59,6 +62,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.MethodParameter
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
+import org.springframework.core.SpringVersion
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -126,7 +130,15 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                              ctx: AuthContext) = TokenXFilterFunction(configs, service, matcher, ctx)
 
     @Bean
-    fun startupInfoContributor(ctx: ApplicationContext) = StartupInfoContributor(ctx)
+    fun springInfoContributor() = InfoContributor { builder ->
+        builder.withDetails(mapOf(Pair("Spring Boot version", SpringBootVersion.getVersion()),
+                Pair("Spring Version", SpringVersion.getVersion())))
+    }
+
+    @Bean
+    fun startupInfoContributor(ctx: ApplicationContext)  = InfoContributor { builder ->
+        builder.withDetail("extra-info", mapOf(Pair("Startup time",ctx.startupDate.format())))
+    }
 
     @Bean
     fun headersToMDCFilterRegistrationBean() =
