@@ -131,9 +131,10 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     
     @Bean
     fun extraInfoContributor(ctx: ApplicationContext)  = InfoContributor { builder ->
-        builder.withDetail("extra-info", mapOf(Pair("Startup time",ctx.startupDate.format())))
-            .withDetails(mapOf(Pair("Spring Boot version", SpringBootVersion.getVersion()),
-                Pair("Spring Version", SpringVersion.getVersion())))
+            builder.withDetails(mapOf(
+                    Pair("Startup time",ctx.startupDate.format()),
+                    Pair("Spring Boot version", SpringBootVersion.getVersion()),
+                    Pair("Spring Version", SpringVersion.getVersion())))
     }
 
     @Bean
