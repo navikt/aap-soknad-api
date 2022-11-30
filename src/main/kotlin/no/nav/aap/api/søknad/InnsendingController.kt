@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad
 
-import javax.validation.Valid
+import jakarta.validation.Valid
 import no.nav.aap.api.søknad.fordeling.Fordeler
 import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.StandardEttersending
