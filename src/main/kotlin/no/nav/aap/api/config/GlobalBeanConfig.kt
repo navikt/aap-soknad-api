@@ -34,7 +34,6 @@ import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.toMDC
-import no.nav.aap.util.StartupInfoContributor
 import no.nav.aap.util.StringExtensions.toJson
 import no.nav.aap.util.TimeExtensions.format
 import no.nav.boot.conditionals.ConditionalOnNotProd
@@ -131,10 +130,10 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     
     @Bean
     fun extraInfoContributor(ctx: ApplicationContext)  = InfoContributor { builder ->
-            builder.withDetails(mapOf(
+            builder.withDetail("extra",mapOf(
                     Pair("Startup time",ctx.startupDate.format()),
-                    Pair("Spring Boot version", SpringBootVersion.getVersion()),
-                    Pair("Spring Version", SpringVersion.getVersion())))
+                    Pair("Spring boot version", SpringBootVersion.getVersion()),
+                    Pair("Spring version", SpringVersion.getVersion())))
     }
 
     @Bean
