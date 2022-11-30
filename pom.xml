@@ -30,7 +30,7 @@
         <java.version>17</java.version>
         <jib.version>3.3.1</jib.version>
         <kotlinx.coroutines.version>1.6.4</kotlinx.coroutines.version>
-        <kotlin.version>1.7.21</kotlin.version>
+        <kotlin.version>1.7.22</kotlin.version>
         <logstash.version>7.2</logstash.version>
         <mock-oauth2-server.version>0.3.6</mock-oauth2-server.version>
         <neovisionaries.version>1.29</neovisionaries.version>
