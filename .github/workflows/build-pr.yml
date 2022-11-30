@@ -8,28 +8,51 @@ on:
             - '**.md'
 env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    IMAGE_BASE: ghcr.io/${{ github.repository }}
 
 jobs:
-    kompiler:
+    bygg:
         runs-on: ubuntu-latest
+        outputs:
+            image: ${{ steps.kompiler-pr.outputs.image }}
         steps:
+            -  name: Print number of PR
+               run: echo The Title of your PR is ${{ github.event.pull_request.number }}
 
             -   name: Sjekk ut kode
                 uses: actions/checkout@v3
-
-            -   name: Hent Maven cache
-                uses: actions/cache@v3
-                with:
-                    path: ~/.m2/repository
-                    key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-                    restore-keys: ${{ runner.os }}-maven-
 
             -   name: Sett opp Java 17
                 uses: actions/setup-java@v3
                 with:
                     java-version: 17
-                    distribution: 'temurin'
+                    distribution: temurin
+                    cache: maven
+
+            -   name: Setter tag-navn
+                run: echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+
+            -   name: Setter image-navn
+                run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)-PR${{ steps.kompiler-pr.outputs.image }}" >> $GITHUB_ENV
 
             -   name: Kompiler
+                id: kompiler-pr
                 run: |
-                    ./mvnw test --batch-mode --quiet --settings .github/.m2/settings.xml
+                    echo "image=${{ env.IMAGE }}" >> $GITHUB_OUTPUT
+                    ./mvnw  --batch-mode --settings .github/.m2/settings.xml package jib:build 
+
+    deploy:
+        name: Deploy PR til dev-gcp
+        needs: bygg
+        runs-on: ubuntu-latest
+        environment: pr:dev-gcp:aap
+        env:
+            PRINT_PAYLOAD: true
+            APIKEY: ${{secrets.NAIS_DEPLOY_APIKEY}}
+            RESOURCE: .nais/naiserator.yaml,.nais/dev-gcp-alerts.yaml
+            CLUSTER: dev-gcp
+            VARS: .nais/dev-gcp.json
+            IMAGE: ${{needs.bygg.outputs.image}}
+        steps:
+            -   uses: actions/checkout@v3
+            -   uses: nais/deploy/actions/deploy@master
