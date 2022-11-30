@@ -16,8 +16,6 @@ import org.springframework.stereotype.Component
 @Component
 class SøknadVLFordeler(private val fordeler: KafkaOperations<String, Any>) {
 
-    private val log = getLogger(javaClass)
-
     fun fordel(søknad: Any, fnr: Fødselsnummer, journalpostId: String, cfg: VLTopicConfig) =
         with(cfg) {
             fordeler.send(ProducerRecord(topic, fnr.fnr, søknad)
@@ -26,19 +24,21 @@ class SøknadVLFordeler(private val fordeler: KafkaOperations<String, Any>) {
                         .add(NAV_CALL_ID, callId().toByteArray())
                         .add("journalpostid", journalpostId.toByteArray())
                 })
-                .whenComplete {
-                    res, e -> e?.let {
-                    failure("Kunne ikke sende $journalpostId til Kelvin",it as KafkaProducerException)
-                } ?: success(journalpostId,fnr,res.recordMetadata)
+                .whenComplete { res, e ->
+                    e?.let {
+                        throw IntegrationException(msg = "Kunne ikke sende $journalpostId til Kelvin", cause = it as KafkaProducerException)
+                    } ?: log(journalpostId, fnr, res.recordMetadata)
                 }
-        }
-    private fun success(msg: String, fnr: Fødselsnummer,rec: RecordMetadata) = log(msg ,fnr,rec)
-    private fun failure(msg: String,  e: KafkaProducerException) :Nothing = throw IntegrationException(msg = msg, cause = e)
-
-    private fun log(msg: String, fnr: Fødselsnummer, recordMetadata: RecordMetadata?) =
-        with(recordMetadata) {
-            log.info("Fordelte $msg for ${fnr.fnr.partialMask()}, offset ${this?.offset()}, partition ${this?.partition()} på topic ${this?.topic()}")
         }
 
     override fun toString() = "${javaClass.simpleName} [fordeler=$fordeler]"
+
+    companion object {
+        private fun log(msg: String, fnr: Fødselsnummer, recordMetadata: RecordMetadata) =
+            with(recordMetadata) {
+                log.info("Fordelte $msg for ${fnr.fnr.partialMask()}, offset ${offset()}, partition ${partition()} på topic ${topic()}")
+            }
+
+        private val log = getLogger(SøknadVLFordeler::class.java)
+    }
 }
