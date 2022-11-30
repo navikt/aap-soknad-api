@@ -163,7 +163,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                         OPPGAVE -> oppgaverAvsluttet.increment()
                         BESKJED -> beskjederAvsluttet.increment()
                     }
-                    log.trace("Sendte avslutt $notifikasjonType med eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                    log.trace("Sendte avslutt ${notifikasjonType.name.lowercase()} med eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                 }
             }
         }
