@@ -11,26 +11,16 @@ import no.nav.aap.util.MDCUtil.callId
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.*
+import org.springframework.http.ProblemDetail
 import org.springframework.http.converter.HttpMessageConversionException
-import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException.NotFound
 import org.springframework.web.context.request.NativeWebRequest
-import org.zalando.problem.Problem
-import org.zalando.problem.Problem.builder
-import org.zalando.problem.Status
-import org.zalando.problem.Status.BAD_REQUEST
-import org.zalando.problem.Status.INTERNAL_SERVER_ERROR
-import org.zalando.problem.Status.NOT_FOUND
-import org.zalando.problem.Status.SERVICE_UNAVAILABLE
-import org.zalando.problem.Status.UNAUTHORIZED
-import org.zalando.problem.Status.UNPROCESSABLE_ENTITY
-import org.zalando.problem.Status.UNSUPPORTED_MEDIA_TYPE
-import org.zalando.problem.spring.web.advice.ProblemHandling
 
 @ControllerAdvice
-class AAPApiExceptionHandling : ProblemHandling {
+class AAPApiExceptionHandling  {
     private val log = getLogger(javaClass)
 
     @ExceptionHandler(JwtTokenMissingException::class, JwtTokenUnauthorizedException::class)
@@ -55,25 +45,23 @@ class AAPApiExceptionHandling : ProblemHandling {
     fun messageConversion(e: HttpMessageConversionException, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
 
     @ExceptionHandler(Exception::class)
-    fun catchAll(e: Exception, req: NativeWebRequest) = createProblem(e, req, INTERNAL_SERVER_ERROR)
+    fun catchAll(e: Exception, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
 
-    override fun handleMessageNotReadableException(e: HttpMessageNotReadableException, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
-     private fun createProblem(t: Throwable, req: NativeWebRequest, status: Status, substatus: Substatus? = null)  =
-         create(t,toProblem(t, status, substatus), req)
+     private fun createProblem(t: Throwable, req: NativeWebRequest, status: HttpStatus, substatus: Substatus? = null)  =
+         toProblem(t, status, substatus,req)
 
-    private fun toProblem(t: Throwable, status: Status, substatus: Substatus?) =
-        with(builder()
-            .withTitle(status.reasonPhrase)
-            .withStatus(status)
-            .withDetail(t.message)
-            .with(NAV_CALL_ID, callId())) {
+    private fun toProblem(t: Throwable, status: HttpStatus, substatus: Substatus?,req: NativeWebRequest) =
+        ProblemDetail.forStatus(status).apply {
+            title = status.reasonPhrase
+            detail = t.message
+            setProperty(NAV_CALL_ID, callId())
             substatus?.let {
-                with(SUBSTATUS, it).build()
-            } ?: build()
-        }
+                setProperty(SUBSTATUS, it)
+            }
+        }.also { log(t,it,req,status) }
 
-    override fun log(t: Throwable, problem: Problem, req: NativeWebRequest, status: HttpStatus) =
-        log.error("$req ${status.reasonPhrase}: ${ t.message}",t)
+     private fun log(t: Throwable, problem: ProblemDetail, req: NativeWebRequest, status: HttpStatus) =
+        log.error("$req $problem ${status.reasonPhrase}: ${ t.message}",t)
 
     companion object {
         private const val SUBSTATUS = "substatus"

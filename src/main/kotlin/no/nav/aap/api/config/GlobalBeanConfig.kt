@@ -76,7 +76,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
-import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 import reactor.util.retry.Retry
@@ -93,7 +92,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b ->
-        b.modules(ProblemModule(),
+        b.modules(
                 JavaTimeModule(),
                 TokenXJacksonModule(),
                 KotlinModule.Builder().build())
