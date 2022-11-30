@@ -63,7 +63,9 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                         e?.let {
                             throw IntegrationException(msg = "Kunne ikke opprtte beskjed i Min Side", cause = it as KafkaProducerException)
                         } ?: run {
-                            log.trace("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling på offset ${res.recordMetadata.offset()} partition${res.recordMetadata.partition()}på topic ${res.recordMetadata.topic()}")
+                            with(res) {
+                                log.trace("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                            }
                             repos.beskjeder.save(Beskjed(fnr.fnr, eventId, mellomlagring = mellomlagring,ekstern = eksternVarsling)).eventid
                         }
                     }
@@ -86,20 +88,22 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 log.info("Oppretter Min Side oppgave med ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         oppgave(tekst, varighet, type, eventId, eksternVarsling)))
-                    .whenComplete {
-                        res, e -> e?.let {
-                        failure("Kunne ikke opprette oppgave",it as KafkaProducerException)
-                    } ?: success("opprett oppgave med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling",res.producerRecord.key().fodselsnummer,res.recordMetadata)
+                    .whenComplete { res, e ->
+                        e?.let {
+                            throw IntegrationException(msg = "Kunne ikke opprette oppgave", cause = it as KafkaProducerException)
+                        } ?: run {
+                            with(res) {
+                                log("opprett oppgave med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling", producerRecord.key().fodselsnummer, recordMetadata)
+                            }
+                            repos.oppgaver.save(Oppgave(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
+                        }
                     }
-                repos.oppgaver.save(Oppgave(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
             }
             else {
                 log.trace("Oppretter ikke oppgave i Min Side for $fnr")
                 null
             }
         }
-    private fun success(msg: String, fnr: String,rec: RecordMetadata) = log(msg ,fnr,rec)
-    private fun failure(msg: String,  e: KafkaProducerException) :Nothing = throw IntegrationException(msg = msg, cause = e)
 
     private fun log(msg: String, fnr: String, recordMetadata: RecordMetadata?) =
         with(recordMetadata) {
@@ -150,12 +154,17 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
         }
 
     private fun avsluttMinSide(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType, type: SkjemaType = STANDARD) =
-        minside.send(ProducerRecord(cfg.done, key(type,eventId, fnr), done())).get().run {
-            when (notifikasjonType) {
-                OPPGAVE -> oppgaverAvsluttet.increment()
-                BESKJED -> beskjederAvsluttet.increment()
-            }.also {
-                log.trace("Sendte avslutt $notifikasjonType med eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+        minside.send(ProducerRecord(cfg.done, key(type,eventId, fnr), done())).whenComplete { res, e ->
+            e?.let {
+                throw IntegrationException(msg = "Kunne ikke avslutte ${notifikasjonType.name.lowercase()}", cause = it as KafkaProducerException)
+            } ?: run {
+                with(res) {
+                    when (notifikasjonType) {
+                        OPPGAVE -> oppgaverAvsluttet.increment()
+                        BESKJED -> beskjederAvsluttet.increment()
+                    }
+                    log.trace("Sendte avslutt $notifikasjonType med eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                }
             }
         }
 
