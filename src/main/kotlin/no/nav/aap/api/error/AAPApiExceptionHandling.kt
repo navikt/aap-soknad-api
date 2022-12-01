@@ -55,7 +55,7 @@ class AAPApiExceptionHandling : ResponseEntityExceptionHandler() {
     private fun createProblem(e: Exception, req: NativeWebRequest, status: HttpStatus, substatus: Substatus? = null) =
         status(status)
             .headers(HttpHeaders().apply { contentType = APPLICATION_PROBLEM_JSON })
-            .body(createProblemDetail(e, status, e.message ?: e.javaClass.simpleName, null, null, req).apply {
+            .body(createProblemDetail(e, status, e.message ?: e.javaClass.simpleName, substatus.name, null, req).apply {
                 setProperty(NAV_CALL_ID, callId())
                 substatus?.let {
                     setProperty(SUBSTATUS, it)
