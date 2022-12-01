@@ -13,9 +13,9 @@ import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnaut
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
-import org.springframework.http.HttpStatusCode
-import org.springframework.http.MediaType
+import org.springframework.http.MediaType.*
 import org.springframework.http.ProblemDetail
+import org.springframework.http.ResponseEntity.*
 import org.springframework.http.converter.HttpMessageConversionException
 import org.springframework.web.ErrorResponse.*
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -47,7 +47,7 @@ class AAPApiExceptionHandling  : ResponseEntityExceptionHandler() {
     fun dokument(e: DokumentException, req: NativeWebRequest) = createProblem(e, req, UNPROCESSABLE_ENTITY, e.substatus)
 
     @ExceptionHandler(HttpMessageConversionException::class)
-    fun messageConversion(e: HttpMessageConversionException, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
+    fun messageConversion(e: HttpMessageConversionException, req: NativeWebRequest) =  createProblem(e, req, BAD_REQUEST)
 
     @ExceptionHandler(Exception::class)
     fun catchAll(e: Exception, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
@@ -56,15 +56,16 @@ class AAPApiExceptionHandling  : ResponseEntityExceptionHandler() {
          toProblem(e, status, substatus,req)
 
     private fun toProblem(e: Exception,status: HttpStatus, substatus: Substatus?, req: NativeWebRequest) =
-       handleExceptionInternal(e,
-        createProblemDetail(e,status, e.message ?: e.javaClass.simpleName,null,null,req).apply {
-            setProperty(NAV_CALL_ID, callId())
-            substatus?.let {
-                setProperty(SUBSTATUS, it)
-            }
-        }.also { log(e,it,req,status) }, HttpHeaders().apply { contentType = MediaType.parseMediaType("application/problem+json") }, HttpStatusCode.valueOf(status.value()),req)
+        status(status)
+            .headers(HttpHeaders().apply { contentType = APPLICATION_PROBLEM_JSON })
+            .body(createProblemDetail(e,status, e.message ?: e.javaClass.simpleName,null,null,req).apply {
+                setProperty(NAV_CALL_ID, callId())
+                substatus?.let {
+                    setProperty(SUBSTATUS, it)
+                }
+            }.also { log(e,it,req,status) })
 
-     private fun log(t: Throwable, problem: ProblemDetail, req: NativeWebRequest, status: HttpStatus) =
+    private fun log(t: Throwable, problem: ProblemDetail, req: NativeWebRequest, status: HttpStatus) =
         log.error("$req $problem ${status.reasonPhrase}: ${ t.message}",t)
 
     companion object {
