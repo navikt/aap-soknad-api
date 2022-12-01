@@ -2,7 +2,7 @@ package no.nav.aap.api.oppslag.behandler
 
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLER
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLERPING
-import no.nav.aap.rest.AbstractWebClientAdapter
+import no.nav.aap.rest.AbstractRetryingWebClientAdapter
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -14,7 +14,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 class BehandlerWebClientAdapter(
         @Qualifier(BEHANDLER) webClient: WebClient,
         @Qualifier(BEHANDLERPING) pingClient: WebClient,
-        val cf: BehandlerConfig) : AbstractWebClientAdapter(webClient, cf,pingClient) {
+        val cf: BehandlerConfig) : AbstractRetryingWebClientAdapter(webClient, cf,pingClient) {
 
     fun behandlerInfo() = webClient
         .get()

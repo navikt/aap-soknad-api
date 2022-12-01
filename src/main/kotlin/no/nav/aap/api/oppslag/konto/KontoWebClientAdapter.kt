@@ -2,7 +2,7 @@ package no.nav.aap.api.oppslag.konto
 
 import no.nav.aap.api.felles.Kontonummer
 import no.nav.aap.api.oppslag.konto.KontoConfig.Companion.KONTO
-import no.nav.aap.rest.AbstractWebClientAdapter
+import no.nav.aap.rest.AbstractRetryingWebClientAdapter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono
 
 @Component
 class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient, private val cf: KontoConfig) :
-    AbstractWebClientAdapter(client, cf) {
+    AbstractRetryingWebClientAdapter(client, cf) {
 
     fun kontoInfo(historikk: Boolean = false) =
         if (cf.isEnabled) {

@@ -12,7 +12,7 @@ import no.nav.aap.api.søknad.arkiv.pdf.PDFGeneratorConfig.Companion.PDF
 import no.nav.aap.api.søknad.model.PDFKvittering
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
-import no.nav.aap.rest.AbstractWebClientAdapter
+import no.nav.aap.rest.AbstractRetryingWebClientAdapter
 import no.nav.aap.util.StringExtensions.toJson
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Qualifier
@@ -24,7 +24,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 @Component
 class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
                                    private val cf: PDFGeneratorConfig,
-                                   private val mapper: ObjectMapper) : AbstractWebClientAdapter(client, cf) {
+                                   private val mapper: ObjectMapper) : AbstractRetryingWebClientAdapter(client, cf) {
     fun generate(søker: Søker, kvittering: PDFKvittering) = generate(cf.standardPath, StandardData(søker, kvittering).toJson(mapper))
     fun generate(søker: Søker, søknad: UtlandSøknad) = generate(cf.utlandPath, UtlandData(søker, søknad).toJson(mapper))
     private fun generate(path: String, data: Any) =
