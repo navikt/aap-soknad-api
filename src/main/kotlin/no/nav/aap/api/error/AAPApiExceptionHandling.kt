@@ -53,7 +53,7 @@ class AAPApiExceptionHandling  : ResponseEntityExceptionHandler() {
          toProblem(e, status, substatus,req)
 
     private fun toProblem(e: Exception,status: HttpStatus, substatus: Substatus?, req: NativeWebRequest) =
-        createProblemDetail(e,status, e.message ?: getDefaultTitleMessageCode(e.javaClass),null,null,req).apply {
+        createProblemDetail(e,status, e.message ?: e.javaClass.simpleName,null,null,req).apply {
             setProperty(NAV_CALL_ID, callId())
             substatus?.let {
                 setProperty(SUBSTATUS, it)
