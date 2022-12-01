@@ -25,7 +25,7 @@ import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 
 @ControllerAdvice
-class AAPApiExceptionHandling  : ResponseEntityExceptionHandler() {
+class AAPApiExceptionHandling : ResponseEntityExceptionHandler() {
     private val log = getLogger(javaClass)
 
     @ExceptionHandler(JwtTokenMissingException::class, JwtTokenUnauthorizedException::class)
@@ -47,26 +47,23 @@ class AAPApiExceptionHandling  : ResponseEntityExceptionHandler() {
     fun dokument(e: DokumentException, req: NativeWebRequest) = createProblem(e, req, UNPROCESSABLE_ENTITY, e.substatus)
 
     @ExceptionHandler(HttpMessageConversionException::class)
-    fun messageConversion(e: HttpMessageConversionException, req: NativeWebRequest) =  createProblem(e, req, BAD_REQUEST)
+    fun messageConversion(e: HttpMessageConversionException, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
 
     @ExceptionHandler(Exception::class)
     fun catchAll(e: Exception, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
 
-     private fun createProblem(e: Exception, req: NativeWebRequest, status: HttpStatus, substatus: Substatus? = null)  =
-         toProblem(e, status, substatus,req)
-
-    private fun toProblem(e: Exception,status: HttpStatus, substatus: Substatus?, req: NativeWebRequest) =
+    private fun createProblem(e: Exception, req: NativeWebRequest, status: HttpStatus, substatus: Substatus? = null) =
         status(status)
             .headers(HttpHeaders().apply { contentType = APPLICATION_PROBLEM_JSON })
-            .body(createProblemDetail(e,status, e.message ?: e.javaClass.simpleName,null,null,req).apply {
+            .body(createProblemDetail(e, status, e.message ?: e.javaClass.simpleName, null, null, req).apply {
                 setProperty(NAV_CALL_ID, callId())
                 substatus?.let {
                     setProperty(SUBSTATUS, it)
                 }
-            }.also { log(e,it,req,status) })
+            }.also { log(e, it, req, status) })
 
     private fun log(t: Throwable, problem: ProblemDetail, req: NativeWebRequest, status: HttpStatus) =
-        log.error("$req $problem ${status.reasonPhrase}: ${ t.message}",t)
+        log.error("$req $problem ${status.reasonPhrase}: ${t.message}", t)
 
     companion object {
         private const val SUBSTATUS = "substatus"
