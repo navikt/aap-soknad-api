@@ -20,6 +20,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
+import reactor.util.retry.Retry
 
 @Component
 class ArkivOppslagWebClientAdapter(
@@ -27,9 +28,8 @@ class ArkivOppslagWebClientAdapter(
         @Qualifier(SAF) private val graphQL: GraphQLWebClient,
         private val ctx: AuthContext,
         private val mapper: ArkivOppslagMapper,
+        @Qualifier(SAF) private val retry: Retry,
         val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(client, cf) {
-
-
 
     fun dokument(journalpostId: String, dokumentInfoId: String) =
         webClient.get()
@@ -37,8 +37,9 @@ class ArkivOppslagWebClientAdapter(
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono<ByteArray>()
+            .onErrorMap { e -> IntegrationException("Feil fra saf-selvbetjening ${cf.dokUri()}",null,e) }
             .doOnSuccess { log.trace("Arkivoppslag returnerte  ${it.size} bytes") }
-            .doOnError { t: Throwable -> log.warn("Arkivoppslag feilet", t) }
+            .retryWhen(retry)
             .block() ?: throw IntegrationException("Null response fra arkiv")
 
     fun dokumenter() = query()
