@@ -44,7 +44,6 @@
         <sonar.projectKey>navikt_aap-soknad-api</sonar.projectKey>
         <spring-cloud-gcp.version>3.4.0</spring-cloud-gcp.version>
         <springdoc.version>2.0.0</springdoc.version>
-        <springdoc.kotlin.version>1.6.13</springdoc.kotlin.version>
         <swagger.annotations.version>2.2.7</swagger.annotations.version>
         <testcontainers.version>1.17.6</testcontainers.version>
         <tika.version>2.6.0</tika.version>
@@ -220,19 +219,6 @@
             <artifactId>logstash-logback-encoder</artifactId>
             <version>${logstash.version}</version>
         </dependency>
-        <!--
-       <dependency>
-           <groupId>org.springdoc</groupId>
-           <artifactId>springdoc-openapi-kotlin</artifactId>
-           <version>${springdoc.kotlin.version}</version>
-       </dependency>
-
-       <dependency>
-           <groupId>org.springdoc</groupId>
-           <artifactId>springdoc-openapi-ui</artifactId>
-           <version>${springdoc.kotlin.version}</version>
-       </dependency>
-       -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
