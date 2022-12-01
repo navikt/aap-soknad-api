@@ -13,7 +13,6 @@ import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnaut
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.ProblemDetail
-import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConversionException
 import org.springframework.web.ErrorResponse.*
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -54,12 +53,12 @@ class AAPApiExceptionHandling  : ResponseEntityExceptionHandler() {
          toProblem(e, status, substatus,req)
 
     private fun toProblem(e: Exception,status: HttpStatus, substatus: Substatus?, req: NativeWebRequest) =
-        ResponseEntity.of(createProblemDetail(e,status, e.message ?: e.javaClass.simpleName,null,null,req).apply {
+        createProblemDetail(e,status, e.message ?: e.javaClass.simpleName,null,null,req).apply {
             setProperty(NAV_CALL_ID, callId())
             substatus?.let {
                 setProperty(SUBSTATUS, it)
             }
-        }.also { log(e,it,req,status) })
+        }.also { log(e,it,req,status) }
 
      private fun log(t: Throwable, problem: ProblemDetail, req: NativeWebRequest, status: HttpStatus) =
         log.error("$req $problem ${status.reasonPhrase}: ${ t.message}",t)
