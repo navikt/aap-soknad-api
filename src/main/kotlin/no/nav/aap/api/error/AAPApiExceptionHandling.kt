@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.HttpStatusCode
+import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
 import org.springframework.http.converter.HttpMessageConversionException
 import org.springframework.web.ErrorResponse.*
@@ -61,7 +62,7 @@ class AAPApiExceptionHandling  : ResponseEntityExceptionHandler() {
             substatus?.let {
                 setProperty(SUBSTATUS, it)
             }
-        }.also { log(e,it,req,status) }, HttpHeaders(), HttpStatusCode.valueOf(status.value()),req)
+        }.also { log(e,it,req,status) }, HttpHeaders().apply { contentType = MediaType.parseMediaType("application/problem+json") }, HttpStatusCode.valueOf(status.value()),req)
 
      private fun log(t: Throwable, problem: ProblemDetail, req: NativeWebRequest, status: HttpStatus) =
         log.error("$req $problem ${status.reasonPhrase}: ${ t.message}",t)
