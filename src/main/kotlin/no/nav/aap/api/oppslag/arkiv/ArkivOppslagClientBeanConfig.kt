@@ -28,7 +28,7 @@ class ArkivOppslagClientBeanConfig {
         Retry.fixedDelay(3, Duration.ofMillis(100))
             .filter { e -> e is IntegrationException }
             .doBeforeRetry { s -> log.warn("Retry kall mot arkiv grunnet exception ${s.failure().javaClass.name} og melding ${s.failure().message} for ${s.totalRetriesInARow() + 1} gang, prøver igjen") }
-            .onRetryExhaustedThrow { _, spec ->  throw IntegrationException("Retry kall arkiv gir opp etter ${spec.totalRetries()} forsøk",spec.failure()) }
+            .onRetryExhaustedThrow { _, spec ->  throw IntegrationException("Retry kall mot arkiv gir opp etter ${spec.totalRetries()} forsøk",spec.failure()) }
 
 
     @Qualifier(SAF)
