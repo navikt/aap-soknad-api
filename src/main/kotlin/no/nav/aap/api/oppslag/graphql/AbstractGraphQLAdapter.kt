@@ -4,12 +4,12 @@ import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import java.io.File
 import no.nav.aap.rest.AbstractRestConfig
-import no.nav.aap.rest.AbstractWebClientAdapter
+import no.nav.aap.rest.AbstractRetryingWebClientAdapter
 import org.springframework.web.reactive.function.client.WebClient
 
 abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig,
                                       val errorHandler: GraphQLErrorHandler = GraphQLDefaultErrorHandler()) :
-    AbstractWebClientAdapter(client, cfg) {
+    AbstractRetryingWebClientAdapter(client, cfg) {
 
     protected inline fun <reified T : Any> query(graphQLClient: GraphQLWebClient, query: String, ident: String) =
         runCatching {
