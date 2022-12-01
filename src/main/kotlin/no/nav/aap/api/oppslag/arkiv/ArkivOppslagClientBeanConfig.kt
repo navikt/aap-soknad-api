@@ -24,7 +24,7 @@ class ArkivOppslagClientBeanConfig {
 
     @Bean
     @Qualifier(SAF)
-    fun retry(): Retry =
+    fun arkivRetry(): Retry =
         Retry.fixedDelay(3, Duration.ofMillis(100))
             .filter { e -> e is IntegrationException }
             .doBeforeRetry { s -> log.warn("Retry kall mot token endpoint grunnet exception ${s.failure().javaClass.name} og melding ${s.failure().message} for ${s.totalRetriesInARow() + 1} gang, prøver igjen") }
