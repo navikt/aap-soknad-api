@@ -32,7 +32,7 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
             doScan(bytes)
         }
 
-    @Timed
+    @Timed("virus", histogram = true)
     private fun doScan(bytes: ByteArray) =
         webClient
         .put()
