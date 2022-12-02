@@ -37,7 +37,7 @@ class ArkivOppslagWebClientAdapter(
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono<ByteArray>()
-            .onErrorMap { e -> IntegrationException("Feil fra saf-selvbetjening ${cf.dokUri()}",null,e) }
+            .onErrorMap { e -> IntegrationException("Feil fra arkiv ${cf.dokUri()}",null,e) }
             .doOnSuccess { log.trace("Arkivoppslag returnerte  ${it.size} bytes") }
             .retryWhen(retry)
             .block() ?: throw IntegrationException("Null response fra arkiv")

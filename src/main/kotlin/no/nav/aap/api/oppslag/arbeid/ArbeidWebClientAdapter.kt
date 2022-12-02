@@ -1,6 +1,7 @@
 package no.nav.aap.api.oppslag.arbeid
 
 import no.nav.aap.api.oppslag.arbeid.ArbeidConfig.Companion.ARBEID
+import no.nav.aap.rest.AbstractRetryingWebClientAdapter
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -11,7 +12,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 @Component
 class ArbeidWebClientAdapter(
         @Qualifier(ARBEID) webClient: WebClient,
-        private val cf: ArbeidConfig) : AbstractWebClientAdapter(webClient, cf) {
+        private val cf: ArbeidConfig) : AbstractRetryingWebClientAdapter(webClient, cf) {
 
     fun arbeidInfo() =
         if (cf.isEnabled) {
