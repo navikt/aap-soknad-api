@@ -89,6 +89,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     val log = getLogger(javaClass)
 
     @Bean
+    @Primary
     fun gcpStorageRetrySettings(@Value("\${mellomlagring.timeout:2500}") timeoutMs: Int) =
          ServiceOptions.getDefaultRetrySettings().toBuilder()
             .setInitialRetryDelay(ofMillis(400))
