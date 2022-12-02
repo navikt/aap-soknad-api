@@ -81,6 +81,7 @@ import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 import reactor.util.retry.Retry
 import reactor.util.retry.Retry.fixedDelay
 import com.google.cloud.ServiceOptions
+import java.time.Duration
 import org.threeten.bp.Duration.ofMillis
 @Configuration
 class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
@@ -100,7 +101,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         .newBuilder()
         .setRetrySettings(retrySettings)
         .build()
-        .service;
+        .service
     @Bean
     fun countedAspect(registry: MeterRegistry) = CountedAspect(registry)
     @Bean
@@ -241,7 +242,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         RetryingWebClientOAuth2HttpClient(b.build(),retry)
     @Bean
     fun retry(): Retry =
-        fixedDelay(3, ofMillis(100))
+        fixedDelay(3, Duration.ofMillis(100))
             .filter { e -> e is OAuth2ClientException}
             .doBeforeRetry { s -> log.warn("Retry kall mot token endpoint grunnet exception ${s.failure().javaClass.name} og melding ${s.failure().message} for ${s.totalRetriesInARow() + 1} gang, prøver igjen") }
             .onRetryExhaustedThrow { _, spec ->  throw OAuth2ClientException("Retry kall mot token endpoint gir opp etter ${spec.totalRetries()} forsøk",spec.failure())}
