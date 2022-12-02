@@ -82,6 +82,7 @@ import reactor.util.retry.Retry
 import reactor.util.retry.Retry.fixedDelay
 import com.google.cloud.ServiceOptions
 import java.time.Duration
+import org.springframework.context.annotation.Primary
 import org.threeten.bp.Duration.ofMillis
 @Configuration
 class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
@@ -97,6 +98,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
             .setTotalTimeout(ofMillis(timeoutMs.toLong()))
             .build()
     @Bean
+    @Primary
     fun gcpStorage(retrySettings: RetrySettings) =  StorageOptions
         .newBuilder()
         .setRetrySettings(retrySettings)
