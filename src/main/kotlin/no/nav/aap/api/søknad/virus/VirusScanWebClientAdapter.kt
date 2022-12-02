@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.virus
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import io.micrometer.core.annotation.Timed
 import no.nav.aap.api.søknad.virus.ScanResult.Companion.FEIL
 import no.nav.aap.api.søknad.virus.ScanResult.Result.FOUND
 import no.nav.aap.api.søknad.virus.ScanResult.Result.NONE
@@ -24,32 +25,35 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
 
     fun harVirus(bytes: ByteArray) =
         if (skalIkkeScanne(bytes, cf)) {
-            ScanResult(NONE).also {
-                log.trace("Ingen scanning av (${bytes.size} bytes, enabled=${cf.enabled})")
-            }
+            log.trace("Ingen scanning av (${bytes.size} bytes, enabled=${cf.enabled})")
+            ScanResult(NONE)
         }
         else {
-            webClient
-                .put()
-                .bodyValue(bytes)
-                .accept(APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono<List<ScanResult>>()
-                .doOnError { t: Throwable ->
-                    log.warn("Virus-respons feilet", t)
-                }
-                .doOnSuccess {
-                    log.trace("Virus respons OK")
-                }
-                .onErrorReturn(FEIL)
-                .defaultIfEmpty(FEIL)
-                .block()
-                ?.single()
-                .also {
-                    log.trace("Fikk scan result $it")
-                }
-                ?: ScanResult(NONE)
+            doScan(bytes)
         }
+
+    @Timed
+    private fun doScan(bytes: ByteArray) =
+        webClient
+        .put()
+        .bodyValue(bytes)
+        .accept(APPLICATION_JSON)
+        .retrieve()
+        .bodyToMono<List<ScanResult>>()
+        .doOnError { t: Throwable ->
+            log.warn("Virus-respons feilet", t)
+        }
+        .doOnSuccess {
+            log.trace("Virus respons OK")
+        }
+        .onErrorReturn(FEIL)
+        .defaultIfEmpty(FEIL)
+        .block()
+        ?.single()
+        .also {
+            log.trace("Fikk scan result $it")
+        }
+        ?: ScanResult(NONE)
 
     private fun skalIkkeScanne(bytes: ByteArray, cf: VirusScanConfig) = bytes.isEmpty() || !cf.isEnabled
 
