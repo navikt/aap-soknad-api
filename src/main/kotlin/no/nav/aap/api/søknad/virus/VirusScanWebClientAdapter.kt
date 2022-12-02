@@ -23,6 +23,7 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
             FOUND, OK -> emptyMap()
         }
 
+    @Timed("virus", histogram = true)
     fun harVirus(bytes: ByteArray) =
         if (skalIkkeScanne(bytes, cf)) {
             log.trace("Ingen scanning av (${bytes.size} bytes, enabled=${cf.enabled})")
@@ -32,7 +33,6 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
             doScan(bytes)
         }
 
-    @Timed("virus", histogram = true)
     private fun doScan(bytes: ByteArray) =
         webClient
         .put()
