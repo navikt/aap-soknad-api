@@ -37,9 +37,8 @@ class ArkivOppslagWebClientAdapter(
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono<ByteArray>()
-            .onErrorMap { e -> IntegrationException("Feil fra arkiv ${cf.dokUri()}",null,e) }
-            .doOnSuccess { log.trace("Arkivoppslag returnerte  ${it.size} bytes") }
             .retryWhen(retry)
+            .doOnSuccess { log.trace("Arkivoppslag returnerte  ${it.size} bytes") }
             .block() ?: throw IntegrationException("Null response fra arkiv")
 
     fun dokumenter() = query()
