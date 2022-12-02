@@ -27,7 +27,6 @@ import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
 import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
-import no.nav.aap.rest.ActuatorIgnoringTraceRequestFilter
 import no.nav.aap.rest.HeadersToMDCFilter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
@@ -166,11 +165,6 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     @ConditionalOnProd
     @Bean
     fun prodHttpClient() = HttpClient.create()
-
-    @Bean
-    @ConditionalOnNotProd
-    fun actuatorIgnoringTraceRequestFilter(repo: HttpTraceRepository, tracer: HttpExchangeTracer) =
-        ActuatorIgnoringTraceRequestFilter(repo, tracer)
 
     @ConditionalOnNotProd
     class HttpTraceRepository(private val mapper: ObjectMapper) : InMemoryHttpTraceRepository() {
