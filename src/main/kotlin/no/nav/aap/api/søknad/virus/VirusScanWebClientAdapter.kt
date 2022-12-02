@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.virus
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import io.micrometer.core.annotation.Counted
 import io.micrometer.core.annotation.Timed
 import no.nav.aap.api.søknad.virus.ScanResult.Companion.FEIL
 import no.nav.aap.api.søknad.virus.ScanResult.Result.FOUND
@@ -24,6 +25,7 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
         }
 
     @Timed("virus", histogram = true)
+    @Counted("virus")
     fun harVirus(bytes: ByteArray) =
         if (skalIkkeScanne(bytes, cf)) {
             log.trace("Ingen scanning av (${bytes.size} bytes, enabled=${cf.enabled})")
