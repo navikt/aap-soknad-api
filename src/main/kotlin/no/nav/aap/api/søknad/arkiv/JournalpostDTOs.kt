@@ -32,10 +32,12 @@ data class Journalpost(
 
     data class DokumentVariant private constructor(val filtype: String,
                                                    val fysiskDokument: String,
+                                                   val code: List<String>,
                                                    val variantformat: String) {
-        constructor(fysiskDokument: String, variantformat: VariantFormat = ARKIV, filtype: Filtype = PDFA) : this(
+        constructor(fysiskDokument: String, variantformat: VariantFormat = ARKIV, filtype: Filtype = PDFA, code: List<String> = emptyList()) : this(
                 filtype.name,
                 fysiskDokument,
+                code,
                 variantformat.name)
 
         override fun toString() =

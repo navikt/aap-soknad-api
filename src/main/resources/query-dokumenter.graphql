@@ -23,6 +23,7 @@ query dokumentoversiktSelvbetjening($ident: String!) {
           variantformat
           filtype
           brukerHarTilgang
+          code
         }
       }
     }
