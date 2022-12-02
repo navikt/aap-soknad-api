@@ -27,6 +27,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 
 @ConditionalOnGCP
 @Timed
+
 internal class GCPKryptertMellomlager(val cfg: BucketConfig,
                                       private val lager: Storage,
                                       private val mapper: ObjectMapper,

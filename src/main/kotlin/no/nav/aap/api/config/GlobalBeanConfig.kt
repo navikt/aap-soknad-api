@@ -3,6 +3,8 @@ package no.nav.aap.api.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.google.api.gax.retrying.RetrySettings
+import com.google.cloud.storage.StorageOptions
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import io.micrometer.core.aop.CountedAspect
 import io.micrometer.core.aop.TimedAspect
@@ -15,10 +17,8 @@ import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP
 import java.io.IOException
-import java.time.Duration
 import java.time.Duration.*
 import java.util.*
-import java.util.Arrays.setAll
 import java.util.function.Consumer
 import javax.servlet.Filter
 import javax.servlet.FilterChain
@@ -49,7 +49,6 @@ import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPro
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.actuate.trace.http.HttpExchangeTracer
 import org.springframework.boot.actuate.trace.http.HttpTrace
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
@@ -59,7 +58,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
 import org.springframework.core.MethodParameter
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
@@ -74,9 +72,7 @@ import org.springframework.http.server.ServerHttpResponse
 import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ControllerAdvice
-import org.springframework.web.client.RestClientException
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import org.zalando.problem.jackson.ProblemModule
@@ -84,12 +80,27 @@ import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 import reactor.util.retry.Retry
 import reactor.util.retry.Retry.fixedDelay
-import reactor.util.retry.RetryBackoffSpec
-
+import com.google.cloud.ServiceOptions
+import org.threeten.bp.Duration.ofMillis
 @Configuration
 class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
     val log = getLogger(javaClass)
 
+    @Bean
+    fun gcpStorageRetrySettings(@Value("\${mellomlagring.timeout:2500}") timeoutMs: Int) =
+         ServiceOptions.getDefaultRetrySettings().toBuilder()
+            .setInitialRetryDelay(ofMillis(400))
+            .setMaxRetryDelay(ofMillis(900))
+            .setRetryDelayMultiplier(1.5)
+            .setMaxAttempts(5)
+            .setTotalTimeout(ofMillis(timeoutMs.toLong()))
+            .build()
+    @Bean
+    fun gcpStorage(retrySettings: RetrySettings) =  StorageOptions
+        .newBuilder()
+        .setRetrySettings(retrySettings)
+        .build()
+        .service;
     @Bean
     fun countedAspect(registry: MeterRegistry) = CountedAspect(registry)
     @Bean
