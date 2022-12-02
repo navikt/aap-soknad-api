@@ -4,7 +4,6 @@ import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import java.nio.charset.Charset.defaultCharset
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.LoggerUtil.getSecureLogger
-import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -21,9 +20,7 @@ class GraphQLDefaultErrorHandler : GraphQLErrorHandler {
     private val secureLogger = getSecureLogger()
 
     override fun handle(e: GraphQLErrorsException): Nothing {
-        log.warn("GraphQL oppslag feilet, se secure logs for flere detaljer")
-        secureLogger.error("GraphQL oppslag returnerte ${e.errors.size} feil. ${e.errors}", e)
-        log.trace(CONFIDENTIAL, "GraphQL oppslag returnerte ${e.errors.size} feil. ${e.errors}", e)
+        log.warn("GraphQL oppslag returnerte ${e.errors.size} feil. ${e.errors}", e)
         throw e.httpClientException()
     }
 
