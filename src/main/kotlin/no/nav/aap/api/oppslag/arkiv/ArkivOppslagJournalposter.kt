@@ -64,6 +64,7 @@ data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournal
 
             data class ArkivOppslagDokumentVariant(val variantformat: ArkivOppslagDokumentVariantFormat,
                                                    val filtype: ArkivOppslagDokumentFiltype,
+                                                   val code: List<String> = emptyList(),
                                                    val brukerHarTilgang: Boolean) {
 
                 enum class ArkivOppslagDokumentVariantFormat {
