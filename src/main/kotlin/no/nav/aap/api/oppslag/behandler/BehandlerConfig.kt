@@ -17,7 +17,7 @@ class BehandlerConfig(
         @DefaultValue(DEFAULT_URI) baseUri: URI,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String = DEFAULT_PING_PATH,
         @DefaultValue(DEFAULT_PATH) private val path: String = DEFAULT_PATH,
-        @NestedConfigurationProperty private val retryCfg: RetryConfig = RetryConfig.DEFAULT,
+        @NestedConfigurationProperty @DefaultValue val retryCfg: RetryConfig = RetryConfig.DEFAULT,
         @DefaultValue("true") enabled: Boolean = true) : AbstractRestConfig(baseUri, pingPath, BEHANDLER, enabled,retryCfg) {
     fun path(b: UriBuilder) = b.path(path).build()
 
