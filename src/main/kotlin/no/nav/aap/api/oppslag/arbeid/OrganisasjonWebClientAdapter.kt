@@ -5,6 +5,7 @@ import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.Constants.ORGANISASJON
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -21,11 +22,12 @@ class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON) val client: WebClien
                 .uri { b -> cf.organisasjonURI(b, orgnr) }
                 .accept(APPLICATION_JSON)
                 .retrieve()
-                .onStatus({ it.isError }) { Mono.empty() }
+                .onStatus({ NOT_FOUND == it }, { Mono.empty<Throwable>().also { log.trace("Organisasjon $orgnr ikke funnet") } })
                 .bodyToMono(OrganisasjonDTO::class.java)
                 .retryWhen(cf.retrySpec(log))
                 .doOnError { t: Throwable -> log.warn("Organisasjon oppslag feilet", t) }
                 .doOnSuccess { log.trace("Organisasjon oppslag OK") }
+                .onErrorResume { Mono.empty() }
                 .mapNotNull(OrganisasjonDTO::fulltNavn)
                 .defaultIfEmpty(orgnr.orgnr)
                 .block() ?: orgnr.orgnr

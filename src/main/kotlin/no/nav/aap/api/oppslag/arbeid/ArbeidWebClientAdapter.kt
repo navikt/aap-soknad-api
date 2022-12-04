@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException.*
 import org.springframework.web.reactive.function.client.bodyToMono
+import reactor.core.publisher.Mono
 
 @Component
 class ArbeidWebClientAdapter(
@@ -23,12 +24,10 @@ class ArbeidWebClientAdapter(
                 .retrieve()
                 .bodyToMono<List<ArbeidsforholdDTO>>()
                 .retryWhen(cf.retrySpec(log))
-                .doOnError { t: Throwable ->
-                    log.warn("Arbeidsforhold oppslag feilet", t)
-                }
-                .doOnSuccess {
-                    log.trace("Arbeidsforhold er $it")
-                }
+                .onErrorResume { Mono.empty() }
+                .doOnError { t -> log.warn("Arbeidsforhold oppslag feilet", t) }
+                .doOnSuccess { log.trace("Arbeidsforhold er $it") }
+                .defaultIfEmpty(listOf())
                 .block().orEmpty()
         }
         else {

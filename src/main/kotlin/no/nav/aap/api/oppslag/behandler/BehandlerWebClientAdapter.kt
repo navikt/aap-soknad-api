@@ -23,25 +23,14 @@ class BehandlerWebClientAdapter(
         .uri(cf::path)
         .accept(APPLICATION_JSON)
         .retrieve()
-        .onStatus({ NOT_FOUND == it }, {
-            Mono.empty<Throwable?>().also {
-                log.trace("Behandler ikke funnet")
-            }
-        })
+        .onStatus({ NOT_FOUND == it }, { Mono.empty<Throwable?>().also { log.trace("Behandler ikke funnet") } })
         .bodyToMono<List<BehandlerDTO>>()
         .retryWhen(cf.retrySpec(log))
-        .onErrorResume {
-            Mono.empty<List<BehandlerDTO>>().also {
-                log.warn("Behandler oppslag feilet", it) }
-        }
+        .onErrorResume { Mono.empty<List<BehandlerDTO>>().also { log.warn("Behandler oppslag feilet", it) } }
         .block()
-        ?.map {
-            it.tilBehandler()
-        }
+        ?.map { it.tilBehandler() }
         .orEmpty()
-        .also {
-            log.trace(CONFIDENTIAL,"Behandlere mappet er $it")
-        }
+        .also { log.trace(CONFIDENTIAL,"Behandlere mappet er $it") }
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cfg]"
 }
