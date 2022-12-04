@@ -1,67 +1,98 @@
 package no.nav.aap.api.oppslag.behandler
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.felles.OrgNummer
+import no.nav.aap.api.felles.MockWebServerExtensions.expect
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerKategori.LEGE
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerType.FASTLEGE
+import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import kotlin.test.assertEquals
+import org.springframework.http.HttpStatus.BAD_GATEWAY
+import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.OK
+import org.springframework.web.reactive.function.client.WebClient
 
-@SpringBootTest(classes = [ObjectMapper::class])
 class BehandlerTest {
-    @Autowired
-    lateinit var mapper: ObjectMapper
-    val json = "[\n" +
-            "   {\n" +
-            "      \"type\":\"FASTLEGE\",\n" +
-            "      \"kategori\":\"LEGE\",\n" +
-            "      \"behandlerRef\":\"d182f24b-ebca-4f44-bf86-65901ec6141b\",\n" +
-            "      \"fnr\":\"08089403198\",\n" +
-            "      \"fornavn\":\"Unni\",\n" +
-            "      \"mellomnavn\":\"\",\n" +
-            "      \"etternavn\":\"Larsen\",\n" +
-            "      \"orgnummer\":\"976673867\",\n" +
-            "      \"kontor\":\"Legesenteret AS\",\n" +
-            "      \"adresse\":\"Legeveien 17\",\n" +
-            "      \"postnummer\":\"5300\",\n" +
-            "      \"poststed\":\"KLEPPESTØ\",\n" +
-            "      \"telefon\":\"500000230\"\n" +
-            "   }" +
-            " ]"
 
-    @Test
-    fun serdeserTest() {
-        val o = OrgNummer("976673867")
-        serdeser(o)
-        val f = BehandlerDTO(
-                FASTLEGE, LEGE, "123", Fødselsnummer("08089403198"), "Unni", "Mellom", "Larsen",
-                OrgNummer("976673867"), "Kontor", "Adresse", "5300", "KLEPPESTØ", "61253479")
-        serdeser(f, true)
+    lateinit var server: MockWebServer
+    lateinit var client: BehandlerClient
+
+    val respons = """[
+              {
+                  "type": "FASTLEGE",
+                  "kategori": "LEGE",
+                  "behandlerRef": "d182f24b-ebca-4f44-bf86-65901ec6141b",
+                  "fnr": "08089403198",
+                  "fornavn": "Unni",
+                  "etternavn": "Larsen",
+                  "orgnummer": "976673867",
+                  "kontor": "Legesenteret AS",
+                  "adresse": "Legeveien 17",
+                  "postnummer": "5300",
+                  "poststed": "KLEPPESTØ",
+                  "telefon": "500000230"
+               }
+             ]
+            """
+
+    @BeforeEach
+    fun beforeEach() {
+        server = MockWebServer()
+        with(BehandlerConfig(server.url("/").toUri())) {
+            client = BehandlerClient(BehandlerWebClientAdapter(WebClient.builder().baseUrl("$baseUri").build(),WebClient.create(),this))
+        }
     }
 
     @Test
-    fun serdeserFromJSONTest() {
-        mapper.registerKotlinModule()
-        val dtos = mapper.readValue(json, object : TypeReference<List<BehandlerDTO>>() {})
-        assertEquals(dtos.size, 1)
-        val dto = dtos[0]
-        assertThat(dto.fnr).isEqualTo(Fødselsnummer("08089403198"))
+    @DisplayName("Junk fra tjenesten skal gi en tom list")
+    fun junkRespons() {
+        server.expect("junk")
+        assertThat(client.behandlerInfo()).isEmpty()
     }
 
-    private fun serdeser(a: Any, print: Boolean = false) {
-        mapper.registerKotlinModule()
-        mapper.registerModule(JavaTimeModule())
-        val ser = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(a)
-        if (print) println(ser)
-        val deser = mapper.readValue(ser, a::class.java)
-        if (print) println(deser)
-        assertThat(a).isEqualTo(deser)
+    @Test
+    @DisplayName("Retry gir opp tilslutt og gir tom liste")
+    fun feilRespons() {
+        server.expect(4,BAD_GATEWAY)
+        assertThat(client.behandlerInfo()).isEmpty()
+    }
+
+    @Test
+    @DisplayName("Not found gir opp med en gang")
+    fun notFound() {
+        server.expect(NOT_FOUND)
+        assertThat(client.behandlerInfo()).isEmpty()
+    }
+    @Test
+    @DisplayName("Tom respons fra tjenesten skal gi en tom list")
+    fun tomRespons() {
+        server.expect(OK)
+        assertThat(client.behandlerInfo()).isEmpty()
+    }
+
+    @Test
+    @DisplayName("Normal respons fra tjenesten leses og mappes korrekt")
+    fun okRespons() {
+        server.expect(respons)
+        assertOK()
+    }
+
+    @Test
+    @DisplayName("Transiente feil skal føre til retry og korrekt respons til slutt")
+    fun okResponsEtter2Retries() {
+        server
+            .expect(2,INTERNAL_SERVER_ERROR)
+            .expect(respons)
+        assertOK()
+    }
+    private fun assertOK() {
+        with(client.behandlerInfo().single()) {
+            assertThat(this).isNotNull
+            assertThat(type).isEqualTo(FASTLEGE)
+            assertThat(kategori).isEqualTo(LEGE)
+            assertThat(navn.fornavn).isEqualTo("Unni")
+        }
     }
 }

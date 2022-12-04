@@ -20,7 +20,7 @@
         <confluent.version>7.3.0</confluent.version>
         <commit-id.version>5.0.0</commit-id.version>
         <commons-text.version>1.10.0</commons-text.version>
-        <domain.version>1.0.29</domain.version>
+        <domain.version>1.0.30</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
         <gcp.libraries.version>26.1.5</gcp.libraries.version>
         <gcp.version>0.182.0</gcp.version>

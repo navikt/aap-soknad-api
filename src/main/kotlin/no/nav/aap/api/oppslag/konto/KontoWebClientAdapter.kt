@@ -2,7 +2,6 @@ package no.nav.aap.api.oppslag.konto
 
 import no.nav.aap.api.felles.Kontonummer
 import no.nav.aap.api.oppslag.konto.KontoConfig.Companion.KONTO
-import no.nav.aap.rest.AbstractRetryingWebClientAdapter
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -11,10 +10,12 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
+import reactor.util.retry.Retry
 
 @Component
-class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient, private val cf: KontoConfig) :
-    AbstractRetryingWebClientAdapter(client, cf) {
+class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
+                            @Qualifier(KONTO) private val retry: Retry,
+                            private val cf: KontoConfig) : AbstractWebClientAdapter(client, cf) {
 
     fun kontoInfo(historikk: Boolean = false) =
         if (cf.isEnabled) {
@@ -27,14 +28,10 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient, private val cf:
                     Mono.empty()
                 })
                 .bodyToMono<Map<String, String>>()
-                .doOnSuccess {
-                    log.trace("Kontoinformasjon er $it")
-                }
-                .doOnError { t: Throwable ->
-                    log.warn("Kontoinformasjon oppslag feilet", t)
-                }
+                .retryWhen(retry)
+                .doOnSuccess { log.trace("Kontoinformasjon returnerte  $it") }
+                .onErrorResume { Mono.empty() }
                 .defaultIfEmpty(emptyMap())
-                .onErrorReturn(emptyMap())
                 .block()?.tilKontonummer()
         }
         else null

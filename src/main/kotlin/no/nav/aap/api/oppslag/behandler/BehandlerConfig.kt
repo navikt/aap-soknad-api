@@ -1,21 +1,24 @@
 package no.nav.aap.api.oppslag.behandler
 
 import java.net.URI
+import java.time.Duration
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLER
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.web.util.UriBuilder
+import reactor.util.retry.Retry.*
 
 @ConfigurationProperties(BEHANDLER)
 @ConstructorBinding
 class BehandlerConfig(
         @DefaultValue(DEFAULT_URI) baseUri: URI,
-        @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
-        @DefaultValue(DEFAULT_PATH) private val path: String,
-        @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, BEHANDLER, enabled) {
-
+        @DefaultValue(DEFAULT_PING_PATH) pingPath: String = DEFAULT_PING_PATH,
+        @DefaultValue(DEFAULT_PATH) private val path: String = DEFAULT_PATH,
+        @DefaultValue("3")  retries: Long = 3,
+        @DefaultValue("100ms")  delay: Duration = Duration.ofMillis(100),
+        @DefaultValue("true") enabled: Boolean = true) : AbstractRestConfig(baseUri, pingPath, BEHANDLER, enabled,retries,delay) {
     fun path(b: UriBuilder) = b.path(path).build()
 
     companion object {

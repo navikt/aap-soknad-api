@@ -1,6 +1,7 @@
 package no.nav.aap.api.oppslag.konto
 
 import java.net.URI
+import java.time.Duration
 import no.nav.aap.api.oppslag.konto.KontoConfig.Companion.KONTO
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -13,7 +14,9 @@ import org.springframework.web.util.UriBuilder
 class KontoConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
                   @DefaultValue(PINGPATH) pingPath: String,
                   @DefaultValue(DEFAULT_KONTO_PATH) private val kontoPath: String,
-                  @DefaultValue("false") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, KONTO, enabled) {
+                  @DefaultValue("3")  retries: Long,
+                  @DefaultValue("100ms")  delay: Duration,
+                  @DefaultValue("false") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, KONTO, enabled,retries,delay) {
 
     fun kontoUri(b: UriBuilder) = b.path(kontoPath).build()
 

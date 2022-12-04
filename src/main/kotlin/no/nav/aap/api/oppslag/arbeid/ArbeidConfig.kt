@@ -1,6 +1,7 @@
 package no.nav.aap.api.oppslag.arbeid
 
 import java.net.URI
+import java.time.Duration
 import java.time.LocalDate.now
 import java.time.Period
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
@@ -19,9 +20,11 @@ class ArbeidConfig(baseUri: URI,
                    @DefaultValue(PATH) private val path: String,
                    @DefaultValue("true") enabled: Boolean,
                    @DefaultValue(PINGPATH) pingPath: String,
+                   @DefaultValue("3")  retries: Long,
+                   @DefaultValue("100ms")  delay: Duration,
                    @DefaultValue(FEMÅR) @PeriodFormat(SIMPLE) private val tidTilbake: Period,
                    @DefaultValue("false") val sporingsinformasjon: Boolean) :
-    AbstractRestConfig(baseUri, pingPath, ARBEID, enabled) {
+    AbstractRestConfig(baseUri, pingPath, ARBEID, enabled,retries,delay) {
 
     fun arbeidsforholdURI(b: UriBuilder) =
         b.path(path)

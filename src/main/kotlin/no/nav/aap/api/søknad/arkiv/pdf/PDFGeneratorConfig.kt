@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.arkiv.pdf
 
 import java.net.URI
+import java.time.Duration
 import no.nav.aap.api.søknad.arkiv.pdf.PDFGeneratorConfig.Companion.PDF
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -16,7 +17,9 @@ class PDFGeneratorConfig(
         @DefaultValue(UTLAND_PATH) val utlandPath: String,
         @DefaultValue(STANDARD_PATH) val standardPath: String,
         @DefaultValue("true") enabled: Boolean,
-        @DefaultValue(DEFAULT_BASE_URI) baseUri: URI) : AbstractRestConfig(baseUri, pingPath, PDF, enabled) {
+        @DefaultValue("3")  retries: Long,
+        @DefaultValue("100ms")  delay: Duration,
+        @DefaultValue(DEFAULT_BASE_URI) baseUri: URI) : AbstractRestConfig(baseUri, pingPath, PDF, enabled,retries,delay) {
     companion object {
         const val PDF = "pdf"
         private const val DEFAULT_BASE_URI = "http://pdfgen"

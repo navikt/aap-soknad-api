@@ -1,6 +1,7 @@
 package no.nav.aap.api.oppslag.arbeid
 
 import java.net.URI
+import java.time.Duration
 import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.util.Constants.ORGANISASJON
@@ -14,8 +15,10 @@ import org.springframework.web.util.UriComponentsBuilder
 @ConstructorBinding
 class OrganisasjonConfig(baseUri: URI,
                          @DefaultValue(V1_ORGANISASJON) private val organisasjonPath: String,
+                         @DefaultValue("3")  retries: Long,
+                         @DefaultValue("100ms")  delay: Duration,
                          @DefaultValue("true") enabled: Boolean) :
-    AbstractRestConfig(baseUri, pingPath(organisasjonPath), ORGANISASJON, enabled) {
+    AbstractRestConfig(baseUri, pingPath(organisasjonPath), ORGANISASJON, enabled,retries,delay) {
 
     fun organisasjonURI(b: UriBuilder, orgnr: OrgNummer) = b.path(organisasjonPath).build(orgnr.orgnr)
 

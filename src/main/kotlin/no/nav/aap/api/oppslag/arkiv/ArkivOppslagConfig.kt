@@ -1,6 +1,7 @@
 package no.nav.aap.api.oppslag.arkiv
 
 import java.net.URI
+import java.time.Duration
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -13,7 +14,9 @@ class ArkivOppslagConfig(
         baseUri: URI,
         @DefaultValue(PINGPATH) pingPath: String,
         @DefaultValue(DOKPATH) private val dokPath: String,
-        @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, SAF, enabled) {
+        @DefaultValue("3")  retries: Long,
+        @DefaultValue("100ms")  delay: Duration,
+        @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, SAF, enabled,retries,delay) {
 
     fun dokUri() = "$baseUri$dokPath"
 
