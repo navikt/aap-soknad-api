@@ -16,10 +16,12 @@ import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJourna
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.util.AuthContext
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
+import reactor.core.publisher.Mono
 
 @Component
 class ArkivOppslagWebClientAdapter(
@@ -34,10 +36,11 @@ class ArkivOppslagWebClientAdapter(
             .uri(cf.dokUri(), journalpostId, dokumentInfoId,ARKIV.name)
             .accept(APPLICATION_JSON)
             .retrieve()
+            .onStatus({ UNAUTHORIZED == it }, { Mono.empty<Throwable>().also { log.trace("Dokument $journalpostId/$dokumentInfoId kan ikke slås opp") } })
             .bodyToMono<ByteArray>()
             .retryWhen(cf.retrySpec(log))
             .doOnSuccess { log.trace("Arkivoppslag returnerte  ${it.size} bytes") }
-            .block() ?: throw IntegrationException("Null response fra arkiv")
+            .block() ?: throw IntegrationException("Null response fra arkiv for  $journalpostId/$dokumentInfoId ")
 
     fun dokumenter() = query()
         ?.filter { it.journalposttype in listOf(I, U) }

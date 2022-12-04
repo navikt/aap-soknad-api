@@ -10,7 +10,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import reactor.core.publisher.Mono
+import reactor.core.publisher.Mono.*
 
 @Component
 class BehandlerWebClientAdapter(
@@ -23,12 +23,12 @@ class BehandlerWebClientAdapter(
         .uri(cf::path)
         .accept(APPLICATION_JSON)
         .retrieve()
-        .onStatus({ NOT_FOUND == it }, { Mono.empty<Throwable?>().also { log.trace("Behandler ikke funnet") } })
+        .onStatus({ NOT_FOUND == it }, { empty<Throwable>().also { log.trace("Behandler ikke funnet") } })
         .bodyToMono<List<BehandlerDTO>>()
         .retryWhen(cf.retrySpec(log))
-        .onErrorResume { Mono.empty<List<BehandlerDTO>>().also { log.warn("Behandler oppslag feilet", it) } }
+        .onErrorResume { empty<List<BehandlerDTO>>().also { log.info("Behandler oppslag feilet etter ${cfg.retry}, faller tilbake til tom liste", it) } }
         .block()
-        ?.map { it.tilBehandler() }
+        ?.map(BehandlerDTO::tilBehandler)
         .orEmpty()
         .also { log.trace(CONFIDENTIAL,"Behandlere mappet er $it") }
 

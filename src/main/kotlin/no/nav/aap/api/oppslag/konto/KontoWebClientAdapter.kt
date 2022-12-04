@@ -10,11 +10,9 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
-import reactor.util.retry.Retry
 
 @Component
 class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
-                            @Qualifier(KONTO) private val retry: Retry,
                             private val cf: KontoConfig) : AbstractWebClientAdapter(client, cf) {
 
     fun kontoInfo(historikk: Boolean = false) =
@@ -25,7 +23,7 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
                 .retrieve()
                 .onStatus({ NOT_FOUND == it }, { Mono.empty<Throwable>().also {log.trace("Kontoinformasjon ikke funnet") } })
                 .bodyToMono<Map<String, String>>()
-                .retryWhen(retry)
+                .retryWhen(cf.retrySpec(log))
                 .doOnSuccess { log.trace("Kontoinformasjon returnerte  $it") }
                 .onErrorResume { Mono.empty() }
                 .defaultIfEmpty(emptyMap())
@@ -33,5 +31,5 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
         }
         else null
 
-    private fun Map<String, String>.tilKontonummer() = this["kontonummer"]?.let { Kontonummer(it) }
+    private fun Map<String, String>.tilKontonummer() = this["kontonummer"]?.let(::Kontonummer)
 }

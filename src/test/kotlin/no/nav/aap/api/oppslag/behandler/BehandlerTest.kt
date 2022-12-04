@@ -66,7 +66,7 @@ class BehandlerTest {
         assertThat(client.behandlerInfo()).isEmpty()
     }
     @Test
-    @DisplayName("Tom respons fra tjenesten skal gi en tom list")
+    @DisplayName("Tom respons fra tjenesten skal gi en tom liste")
     fun tomRespons() {
         server.expect(OK)
         assertThat(client.behandlerInfo()).isEmpty()
