@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.boot.convert.PeriodFormat
-import org.springframework.boot.convert.PeriodStyle.SIMPLE
+import org.springframework.boot.convert.PeriodStyle.*
 import org.springframework.web.util.UriBuilder
 
 @ConfigurationProperties(ARBEID)
@@ -24,6 +24,9 @@ class ArbeidConfig(baseUri: URI,
                    @DefaultValue(FEMÅR) @PeriodFormat(SIMPLE) private val tidTilbake: Period,
                    @DefaultValue("false") val sporingsinformasjon: Boolean) :
     AbstractRestConfig(baseUri, pingPath, ARBEID, enabled,retryCfg) {
+
+    constructor(baseUri: URI) : this(baseUri, PATH,true, PINGPATH,RetryConfig.DEFAULT, detectAndParse(FEMÅR),false)
+
 
     fun arbeidsforholdURI(b: UriBuilder) =
         b.path(path)

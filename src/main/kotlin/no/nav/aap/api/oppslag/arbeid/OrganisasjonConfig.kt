@@ -1,7 +1,6 @@
 package no.nav.aap.api.oppslag.arbeid
 
 import java.net.URI
-import java.time.Duration
 import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.util.Constants.ORGANISASJON
@@ -19,6 +18,8 @@ class OrganisasjonConfig(baseUri: URI,
                          @NestedConfigurationProperty private val retryCfg: RetryConfig = RetryConfig.DEFAULT,
                          @DefaultValue("true") enabled: Boolean) :
     AbstractRestConfig(baseUri, pingPath(organisasjonPath), ORGANISASJON, enabled,retryCfg) {
+
+    constructor(baseUri: URI) : this(baseUri, V1_ORGANISASJON,RetryConfig.DEFAULT,true)
 
     fun organisasjonURI(b: UriBuilder, orgnr: OrgNummer) = b.path(organisasjonPath).build(orgnr.orgnr)
 

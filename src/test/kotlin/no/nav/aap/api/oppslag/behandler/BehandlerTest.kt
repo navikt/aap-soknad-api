@@ -76,7 +76,7 @@ class BehandlerTest {
     @DisplayName("Normal respons fra tjenesten leses og mappes korrekt")
     fun okRespons() {
         server.expect(respons)
-        assertOK()
+        assertOK(client.behandlerInfo().single())
     }
 
     @Test
@@ -85,10 +85,10 @@ class BehandlerTest {
         server
             .expect(2,INTERNAL_SERVER_ERROR)
             .expect(respons)
-        assertOK()
+        assertOK(client.behandlerInfo().single())
     }
-    private fun assertOK() {
-        with(client.behandlerInfo().single()) {
+    private fun assertOK(behandler: RegistrertBehandler) {
+        with(behandler) {
             assertThat(this).isNotNull
             assertThat(type).isEqualTo(FASTLEGE)
             assertThat(kategori).isEqualTo(LEGE)
