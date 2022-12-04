@@ -15,7 +15,7 @@ import reactor.util.retry.Retry.*
 @ConstructorBinding
 class BehandlerConfig(
         @DefaultValue(DEFAULT_URI) baseUri: URI,
-        @DefaultValue(DEFAULT_PING_PATH) pingPath,
+        @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
         @DefaultValue(DEFAULT_PATH) private val path: String,
         @NestedConfigurationProperty val retryCfg: RetryConfig = RetryConfig.DEFAULT,
         @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, BEHANDLER, enabled,retryCfg) {
