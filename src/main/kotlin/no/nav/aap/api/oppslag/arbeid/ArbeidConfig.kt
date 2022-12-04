@@ -1,7 +1,6 @@
 package no.nav.aap.api.oppslag.arbeid
 
 import java.net.URI
-import java.time.Duration
 import java.time.LocalDate.now
 import java.time.Period
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
@@ -9,6 +8,7 @@ import no.nav.aap.api.oppslag.arbeid.ArbeidConfig.Companion.ARBEID
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
+import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.boot.convert.PeriodFormat
 import org.springframework.boot.convert.PeriodStyle.SIMPLE
@@ -20,11 +20,10 @@ class ArbeidConfig(baseUri: URI,
                    @DefaultValue(PATH) private val path: String,
                    @DefaultValue("true") enabled: Boolean,
                    @DefaultValue(PINGPATH) pingPath: String,
-                   @DefaultValue("3")  retries: Long,
-                   @DefaultValue("100ms")  delay: Duration,
+                   @NestedConfigurationProperty private val retryCfg: RetryConfig = RetryConfig.DEFAULT,
                    @DefaultValue(FEMÅR) @PeriodFormat(SIMPLE) private val tidTilbake: Period,
                    @DefaultValue("false") val sporingsinformasjon: Boolean) :
-    AbstractRestConfig(baseUri, pingPath, ARBEID, enabled,retries,delay) {
+    AbstractRestConfig(baseUri, pingPath, ARBEID, enabled,retryCfg) {
 
     fun arbeidsforholdURI(b: UriBuilder) =
         b.path(path)

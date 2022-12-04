@@ -1,7 +1,6 @@
 package no.nav.aap.api.søknad.arkiv
 
 import java.net.URI
-import java.time.Duration
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.util.Constants.JOARK
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -15,10 +14,9 @@ class ArkivConfig(
         @DefaultValue(DEFAULT_OPPRETT_PATH) val arkivPath: String,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
         @DefaultValue("true") enabled: Boolean,
-        @DefaultValue("3")  retries: Long,
-        @DefaultValue("100ms")  delay: Duration,
+        @NestedConfigurationProperty private val retryCfg: RetryConfig = RetryConfig.DEFAULT,
         @NestedConfigurationProperty val hendelser: HendelseConfig,
-        baseUri: URI) : AbstractRestConfig(baseUri, pingPath, JOARK, enabled,retries,delay) {
+        baseUri: URI) : AbstractRestConfig(baseUri, pingPath, JOARK, enabled,retryCfg) {
 
     data class HendelseConfig(val topic: String)
 

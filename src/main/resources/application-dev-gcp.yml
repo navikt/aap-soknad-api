@@ -48,10 +48,6 @@ saf:
     base-uri: https://safselvbetjening-q1.dev-fss-pub.nais.io
 konto:
     enabled: true
-behandler:
-    enabled: true
-    retry:
-        retries: 8
 joark:
     hendelser:
         topic: teamdokumenthandtering.aapen-dok-journalfoering-q1

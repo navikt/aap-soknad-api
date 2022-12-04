@@ -7,6 +7,7 @@ import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.util.Constants.ORGANISASJON
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
+import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.web.util.UriBuilder
 import org.springframework.web.util.UriComponentsBuilder
@@ -15,10 +16,9 @@ import org.springframework.web.util.UriComponentsBuilder
 @ConstructorBinding
 class OrganisasjonConfig(baseUri: URI,
                          @DefaultValue(V1_ORGANISASJON) private val organisasjonPath: String,
-                         @DefaultValue("3")  retries: Long,
-                         @DefaultValue("100ms")  delay: Duration,
+                         @NestedConfigurationProperty private val retryCfg: RetryConfig = RetryConfig.DEFAULT,
                          @DefaultValue("true") enabled: Boolean) :
-    AbstractRestConfig(baseUri, pingPath(organisasjonPath), ORGANISASJON, enabled,retries,delay) {
+    AbstractRestConfig(baseUri, pingPath(organisasjonPath), ORGANISASJON, enabled,retryCfg) {
 
     fun organisasjonURI(b: UriBuilder, orgnr: OrgNummer) = b.path(organisasjonPath).build(orgnr.orgnr)
 

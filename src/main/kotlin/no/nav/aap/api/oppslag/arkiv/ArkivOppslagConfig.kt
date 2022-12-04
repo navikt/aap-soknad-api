@@ -6,6 +6,7 @@ import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
+import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 
 @ConfigurationProperties(SAF)
@@ -14,9 +15,8 @@ class ArkivOppslagConfig(
         baseUri: URI,
         @DefaultValue(PINGPATH) pingPath: String,
         @DefaultValue(DOKPATH) private val dokPath: String,
-        @DefaultValue("3")  retries: Long,
-        @DefaultValue("100ms")  delay: Duration,
-        @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, SAF, enabled,retries,delay) {
+        @NestedConfigurationProperty private val retryCfg: RetryConfig = RetryConfig.DEFAULT,
+        @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, SAF, enabled,retryCfg) {
 
     fun dokUri() = "$baseUri$dokPath"
 
