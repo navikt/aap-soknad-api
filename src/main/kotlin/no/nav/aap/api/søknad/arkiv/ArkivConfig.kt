@@ -15,12 +15,13 @@ class ArkivConfig(
         @DefaultValue(DEFAULT_OPPRETT_PATH) val arkivPath: String,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
         @DefaultValue("true") enabled: Boolean,
-        @NestedConfigurationProperty val hendelser: HendelseConfig,
         @DefaultValue("3")  retries: Long,
         @DefaultValue("100ms")  delay: Duration,
+        @NestedConfigurationProperty val hendelser: HendelseConfig,
         baseUri: URI) : AbstractRestConfig(baseUri, pingPath, JOARK, enabled,retries,delay) {
 
     data class HendelseConfig(val topic: String)
+
 
     override fun toString() = "${javaClass.simpleName} [pingPath=$pingPath,arkivPath=$arkivPath,enabled=$isEnabled,baseUri=$baseUri]"
 

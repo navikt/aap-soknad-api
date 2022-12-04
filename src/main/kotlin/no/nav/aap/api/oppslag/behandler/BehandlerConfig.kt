@@ -3,9 +3,11 @@ package no.nav.aap.api.oppslag.behandler
 import java.net.URI
 import java.time.Duration
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLER
+import no.nav.aap.api.søknad.arkiv.ArkivConfig.RetryConfig
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
+import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.web.util.UriBuilder
 import reactor.util.retry.Retry.*
@@ -16,10 +18,12 @@ class BehandlerConfig(
         @DefaultValue(DEFAULT_URI) baseUri: URI,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String = DEFAULT_PING_PATH,
         @DefaultValue(DEFAULT_PATH) private val path: String = DEFAULT_PATH,
-        @DefaultValue("3")  retries: Long = 3,
-        @DefaultValue("100ms")  delay: Duration = Duration.ofMillis(100),
-        @DefaultValue("true") enabled: Boolean = true) : AbstractRestConfig(baseUri, pingPath, BEHANDLER, enabled,retries,delay) {
+        @NestedConfigurationProperty val retry: RetryConfig,
+        @DefaultValue("true") enabled: Boolean = true) : AbstractRestConfig(baseUri, pingPath, BEHANDLER, enabled,retry.retries,retry.delayed) {
     fun path(b: UriBuilder) = b.path(path).build()
+
+    data class RetryConfig(@DefaultValue("3")  val retries: Long,
+                           @DefaultValue("100ms")  val delayed: Duration)
 
     companion object {
         const val BEHANDLER = "behandler"
