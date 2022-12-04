@@ -50,7 +50,7 @@ konto:
     enabled: true
 behandler:
     enabled: true
-    delay:
+    retry:
         retries: 2
         delayed: 125ms
 joark:
