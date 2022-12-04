@@ -12,14 +12,14 @@ import org.springframework.http.HttpStatus.BAD_GATEWAY
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.OK
-import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClient.*
 
 class BehandlerTest {
 
-    lateinit var server: MockWebServer
-    lateinit var client: BehandlerClient
+    private lateinit var server: MockWebServer
+    private lateinit var client: BehandlerClient
 
-    val respons = """[
+    private val respons = """[
               {
                   "type": "FASTLEGE",
                   "kategori": "LEGE",
@@ -40,13 +40,12 @@ class BehandlerTest {
     @BeforeEach
     fun beforeEach() {
         server = MockWebServer()
-        with(BehandlerConfig(server.url("/").toUri())) {
-            client = BehandlerClient(BehandlerWebClientAdapter(WebClient.builder().baseUrl("$baseUri").build(),WebClient.create(),this))
-        }
+        val cfg =  BehandlerConfig(server.url("/").toUri())
+        client = BehandlerClient(BehandlerWebClientAdapter(builder().baseUrl("${cfg.baseUri}").build(), create(),cfg))
     }
 
     @Test
-    @DisplayName("Junk fra tjenesten skal gi en tom list")
+    @DisplayName("Junk fra tjenesten skal gi en tom liste")
     fun junkRespons() {
         server.expect("junk")
         assertThat(client.behandlerInfo()).isEmpty()
