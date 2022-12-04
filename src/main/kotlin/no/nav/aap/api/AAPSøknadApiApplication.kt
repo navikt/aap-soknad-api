@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EnableJwtTokenValidation(ignore = ["org.springdoc", "org.springframework"])
 @EnableOAuth2Client(cacheEnabled = true)
 @ConfigurationPropertiesScan
+@EnableRetry
 @EnableKafka
 @EnableCaching
 @EnableJpaAuditing
