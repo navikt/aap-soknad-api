@@ -2,8 +2,8 @@ package no.nav.aap.api.oppslag.behandler
 
 import java.net.URI
 import java.time.Duration
+import java.time.Duration.*
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLER
-import no.nav.aap.api.søknad.arkiv.ArkivConfig.RetryConfig
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -18,7 +18,7 @@ class BehandlerConfig(
         @DefaultValue(DEFAULT_URI) baseUri: URI,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String = DEFAULT_PING_PATH,
         @DefaultValue(DEFAULT_PATH) private val path: String = DEFAULT_PATH,
-        @NestedConfigurationProperty val retry: RetryConfig,
+        @NestedConfigurationProperty val retry: RetryConfig = RetryConfig(3, ofMillis(100)),
         @DefaultValue("true") enabled: Boolean = true) : AbstractRestConfig(baseUri, pingPath, BEHANDLER, enabled,retry.retries,retry.delayed) {
     fun path(b: UriBuilder) = b.path(path).build()
 
