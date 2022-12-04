@@ -28,7 +28,7 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
     @Counted("virus")
     fun harVirus(bytes: ByteArray) =
         if (skalIkkeScanne(bytes, cf)) {
-            log.trace("Ingen scanning av (${bytes.size} bytes, enabled=${cf.enabled})")
+            log.trace("Ingen scanning av (${bytes.size})")
             ScanResult(NONE)
         }
         else {

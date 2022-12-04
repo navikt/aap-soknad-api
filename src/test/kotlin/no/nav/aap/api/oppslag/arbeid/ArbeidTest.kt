@@ -1,25 +1,19 @@
 package no.nav.aap.api.oppslag.arbeid
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import no.nav.aap.api.felles.OrgNummer
-import no.nav.aap.api.felles.Periode
-import no.nav.aap.api.oppslag.arbeid.ArbeidsforholdDTO.AnsettelsesperiodeDTO
-import no.nav.aap.api.oppslag.arbeid.ArbeidsforholdDTO.ArbeidsavtaleDTO
-import no.nav.aap.api.oppslag.arbeid.ArbeidsforholdDTO.ArbeidsgiverDTO
-import no.nav.aap.api.oppslag.arbeid.ArbeidsforholdDTO.ArbeidsgiverDTO.ArbeidsgiverType.Organisasjon
-import org.assertj.core.api.Assertions.assertThat
+import no.nav.aap.api.felles.MockWebServerExtensions.expect
+import okhttp3.mockwebserver.MockWebServer
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import java.time.LocalDate
+import org.springframework.web.reactive.function.client.WebClient
 
-@SpringBootTest(classes = [ObjectMapper::class])
 class ArbeidTest {
-    @Autowired
-    lateinit var mapper: ObjectMapper
-    var json = """     [ {
+
+    lateinit var arbeidServer: MockWebServer
+    lateinit var orgServer: MockWebServer
+
+    lateinit var client: ArbeidClient
+
+    var arbeid = """     [ {
             "type":"Ordinaer",
             "arbeidstidsordning":"ikkeSkift",
             "yrke":"2521106",
@@ -45,28 +39,35 @@ class ArbeidTest {
       "sistBekreftet":"2022-01-13T14:50:36"
    }
 ]
-    """.trimIndent()
+    """
+
+    @BeforeEach
+    fun beforeEach() {
+        arbeidServer = MockWebServer()
+        orgServer = MockWebServer()
+        val arbeidCfg = ArbeidConfig(arbeidServer.url("/").toUri())
+        val arbeidAdapter = ArbeidWebClientAdapter(WebClient.builder().baseUrl("${arbeidCfg.baseUri}").build(),arbeidCfg)
+        val orgCfg = OrganisasjonConfig(orgServer.url("/").toUri())
+        val orgAdapter = OrganisasjonWebClientAdapter(WebClient.builder().baseUrl("${orgCfg.baseUri}").build(),orgCfg)
+        client = ArbeidClient(arbeidAdapter,orgAdapter)
+        }
+
     @Test
-    fun serdeserTest() {
-       val a1 = ArbeidsgiverDTO(Organisasjon, OrgNummer("999263550"))
-        serdeser(a1)
-        val p = Periode(LocalDate.now(),LocalDate.now().plusDays(1))
-        serdeser(p)
-        val ap = AnsettelsesperiodeDTO(p)
-        serdeser(ap)
-        val aa = ArbeidsavtaleDTO(100.0,37.5)
-        serdeser(aa)
-        val af = ArbeidsforholdDTO(ap,listOf(aa),a1)
-        serdeser(af)
+    fun ok() {
+        arbeidServer.expect(arbeid)
+       // print(client.arbeidInfo().single())
     }
 
-    private fun serdeser(a: Any, print: Boolean = false) {
-        mapper.registerKotlinModule()
-        mapper.registerModule(JavaTimeModule())
-        val ser = mapper.writeValueAsString(a)
-        if (print) println(ser)
-        val deser = mapper.readValue(ser, a::class.java)
-        if (print) println(deser)
-        assertThat(a).isEqualTo(deser)
-    }
+    /*
+    val a1 = ArbeidsgiverDTO(Organisasjon, OrgNummer("999263550"))
+    serdeser(a1)
+    val p = Periode(LocalDate.now(),LocalDate.now().plusDays(1))
+    serdeser(p)
+    val ap = AnsettelsesperiodeDTO(p)
+    serdeser(ap)
+    val aa = ArbeidsavtaleDTO(100.0,37.5)
+    serdeser(aa)
+    val af = ArbeidsforholdDTO(ap,listOf(aa),a1)
+
+     */
 }

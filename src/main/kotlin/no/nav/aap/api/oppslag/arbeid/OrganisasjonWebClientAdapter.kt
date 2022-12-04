@@ -2,9 +2,10 @@ package no.nav.aap.api.oppslag.arbeid
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import no.nav.aap.api.felles.OrgNummer
-import no.nav.aap.rest.AbstractRetryingWebClientAdapter
+import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.Constants.ORGANISASJON
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -12,31 +13,25 @@ import reactor.core.publisher.Mono
 
 @Component
 class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON) val client: WebClient,
-                                   private val cf: OrganisasjonConfig) : AbstractRetryingWebClientAdapter(client, cf) {
+                                   private val cf: OrganisasjonConfig) : AbstractWebClientAdapter(client, cf) {
 
     fun orgNavn(orgnr: OrgNummer) =
         if (cf.isEnabled) {
             webClient
                 .get()
-                .uri { b ->
-                    cf.organisasjonURI(b, orgnr)
-                }
+                .uri { b -> cf.organisasjonURI(b, orgnr) }
                 .accept(APPLICATION_JSON)
                 .retrieve()
-                .onStatus({ it.isError }) { Mono.empty() }
+                .onStatus({ NOT_FOUND == it }, { Mono.empty<Throwable>().also { log.trace("Organisasjon $orgnr ikke funnet") } })
                 .bodyToMono(OrganisasjonDTO::class.java)
-                .doOnError { t: Throwable ->
-                    log.warn("Organisasjon oppslag feilet", t)
-                }
-                .doOnSuccess {
-                    log.trace("Organisasjon oppslag OK")
-                }
+                .retryWhen(cf.retrySpec(log))
+                .doOnError { t: Throwable -> log.warn("Organisasjon oppslag feilet", t) }
+                .doOnSuccess { log.trace("Organisasjon oppslag OK") }
+                .onErrorResume { Mono.empty() }
                 .mapNotNull(OrganisasjonDTO::fulltNavn)
                 .defaultIfEmpty(orgnr.orgnr)
                 .block() ?: orgnr.orgnr
-                .also {
-                    log.trace("Organisasjon oppslag response $it")
-                }
+                .also { log.trace("Organisasjon oppslag response $it") }
         }
         else {
             orgnr.orgnr

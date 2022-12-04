@@ -9,7 +9,6 @@ import org.springframework.retry.annotation.Backoff
 import org.springframework.retry.annotation.Retryable
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientException
-import org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
 import org.springframework.web.reactive.function.client.WebClientResponseException.Forbidden
 import org.springframework.web.reactive.function.client.WebClientResponseException.NotFound
 import org.springframework.web.reactive.function.client.WebClientResponseException.Unauthorized
@@ -20,7 +19,7 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
 
     @Retryable(
             include = [WebClientException::class],
-            exclude = [NotFound::class, Forbidden::class, BadRequest::class, Unauthorized::class],
+            exclude = [NotFound::class, Forbidden::class, Unauthorized::class],
             maxAttemptsExpression = "#{\${rest.retry.attempts:3}}",
             backoff = Backoff(delayExpression = "#{\${rest.retry.delay:100}}"))
     protected inline fun <reified T : Any> query(graphQLClient: GraphQLWebClient, query: String, ident: String) =

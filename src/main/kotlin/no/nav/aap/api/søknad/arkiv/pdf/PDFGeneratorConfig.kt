@@ -5,6 +5,7 @@ import no.nav.aap.api.søknad.arkiv.pdf.PDFGeneratorConfig.Companion.PDF
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
+import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.util.unit.DataSize
 
@@ -16,7 +17,8 @@ class PDFGeneratorConfig(
         @DefaultValue(UTLAND_PATH) val utlandPath: String,
         @DefaultValue(STANDARD_PATH) val standardPath: String,
         @DefaultValue("true") enabled: Boolean,
-        @DefaultValue(DEFAULT_BASE_URI) baseUri: URI) : AbstractRestConfig(baseUri, pingPath, PDF, enabled) {
+        @NestedConfigurationProperty  val retryCfg: RetryConfig = RetryConfig.DEFAULT,
+        @DefaultValue(DEFAULT_BASE_URI) baseUri: URI) : AbstractRestConfig(baseUri,pingPath, PDF, enabled,retryCfg) {
     companion object {
         const val PDF = "pdf"
         private const val DEFAULT_BASE_URI = "http://pdfgen"
