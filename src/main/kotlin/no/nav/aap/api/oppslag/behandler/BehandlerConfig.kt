@@ -16,7 +16,7 @@ import reactor.util.retry.Retry.*
 class BehandlerConfig(
         @DefaultValue(DEFAULT_URI) baseUri: URI,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
-        @DefaultValue(DEFAULT_PATH) private val path: String,
+        @DefaultValue(DEFAULT_PATH)  val path: String,
         @NestedConfigurationProperty val retryCfg: RetryConfig = RetryConfig.DEFAULT,
         @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, BEHANDLER, enabled,retryCfg) {
     fun path(b: UriBuilder) = b.path(path).build()
