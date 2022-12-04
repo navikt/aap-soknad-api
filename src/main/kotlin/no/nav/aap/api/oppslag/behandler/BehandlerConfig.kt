@@ -15,11 +15,13 @@ import reactor.util.retry.Retry.*
 @ConstructorBinding
 class BehandlerConfig(
         @DefaultValue(DEFAULT_URI) baseUri: URI,
-        @DefaultValue(DEFAULT_PING_PATH) pingPath: String = DEFAULT_PING_PATH,
-        @DefaultValue(DEFAULT_PATH) private val path: String = DEFAULT_PATH,
-        @NestedConfigurationProperty  val retryCfg: RetryConfig = RetryConfig.DEFAULT,
-        @DefaultValue("true") enabled: Boolean = true) : AbstractRestConfig(baseUri, pingPath, BEHANDLER, enabled,retryCfg) {
+        @DefaultValue(DEFAULT_PING_PATH) pingPath,
+        @DefaultValue(DEFAULT_PATH) private val path: String,
+        @NestedConfigurationProperty val retryCfg: RetryConfig = RetryConfig.DEFAULT,
+        @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, BEHANDLER, enabled,retryCfg) {
     fun path(b: UriBuilder) = b.path(path).build()
+
+    constructor(baseUri: URI) : this(baseUri,DEFAULT_PING_PATH,DEFAULT_PATH,RetryConfig.DEFAULT,true)
 
 
     companion object {
