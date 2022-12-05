@@ -13,15 +13,16 @@ import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClient.builder
+import org.springframework.web.reactive.function.client.WebClient.create
 
 class ArkivTest {
 
-    lateinit var joark: MockWebServer
+    lateinit var arkiv: MockWebServer
     lateinit var client: ArkivClient
 
 
-     private val respons =
+     private val kvittering =
          """
          {
            "journalpostId" : "42",
@@ -35,14 +36,14 @@ class ArkivTest {
 
     @BeforeEach
     fun beforeEach() {
-        joark = MockWebServer()
-        val cfg = ArkivConfig(joark.url("/").toUri())
-        client = ArkivClient(ArkivWebClientAdapter(WebClient.builder().baseUrl("${cfg.baseUri}").build(), WebClient.create(), cfg))
+        arkiv = MockWebServer()
+        val cfg = ArkivConfig(arkiv.url("/").toUri())
+        client = ArkivClient(ArkivWebClientAdapter(builder().baseUrl("${cfg.baseUri}").build(), create(), cfg))
     }
 
     @Test
     fun ok() {
-        joark.expect(respons)
+        arkiv.expect(kvittering)
         var r = client.arkiver(journalpost())
         assertNotNull(r)
         assertThat(r.journalpostId).isEqualTo("42")
@@ -50,9 +51,9 @@ class ArkivTest {
     }
 
     private fun journalpost() = Journalpost("tittel",
-            AvsenderMottaker(Fødselsnummer("03016536325"),
-            Navn("Jan","Olav","Eide")),
-            Bruker(Fødselsnummer("03016536325")), listOf(Dokument("tittel","kode",
+            AvsenderMottaker(Fødselsnummer("08089403198"),
+            Navn("Test","Tester","Testsen")),
+            Bruker(Fødselsnummer("08089403198")), listOf(Dokument("tittel","kode",
             DokumentVariant("fysisk"))), UUID.randomUUID())
 
 }
