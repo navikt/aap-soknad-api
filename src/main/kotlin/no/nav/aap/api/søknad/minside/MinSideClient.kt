@@ -92,10 +92,9 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
     fun avsluttOppgave(fnr: Fødselsnummer, eventId: UUID, type: SkjemaType = STANDARD) =
         with(cfg.oppgave) {
             if (enabled) {
+                avsluttMinSide(eventId, fnr, OPPGAVE, type)
                 repos.oppgaver.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
-                    avsluttMinSide(it.eventid, fnr, OPPGAVE, type)
                     it.done = true
-                } ?: log.warn("Kunne ikke finne oppgave med eventid $eventId for fnr $fnr i DB, allerede avsluttet?. Avslutter på Min Side likevel").also {
                 }
             }
             else {
