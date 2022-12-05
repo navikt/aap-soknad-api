@@ -247,8 +247,8 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     fun retry(): Retry =
         fixedDelay(3, Duration.ofMillis(100))
             .filter { e -> e is OAuth2ClientException}
-            .doBeforeRetry { s -> log.warn("Retry kall mot token endpoint grunnet exception ${s.failure().javaClass.name} og melding ${s.failure().message} for ${s.totalRetriesInARow() + 1} gang, prøver igjen") }
-            .onRetryExhaustedThrow { _, spec ->  throw OAuth2ClientException("Retry kall mot token endpoint gir opp etter ${spec.totalRetries()} forsøk",spec.failure())}
+            .doBeforeRetry { s -> log.info("Retry kall mot token endpoint feilet med  ${s.failure().message} for ${s.totalRetriesInARow() + 1} gang, prøver igjen",s.failure()) }
+            .onRetryExhaustedThrow { _, spec -> log.info("Retry mot token endpoint gir opp etter ${spec.totalRetriesInARow()} forsøk").run { spec.failure() } }
 
     class RetryingWebClientOAuth2HttpClient(private val client: WebClient, private val retry: Retry) : OAuth2HttpClient {
 
@@ -262,9 +262,9 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                     .bodyValue(LinkedMultiValueMap<String, String>().apply { setAll(formParameters) })
                     .retrieve()
                     .bodyToMono<OAuth2AccessTokenResponse>()
-                    .onErrorMap { e -> OAuth2ClientException("Feil fra token endpoint ${req.tokenEndpointUrl}",e) }
-                    .doOnSuccess { log.trace("Token endpoint returnerte OK") }
                     .retryWhen(retry)
+                    .onErrorMap { e -> if (e is OAuth2ClientException) e else OAuth2ClientException("Uventet feil fra token endpoint",e) }
+                    .doOnSuccess { log.trace("Token endpoint returnerte OK") }
                     .block()
                     ?: throw OAuth2ClientException("Ingen respons (null) fra token endpoint $tokenEndpointUrl")
             }
