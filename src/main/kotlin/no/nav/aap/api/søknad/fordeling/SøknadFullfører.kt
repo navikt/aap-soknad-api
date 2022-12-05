@@ -112,7 +112,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
     private fun Søknad.avsluttMinSideOppgaveHvisKomplett(fnr: Fødselsnummer) =
         with(manglendevedlegg) {
             if (isEmpty()) {
-                log.trace("Alle manglende vedlegg er sendt inn, avslutter oppgave $eventid")
+                log.info("Alle manglende vedlegg er sendt inn, avslutter oppgave $eventid")
                 minside.avsluttOppgave(fnr, eventid)
             }
             else {
