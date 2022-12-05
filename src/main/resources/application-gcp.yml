@@ -193,7 +193,7 @@ buckets:
     navn: ${mellomlagring.navn}
     purring:
       delay: 3600
-      eldreEnn: 12d
+      eldreEnn: 10d
       enabled: true
     subscription:
       navn: ${mellomlagring.navn}-subscription2
