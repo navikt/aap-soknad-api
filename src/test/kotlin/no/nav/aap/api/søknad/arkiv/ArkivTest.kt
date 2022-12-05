@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.arkiv
 
 import java.util.*
+import kotlin.test.assertNotNull
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.MockWebServerExtensions.expect
 import no.nav.aap.api.felles.Navn
@@ -9,9 +10,9 @@ import no.nav.aap.api.søknad.arkiv.Journalpost.Bruker
 import no.nav.aap.api.søknad.arkiv.Journalpost.Dokument
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant
 import okhttp3.mockwebserver.MockWebServer
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpStatus.CONFLICT
 import org.springframework.web.reactive.function.client.WebClient
 
 class ArkivTest {
@@ -36,15 +37,15 @@ class ArkivTest {
     fun beforeEach() {
         joark = MockWebServer()
         val cfg = ArkivConfig(joark.url("/").toUri())
-        val arkivAdapter = ArkivWebClientAdapter(WebClient.builder().baseUrl("${cfg.baseUri}").build(),WebClient.create(),cfg)
-        client = ArkivClient(arkivAdapter)
+        client = ArkivClient(ArkivWebClientAdapter(WebClient.builder().baseUrl("${cfg.baseUri}").build(), WebClient.create(), cfg))
     }
 
     @Test
-    fun conflictErOK() {
-        joark.expect(respons,CONFLICT)
-       // var r = client.arkiver(journalpost())
-       // println(r)
+    fun ok() {
+        joark.expect(respons)
+        var r = client.arkiver(journalpost())
+        assertNotNull(r)
+        assertThat(r.journalpostId).isEqualTo("42")
 
     }
 
