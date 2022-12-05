@@ -7,6 +7,8 @@ spring:
         name: soknad-api
     codec:
         max-in-memory-size: 100MB
+    jpa:
+        open-in-view: false
     main:
         banner-mode: off
     servlet:
