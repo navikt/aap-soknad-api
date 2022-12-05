@@ -21,12 +21,8 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("
             .bodyValue(journalpost)
             .retrieve()
             .bodyToMono<ArkivResponse>()
-            .doOnError { t: Throwable ->
-                log.warn("Journalføring feilet", t)
-            }
-            .doOnSuccess {
-                log.info("Journalført ${journalpost.dokumenter} med tittel ${journalpost.tittel}, OK respons er $it")
-            }
+            .doOnError { t: Throwable -> log.warn("Journalføring feilet", t) }
+            .doOnSuccess { log.info("Journalført $journalpost, OK respons er $it") }
             .block() ?: throw IntegrationException("Null respons fra arkiv")
 
     @JsonIgnoreProperties(ignoreUnknown = true)

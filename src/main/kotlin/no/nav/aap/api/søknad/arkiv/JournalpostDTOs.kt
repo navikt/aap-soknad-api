@@ -38,27 +38,15 @@ data class Journalpost(
                 fysiskDokument,
                 variantformat.name)
 
-        override fun toString() =
-            "${javaClass.simpleName} [filtype=$filtype,format=$variantformat,fysiskDokument=${fysiskDokument.length} bytes]"
+        override fun toString() = "${javaClass.simpleName} [filtype=$filtype,format=$variantformat,fysiskDokument=${fysiskDokument.length} bytes]"
 
-        enum class VariantFormat {
-            ORIGINAL,
-            ARKIV,
-            FULLVERSJON
-        }
+        enum class VariantFormat { ORIGINAL, ARKIV, FULLVERSJON }
 
-        enum class Filtype {
-            PDFA,
-            JPEG,
-            PNG,
-            JSON
-        }
+        enum class Filtype { PDFA, JPEG, PNG, JSON }
     }
 
     data class Bruker(val id: Fødselsnummer, val idType: String = ID_TYPE)
-    data class AvsenderMottaker private constructor(val id: Fødselsnummer,
-                                                    val navn: String?,
-                                                    val idType: String = ID_TYPE) {
+    data class AvsenderMottaker private constructor(val id: Fødselsnummer, val navn: String?, val idType: String = ID_TYPE) {
         constructor (id: Fødselsnummer, navn: Navn) : this(id, navn.navn)
     }
 
@@ -67,4 +55,7 @@ data class Journalpost(
         private const val KANAL = "NAV_NO"
         private const val ID_TYPE = "FNR"
     }
+
+    override fun toString() = "${javaClass.simpleName} [filtype=$tittel,dokumenter=$dokumenter,eksternReferanseId=$eksternReferanseId]"
+
 }
