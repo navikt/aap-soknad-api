@@ -14,6 +14,7 @@ import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class SøknadClient(private val repo: SøknadRepository,
@@ -22,11 +23,13 @@ class SøknadClient(private val repo: SøknadRepository,
 
     val log = getLogger(javaClass)
 
+    @Transactional
     fun søknad(søknadId: UUID) = søknad(ctx.getFnr(), søknadId)
 
     fun søknad(fnr: Fødselsnummer, søknadId: UUID) =
         repo.getSøknadByEventidAndFnr(søknadId, fnr.fnr)?.let(::tilSøknad)
 
+    @Transactional
     fun søknader(pageable: Pageable) = søknader(ctx.getFnr(), pageable)
     internal fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
         repo.getSøknadByFnr(fnr.fnr, pageable).map(::tilSøknad)
