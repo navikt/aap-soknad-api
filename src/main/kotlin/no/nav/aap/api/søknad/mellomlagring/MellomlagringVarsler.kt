@@ -1,12 +1,11 @@
 package no.nav.aap.api.søknad.mellomlagring
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import java.net.InetAddress
+import java.net.InetAddress.*
 import java.net.InetSocketAddress.*
 import java.util.*
 import java.util.concurrent.TimeUnit.SECONDS
 import no.nav.aap.api.søknad.minside.MinSideClient
-import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
 import no.nav.aap.api.søknad.minside.MinSideRepositories
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.beans.factory.annotation.Value
@@ -24,9 +23,10 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
     fun sjekkVarsling() {
         with(lager.config().purring) {
             if (enabled && elector.erLeder(ME))  {
-                log.trace("Pod $ME. Ser etter snart utgåtte mellomlagringer ikke oppdatert på ${eldreEnn.toHours()} timer")
+                log.info("Pod $ME. Ser etter snart utgåtte mellomlagringer ikke oppdatert på ${eldreEnn.toHours()} timer")
                 val gamle = lager.ikkeOppdatertSiden(eldreEnn)
-                log.trace("Disse skal purres: $gamle")
+                log.info("Disse kan purres: ${gamle.map { g -> Pair(g.third, g.third) }}")
+                /*
                 gamle.forEach {
                     log.trace("Avslutter ${it.third} for ${it.first} siden opprettet er ${it.second}")
                     repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(it.first.fnr,it.third)?.let { _ ->
@@ -34,7 +34,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
                         minside.avsluttBeskjed(it.first, it.third)
                         minside.opprettBeskjed(it.first,"Din mellomlagrede søknad fjernes snart",  UUID.randomUUID(),false, MINAAPSTD,true)
                     } ?: log.trace("Oppretter ingn beskjed om snart utgått mellomlagret søknad ")
-                }
+                }*/
             }
             else {
                 log.trace("Pod $ME. Ingen sjekk av snart utgåtte mellomlagringer")
@@ -43,7 +43,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
     }
 
     companion object {
-         private val ME = InetAddress.getLocalHost().hostName
+         private val ME = getLocalHost().hostName
     }
 }
 
