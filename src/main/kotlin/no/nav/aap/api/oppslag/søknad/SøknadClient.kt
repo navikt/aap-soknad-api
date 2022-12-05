@@ -1,7 +1,7 @@
 package no.nav.aap.api.oppslag.søknad
 
 import java.time.Instant
-import java.time.ZoneOffset
+import java.time.ZoneOffset.UTC
 import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
@@ -23,13 +23,13 @@ class SøknadClient(private val repo: SøknadRepository,
 
     val log = getLogger(javaClass)
 
-    @Transactional
+    @Transactional(readOnly = true)
     fun søknad(søknadId: UUID) = søknad(ctx.getFnr(), søknadId)
 
     fun søknad(fnr: Fødselsnummer, søknadId: UUID) =
         repo.getSøknadByEventidAndFnr(søknadId, fnr.fnr)?.let(::tilSøknad)
 
-    @Transactional
+    @Transactional(readOnly = true)
     fun søknader(pageable: Pageable) = søknader(ctx.getFnr(), pageable)
     internal fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
         repo.getSøknadByFnr(fnr.fnr, pageable).map(::tilSøknad)
@@ -42,7 +42,7 @@ class SøknadClient(private val repo: SøknadRepository,
 
     private fun tilSøknad(s: Søknad) =
         with(s) {
-            SøknadDTO(created?.toInstant(ZoneOffset.UTC),
+            SøknadDTO(created?.toInstant(UTC),
                     eventid, journalpostid,
                     arkivClient.innsendteDokumenter(ettersendinger.map(Ettersending::eventid) + eventid), // TODO, for tung, slå opp alle først og plukk ut
                     manglendevedlegg.map { it.vedleggtype }).also {
