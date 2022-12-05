@@ -14,7 +14,6 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND_SØKNAD
-import no.nav.aap.api.søknad.SendCallback
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
 import no.nav.aap.api.søknad.minside.MinSideClient.NotifikasjonType.BESKJED
 import no.nav.aap.api.søknad.minside.MinSideClient.NotifikasjonType.OPPGAVE
@@ -79,8 +78,10 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 log.info("Oppretter Min Side oppgave med ekstern varsling $eksternVarsling og eventid $eventId")
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
                         oppgave(tekst, varighet, type, eventId, eksternVarsling)))
-                    .addCallback(SendCallback("opprett oppgave med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling"))
-                repos.oppgaver.save(Oppgave(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
+                    .get().run {
+                        log.trace("Sendte opprett oppgave med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                        repos.oppgaver.save(Oppgave(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
+                    }
             }
             else {
                 log.trace("Oppretter ikke oppgave i Min Side for $fnr")
