@@ -36,30 +36,30 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
 
     override fun fordel(innsending: Innsending) =
         pdl.søkerMedBarn().run {
-            registry.counter(SØKNADER,"type", STANDARD.name.lowercase()).increment()
             with(arkiv.fordel(innsending, this)) {
                 innsending.søknad.fødselsdato = this@run.fødseldato
                 vlFordeler.fordel(innsending.søknad, fnr, journalpostId, cfg.standard)
                 fullfører.fullfør(this@run.fnr, innsending.søknad, this)
             }
+            registry.counter(SØKNADER,"type", STANDARD.name.lowercase()).increment()
         }
 
     override fun fordel(e: StandardEttersending) =
     pdl.søkerUtenBarn().run {
-        registry.counter(SØKNADER,"type", STANDARD_ETTERSENDING.name.lowercase()).increment()
-            with(arkiv.fordel(e, this)) {
-                vlFordeler.fordel(e, fnr, journalpostId, cfg.ettersending)
-                fullfører.fullfør(this@run.fnr, e, this)
-            }
+        with(arkiv.fordel(e, this)) {
+            vlFordeler.fordel(e, fnr, journalpostId, cfg.ettersending)
+            fullfører.fullfør(this@run.fnr, e, this)
         }
+        registry.counter(SØKNADER,"type", STANDARD_ETTERSENDING.name.lowercase()).increment()
+    }
 
     override fun fordel(søknad: UtlandSøknad) =
         pdl.søkerUtenBarn().run {
-            registry.counter(SØKNADER,"type", UTLAND.name.lowercase()).increment()
             with(arkiv.fordel(søknad, this)) {
                 vlFordeler.fordel(søknad, fnr, journalpostId, cfg.utland)
                 fullfører.fullfør(this@run.fnr, søknad, this)
             }
+            registry.counter(SØKNADER,"type", UTLAND.name.lowercase()).increment()
         }
 
     data class Kvittering(val journalpostId: String = "0", val tidspunkt: LocalDateTime = now(),val uuid: UUID? = null)
