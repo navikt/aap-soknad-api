@@ -5,7 +5,7 @@ import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobField.METADATA
 import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
-import com.google.cloud.storage.Storage.BlobListOption
+import com.google.cloud.storage.Storage.BlobListOption.fields
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import io.micrometer.core.annotation.Timed
 import java.nio.charset.StandardCharsets.UTF_8
@@ -75,14 +75,18 @@ internal class GCPKryptertMellomlager(val cfg: BucketConfig,
         }
 
     override fun ikkeOppdatertSiden(duration: Duration) =
-        lager.list(cfg.mellom.navn, BlobListOption.currentDirectory(),BlobListOption.fields(TIME_CREATED,METADATA))
+        lager.list(cfg.mellom.navn, fields(TIME_CREATED,METADATA))
             .iterateAll()
             .map {
-                log.info("Metadata for $it er ${it.asBlobInfo().metadata}")
+                log.info("Metadata for $it (${it.isDirectory} er ${it.asBlobInfo().metadata}")
+                if (!it.isDirectory)  {
                 Triple(Fødselsnummer(it.name.split("/")[0]),
                         ofEpochSecond(it.createTime/1000,0, UTC),
                         UUID.fromString(it.metadata[("uuid")]))
+                }
+                else null
             }
+            .filterNotNull()
             .filter {
                 it.second.isBefore(now().minus(duration))
             }
