@@ -78,6 +78,7 @@ internal class GCPKryptertMellomlager(val cfg: BucketConfig,
         lager.list(cfg.mellom.navn, BlobListOption.fields(TIME_CREATED,METADATA))
             .iterateAll()
             .map {
+                log.info("Metadata for $it er ${it.asBlobInfo().metadata}")
                 Triple(Fødselsnummer(it.name.split("/")[0]),
                         ofEpochSecond(it.createTime/1000,0, UTC),
                         UUID.fromString(it.metadata[("uuid")]))
