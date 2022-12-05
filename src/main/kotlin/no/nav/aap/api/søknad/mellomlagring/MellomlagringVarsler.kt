@@ -58,12 +58,8 @@ class LeaderElector(@Value("\${elector.path}") private val elector: String, priv
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono<Leader>()
-            .doOnError { t: Throwable ->
-                log.warn("Leader oppslag mot $elector feilet", t)
-            }
-            .doOnSuccess {
-                log.trace("Leader er ${it.name}, jeg er $me")
-            }
+            .doOnError { t: Throwable -> log.warn("Leader oppslag mot $elector feilet", t) }
+            .doOnSuccess { log.trace("Leader er ${it.name}, jeg er $me") }
             .block()?.name == me
 
     @JsonIgnoreProperties(ignoreUnknown = true)
