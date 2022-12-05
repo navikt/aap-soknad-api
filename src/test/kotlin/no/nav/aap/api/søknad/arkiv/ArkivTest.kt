@@ -13,6 +13,7 @@ import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus.CONFLICT
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.web.reactive.function.client.WebClient.builder
 import org.springframework.web.reactive.function.client.WebClient.create
@@ -45,6 +46,13 @@ class ArkivTest {
     @Test
     fun ok() {
         arkiv.expect(kvittering,CREATED)
+        var r = client.arkiver(journalpost())
+        assertNotNull(r)
+        assertThat(r.journalpostId).isEqualTo("42")
+    }
+   // @Test
+    fun conflict() {
+        arkiv.expect(kvittering,CONFLICT)
         var r = client.arkiver(journalpost())
         assertNotNull(r)
         assertThat(r.journalpostId).isEqualTo("42")
