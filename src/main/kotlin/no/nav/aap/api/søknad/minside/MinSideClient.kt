@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.minside
 
 import io.micrometer.core.annotation.Counted
-import io.micrometer.core.instrument.Metrics
+import io.micrometer.core.instrument.Metrics.counter
 import java.time.Duration
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
@@ -136,7 +136,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 OPPGAVE -> oppgaverAvsluttet.increment()
                 BESKJED -> beskjederAvsluttet.increment()
             }.also {
-                log.trace("Sendte avslutt $notifikasjonType med eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                log.info("Sendte avslutt $notifikasjonType med eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
             }
         }
 
@@ -190,8 +190,8 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
         OPPGAVE,BESKJED
     }
     companion object {
-        private val oppgaverAvsluttet = Metrics.counter(AVSLUTTET_OPPGAVE)
-        private val beskjederAvsluttet = Metrics.counter(AVSLUTTET_BESKJED)
+        private val oppgaverAvsluttet = counter(AVSLUTTET_OPPGAVE)
+        private val beskjederAvsluttet = counter(AVSLUTTET_BESKJED)
     }
 }
 
