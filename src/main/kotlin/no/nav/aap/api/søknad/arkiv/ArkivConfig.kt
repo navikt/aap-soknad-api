@@ -18,6 +18,8 @@ class ArkivConfig(
         @NestedConfigurationProperty val hendelser: HendelseConfig,
         baseUri: URI) : AbstractRestConfig(baseUri, pingPath, JOARK, enabled,retryCfg) {
 
+    constructor(baseUri: URI) : this(DEFAULT_OPPRETT_PATH, DEFAULT_PING_PATH,true,RetryConfig.DEFAULT,HendelseConfig("some topic"),baseUri)
+
     data class HendelseConfig(val topic: String)
 
 
