@@ -48,6 +48,6 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("
         Retry.fixedDelay(3, Duration.ofMillis(100))
             .filter { it is WebClientResponseException && it !is Conflict && it !is Unauthorized && it !is NotFound && it !is Forbidden }
             .onRetryExhaustedThrow { _, s ->  s.failure()}
-            .doBeforeRetry { s -> log.warn("Retry kall mot $baseUri grunnet exception ${s.failure().javaClass.name} og melding ${s.failure().message} for ${s.totalRetriesInARow() + 1} gang, prøver igjen") }
+            .doBeforeRetry { s -> log.warn("Retry kall mot ${cf.arkivPath} grunnet exception ${s.failure().javaClass.name} og melding ${s.failure().message} for ${s.totalRetriesInARow() + 1} gang, prøver igjen") }
 
 }
