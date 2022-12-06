@@ -5,6 +5,7 @@ import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobField.METADATA
 import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
+import com.google.cloud.storage.Storage.BlobListOption
 import com.google.cloud.storage.Storage.BlobListOption.fields
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import io.micrometer.core.annotation.Timed
@@ -75,21 +76,20 @@ internal class GCPKryptertMellomlager(val cfg: BucketConfig,
         }
 
     override fun ikkeOppdatertSiden(duration: Duration) =
-        lager.list(cfg.mellom.navn,Storage.BlobListOption.prefix("*/"), fields(TIME_CREATED,METADATA))
-            .iterateAll()
-            .map {
-                if (!it.isDirectory)  {
-                    log.info("Metadata for non-directorty $it  er ${it.asBlobInfo().metadata}")
+        lager.list(cfg.mellom.navn, BlobListOption.prefix("*/"), fields(TIME_CREATED, METADATA))
+            .iterateAll().mapNotNull {
+                log.info("${MellomlagringVarsler.ME} Blob er $it")
+                if (!it.isDirectory) {
+                    log.info("${MellomlagringVarsler.ME} Metadata for Blob $it  er ${it.asBlobInfo().metadata}")
                     Triple(Fødselsnummer(it.name.split("/")[0]),
-                        ofEpochSecond(it.createTime/1000,0, UTC),
-                        UUID.fromString(it.metadata[("uuid")]))
+                            ofEpochSecond(it.createTime / 1000, 0, UTC),
+                            UUID.fromString(it.metadata[("uuid")]))
                 }
                 else {
-                    log.info("$it er directoty")
+                    log.info("${MellomlagringVarsler.ME} Blon $it er directory")
                     null
                 }
             }
-            .filterNotNull()
             .filter {
                 it.second.isBefore(now().minus(duration))
             }

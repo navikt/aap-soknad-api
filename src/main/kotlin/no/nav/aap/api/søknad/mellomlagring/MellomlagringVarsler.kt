@@ -49,7 +49,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
     }
 
     companion object {
-         private val ME = getLocalHost().hostName
+          val ME = getLocalHost().hostName
     }
 }
 
