@@ -70,14 +70,15 @@ class ArkivTest {
     }
 
     private fun assertOK(resultat: ArkivResultat) {
-        assertThat(resultat).isNotNull
-        assertThat(resultat.journalpostId).isEqualTo("42")
-
+        with(resultat)  {
+            assertThat(this).isNotNull
+            assertThat(journalpostId).isEqualTo("42")
+            assertThat(dokumentIds).isEqualTo(listOf("666"))
+        }
     }
     private fun journalpost() = Journalpost("tittel",
             AvsenderMottaker(Fødselsnummer("08089403198"),
             Navn("Test","Tester","Testsen")),
             Bruker(Fødselsnummer("08089403198")), listOf(Dokument("tittel","kode",
             DokumentVariant("fysisk"))), randomUUID())
-
 }
