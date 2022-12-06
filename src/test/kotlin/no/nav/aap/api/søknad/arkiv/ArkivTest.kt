@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.arkiv
 
 import java.util.*
+import java.util.UUID.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.MockWebServerExtensions.expect
 import no.nav.aap.api.felles.Navn
@@ -77,6 +78,6 @@ class ArkivTest {
             AvsenderMottaker(Fødselsnummer("08089403198"),
             Navn("Test","Tester","Testsen")),
             Bruker(Fødselsnummer("08089403198")), listOf(Dokument("tittel","kode",
-            DokumentVariant("fysisk"))), UUID.randomUUID())
+            DokumentVariant("fysisk"))), randomUUID())
 
 }
