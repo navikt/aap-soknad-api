@@ -23,7 +23,7 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("
             .bodyValue(journalpost)
             .exchangeToMono {
                 with(it) {
-                    if (statusCode() == CONFLICT || statusCode() == CREATED) {
+                    if (statusCode() in listOf(CONFLICT,CREATED)) {
                         bodyToMono(ArkivResponse::class.java)
                     }
                     else {
