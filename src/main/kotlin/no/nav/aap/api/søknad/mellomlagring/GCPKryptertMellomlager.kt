@@ -87,8 +87,8 @@ internal class GCPKryptertMellomlager(val cfg: BucketConfig,
                     null
                 }
             }
-            .filter {
-                it.second.isBefore(now().minus(duration))
-            }
+           // .filter {
+           //     it.second.isBefore(now().minus(duration))
+           // }
 
 }
