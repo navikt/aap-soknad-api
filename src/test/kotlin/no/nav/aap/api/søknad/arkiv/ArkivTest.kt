@@ -12,6 +12,7 @@ import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant
 import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.http.HttpStatus.BAD_GATEWAY
@@ -47,16 +48,13 @@ class ArkivTest {
     }
 
     @Test
+    @DisplayName("OK respons, happy path")
     fun ok() {
         arkiv.expect(kvittering,CREATED)
         assertOK(client.arkiver(journalpost()))
     }
-    @Test
-    fun conflict() {
-        arkiv.expect(kvittering,CONFLICT)
-        assertOK(client.arkiver(journalpost()))
-    }
         @Test
+        @DisplayName("Exception kastes etter alle retry-forsøkene er brukt opp")
         fun bad() {
             arkiv.expect(4,BAD_GATEWAY)
             assertThrows<WebClientResponseException> {
@@ -64,7 +62,8 @@ class ArkivTest {
             }
     }
     @Test
-    fun opprettetOKMenResponsenKomAldriTilbake() {
+    @DisplayName("Først respons som fører til retry, deretter 409 OK")
+    fun badConflict() {
         arkiv.expect(BAD_GATEWAY).expect(kvittering,CONFLICT)
         assertOK(client.arkiver(journalpost()))
     }
