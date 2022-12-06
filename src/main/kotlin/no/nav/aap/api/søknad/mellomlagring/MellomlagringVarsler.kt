@@ -25,8 +25,9 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
             if (enabled && elector.erLeder(ME))  {
                 log.info("Pod $ME: Ser etter snart utgåtte mellomlagringer ikke oppdatert på ${eldreEnn.toDays()} dager")
                 try {
-                    val gamle = lager.ikkeOppdatertSiden(eldreEnn)
-                    log.info("Disse kan jo purres: $gamle")
+                    val gamle = lager.ikkeOppdatertSiden(eldreEnn).also {
+                        log.info("Disse kan jo purres: $it")
+                    }
                 }
                 catch (e: Exception) {
                     log.warn("OOPS",e)
