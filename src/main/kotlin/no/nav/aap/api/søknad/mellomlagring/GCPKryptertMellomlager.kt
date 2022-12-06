@@ -5,7 +5,6 @@ import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobField.METADATA
 import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
-import com.google.cloud.storage.Storage.BlobListOption
 import com.google.cloud.storage.Storage.BlobListOption.fields
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import io.micrometer.core.annotation.Timed
@@ -76,7 +75,7 @@ internal class GCPKryptertMellomlager(val cfg: BucketConfig,
         }
 
     override fun ikkeOppdatertSiden(duration: Duration) =
-        lager.list(cfg.mellom.navn, BlobListOption.prefix("*/"), fields(TIME_CREATED, METADATA))
+        lager.list(cfg.mellom.navn, fields(TIME_CREATED, METADATA))
             .iterateAll().mapNotNull {
                 log.info("${MellomlagringVarsler.ME} Blob er $it")
                 if (!it.isDirectory) {
