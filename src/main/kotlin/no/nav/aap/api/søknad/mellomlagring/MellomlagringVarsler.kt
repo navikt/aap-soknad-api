@@ -23,11 +23,10 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val lager
     fun sjekkVarsling() {
         with(lager.config().purring) {
             if (enabled && elector.erLeder(ME))  {
-                log.info("Pod $ME: Ser etter snart utgåtte mellomlagringer ikke oppdatert på ${eldreEnn.toHours()} timer")
-                log.info("Purrer")
+                log.info("Pod $ME: Ser etter snart utgåtte mellomlagringer ikke oppdatert på ${eldreEnn.toDays()} dager")
                 try {
                     val gamle = lager.ikkeOppdatertSiden(eldreEnn)
-                    log.info("Disse kan purres: ${gamle.map { g -> Pair(g.third, g.third) }}")
+                    log.info("Disse kan jo purres: $gamle")
                 }
                 catch (e: Exception) {
                     log.warn("OOPS",e)

@@ -10,7 +10,6 @@ import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import io.micrometer.core.annotation.Timed
 import java.nio.charset.StandardCharsets.UTF_8
 import java.time.Duration
-import java.time.LocalDateTime.now
 import java.time.LocalDateTime.ofEpochSecond
 import java.time.ZoneOffset.UTC
 import java.util.*
