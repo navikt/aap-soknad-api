@@ -75,7 +75,7 @@ internal class GCPKryptertMellomlager(val cfg: BucketConfig,
         }
 
     override fun ikkeOppdatertSiden(duration: Duration) =
-        lager.list(cfg.mellom.navn, fields(TIME_CREATED, METADATA))
+        lager.list(cfg.mellom.navn, Storage.BlobListOption.currentDirectory(),fields(TIME_CREATED, METADATA))
             .iterateAll().mapNotNull { blob ->
                 log.info("${MellomlagringVarsler.ME} Blob er $blob  ${blob.isDirectory}")
                 if (!blob.isDirectory) {
