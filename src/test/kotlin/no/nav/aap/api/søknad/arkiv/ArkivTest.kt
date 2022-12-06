@@ -13,10 +13,13 @@ import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.springframework.http.HttpStatus.BAD_GATEWAY
 import org.springframework.http.HttpStatus.CONFLICT
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.web.reactive.function.client.WebClient.builder
 import org.springframework.web.reactive.function.client.WebClient.create
+import org.springframework.web.reactive.function.client.WebClientResponseException
 
 class ArkivTest {
 
@@ -50,13 +53,26 @@ class ArkivTest {
         assertNotNull(r)
         assertThat(r.journalpostId).isEqualTo("42")
     }
-   // @Test
+    @Test
     fun conflict() {
         arkiv.expect(kvittering,CONFLICT)
         var r = client.arkiver(journalpost())
         assertNotNull(r)
         assertThat(r.journalpostId).isEqualTo("42")
-
+    }
+        @Test
+        fun bad() {
+            arkiv.expect(4,BAD_GATEWAY)
+            assertThrows<WebClientResponseException> {
+                client.arkiver(journalpost())
+            }
+    }
+    @Test
+    fun opprettetOKMenResponsenKomAldriTilbake() {
+        arkiv.expect(BAD_GATEWAY).expect(kvittering,CONFLICT)
+        var r = client.arkiver(journalpost())
+        assertNotNull(r)
+        assertThat(r.journalpostId).isEqualTo("42")
     }
 
     private fun journalpost() = Journalpost("tittel",
