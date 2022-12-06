@@ -76,16 +76,16 @@ internal class GCPKryptertMellomlager(val cfg: BucketConfig,
 
     override fun ikkeOppdatertSiden(duration: Duration) =
         lager.list(cfg.mellom.navn, fields(TIME_CREATED, METADATA))
-            .iterateAll().mapNotNull {
-                log.info("${MellomlagringVarsler.ME} Blob er $it")
-                if (!it.isDirectory) {
-                    log.info("${MellomlagringVarsler.ME} Metadata for Blob $it  er ${it.asBlobInfo().metadata}")
-                    Triple(Fødselsnummer(it.name.split("/")[0]),
-                            ofEpochSecond(it.createTime / 1000, 0, UTC),
-                            UUID.fromString(it.metadata[("uuid")]))
+            .iterateAll().mapNotNull { blob ->
+                log.info("${MellomlagringVarsler.ME} Blob er $blob")
+                if (!blob.isDirectory) {
+                    log.info("${MellomlagringVarsler.ME} Metadata for Blob $blob er ${blob.asBlobInfo().metadata}")
+                    Triple(Fødselsnummer(blob.name.split("/")[0]),
+                            ofEpochSecond(blob.createTime / 1000, 0, UTC),
+                            UUID.fromString(blob.metadata[("uuid")])).also { log.info("Triple for Blob er $it") }
                 }
                 else {
-                    log.info("${MellomlagringVarsler.ME} Blon $it er directory")
+                    log.info("${MellomlagringVarsler.ME} Blob $blob er directory")
                     null
                 }
             }
