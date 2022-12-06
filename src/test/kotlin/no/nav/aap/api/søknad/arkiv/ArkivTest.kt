@@ -69,7 +69,7 @@ class ArkivTest {
     }
 
     private fun assertOK(resultat: ArkivResultat) {
-        assertThat(resultat).isNull()
+        assertThat(resultat).isNotNull
         assertThat(resultat.journalpostId).isEqualTo("42")
 
     }
