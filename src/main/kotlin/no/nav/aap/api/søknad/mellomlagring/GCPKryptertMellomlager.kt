@@ -85,7 +85,7 @@ internal class GCPKryptertMellomlager(val cfg: BucketConfig,
                     log.info("${MellomlagringVarsler.ME} Blob $blob er directory")
                     null
                 }
-            }
+            }.toList()
            // .filter {
            //     it.second.isBefore(now().minus(duration))
            // }
