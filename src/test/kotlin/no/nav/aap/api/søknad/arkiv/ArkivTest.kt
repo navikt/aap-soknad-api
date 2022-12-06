@@ -73,7 +73,7 @@ class ArkivTest {
         with(resultat)  {
             assertThat(this).isNotNull
             assertThat(journalpostId).isEqualTo("42")
-            assertThat(dokumentIds).isEqualTo(listOf("666"))
+            assertThat(dokumentIds.single()).isEqualTo("666")
         }
     }
     private fun journalpost() = Journalpost("tittel",
