@@ -6,7 +6,6 @@ import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.Constants.JOARK
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus.*
-import org.springframework.http.HttpStatus.Series.SUCCESSFUL
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -24,7 +23,7 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("
             .bodyValue(journalpost)
             .exchangeToMono {
                 with(it) {
-                    if (statusCode() == CONFLICT || statusCode().series() == SUCCESSFUL) {
+                    if (statusCode() == CONFLICT || statusCode() == CREATED) {
                         bodyToMono(ArkivResponse::class.java)
                     }
                     else {
