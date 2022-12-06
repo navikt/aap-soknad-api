@@ -78,13 +78,16 @@ internal class GCPKryptertMellomlager(val cfg: BucketConfig,
         lager.list(cfg.mellom.navn,Storage.BlobListOption.prefix("*/"), fields(TIME_CREATED,METADATA))
             .iterateAll()
             .map {
-                log.info("Metadata for $it (${it.isDirectory} er ${it.asBlobInfo().metadata}")
                 if (!it.isDirectory)  {
-                Triple(Fødselsnummer(it.name.split("/")[0]),
+                    log.info("Metadata for non-directorty $it  er ${it.asBlobInfo().metadata}")
+                    Triple(Fødselsnummer(it.name.split("/")[0]),
                         ofEpochSecond(it.createTime/1000,0, UTC),
                         UUID.fromString(it.metadata[("uuid")]))
                 }
-                else null
+                else {
+                    log.info("$it er directoty")
+                    null
+                }
             }
             .filterNotNull()
             .filter {
