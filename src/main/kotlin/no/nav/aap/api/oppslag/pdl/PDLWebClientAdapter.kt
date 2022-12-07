@@ -44,13 +44,11 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
 
     fun barn(medBarn:Boolean,forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) =
         if(medBarn) {
-            forelderBarnRelasjon.asSequence().mapNotNull {
-            if(it.relatertPersonsIdent == null){
-                log.warn("relatertPersonsIdent er null")
-                null
-            } else query<PDLBarn>(clients.system, BARN_QUERY, it.relatertPersonsIdent)
-        }
-    } else emptySequence()
+            forelderBarnRelasjon.asSequence().mapNotNull { relasjon ->
+                relasjon.relatertPersonsIdent?.let { query<PDLBarn>(clients.system, BARN_QUERY, it)
+                }
+            }
+        } else emptySequence()
 
     override fun toString() =
         "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
