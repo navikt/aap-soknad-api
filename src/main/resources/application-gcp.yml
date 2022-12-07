@@ -194,7 +194,7 @@ buckets:
     purring:
       delay: 60
       eldreEnn: 10d
-      enabled: true
+      enabled: false
     subscription:
       navn: ${mellomlagring.navn}-subscription2
       topic: ${mellomlagring.navn}-topic2
