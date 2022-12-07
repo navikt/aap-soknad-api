@@ -20,23 +20,14 @@ data class Journalpost(
         val journalposttype: String = INNGÅENDE,
         val tema: String = AAP.uppercase()) {
 
-    data class Dokument private constructor(val tittel: String?,
-                                            val brevkode: String? = null,
-                                            val dokumentVarianter: List<DokumentVariant>) {
-        constructor(dokumentVarianter: List<DokumentVariant>, type: SkjemaType = STANDARD) : this(type.tittel,
-                type.kode,
-                dokumentVarianter)
+    data class Dokument private constructor(val tittel: String?, val brevkode: String? = null, val dokumentVarianter: List<DokumentVariant>) {
+        constructor(dokumentVarianter: List<DokumentVariant>, type: SkjemaType = STANDARD) : this(type.tittel, type.kode, dokumentVarianter)
 
         constructor(tittel: String? = null,  brevkode: String?,variant: DokumentVariant) : this(tittel, brevkode, listOf(variant))
     }
 
-    data class DokumentVariant private constructor(val filtype: String,
-                                                   val fysiskDokument: String,
-                                                   val variantformat: String) {
-        constructor(fysiskDokument: String, variantformat: VariantFormat = ARKIV, filtype: Filtype = PDFA) : this(
-                filtype.name,
-                fysiskDokument,
-                variantformat.name)
+    data class DokumentVariant private constructor(val filtype: String, val fysiskDokument: String, val variantformat: String) {
+        constructor(fysiskDokument: String, variantformat: VariantFormat = ARKIV, filtype: Filtype = PDFA) : this(filtype.name, fysiskDokument, variantformat.name)
 
         override fun toString() = "${javaClass.simpleName} [filtype=$filtype,format=$variantformat,fysiskDokument=${fysiskDokument.length} bytes]"
 

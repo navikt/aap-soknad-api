@@ -23,7 +23,7 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
             exclude = [NotFound::class, Forbidden::class, Unauthorized::class],
             maxAttemptsExpression = "#{\${rest.retry.attempts:3}}",
             backoff = Backoff(delayExpression = "#{\${rest.retry.delay:100}}"))
-    protected inline fun <reified T : Any> query(graphQLClient: GraphQLWebClient, query: String, ident: String) =
+    protected inline fun <reified T> query(graphQLClient: GraphQLWebClient, query: String, ident: String) =
         runCatching {
             graphQLClient.post(query, ident.toIdent(), T::class.java).block()
         }.getOrElse {
@@ -35,7 +35,7 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
                 throw it
             }
         }
-    protected inline fun <reified T : Any> queryBolk(graphQLClient: GraphQLWebClient, query: String, idents: List<String>) =
+    protected inline fun <reified T> queryBolk(graphQLClient: GraphQLWebClient, query: String, idents: List<String>) =
         runCatching {
             graphQLClient.flux(query, idents.toIdenter(), T::class.java).collectList().block()
         }.getOrElse {
