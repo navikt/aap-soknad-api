@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.arkiv
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import java.io.IOException
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.Constants.JOARK
@@ -10,6 +11,9 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
+import org.springframework.web.reactive.function.client.WebClientResponseException.Forbidden
+import org.springframework.web.reactive.function.client.WebClientResponseException.NotFound
+import org.springframework.web.reactive.function.client.WebClientResponseException.Unauthorized
 import reactor.core.publisher.Mono
 
 @Component
@@ -31,7 +35,7 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("
                     }
                 }
             }
-            .retryWhen(cf.retrySpec(log))
+            .retryWhen(cf.retrySpec(log) { it is IOException || (it is WebClientResponseException && it !is Unauthorized && it !is NotFound && it !is Forbidden) })
             .doOnError { t: Throwable -> log.warn("Journalføring feilet", t) }
             .doOnSuccess { log.info("Journalført $journalpost, OK respons er $it") }
             .block() ?: throw IntegrationException("Null respons fra arkiv")
