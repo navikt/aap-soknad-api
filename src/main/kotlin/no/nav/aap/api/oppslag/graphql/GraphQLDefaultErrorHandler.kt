@@ -21,7 +21,7 @@ class GraphQLDefaultErrorHandler : GraphQLErrorHandler {
 
     override fun handle(e: GraphQLErrorsException): Nothing {
         log.warn("GraphQL oppslag returnerte ${e.errors.size} feil. ${e.errors}", e)
-        throw e.httpClientException()
+        throw e.httpClientException().also { log.warn("GraphQL oversatte feilkode til ${it.javaClass.simpleName}",it) }
     }
 
     private fun GraphQLErrorsException.code() = errors.firstOrNull()?.extensions?.get("code")?.toString()
