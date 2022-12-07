@@ -247,7 +247,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     @Bean
     fun retryListener()  = object : RetryListener {
-        override fun <T , E : Throwable> open(ctx: RetryContext, callback: RetryCallback<T, E>) = log.info("Retry ${ctx.metode()} gjør første forsøk").run { true }
+        override fun <T , E : Throwable> open(ctx: RetryContext, callback: RetryCallback<T, E>) =  true.also { log.info("Retry ${ctx.metode()} gjør første forsøk") }
         override fun <T , E : Throwable> close(ctx: RetryContext, callback: RetryCallback<T, E>, e: Throwable?) = e?.let { log.warn("Retry siste forsøk ferdig uten suksess",e) } ?: log.info("Retry siste forsøk ${ctx.metode()} ferdig med suksess")
         override fun <T, E : Throwable> onError(ctx: RetryContext, callback: RetryCallback<T, E>, e: Throwable) = log.warn("Retry forsøk ${ctx.retryCount} for  metode ${ctx.metode()}  kastet exception", e)
     }
