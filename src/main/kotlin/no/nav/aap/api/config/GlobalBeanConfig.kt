@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.api.gax.retrying.RetrySettings
+import com.google.cloud.ServiceOptions
 import com.google.cloud.storage.StorageOptions
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import io.micrometer.core.aop.CountedAspect
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP
 import java.io.IOException
+import java.time.Duration
 import java.time.Duration.*
 import java.util.*
 import java.util.function.Consumer
@@ -58,6 +60,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.core.MethodParameter
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
@@ -70,20 +73,22 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
 import org.springframework.kafka.core.KafkaAdmin
+import org.springframework.retry.RetryCallback
+import org.springframework.retry.RetryContext
+import org.springframework.retry.RetryListener
+import org.springframework.retry.listener.RetryListenerSupport
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
+import org.threeten.bp.Duration.ofMillis
 import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 import reactor.util.retry.Retry
 import reactor.util.retry.Retry.fixedDelay
-import com.google.cloud.ServiceOptions
-import java.time.Duration
-import org.springframework.context.annotation.Primary
-import org.threeten.bp.Duration.ofMillis
+
 @Configuration
 class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
     val log = getLogger(javaClass)
@@ -239,6 +244,14 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
             abstract fun topics(): List<String>
         }
     }
+
+    @Bean
+    fun retryListener()  = object : RetryListener {
+        override fun <T , E : Throwable> open(ctx: RetryContext, callback: RetryCallback<T, E>) = log.info("Retry ${ctx.metode()} gjør første forsøk").run { true }
+        override fun <T , E : Throwable> close(ctx: RetryContext, callback: RetryCallback<T, E>, e: Throwable?) = e?.let { log.warn("Retry siste forsøk ferdig uten suksess",e) } ?: log.info("Retry siste forsøk ${ctx.metode()} ferdig med suksess")
+        override fun <T, E : Throwable> onError(ctx: RetryContext, callback: RetryCallback<T, E>, e: Throwable) = log.warn("Retry forsøk ${ctx.retryCount} for  metode ${ctx.metode()}  kastet exception", e)
+    }
+    private fun RetryContext.metode() = getAttribute("context.name")
 
     @Bean
     fun retryingOAuth2HttpClient(b: WebClient.Builder, retry: Retry) =
