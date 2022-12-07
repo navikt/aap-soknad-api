@@ -3,6 +3,7 @@ package no.nav.aap.api.oppslag.graphql
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import java.io.File
+import java.io.IOException
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.retry.annotation.Backoff
@@ -18,7 +19,7 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
     AbstractWebClientAdapter(client, cfg) {
 
     @Retryable(
-            include = [WebClientException::class],
+            include = [WebClientException::class, IOException::class],
             exclude = [NotFound::class, Forbidden::class, Unauthorized::class],
             maxAttemptsExpression = "#{\${rest.retry.attempts:3}}",
             backoff = Backoff(delayExpression = "#{\${rest.retry.delay:100}}"))
