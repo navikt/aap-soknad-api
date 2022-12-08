@@ -14,13 +14,17 @@ import org.springframework.boot.context.properties.bind.DefaultValue
 @ConstructorBinding
 data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConfig,
                          @NestedConfigurationProperty val beskjed: TopicConfig,
-                         @NestedConfigurationProperty val backlinks: BacklinksConfig,
                          @NestedConfigurationProperty val oppgave: TopicConfig,
+                         @NestedConfigurationProperty val utkast: UtkastConfig,
                          @DefaultValue("false") val enabled: Boolean,
+                         @NestedConfigurationProperty val backlinks: BacklinksConfig,
                          val done: String) : AbstractKafkaConfig(MINSIDE,enabled) {
 
     val app = nais.app
     val namespace = nais.namespace
+
+
+    data class UtkastConfig( @DefaultValue("minside.aapen-utkast-v1") val topic: String, @DefaultValue("true") val enabled: Boolean)
 
     data class BacklinksConfig(val innsyn: URI, val standard: URI, val utland: URI)
     data class TopicConfig(val topic: String,
@@ -37,6 +41,6 @@ data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConf
         private const val DEFAULT_LEVEL = "3"
     }
 
-    override fun topics() =  listOf(beskjed.topic,oppgave.topic,done)
+    override fun topics() =  listOf(utkast.topic,beskjed.topic,oppgave.topic,done)
 
 }
