@@ -38,7 +38,7 @@ organisasjon:
 saf:
     base-uri: https://safselvbetjening.prod-fss-pub.nais.io
 konto:
-    enabled: false
+    enabled: true
 vl:
     enabled: false
     standard:

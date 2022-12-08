@@ -86,6 +86,9 @@ class OppslagController(
                     .body(it)
             }
 
+    @GetMapping("/kontonummer")
+    fun kontonummer() = konto.kontoInfo()
+
     companion object {
         const val OPPSLAG_BASE = "/oppslag"
         private const val DOKUMENT = "/dokument/{journalpostId}/{dokumentId}"
