@@ -231,14 +231,18 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         override fun pingEndpoint() = "$bootstrapServers"
         override fun name() = cfg.name
 
-        override fun ping() =
-            admin.describeTopics(*cfg.topics().toTypedArray()).entries
+        val log = getLogger(javaClass)
+
+        override fun ping(): Map<String, String> {
+            log.trace("Helsesjekker ${cfg.topics()}")
+            return admin.describeTopics(*cfg.topics().toTypedArray()).entries
                 .withIndex()
                 .associate {
                     with(it) {
                         "topic-${index}" to "${value.value.name()} (${value.value.partitions().count()} partisjoner)"
                     }
                 }
+        }
 
         abstract class AbstractKafkaConfig(val name: String, val isEnabled: Boolean) {
             abstract fun topics(): List<String>
