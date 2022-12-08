@@ -31,7 +31,7 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
                 errorHandler.handle(it)
             }
             else {
-                log.warn("Oppslag ${File(query).nameWithoutExtension.split("-")[0]} feilet med uventet feil", it)
+                log.warn("Oppslag ${File(query).nameWithoutExtension.split("-")[1]} feilet med uventet exception ${it.javaClass.simpleName}", it)
                 throw it
             }
         }
@@ -43,7 +43,7 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
                 errorHandler.handle(it)
             }
             else {
-                log.warn("Oppslag ${File(query).nameWithoutExtension.split("-")[0]} feilet med uventet feil", it)
+                log.warn("Oppslag ${File(query).nameWithoutExtension.split("-")[1]} feilet med uventet feil", it)
                 throw it
             }
         }
