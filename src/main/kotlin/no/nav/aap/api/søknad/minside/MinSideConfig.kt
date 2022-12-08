@@ -41,6 +41,6 @@ data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConf
         private const val DEFAULT_LEVEL = "3"
     }
 
-    override fun topics() =  listOf(/*utkast.topic,*/beskjed.topic,oppgave.topic,done)
+    override fun topics() =  listOf(utkast.topic,beskjed.topic,oppgave.topic,done)
 
 }
