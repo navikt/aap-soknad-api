@@ -1,7 +1,6 @@
 package no.nav.aap.api.oppslag.arkiv
 
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
-import java.io.IOException
 import java.time.LocalDateTime
 import java.util.*
 import no.nav.aap.api.felles.error.IntegrationException
@@ -21,20 +20,16 @@ import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.WebClientResponseException
-import org.springframework.web.reactive.function.client.WebClientResponseException.Forbidden
-import org.springframework.web.reactive.function.client.WebClientResponseException.NotFound
-import org.springframework.web.reactive.function.client.WebClientResponseException.Unauthorized
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 
 @Component
 class ArkivOppslagWebClientAdapter(
-        @Qualifier(SAF) client: WebClient,
-        @Qualifier(SAF) private val graphQL: GraphQLWebClient,
+        @Qualifier(SAF) webCLient: WebClient,
+        @Qualifier(SAF) private val graphQLClient: GraphQLWebClient,
         private val ctx: AuthContext,
         private val mapper: ArkivOppslagMapper,
-        val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(client, cf) {
+        val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(webCLient, cf) {
 
     fun dokument(journalpostId: String, dokumentInfoId: String) =
         webClient.get()
@@ -43,7 +38,7 @@ class ArkivOppslagWebClientAdapter(
             .retrieve()
             .onStatus({ UNAUTHORIZED == it }, { Mono.empty<Throwable>().also { log.trace("Dokument $journalpostId/$dokumentInfoId kan ikke slås opp") } })
             .bodyToMono<ByteArray>()
-            .retryWhen(cf.retrySpec(log) { it is IOException || (it is WebClientResponseException && it !is Unauthorized && it !is NotFound && it !is Forbidden) })
+            .retryWhen(cf.retrySpec(log))
             .doOnSuccess { log.trace("Arkivoppslag returnerte  ${it.size} bytes") }
             .block() ?: throw IntegrationException("Null response fra arkiv for  $journalpostId/$dokumentInfoId ")
 
@@ -56,7 +51,7 @@ class ArkivOppslagWebClientAdapter(
         ?.firstOrNull { it.journalpostId == journalPostId }
         ?.dokumenter?.firstOrNull()?.dokumentInfoId   // Søknaden er alltid  første elementet
 
-    private fun query() = query<ArkivOppslagJournalposter>(graphQL, DOKUMENTER_QUERY, ctx.getFnr().fnr)
+    private fun query() = query<ArkivOppslagJournalposter>(graphQLClient, DOKUMENTER_QUERY, ctx.getFnr().fnr)
         ?.journalposter.also {
             log.trace("GraphQL oppslag returnerte $it")
         }
