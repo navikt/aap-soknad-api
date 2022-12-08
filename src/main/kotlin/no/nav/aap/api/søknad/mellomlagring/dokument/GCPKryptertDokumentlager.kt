@@ -75,7 +75,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                         }
                 }
             } ?: run {
-            log.warn("Kunne ikke lese dokument med id $uuid fra dokumentlager")
+            log.warn("Kunne ikke lese dokument med id $uuid for $fnr fra dokumentlager, finnes dokumentet?")
             null
         }
 
