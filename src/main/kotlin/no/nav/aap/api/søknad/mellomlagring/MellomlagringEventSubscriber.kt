@@ -48,7 +48,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                         log.info("PubSub event $type med metadata $it")
                         when (type) {
                             OBJECT_FINALIZE -> opprettet(it)
-                            OBJECT_DELETE -> slettet(it, attributesMap["overwrittenByGeneration"] != null)
+                            OBJECT_DELETE -> avslutt(it, attributesMap["overwrittenByGeneration"] != null)
                             else -> log.warn("Event $type ikke håndtert (dette skal aldri skje)")
                         }
                     } ?: log.warn("Fant ikke forventede metadata i event ${event.pubsubMessage}")
@@ -65,12 +65,12 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
             }
         }
 
-    private fun slettet(metadata: Metadata, overwritten: Boolean) =
+    private fun avslutt(metadata: Metadata, overwritten: Boolean) =
         with(metadata) {
             registry.gauge(MELLOMLAGRING,mellomlagrede.decIfPositive())
             if (!overwritten) {
                 log.info("Mellomlagring endelig slettet utkast fra metadata $this")
-                dittNav.avsluttUtkast(fnr,eventId)
+                dittNav.avsluttUtkast(fnr)
             }
             else {
                 log.info("Mellomlagring overwritten event ignorert")

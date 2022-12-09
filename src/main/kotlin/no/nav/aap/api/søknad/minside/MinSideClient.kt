@@ -52,14 +52,14 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
 
     @Counted(value = AVSLUTTET_UTKAST, description = "Antall utkast slettet")
     @Transactional
-    fun avsluttUtkast(fnr: Fødselsnummer, eventId: UUID) =
+    fun avsluttUtkast(fnr: Fødselsnummer) =
         with(cfg.utkast) {
             if (enabled) {
                 repos.utkast.findByFnr(fnr.fnr)?.let {
                     log.info("Avslutter Min Side utkast for eventid $it")
-                    utkast.send(ProducerRecord(topic,  "$eventId", slettUtkast(eventId,fnr)))
+                    utkast.send(ProducerRecord(topic,  "${it.eventid}", slettUtkast("${it.eventid}",fnr)))
                         .get().run {
-                            log.trace("Sendte avslutt utkast eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                            log.trace("Sendte avslutt utkast eventid ${it.eventid} på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                             it.done = true
                             it.type = "deleted"
                         }
@@ -81,7 +81,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 val u = repos.utkast.findByFnr(fnr.fnr)
                 if (u == null) {
                     log.info("Oppretter Min Side utkast med eventid $eventId")
-                    utkast.send(ProducerRecord(topic,  "$eventId", lagUtkast(tekst, eventId,fnr)))
+                    utkast.send(ProducerRecord(topic,  "$eventId", lagUtkast(tekst, "$eventId",fnr)))
                         .get().run {
                             log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                             repos.utkast.save(Utkast(fnr.fnr,eventId,"created"))
@@ -97,16 +97,16 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-    private fun utkast(tittel: String,utkastId: UUID,fnr: Fødselsnummer) =
+    private fun utkast(tittel: String,utkastId: String,fnr: Fødselsnummer) =
          UtkastJsonBuilder()
-             .withUtkastId(utkastId.toString())
+             .withUtkastId(utkastId)
              .withIdent(fnr.fnr)
              .withLink(MINAAPSTD.link(cfg.backlinks).toString())
              .withTittel(tittel)
 
-    private fun lagUtkast(tittel: String,utkastId: UUID,fnr: Fødselsnummer,) = utkast(tittel,utkastId,fnr).create()
-    private fun oppdaterUtkast(tittel: String,utkastId: UUID,fnr: Fødselsnummer,) = utkast(tittel,utkastId,fnr).update()
-    private fun slettUtkast(utkastId: UUID,fnr: Fødselsnummer) =  UtkastJsonBuilder().withUtkastId(utkastId.toString()).withIdent(fnr.fnr).delete()
+    private fun lagUtkast(tittel: String,utkastId: String,fnr: Fødselsnummer,) = utkast(tittel,utkastId,fnr).create()
+    private fun oppdaterUtkast(tittel: String,utkastId: String,fnr: Fødselsnummer,) = utkast(tittel,utkastId,fnr).update()
+    private fun slettUtkast(utkastId: String,fnr: Fødselsnummer) =  UtkastJsonBuilder().withUtkastId(utkastId).withIdent(fnr.fnr).delete()
 
     @Transactional
     @Counted(value = OPPRETTET_BESKJED, description = "Antall beskjeder opprettet")
