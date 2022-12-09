@@ -52,9 +52,9 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                        type: MinSideNotifikasjonType = MINAAPSTD,
                        eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
-            if (enabled) {
+            if (isEnabled) {
                 log.info("Oppretter Min Side beskjed med ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), beskjed(tekst, varighet,type, eksternVarsling)))
+                minside.send(ProducerRecord(topicName, key(type.skjemaType, eventId, fnr), beskjed(tekst, varighet,type, eksternVarsling)))
                     .get().run {
                         log.trace("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                         repos.beskjeder.save(Beskjed(fnr.fnr, eventId, mellomlagring = mellomlagring,ekstern = eksternVarsling)).eventid
@@ -74,9 +74,9 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                        type: MinSideNotifikasjonType = MINAAPSTD,
                        eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
-            if (enabled) {
+            if (isEnabled) {
                 log.info("Oppretter Min Side oppgave med ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
+                minside.send(ProducerRecord(topicName, key(type.skjemaType, eventId, fnr),
                         oppgave(tekst, varighet, type, eventId, eksternVarsling)))
                     .get().run {
                         log.trace("Sendte opprett oppgave med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
@@ -92,7 +92,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
     @Transactional
     fun avsluttOppgave(fnr: Fødselsnummer, eventId: UUID, type: SkjemaType = STANDARD) =
         with(cfg.oppgave) {
-            if (enabled) {
+            if (isEnabled) {
                 avsluttMinSide(eventId, fnr, OPPGAVE, type)
                 repos.oppgaver.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
                     it.done = true
@@ -106,7 +106,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
     @Transactional
     fun avsluttBeskjed(fnr: Fødselsnummer, eventId: UUID, type: SkjemaType = STANDARD) =
         with(cfg.beskjed) {
-            if (enabled) {
+            if (isEnabled) {
                 avsluttMinSide(eventId, fnr, BESKJED, type)
                 repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
                     it.done = true
@@ -119,7 +119,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
     @Transactional
     fun avsluttAlleTidligereUavsluttedeBeskjederOmMellomlagring(fnr: Fødselsnummer, sisteEventid: UUID, type: SkjemaType = STANDARD) =
         with(cfg.beskjed) {
-            if (enabled) {
+            if (isEnabled) {
                 repos.beskjeder.findByFnrAndDoneIsFalseAndMellomlagringIsTrueAndEventidNot(fnr.fnr, sisteEventid).forEach {
                     log.trace("Avslutter tidligere, ikke-avsluttet beskjed $it")
                     avsluttMinSide(it.eventid, fnr, BESKJED, type)

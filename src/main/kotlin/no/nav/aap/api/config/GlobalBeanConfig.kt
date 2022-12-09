@@ -235,7 +235,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
         override fun ping(): Map<String, String> {
             log.info("Helsesjekker ${cfg.topics()}")
-            return cfg.topics().mapIndexedNotNull { ix, cf -> innslag(cf.topic,ix)}
+            return cfg.topics().mapIndexedNotNull { ix, cf -> innslag(cf.topicName,ix)}
                 .associateBy({ it.first }, { it.second })
         }
 

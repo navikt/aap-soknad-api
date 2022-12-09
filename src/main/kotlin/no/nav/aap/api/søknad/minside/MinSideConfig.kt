@@ -19,22 +19,22 @@ data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConf
                          @NestedConfigurationProperty val utkast: UtkastConfig,
                          @NestedConfigurationProperty val backlinks: BacklinksConfig,
                          val done: String) : AbstractKafkaConfig(MINSIDE,enabled) {
-          val enabled = utkast.enabled || oppgave.enabled || beskjed.enabled
+          val enabled = utkast.isEnabled || oppgave.isEnabled || beskjed.isEnabled
 
     val app = nais.app
     val namespace = nais.namespace
 
 
-    class UtkastConfig(@DefaultValue(UTKAST_TOPIC)  topic: String, @DefaultValue("true")  enabled: Boolean) : KafkaConfig(topic,enabled)
+    class UtkastConfig(@DefaultValue(UTKAST_TOPIC)  val topic: String, @DefaultValue("true")  val enabled: Boolean) : KafkaConfig(topic,enabled)
 
     data class BacklinksConfig(val innsyn: URI, val standard: URI, val utland: URI)
     class TopicConfig(topic: String,
                            @DefaultValue(DEFAULT_VARIGHET) val varighet: Duration,
-                           @DefaultValue("true")  enabled: Boolean,
+                           @DefaultValue("true")  val enabled: Boolean,
                            val preferertekanaler: List<PreferertKanal> = emptyList(),
                            @DefaultValue(DEFAULT_LEVEL) val sikkerhetsnivaa: Int)  : KafkaConfig(topic,enabled)
 
-    abstract  class KafkaConfig(val topic: String, val enabled: Boolean)
+    abstract  class KafkaConfig(val topicName: String, val isEnabled: Boolean)
 
 
     data class NAISConfig(val namespace: String, val app: String)

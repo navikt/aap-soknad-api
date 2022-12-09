@@ -16,9 +16,9 @@ class SøknadVLFordeler(private val fordeler: KafkaOperations<String, Any>) {
     private val log = getLogger(javaClass)
 
     fun fordel(søknad: Any, fnr: Fødselsnummer, journalpostId: String, cfg: VLTopicConfig) =
-        if (cfg.enabled) {
+        if (cfg.isEnabled) {
             with(cfg) {
-                fordeler.send(ProducerRecord(topic, fnr.fnr, søknad)
+                fordeler.send(ProducerRecord(topicName, fnr.fnr, søknad)
                     .apply {
                         headers()
                             .add(NAV_CALL_ID, callId().toByteArray())
