@@ -1,47 +1,45 @@
 package no.nav.aap.api
 
-import no.nav.aap.api.felles.Navn
-import no.nav.aap.api.oppslag.pdl.*
-import no.nav.aap.api.søknad.model.Søker.Barn
 import java.time.LocalDate
+import no.nav.aap.api.felles.Navn
+import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse
+import no.nav.aap.api.oppslag.pdl.PDLBarn
+import no.nav.aap.api.oppslag.pdl.PDLGradering
+import no.nav.aap.api.oppslag.pdl.PDLNavn
+import no.nav.aap.api.oppslag.pdl.PDLSøker
+import no.nav.aap.api.søknad.model.Søker.Barn
 
 object OMBarn {
-    fun enkeltBarn(): Barn {
-        return Barn(Navn("Barn", "B", "Barnsben"), LocalDate.now())
-    }
+    fun enkeltBarn() = Barn(Navn("Barn", "B", "Barnsben"), LocalDate.now())
 
-    fun listeMedPDLBarn(): Sequence<PDLBarn>{
-        return sequenceOf(
-            PDLBarn(
-                setOf(PDLSøker.PDLFødsel(LocalDate.now())),
-                setOf(PDLNavn("Barn", "B", "Barnsben")),
-                setOf(PDLGradering(PDLAdresseBeskyttelse.STRENGT_FORTROLIG)),
-                setOf(PDLBarn.PDLDødsfall(LocalDate.now()))
-            ),
-            PDLBarn(
-                setOf(PDLSøker.PDLFødsel(LocalDate.now())),
-                setOf(PDLNavn("Barn", "B", "Barnsben")),
-                setOf(PDLGradering(PDLAdresseBeskyttelse.FORTROLIG)),
-                setOf(PDLBarn.PDLDødsfall(LocalDate.now()))
-            ),
-            PDLBarn(
-                setOf(PDLSøker.PDLFødsel(LocalDate.now())),
-                setOf(PDLNavn("Barn", "B", "Barnsben")),
-                setOf(PDLGradering(PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND)),
-                setOf(PDLBarn.PDLDødsfall(LocalDate.now()))
-            ),
-            PDLBarn(
-                setOf(PDLSøker.PDLFødsel(LocalDate.now())),
-                setOf(PDLNavn("Barn", "B", "Barnsben")),
-                null,
-                setOf(PDLBarn.PDLDødsfall(LocalDate.now()))
-            ),
-            PDLBarn(
-                setOf(PDLSøker.PDLFødsel(LocalDate.now())),
-                setOf(PDLNavn("Barn", "B", "Barnsben")),
-                null,null
-            )
-        )
-    }
-
+    fun listeMedPDLBarn() = sequenceOf(
+        PDLBarn(
+            setOf(PDLSøker.PDLFødsel(LocalDate.now())),
+            setOf(PDLNavn("Barn", "B", "Barnsben")),
+            setOf(PDLGradering(PDLAdresseBeskyttelse.STRENGT_FORTROLIG)),
+            setOf(PDLBarn.PDLDødsfall(LocalDate.now()))
+        ),
+        PDLBarn(
+            setOf(PDLSøker.PDLFødsel(LocalDate.now())),
+            setOf(PDLNavn("Barn", "B", "Barnsben")),
+            setOf(PDLGradering(PDLAdresseBeskyttelse.FORTROLIG)),
+            setOf(PDLBarn.PDLDødsfall(LocalDate.now()))
+        ),
+        PDLBarn(
+            setOf(PDLSøker.PDLFødsel(LocalDate.now())),
+            setOf(PDLNavn("Barn", "B", "Barnsben")),
+            setOf(PDLGradering(PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND)),
+            setOf(PDLBarn.PDLDødsfall(LocalDate.now()))
+        ),
+        PDLBarn(
+            setOf(PDLSøker.PDLFødsel(LocalDate.now())),
+            setOf(PDLNavn("Barn", "B", "Barnsben")),
+            null,
+            setOf(PDLBarn.PDLDødsfall(LocalDate.now()))
+        ),
+        PDLBarn(
+            setOf(PDLSøker.PDLFødsel(LocalDate.now())),
+            setOf(PDLNavn("Barn", "B", "Barnsben")),
+            null,null
+        ))
 }
