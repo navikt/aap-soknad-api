@@ -7,11 +7,9 @@ import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import com.google.cloud.storage.NotificationInfo.EventType.valueOf
 import com.google.pubsub.v1.PubsubMessage
-import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Metrics.*
 import java.util.*
 import java.util.UUID.*
-import no.nav.aap.api.config.Metrikker.MELLOMLAGRING
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.*
@@ -31,8 +29,7 @@ import org.springframework.boot.CommandLineRunner
 class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                                    private val cfg: BucketConfig,
                                    private val mapper: ObjectMapper,
-                                   private val subscriber: PubSubSubscriberTemplate,
-                                   private val registry: MeterRegistry) : CommandLineRunner {
+                                   private val subscriber: PubSubSubscriberTemplate) : CommandLineRunner {
 
     private val log = getLogger(javaClass)
 
@@ -48,7 +45,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                         log.info("PubSub event $type med metadata $it")
                         when (type) {
                             OBJECT_FINALIZE -> opprettet(it)
-                            OBJECT_DELETE -> avslutt(it, attributesMap["overwrittenByGeneration"] != null)
+                            OBJECT_DELETE -> avsluttet(it, endeligSlettet())
                             else -> log.warn("Event $type ikke håndtert (dette skal aldri skje)")
                         }
                     } ?: log.warn("Fant ikke forventede metadata i event ${event.pubsubMessage}")
@@ -59,27 +56,18 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
 
     private fun opprettet(metadata: Metadata) =
         with(metadata) {
-            registry.gauge(MELLOMLAGRING, mellomlagrede.inc())
-            dittNav.opprettUtkast(fnr,"Du har en påbegynt søknad om AAP",eventId).also {
-              //  log.info("Mellomlagring opprettet utkast fra metadata $this")
-            }
+            dittNav.opprettUtkast(fnr,"Du har en påbegynt søknad om AAP",eventId).also {}
         }
 
-    private fun avslutt(metadata: Metadata, overwritten: Boolean) =
+    private fun avsluttet(metadata: Metadata, endeligSlettet: Boolean) =
         with(metadata) {
-            registry.gauge(MELLOMLAGRING,mellomlagrede.decIfPositive())
-            if (!overwritten) {
-                log.info("Mellomlagring endelig slettet utkast fra metadata $this")
+            if (endeligSlettet) {
+                log.trace("Utkast slettes for $fnr")
                 dittNav.avsluttUtkast(fnr)
             }
-            else {
-                log.info("Mellomlagring overwritten event ignorert")
-            }
         }
 
-    private fun PubsubMessage.data() = mapper.readValue<Map<String, Any>>(data.toStringUtf8())
-    private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
-    private fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { valueOf(it) }
+
 
     private fun PubsubMessage.metadata() =
         with(objektNavn()) {
@@ -97,7 +85,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
     private data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val eventId: UUID) {
         companion object {
             fun getInstance(type: String?, fnr: String?, eventId: String?) =
-                if (eventId != null && fnr != null && type != null) {
+                if (!(eventId == null || fnr == null || type == null)) {
                     toMDC(NAV_CALL_ID, eventId)
                     Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), fromString(eventId))
                 }
@@ -106,11 +94,13 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                 }
         }
     }
-
-    private fun Int.decIfPositive() = if (this > 0) this.dec() else this
+    private fun PubsubMessage.data() = mapper.readValue<Map<String, Any>>(data.toStringUtf8())
 
     companion object {
-        private var mellomlagrede = 0
+        private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
+        private fun PubsubMessage.endeligSlettet() = attributesMap[OVERWRITTEN] == null
+        private fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { valueOf(it) }
+        private const val OVERWRITTEN = "overwrittenByGeneration"
         private const val EVENT_TYPE = "eventType"
         private const val METADATA = "metadata"
         private const val OBJECTID = "objectId"

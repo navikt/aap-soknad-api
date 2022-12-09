@@ -13,9 +13,6 @@ import no.nav.aap.util.StringExtensions.partialMask
 
 interface MinSideBeskjedRepository : MinSideRepository<Beskjed> {
 
-    fun findByFnrAndDoneIsFalseAndMellomlagringIsTrueAndEventidNot(fnr: String, eventid: UUID): List<Beskjed>
-
-
     @Entity(name = "beskjed")
     @Table(name = "minsidebeskjeder")
     class Beskjed(fnr: String,
@@ -28,8 +25,6 @@ interface MinSideBeskjedRepository : MinSideRepository<Beskjed> {
         MinSideBaseEntity(fnr, eventid, done,ekstern)  {
         override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated,mellomlagring=$mellomlagring,ekstern=$ekstern, done=$done,id=$id]"
     }
-
-
 
     @Entity(name = "eksternbeskjednotifikasjon")
     @Table(name = "eksternebeskjednotifikasjoner")

@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.minside
 
 import io.micrometer.core.annotation.Counted
+import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Metrics.counter
 import java.time.Duration
 import java.time.LocalDateTime.now
@@ -9,6 +10,7 @@ import java.util.*
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_BESKJED
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_OPPGAVE
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_UTKAST
+import no.nav.aap.api.config.Metrikker.MELLOMLAGRING
 import no.nav.aap.api.config.Metrikker.OPPRETTET_BESKJED
 import no.nav.aap.api.config.Metrikker.OPPRETTET_OPPGAVE
 import no.nav.aap.api.config.Metrikker.OPPRETTET_UTKAST
@@ -21,6 +23,7 @@ import no.nav.aap.api.søknad.minside.MinSideClient.NotifikasjonType.BESKJED
 import no.nav.aap.api.søknad.minside.MinSideClient.NotifikasjonType.OPPGAVE
 import no.nav.aap.api.søknad.minside.MinSideConfig.BacklinksConfig
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
+import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.SØKNADSTD
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.MINAAP
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.SØKNAD
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
@@ -44,6 +47,7 @@ import org.springframework.web.util.UriComponentsBuilder.fromUri
 class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                     private val utkast: KafkaOperations<String, String>,
                     private val cfg: MinSideConfig,
+                    private val registry: MeterRegistry,
                     private val repos: MinSideRepositories) {
 
     private val log = getLogger(javaClass)
@@ -56,6 +60,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         with(cfg.utkast) {
             if (enabled) {
                 repos.utkast.findByFnr(fnr.fnr)?.let {
+                    registry.gauge(MELLOMLAGRING, mellomlagrede.decIfPositive())
                     log.info("Avslutter Min Side utkast for eventid $it")
                     utkast.send(ProducerRecord(topic,  "${it.eventid}", slettUtkast("${it.eventid}",fnr)))
                         .get().run {
@@ -63,10 +68,10 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                             it.done = true
                             it.type = "deleted"
                         }
-                } ?: log.info("Ingen utkast å avslutte for $fnr")
+                } ?: log.trace("Ingen utkast å avslutte for $fnr")
             }
             else {
-                log.info("Oppretter ikke utkast i Ditt Nav for $fnr, disabled")
+                log.trace("Oppretter ikke utkast i Ditt Nav for $fnr, disabled")
                 null
             }
         }
@@ -80,6 +85,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
             if (enabled) {
                 val u = repos.utkast.findByFnr(fnr.fnr)
                 if (u == null) {
+                    registry.gauge(MELLOMLAGRING, mellomlagrede.inc())
                     log.info("Oppretter Min Side utkast med eventid $eventId")
                     utkast.send(ProducerRecord(topic,  "$eventId", lagUtkast(tekst, "$eventId",fnr)))
                         .get().run {
@@ -88,11 +94,11 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                         }
                 }
                 else {
-                    log.info("Oppretter ikke nytt Min Side utkast, fant allerede eksisterende innslag $u ")
+                    log.trace("Oppretter ikke nytt Min Side utkast, fant allerede eksisterende innslag")
                 }
             }
             else {
-                log.info("Oppretter ikke nytt utkast i Ditt Nav for $fnr")
+                log.trace("Oppretter ikke nytt utkast i Ditt Nav for $fnr")
                 null
             }
         }
@@ -101,7 +107,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
          UtkastJsonBuilder()
              .withUtkastId(utkastId)
              .withIdent(fnr.fnr)
-             .withLink(MINAAPSTD.link(cfg.backlinks).toString())
+             .withLink(SØKNADSTD.link(cfg.backlinks).toString())
              .withTittel(tittel)
 
     private fun lagUtkast(tittel: String,utkastId: String,fnr: Fødselsnummer,) = utkast(tittel,utkastId,fnr).create()
@@ -182,21 +188,6 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-    @Transactional
-    fun avsluttAlleTidligereUavsluttedeBeskjederOmMellomlagring(fnr: Fødselsnummer, sisteEventid: UUID, type: SkjemaType = STANDARD) =
-        with(cfg.beskjed) {
-            if (enabled) {
-                repos.beskjeder.findByFnrAndDoneIsFalseAndMellomlagringIsTrueAndEventidNot(fnr.fnr, sisteEventid).forEach {
-                    log.trace("Avslutter tidligere, ikke-avsluttet beskjed $it")
-                    avsluttMinSide(it.eventid, fnr, BESKJED, type)
-                    it.done = true
-                }
-            }
-            else {
-                log.trace("Sender ikke avslutt tiligere ikke-avsluttede beskjeder til Min Side for beskjed for $fnr")
-            }
-        }
-
     private fun avsluttMinSide(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType, type: SkjemaType = STANDARD) =
         minside.send(ProducerRecord(cfg.done, key(type,eventId, fnr), done())).get().run {
             when (notifikasjonType) {
@@ -257,6 +248,8 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         OPPGAVE,BESKJED
     }
     companion object {
+        private fun Int.decIfPositive() = if (this > 0) this.dec() else this
+        private var mellomlagrede = 0
         private val oppgaverAvsluttet = counter(AVSLUTTET_OPPGAVE)
         private val beskjederAvsluttet = counter(AVSLUTTET_BESKJED)
     }
