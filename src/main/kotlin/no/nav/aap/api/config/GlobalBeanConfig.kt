@@ -27,6 +27,7 @@ import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
+import no.nav.aap.api.søknad.minside.MinSideConfig.KafkaConfig
 import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.HeadersToMDCFilter
@@ -234,7 +235,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
         override fun ping(): Map<String, String> {
             log.info("Helsesjekker ${cfg.topics()}")
-            return cfg.topics().mapIndexedNotNull { ix, topic -> innslag(topic,ix)}
+            return cfg.topics().mapIndexedNotNull { ix, cf -> innslag(cf.topic,ix)}
                 .associateBy({ it.first }, { it.second })
         }
 
@@ -250,7 +251,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         }
 
         abstract class AbstractKafkaConfig(val name: String, val isEnabled: Boolean) {
-            abstract fun topics(): List<String>
+            abstract fun topics(): List<KafkaConfig>
         }
     }
 
