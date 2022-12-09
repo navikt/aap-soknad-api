@@ -14,6 +14,7 @@ import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
+import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
@@ -43,6 +44,14 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
             .apply {
                 put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
                 put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
+            }))
+
+    @Bean
+    fun minSideUtkastKafkaOperations(p: KafkaProperties) =
+        KafkaTemplate(DefaultKafkaProducerFactory<String, String>(p.buildProducerProperties()
+            .apply {
+                put(KEY_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java)
+                put(VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java)
             }))
     @Bean(DOKNOTIFIKASJON)
     fun dokNotifikasjonListenerContainerFactory(p: KafkaProperties) =
