@@ -7,7 +7,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
 import no.nav.aap.api.felles.Adresse
-import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.api.felles.Periode
@@ -16,8 +15,6 @@ import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerKategori.LEGE
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerType.FASTLEGE
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.KontaktInformasjon
-import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
-import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
 import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
 import no.nav.aap.api.søknad.model.BarnOgInntekt
@@ -27,7 +24,6 @@ import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.StandardSøknad.Yrkesskade
 import no.nav.aap.api.søknad.model.Studier
 import no.nav.aap.api.søknad.model.Studier.StudieSvar.NEI
-import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetalinger
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønad
@@ -48,20 +44,7 @@ class SøknadTest {
     lateinit var mapper: ObjectMapper
 
     @Mock
-    lateinit var lager: Dokumentlager
-
-    @Mock
     lateinit var ctx: AuthContext
-
-    @Mock
-    lateinit var pdf: PDFGenerator
-
-    val v2 = """
-        [ "07e35799-4db5-4ba3-81cc-3681dd1dec60" ]
-    """.trimIndent()
-    val v3 = """
-         "07e35799-4db5-4ba3-81cc-3681dd1dec60" 
-    """.trimIndent()
 
     val test = """
        {
@@ -174,15 +157,6 @@ class SøknadTest {
 
 
     companion object {
-
-        fun søker(): Søker {
-            return Søker(Navn("Ole", "B", "Olsen"),
-                    Fødselsnummer("08089403198"),
-                    false,
-                    Adresse("Gata", "17", "A",
-                            PostNummer("2600", "Lillehammer")), now(), listOf(
-                    Barn(Navn("Barn", "B", "Barnsben"), now())))
-        }
 
         fun standardSøknad() = StandardSøknad(
                 false,
