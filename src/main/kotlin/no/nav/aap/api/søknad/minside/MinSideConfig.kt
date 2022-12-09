@@ -24,7 +24,7 @@ data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConf
     val namespace = nais.namespace
 
 
-    data class UtkastConfig( @DefaultValue("minside.aapen-utkast-v1") val topic: String, @DefaultValue("true") val enabled: Boolean)
+    data class UtkastConfig( @DefaultValue("min-side.aapen-utkast-v1") val topic: String, @DefaultValue("true") val enabled: Boolean)
 
     data class BacklinksConfig(val innsyn: URI, val standard: URI, val utland: URI)
     data class TopicConfig(val topic: String,
