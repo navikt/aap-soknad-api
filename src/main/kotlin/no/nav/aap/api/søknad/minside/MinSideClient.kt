@@ -41,7 +41,7 @@ import org.springframework.web.util.UriComponentsBuilder.fromUri
 
 @ConditionalOnGCP
 class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
-                    private val utkast: KafkaOperations<String, Any>,
+                    private val utkast: KafkaOperations<String, String>,
                     private val cfg: MinSideConfig,
                     private val repos: MinSideRepositories) {
 
@@ -58,7 +58,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 val u = repos.utkast.findByFnr(fnr.fnr)
                 if (u == null) {
                     log.info("Oppretter Min Side utkast og eventid $eventId")
-                    utkast.send(ProducerRecord(topic,  "$eventId", utkast(tekst, eventId,fnr)))
+                    utkast.send(ProducerRecord(topic,  "$eventId", lagUtkast(tekst, eventId,fnr)))
                         .get().run {
                             log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                             repos.utkast.save(Utkast(fnr.fnr,eventId,"created"))

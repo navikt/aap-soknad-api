@@ -44,7 +44,6 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
                 put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
                 put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
             }))
-
     @Bean(DOKNOTIFIKASJON)
     fun dokNotifikasjonListenerContainerFactory(p: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, DoknotifikasjonStatus>().apply {
