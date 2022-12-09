@@ -20,13 +20,9 @@ class ArbeidClientBeanConfig {
     fun webClientArbeidsforhold(builder: Builder, cfg: ArbeidConfig, tokenX: TokenXFilterFunction, ctx: AuthContext) =
         builder
             .baseUrl("${cfg.baseUri}")
-            .filter(navPersonIdentFunction(ctx))
+            .filter(generellFilterFunction(NAV_PERSON_IDENT) { ctx.getSubject() ?: "NO SUBJECT" })
             .filter(tokenX)
             .build()
-
-    private fun navPersonIdentFunction(ctx: AuthContext) = generellFilterFunction(NAV_PERSON_IDENT) {
-        ctx.getSubject() ?: "NO SUBJECT"
-    }
 
     @Bean
     @ConditionalOnProperty("$ARBEID.enabled", havingValue = "true")

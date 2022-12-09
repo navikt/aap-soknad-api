@@ -13,11 +13,7 @@ data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournal
                                        val sak: ArkivOppslagSak?,
                                        val dokumenter: List<ArkivOppslagDokumentInfo>) {
 
-        enum class ArkivOppslagJournalpostType {
-            I,
-            U,
-            N
-        }
+        enum class ArkivOppslagJournalpostType { I, U, N }
 
         enum class ArkivOppslagJournalStatus {
             MOTTATT,
@@ -51,10 +47,7 @@ data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournal
                                    val fagsaksystem: String?,
                                    val sakstype: ArkivOppslagSakstype) {
 
-            enum class ArkivOppslagSakstype {
-                GENERELL_SAK,
-                FAGSAK
-            }
+            enum class ArkivOppslagSakstype { GENERELL_SAK, FAGSAK }
         }
 
         data class ArkivOppslagDokumentInfo(val dokumentInfoId: String,
@@ -67,16 +60,9 @@ data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournal
                                                    val code: List<String> = emptyList(),
                                                    val brukerHarTilgang: Boolean) {
 
-                enum class ArkivOppslagDokumentVariantFormat {
-                    ARKIV,
-                    SLADDET
-                }
+                enum class ArkivOppslagDokumentVariantFormat { ARKIV, SLADDET }
 
-                enum class ArkivOppslagDokumentFiltype {
-                    PDF,
-                    JPG,
-                    PNG
-                }
+                enum class ArkivOppslagDokumentFiltype { PDF, JPG, PNG }
             }
         }
     }

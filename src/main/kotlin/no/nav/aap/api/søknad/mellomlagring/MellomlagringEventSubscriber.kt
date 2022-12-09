@@ -67,12 +67,10 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
             }
         }
 
-
-
     private fun PubsubMessage.metadata() =
         with(objektNavn()) {
             if (this?.size == 2) {
-                data()[METADATA]?.let {
+                data(mapper)[METADATA]?.let {
                     it as Map<String, String>
                     getInstance(it[SKJEMATYPE], this[0], it[UUID_])
                 }
@@ -94,9 +92,9 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                 }
         }
     }
-    private fun PubsubMessage.data() = mapper.readValue<Map<String, Any>>(data.toStringUtf8())
 
     companion object {
+        private fun PubsubMessage.data(mapper: ObjectMapper) = mapper.readValue<Map<String, Any>>(data.toStringUtf8())
         private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
         private fun PubsubMessage.endeligSlettet() = attributesMap[OVERWRITTEN] == null
         private fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { valueOf(it) }
