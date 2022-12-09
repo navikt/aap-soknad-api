@@ -51,6 +51,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
 
 
     @Counted(value = AVSLUTTET_UTKAST, description = "Antall utkast slettet")
+    @Transactional
     fun avsluttUtkast(fnr: Fødselsnummer, eventId: UUID) =
         with(cfg.utkast) {
             if (enabled) {
@@ -71,6 +72,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         }
 
     @Counted(value = OPPRETTET_UTKAST, description = "Antall utkast opprettet")
+    @Transactional
     fun opprettUtkast(fnr: Fødselsnummer,
                       tekst: String,
                       eventId: UUID = callIdAsUUID()) =
@@ -78,7 +80,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
             if (enabled) {
                 val u = repos.utkast.findByFnr(fnr.fnr)
                 if (u == null) {
-                    log.info("Oppretter Min Side utkast og eventid $eventId")
+                    log.info("Oppretter Min Side utkast med eventid $eventId")
                     utkast.send(ProducerRecord(topic,  "$eventId", lagUtkast(tekst, eventId,fnr)))
                         .get().run {
                             log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
@@ -86,7 +88,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                         }
                 }
                 else {
-                    log.info("Oppretter ikke nytt Min Side utkast, fant $u ")
+                    log.info("Oppretter ikke nytt Min Side utkast, fant allerede eksisterende innslag $u ")
                 }
             }
             else {
