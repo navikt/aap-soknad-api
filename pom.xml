@@ -48,6 +48,8 @@
         <testcontainers.version>1.17.6</testcontainers.version>
         <tika.version>2.6.0</tika.version>
         <token.validation.version>2.1.8</token.validation.version>
+        <utkast.version>20221208152503-d9cba4c</utkast.version>
+
     </properties>
     <repositories>
         <repository>
@@ -92,6 +94,11 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>no.nav.tms.utkast</groupId>
+            <artifactId>builder</artifactId>
+            <version>${utkast.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.neovisionaries</groupId>
             <artifactId>nv-i18n</artifactId>

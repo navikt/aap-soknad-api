@@ -10,6 +10,7 @@ import no.nav.aap.api.config.Metrikker.AVSLUTTET_BESKJED
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_OPPGAVE
 import no.nav.aap.api.config.Metrikker.OPPRETTET_BESKJED
 import no.nav.aap.api.config.Metrikker.OPPRETTET_OPPGAVE
+import no.nav.aap.api.config.Metrikker.OPPRETTET_UTKAST
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
@@ -31,17 +32,56 @@ import no.nav.brukernotifikasjon.schemas.builders.DoneInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
+import no.nav.tms.utkast.builder.UtkastJsonBuilder
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.springframework.kafka.core.KafkaTemplate
+import org.springframework.kafka.core.KafkaOperations
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.util.UriComponentsBuilder.fromUri
 
 @ConditionalOnGCP
-class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
+class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
+                    private val utkast: KafkaOperations<String, Any>,
                     private val cfg: MinSideConfig,
                     private val repos: MinSideRepositories) {
 
     private val log = getLogger(javaClass)
+
+
+
+    @Counted(value = OPPRETTET_UTKAST, description = "Antall utkast opprettet")
+    fun opprettUtkast(fnr: Fødselsnummer,
+                       tekst: String,
+                       eventId: UUID = callIdAsUUID()) =
+        with(cfg.utkast) {
+            if (enabled) {
+                log.info("Oppretter Min Side utkast  og eventid $eventId")
+                utkast.send(ProducerRecord(topic,  "$eventId", utkast(tekst, eventId,fnr)))
+                    .get().run {
+                        log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                    //    repos.beskjeder.save(Beskjed(fnr.fnr, eventId, mellomlagring = mellomlagring,ekstern = eksternVarsling)).eventid
+                    }
+            }
+            else {
+                log.trace("Oppretter ikke utkast i Ditt Nav for $fnr")
+                null
+            }
+        }
+
+    private fun utkast(tittel: String,utkastId: UUID,fnr: Fødselsnummer) =
+         UtkastJsonBuilder()
+             .withUtkastId(utkastId.toString())
+             .withIdent(fnr.fnr)
+             .withLink(MINAAPSTD.link(cfg.backlinks).toString())
+             .withTittel(tittel)
+
+    private fun lagUtkast(tittel: String,utkastId: UUID,fnr: Fødselsnummer,) = utkast(tittel,utkastId,fnr).create()
+    private fun oppdaterUtkast(tittel: String,utkastId: UUID,fnr: Fødselsnummer,) = utkast(tittel,utkastId,fnr).update()
+
+    private fun slettUtkast(utkastId: UUID,fnr: Fødselsnummer) =  UtkastJsonBuilder()
+        .withUtkastId(utkastId.toString())
+        .withIdent(fnr.fnr).delete()
+
+
 
     @Transactional
     @Counted(value = OPPRETTET_BESKJED, description = "Antall beskjeder opprettet")
@@ -116,6 +156,7 @@ class MinSideClient(private val minside: KafkaTemplate<NokkelInput, Any>,
                 log.trace("Sender ikke avslutt beskjed til Min Side for beskjed for $fnr")
             }
         }
+
     @Transactional
     fun avsluttAlleTidligereUavsluttedeBeskjederOmMellomlagring(fnr: Fødselsnummer, sisteEventid: UUID, type: SkjemaType = STANDARD) =
         with(cfg.beskjed) {
