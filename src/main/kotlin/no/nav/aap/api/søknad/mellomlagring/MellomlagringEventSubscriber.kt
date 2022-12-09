@@ -61,7 +61,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
         with(metadata) {
             registry.gauge(MELLOMLAGRING, mellomlagrede.inc())
             dittNav.opprettUtkast(fnr,"Du har en påbegynt søknad om AAP",eventId).also {
-                log.info("Mellomlagring opprettet utkast fra metadata $this")
+              //  log.info("Mellomlagring opprettet utkast fra metadata $this")
             }
         }
 
@@ -69,7 +69,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
         with(metadata) {
             registry.gauge(MELLOMLAGRING,mellomlagrede.decIfPositive())
             dittNav.avsluttUtkast(fnr,eventId).also {
-                log.info( "Mellomlagring slettet utkast fra metadata $this")
+               // log.info( "Mellomlagring slettet utkast fra metadata $this")
             }
         }
 

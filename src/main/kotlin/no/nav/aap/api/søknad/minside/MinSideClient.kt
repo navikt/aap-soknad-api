@@ -65,7 +65,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 } ?: log.info("Ingen utkast å avslutte for $fnr")
             }
             else {
-                log.trace("Oppretter ikke utkast i Ditt Nav for $fnr")
+                log.info("Oppretter ikke utkast i Ditt Nav for $fnr, disabled")
                 null
             }
         }
@@ -86,11 +86,11 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                         }
                 }
                 else {
-                    log.info("Oppretter ikke Min Side utkas, fant  $u ")
+                    log.info("Oppretter ikke nytt Min Side utkast, fant $u ")
                 }
             }
             else {
-                log.trace("Oppretter ikke utkast i Ditt Nav for $fnr")
+                log.info("Oppretter ikke nytt utkast i Ditt Nav for $fnr")
                 null
             }
         }
