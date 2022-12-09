@@ -95,4 +95,5 @@ private class LoggingEntityListener {
 @Component
 data class MinSideRepositories(val beskjeder: MinSideBeskjedRepository,
                                val oppgaver: MinSideOppgaveRepository,
+                               val utkast: MinSideUtkastRepository,
                                var søknader: SøknadRepository)

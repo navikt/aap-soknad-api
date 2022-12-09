@@ -60,8 +60,8 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
     private fun opprettet(metadata: Metadata) =
         with(metadata) {
             registry.gauge(MELLOMLAGRING, mellomlagrede.inc())
-            log.info("Mellomlagring opprettet hendelse  fra metadata $this")
-           // dittNav.opprettUtkast(fnr,"Du har en påbegynt søknad",this.eventId)
+            log.info("Mellomlagring opprettet hendelse fra metadata $this")
+            dittNav.opprettUtkast(fnr,"Du har en påbegynt søknad",this.eventId)
         }
 
     private fun slettet(metadata: Metadata) =

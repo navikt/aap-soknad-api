@@ -23,6 +23,7 @@ import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPST
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.MINAAP
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.SØKNAD
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
+import no.nav.aap.api.søknad.minside.MinSideUtkastRepository.Utkast
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -50,16 +51,22 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
 
     @Counted(value = OPPRETTET_UTKAST, description = "Antall utkast opprettet")
     fun opprettUtkast(fnr: Fødselsnummer,
-                       tekst: String,
-                       eventId: UUID = callIdAsUUID()) =
+                      tekst: String,
+                      eventId: UUID = callIdAsUUID()) =
         with(cfg.utkast) {
             if (enabled) {
-                log.info("Oppretter Min Side utkast  og eventid $eventId")
-                utkast.send(ProducerRecord(topic,  "$eventId", utkast(tekst, eventId,fnr)))
-                    .get().run {
-                        log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
-                    //    repos.beskjeder.save(Beskjed(fnr.fnr, eventId, mellomlagring = mellomlagring,ekstern = eksternVarsling)).eventid
-                    }
+                val u = repos.utkast.findByFnr(fnr.fnr)
+                if (u == null) {
+                    log.info("Oppretter Min Side utkast og eventid $eventId")
+                    utkast.send(ProducerRecord(topic,  "$eventId", utkast(tekst, eventId,fnr)))
+                        .get().run {
+                            log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                            repos.utkast.save(Utkast(fnr.fnr,eventId,"created"))
+                        }
+                }
+                else {
+                    log.info("Oppretter ikke Min Side utkas, fant  $u ")
+                }
             }
             else {
                 log.trace("Oppretter ikke utkast i Ditt Nav for $fnr")
