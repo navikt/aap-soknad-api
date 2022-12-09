@@ -190,7 +190,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         private val log = getLogger(javaClass)
         override fun add(trace: HttpTrace) {
             runCatching {
-                log.trace(CONFIDENTIAL, mapper.writerWithDefaultPrettyPrinter().writeValueAsString(trace))
+               // log.trace(CONFIDENTIAL, mapper.writerWithDefaultPrettyPrinter().writeValueAsString(trace))
                 super.add(trace)
             }.getOrNull()
         }
