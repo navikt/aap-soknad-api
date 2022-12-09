@@ -60,14 +60,17 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
     private fun opprettet(metadata: Metadata) =
         with(metadata) {
             registry.gauge(MELLOMLAGRING, mellomlagrede.inc())
-            log.info("Mellomlagring opprettet hendelse fra metadata $this")
-            dittNav.opprettUtkast(fnr,"Du har en påbegynt søknad",this.eventId)
+            dittNav.opprettUtkast(fnr,"Du har en påbegynt søknad om AAP",eventId).also {
+                log.info("Mellomlagring opprettet utkast fra metadata $this")
+            }
         }
 
     private fun slettet(metadata: Metadata) =
         with(metadata) {
             registry.gauge(MELLOMLAGRING,mellomlagrede.decIfPositive())
-            log.info( "Mellomlagring slettet hendelse fra metadata $this")
+            dittNav.avsluttUtkast(fnr,eventId).also {
+                log.info( "Mellomlagring slettet utkast fra metadata $this")
+            }
         }
 
     private fun PubsubMessage.data() = mapper.readValue<Map<String, Any>>(data.toStringUtf8())
