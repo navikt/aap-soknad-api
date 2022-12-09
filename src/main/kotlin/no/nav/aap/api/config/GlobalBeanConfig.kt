@@ -76,7 +76,6 @@ import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.retry.RetryCallback
 import org.springframework.retry.RetryContext
 import org.springframework.retry.RetryListener
-import org.springframework.retry.listener.RetryListenerSupport
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.reactive.function.client.WebClient
@@ -234,14 +233,20 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         val log = getLogger(javaClass)
 
         override fun ping(): Map<String, String> {
-            log.trace("Helsesjekker ${cfg.topics()}")
-            return admin.describeTopics(*cfg.topics().toTypedArray()).entries
-                .withIndex()
-                .associate {
-                    with(it) {
-                        "topic-${index}" to "${value.value.name()} (${value.value.partitions().count()} partisjoner)"
-                    }
-                }
+            log.info("Helsesjekker ${cfg.topics()}")
+            return cfg.topics().mapIndexedNotNull { ix, topic -> innslag(topic,ix)}
+                .associateBy({ it.first }, { it.second })
+        }
+
+        private fun innslag(topic: String, ix: Int): Pair<String,String>?{
+             runCatching {
+                with(admin.describeTopics(topic).values.first()) {
+                     return Pair("topic-$ix", "${name()} (${partitions().count()} partisjoner")
+                 }
+             }.recover {
+                 return Pair(topic, it.message ?: it.javaClass.simpleName)
+             }
+            return null
         }
 
         abstract class AbstractKafkaConfig(val name: String, val isEnabled: Boolean) {
