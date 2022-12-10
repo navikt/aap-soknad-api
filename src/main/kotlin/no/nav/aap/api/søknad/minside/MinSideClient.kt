@@ -54,7 +54,7 @@ class MinSideClient(private val minside: MinSideProdusenter,
     fun opprettUtkast(fnr: Fødselsnummer, tekst: String, skjemaType: SkjemaType = STANDARD, eventId: UUID = callIdAsUUID()) =
         with(cfg.utkast) {
             if (enabled) {
-                if (repos.utkast.existsByFnrAndSkjemaType(fnr.fnr, skjemaType)) {
+                if (repos.utkast.existsByFnrAndSkjematype(fnr.fnr, skjemaType)) {
                     registry.gauge(MELLOMLAGRING, utkast.inc())
                     log.info("Oppretter Min Side utkast med eventid $eventId")
                     minside.utkast.send(ProducerRecord(topic, "$eventId", opprettUtkast(cfg,tekst, "$eventId", fnr)))
@@ -81,7 +81,7 @@ class MinSideClient(private val minside: MinSideProdusenter,
     fun avsluttUtkast(fnr: Fødselsnummer,skjemaType: SkjemaType) =
         with(cfg.utkast) {
             if (enabled) {
-                repos.utkast.findByFnrAndSkjemaType(fnr.fnr,skjemaType)?.let {
+                repos.utkast.findByFnrAndSkjematype(fnr.fnr,skjemaType)?.let {
                     registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
                     log.info("Avslutter Min Side utkast for eventid $it")
                     minside.utkast.send(ProducerRecord(topic,  "${it.eventid}", avsluttUtkast("${it.eventid}",fnr)))
