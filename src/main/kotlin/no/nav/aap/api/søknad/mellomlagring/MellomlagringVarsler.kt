@@ -5,6 +5,7 @@ import java.net.InetAddress.*
 import java.net.InetSocketAddress.*
 import java.net.URI
 import java.net.http.HttpClient
+import java.net.http.HttpHeaders
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
 import java.util.*
@@ -31,6 +32,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val elect
         env.getProperty("elector.path")?.let {
             val request = HttpRequest.newBuilder()
                 .uri(URI("http://$it"))
+                .header("Accept" "application/json")
                 .GET()
                 .build()
             val client  = HttpClient.newHttpClient()
