@@ -17,13 +17,12 @@ interface MinSideBeskjedRepository : MinSideRepository<Beskjed> {
     @Table(name = "minsidebeskjeder")
     class Beskjed(fnr: String,
                   eventid: UUID,
-                  val mellomlagring: Boolean = false,
                   done: Boolean = false,
                   ekstern: Boolean = false,
                   @OneToMany(mappedBy = "beskjed", cascade = [ALL], orphanRemoval = true)
                   var notifikasjoner: MutableSet<EksternBeskjedNotifikasjon> = mutableSetOf()) :
         MinSideBaseEntity(fnr, eventid, done,ekstern)  {
-        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated,mellomlagring=$mellomlagring,ekstern=$ekstern, done=$done,id=$id]"
+        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated,ekstern=$ekstern, done=$done,id=$id]"
     }
 
     @Entity(name = "eksternbeskjednotifikasjon")

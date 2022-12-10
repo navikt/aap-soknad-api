@@ -122,7 +122,6 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     fun opprettBeskjed(fnr: Fødselsnummer,
                        tekst: String,
                        eventId: UUID = callIdAsUUID(),
-                       mellomlagring: Boolean = false,
                        type: MinSideNotifikasjonType = MINAAPSTD,
                        eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
@@ -131,7 +130,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                 minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), beskjed(tekst, varighet,type, eksternVarsling)))
                     .get().run {
                         log.trace("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
-                        repos.beskjeder.save(Beskjed(fnr.fnr, eventId, mellomlagring = mellomlagring,ekstern = eksternVarsling)).eventid
+                        repos.beskjeder.save(Beskjed(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
                     }
             }
             else {

@@ -1,0 +1,1 @@
+ALTER TABLE minsidebeskjeder DROP COLUMN mellomlagring;
