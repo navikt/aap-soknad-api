@@ -54,7 +54,7 @@ class MinSideClient(private val minside: MinSideProdusenter,
     fun opprettUtkast(fnr: Fødselsnummer, tekst: String, skjemaType: SkjemaType = STANDARD, eventId: UUID = callIdAsUUID()) =
         with(cfg.utkast) {
             if (enabled) {
-                if (repos.utkast.existsByFnrAndSkjematype(fnr.fnr, skjemaType)) {
+                if (!repos.utkast.existsByFnrAndSkjematype(fnr.fnr, skjemaType)) {
                     registry.gauge(MELLOMLAGRING, utkast.inc())
                     log.info("Oppretter Min Side utkast med eventid $eventId")
                     minside.utkast.send(ProducerRecord(topic, "$eventId", opprettUtkast(cfg,tekst, "$eventId", fnr)))
