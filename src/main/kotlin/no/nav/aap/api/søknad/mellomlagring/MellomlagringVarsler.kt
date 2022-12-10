@@ -37,6 +37,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val elect
             val client  = HttpClient.newHttpClient()
             val res = client.send(request, BodyHandlers.ofString())
             log.trace("Elector ga response $res")
+            log.trace("OLD elector ${elector.leder(ME)}")
     }
 }
 
@@ -52,15 +53,15 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val elect
 class LeaderElector(@Value("\${elector.path}") private val elector: String, private val b: Builder) {
     val log = getLogger(javaClass)
 
-    fun erLeder(me: String) =
+    fun leder(me: String) =
         b.baseUrl("http://$elector").build()
             .get()
             .accept(APPLICATION_JSON)
             .retrieve()
-            .bodyToMono<Leader>()
+            .bodyToMono<String>()
             .doOnError { t: Throwable -> log.warn("Leader oppslag mot $elector feilet", t) }
-            .doOnSuccess { log.trace("Leader er ${it.name}, jeg er $me") }
-            .block()?.name == me
+            .doOnSuccess { log.trace("Leader er $it, jeg er $me") }
+            .block()
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class Leader(val name: String)
