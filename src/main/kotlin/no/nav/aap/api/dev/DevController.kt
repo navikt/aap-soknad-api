@@ -4,7 +4,6 @@ import java.time.Duration
 import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
-import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
@@ -68,11 +67,11 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
 
     @GetMapping("/dittnav/avsluttbeskjed")
     fun avsluttBeskjed(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) =
-        dittNav.avsluttBeskjed(fnr, uuid, STANDARD)
+        dittNav.avsluttBeskjed(fnr, uuid)
 
     @GetMapping("/dittnav/avsluttoppgave")
     fun avsluttOppgave(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) =
-        dittNav.avsluttOppgave(fnr, uuid, STANDARD)
+        dittNav.avsluttOppgave(fnr, uuid)
 
     @PostMapping("vl/{fnr}")
     @ResponseStatus(CREATED)

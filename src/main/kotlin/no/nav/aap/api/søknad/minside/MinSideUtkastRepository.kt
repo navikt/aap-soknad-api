@@ -12,7 +12,9 @@ import no.nav.aap.api.søknad.minside.MinSideUtkastRepository.Utkast
 import no.nav.aap.util.StringExtensions.partialMask
 
 interface MinSideUtkastRepository : MinSideRepository<Utkast> {
+    fun existsByFnrAndSkjemaType(fnr: String, skjemaType: SkjemaType): Boolean
     fun findByFnrAndSkjemaType(fnr: String, skjemaType: SkjemaType): Utkast?
+
 
     @Entity(name = "utkast")
     @Table(name = "minsideutkast")

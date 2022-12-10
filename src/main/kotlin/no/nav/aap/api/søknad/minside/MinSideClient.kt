@@ -3,9 +3,6 @@ package no.nav.aap.api.søknad.minside
 import io.micrometer.core.annotation.Counted
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Metrics.counter
-import java.time.Duration
-import java.time.LocalDateTime.now
-import java.time.ZoneOffset.UTC
 import java.util.*
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_BESKJED
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_OPPGAVE
@@ -17,33 +14,28 @@ import no.nav.aap.api.config.Metrikker.OPPRETTET_UTKAST
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
-import no.nav.aap.api.felles.SkjemaType.UTLAND_SØKNAD
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
-import no.nav.aap.api.søknad.minside.MinSideClient.NotifikasjonType.BESKJED
-import no.nav.aap.api.søknad.minside.MinSideClient.NotifikasjonType.OPPGAVE
-import no.nav.aap.api.søknad.minside.MinSideConfig.BacklinksConfig
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
-import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.SØKNADSTD
-import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.MINAAP
-import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.SØKNAD
+import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType
+import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType.BESKJED
+import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType.OPPGAVE
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
+import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.beskjed
+import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.done
+import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.key
+import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.lagUtkast
+import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.oppgave
+import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.slettUtkast
 import no.nav.aap.api.søknad.minside.MinSideUtkastRepository.Utkast
 import no.nav.aap.api.søknad.minside.UtkastType.CREATED
 import no.nav.aap.api.søknad.minside.UtkastType.DONE
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
-import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
-import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder
-import no.nav.brukernotifikasjon.schemas.builders.DoneInputBuilder
-import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
-import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
-import no.nav.tms.utkast.builder.UtkastJsonBuilder
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.util.UriComponentsBuilder.fromUri
 
 @ConditionalOnGCP
 class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
@@ -54,7 +46,29 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
 
     private val log = getLogger(javaClass)
 
-
+    @Counted(value = OPPRETTET_UTKAST, description = "Antall utkast opprettet")
+    @Transactional
+    fun opprettUtkast(fnr: Fødselsnummer, tekst: String, skjemaType: SkjemaType = STANDARD, eventId: UUID = callIdAsUUID()) =
+        with(cfg.utkast) {
+            if (enabled) {
+                if (repos.utkast.existsByFnrAndSkjemaType(fnr.fnr, skjemaType)) {
+                    registry.gauge(MELLOMLAGRING, mellomlagrede.inc())
+                    log.info("Oppretter Min Side utkast med eventid $eventId")
+                    utkast.send(ProducerRecord(topic, "$eventId", lagUtkast(cfg,tekst, "$eventId", fnr)))
+                        .get().run {
+                            log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                            repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
+                        }
+                }
+                else {
+                    log.trace("Oppretter ikke nytt Min Side utkast, fant et allerede eksisterende utkast")
+                }
+            }
+            else {
+                log.trace("Oppretter ikke nytt utkast i Ditt Nav for $fnr")
+                null
+            }
+        }
 
     @Counted(value = AVSLUTTET_UTKAST, description = "Antall utkast slettet")
     @Transactional
@@ -78,56 +92,14 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-    @Counted(value = OPPRETTET_UTKAST, description = "Antall utkast opprettet")
-    @Transactional
-    fun opprettUtkast(fnr: Fødselsnummer,
-                      tekst: String,
-                      skjemaType: SkjemaType = STANDARD,
-                      eventId: UUID = callIdAsUUID()) =
-        with(cfg.utkast) {
-            if (enabled) {
-                val u = repos.utkast.findByFnrAndSkjemaType(fnr.fnr,skjemaType)
-                if (u == null) {
-                    registry.gauge(MELLOMLAGRING, mellomlagrede.inc())
-                    log.info("Oppretter Min Side utkast med eventid $eventId")
-                    utkast.send(ProducerRecord(topic,  "$eventId", lagUtkast(tekst, "$eventId",fnr)))
-                        .get().run {
-                            log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
-                            repos.utkast.save(Utkast(fnr.fnr,eventId,CREATED))
-                        }
-                }
-                else {
-                    log.trace("Oppretter ikke nytt Min Side utkast, fant allerede eksisterende innslag")
-                }
-            }
-            else {
-                log.trace("Oppretter ikke nytt utkast i Ditt Nav for $fnr")
-                null
-            }
-        }
-
-    private fun utkast(tittel: String,utkastId: String,fnr: Fødselsnummer) =
-         UtkastJsonBuilder()
-             .withUtkastId(utkastId)
-             .withIdent(fnr.fnr)
-             .withLink(SØKNADSTD.link(cfg.backlinks).toString())
-             .withTittel(tittel)
-
-    private fun lagUtkast(tittel: String,utkastId: String,fnr: Fødselsnummer,) = utkast(tittel,utkastId,fnr).create()
-    private fun oppdaterUtkast(tittel: String,utkastId: String,fnr: Fødselsnummer,) = utkast(tittel,utkastId,fnr).update()
-    private fun slettUtkast(utkastId: String,fnr: Fødselsnummer) =  UtkastJsonBuilder().withUtkastId(utkastId).withIdent(fnr.fnr).delete()
 
     @Transactional
     @Counted(value = OPPRETTET_BESKJED, description = "Antall beskjeder opprettet")
-    fun opprettBeskjed(fnr: Fødselsnummer,
-                       tekst: String,
-                       eventId: UUID = callIdAsUUID(),
-                       type: MinSideNotifikasjonType = MINAAPSTD,
-                       eksternVarsling: Boolean = true) =
+    fun opprettBeskjed(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
             if (enabled) {
                 log.info("Oppretter Min Side beskjed med ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr), beskjed(tekst, varighet,type, eksternVarsling)))
+                minside.send(ProducerRecord(topic, key(cfg, eventId, fnr), beskjed(cfg,tekst, varighet,type, eksternVarsling)))
                     .get().run {
                         log.trace("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                         repos.beskjeder.save(Beskjed(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
@@ -140,17 +112,27 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
+    fun avsluttBeskjed(fnr: Fødselsnummer, eventId: UUID) =
+        with(cfg.beskjed) {
+            if (enabled) {
+                avsluttMinSide(eventId, fnr, BESKJED)
+                repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
+                    it.done = true
+                }
+            }
+            else {
+                log.trace("Sender ikke avslutt beskjed til Min Side for beskjed for $fnr")
+            }
+        }
+
+    @Transactional
     @Counted(value = OPPRETTET_OPPGAVE, description = "Antall oppgaver opprettet")
-    fun opprettOppgave(fnr: Fødselsnummer,
-                       tekst: String,
-                       eventId: UUID = callIdAsUUID(),
-                       type: MinSideNotifikasjonType = MINAAPSTD,
-                       eksternVarsling: Boolean = true) =
+    fun opprettOppgave(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
                 log.info("Oppretter Min Side oppgave med ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic, key(type.skjemaType, eventId, fnr),
-                        oppgave(tekst, varighet, type, eventId, eksternVarsling)))
+                minside.send(ProducerRecord(topic, key(cfg, eventId, fnr),
+                        oppgave(cfg,tekst, varighet, type, eventId, eksternVarsling)))
                     .get().run {
                         log.trace("Sendte opprett oppgave med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                         repos.oppgaver.save(Oppgave(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
@@ -163,10 +145,10 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         }
 
     @Transactional
-    fun avsluttOppgave(fnr: Fødselsnummer, eventId: UUID, type: SkjemaType = STANDARD) =
+    fun avsluttOppgave(fnr: Fødselsnummer, eventId: UUID) =
         with(cfg.oppgave) {
             if (enabled) {
-                avsluttMinSide(eventId, fnr, OPPGAVE, type)
+                avsluttMinSide(eventId, fnr, OPPGAVE)
                 repos.oppgaver.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
                     it.done = true
                 }
@@ -176,22 +158,8 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-    @Transactional
-    fun avsluttBeskjed(fnr: Fødselsnummer, eventId: UUID, type: SkjemaType = STANDARD) =
-        with(cfg.beskjed) {
-            if (enabled) {
-                avsluttMinSide(eventId, fnr, BESKJED, type)
-                repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
-                    it.done = true
-                }
-            }
-            else {
-                log.trace("Sender ikke avslutt beskjed til Min Side for beskjed for $fnr")
-            }
-        }
-
-    private fun avsluttMinSide(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType, type: SkjemaType = STANDARD) =
-        minside.send(ProducerRecord(cfg.done, key(type,eventId, fnr), done())).get().run {
+    private fun avsluttMinSide(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType) =
+        minside.send(ProducerRecord(cfg.done, key(cfg, eventId, fnr), done())).get().run {
             when (notifikasjonType) {
                 OPPGAVE -> oppgaverAvsluttet.increment()
                 BESKJED -> beskjederAvsluttet.increment()
@@ -200,55 +168,6 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-
-    private fun beskjed(tekst: String, varighet: Duration, type: MinSideNotifikasjonType, eksternVarsling: Boolean) =
-        with(cfg.beskjed) {
-            BeskjedInputBuilder()
-                .withSikkerhetsnivaa(sikkerhetsnivaa)
-                .withTidspunkt(now(UTC))
-                .withSynligFremTil(now(UTC).plus(varighet))
-                .withLink(type.link(cfg.backlinks)?.toURL())
-                .withTekst(tekst)
-                .withEksternVarsling(eksternVarsling)
-                .withPrefererteKanaler(*preferertekanaler.toTypedArray())
-                .build().also { m ->
-                    log.trace(CONFIDENTIAL, "Melding ${m.tekst}, prefererte kanaler ${m.prefererteKanaler} og ekstern notifikasjon ${m.eksternVarsling}")
-                }
-        }
-
-    private fun oppgave(tekst: String, varighet: Duration, type: MinSideNotifikasjonType, eventId: UUID, eksternVarsling: Boolean) =
-        with(cfg.oppgave) {
-            OppgaveInputBuilder()
-                .withSikkerhetsnivaa(sikkerhetsnivaa)
-                .withTidspunkt(now(UTC))
-                .withSynligFremTil(now(UTC).plus(varighet))
-                .withLink(type.link(cfg.backlinks, eventId)?.toURL())
-                .withTekst(tekst)
-                .withEksternVarsling(eksternVarsling)
-                .withPrefererteKanaler(*preferertekanaler.toTypedArray())
-                .build().also { o ->
-                    log.trace(CONFIDENTIAL, "Oppgave  ${o.tekst}, prefererte kanaler ${o.prefererteKanaler} og ekstern notifikasjon ${o.eksternVarsling}")
-                }
-        }
-
-    private fun done() = DoneInputBuilder().withTidspunkt(now(UTC)).build()
-
-    private fun key(type: SkjemaType, eventId: UUID, fnr: Fødselsnummer) =
-        with(cfg) {
-            NokkelInputBuilder()
-                .withFodselsnummer(fnr.fnr)
-                .withEventId("$eventId")
-                .withGrupperingsId(type.name)
-                .withAppnavn(app)
-                .withNamespace(namespace)
-                .build().also {
-                    log.info(CONFIDENTIAL, "Key for Ditt Nav $type er $it")
-                }
-        }
-
-    private enum class NotifikasjonType  {
-        OPPGAVE,BESKJED
-    }
     companion object {
         private fun Int.decIfPositive() = if (this > 0) this.dec() else this
         private var mellomlagrede = 0
@@ -258,33 +177,3 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
 }
 
 enum class UtkastType  {CREATED, UPDATED,DONE }
-data class MinSideNotifikasjonType private constructor(val skjemaType: SkjemaType,
-                                                       private val ctx: MinSideBacklinkContext) {
-
-    private enum class MinSideBacklinkContext {
-        MINAAP,
-        SØKNAD
-    }
-
-    fun link(cfg: BacklinksConfig, eventId: UUID? = null) =
-        when (skjemaType) {
-            STANDARD -> when (ctx) {
-                MINAAP -> eventId?.let { fromUri(cfg.innsyn).queryParam("eventId", it).build().toUri() }
-                    ?: cfg.innsyn
-
-                SØKNAD -> cfg.standard
-            }
-
-            UTLAND_SØKNAD -> when (ctx) {
-                MINAAP -> cfg.innsyn
-                SØKNAD -> cfg.utland
-            }
-
-            else -> null
-        }
-
-    companion object {
-        val MINAAPSTD = MinSideNotifikasjonType(STANDARD, MINAAP)
-        val SØKNADSTD = MinSideNotifikasjonType(STANDARD, SØKNAD)
-    }
-}
