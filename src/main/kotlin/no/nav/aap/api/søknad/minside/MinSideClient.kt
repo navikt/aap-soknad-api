@@ -28,6 +28,8 @@ import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkCon
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.SØKNAD
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.api.søknad.minside.MinSideUtkastRepository.Utkast
+import no.nav.aap.api.søknad.minside.UtkastType.CREATED
+import no.nav.aap.api.søknad.minside.UtkastType.DONE
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -66,7 +68,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                         .get().run {
                             log.trace("Sendte avslutt utkast eventid ${it.eventid} på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                             it.done = true
-                            it.type = "deleted"
+                            it.type = DONE
                         }
                 } ?: log.trace("Ingen utkast å avslutte for $fnr")
             }
@@ -91,7 +93,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
                     utkast.send(ProducerRecord(topic,  "$eventId", lagUtkast(tekst, "$eventId",fnr)))
                         .get().run {
                             log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
-                            repos.utkast.save(Utkast(fnr.fnr,eventId,"created"))
+                            repos.utkast.save(Utkast(fnr.fnr,eventId,CREATED))
                         }
                 }
                 else {
@@ -256,6 +258,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     }
 }
 
+enum class UtkastType  {CREATED, UPDATED,DONE }
 data class MinSideNotifikasjonType private constructor(val skjemaType: SkjemaType,
                                                        private val ctx: MinSideBacklinkContext) {
 

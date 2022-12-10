@@ -16,9 +16,10 @@ interface MinSideUtkastRepository : MinSideRepository<Utkast> {
 
     @Entity(name = "utkast")
     @Table(name = "minsideutkast")
-    class Utkast(fnr: String, eventid: UUID, var type: String,
+    class Utkast(fnr: String, eventid: UUID,
+                 @Enumerated(STRING) var type: UtkastType,
                  @Enumerated(STRING) var skjemaType: SkjemaType = STANDARD,
                  done: Boolean = false) : MinSideBaseEntity(fnr,eventid,done,false) {
-        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, type = $type, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id]"
+        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, skjemaType = $skjemaType, type = $type, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id]"
     }
 }
