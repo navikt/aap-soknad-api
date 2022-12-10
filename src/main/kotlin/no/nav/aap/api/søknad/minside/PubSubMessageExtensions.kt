@@ -12,6 +12,11 @@ import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.util.MDCUtil
 
 object PubSubMessageExtensions {
+
+    private const val OVERWRITTEN = "overwrittenByGeneration"
+    private const val EVENT_TYPE = "eventType"
+    private const val METADATA = "metadata"
+    private const val OBJECTID = "objectId"
      fun PubsubMessage.metadata(mapper: ObjectMapper) =
         with(objektNavn()) {
             if (this?.size == 2) {
@@ -26,10 +31,7 @@ object PubSubMessageExtensions {
      private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
      fun PubsubMessage.endeligSlettet() = attributesMap[OVERWRITTEN] == null
      fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { EventType.valueOf(it) }
-    private const val OVERWRITTEN = "overwrittenByGeneration"
-    private const val EVENT_TYPE = "eventType"
-    private const val METADATA = "metadata"
-    private const val OBJECTID = "objectId"
+
 
     data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val eventId: UUID) {
         companion object {

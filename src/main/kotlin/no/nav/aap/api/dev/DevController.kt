@@ -1,11 +1,9 @@
 package no.nav.aap.api.dev
 
-import java.time.Duration
 import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.oppslag.søknad.SøknadClient
-import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
 import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
@@ -14,7 +12,6 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideRepositories
 import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
 import org.springframework.data.domain.Pageable
@@ -47,10 +44,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
                              private val vl: SøknadVLFordeler,
                              private val dittNav: MinSideClient,
                              private val søknad: SøknadClient,
-                             private val arkiv: ArkivJournalpostGenerator,
                              private val repos: MinSideRepositories) {
-
-    private val log = getLogger(javaClass)
 
     @GetMapping("/soknader")
     fun søknader(@RequestParam fnr: Fødselsnummer,
@@ -82,9 +76,6 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     fun slettMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer): ResponseEntity<Void> =
         if (mellomlager.slett(type, fnr)) noContent().build() else notFound().build()
 
-    @GetMapping("mellomlager/alle")
-    fun alle()= ok(mellomlager.ikkeOppdatertSiden(Duration.ofMinutes(2)))
-
     @GetMapping("mellomlager/{type}/{fnr}")
     fun lesMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer) =
         mellomlager.les(type, fnr)?.let { ok(it) } ?: notFound().build()
@@ -103,10 +94,8 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
 
     @DeleteMapping("vedlegg/slett/{fnr}")
     @ResponseStatus(NO_CONTENT)
-    fun slettDokument(@PathVariable fnr: Fødselsnummer, @RequestParam vararg uuids: UUID?) {
-        log.info("DevController sletter uuids ${uuids.toList()}")
+    fun slettDokument(@PathVariable fnr: Fødselsnummer, @RequestParam vararg uuids: UUID?) =
         dokumentLager.slettDokumenter(uuids.toList(), fnr)
-    }
 
     @DeleteMapping("vedlegg/slettAlle/{fnr}")
     @ResponseStatus(NO_CONTENT)

@@ -3,16 +3,9 @@ package no.nav.aap.api.søknad.mellomlagring
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.storage.BlobInfo.newBuilder
 import com.google.cloud.storage.Storage
-import com.google.cloud.storage.Storage.BlobField.METADATA
-import com.google.cloud.storage.Storage.BlobField.TIME_CREATED
-import com.google.cloud.storage.Storage.BlobListOption.fields
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import io.micrometer.core.annotation.Timed
 import java.nio.charset.StandardCharsets.UTF_8
-import java.time.Duration
-import java.time.LocalDateTime.ofEpochSecond
-import java.time.ZoneOffset.UTC
-import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
@@ -72,22 +65,4 @@ internal class GCPKryptertMellomlager(val cfg: BucketConfig,
                 }
             }
         }
-
-    override fun ikkeOppdatertSiden(duration: Duration) =
-        lager.list(cfg.mellom.navn, Storage.BlobListOption.currentDirectory(),fields(TIME_CREATED, METADATA))
-            .iterateAll().mapNotNull { blob ->
-                if (!blob.isDirectory && blob.metadata != null) {
-                    Triple(Fødselsnummer(blob.name.split("/")[0]),
-                            ofEpochSecond(blob.createTime / 1000, 0, UTC),
-                            UUID.fromString(blob.metadata[("uuid")])).also { log.info("Triple for Blob er $it") }
-                }
-                else {
-                    log.info("${MellomlagringVarsler.ME} Blob $blob er directory")
-                    null
-                }
-            }.toList().also { log.info("Triple blob list for Blob er $it") }
-           // .filter {
-           //     it.second.isBefore(now().minus(duration))
-           // }
-
 }

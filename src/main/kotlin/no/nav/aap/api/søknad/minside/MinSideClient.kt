@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional
 @Component
 data class MinSideProdusenter(val avro: KafkaOperations<NokkelInput, Any>, val utkast: KafkaOperations<String, String>)
 @ConditionalOnGCP
-class MinSideClient(private val minside: MinSideProdusenter,
+class MinSideClient(private val produsenter: MinSideProdusenter,
                     private val cfg: MinSideConfig,
                     private val registry: MeterRegistry,
                     private val repos: MinSideRepositories) {
@@ -49,16 +49,16 @@ class MinSideClient(private val minside: MinSideProdusenter,
     private val log = getLogger(javaClass)
 
     @Transactional
-    @Counted(value = OPPRETTET_UTKAST, description = "Antall utkast opprettet")
+    @Counted(OPPRETTET_UTKAST, description = "Antall utkast opprettet")
     fun opprettUtkast(fnr: Fødselsnummer, tekst: String, skjemaType: SkjemaType = STANDARD, eventId: UUID = callIdAsUUID()) =
         with(cfg.utkast) {
             if (enabled) {
                 if (!repos.utkast.existsByFnrAndSkjematype(fnr.fnr, skjemaType)) {
                     log.info("Oppretter Min Side utkast med eventid $eventId")
-                    minside.utkast.send(ProducerRecord(topic, "$eventId", opprettUtkast(cfg,tekst, "$eventId", fnr)))
+                    produsenter.utkast.send(ProducerRecord(topic, "$eventId", opprettUtkast(cfg,tekst, "$eventId", fnr)))
                         .get().also {
-                            log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
-                           repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
+                            log.trace("Sendte opprett utkast med eventid $eventId  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
+                            repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
                             registry.gauge(MELLOMLAGRING, utkast.inc())
                         }
                 }
@@ -71,16 +71,16 @@ class MinSideClient(private val minside: MinSideProdusenter,
                 null
             }
         }
-    @Counted(value = AVSLUTTET_UTKAST, description = "Antall utkast slettet")
+    @Counted(AVSLUTTET_UTKAST, description = "Antall utkast slettet")
     @Transactional
     fun avsluttUtkast(fnr: Fødselsnummer,skjemaType: SkjemaType) =
         with(cfg.utkast) {
             if (enabled) {
                 repos.utkast.findByFnrAndSkjematype(fnr.fnr,skjemaType)?.let { u ->
                     log.info("Avslutter Min Side utkast for eventid ${u.eventid}")
-                    minside.utkast.send(ProducerRecord(topic,  "${u.eventid}", avsluttUtkast("${u.eventid}",fnr)))
+                    produsenter.utkast.send(ProducerRecord(topic,  "${u.eventid}", avsluttUtkast("${u.eventid}",fnr)))
                         .get().also {
-                            log.trace("Sendte avslutt utkast eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
+                            log.trace("Sendte avslutt utkast med eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
                             u.done = true
                             u.type = DONE
                             registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
@@ -95,14 +95,14 @@ class MinSideClient(private val minside: MinSideProdusenter,
 
 
     @Transactional
-    @Counted(value = OPPRETTET_BESKJED, description = "Antall beskjeder opprettet")
+    @Counted(OPPRETTET_BESKJED, description = "Antall beskjeder opprettet")
     fun opprettBeskjed(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
             if (enabled) {
                 log.info("Oppretter Min Side beskjed med ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.avro.send(ProducerRecord(topic, key(cfg, eventId, fnr), beskjed(cfg,tekst, varighet,type, eksternVarsling)))
+                produsenter.avro.send(ProducerRecord(topic, key(cfg, eventId, fnr), beskjed(cfg,tekst, varighet,type, eksternVarsling)))
                     .get().run {
-                        log.trace("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                        log.trace("Sendte opprett beskjed med eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                         repos.beskjeder.save(Beskjed(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
                     }
             }
@@ -127,15 +127,15 @@ class MinSideClient(private val minside: MinSideProdusenter,
         }
 
     @Transactional
-    @Counted(value = OPPRETTET_OPPGAVE, description = "Antall oppgaver opprettet")
+    @Counted(OPPRETTET_OPPGAVE, description = "Antall oppgaver opprettet")
     fun opprettOppgave(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
                 log.info("Oppretter Min Side oppgave med ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.avro.send(ProducerRecord(topic, key(cfg, eventId, fnr),
+                produsenter.avro.send(ProducerRecord(topic, key(cfg, eventId, fnr),
                         oppgave(cfg,tekst, varighet, type, eventId, eksternVarsling)))
                     .get().run {
-                        log.trace("Sendte opprett oppgave med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                        log.trace("Sendte opprett oppgave med eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                         repos.oppgaver.save(Oppgave(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
                     }
             }
@@ -160,7 +160,7 @@ class MinSideClient(private val minside: MinSideProdusenter,
         }
 
     private fun avslutt(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType) =
-        minside.avro.send(ProducerRecord(cfg.done, key(cfg, eventId, fnr), done())).get().run {
+        produsenter.avro.send(ProducerRecord(cfg.done, key(cfg, eventId, fnr), done())).get().run {
             when (notifikasjonType) {
                 OPPGAVE -> oppgaverAvsluttet.increment()
                 BESKJED -> beskjederAvsluttet.increment()

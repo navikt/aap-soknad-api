@@ -16,7 +16,7 @@ data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConf
                          @NestedConfigurationProperty val beskjed: TopicConfig,
                          @NestedConfigurationProperty val oppgave: TopicConfig,
                          @NestedConfigurationProperty val utkast: UtkastConfig,
-                         @DefaultValue("false") val enabled: Boolean,
+                         @DefaultValue("true") val enabled: Boolean,
                          @NestedConfigurationProperty val backlinks: BacklinksConfig,
                          val done: String) : AbstractKafkaConfig(MINSIDE,enabled) {
 
