@@ -48,18 +48,18 @@ class MinSideClient(private val minside: MinSideProdusenter,
 
     private val log = getLogger(javaClass)
 
+    @Transactional
     @Counted(value = OPPRETTET_UTKAST, description = "Antall utkast opprettet")
-   // @Transactional
     fun opprettUtkast(fnr: Fødselsnummer, tekst: String, skjemaType: SkjemaType = STANDARD, eventId: UUID = callIdAsUUID()) =
         with(cfg.utkast) {
             if (enabled) {
                 if (!repos.utkast.existsByFnrAndSkjematype(fnr.fnr, skjemaType)) {
-                    registry.gauge(MELLOMLAGRING, utkast.inc())
                     log.info("Oppretter Min Side utkast med eventid $eventId")
                     minside.utkast.send(ProducerRecord(topic, "$eventId", opprettUtkast(cfg,tekst, "$eventId", fnr)))
                         .get().also {
                             log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
                            repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
+                            registry.gauge(MELLOMLAGRING, utkast.inc())
                         }
                 }
                 else {
@@ -71,22 +71,19 @@ class MinSideClient(private val minside: MinSideProdusenter,
                 null
             }
         }
-    fun foo(bar: () -> String) {
-        print(bar.invoke())
-    }
     @Counted(value = AVSLUTTET_UTKAST, description = "Antall utkast slettet")
-   // @Transactional
+    @Transactional
     fun avsluttUtkast(fnr: Fødselsnummer,skjemaType: SkjemaType) =
         with(cfg.utkast) {
             if (enabled) {
                 repos.utkast.findByFnrAndSkjematype(fnr.fnr,skjemaType)?.let { u ->
-                    registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
                     log.info("Avslutter Min Side utkast for eventid ${u.eventid}")
                     minside.utkast.send(ProducerRecord(topic,  "${u.eventid}", avsluttUtkast("${u.eventid}",fnr)))
                         .get().also {
                             log.trace("Sendte avslutt utkast eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
                             u.done = true
                             u.type = DONE
+                            registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
                         }
                 } ?: log.trace("Ingen utkast å avslutte for $fnr")
             }
