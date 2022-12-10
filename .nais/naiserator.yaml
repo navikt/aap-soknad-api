@@ -64,7 +64,6 @@ spec:
         - application: clamav
           namespace: clamav
         - application: pdfgen
-          namespace: aap
         - application: digdir-krr-proxy
           namespace: team-rocket
         - application: isdialogmelding

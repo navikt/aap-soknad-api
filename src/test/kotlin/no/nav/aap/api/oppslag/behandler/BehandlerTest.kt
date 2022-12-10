@@ -81,6 +81,7 @@ class BehandlerTest {
     @Test
     @DisplayName("Transiente feil skal føre til retry og korrekt respons til slutt")
     fun okResponsEtter2Retries() {
+
         server
             .expect(2,INTERNAL_SERVER_ERROR)
             .expect(respons)

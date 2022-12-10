@@ -56,14 +56,14 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
 
     private fun opprettet(metadata: Metadata) =
         with(metadata) {
-            dittNav.opprettUtkast(fnr,"Du har en påbegynt søknad om AAP",eventId).also {}
+            dittNav.opprettUtkast(fnr,"Du har en påbegynt søknad om AAP",type,eventId).also {}
         }
 
     private fun avsluttet(metadata: Metadata, endeligSlettet: Boolean) =
         with(metadata) {
             if (endeligSlettet) {
-                log.trace("Utkast slettes for $fnr")
-                dittNav.avsluttUtkast(fnr)
+                log.trace("Utkast endelig slettes for $fnr")
+                dittNav.avsluttUtkast(fnr,type)
             }
         }
 

@@ -56,10 +56,10 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
 
     @Counted(value = AVSLUTTET_UTKAST, description = "Antall utkast slettet")
     @Transactional
-    fun avsluttUtkast(fnr: Fødselsnummer) =
+    fun avsluttUtkast(fnr: Fødselsnummer,skjemaType: SkjemaType) =
         with(cfg.utkast) {
             if (enabled) {
-                repos.utkast.findByFnr(fnr.fnr)?.let {
+                repos.utkast.findByFnrAndSkjemaType(fnr.fnr,skjemaType)?.let {
                     registry.gauge(MELLOMLAGRING, mellomlagrede.decIfPositive())
                     log.info("Avslutter Min Side utkast for eventid $it")
                     utkast.send(ProducerRecord(topic,  "${it.eventid}", slettUtkast("${it.eventid}",fnr)))
@@ -80,10 +80,11 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     @Transactional
     fun opprettUtkast(fnr: Fødselsnummer,
                       tekst: String,
+                      skjemaType: SkjemaType = STANDARD,
                       eventId: UUID = callIdAsUUID()) =
         with(cfg.utkast) {
             if (enabled) {
-                val u = repos.utkast.findByFnr(fnr.fnr)
+                val u = repos.utkast.findByFnrAndSkjemaType(fnr.fnr,skjemaType)
                 if (u == null) {
                     registry.gauge(MELLOMLAGRING, mellomlagrede.inc())
                     log.info("Oppretter Min Side utkast med eventid $eventId")
