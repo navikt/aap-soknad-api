@@ -20,8 +20,8 @@ interface MinSideUtkastRepository : MinSideRepository<Utkast> {
     @Table(name = "minsideutkast")
     class Utkast(fnr: String, eventid: UUID,
                  @Enumerated(STRING) var type: UtkastType,
-                 @Enumerated(STRING) var skjemaType: SkjemaType = STANDARD,
+                 @Enumerated(STRING) var skjematype: SkjemaType = STANDARD,
                  done: Boolean = false) : MinSideBaseEntity(fnr,eventid,done,false) {
-        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, skjemaType = $skjemaType, type = $type, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id]"
+        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, skjemaType = $skjematype, type = $type, created=$created, eventid=$eventid, updated=$updated, done=$done,id=$id]"
     }
 }

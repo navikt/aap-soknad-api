@@ -58,7 +58,7 @@ class MinSideClient(private val minside: MinSideProdusenter,
                     registry.gauge(MELLOMLAGRING, utkast.inc())
                     log.info("Oppretter Min Side utkast med eventid $eventId")
                     minside.utkast.send(ProducerRecord(topic, "$eventId", opprettUtkast(cfg,tekst, "$eventId", fnr)))
-                        .addCallback(SendCallback("opprett utkast med tekst $tekst, eventid $eventId") { repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED)) })
+                        .addCallback(SendCallback("opprett utkast med tekst $tekst,  eventid $eventId") { repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED)) })
                         //.get().run {
                          //   log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                         //    repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
