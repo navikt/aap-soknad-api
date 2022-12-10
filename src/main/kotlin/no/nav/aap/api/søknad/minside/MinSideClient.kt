@@ -20,12 +20,12 @@ import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType.BESKJED
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType.OPPGAVE
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
+import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.avsluttUtkast
 import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.beskjed
 import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.done
 import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.key
-import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.lagUtkast
 import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.oppgave
-import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.slettUtkast
+import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.opprettUtkast
 import no.nav.aap.api.søknad.minside.MinSideUtkastRepository.Utkast
 import no.nav.aap.api.søknad.minside.UtkastType.CREATED
 import no.nav.aap.api.søknad.minside.UtkastType.DONE
@@ -35,11 +35,13 @@ import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
+import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
+@Component
+data class MinSideProdusenter(val avro: KafkaOperations<NokkelInput, Any>, val utkast: KafkaOperations<String, String>)
 @ConditionalOnGCP
-class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
-                    private val utkast: KafkaOperations<String, String>,
+class MinSideClient(private val minside: MinSideProdusenter,
                     private val cfg: MinSideConfig,
                     private val registry: MeterRegistry,
                     private val repos: MinSideRepositories) {
@@ -52,9 +54,9 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         with(cfg.utkast) {
             if (enabled) {
                 if (repos.utkast.existsByFnrAndSkjemaType(fnr.fnr, skjemaType)) {
-                    registry.gauge(MELLOMLAGRING, mellomlagrede.inc())
+                    registry.gauge(MELLOMLAGRING, utkast.inc())
                     log.info("Oppretter Min Side utkast med eventid $eventId")
-                    utkast.send(ProducerRecord(topic, "$eventId", lagUtkast(cfg,tekst, "$eventId", fnr)))
+                    minside.utkast.send(ProducerRecord(topic, "$eventId", opprettUtkast(cfg,tekst, "$eventId", fnr)))
                         .get().run {
                             log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                             repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
@@ -76,9 +78,9 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         with(cfg.utkast) {
             if (enabled) {
                 repos.utkast.findByFnrAndSkjemaType(fnr.fnr,skjemaType)?.let {
-                    registry.gauge(MELLOMLAGRING, mellomlagrede.decIfPositive())
+                    registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
                     log.info("Avslutter Min Side utkast for eventid $it")
-                    utkast.send(ProducerRecord(topic,  "${it.eventid}", slettUtkast("${it.eventid}",fnr)))
+                    minside.utkast.send(ProducerRecord(topic,  "${it.eventid}", avsluttUtkast("${it.eventid}",fnr)))
                         .get().run {
                             log.trace("Sendte avslutt utkast eventid ${it.eventid} på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                             it.done = true
@@ -99,7 +101,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         with(cfg.beskjed) {
             if (enabled) {
                 log.info("Oppretter Min Side beskjed med ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic, key(cfg, eventId, fnr), beskjed(cfg,tekst, varighet,type, eksternVarsling)))
+                minside.avro.send(ProducerRecord(topic, key(cfg, eventId, fnr), beskjed(cfg,tekst, varighet,type, eksternVarsling)))
                     .get().run {
                         log.trace("Sendte opprett beskjed med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
                         repos.beskjeder.save(Beskjed(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
@@ -115,7 +117,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     fun avsluttBeskjed(fnr: Fødselsnummer, eventId: UUID) =
         with(cfg.beskjed) {
             if (enabled) {
-                avsluttMinSide(eventId, fnr, BESKJED)
+                avslutt(eventId, fnr, BESKJED)
                 repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
                     it.done = true
                 }
@@ -131,7 +133,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
         with(cfg.oppgave) {
             if (enabled) {
                 log.info("Oppretter Min Side oppgave med ekstern varsling $eksternVarsling og eventid $eventId")
-                minside.send(ProducerRecord(topic, key(cfg, eventId, fnr),
+                minside.avro.send(ProducerRecord(topic, key(cfg, eventId, fnr),
                         oppgave(cfg,tekst, varighet, type, eventId, eksternVarsling)))
                     .get().run {
                         log.trace("Sendte opprett oppgave med tekst $tekst, eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
@@ -148,7 +150,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
     fun avsluttOppgave(fnr: Fødselsnummer, eventId: UUID) =
         with(cfg.oppgave) {
             if (enabled) {
-                avsluttMinSide(eventId, fnr, OPPGAVE)
+                avslutt(eventId, fnr, OPPGAVE)
                 repos.oppgaver.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
                     it.done = true
                 }
@@ -158,8 +160,8 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
             }
         }
 
-    private fun avsluttMinSide(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType) =
-        minside.send(ProducerRecord(cfg.done, key(cfg, eventId, fnr), done())).get().run {
+    private fun avslutt(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType) =
+        minside.avro.send(ProducerRecord(cfg.done, key(cfg, eventId, fnr), done())).get().run {
             when (notifikasjonType) {
                 OPPGAVE -> oppgaverAvsluttet.increment()
                 BESKJED -> beskjederAvsluttet.increment()
@@ -170,7 +172,7 @@ class MinSideClient(private val minside: KafkaOperations<NokkelInput, Any>,
 
     companion object {
         private fun Int.decIfPositive() = if (this > 0) this.dec() else this
-        private var mellomlagrede = 0
+        private var utkast = 0
         private val oppgaverAvsluttet = counter(AVSLUTTET_OPPGAVE)
         private val beskjederAvsluttet = counter(AVSLUTTET_BESKJED)
     }

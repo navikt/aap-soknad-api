@@ -58,9 +58,9 @@ object MinSidePayloadGeneratorer {
             .withLink(SØKNADSTD.link(cfg.backlinks).toString())
             .withTittel(tittel)
 
-     fun lagUtkast(cfg: MinSideConfig,tittel: String,utkastId: String,fnr: Fødselsnummer) = utkast(cfg,tittel,utkastId,fnr).create()
+     fun opprettUtkast(cfg: MinSideConfig, tittel: String, utkastId: String, fnr: Fødselsnummer) = utkast(cfg,tittel,utkastId,fnr).create()
      fun oppdaterUtkast(cfg: MinSideConfig,tittel: String,utkastId: String,fnr: Fødselsnummer,) = utkast(cfg,tittel,utkastId,fnr).update()
-     fun slettUtkast(utkastId: String,fnr: Fødselsnummer) =  UtkastJsonBuilder().withUtkastId(utkastId).withIdent(fnr.fnr).delete()
+     fun avsluttUtkast(utkastId: String, fnr: Fødselsnummer) =  UtkastJsonBuilder().withUtkastId(utkastId).withIdent(fnr.fnr).delete()
 
 
 }
