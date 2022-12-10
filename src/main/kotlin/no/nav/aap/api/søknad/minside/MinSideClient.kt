@@ -14,7 +14,6 @@ import no.nav.aap.api.config.Metrikker.OPPRETTET_UTKAST
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
-import no.nav.aap.api.søknad.SendCallback
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType
@@ -50,7 +49,7 @@ class MinSideClient(private val minside: MinSideProdusenter,
     private val log = getLogger(javaClass)
 
     @Counted(value = OPPRETTET_UTKAST, description = "Antall utkast opprettet")
-    @Transactional
+   // @Transactional
     fun opprettUtkast(fnr: Fødselsnummer, tekst: String, skjemaType: SkjemaType = STANDARD, eventId: UUID = callIdAsUUID()) =
         with(cfg.utkast) {
             if (enabled) {
@@ -58,11 +57,10 @@ class MinSideClient(private val minside: MinSideProdusenter,
                     registry.gauge(MELLOMLAGRING, utkast.inc())
                     log.info("Oppretter Min Side utkast med eventid $eventId")
                     minside.utkast.send(ProducerRecord(topic, "$eventId", opprettUtkast(cfg,tekst, "$eventId", fnr)))
-                        .addCallback(SendCallback("opprett utkast med tekst $tekst,  eventid $eventId") { repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED)) })
-                        //.get().run {
-                         //   log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
-                        //    repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
-                        //}
+                        .get().also {
+                            log.trace("Sendte opprett utkast med tekst $tekst, eventid $eventId  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
+                           repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
+                        }
                 }
                 else {
                     log.trace("Oppretter ikke nytt Min Side utkast, fant et allerede eksisterende utkast")
@@ -77,18 +75,18 @@ class MinSideClient(private val minside: MinSideProdusenter,
         print(bar.invoke())
     }
     @Counted(value = AVSLUTTET_UTKAST, description = "Antall utkast slettet")
-    @Transactional
+   // @Transactional
     fun avsluttUtkast(fnr: Fødselsnummer,skjemaType: SkjemaType) =
         with(cfg.utkast) {
             if (enabled) {
-                repos.utkast.findByFnrAndSkjematype(fnr.fnr,skjemaType)?.let {
+                repos.utkast.findByFnrAndSkjematype(fnr.fnr,skjemaType)?.let { u ->
                     registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
-                    log.info("Avslutter Min Side utkast for eventid $it")
-                    minside.utkast.send(ProducerRecord(topic,  "${it.eventid}", avsluttUtkast("${it.eventid}",fnr)))
-                        .get().run {
-                            log.trace("Sendte avslutt utkast eventid ${it.eventid} på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
-                            it.done = true
-                            it.type = DONE
+                    log.info("Avslutter Min Side utkast for eventid ${u.eventid}")
+                    minside.utkast.send(ProducerRecord(topic,  "${u.eventid}", avsluttUtkast("${u.eventid}",fnr)))
+                        .get().also {
+                            log.trace("Sendte avslutt utkast eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
+                            u.done = true
+                            u.type = DONE
                         }
                 } ?: log.trace("Ingen utkast å avslutte for $fnr")
             }
