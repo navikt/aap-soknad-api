@@ -51,15 +51,15 @@ object MinSidePayloadGeneratorer {
                 .build()
         }
 
-     private fun utkast(cfg: MinSideConfig,tittel: String,utkastId: String,fnr: Fødselsnummer) =
+     private fun utkast(cfg: MinSideConfig,tittel: String,utkastId: String,fnr: Fødselsnummer,type: MinSideNotifikasjonType) =
         UtkastJsonBuilder()
             .withUtkastId(utkastId)
             .withIdent(fnr.fnr)
-            .withLink(SØKNADSTD.link(cfg.backlinks).toString())
+            .withLink(type.link(cfg.backlinks).toString())
             .withTittel(tittel)
 
-     fun opprettUtkast(cfg: MinSideConfig, tittel: String, utkastId: String, fnr: Fødselsnummer) = utkast(cfg,tittel,utkastId,fnr).create()
-     fun oppdaterUtkast(cfg: MinSideConfig,tittel: String,utkastId: String,fnr: Fødselsnummer,) = utkast(cfg,tittel,utkastId,fnr).update()
+     fun opprettUtkast(cfg: MinSideConfig, tittel: String, utkastId: String, fnr: Fødselsnummer, type: MinSideNotifikasjonType = SØKNADSTD) = utkast(cfg,tittel,utkastId,fnr,type).create()
+     fun oppdaterUtkast(cfg: MinSideConfig,tittel: String,utkastId: String,fnr: Fødselsnummer,type: MinSideNotifikasjonType = SØKNADSTD) = utkast(cfg,tittel,utkastId,fnr,type).update()
      fun avsluttUtkast(utkastId: String, fnr: Fødselsnummer) =  UtkastJsonBuilder().withUtkastId(utkastId).withIdent(fnr.fnr).delete()
 
 

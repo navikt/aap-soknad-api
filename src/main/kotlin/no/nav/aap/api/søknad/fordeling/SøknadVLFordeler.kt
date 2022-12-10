@@ -24,7 +24,9 @@ class SøknadVLFordeler(private val fordeler: KafkaOperations<String, Any>) {
                             .add(NAV_CALL_ID, callId().toByteArray())
                             .add("journalpostid", journalpostId.toByteArray())
                     })
-                    .addCallback(SendCallback("${søknad.javaClass.simpleName.lowercase()} til VL med journalpost $journalpostId"))
+                    .addCallback(SendCallback("${søknad.javaClass.simpleName.lowercase()} til VL med journalpost $journalpostId") {
+                        log.info("WOW")
+                    })
             }
         }
         else {

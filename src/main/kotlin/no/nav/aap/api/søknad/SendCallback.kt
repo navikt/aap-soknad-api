@@ -9,7 +9,7 @@ import org.springframework.kafka.core.KafkaProducerException
 import org.springframework.kafka.core.KafkaSendCallback
 import org.springframework.kafka.support.SendResult
 
-class SendCallback<K, V>(private val msg: String) : KafkaSendCallback<K, V> {
+class SendCallback<K, V>(private val msg: String, private val success: ()->Unit ={ }) : KafkaSendCallback<K, V> {
     private val log = getLogger(javaClass)
 
     override fun onSuccess(result: SendResult<K, V>?) =
@@ -19,6 +19,9 @@ class SendCallback<K, V>(private val msg: String) : KafkaSendCallback<K, V> {
                 is String -> log(key.partialMask(), this?.recordMetadata)
                 else -> log("$key", this?.recordMetadata)
             }
+        }.also {
+            log.info("Invoking success function")
+            success.invoke()
         }
 
     override fun onFailure(e: KafkaProducerException) =
