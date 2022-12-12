@@ -19,7 +19,7 @@ interface MinSideUtkastRepository : MinSideRepository<Utkast> {
     fun findByFnrAndSkjematype(fnr: String, skjemaType: SkjemaType): Utkast?
 
 
-    @Query("update utkast u set u.type = :type where u.fnr = :fnr and u.eventid = :eventid")
+    @Query("update utkast u set u.type = :type, u.updated = now()   where u.fnr = :fnr and u.eventid = :eventid")
     @Modifying
     fun oppdaterUtkast(@Param("type") type: UtkastType, @Param("fnr") fnr: String, @Param("eventid") eventid: UUID)
 
