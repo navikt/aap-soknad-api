@@ -14,6 +14,7 @@ import no.nav.aap.util.MDCUtil
 object PubSubMessageExtensions {
 
     private const val OVERWRITTEN = "overwrittenByGeneration"
+    private const val OVERWROTE ="overwroteGeneration"
     private const val EVENT_TYPE = "eventType"
     private const val METADATA = "metadata"
     private const val OBJECTID = "objectId"
@@ -30,7 +31,9 @@ object PubSubMessageExtensions {
      private fun PubsubMessage.data(mapper: ObjectMapper) = mapper.readValue<Map<String, Any>>(data.toStringUtf8())
      private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
      fun PubsubMessage.endeligSlettet() = attributesMap[OVERWRITTEN] == null
-     fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { EventType.valueOf(it) }
+    fun PubsubMessage.førstegang() = attributesMap[OVERWROTE] == null
+
+    fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { EventType.valueOf(it) }
 
 
     data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val eventId: UUID) {

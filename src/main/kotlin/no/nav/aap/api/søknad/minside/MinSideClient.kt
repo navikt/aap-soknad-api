@@ -8,6 +8,7 @@ import no.nav.aap.api.config.Metrikker.AVSLUTTET_BESKJED
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_OPPGAVE
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_UTKAST
 import no.nav.aap.api.config.Metrikker.MELLOMLAGRING
+import no.nav.aap.api.config.Metrikker.OPPDATERT_UTKAST
 import no.nav.aap.api.config.Metrikker.OPPRETTET_BESKJED
 import no.nav.aap.api.config.Metrikker.OPPRETTET_OPPGAVE
 import no.nav.aap.api.config.Metrikker.OPPRETTET_UTKAST
@@ -24,11 +25,13 @@ import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.avsluttUtkast
 import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.beskjed
 import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.done
 import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.key
+import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.oppdaterUtkast
 import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.oppgave
 import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.opprettUtkast
 import no.nav.aap.api.søknad.minside.MinSideUtkastRepository.Utkast
 import no.nav.aap.api.søknad.minside.UtkastType.CREATED
 import no.nav.aap.api.søknad.minside.UtkastType.DONE
+import no.nav.aap.api.søknad.minside.UtkastType.UPDATED
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -63,11 +66,30 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                         }
                 }
                 else {
-                    log.trace("Oppretter ikke nytt Min Side utkast, fant et allerede eksisterende utkast")
+                    log.warn("Oppretter IKKE nytt Min Side utkast, fant et allerede eksisterende utkast")
                 }
             }
             else {
-                log.trace("Oppretter ikke nytt utkast i Ditt Nav for $fnr")
+                log.trace("Oppretter IKKE nytt utkast i Ditt Nav for $fnr, disabled")
+                null
+            }
+        }
+    @Transactional
+    @Counted(OPPDATERT_UTKAST, description = "Antall utkast oppdatert")
+    fun oppdaterUtkast(fnr: Fødselsnummer, nyTekst: String, skjemaType: SkjemaType = STANDARD) =
+        with(cfg.utkast) {
+            if (enabled) {
+                repos.utkast.findByFnrAndSkjematype(fnr.fnr, skjemaType)?.let {u ->
+                    log.info("Oppdaterer Min Side utkast med eventid ${u.eventid}")
+                    produsenter.utkast.send(ProducerRecord(topic, "${u.eventid}", oppdaterUtkast(cfg,nyTekst, "${u.eventid}", fnr)))
+                        .get().also {
+                            log.trace("Sendte oppdater utkast med eventid ${u.eventid}  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
+                            repos.utkast.save(Utkast(fnr.fnr, u.eventid, UPDATED))
+                        }
+                } ?:  log.warn("Oppdaterer ikke nytt Min Side utkast, fant IKKE et allerede eksisterende utkast")
+            }
+            else {
+                log.trace("Oppdaterer IKKE nytt utkast i Ditt Nav for $fnr, disabled")
                 null
             }
         }
@@ -83,12 +105,14 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                             log.trace("Sendte avslutt utkast med eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
                             u.done = true
                             u.type = DONE
+                            utkastAvsluttet.increment()
                             registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
+                            utkastAvsluttet.increment()
                         }
-                } ?: log.trace("Ingen utkast å avslutte for $fnr")
+                } ?: log.warn("Ingen utkast å avslutte for $fnr")
             }
             else {
-                log.trace("Oppretter ikke utkast i Ditt Nav for $fnr, disabled")
+                log.trace("Avslutter IKKE utkast i Ditt Nav for $fnr, disabled")
                 null
             }
         }
@@ -107,7 +131,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     }
             }
             else {
-                log.trace("Oppretter ikke beskjed i Ditt Nav for $fnr")
+                log.trace("Oppretter IKKE beskjed i Ditt Nav for $fnr, disabled")
                 null
             }
         }
@@ -122,7 +146,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 }
             }
             else {
-                log.trace("Sender ikke avslutt beskjed til Min Side for beskjed for $fnr")
+                log.trace("Sender IKKE avslutt beskjed til Min Side for beskjed for $fnr, disabled")
             }
         }
 
@@ -140,7 +164,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     }
             }
             else {
-                log.trace("Oppretter ikke oppgave i Min Side for $fnr")
+                log.trace("Oppretter IKKE oppgave i Min Side for $fnr")
                 null
             }
         }
@@ -155,7 +179,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 }
             }
             else {
-                log.trace("Sender ikke avslutt oppgave til Ditt Nav for $fnr")
+                log.trace("Sender IKKE avslutt oppgave til Ditt Nav for $fnr, disabled")
             }
         }
 
@@ -173,6 +197,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         private fun Int.decIfPositive() = if (this > 0) this.dec() else this
         private var utkast = 0
         private val oppgaverAvsluttet = counter(AVSLUTTET_OPPGAVE)
+        private val utkastAvsluttet = counter(AVSLUTTET_UTKAST)
         private val beskjederAvsluttet = counter(AVSLUTTET_BESKJED)
     }
 }
