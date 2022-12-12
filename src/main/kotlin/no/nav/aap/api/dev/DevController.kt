@@ -3,7 +3,6 @@ package no.nav.aap.api.dev
 import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
-import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
@@ -61,36 +60,27 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     }
 
     @GetMapping("/dittnav/avsluttbeskjed")
-    fun avsluttBeskjed(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) =
-        dittNav.avsluttBeskjed(fnr, uuid)
+    fun avsluttBeskjed(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) = dittNav.avsluttBeskjed(fnr, uuid)
 
     @GetMapping("/dittnav/avsluttoppgave")
-    fun avsluttOppgave(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) =
-        dittNav.avsluttOppgave(fnr, uuid)
+    fun avsluttOppgave(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) = dittNav.avsluttOppgave(fnr, uuid)
 
     @GetMapping("/dittnav/avsluttutkast")
-    fun avsluttUtkast(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) =
-        dittNav.avsluttUtkastDev(fnr,uuid)
-
-    //b837486f-3d61-41bd-a7c4-0b4f7d532c59
+    fun avsluttUtkast(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) = dittNav.avsluttUtkastDev(fnr,uuid)
 
     @PostMapping("vl/{fnr}")
     @ResponseStatus(CREATED)
-    fun vl(@PathVariable fnr: Fødselsnummer, @RequestBody søknad: StandardSøknad) =
-        vl.fordel(søknad, fnr, "42", cfg.standard)
+    fun vl(@PathVariable fnr: Fødselsnummer, @RequestBody søknad: StandardSøknad) = vl.fordel(søknad, fnr, "42", cfg.standard)
 
     @DeleteMapping("mellomlager/{type}/{fnr}")
-    fun slettMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer): ResponseEntity<Void> =
-        if (mellomlager.slett(type, fnr)) noContent().build() else notFound().build()
+    fun slettMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer): ResponseEntity<Void> = if (mellomlager.slett(type, fnr)) noContent().build() else notFound().build()
 
     @GetMapping("mellomlager/{type}/{fnr}")
-    fun lesMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer) =
-        mellomlager.les(type, fnr)?.let { ok(it) } ?: notFound().build()
+    fun lesMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer) = mellomlager.les(type, fnr)?.let { ok(it) } ?: notFound().build()
 
     @PostMapping("mellomlager/{type}/{fnr}", produces = [TEXT_PLAIN_VALUE])
     @ResponseStatus(CREATED)
-    fun mellomlagre(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer, @RequestBody data: String) =
-        mellomlager.lagre(data, type, fnr)
+    fun mellomlagre(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer, @RequestBody data: String) = mellomlager.lagre(data, type, fnr)
 
     @PostMapping("vedlegg/lagre/{fnr}", consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
@@ -101,8 +91,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
 
     @DeleteMapping("vedlegg/slett/{fnr}")
     @ResponseStatus(NO_CONTENT)
-    fun slettDokument(@PathVariable fnr: Fødselsnummer, @RequestParam vararg uuids: UUID?) =
-        dokumentLager.slettDokumenter(uuids.toList(), fnr)
+    fun slettDokument(@PathVariable fnr: Fødselsnummer, @RequestParam vararg uuids: UUID?) = dokumentLager.slettDokumenter(uuids.toList(), fnr)
 
     @DeleteMapping("vedlegg/slettAlle/{fnr}")
     @ResponseStatus(NO_CONTENT)

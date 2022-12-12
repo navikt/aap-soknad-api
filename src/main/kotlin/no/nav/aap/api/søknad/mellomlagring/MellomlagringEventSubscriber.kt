@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.spring.pubsub.core.subscriber.PubSubSubscriberTemplate
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
+import java.time.Duration.*
+import java.time.LocalDateTime
+import java.time.ZonedDateTime.*
+import kotlin.time.toKotlinDuration
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.eventType
@@ -43,6 +47,9 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                    log.trace("Oppdatert utkast grunnet oppdatering for ${md.fnr}") }
                             }
                             OBJECT_DELETE -> if (endeligSlettet()) {
+                                attributesMap["timeCreated"]?.let {
+                                    log.info("Slettet utkast etter ${between(parse(it).toLocalDateTime(), LocalDateTime.now()).toKotlinDuration()}")
+                                }
                                 minside.avsluttUtkast(md.fnr, md.type).also {
                                     log.trace("Endelig slettet utkast for ${md.fnr}")
                                 }
