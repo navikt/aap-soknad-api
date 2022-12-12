@@ -56,7 +56,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         with(cfg.utkast) {
             if (enabled) {
                 if (!repos.utkast.existsByFnrAndSkjematype(fnr.fnr, skjemaType)) {
-                    log.info("Oppretter Min Side utkast med eventid $eventId")
+                    log.trace("Oppretter Min Side utkast med eventid $eventId")
                     produsenter.utkast.send(ProducerRecord(topic, "$eventId", opprettUtkast(cfg,tekst, "$eventId", fnr)))
                         .get().also {
                             log.trace("Sendte opprett utkast med eventid $eventId  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
@@ -79,7 +79,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         with(cfg.utkast) {
             if (enabled) {
                 repos.utkast.findByFnrAndSkjematype(fnr.fnr, skjemaType)?.let {u ->
-                    log.info("Oppdaterer Min Side utkast med eventid ${u.eventid}")
+                    log.trace("Oppdaterer Min Side utkast med eventid ${u.eventid}")
                     produsenter.utkast.send(ProducerRecord(topic, "${u.eventid}", oppdaterUtkast(cfg,nyTekst, "${u.eventid}", fnr)))
                         .get().also {
                             log.trace("Sendte oppdater utkast med eventid ${u.eventid}  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
@@ -98,7 +98,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         with(cfg.utkast) {
             if (enabled) {
                 repos.utkast.findByFnrAndSkjematype(fnr.fnr,skjemaType)?.let { u ->
-                    log.info("Avslutter Min Side utkast for eventid ${u.eventid}")
+                    log.trace("Avslutter Min Side utkast for eventid ${u.eventid}")
                     produsenter.utkast.send(ProducerRecord(topic,  "${u.eventid}", avsluttUtkast("${u.eventid}",fnr)))
                         .get().also {
                             log.trace("Sendte avslutt utkast med eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
@@ -125,7 +125,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
     fun opprettBeskjed(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
             if (enabled) {
-                log.info("Oppretter Min Side beskjed med ekstern varsling $eksternVarsling og eventid $eventId")
+                log.trace("Oppretter Min Side beskjed med ekstern varsling $eksternVarsling og eventid $eventId")
                 produsenter.avro.send(ProducerRecord(topic, key(cfg, eventId, fnr), beskjed(cfg,tekst, varighet,type, eksternVarsling)))
                     .get().run {
                         log.trace("Sendte opprett beskjed med eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
@@ -157,7 +157,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
     fun opprettOppgave(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
-                log.info("Oppretter Min Side oppgave med ekstern varsling $eksternVarsling og eventid $eventId")
+                log.trace("Oppretter Min Side oppgave med ekstern varsling $eksternVarsling og eventid $eventId")
                 produsenter.avro.send(ProducerRecord(topic, key(cfg, eventId, fnr),
                         oppgave(cfg,tekst, varighet, type, eventId, eksternVarsling)))
                     .get().run {
@@ -191,12 +191,12 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 OPPGAVE -> oppgaverAvsluttet.increment()
                 BESKJED -> beskjederAvsluttet.increment()
             }.also {
-                log.info("Sendte avslutt $notifikasjonType med eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                log.trace("Sendte avslutt $notifikasjonType med eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
             }
         }
 
     companion object {
-        private fun Int.decIfPositive() = if (this > 0) this.dec() else this
+        private fun Int.decIfPositive() = if (this > 0) dec() else this
         private var utkast = 0
         private val oppgaverAvsluttet = counter(AVSLUTTET_OPPGAVE)
         private val utkastAvsluttet = counter(AVSLUTTET_UTKAST)

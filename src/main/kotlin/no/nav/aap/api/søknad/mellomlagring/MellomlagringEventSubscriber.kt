@@ -36,7 +36,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                     val type = eventType()
                     log.trace(CONFIDENTIAL, "Data i $type er ${data.toStringUtf8()}, attributter er $attributesMap")
                     metadata(mapper)?.let { md ->
-                        log.info("PubSub event $type med metadata $md for for ${md.fnr}")
+                        log.trace("PubSub event $type med metadata $md for for ${md.fnr}")
                         when (type) {
                             OBJECT_FINALIZE -> if (førstegang())  {
                                 minside.opprettUtkast(md.fnr, "Du har en påbegynt ${md.type.tittel.decap()}", md.type, md.eventId).also {
