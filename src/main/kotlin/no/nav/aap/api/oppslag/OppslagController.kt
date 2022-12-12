@@ -22,7 +22,7 @@ import org.springframework.http.CacheControl.noCache
 import org.springframework.http.ContentDisposition.attachment
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType.*
-import org.springframework.http.ResponseEntity.ok
+import org.springframework.http.ResponseEntity.*
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 
@@ -46,6 +46,9 @@ class OppslagController(
 
     @GetMapping("/soekerutenbarn")
     fun søkerUtenBarn() = pdl.søkerUtenBarn()
+
+    @GetMapping("/kontonummer")
+    fun kontonummer() = konto.kontoInfo()?.let { it } ?: notFound()
 
     @GetMapping("/behandlere")
     fun behandlere() = behandler.behandlerInfo()
@@ -85,9 +88,6 @@ class OppslagController(
                     })
                     .body(it)
             }
-
-    @GetMapping("/kontonummer")
-    fun kontonummer() = konto.kontoInfo()
 
     companion object {
         const val OPPSLAG_BASE = "/oppslag"
