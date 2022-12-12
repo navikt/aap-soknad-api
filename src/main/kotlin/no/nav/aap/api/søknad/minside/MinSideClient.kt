@@ -115,6 +115,10 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
             }
         }
 
+    @Transactional
+    fun avsluttUtkastDev(fnr: Fødselsnummer,uuid: UUID) = produsenter.utkast.send(ProducerRecord(cfg.utkast.topic,  "$uuid", avsluttUtkast("$uuid",fnr)))
+
+
 
     @Transactional
     @Counted(OPPRETTET_BESKJED, description = "Antall beskjeder opprettet")

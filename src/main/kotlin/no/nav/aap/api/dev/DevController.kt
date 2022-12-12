@@ -3,6 +3,7 @@ package no.nav.aap.api.dev
 import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
+import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
@@ -66,6 +67,12 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     @GetMapping("/dittnav/avsluttoppgave")
     fun avsluttOppgave(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) =
         dittNav.avsluttOppgave(fnr, uuid)
+
+    @GetMapping("/dittnav/avsluttutkast")
+    fun avsluttUtkast(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) =
+        dittNav.avsluttUtkastDev(fnr,uuid)
+
+    //b837486f-3d61-41bd-a7c4-0b4f7d532c59
 
     @PostMapping("vl/{fnr}")
     @ResponseStatus(CREATED)
