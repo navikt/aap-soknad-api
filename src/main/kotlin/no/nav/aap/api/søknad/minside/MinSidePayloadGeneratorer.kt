@@ -45,6 +45,7 @@ object MinSidePayloadGeneratorer {
         with(cfg) {
             NokkelInputBuilder()
                 .withFodselsnummer(fnr.fnr)
+                .withGrupperingsId("Denne fjernes snart uansett")
                 .withEventId("$eventId")
                 .withAppnavn(app)
                 .withNamespace(namespace)
