@@ -166,6 +166,8 @@ saf:
   enabled: true
 pdf:
   enabled: true
+konto:
+  enabled: true
 krr:
   enabled: true
 minside:

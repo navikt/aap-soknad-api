@@ -37,8 +37,6 @@ organisasjon:
     base-uri: https://ereg-services.prod-fss-fss-pub.nais.io
 saf:
     base-uri: https://safselvbetjening.prod-fss-pub.nais.io
-konto:
-    enabled: true
 vl:
     enabled: false
     standard:
