@@ -31,25 +31,24 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                 with(event.pubsubMessage) {
                     val type = eventType()
                     log.trace(CONFIDENTIAL, "Data i $type er ${data.toStringUtf8()}, attributter er $attributesMap")
-                    metadata(mapper)?.let {
-                        log.info("PubSub event $type med metadata $it")
+                    metadata(mapper)?.let { md ->
+                        log.info("PubSub event $type med metadata $md for for ${md.fnr}")
                         when (type) {
                             OBJECT_FINALIZE -> if (førstegang())  {
-                                minside.opprettUtkast(it.fnr, "Du har en påbegynt ${it.type.tittel.decap()}", it.type, it.eventId).also {
-                                    log.trace("Opprettet førstegangs utkast")
+                                minside.opprettUtkast(md.fnr, "Du har en påbegynt ${md.type.tittel.decap()}", md.type, md.eventId).also {
+                                    log.trace("Opprettet førstegangs utkast for ${md.fnr}")
                                 }
                             } else {
-                                log.trace("Oppdatering av mellomlagring")
-                               minside.oppdaterUtkast(it.fnr,"Du har en påbegynt ${it.type.tittel.decap()}",it.type).also {
-                                   log.trace("Oppdatert utkast grunnet oppdatering") }
+                               minside.oppdaterUtkast(md.fnr,"Du har en påbegynt ${md.type.tittel.decap()}",md.type).also {
+                                   log.trace("Oppdatert utkast grunnet oppdatering for ${md.fnr}") }
                             }
                             OBJECT_DELETE -> if (endeligSlettet()) {
-                                minside.avsluttUtkast(it.fnr, it.type).also {
-                                    log.trace("Endelig slettet utkast")
+                                minside.avsluttUtkast(md.fnr, md.type).also {
+                                    log.trace("Endelig slettet utkast for ${md.fnr}")
                                 }
                             } else {
                                 Unit.also {
-                                    log.trace("Slettet grunnet ny versjon, ingen oppdatering av utkast")
+                                    log.trace("Slettet grunnet ny versjon, ingen oppdatering av utkast for ${md.fnr}")
                                 }
                             }
                             else -> log.warn("Event $type ikke håndtert (dette skal aldri skje)")
