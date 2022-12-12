@@ -30,7 +30,6 @@ import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.oppgave
 import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.opprettUtkast
 import no.nav.aap.api.søknad.minside.MinSideUtkastRepository.Utkast
 import no.nav.aap.api.søknad.minside.UtkastType.CREATED
-import no.nav.aap.api.søknad.minside.UtkastType.DONE
 import no.nav.aap.api.søknad.minside.UtkastType.UPDATED
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
@@ -103,8 +102,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     produsenter.utkast.send(ProducerRecord(topic,  "${u.eventid}", avsluttUtkast("${u.eventid}",fnr)))
                         .get().also {
                             log.trace("Sendte avslutt utkast med eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
-                            u.done = true
-                            u.type = DONE
+                            repos.utkast.delete(u)
                             utkastAvsluttet.increment()
                             registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
                             utkastAvsluttet.increment()
