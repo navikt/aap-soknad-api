@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient.Builder
 import org.springframework.web.reactive.function.client.bodyToMono
 
-@Component
+//@Component
 class MellomlagringVarsler(private val minside: MinSideClient, private val elector: LeaderElector, private val repos: MinSideRepositories) {
     val log = getLogger(javaClass)
 
@@ -29,7 +29,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val elect
 
 
 
-@Component
+//@Component
 class LeaderElector(@Value("\${elector.path}") private val elector: String, private val b: Builder) {
     val log = getLogger(javaClass)
 
