@@ -84,7 +84,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     produsenter.utkast.send(ProducerRecord(topic, "${u.eventid}", oppdaterUtkast(cfg,nyTekst, "${u.eventid}", fnr)))
                         .get().also {
                             log.trace("Sendte oppdater utkast med eventid ${u.eventid}  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
-                            repos.utkast.save(Utkast(fnr.fnr, u.eventid, UPDATED))
+                            repos.utkast.oppdaterUtkast(UPDATED,fnr.fnr, u.eventid)
                         }
                 } ?:  log.warn("Oppdaterer ikke nytt Min Side utkast, fant IKKE et allerede eksisterende utkast")
             }

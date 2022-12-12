@@ -16,7 +16,7 @@ import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.boot.CommandLineRunner
 
 @ConditionalOnDev
-class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
+class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                    private val cfg: BucketConfig,
                                    private val mapper: ObjectMapper,
                                    private val subscriber: PubSubSubscriberTemplate) : CommandLineRunner {
@@ -35,16 +35,16 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                         log.info("PubSub event $type med metadata $it")
                         when (type) {
                             OBJECT_FINALIZE -> if (førstegang())  {
-                                dittNav.opprettUtkast(it.fnr, "Du har en påbegynt ${it.type.tittel.decap()}", it.type, it.eventId).also {
+                                minside.opprettUtkast(it.fnr, "Du har en påbegynt ${it.type.tittel.decap()}", it.type, it.eventId).also {
                                     log.trace("Opprettet førstegangs utkast")
                                 }
                             } else {
-                                log.trace("Oppdatering av mellomlagring NOOP")
-                               // dittNav.oppdaterUtkast(it.fnr,"Du har en påbegynt ${it.type.tittel.decap()}",it.type).also {
-                               //     log.trace("Oppdatert utkast grunnet oppdatering") }
+                                log.trace("Oppdatering av mellomlagring")
+                               minside.oppdaterUtkast(it.fnr,"Du har en påbegynt ${it.type.tittel.decap()}",it.type).also {
+                                   log.trace("Oppdatert utkast grunnet oppdatering") }
                             }
                             OBJECT_DELETE -> if (endeligSlettet()) {
-                                dittNav.avsluttUtkast(it.fnr, it.type).also {
+                                minside.avsluttUtkast(it.fnr, it.type).also {
                                     log.trace("Endelig slettet utkast")
                                 }
                             } else {
