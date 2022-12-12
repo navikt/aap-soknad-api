@@ -39,6 +39,7 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                                     log.trace("Opprettet førstegangs utkast")
                                 }
                             } else {
+                                log.trace("Oppdatering av mellomlagring NOOP")
                                // dittNav.oppdaterUtkast(it.fnr,"Du har en påbegynt ${it.type.tittel.decap()}",it.type).also {
                                //     log.trace("Oppdatert utkast grunnet oppdatering") }
                             }
