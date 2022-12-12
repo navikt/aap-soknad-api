@@ -36,11 +36,11 @@ class MellomlagringEventSubscriber(private val dittNav: MinSideClient,
                         when (type) {
                             OBJECT_FINALIZE -> if (førstegang())  {
                                 dittNav.opprettUtkast(it.fnr, "Du har en påbegynt ${it.type.tittel.decap()}", it.type, it.eventId).also {
-                                    log.trace("Opprettet utkast")
+                                    log.trace("Opprettet førstegangs utkast")
                                 }
                             } else {
-                                dittNav.oppdaterUtkast(it.fnr,"Du har en påbegynt ${it.type.tittel.decap()}",it.type).also {
-                                    log.trace("Oppdatert utkast grunnet oppdatering") }
+                               // dittNav.oppdaterUtkast(it.fnr,"Du har en påbegynt ${it.type.tittel.decap()}",it.type).also {
+                               //     log.trace("Oppdatert utkast grunnet oppdatering") }
                             }
                             OBJECT_DELETE -> if (endeligSlettet()) {
                                 dittNav.avsluttUtkast(it.fnr, it.type).also {
