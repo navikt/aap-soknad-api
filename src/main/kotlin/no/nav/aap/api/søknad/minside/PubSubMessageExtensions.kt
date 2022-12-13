@@ -13,7 +13,10 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
-import no.nav.aap.util.MDCUtil
+import no.nav.aap.util.LoggerUtil
+import no.nav.aap.util.MDCUtil.NAV_CALL_ID
+import no.nav.aap.util.MDCUtil.toMDC
+import no.nav.aap.util.StringExtensions.partialMask
 
 object PubSubMessageExtensions {
 
@@ -23,7 +26,10 @@ object PubSubMessageExtensions {
     private const val METADATA = "metadata"
     private const val OBJECTID = "objectId"
     private const val TIMECREATED = "timeCreated"
-     fun PubsubMessage.metadata(mapper: ObjectMapper) =
+
+    private val log = LoggerUtil.getLogger(javaClass)
+
+    fun PubsubMessage.metadata(mapper: ObjectMapper) =
         with(objektNavn()) {
             if (this?.size == 2) {
                 data(mapper)[METADATA]?.let {
@@ -45,11 +51,12 @@ object PubSubMessageExtensions {
     data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val eventId: UUID) {
         companion object {
             fun getInstance(type: String?, fnr: String?, eventId: String?) =
-                if (!(eventId == null || fnr == null || type == null)) {
-                    MDCUtil.toMDC(MDCUtil.NAV_CALL_ID, eventId)
+                if (eventId != null && fnr != null && type != null) {
+                    toMDC(NAV_CALL_ID, eventId)
                     Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(eventId))
                 }
                 else {
+                    log.warn("Metadata type=$type  fnr=${fnr?.partialMask()}  eventid=$eventId")
                     null
                 }
         }
