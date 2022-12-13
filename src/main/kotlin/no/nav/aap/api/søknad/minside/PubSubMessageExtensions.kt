@@ -34,11 +34,11 @@ object PubSubMessageExtensions {
             if (this?.size == 2) {
                 data(mapper)[METADATA]?.let {
                     it as Map<String, String>
-                    log.warn("Metadata RAW er $it")
+                    log.warn("Metadata RAW er $it, objectnavn er $this")
                     Metadata.getInstance(it[SKJEMATYPE], this[0], it[UUID_])
                 }
             }
-            else { log.warn("fant ikke FNR fra $this")
+            else {
                 null
             }
         }
@@ -59,7 +59,6 @@ object PubSubMessageExtensions {
                     Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(eventId))
                 }
                 else {
-                    log.warn("Metadata getInstance type=$type  fnr=${fnr?.partialMask()}  eventid=$eventId")
                     null
                 }
         }
