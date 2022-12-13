@@ -34,6 +34,7 @@ object PubSubMessageExtensions {
             if (this?.size == 2) {
                 data(mapper)[METADATA]?.let {
                     it as Map<String, String>
+                    log.warn("Metadata RAW er $it")
                     Metadata.getInstance(it[SKJEMATYPE], this[0], it[UUID_])
                 }
             }
