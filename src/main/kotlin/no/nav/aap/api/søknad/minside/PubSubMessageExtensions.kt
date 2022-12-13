@@ -37,7 +37,9 @@ object PubSubMessageExtensions {
                     Metadata.getInstance(it[SKJEMATYPE], this[0], it[UUID_])
                 }
             }
-            else { null}
+            else { log.warn("fant ikke FNR fra $this")
+                null
+            }
         }
      private fun PubsubMessage.data(mapper: ObjectMapper) = mapper.readValue<Map<String, Any>>(data.toStringUtf8())
      private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
@@ -56,7 +58,7 @@ object PubSubMessageExtensions {
                     Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(eventId))
                 }
                 else {
-                    log.warn("Metadata type=$type  fnr=${fnr?.partialMask()}  eventid=$eventId")
+                    log.warn("Metadata getInstance type=$type  fnr=${fnr?.partialMask()}  eventid=$eventId")
                     null
                 }
         }
