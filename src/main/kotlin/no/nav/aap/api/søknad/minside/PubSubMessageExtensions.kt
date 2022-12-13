@@ -16,6 +16,7 @@ import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.toMDC
+import no.nav.aap.util.StringExtensions.partialMask
 
 object PubSubMessageExtensions {
 
@@ -30,12 +31,13 @@ object PubSubMessageExtensions {
 
     fun PubsubMessage.metadata(mapper: ObjectMapper) =
         with(objektNavn()) {
-            log.warn("objectnavn er $this")
             if (this?.size == 2) {
                 data(mapper)[METADATA]?.let {
                     it as Map<String, String>
-                    log.warn("Metadata RAW er $it, objectnavn er $this")
-                    Metadata.getInstance(it[SKJEMATYPE], this[0], it[UUID_])
+                    log.warn("Metadata RAW er $it, objectnavn er ${this[0].partialMask()}")
+                    val md = Metadata.getInstance(it[SKJEMATYPE], this[0], it[UUID_])
+                    log.warn("Metadata er $md")
+                    md
                 }
             }
             else {
