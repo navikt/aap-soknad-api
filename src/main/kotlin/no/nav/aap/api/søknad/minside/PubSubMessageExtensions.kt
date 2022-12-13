@@ -16,7 +16,6 @@ import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.toMDC
-import no.nav.aap.util.StringExtensions.partialMask
 
 object PubSubMessageExtensions {
 
@@ -31,6 +30,7 @@ object PubSubMessageExtensions {
 
     fun PubsubMessage.metadata(mapper: ObjectMapper) =
         with(objektNavn()) {
+            log.warn("objectnavn er $this")
             if (this?.size == 2) {
                 data(mapper)[METADATA]?.let {
                     it as Map<String, String>
