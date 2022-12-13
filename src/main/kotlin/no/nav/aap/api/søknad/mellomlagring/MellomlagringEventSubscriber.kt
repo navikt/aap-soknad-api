@@ -37,23 +37,22 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                         when (eventType) {
                             OBJECT_FINALIZE -> if (førstegang())  {
                                 minside.opprettUtkast(md.fnr, "Du har en påbegynt ${md.type.tittel.decap()}", md.type, md.eventId).also {
-                                    log.trace("Opprettet muligens førstegangs utkast for ${md.fnr}")
+                                    log.info("Opprettet muligens førstegangs utkast for ${md.fnr}")
                                 }
                             } else {
                                 minside.oppdaterUtkast(md.fnr,"Du har en påbegynt ${md.type.tittel.decap()}",md.type).also {
-                                    log.trace("Oppdaterte muligens utkast grunnet oppdatering for ${md.fnr}") }
+                                    log.info("Oppdaterte muligens utkast grunnet oppdatering for ${md.fnr}") }
                             }
                             OBJECT_DELETE -> if (endeligSlettet()) {
                                 with(md) {
                                     log.info("Slettet muligens utkast endelig hendelse etter ${varighet()}")
                                     minside.avsluttUtkast(fnr, type).also {
-                                        log.trace("Endelig muligens slettet utkast for ${md.fnr}")
+                                        log.info("Endelig muligens slettet utkast for ${md.fnr}")
                                     }
                                 }
-
                             } else {
                                 Unit.also {
-                                    log.trace("Slettet grunnet ny versjon, ingen oppdatering av utkast for ${md.fnr}")
+                                    log.info("Slettet grunnet ny versjon, ingen oppdatering av utkast for ${md.fnr}")
                                 }
                             }
                             else -> log.warn("Event $eventType ikke håndtert (dette skal aldri skje)")
