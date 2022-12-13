@@ -37,17 +37,17 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                         when (eventType) {
                             OBJECT_FINALIZE -> if (førstegang())  {
                                 minside.opprettUtkast(md.fnr, "Du har en påbegynt ${md.type.tittel.decap()}", md.type, md.eventId).also {
-                                    log.trace("Opprettet førstegangs utkast for ${md.fnr}")
+                                    log.trace("Opprettet muligens førstegangs utkast for ${md.fnr}")
                                 }
                             } else {
                                 minside.oppdaterUtkast(md.fnr,"Du har en påbegynt ${md.type.tittel.decap()}",md.type).also {
-                                    log.trace("Oppdatert utkast grunnet oppdatering for ${md.fnr}") }
+                                    log.trace("Oppdaterte muligens utkast grunnet oppdatering for ${md.fnr}") }
                             }
                             OBJECT_DELETE -> if (endeligSlettet()) {
                                 with(md) {
-                                    log.info("Slettet utkast endelig hendelse etter ${varighet()}")
+                                    log.info("Slettet muligens utkast endelig hendelse etter ${varighet()}")
                                     minside.avsluttUtkast(fnr, type).also {
-                                        log.trace("Endelig slettet utkast for ${md.fnr}")
+                                        log.trace("Endelig muligens slettet utkast for ${md.fnr}")
                                     }
                                 }
 
