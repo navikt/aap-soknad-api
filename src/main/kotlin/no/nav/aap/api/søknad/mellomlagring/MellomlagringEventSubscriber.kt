@@ -4,15 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.spring.pubsub.core.subscriber.PubSubSubscriberTemplate
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
-import java.time.Duration
-import java.time.LocalDateTime
-import java.time.ZonedDateTime
-import kotlin.time.toKotlinDuration
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.eventType
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.førstegang
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.metadata
+import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.varighet
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.decap
 import no.nav.boot.conditionals.ConditionalOnDev
@@ -33,11 +30,10 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
             subscriber.subscribe(subscription.navn) { event ->
                 event.ack()
                 with(event.pubsubMessage) {
-                    val type = eventType()
-                    log.trace(CONFIDENTIAL, "Data i $type er ${data.toStringUtf8()}, attributter er $attributesMap")
+                    val eventType = eventType()
                     metadata(mapper)?.let { md ->
-                        log.trace("PubSub event $type med metadata $md for for ${md.fnr}")
-                        when (type) {
+                        log.trace(CONFIDENTIAL,"Event type $eventType med metadata $md for for ${md.fnr}, attributter er $attributesMap")
+                        when (eventType) {
                             OBJECT_FINALIZE -> if (førstegang())  {
                                 minside.opprettUtkast(md.fnr, "Du har en påbegynt ${md.type.tittel.decap()}", md.type, md.eventId).also {
                                     log.trace("Opprettet førstegangs utkast for ${md.fnr}")
@@ -47,18 +43,19 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                    log.trace("Oppdatert utkast grunnet oppdatering for ${md.fnr}") }
                             }
                             OBJECT_DELETE -> if (endeligSlettet()) {
-                                attributesMap["timeCreated"]?.let {
-                                    log.info("Slettet utkast etter ${Duration.between(ZonedDateTime.parse(it).toLocalDateTime(), LocalDateTime.now()).toKotlinDuration()}")
+                                with(md) {
+                                    log.info("Slettet utkast endelig hendelse etter ${varighet()}")
+                                    minside.avsluttUtkast(fnr, type).also {
+                                        log.trace("Endelig slettet utkast for ${md.fnr}")
+                                    }
                                 }
-                                minside.avsluttUtkast(md.fnr, md.type).also {
-                                    log.trace("Endelig slettet utkast for ${md.fnr}")
-                                }
+
                             } else {
                                 Unit.also {
                                     log.trace("Slettet grunnet ny versjon, ingen oppdatering av utkast for ${md.fnr}")
                                 }
                             }
-                            else -> log.warn("Event $type ikke håndtert (dette skal aldri skje)")
+                            else -> log.warn("Event $eventType ikke håndtert (dette skal aldri skje)")
                         }
                     } ?: log.warn("Fant ikke forventede metadata i event ${event.pubsubMessage}")
                 }
