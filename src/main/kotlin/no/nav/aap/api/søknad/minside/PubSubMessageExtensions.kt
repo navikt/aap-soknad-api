@@ -34,9 +34,7 @@ object PubSubMessageExtensions {
             if (this?.size == 2) {
                 data(mapper)[METADATA]?.let {
                     val map = it as Map<String, String>
-                    log.warn("Metadata RAW er $map, objectnavn er ${this[0].partialMask()}")
                     val md = Metadata.getInstance(map[SKJEMATYPE], this[0], map[UUID_])
-                    log.warn("Metadata er $md")
                     md
                 }
             }
