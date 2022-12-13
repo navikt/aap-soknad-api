@@ -56,3 +56,8 @@ minside:
         innsyn: https://www.nav.no/aap/mine-aap
         standard: https://www.nav.no/aap/soknad
         utland: https://aap-soknad.nav.no/aap/soknad/utland
+buckets:
+    mellom:
+        subscription:
+            navn: ${mellomlagring.navn}-subscription
+            topic: ${mellomlagring.navn}-topic

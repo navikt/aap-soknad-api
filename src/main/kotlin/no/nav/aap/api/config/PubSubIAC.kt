@@ -30,7 +30,7 @@ class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, pri
                 lagTopic(topic)
             }
             else {
-                log.trace("Topic $topic finnes allerede i ${cfg.project}")
+                log.info("Topic $topic finnes allerede i ${cfg.project}")
             }
             if (!harSubscription(navn)) {
                 lagSubscription(this)
