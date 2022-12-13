@@ -44,7 +44,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                             }
                             OBJECT_DELETE -> if (endeligSlettet()) {
                                 with(md) {
-                                    log.info("Slettet muligens utkast endelig hendelse etter ${varighet()}")
+                                    log.info("Slettet muligens utkast endelig hendelse etter ${varighet(mapper)}")
                                     minside.avsluttUtkast(fnr, type).also {
                                         log.info("Endelig muligens slettet utkast for ${md.fnr}")
                                     }

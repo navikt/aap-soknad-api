@@ -16,7 +16,6 @@ import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.toMDC
-import no.nav.aap.util.StringExtensions.partialMask
 
 object PubSubMessageExtensions {
 
@@ -45,7 +44,7 @@ object PubSubMessageExtensions {
      private fun PubsubMessage.data(mapper: ObjectMapper) = mapper.readValue<Map<String, Any>>(data.toStringUtf8())
      private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
      fun PubsubMessage.endeligSlettet() = attributesMap[OVERWRITTEN] == null
-    fun PubsubMessage.varighet() = attributesMap[TIMECREATED]?.let {  Duration.between(ZonedDateTime.parse(it).toLocalDateTime(), LocalDateTime.now()).toKotlinDuration()}
+    fun PubsubMessage.varighet(mapper: ObjectMapper) = data(mapper)[TIMECREATED]?.let {  Duration.between(ZonedDateTime.parse(it as String).toLocalDateTime(), LocalDateTime.now()).toKotlinDuration()}
     fun PubsubMessage.førstegang() = attributesMap[OVERWROTE] == null
 
     fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { EventType.valueOf(it) }
