@@ -32,7 +32,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                     val eventType = eventType()
                     val meta =  metadata(mapper)
                     meta?.let { md ->
-                        log.info("Event type $eventType med metadata $md for for ${md.fnr}")
+                        log.info("Event type $eventType med metadata $md")
                         when (eventType) {
                             OBJECT_FINALIZE -> if (førstegang())  {
                                 minside.opprettUtkast(md.fnr, "Du har en påbegynt ${md.type.tittel.decap()}", md.type, md.eventId).also {
