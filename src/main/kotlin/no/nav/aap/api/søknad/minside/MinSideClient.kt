@@ -56,7 +56,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         with(cfg.utkast) {
             if (enabled) {
                 if (!repos.utkast.existsByFnrAndSkjematype(fnr.fnr, skjemaType)) {
-                    log.trace("Oppretter Min Side utkast med eventid $eventId")
+                    log.info("Oppretter Min Side utkast med eventid $eventId")
                     produsenter.utkast.send(ProducerRecord(topic, "$eventId", opprettUtkast(cfg,tekst, "$eventId", fnr)))
                         .get().also {
                             log.trace("Sendte opprett utkast med eventid $eventId  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
@@ -69,7 +69,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 }
             }
             else {
-                log.trace("Oppretter IKKE nytt utkast i Ditt Nav for $fnr, disabled")
+                log.info("Oppretter IKKE nytt utkast i Ditt Nav for $fnr, disabled")
                 null
             }
         }

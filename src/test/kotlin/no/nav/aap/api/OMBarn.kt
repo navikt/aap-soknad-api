@@ -1,44 +1,43 @@
 package no.nav.aap.api
 
-import java.time.LocalDate
-import no.nav.aap.api.felles.Navn
-import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse
+import java.time.LocalDate.now
+import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.FORTROLIG
+import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
+import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
 import no.nav.aap.api.oppslag.pdl.PDLBarn
+import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLDødsfall
 import no.nav.aap.api.oppslag.pdl.PDLGradering
 import no.nav.aap.api.oppslag.pdl.PDLNavn
-import no.nav.aap.api.oppslag.pdl.PDLSøker
-import no.nav.aap.api.søknad.model.Søker.Barn
+import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLFødsel
 
 object OMBarn {
-    fun enkeltBarn() = Barn(Navn("Barn", "B", "Barnsben"), LocalDate.now())
-
     fun listeMedPDLBarn() = sequenceOf(
         PDLBarn(
-            setOf(PDLSøker.PDLFødsel(LocalDate.now())),
+            setOf(PDLFødsel(now())),
             setOf(PDLNavn("Barn", "B", "Barnsben")),
-            setOf(PDLGradering(PDLAdresseBeskyttelse.STRENGT_FORTROLIG)),
-            setOf(PDLBarn.PDLDødsfall(LocalDate.now()))
+            setOf(PDLGradering(STRENGT_FORTROLIG)),
+            setOf(PDLDødsfall(now()))
         ),
         PDLBarn(
-            setOf(PDLSøker.PDLFødsel(LocalDate.now())),
+            setOf(PDLFødsel(now())),
             setOf(PDLNavn("Barn", "B", "Barnsben")),
-            setOf(PDLGradering(PDLAdresseBeskyttelse.FORTROLIG)),
-            setOf(PDLBarn.PDLDødsfall(LocalDate.now()))
+            setOf(PDLGradering(FORTROLIG)),
+            setOf(PDLDødsfall(now()))
         ),
         PDLBarn(
-            setOf(PDLSøker.PDLFødsel(LocalDate.now())),
+            setOf(PDLFødsel(now())),
             setOf(PDLNavn("Barn", "B", "Barnsben")),
-            setOf(PDLGradering(PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND)),
-            setOf(PDLBarn.PDLDødsfall(LocalDate.now()))
+            setOf(PDLGradering(STRENGT_FORTROLIG_UTLAND)),
+            setOf(PDLDødsfall(now()))
         ),
         PDLBarn(
-            setOf(PDLSøker.PDLFødsel(LocalDate.now())),
+            setOf(PDLFødsel(now())),
             setOf(PDLNavn("Barn", "B", "Barnsben")),
             null,
-            setOf(PDLBarn.PDLDødsfall(LocalDate.now()))
+            setOf(PDLDødsfall(now()))
         ),
         PDLBarn(
-            setOf(PDLSøker.PDLFødsel(LocalDate.now())),
+            setOf(PDLFødsel(now())),
             setOf(PDLNavn("Barn", "B", "Barnsben")),
             null,null
         ))
