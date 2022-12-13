@@ -69,7 +69,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 }
             }
             else {
-                log.info("Oppretter IKKE nytt utkast i Ditt Nav for $fnr, disabled")
+                log.trace("Oppretter IKKE nytt utkast i Ditt Nav for $fnr, disabled")
                 null
             }
         }
