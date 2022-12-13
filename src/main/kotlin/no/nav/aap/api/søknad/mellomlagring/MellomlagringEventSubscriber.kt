@@ -31,9 +31,9 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                 event.ack()
                 with(event.pubsubMessage) {
                     val eventType = eventType()
-                    val md =  metadata(mapper)
-                    log.warn("Metadata er $md")
-                    md?.let { md ->
+                    val meta =  metadata(mapper)
+                    log.warn("Metadata er $meta")
+                    meta?.let { md ->
                         log.trace(CONFIDENTIAL,"Event type $eventType med metadata $md for for ${md.fnr}, attributter er $attributesMap")
                         when (eventType) {
                             OBJECT_FINALIZE -> if (førstegang())  {
