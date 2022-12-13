@@ -31,7 +31,6 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                 with(event.pubsubMessage) {
                     val eventType = eventType()
                     val meta =  metadata(mapper)
-                    log.warn("Metadata er $meta")
                     meta?.let { md ->
                         log.info("Event type $eventType med metadata $md for for ${md.fnr}")
                         when (eventType) {
