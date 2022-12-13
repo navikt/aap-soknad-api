@@ -13,7 +13,6 @@ import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.varighet
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.decap
 import no.nav.boot.conditionals.ConditionalOnGCP
-import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.boot.CommandLineRunner
 
 @ConditionalOnGCP
@@ -34,7 +33,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                     val meta =  metadata(mapper)
                     log.warn("Metadata er $meta")
                     meta?.let { md ->
-                        log.trace(CONFIDENTIAL,"Event type $eventType med metadata $md for for ${md.fnr}, attributter er $attributesMap")
+                        log.info("Event type $eventType med metadata $md for for ${md.fnr}, attributter er $attributesMap")
                         when (eventType) {
                             OBJECT_FINALIZE -> if (førstegang())  {
                                 minside.opprettUtkast(md.fnr, "Du har en påbegynt ${md.type.tittel.decap()}", md.type, md.eventId).also {
