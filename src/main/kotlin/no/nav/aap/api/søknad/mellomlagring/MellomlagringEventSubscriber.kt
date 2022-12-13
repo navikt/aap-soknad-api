@@ -13,10 +13,11 @@ import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.varighet
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.decap
 import no.nav.boot.conditionals.ConditionalOnDev
+import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.boot.CommandLineRunner
 
-@ConditionalOnDev
+@ConditionalOnGCP
 class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                    private val cfg: BucketConfig,
                                    private val mapper: ObjectMapper,
