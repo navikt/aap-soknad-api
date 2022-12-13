@@ -12,7 +12,6 @@ import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.metadata
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.varighet
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.decap
-import no.nav.boot.conditionals.ConditionalOnDev
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.boot.CommandLineRunner

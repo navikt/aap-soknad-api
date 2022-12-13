@@ -25,7 +25,7 @@ class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, pri
 
     override fun run(vararg args: String?) {
         with(cfg.mellom.subscription) {
-            log.trace("IAC Pub sub init")
+            log.info("IAC Pub sub init")
             if (!harTopic(topic)) {
                 lagTopic(topic)
             }
@@ -36,7 +36,7 @@ class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, pri
                 lagSubscription(this)
             }
             else {
-                log.trace("Subscription $navn finnes allerede for topic $topic")
+                log.info("Subscription $navn finnes allerede for topic $topic")
             }
 
             if (!harNotifikasjon(topic)) {
@@ -56,7 +56,7 @@ class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, pri
 
     private fun lagTopic(topic: String) =
         admin.createTopic(topic).also {
-            log.trace("Lagd topic ${it.name}")
+            log.info("Lagd topic ${it.name}")
         }
 
     private fun harNotifikasjon(topic: String) =
@@ -100,7 +100,7 @@ class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, pri
             log.info("Lager pull subscription $navn for $topic")
             admin.createSubscription(navn, topic)
                 .also {
-                    log.trace("Lagd subscription ${it.name}")
+                    log.info("Lagd subscription ${it.name}")
                 }
         }
 
