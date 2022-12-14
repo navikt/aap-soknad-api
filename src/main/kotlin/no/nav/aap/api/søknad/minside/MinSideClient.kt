@@ -59,13 +59,18 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         with(cfg.utkast) {
             if (enabled) {
                 if (!repos.utkast.existsByFnrAndSkjematype(fnr.fnr, skjemaType)) {
-                    log.info("Oppretter Min Side utkast med eventid $eventId")
-                    produsenter.utkast.send(ProducerRecord(topic, "$eventId", opprettUtkast(cfg,tekst, "$eventId", fnr)))
-                        .get().also {
-                            log.trace("Sendte opprett utkast med eventid $eventId  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
-                            repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
-                            registry.gauge(MELLOMLAGRING, utkast.inc())
-                        }
+                    if (sendenabled) {
+                        log.info("Oppretter Min Side utkast med eventid $eventId")
+                        produsenter.utkast.send(ProducerRecord(topic, "$eventId", opprettUtkast(cfg,tekst, "$eventId", fnr)))
+                            .get().also {
+                                log.trace("Sendte opprett utkast med eventid $eventId  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
+                                repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
+                                registry.gauge(MELLOMLAGRING, utkast.inc())
+                            }
+                    } else {
+                        log.trace("Oppretter Min Side utkast DB med eventid $eventId")
+                        repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
+                    }
                 }
                 else {
                     log.warn("Oppretter IKKE nytt Min Side utkast, fant et allerede eksisterende utkast")
@@ -81,12 +86,18 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         with(cfg.utkast) {
             if (enabled) {
                 repos.utkast.findByFnrAndSkjematype(fnr.fnr, skjemaType)?.let {u ->
-                    log.trace("Oppdaterer Min Side utkast med eventid ${u.eventid}")
-                    produsenter.utkast.send(ProducerRecord(topic, "${u.eventid}", oppdaterUtkast(cfg,nyTekst, "${u.eventid}", fnr)))
+                    if (sendenabled) {
+                        log.trace("Oppdaterer Min Side utkast med eventid ${u.eventid}")
+                        produsenter.utkast.send(ProducerRecord(topic, "${u.eventid}", oppdaterUtkast(cfg,nyTekst, "${u.eventid}", fnr)))
                         .get().also {
                             log.trace("Sendte oppdater utkast med eventid ${u.eventid}  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
                             repos.utkast.oppdaterUtkast(UPDATED,fnr.fnr, u.eventid)
                         }
+                    }
+                    else {
+                        log.trace("Oppdaterer Min Side utkast DB med eventid ${u.eventid}")
+                        repos.utkast.oppdaterUtkast(UPDATED,fnr.fnr, u.eventid)
+                    }
                 } ?:  log.warn("Oppdaterer ikke nytt Min Side utkast, fant IKKE et allerede eksisterende utkast")
             }
             else {
@@ -101,15 +112,20 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 repos.utkast.findByFnrAndSkjematype(fnr.fnr,skjemaType)?.let { u ->
                     val varighet = between(u.created, now()).toKotlinDuration()
                     log.info("Avslutter Min Side utkast for eventid ${u.eventid} etter $varighet")
-                    produsenter.utkast.send(ProducerRecord(topic,  "${u.eventid}", avsluttUtkast("${u.eventid}",fnr)))
+                    if (sendenabled) {
+                        produsenter.utkast.send(ProducerRecord(topic,  "${u.eventid}", avsluttUtkast("${u.eventid}",fnr)))
                         .get().also {
                             log.trace("Sendte avslutt utkast med eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
                             repos.utkast.delete(u)
-                            utkastAvsluttet.increment()
                             registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
-                            utkastAvsluttet.increment()
 
                         }
+                    }
+                    else {
+                        log.trace("Avslutter Min Side utkast DB med eventid ${u.eventid}")
+                        repos.utkast.delete(u)
+                        registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
+                    }
                 } ?: log.warn("Ingen utkast å avslutte for $fnr")
             }
             else {
@@ -117,9 +133,11 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
             }
         }
     @Transactional
-    fun avsluttUtkastDev(fnr: Fødselsnummer,uuid: UUID) = produsenter.utkast.send(ProducerRecord(cfg.utkast.topic,  "$uuid", avsluttUtkast("$uuid",fnr)))
-
-
+    fun avsluttUtkastDev(fnr: Fødselsnummer,uuid: UUID) =
+        if (cfg.utkast.sendenabled) {
+            produsenter.utkast.send(ProducerRecord(cfg.utkast.topic,  "$uuid", avsluttUtkast("$uuid",fnr)))
+        }
+       else Unit
 
     @Transactional
     @Counted(OPPRETTET_BESKJED, description = "Antall beskjeder opprettet")
@@ -198,7 +216,6 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         private fun Int.decIfPositive() = if (this > 0) dec() else this
         private var utkast = 0
         private val oppgaverAvsluttet = counter(AVSLUTTET_OPPGAVE)
-        private val utkastAvsluttet = counter(AVSLUTTET_UTKAST)
         private val beskjederAvsluttet = counter(AVSLUTTET_BESKJED)
     }
 }
