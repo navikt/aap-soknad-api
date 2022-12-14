@@ -9,7 +9,6 @@ import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.eventType
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.førstegang
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.metadata
-import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.varighet
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.decap
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -50,7 +49,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
 
                             OBJECT_DELETE -> if (endeligSlettet()) {
                                 with(md) {
-                                    log.info("Slettet muligens utkast endelig hendelse for $md etter ${varighet(mapper)}")
+                                    log.info("Slettet muligens utkast endelig hendelse for $md")
                                     minside.avsluttUtkast(fnr, type).also {
                                         log.info("Endelig muligens slettet utkast for ${md.fnr}")
                                     }

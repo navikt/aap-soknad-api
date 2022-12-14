@@ -3,7 +3,10 @@ package no.nav.aap.api.søknad.minside
 import io.micrometer.core.annotation.Counted
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Metrics.counter
+import java.time.Duration.between
+import java.time.LocalDateTime.now
 import java.util.*
+import kotlin.time.toKotlinDuration
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_BESKJED
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_OPPGAVE
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_UTKAST
@@ -96,7 +99,8 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         with(cfg.utkast) {
             if (enabled) {
                 repos.utkast.findByFnrAndSkjematype(fnr.fnr,skjemaType)?.let { u ->
-                    log.trace("Avslutter Min Side utkast for eventid ${u.eventid}")
+                    val varighet = between(u.created, now()).toKotlinDuration()
+                    log.info("Avslutter Min Side utkast for eventid ${u.eventid} etter $varighet")
                     produsenter.utkast.send(ProducerRecord(topic,  "${u.eventid}", avsluttUtkast("${u.eventid}",fnr)))
                         .get().also {
                             log.trace("Sendte avslutt utkast med eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
@@ -104,6 +108,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                             utkastAvsluttet.increment()
                             registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
                             utkastAvsluttet.increment()
+
                         }
                 } ?: log.warn("Ingen utkast å avslutte for $fnr")
             }
@@ -111,7 +116,6 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 log.trace("Avslutter IKKE utkast i Ditt Nav for $fnr, disabled")
             }
         }
-
     @Transactional
     fun avsluttUtkastDev(fnr: Fødselsnummer,uuid: UUID) = produsenter.utkast.send(ProducerRecord(cfg.utkast.topic,  "$uuid", avsluttUtkast("$uuid",fnr)))
 
