@@ -24,7 +24,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
 
     override fun run(vararg args: String?) {
         with(cfg.mellom) {
-            log.trace("IAC Abonnererer på hendelser i $subscription")
+            log.info("IAC Abonnererer på hendelser i $subscription")
             subscriber.subscribe(subscription.navn) { event ->
                 event.ack()
                 with(event.pubsubMessage) {
@@ -33,10 +33,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                         log.trace("Event type $eventType med metadata $md and map $attributesMap")
                         when (eventType) {
                             OBJECT_FINALIZE -> if (førstegang()) {
-                                minside.opprettUtkast(md.fnr,
-                                        "Du har en påbegynt ${md.type.tittel.decap()}",
-                                        md.type,
-                                        md.eventId).also {
+                                minside.opprettUtkast(md.fnr, "Du har en påbegynt ${md.type.tittel.decap()}", md.type, md.eventId).also {
                                     log.trace("Opprettet muligens førstegangs utkast for ${md.fnr}")
                                 }
                             }
@@ -49,9 +46,9 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
 
                             OBJECT_DELETE -> if (endeligSlettet()) {
                                 with(md) {
-                                    log.info("Slettet muligens utkast endelig hendelse for $md")
+                                    log.trace("Slettet muligens utkast endelig hendelse for $md")
                                     minside.avsluttUtkast(fnr, type).also {
-                                        log.info("Endelig muligens slettet utkast for ${md.fnr}")
+                                        log.trace("Endelig muligens slettet utkast for ${md.fnr}")
                                     }
                                 }
                             }
