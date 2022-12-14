@@ -110,9 +110,8 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         with(cfg.utkast) {
             if (enabled) {
                 repos.utkast.findByFnrAndSkjematype(fnr.fnr,skjemaType)?.let { u ->
-                    val varighet = between(u.created, now()).toKotlinDuration()
-                    log.info("Avslutter Min Side utkast for eventid ${u.eventid} etter $varighet")
                     if (sendenabled) {
+                        log.info("Avslutter Min Side utkast for eventid ${u.eventid} etter ${between(u.created, now()).toKotlinDuration()}")
                         produsenter.utkast.send(ProducerRecord(topic,  "${u.eventid}", avsluttUtkast("${u.eventid}",fnr)))
                         .get().also {
                             log.trace("Sendte avslutt utkast med eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
@@ -122,7 +121,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                         }
                     }
                     else {
-                        log.info("Avslutter Min Side utkast DB med eventid ${u.eventid} for $fnr")
+                        log.info("Avslutter Min Side utkast DB for eventid ${u.eventid} etter ${between(u.created, now()).toKotlinDuration()}")
                         repos.utkast.delete(u)
                         registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
                     }
