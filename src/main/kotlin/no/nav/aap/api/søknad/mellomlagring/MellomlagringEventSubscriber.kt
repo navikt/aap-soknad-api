@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.mellomlagring
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.spring.pubsub.core.subscriber.PubSubSubscriberTemplate
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
@@ -16,7 +15,6 @@ import org.springframework.boot.CommandLineRunner
 @ConditionalOnGCP
 class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                    private val cfg: BucketConfig,
-                                   private val mapper: ObjectMapper,
                                    private val subscriber: PubSubSubscriberTemplate) : CommandLineRunner {
 
     private val log = getLogger(javaClass)
