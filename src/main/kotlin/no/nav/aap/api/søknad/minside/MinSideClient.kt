@@ -69,6 +69,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                             }
                     } else {
                         log.info("Oppretter Min Side utkast DB med eventid $eventId for $fnr")
+                        registry.gauge(MELLOMLAGRING, utkast.inc())
                         repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
                     }
                 }
