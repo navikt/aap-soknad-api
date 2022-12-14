@@ -95,7 +95,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                         }
                     }
                     else {
-                        log.info("Oppdaterer Min Side utkast DB med eventid ${u.eventid} for $fnr")
+                        log.trace("Oppdaterer Min Side utkast DB med eventid ${u.eventid} for $fnr")
                         repos.utkast.oppdaterUtkast(UPDATED,fnr.fnr, u.eventid)
                     }
                 } ?:  log.warn("Oppdaterer ikke nytt Min Side utkast, fant IKKE et allerede eksisterende utkast for $fnr")
