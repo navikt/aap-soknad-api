@@ -122,7 +122,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                         }
                     }
                     else {
-                        log.info("Avslutter Min Side utkast DB for eventid ${u.eventid} etter ${between(u.created, now()).toKotlinDuration()}")
+                        log.info("Avslutter Min Side utkast DB for eventid ${u.eventid} for $fnr etter ${between(u.created, now()).toKotlinDuration()}")
                         repos.utkast.delete(u)
                         registry.gauge(MELLOMLAGRING, utkast.dec())
                     }
