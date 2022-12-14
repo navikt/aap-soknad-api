@@ -7,7 +7,7 @@ import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.eventType
-import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.førstegang
+import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.førstegangsOpprettelse
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.metadata
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
@@ -32,7 +32,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                         log.trace("Event type $eventType med metadata $md and map $attributesMap")
                         with(md) {
                             when (eventType) {
-                                OBJECT_FINALIZE -> if (førstegang()) {
+                                OBJECT_FINALIZE -> if (førstegangsOpprettelse()) {
                                     minside.opprettUtkast(fnr, "Du har en påbegynt $tittel",type, eventId).also {
                                         log.trace("Opprettet muligens førstegangs utkast for $fnr")
                                     }

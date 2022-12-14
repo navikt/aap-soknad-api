@@ -41,7 +41,7 @@ object PubSubMessageExtensions {
      private fun PubsubMessage.data(mapper: ObjectMapper) = mapper.readValue<Map<String, Any>>(data.toStringUtf8())
      private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
      fun PubsubMessage.endeligSlettet() = attributesMap[OVERWRITTEN] == null
-    fun PubsubMessage.førstegang() = attributesMap[OVERWROTE] == null
+    fun PubsubMessage.førstegangsOpprettelse() = attributesMap[OVERWROTE] == null
     fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { EventType.valueOf(it) }
 
 
