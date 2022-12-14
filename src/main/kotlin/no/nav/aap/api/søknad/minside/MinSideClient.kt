@@ -70,7 +70,6 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
             }
             else {
                 log.trace("Oppretter IKKE nytt utkast i Ditt Nav for $fnr, disabled")
-                null
             }
         }
     @Transactional
@@ -89,7 +88,6 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
             }
             else {
                 log.trace("Oppdaterer IKKE nytt utkast i Ditt Nav for $fnr, disabled")
-                null
             }
         }
     @Counted(AVSLUTTET_UTKAST, description = "Antall utkast slettet")
@@ -111,7 +109,6 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
             }
             else {
                 log.trace("Avslutter IKKE utkast i Ditt Nav for $fnr, disabled")
-                null
             }
         }
 
@@ -134,7 +131,6 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
             }
             else {
                 log.trace("Oppretter IKKE beskjed i Ditt Nav for $fnr, disabled")
-                null
             }
         }
 
@@ -167,7 +163,6 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
             }
             else {
                 log.trace("Oppretter IKKE oppgave i Min Side for $fnr")
-                null
             }
         }
 
