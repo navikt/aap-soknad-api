@@ -30,9 +30,9 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                 event.ack()
                 with(event.pubsubMessage) {
                     val eventType = eventType()
-                    val md =  metadata(mapper)
-                    if (md != null) {
-                  //  meta?.let { md ->
+                    val meta = metadata(mapper)
+                    //if (md != null) {
+                    meta?.let { md ->
                         log.trace("Event type $eventType med metadata $md and map $attributesMap")
                         when (eventType) {
                             OBJECT_FINALIZE -> if (førstegang())  {
@@ -57,8 +57,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                             }
                             else -> log.warn("Event $eventType ikke håndtert (dette skal aldri skje)")
                         }
-                    }
-                    else  log.info("Fant ikke forventede metadata i event ${event.pubsubMessage} $attributesMap")
+                    } ?:  log.info("Fant ikke forventede metadata i event ${event.pubsubMessage} $attributesMap")
                 }
             }
         }
