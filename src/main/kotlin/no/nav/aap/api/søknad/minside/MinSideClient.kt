@@ -68,7 +68,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                                 registry.gauge(MELLOMLAGRING, utkast.inc())
                             }
                     } else {
-                        log.trace("Oppretter Min Side utkast DB med eventid $eventId for $fnr")
+                        log.info("Oppretter Min Side utkast DB med eventid $eventId for $fnr")
                         repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
                     }
                 }
@@ -95,7 +95,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                         }
                     }
                     else {
-                        log.trace("Oppdaterer Min Side utkast DB med eventid ${u.eventid} for $fnr")
+                        log.info("Oppdaterer Min Side utkast DB med eventid ${u.eventid} for $fnr")
                         repos.utkast.oppdaterUtkast(UPDATED,fnr.fnr, u.eventid)
                     }
                 } ?:  log.warn("Oppdaterer ikke nytt Min Side utkast, fant IKKE et allerede eksisterende utkast for $fnr")
@@ -122,7 +122,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                         }
                     }
                     else {
-                        log.trace("Avslutter Min Side utkast DB med eventid ${u.eventid} for $fnr")
+                        log.info("Avslutter Min Side utkast DB med eventid ${u.eventid} for $fnr")
                         repos.utkast.delete(u)
                         registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
                     }
