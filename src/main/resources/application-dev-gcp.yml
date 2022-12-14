@@ -64,5 +64,5 @@ buckets:
         purring:
             enabled: false
         subscription:
-            navn: ${mellomlagring.navn}-subscription2
-            topic: ${mellomlagring.navn}-topic2
+            navn: ${mellomlagring.navn}-subscription
+            topic: ${mellomlagring.navn}-topic
