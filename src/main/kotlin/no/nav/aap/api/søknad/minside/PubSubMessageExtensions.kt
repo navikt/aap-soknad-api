@@ -12,6 +12,7 @@ import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.toMDC
+import no.nav.aap.util.StringExtensions.decap
 
 object PubSubMessageExtensions {
 
@@ -45,6 +46,7 @@ object PubSubMessageExtensions {
 
 
     data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val eventId: UUID) {
+        val tittel = type.tittel.decap()
         companion object {
             fun getInstance(type: String?, fnr: String?, eventId: String?) =
                 if (eventId != null && fnr != null && type != null) {
