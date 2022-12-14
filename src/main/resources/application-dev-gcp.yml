@@ -52,6 +52,7 @@ joark:
     scope: api://dev-fss.teamdokumenthandtering.dokarkiv-q1/.default
 minside:
     utkast:
+        sendenabled: true
         enabled: true
     backlinks:
         innsyn: https://aap-innsyn.dev.nav.no/aap/mine-aap
