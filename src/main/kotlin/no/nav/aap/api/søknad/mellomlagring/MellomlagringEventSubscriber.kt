@@ -30,19 +30,24 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                 event.ack()
                 with(event.pubsubMessage) {
                     val eventType = eventType()
-                    val meta = metadata(mapper)
-                    //if (meta != null) {
-                    meta?.let { md ->
+                    metadata(mapper)?.let { md ->
                         log.trace("Event type $eventType med metadata $md and map $attributesMap")
                         when (eventType) {
-                            OBJECT_FINALIZE -> if (førstegang())  {
-                                minside.opprettUtkast(md.fnr, "Du har en påbegynt ${md.type.tittel.decap()}", md.type, md.eventId).also {
+                            OBJECT_FINALIZE -> if (førstegang()) {
+                                minside.opprettUtkast(md.fnr,
+                                        "Du har en påbegynt ${md.type.tittel.decap()}",
+                                        md.type,
+                                        md.eventId).also {
                                     log.trace("Opprettet muligens førstegangs utkast for ${md.fnr}")
                                 }
-                            } else {
-                                minside.oppdaterUtkast(md.fnr,"Du har en påbegynt ${md.type.tittel.decap()}",md.type).also {
-                                    log.trace("Oppdaterte muligens utkast grunnet oppdatering for ${md.fnr}") }
                             }
+                            else {
+                                minside.oppdaterUtkast(md.fnr, "Du har en påbegynt ${md.type.tittel.decap()}", md.type)
+                                    .also {
+                                        log.trace("Oppdaterte muligens utkast grunnet oppdatering for ${md.fnr}")
+                                    }
+                            }
+
                             OBJECT_DELETE -> if (endeligSlettet()) {
                                 with(md) {
                                     log.info("Slettet muligens utkast endelig hendelse for $md etter ${varighet(mapper)}")
@@ -50,15 +55,16 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                         log.info("Endelig muligens slettet utkast for ${md.fnr}")
                                     }
                                 }
-                            } else {
+                            }
+                            else {
                                 Unit.also {
                                     log.trace("Slettet grunnet ny versjon, ingen oppdatering av utkast for ${md.fnr}")
                                 }
                             }
+
                             else -> log.warn("Event $eventType ikke håndtert (dette skal aldri skje)")
                         }
-                    }  //else  log.info("Fant ikke forventede metadata i event ${event.pubsubMessage} $attributesMap")
-                        ?:  log.info("Fant ikke forventede metadata i event ${event.pubsubMessage} $attributesMap")
+                    } ?: log.info("Fant ikke forventede metadata i event ${event.pubsubMessage} $attributesMap")
                 }
             }
         }
