@@ -10,6 +10,7 @@ import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import io.micrometer.core.aop.CountedAspect
 import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Timer
 import io.netty.handler.logging.LogLevel.TRACE
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
@@ -188,7 +189,21 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
             registry,
             DefaultWebClientExchangeTagsProvider(),
             "custom.web.client",
-            AutoTimer.ENABLED)
+            AutoTimerHistogram())
+
+    class AutoTimerHistogram : AutoTimer {
+        override fun apply(builder: Timer.Builder) {
+            builder
+                .serviceLevelObjectives(
+                        Duration.ofMillis(100),
+                        Duration.ofMillis(500),
+                        Duration.ofMillis(800),
+                        Duration.ofMillis(1000),
+                        Duration.ofMillis(1200))
+                .minimumExpectedValue(Duration.ofMillis(100))
+                .maximumExpectedValue(Duration.ofMillis(10000))
+        }
+    }
 
     @ConditionalOnNotProd
     @Bean
