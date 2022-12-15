@@ -131,12 +131,6 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 log.trace("Avslutter IKKE utkast i Ditt Nav for $fnr, disabled")
             }
         }
-    @Transactional
-    fun avsluttUtkastDev(fnr: Fødselsnummer,uuid: UUID) =
-        if (cfg.utkast.sendenabled) {
-            produsenter.utkast.send(ProducerRecord(cfg.utkast.topic,  "$uuid", avsluttUtkast("$uuid",fnr)))
-        }
-       else Unit
 
     @Transactional
     @Counted(OPPRETTET_BESKJED, description = "Antall beskjeder opprettet")

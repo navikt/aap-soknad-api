@@ -65,9 +65,6 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     @GetMapping("/dittnav/avsluttoppgave")
     fun avsluttOppgave(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) = dittNav.avsluttOppgave(fnr, uuid)
 
-    @GetMapping("/dittnav/avsluttutkast")
-    fun avsluttUtkast(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) = dittNav.avsluttUtkastDev(fnr,uuid)
-
     @PostMapping("vl/{fnr}")
     @ResponseStatus(CREATED)
     fun vl(@PathVariable fnr: Fødselsnummer, @RequestBody søknad: StandardSøknad) = vl.fordel(søknad, fnr, "42", cfg.standard)

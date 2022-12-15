@@ -110,7 +110,7 @@ class ArkivJournalpostGenerator(
             require(vedlegg.isNotEmpty()) { "Forventet > 0 vedlegg" }
             dokumenterFra(e.ettersending, e.vedleggType, STANDARD_ETTERSENDING)
         }.also {
-            require(it.isNotEmpty()) { "Forventet > 0 vedlegg fra dokumentlager" }
+            require(it.isNotEmpty()) { "Forventet > 0 vedlegg fra dokumentlager for ${vedlegg.map { v -> v.ettersending.deler }}" }
         }
 
     private fun dokumenterFra(søknad: StandardSøknad, pdfVariant: DokumentVariant) =
