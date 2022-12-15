@@ -42,12 +42,12 @@ spec:
         cascadingDelete: true
         lifecycleCondition:
           numNewerVersions: 0
-          age: 14
+          age: {{vedlegg-varighet}}
       - name: aap-mellomlagring-{{env}}
         cascadingDelete: true
         lifecycleCondition:
           numNewerVersions: 0
-          age: 14
+          age: {{mellomlagring-varighet}}
   accessPolicy:
     inbound:
       rules:
@@ -98,8 +98,12 @@ spec:
       cpu: 250m
       memory: 1536Mi
   env:
+    - name: MELLOMLAGRING_VARIGHET
+      value: {{mellomlagring-varighet}}
     - name: MELLOMLAGRING_NAVN
       value: aap-mellomlagring-{{env}}
+    - name: VEDLEGG_VARIGHET
+      value: {{vedlegg-varighet}}
     - name: VEDLEGG_NAVN
       value: aap-vedlegg-{{env}}
     - name: ENV

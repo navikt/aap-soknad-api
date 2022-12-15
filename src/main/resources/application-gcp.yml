@@ -192,6 +192,7 @@ buckets:
     ring: ${mellomlagring.navn}-kms
     key: ${mellomlagring.navn}-kmskey
   mellom:
+    varighet: ${mellomlagring.varighet}
     navn: ${mellomlagring.navn}
     purring:
       delay: 60
@@ -201,6 +202,7 @@ buckets:
       navn: ${mellomlagring.navn}-subscription
       topic: ${mellomlagring.navn}-topic
   vedlegg:
+    varighet: ${vedlegg.varighet}
     navn: ${vedlegg.navn}
     maxsum: 50MB
     typer:

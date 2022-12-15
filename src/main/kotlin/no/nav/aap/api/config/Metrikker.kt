@@ -5,6 +5,7 @@ object Metrikker {
     const val INNSENDTE = "soknad.vedlegg.innsendte"
     const val MANGLENDE = "soknad.vedlegg.manglende"
     const val MELLOMLAGRING = "soknad.mellomlagring"
+    const val MELLOMLAGRING_EXPIRED = "soknad.expired"
     const val SØKNADER = "soknad.innsendte"
     const val AVSLUTTET_BESKJED = "soknad.beskjed.avsluttet"
     const val OPPRETTET_BESKJED = "soknad.beskjed.opprettet"

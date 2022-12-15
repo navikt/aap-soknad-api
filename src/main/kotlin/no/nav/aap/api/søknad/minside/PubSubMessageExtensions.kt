@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.cloud.storage.NotificationInfo.EventType
 import com.google.pubsub.v1.PubsubMessage
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
@@ -42,6 +45,9 @@ object PubSubMessageExtensions {
      private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
      fun PubsubMessage.endeligSlettet() = attributesMap[OVERWRITTEN] == null
     fun PubsubMessage.førstegangsOpprettelse() = attributesMap[OVERWROTE] == null
+
+    fun PubsubMessage.varighet() = attributesMap[TIMECREATED]?.let {  Duration.between(ZonedDateTime.parse(it).toLocalDateTime(), LocalDateTime.now())}
+
     fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { EventType.valueOf(it) }
 
 

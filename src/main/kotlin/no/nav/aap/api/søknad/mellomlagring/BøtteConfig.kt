@@ -4,11 +4,14 @@ import com.google.cloud.kms.v1.CryptoKeyName
 import com.google.cloud.kms.v1.KeyRingName
 import com.google.cloud.kms.v1.LocationName
 import java.time.Duration
+import java.time.temporal.ChronoUnit.*
 import no.nav.aap.api.error.Substatus
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.BUCKETS
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
+import org.springframework.boot.context.properties.bind.DefaultValue
+import org.springframework.boot.convert.DurationUnit
 import org.springframework.util.unit.DataSize
 
 @ConfigurationProperties(BUCKETS)
@@ -24,13 +27,13 @@ data class BucketConfig(val project: String,
 
     data class KeyConfig(internal val ring: String, internal val key: String)
 
-    data class MellomlagringBucketConfig(val navn: String, @NestedConfigurationProperty val purring: Purring, @NestedConfigurationProperty val subscription: SubscriptionConfig) {
+    data class MellomlagringBucketConfig(val navn: String, @DefaultValue("14") @DurationUnit(DAYS) val varighet: Duration, @NestedConfigurationProperty val purring: Purring, @NestedConfigurationProperty val subscription: SubscriptionConfig) {
 
         data class SubscriptionConfig(val navn: String, val topic: String)
         data class Purring(val enabled: Boolean, val delay: Long, val eldreEnn: Duration)
     }
 
-    data class VedleggBucketConfig(val navn: String, val maxsum: DataSize, val typer: List<String>)
+    data class VedleggBucketConfig(val navn: String, @DefaultValue("14") @DurationUnit(DAYS) val varighet: Duration,val maxsum: DataSize, val typer: List<String>)
 
     companion object {
         private const val REGION = "europe-north1"

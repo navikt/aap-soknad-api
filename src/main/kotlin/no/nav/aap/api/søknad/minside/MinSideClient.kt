@@ -1,7 +1,6 @@
 package no.nav.aap.api.søknad.minside
 
 import io.micrometer.core.annotation.Counted
-import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Metrics.counter
 import io.micrometer.core.instrument.Metrics.gauge
 import java.time.Duration.between
@@ -50,7 +49,6 @@ data class MinSideProdusenter(val avro: KafkaOperations<NokkelInput, Any>, val u
 @ConditionalOnGCP
 class MinSideClient(private val produsenter: MinSideProdusenter,
                     private val cfg: MinSideConfig,
-                    private val registry: MeterRegistry,
                     private val repos: MinSideRepositories) {
 
     private val log = getLogger(javaClass)
@@ -74,7 +72,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                             }
                     } else {
                         log.info("Oppretter Min Side utkast DB med eventid $eventId for $fnr")
-                        utkast?.incrementAndGet().also { log.info("Mellomlagring counter $it etter opprettet $fnr") }
+                        utkast?.incrementAndGet().also { log.trace("Mellomlagring counter $it etter opprettet $fnr") }
                         repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
                     }
                 }
@@ -127,7 +125,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     else {
                         log.info("Avslutter Min Side utkast DB for eventid ${u.eventid} for $fnr etter ${between(u.created, now()).toKotlinDuration()}")
                         repos.utkast.delete(u)
-                        utkast?.dec().also { log.info("Mellomlagring counter $it etter avsluttet $fnr") }
+                        utkast?.dec().also { log.trace("Mellomlagring counter $it etter avsluttet $fnr") }
                     }
                 } ?: log.warn("Ingen utkast å avslutte for $fnr")
             }

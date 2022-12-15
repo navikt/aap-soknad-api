@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.spring.pubsub.core.subscriber.PubSubSubscriberTemplate
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
+import io.micrometer.core.instrument.Metrics.counter
+import no.nav.aap.api.config.Metrikker.MELLOMLAGRING_EXPIRED
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.eventType
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.førstegangsOpprettelse
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.metadata
+import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.varighet
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.springframework.boot.CommandLineRunner
@@ -43,6 +46,11 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                     }
                                 }
                                 OBJECT_DELETE -> if (endeligSlettet()) {
+                                       varighet()?.let {
+                                           if (it > cfg.mellom.varighet) {
+                                               expired.increment()
+                                           }
+                                       }
                                         log.trace("Slettet muligens utkast endelig hendelse for $md")
                                         minside.avsluttUtkast(fnr, type).also {
                                             log.trace("Endelig muligens slettet utkast for $fnr")
@@ -61,4 +69,8 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
             }
         }
     }
+    companion object {
+        private val expired = counter(MELLOMLAGRING_EXPIRED)
+    }
+
 }
