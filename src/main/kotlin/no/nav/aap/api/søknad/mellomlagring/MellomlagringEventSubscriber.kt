@@ -49,6 +49,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                        varighet()?.let {
                                            if (it > cfg.mellom.varighet) {
                                                expired.increment()
+                                               log.info("Slettet mellomlagring etter ${cfg.mellom.varighet.toDays()} dager for $md")
                                            }
                                        }
                                         log.trace("Slettet muligens utkast endelig hendelse for $md")
