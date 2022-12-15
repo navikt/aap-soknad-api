@@ -99,11 +99,11 @@ spec:
       memory: 1536Mi
   env:
     - name: MELLOMLAGRING_VARIGHET
-      value: {{mellomlagring-varighet}}
+      value: "{{mellomlagring-varighet}}"
     - name: MELLOMLAGRING_NAVN
       value: aap-mellomlagring-{{env}}
     - name: VEDLEGG_VARIGHET
-      value: {{vedlegg-varighet}}
+      value: "{{vedlegg-varighet}}"
     - name: VEDLEGG_NAVN
       value: aap-vedlegg-{{env}}
     - name: ENV
