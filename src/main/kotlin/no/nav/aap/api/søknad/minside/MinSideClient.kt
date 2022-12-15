@@ -70,7 +70,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                             }
                     } else {
                         log.info("Oppretter Min Side utkast DB med eventid $eventId for $fnr")
-                        counter.incrementAndGet().also { log.info("Mellomlagring counter $this") }
+                        utkast?.incrementAndGet().also { log.info("Mellomlagring counter $this") }
                         repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
                     }
                 }
@@ -123,7 +123,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     else {
                         log.info("Avslutter Min Side utkast DB for eventid ${u.eventid} for $fnr etter ${between(u.created, now()).toKotlinDuration()}")
                         repos.utkast.delete(u)
-                        counter.decrementAndGet().also { log.info("Mellomlagring counter $this") }
+                        utkast.decrementAndGet().also { log.info("Mellomlagring counter $this") }
                     }
                 } ?: log.warn("Ingen utkast å avslutte for $fnr")
             }
@@ -212,7 +212,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         }
 
     companion object {
-        val counter = AtomicInteger(0)
+        private val counter = AtomicInteger(0)
         private val utkast =  gauge(MELLOMLAGRING,counter)
         private val oppgaverAvsluttet = counter(AVSLUTTET_OPPGAVE)
         private val beskjederAvsluttet = counter(AVSLUTTET_BESKJED)
