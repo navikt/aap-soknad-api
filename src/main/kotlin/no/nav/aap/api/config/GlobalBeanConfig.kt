@@ -51,6 +51,7 @@ import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPro
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientCustomizer
 import org.springframework.boot.actuate.trace.http.HttpTrace
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
@@ -171,10 +172,12 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
             }
 
     @Bean
-    fun webClientCustomizer(client: HttpClient) =
+    fun webClientCustomizer(client: HttpClient, c: MetricsWebClientCustomizer) =
         WebClientCustomizer { b ->
             b.clientConnector(ReactorClientHttpConnector(client))
-                .filter(correlatingFilterFunction(applicationName))
+                .filter(correlatingFilterFunction(applicationName)).also {
+                    c.customize(it)
+                }
         }
 
     @ConditionalOnNotProd
