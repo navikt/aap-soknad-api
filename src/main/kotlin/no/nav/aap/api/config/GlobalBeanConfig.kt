@@ -200,6 +200,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                         Duration.ofMillis(800),
                         Duration.ofMillis(1000),
                         Duration.ofMillis(1200))
+                .publishPercentileHistogram(true)
                 .minimumExpectedValue(Duration.ofMillis(100))
                 .maximumExpectedValue(Duration.ofMillis(10000))
         }
