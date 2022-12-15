@@ -8,6 +8,7 @@ import java.time.Duration.between
 import java.time.LocalDateTime.now
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 import kotlin.time.toKotlinDuration
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_BESKJED
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_OPPGAVE
@@ -52,6 +53,9 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     private val cfg: MinSideConfig,
                     private val registry: MeterRegistry,
                     private val repos: MinSideRepositories) {
+
+    private val utkast = gauge(MELLOMLAGRING, AtomicLong(repos.utkast.count())).also { log.info("DB mellomlagring init $it") }
+
 
     private val log = getLogger(javaClass)
 
@@ -123,7 +127,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     else {
                         log.info("Avslutter Min Side utkast DB for eventid ${u.eventid} for $fnr etter ${between(u.created, now()).toKotlinDuration()}")
                         repos.utkast.delete(u)
-                        utkast?.dec().also { log.info("Mellomlagring counter $it") }
+                        utkast?.decrementAndGet().also { log.info("Mellomlagring counter $it") }
                     }
                 } ?: log.warn("Ingen utkast å avslutte for $fnr")
             }
@@ -212,7 +216,6 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         }
 
     companion object {
-        private val utkast = gauge(MELLOMLAGRING, AtomicInteger(0))
         private fun AtomicInteger.dec() = if (get() > 0) decrementAndGet() else get()
         private val oppgaverAvsluttet = counter(AVSLUTTET_OPPGAVE)
         private val beskjederAvsluttet = counter(AVSLUTTET_BESKJED)
