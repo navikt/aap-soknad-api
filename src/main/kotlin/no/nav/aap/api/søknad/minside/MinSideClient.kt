@@ -123,7 +123,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     else {
                         log.info("Avslutter Min Side utkast DB for eventid ${u.eventid} for $fnr etter ${between(u.created, now()).toKotlinDuration()}")
                         repos.utkast.delete(u)
-                        utkast.decrementAndGet().also { log.info("Mellomlagring counter $this") }
+                        utkast?.decrementAndGet().also { log.info("Mellomlagring counter $this") }
                     }
                 } ?: log.warn("Ingen utkast å avslutte for $fnr")
             }
