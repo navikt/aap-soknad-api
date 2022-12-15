@@ -53,7 +53,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
 
     private val log = getLogger(javaClass)
 
-    private val utkast = gauge(MELLOMLAGRING, AtomicLong(repos.utkast.count())).also { log.info("DB mellomlagring init $it") }
+    private val utkast = gauge(MELLOMLAGRING, AtomicLong(repos.utkast.count())).also { log.info("DB mellomlagring counter init $it") }
 
 
 
