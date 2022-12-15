@@ -70,7 +70,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                             }
                     } else {
                         log.info("Oppretter Min Side utkast DB med eventid $eventId for $fnr")
-                        utkast?.set(repos.utkast.count()).also { log.info("Mellomlagring teller etter opprett $it") }
+                        utkast?.set(repos.utkast.count()).also { log.info("Mellomlagring teller etter opprett ${utkast?.get()}") }
                         repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
                     }
                 }
@@ -123,7 +123,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     else {
                         log.info("Avslutter Min Side utkast DB for eventid ${u.eventid} for $fnr etter ${between(u.created, now()).toKotlinDuration()}")
                         repos.utkast.delete(u)
-                        utkast?.set(repos.utkast.count()).also { log.info("Mellomlagring teller etter avslutt $it") }
+                        utkast?.set(repos.utkast.count()).also { log.info("Mellomlagring teller etter avslutt ${utkast?.get()}") }
                     }
                 } ?: log.warn("Ingen utkast å avslutte for $fnr")
             }
