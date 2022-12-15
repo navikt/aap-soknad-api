@@ -7,7 +7,6 @@ import io.micrometer.core.instrument.Metrics.gauge
 import java.time.Duration.between
 import java.time.LocalDateTime.now
 import java.util.*
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.time.toKotlinDuration
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_BESKJED
@@ -74,7 +73,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                             }
                     } else {
                         log.info("Oppretter Min Side utkast DB med eventid $eventId for $fnr")
-                        utkast?.incrementAndGet().also { log.info("Mellomlagring counter $it") }
+                        utkast?.dec().also { log.info("Mellomlagring counter $it") }
                         repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
                     }
                 }
@@ -216,7 +215,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         }
 
     companion object {
-        private fun AtomicInteger.dec() = if (get() > 0) decrementAndGet() else get()
+        private fun AtomicLong.dec() = if (get() > 0) decrementAndGet() else get()
         private val oppgaverAvsluttet = counter(AVSLUTTET_OPPGAVE)
         private val beskjederAvsluttet = counter(AVSLUTTET_BESKJED)
     }
