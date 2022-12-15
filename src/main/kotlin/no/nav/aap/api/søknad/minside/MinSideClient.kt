@@ -3,9 +3,11 @@ package no.nav.aap.api.søknad.minside
 import io.micrometer.core.annotation.Counted
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Metrics.counter
+import io.micrometer.core.instrument.Metrics.gauge
 import java.time.Duration.between
 import java.time.LocalDateTime.now
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.time.toKotlinDuration
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_BESKJED
 import no.nav.aap.api.config.Metrikker.AVSLUTTET_OPPGAVE
@@ -65,11 +67,10 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                             .get().also {
                                 log.trace("Sendte opprett utkast med eventid $eventId  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
                                 repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
-                                registry.gauge(MELLOMLAGRING, utkast.inc())
                             }
                     } else {
                         log.info("Oppretter Min Side utkast DB med eventid $eventId for $fnr")
-                        registry.gauge(MELLOMLAGRING, utkast.inc().also { log.info("Mellomlagring teller er $it") })
+                        counter.incrementAndGet().also { log.info("Mellomlagring counter $this") }
                         repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
                     }
                 }
@@ -117,13 +118,12 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                         .get().also {
                             log.trace("Sendte avslutt utkast med eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
                             repos.utkast.delete(u)
-                            registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
                         }
                     }
                     else {
                         log.info("Avslutter Min Side utkast DB for eventid ${u.eventid} for $fnr etter ${between(u.created, now()).toKotlinDuration()}")
                         repos.utkast.delete(u)
-                        registry.gauge(MELLOMLAGRING, utkast.dec().also { log.info("Mellomlagring teller er $it") })
+                        counter.decrementAndGet().also { log.info("Mellomlagring counter $this") }
                     }
                 } ?: log.warn("Ingen utkast å avslutte for $fnr")
             }
@@ -212,8 +212,8 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         }
 
     companion object {
-        private fun Int.decIfPositive() = if (this > 0) dec() else this
-        private var utkast = 0
+        val counter = AtomicInteger(0)
+        private val utkast =  gauge(MELLOMLAGRING,counter)
         private val oppgaverAvsluttet = counter(AVSLUTTET_OPPGAVE)
         private val beskjederAvsluttet = counter(AVSLUTTET_BESKJED)
     }
