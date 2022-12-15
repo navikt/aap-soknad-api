@@ -69,7 +69,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                             }
                     } else {
                         log.info("Oppretter Min Side utkast DB med eventid $eventId for $fnr")
-                        registry.gauge(MELLOMLAGRING, utkast.inc())
+                        registry.gauge(MELLOMLAGRING, utkast.inc().also { log.info("Mellomlagring teller er $it") })
                         repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
                     }
                 }
@@ -124,7 +124,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     else {
                         log.info("Avslutter Min Side utkast DB for eventid ${u.eventid} for $fnr etter ${between(u.created, now()).toKotlinDuration()}")
                         repos.utkast.delete(u)
-                        registry.gauge(MELLOMLAGRING, utkast.dec())
+                        registry.gauge(MELLOMLAGRING, utkast.dec().also { log.info("Mellomlagring teller er $it") }))
                     }
                 } ?: log.warn("Ingen utkast å avslutte for $fnr")
             }
