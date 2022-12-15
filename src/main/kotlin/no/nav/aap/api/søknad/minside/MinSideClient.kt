@@ -118,13 +118,12 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                             log.trace("Sendte avslutt utkast med eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
                             repos.utkast.delete(u)
                             registry.gauge(MELLOMLAGRING, utkast.decIfPositive())
-
                         }
                     }
                     else {
                         log.info("Avslutter Min Side utkast DB for eventid ${u.eventid} for $fnr etter ${between(u.created, now()).toKotlinDuration()}")
                         repos.utkast.delete(u)
-                        registry.gauge(MELLOMLAGRING, utkast.dec().also { log.info("Mellomlagring teller er $it") }))
+                        registry.gauge(MELLOMLAGRING, utkast.dec().also { log.info("Mellomlagring teller er $it") })
                     }
                 } ?: log.warn("Ingen utkast å avslutte for $fnr")
             }
