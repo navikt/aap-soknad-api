@@ -51,7 +51,10 @@ import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPro
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.actuate.metrics.AutoTimer
+import org.springframework.boot.actuate.metrics.web.reactive.client.DefaultWebClientExchangeTagsProvider
 import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientCustomizer
+import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientFilterFunction
 import org.springframework.boot.actuate.trace.http.HttpTrace
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
@@ -86,7 +89,6 @@ import org.threeten.bp.Duration.ofMillis
 import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
-import reactor.util.retry.Retry
 import reactor.util.retry.Retry.fixedDelay
 
 @Configuration
@@ -179,6 +181,13 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                     c.customize(it)
                 }
         }
+
+    @Bean
+    fun metricsWebClientFilterFunction(registry: MeterRegistry) = MetricsWebClientFilterFunction(
+            registry,
+            DefaultWebClientExchangeTagsProvider(),
+            "custom.web.client",
+            AutoTimer.ENABLED)
 
     @ConditionalOnNotProd
     @Bean
