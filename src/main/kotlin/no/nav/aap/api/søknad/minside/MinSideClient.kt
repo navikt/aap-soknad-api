@@ -212,8 +212,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         }
 
     companion object {
-        private val counter = AtomicInteger(0)
-        private val utkast =  gauge(MELLOMLAGRING,counter)
+        private val utkast = gauge(MELLOMLAGRING, AtomicInteger(0))
         private val oppgaverAvsluttet = counter(AVSLUTTET_OPPGAVE)
         private val beskjederAvsluttet = counter(AVSLUTTET_BESKJED)
     }
