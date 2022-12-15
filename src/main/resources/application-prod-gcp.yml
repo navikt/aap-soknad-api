@@ -51,14 +51,8 @@ joark:
         topic: teamdokumenthandtering.aapen-dok-journalfoering
 minside:
     utkast:
-        enabled: true
         sendenabled: false
     backlinks:
         innsyn: https://www.nav.no/aap/mine-aap
         standard: https://www.nav.no/aap/soknad
         utland: https://aap-soknad.nav.no/aap/soknad/utland
-buckets:
-    mellom:
-        subscription:
-            navn: ${mellomlagring.navn}-subscription
-            topic: ${mellomlagring.navn}-topic

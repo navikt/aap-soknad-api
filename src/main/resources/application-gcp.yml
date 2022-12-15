@@ -197,6 +197,9 @@ buckets:
       delay: 60
       eldreEnn: 10d
       enabled: false
+    subscription:
+      navn: ${mellomlagring.navn}-subscription
+      topic: ${mellomlagring.navn}-topic
   vedlegg:
     navn: ${vedlegg.navn}
     maxsum: 50MB

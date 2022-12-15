@@ -53,16 +53,7 @@ joark:
 minside:
     utkast:
         sendenabled: true
-        enabled: true
     backlinks:
         innsyn: https://aap-innsyn.dev.nav.no/aap/mine-aap
         standard: https://aap-soknad.dev.nav.no/aap/soknad
         utland: https://aap-soknad.dev.nav.no/aap/soknad/utland
-
-buckets:
-    mellom:
-        purring:
-            enabled: false
-        subscription:
-            navn: ${mellomlagring.navn}-subscription
-            topic: ${mellomlagring.navn}-topic
