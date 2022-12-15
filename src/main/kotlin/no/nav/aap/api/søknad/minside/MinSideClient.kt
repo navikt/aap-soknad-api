@@ -53,10 +53,11 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     private val registry: MeterRegistry,
                     private val repos: MinSideRepositories) {
 
+    private val log = getLogger(javaClass)
+
     private val utkast = gauge(MELLOMLAGRING, AtomicLong(repos.utkast.count())).also { log.info("DB mellomlagring init $it") }
 
 
-    private val log = getLogger(javaClass)
 
     @Transactional
     @Counted(OPPRETTET_UTKAST, description = "Antall utkast opprettet")
