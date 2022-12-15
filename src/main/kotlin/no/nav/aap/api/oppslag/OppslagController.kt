@@ -6,8 +6,8 @@ import no.nav.aap.api.oppslag.arbeid.ArbeidClient
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.behandler.BehandlerClient
 import no.nav.aap.api.oppslag.konto.KontoClient
-import no.nav.aap.api.oppslag.krr.KRRClient
-import no.nav.aap.api.oppslag.pdl.PDLClient
+import no.nav.aap.api.oppslag.kontaktinformasjon.KRRClient
+import no.nav.aap.api.oppslag.person.PDLClient
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
 import no.nav.aap.api.søknad.model.SøkerInfo

@@ -1,14 +1,14 @@
 package no.nav.aap.api
 
 import java.time.LocalDate.now
-import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.FORTROLIG
-import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
-import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
-import no.nav.aap.api.oppslag.pdl.PDLBarn
-import no.nav.aap.api.oppslag.pdl.PDLBarn.PDLDødsfall
-import no.nav.aap.api.oppslag.pdl.PDLGradering
-import no.nav.aap.api.oppslag.pdl.PDLNavn
-import no.nav.aap.api.oppslag.pdl.PDLSøker.PDLFødsel
+import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.FORTROLIG
+import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
+import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
+import no.nav.aap.api.oppslag.person.PDLBarn
+import no.nav.aap.api.oppslag.person.PDLBarn.PDLDødsfall
+import no.nav.aap.api.oppslag.person.PDLGradering
+import no.nav.aap.api.oppslag.person.PDLNavn
+import no.nav.aap.api.oppslag.person.PDLSøker.PDLFødsel
 
 object OMBarn {
     fun listeMedPDLBarn() = sequenceOf(

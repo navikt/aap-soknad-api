@@ -1,4 +1,4 @@
-package no.nav.aap.api.oppslag.krr
+package no.nav.aap.api.oppslag.kontaktinformasjon
 
 import org.springframework.stereotype.Component
 

@@ -1,6 +1,6 @@
-package no.nav.aap.api.oppslag.krr
+package no.nav.aap.api.oppslag.kontaktinformasjon
 
-import no.nav.aap.api.oppslag.krr.KRRConfig.Companion.KRR
+import no.nav.aap.api.oppslag.kontaktinformasjon.KRRConfig.Companion.KRR
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.beans.factory.annotation.Qualifier

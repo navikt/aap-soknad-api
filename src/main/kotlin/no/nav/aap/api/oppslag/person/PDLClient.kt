@@ -1,4 +1,4 @@
-package no.nav.aap.api.oppslag.pdl
+package no.nav.aap.api.oppslag.person
 
 import org.springframework.stereotype.Component
 

@@ -1,8 +1,7 @@
-package no.nav.aap.api.oppslag.pdl
+package no.nav.aap.api.oppslag.person
 
 import no.nav.aap.api.OMBarn
 import no.nav.aap.api.OMPersoner
-import org.junit.Before
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertTrue

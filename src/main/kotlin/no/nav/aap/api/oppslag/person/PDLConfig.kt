@@ -1,8 +1,7 @@
-package no.nav.aap.api.oppslag.pdl
+package no.nav.aap.api.oppslag.person
 
 import java.net.URI
-import java.time.Duration
-import no.nav.aap.api.oppslag.pdl.PDLConfig.Companion.PDL
+import no.nav.aap.api.oppslag.person.PDLConfig.Companion.PDL
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding

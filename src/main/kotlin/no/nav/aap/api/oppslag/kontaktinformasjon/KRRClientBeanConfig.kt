@@ -1,6 +1,6 @@
-package no.nav.aap.api.oppslag.krr
+package no.nav.aap.api.oppslag.kontaktinformasjon
 
-import no.nav.aap.api.oppslag.krr.KRRConfig.Companion.KRR
+import no.nav.aap.api.oppslag.kontaktinformasjon.KRRConfig.Companion.KRR
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.generellFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction

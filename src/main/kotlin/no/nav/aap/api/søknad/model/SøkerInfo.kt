@@ -3,7 +3,7 @@ package no.nav.aap.api.søknad.model
 import no.nav.aap.api.felles.Kontonummer
 import no.nav.aap.api.oppslag.arbeid.Arbeidsforhold
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
-import no.nav.aap.api.oppslag.krr.Kontaktinformasjon
+import no.nav.aap.api.oppslag.kontaktinformasjon.Kontaktinformasjon
 
 data class SøkerInfo(val søker: Søker,
                      val behandlere: List<RegistrertBehandler>,

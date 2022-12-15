@@ -1,7 +1,7 @@
-package no.nav.aap.api.søknad.virus
+package no.nav.aap.api.søknad.virussjekk
 
 import java.net.URI
-import no.nav.aap.api.søknad.virus.VirusScanConfig.Companion.VIRUS
+import no.nav.aap.api.søknad.virussjekk.VirusScanConfig.Companion.VIRUS
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding

@@ -1,8 +1,7 @@
-package no.nav.aap.api.oppslag.krr
+package no.nav.aap.api.oppslag.kontaktinformasjon
 
 import java.net.URI
-import java.time.Duration
-import no.nav.aap.api.oppslag.krr.KRRConfig.Companion.KRR
+import no.nav.aap.api.oppslag.kontaktinformasjon.KRRConfig.Companion.KRR
 import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding

@@ -1,13 +1,13 @@
-package no.nav.aap.api.oppslag.pdl
+package no.nav.aap.api.oppslag.person
 
 import java.time.LocalDate
 import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.PostNummer
-import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.FORTROLIG
-import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
-import no.nav.aap.api.oppslag.pdl.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
+import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.FORTROLIG
+import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
+import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.util.LoggerUtil.getLogger

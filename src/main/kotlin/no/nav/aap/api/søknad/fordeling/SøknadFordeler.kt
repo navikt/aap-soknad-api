@@ -7,7 +7,7 @@ import java.util.*
 import no.nav.aap.api.config.Metrikker.SØKNADER
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
-import no.nav.aap.api.oppslag.pdl.PDLClient
+import no.nav.aap.api.oppslag.person.PDLClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler
 import no.nav.aap.api.søknad.fordeling.SøknadFordeler.Kvittering
 import no.nav.aap.api.søknad.model.Innsending

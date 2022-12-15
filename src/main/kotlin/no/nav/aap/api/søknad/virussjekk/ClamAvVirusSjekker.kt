@@ -1,12 +1,12 @@
-package no.nav.aap.api.søknad.virus
+package no.nav.aap.api.søknad.virussjekk
 
 import no.nav.aap.api.error.Substatus.VIRUS
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker
-import no.nav.aap.api.søknad.virus.ScanResult.Result.FOUND
-import no.nav.aap.api.søknad.virus.ScanResult.Result.NONE
-import no.nav.aap.api.søknad.virus.ScanResult.Result.OK
+import no.nav.aap.api.søknad.virussjekk.ScanResult.Result.FOUND
+import no.nav.aap.api.søknad.virussjekk.ScanResult.Result.NONE
+import no.nav.aap.api.søknad.virussjekk.ScanResult.Result.OK
 import org.springframework.stereotype.Component
 
 @Component
