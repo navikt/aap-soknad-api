@@ -100,7 +100,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                         log.trace("Oppdaterer Min Side utkast DB med eventid ${u.eventid} for $fnr")
                         repos.utkast.oppdaterUtkast(UPDATED,fnr.fnr, u.eventid)
                     }
-                } ?:  log.warn("Oppdaterer ikke nytt Min Side utkast, fant IKKE et allerede eksisterende utkast for $fnr")
+                } ?:  log.warn("Oppdaterer IKKE nytt Min Side utkast, fant IKKE et allerede eksisterende utkast for $fnr")
             }
             else {
                 log.trace("Oppdaterer IKKE nytt utkast i Ditt Nav for $fnr, disabled")
