@@ -174,12 +174,11 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
             }
 
     @Bean
-    fun webClientCustomizer(client: HttpClient, c: MetricsWebClientCustomizer) =
+    fun webClientCustomizer(client: HttpClient, metricsFilterFunction: MetricsWebClientFilterFunction) =
         WebClientCustomizer { b ->
             b.clientConnector(ReactorClientHttpConnector(client))
-                .filter(correlatingFilterFunction(applicationName)).also {
-                    c.customize(it)
-                }
+                .filter(metricsFilterFunction)
+                .filter(correlatingFilterFunction(applicationName))
         }
 
     @Bean
