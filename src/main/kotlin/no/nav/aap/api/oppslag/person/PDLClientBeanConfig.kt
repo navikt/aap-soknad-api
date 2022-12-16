@@ -30,7 +30,7 @@ class PDLClientBeanConfig(private val registry: MeterRegistry) {
     @Qualifier(PDL_SYSTEM)
     fun pdlSystemWebClient(b: Builder, cfg: PDLConfig, @Qualifier(PDL_SYSTEM) pdlClientCredentialFilterFunction: ExchangeFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
-            .filter(metricsWebClientFilterFunction(registry,"pdl.system"))
+          //  .filter(metricsWebClientFilterFunction(registry,"pdl.system"))
             .filter(temaFilterFunction())
             .filter(pdlClientCredentialFilterFunction)
             .build()
