@@ -21,7 +21,7 @@ internal class MellomlagerController(private val mellomlager: Mellomlager, priva
     fun lagre(@PathVariable type: SkjemaType, @RequestBody data: String) = mellomlager.lagre(data, type)
 
     @GetMapping("/les/{type}")
-    fun les(@PathVariable type: SkjemaType) = mellomlager.les(type)//?.let { ok(it) } ?: notFound().build()
+    fun les(@PathVariable type: SkjemaType) = mellomlager.les(type)
 
     @DeleteMapping("/slett/{type}")
     @ResponseStatus(NO_CONTENT)
