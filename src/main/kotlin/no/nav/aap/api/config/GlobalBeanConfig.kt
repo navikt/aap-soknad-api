@@ -10,7 +10,6 @@ import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import io.micrometer.core.aop.CountedAspect
 import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
-import io.micrometer.core.instrument.Timer
 import io.netty.handler.logging.LogLevel.TRACE
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
@@ -53,15 +52,9 @@ import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPro
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.actuate.metrics.AutoTimer
-import org.springframework.boot.actuate.metrics.web.client.MetricsClientHttpRequestInterceptor
 import org.springframework.boot.actuate.metrics.web.client.MetricsRestTemplateCustomizer
-import org.springframework.boot.actuate.metrics.web.reactive.client.DefaultWebClientExchangeTagsProvider
-import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientCustomizer
-import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientFilterFunction
 import org.springframework.boot.actuate.trace.http.HttpTrace
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
-import org.springframework.boot.autoconfigure.elasticsearch.RestClientBuilderCustomizer
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.client.RestTemplateCustomizer
