@@ -32,7 +32,6 @@ class PDLClientBeanConfig(private val registry: MeterRegistry) {
         b.baseUrl("${cfg.baseUri}")
             .filter(metricsWebClientFilterFunction(registry,"pdl.system"))
             .filter(temaFilterFunction())
-            .filter(metricsWebClientFilterFunction())
             .filter(pdlClientCredentialFilterFunction)
             .build()
 
