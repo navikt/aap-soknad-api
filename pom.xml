@@ -22,7 +22,7 @@
         <commons-text.version>1.10.0</commons-text.version>
         <domain.version>1.0.37</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
-        <gcp.libraries.version>26.1.5</gcp.libraries.version>
+        <gcp.libraries.version>26.2.0</gcp.libraries.version>
         <gcp.version>0.183.0</gcp.version>
         <graphql.version>1.0.0</graphql.version>
         <hibernate.types.version>2.20.0</hibernate.types.version>
