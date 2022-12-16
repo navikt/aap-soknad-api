@@ -54,13 +54,17 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.metrics.AutoTimer
+import org.springframework.boot.actuate.metrics.web.client.MetricsClientHttpRequestInterceptor
+import org.springframework.boot.actuate.metrics.web.client.MetricsRestTemplateCustomizer
 import org.springframework.boot.actuate.metrics.web.reactive.client.DefaultWebClientExchangeTagsProvider
 import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientCustomizer
 import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientFilterFunction
 import org.springframework.boot.actuate.trace.http.HttpTrace
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
+import org.springframework.boot.autoconfigure.elasticsearch.RestClientBuilderCustomizer
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
+import org.springframework.boot.web.client.RestTemplateCustomizer
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.ApplicationContext
@@ -175,6 +179,8 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                 setOrder(LOWEST_PRECEDENCE)
             }
 
+    @Bean
+    fun restTemplateCustomizer(c: MetricsRestTemplateCustomizer) = RestTemplateCustomizer(c::customize)
     @Bean
     fun webClientCustomizer(client: HttpClient, registry: MeterRegistry) =
         WebClientCustomizer { b ->
