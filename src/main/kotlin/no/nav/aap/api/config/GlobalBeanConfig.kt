@@ -52,6 +52,8 @@ import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPro
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.actuate.metrics.AutoTimer
+import org.springframework.boot.actuate.metrics.web.client.DefaultRestTemplateExchangeTagsProvider
 import org.springframework.boot.actuate.metrics.web.client.MetricsRestTemplateCustomizer
 import org.springframework.boot.actuate.trace.http.HttpTrace
 import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository
@@ -174,6 +176,8 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     @Bean
     fun restTemplateCustomizer(c: MetricsRestTemplateCustomizer) = RestTemplateCustomizer(c::customize)
+
+    fun metricsRestTemplateCustomizer(registry: MeterRegistry) = MetricsRestTemplateCustomizer(registry,DefaultRestTemplateExchangeTagsProvider(),"resttemplate", AutoTimer.ENABLED)
     @Bean
     fun webClientCustomizer(client: HttpClient, registry: MeterRegistry) =
         WebClientCustomizer { b ->
