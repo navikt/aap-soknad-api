@@ -175,21 +175,11 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
             }
 
     @Bean
-    fun webClientCustomizer(client: HttpClient, metricsCustomizer: MetricsWebClientCustomizer ,metricsFilterFunction: MetricsWebClientFilterFunction) =
+    fun webClientCustomizer(client: HttpClient) =
         WebClientCustomizer { b ->
             b.clientConnector(ReactorClientHttpConnector(client))
-                .filter(metricsFilterFunction)
-                .filter(correlatingFilterFunction(applicationName)).also {
-                    metricsCustomizer.customize(it)
-                }
+                .filter(correlatingFilterFunction(applicationName))
         }
-
-    @Bean
-    fun metricsWebClientFilterFunction(registry: MeterRegistry) = MetricsWebClientFilterFunction(
-            registry,
-            DefaultWebClientExchangeTagsProvider(),
-            "custom.web.client",
-            AutoTimerHistogram())
 
     class AutoTimerHistogram : AutoTimer {
         override fun apply(builder: Timer.Builder) {

@@ -1,5 +1,11 @@
 package no.nav.aap.api.config
 
+import io.micrometer.core.instrument.MeterRegistry
+import no.nav.aap.api.config.GlobalBeanConfig.AutoTimerHistogram
+import org.springframework.boot.actuate.metrics.AutoTimer
+import org.springframework.boot.actuate.metrics.web.reactive.client.DefaultWebClientExchangeTagsProvider
+import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientFilterFunction
+
 object Metrikker {
     const val ETTERSENDTE = "soknad.vedlegg.ettersendte"
     const val INNSENDTE = "soknad.vedlegg.innsendte"
@@ -14,6 +20,12 @@ object Metrikker {
     const val AVSLUTTET_UTKAST = "soknad.utkast.avsluttet"
     const val OPPRETTET_UTKAST = "soknad.utkast.opprettet"
     const val OPPDATERT_UTKAST = "soknad.utkast.oppdatert"
+
+    fun metricsWebClientFilterFunction(registry: MeterRegistry, name: String, autoTimer: AutoTimer = AutoTimerHistogram()) = MetricsWebClientFilterFunction(
+            registry,
+            DefaultWebClientExchangeTagsProvider(),
+            name,
+            AutoTimerHistogram())
 
 
 }
