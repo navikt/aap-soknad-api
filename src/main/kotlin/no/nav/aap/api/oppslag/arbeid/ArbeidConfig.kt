@@ -6,6 +6,7 @@ import java.time.Period
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 import no.nav.aap.api.oppslag.arbeid.ArbeidConfig.Companion.ARBEID
 import no.nav.aap.rest.AbstractRestConfig
+import no.nav.aap.rest.AbstractRestConfig.RetryConfig.Companion.DEFAULT
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
@@ -20,7 +21,7 @@ class ArbeidConfig(baseUri: URI,
                    @DefaultValue(PATH) private val path: String,
                    @DefaultValue("true") enabled: Boolean,
                    @DefaultValue(PINGPATH) pingPath: String,
-                   @NestedConfigurationProperty private val retryCfg: RetryConfig = RetryConfig.DEFAULT,
+                   @NestedConfigurationProperty private val retryCfg: RetryConfig = DEFAULT,
                    @DefaultValue(FEMÅR) @PeriodFormat(SIMPLE) private val tidTilbake: Period,
                    @DefaultValue("false") val sporingsinformasjon: Boolean) :
     AbstractRestConfig(baseUri, pingPath, ARBEID, enabled,retryCfg) {

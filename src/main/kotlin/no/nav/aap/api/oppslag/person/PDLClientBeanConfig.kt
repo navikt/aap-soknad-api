@@ -2,7 +2,6 @@ package no.nav.aap.api.oppslag.person
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
-import no.nav.aap.api.config.Metrikker.metricsWebClientFilterFunction
 import no.nav.aap.api.oppslag.person.PDLConfig.Companion.PDL_CREDENTIALS
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction

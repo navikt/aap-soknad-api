@@ -1,7 +1,6 @@
 package no.nav.aap.api.søknad.fordeling
 
 import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.søknad.SendCallback
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig.VLTopicConfig
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
@@ -23,10 +22,10 @@ class SøknadVLFordeler(private val fordeler: KafkaOperations<String, Any>) {
                         headers()
                             .add(NAV_CALL_ID, callId().toByteArray())
                             .add("journalpostid", journalpostId.toByteArray())
-                    })
-                    .addCallback(SendCallback("${søknad.javaClass.simpleName.lowercase()} til VL med journalpost $journalpostId") {
-                        log.info("WOW")
-                    })
+                    }).get().also {
+                    log.trace("Sendte ${søknad.javaClass.simpleName.lowercase()}  til VL med journalpost $journalpostId  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
+                }
+                Unit
             }
         }
         else {

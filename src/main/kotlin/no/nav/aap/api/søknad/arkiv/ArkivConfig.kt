@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.arkiv
 
 import java.net.URI
 import no.nav.aap.rest.AbstractRestConfig
+import no.nav.aap.rest.AbstractRestConfig.RetryConfig.Companion.DEFAULT
 import no.nav.aap.util.Constants.JOARK
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -14,11 +15,11 @@ class ArkivConfig(
         @DefaultValue(DEFAULT_OPPRETT_PATH) val arkivPath: String,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
         @DefaultValue("true") enabled: Boolean,
-        @NestedConfigurationProperty private val retryCfg: RetryConfig = RetryConfig.DEFAULT,
+        @NestedConfigurationProperty private val retryCfg: RetryConfig =DEFAULT,
         @NestedConfigurationProperty val hendelser: HendelseConfig,
         baseUri: URI) : AbstractRestConfig(baseUri, pingPath, JOARK, enabled,retryCfg) {
 
-    constructor(baseUri: URI) : this(DEFAULT_OPPRETT_PATH, DEFAULT_PING_PATH,true,RetryConfig.DEFAULT,HendelseConfig("some topic"),baseUri)
+    constructor(baseUri: URI) : this(DEFAULT_OPPRETT_PATH, DEFAULT_PING_PATH,true,DEFAULT,HendelseConfig("some topic"),baseUri)
 
     data class HendelseConfig(val topic: String)
 

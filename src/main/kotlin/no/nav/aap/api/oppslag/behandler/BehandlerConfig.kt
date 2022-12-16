@@ -4,6 +4,7 @@ import java.net.URI
 import java.time.Duration.*
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLER
 import no.nav.aap.rest.AbstractRestConfig
+import no.nav.aap.rest.AbstractRestConfig.RetryConfig.Companion.DEFAULT
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
@@ -17,11 +18,11 @@ class BehandlerConfig(
         @DefaultValue(DEFAULT_URI) baseUri: URI,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
         @DefaultValue(DEFAULT_PATH)  val path: String,
-        @NestedConfigurationProperty val retryCfg: RetryConfig = RetryConfig.DEFAULT,
+        @NestedConfigurationProperty val retryCfg: RetryConfig = DEFAULT,
         @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, BEHANDLER, enabled,retryCfg) {
     fun path(b: UriBuilder) = b.path(path).build()
 
-    constructor(baseUri: URI) : this(baseUri,DEFAULT_PING_PATH,DEFAULT_PATH,RetryConfig.DEFAULT,true)
+    constructor(baseUri: URI) : this(baseUri,DEFAULT_PING_PATH,DEFAULT_PATH,DEFAULT,true)
 
 
     companion object {
