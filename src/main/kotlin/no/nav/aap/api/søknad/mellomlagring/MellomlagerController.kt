@@ -6,8 +6,6 @@ import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
-import org.springframework.http.ResponseEntity.notFound
-import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -23,7 +21,7 @@ internal class MellomlagerController(private val mellomlager: Mellomlager, priva
     fun lagre(@PathVariable type: SkjemaType, @RequestBody data: String) = mellomlager.lagre(data, type)
 
     @GetMapping("/les/{type}")
-    fun les(@PathVariable type: SkjemaType) = mellomlager.les(type)?.let { ok(it) } ?: notFound().build()
+    fun les(@PathVariable type: SkjemaType) = mellomlager.les(type)//?.let { ok(it) } ?: notFound().build()
 
     @DeleteMapping("/slett/{type}")
     @ResponseStatus(NO_CONTENT)
