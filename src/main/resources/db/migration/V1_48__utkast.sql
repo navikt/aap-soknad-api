@@ -1,0 +1,1 @@
+CREATE INDEX SKJEMATYPE_UTKAST_IX ON minsideutkast(skjematype);
