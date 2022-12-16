@@ -49,7 +49,6 @@ class PDLClientBeanConfig {
     @Bean
     fun pdlUserWebClient(b: Builder, cfg: PDLConfig, tokenX: TokenXFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
-            .filter(metricsWebClientFilterFunction(registry,"pdl.user"))
             .filter(temaFilterFunction())
             .filter(tokenX)
             .build()
