@@ -181,21 +181,6 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                 .filter(correlatingFilterFunction(applicationName))
         }
 
-    class AutoTimerHistogram : AutoTimer {
-        override fun apply(builder: Timer.Builder) {
-            builder
-                .serviceLevelObjectives(
-                        Duration.ofMillis(100),
-                        Duration.ofMillis(500),
-                        Duration.ofMillis(800),
-                        Duration.ofMillis(1000),
-                        Duration.ofMillis(1200))
-                .publishPercentileHistogram(true)
-                .minimumExpectedValue(Duration.ofMillis(100))
-                .maximumExpectedValue(Duration.ofMillis(10000))
-        }
-    }
-
     @ConditionalOnNotProd
     @Bean
     fun notProdHttpClient() = HttpClient.create().wiretap(javaClass.name, TRACE, TEXTUAL)

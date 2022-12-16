@@ -3,7 +3,6 @@ package no.nav.aap.api.oppslag.person
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import io.micrometer.core.instrument.MeterRegistry
-import no.nav.aap.api.config.GlobalBeanConfig.AutoTimerHistogram
 import no.nav.aap.api.config.Metrikker.metricsWebClientFilterFunction
 import no.nav.aap.api.oppslag.person.PDLConfig.Companion.PDL_CREDENTIALS
 import no.nav.aap.health.AbstractPingableHealthIndicator
@@ -15,9 +14,6 @@ import no.nav.aap.util.TokenExtensions.bearerToken
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.boot.actuate.metrics.AutoTimer
-import org.springframework.boot.actuate.metrics.web.reactive.client.DefaultWebClientExchangeTagsProvider
-import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientFilterFunction
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

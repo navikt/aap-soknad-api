@@ -1,7 +1,8 @@
 package no.nav.aap.api.config
 
 import io.micrometer.core.instrument.MeterRegistry
-import no.nav.aap.api.config.GlobalBeanConfig.AutoTimerHistogram
+import io.micrometer.core.instrument.Timer
+import java.time.Duration
 import org.springframework.boot.actuate.metrics.AutoTimer
 import org.springframework.boot.actuate.metrics.web.reactive.client.DefaultWebClientExchangeTagsProvider
 import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientFilterFunction
@@ -27,5 +28,18 @@ object Metrikker {
             name,
             AutoTimerHistogram())
 
-
+}
+class AutoTimerHistogram : AutoTimer {
+    override fun apply(builder: Timer.Builder) {
+        builder
+            .serviceLevelObjectives(
+                    Duration.ofMillis(100),
+                    Duration.ofMillis(500),
+                    Duration.ofMillis(800),
+                    Duration.ofMillis(1000),
+                    Duration.ofMillis(1200))
+            .publishPercentileHistogram(true)
+            .minimumExpectedValue(Duration.ofMillis(100))
+            .maximumExpectedValue(Duration.ofMillis(10000))
+    }
 }
