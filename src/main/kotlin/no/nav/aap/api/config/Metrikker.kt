@@ -2,7 +2,7 @@ package no.nav.aap.api.config
 
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Timer
-import java.time.Duration
+import java.time.Duration.ofMillis
 import org.springframework.boot.actuate.metrics.AutoTimer
 import org.springframework.boot.actuate.metrics.web.reactive.client.DefaultWebClientExchangeTagsProvider
 import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientFilterFunction
@@ -26,20 +26,19 @@ object Metrikker {
             registry,
             DefaultWebClientExchangeTagsProvider(),
             name,
-            AutoTimerHistogram())
+            autoTimer)
 
 }
-class AutoTimerHistogram : AutoTimer {
+internal class AutoTimerHistogram : AutoTimer {
     override fun apply(builder: Timer.Builder) {
-        builder
-            .serviceLevelObjectives(
-                    Duration.ofMillis(100),
-                    Duration.ofMillis(500),
-                    Duration.ofMillis(800),
-                    Duration.ofMillis(1000),
-                    Duration.ofMillis(1200))
+        builder.serviceLevelObjectives(
+                ofMillis(100),
+                ofMillis(500),
+                ofMillis(800),
+                ofMillis(1000),
+                ofMillis(1200))
             .publishPercentileHistogram(true)
-            .minimumExpectedValue(Duration.ofMillis(100))
-            .maximumExpectedValue(Duration.ofMillis(10000))
+            .minimumExpectedValue(ofMillis(100))
+            .maximumExpectedValue(ofMillis(10000))
     }
 }

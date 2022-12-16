@@ -2,7 +2,6 @@ package no.nav.aap.api.oppslag.person
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
-import io.micrometer.core.instrument.MeterRegistry
 import no.nav.aap.api.config.Metrikker.metricsWebClientFilterFunction
 import no.nav.aap.api.oppslag.person.PDLConfig.Companion.PDL_CREDENTIALS
 import no.nav.aap.health.AbstractPingableHealthIndicator
@@ -24,13 +23,12 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
-class PDLClientBeanConfig(private val registry: MeterRegistry) {
+class PDLClientBeanConfig {
 
     @Bean
     @Qualifier(PDL_SYSTEM)
     fun pdlSystemWebClient(b: Builder, cfg: PDLConfig, @Qualifier(PDL_SYSTEM) pdlClientCredentialFilterFunction: ExchangeFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
-          //  .filter(metricsWebClientFilterFunction(registry,"pdl.system"))
             .filter(temaFilterFunction())
             .filter(pdlClientCredentialFilterFunction)
             .build()
