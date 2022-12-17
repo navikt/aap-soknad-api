@@ -3,6 +3,7 @@ package no.nav.aap.api.config
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Timer
 import java.time.Duration.ofMillis
+import no.nav.aap.api.felles.SkjemaType.STANDARD
 import org.springframework.boot.actuate.metrics.AutoTimer
 import org.springframework.boot.actuate.metrics.web.reactive.client.DefaultWebClientExchangeTagsProvider
 import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientFilterFunction
@@ -21,6 +22,19 @@ object Metrikker {
     const val AVSLUTTET_UTKAST = "soknad.utkast.avsluttet"
     const val OPPRETTET_UTKAST = "soknad.utkast.opprettet"
     const val OPPDATERT_UTKAST = "soknad.utkast.oppdatert"
+
+    private const val STATUS = "status"
+    private const val KOMPLETT = "komplett"
+    private const val INKOMPLETT = "inkomplett"
+
+
+
+    fun komplettSøknad(registry: MeterRegistry) = registrerSøknad(registry,KOMPLETT)
+
+    fun inkomplettSøknad(registry: MeterRegistry) = registrerSøknad(registry,INKOMPLETT)
+
+    private fun registrerSøknad(registry: MeterRegistry, status: String) = registry.counter(SØKNADER,"type", STANDARD.name.lowercase(),STATUS,status).increment()
+
 
     fun metricsWebClientFilterFunction(registry: MeterRegistry, name: String, autoTimer: AutoTimer = AutoTimerHistogram()) = MetricsWebClientFilterFunction(
             registry,
@@ -41,4 +55,6 @@ internal class AutoTimerHistogram : AutoTimer {
             .minimumExpectedValue(ofMillis(100))
             .maximumExpectedValue(ofMillis(10000))
     }
+
+
 }

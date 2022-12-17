@@ -6,6 +6,8 @@ import java.util.UUID.randomUUID
 import no.nav.aap.api.config.Metrikker.ETTERSENDTE
 import no.nav.aap.api.config.Metrikker.INNSENDTE
 import no.nav.aap.api.config.Metrikker.MANGLENDE
+import no.nav.aap.api.config.Metrikker.inkomplettSøknad
+import no.nav.aap.api.config.Metrikker.komplettSøknad
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
@@ -48,6 +50,12 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
             dokumentLager.slettDokumenter(søknad).run {
                 mellomlager.slett()
                 with(søknad.vedlegg()) {
+                    if (this.manglende.isEmpty()) {
+                      komplettSøknad(registry)
+                    }
+                    else {
+                        inkomplettSøknad(registry)
+                    }
                     with(repo.save(Søknad(fnr.fnr, journalpostId))) {
                         registrerManglende(manglende)
                         registrerVedlagte(vedlagte)

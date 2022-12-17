@@ -174,11 +174,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                 setOrder(LOWEST_PRECEDENCE)
             }
 
-    @Bean
-    fun restTemplateCustomizer(c: MetricsRestTemplateCustomizer) = RestTemplateCustomizer(c::customize)
-
-    fun metricsRestTemplateCustomizer(registry: MeterRegistry) = MetricsRestTemplateCustomizer(registry,DefaultRestTemplateExchangeTagsProvider(),"resttemplate", AutoTimer.ENABLED)
-    @Bean
+   @Bean
     fun webClientCustomizer(client: HttpClient, registry: MeterRegistry) =
         WebClientCustomizer { b ->
             b.clientConnector(ReactorClientHttpConnector(client))

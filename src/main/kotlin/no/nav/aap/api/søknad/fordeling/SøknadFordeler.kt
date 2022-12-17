@@ -5,7 +5,6 @@ import java.time.LocalDateTime
 import java.time.LocalDateTime.now
 import java.util.*
 import no.nav.aap.api.config.Metrikker.SØKNADER
-import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.oppslag.person.PDLClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler
@@ -39,9 +38,7 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
             with(arkiv.fordel(innsending, this)) {
                 innsending.søknad.fødselsdato = this@run.fødseldato
                 vlFordeler.fordel(innsending.søknad, fnr, journalpostId, cfg.standard)
-                fullfører.fullfør(this@run.fnr, innsending.søknad, this).also {
-                    registry.counter(SØKNADER,"type", STANDARD.name.lowercase()).increment()
-                }
+                fullfører.fullfør(this@run.fnr, innsending.søknad, this)
             }
         }
 
