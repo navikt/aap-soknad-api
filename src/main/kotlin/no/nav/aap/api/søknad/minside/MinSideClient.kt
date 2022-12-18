@@ -1,21 +1,13 @@
 package no.nav.aap.api.søknad.minside
 
-import io.micrometer.core.annotation.Counted
-import io.micrometer.core.instrument.Metrics.counter
 import io.micrometer.core.instrument.Metrics.gauge
 import java.time.Duration.between
 import java.time.LocalDateTime.now
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.time.toKotlinDuration
-import no.nav.aap.api.config.Metrikker.AVSLUTTET_BESKJED
-import no.nav.aap.api.config.Metrikker.AVSLUTTET_OPPGAVE
-import no.nav.aap.api.config.Metrikker.AVSLUTTET_UTKAST
-import no.nav.aap.api.config.Metrikker.MELLOMLAGRING
-import no.nav.aap.api.config.Metrikker.OPPDATERT_UTKAST
-import no.nav.aap.api.config.Metrikker.OPPRETTET_BESKJED
-import no.nav.aap.api.config.Metrikker.OPPRETTET_OPPGAVE
-import no.nav.aap.api.config.Metrikker.OPPRETTET_UTKAST
+import no.nav.aap.api.config.Metrikker
+import no.nav.aap.api.config.Metrikker.Companion.MELLOMLAGRING
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
@@ -49,14 +41,13 @@ data class MinSideProdusenter(val avro: KafkaOperations<NokkelInput, Any>, val u
 @ConditionalOnGCP
 class MinSideClient(private val produsenter: MinSideProdusenter,
                     private val cfg: MinSideConfig,
+                    private val metrikker: Metrikker,
                     private val repos: MinSideRepositories) {
 
     private val log = getLogger(javaClass)
-
-    private val utkast = gauge(MELLOMLAGRING, AtomicLong(repos.utkast.count())).also { log.info("DB mellomlagring counter init $it") }
+    private val utkast = gauge(MELLOMLAGRING, AtomicLong(repos.utkast.count()))
 
     @Transactional
-    @Counted(OPPRETTET_UTKAST, description = "Antall utkast opprettet")
     fun opprettUtkast(fnr: Fødselsnummer, tekst: String, skjemaType: SkjemaType = STANDARD, eventId: UUID = callIdAsUUID()) =
         with(cfg.utkast) {
             if (enabled) {
@@ -83,7 +74,6 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
             }
         }
     @Transactional
-    @Counted(OPPDATERT_UTKAST, description = "Antall utkast oppdatert")
     fun oppdaterUtkast(fnr: Fødselsnummer, nyTekst: String, skjemaType: SkjemaType = STANDARD) =
         with(cfg.utkast) {
             if (enabled) {
@@ -106,7 +96,6 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 log.trace("Oppdaterer IKKE nytt utkast i Ditt Nav for $fnr, disabled")
             }
         }
-    @Counted(AVSLUTTET_UTKAST, description = "Antall utkast slettet")
     @Transactional
     fun avsluttUtkast(fnr: Fødselsnummer,skjemaType: SkjemaType) =
         with(cfg.utkast) {
@@ -133,7 +122,6 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         }
 
     @Transactional
-    @Counted(OPPRETTET_BESKJED, description = "Antall beskjeder opprettet")
     fun opprettBeskjed(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
             if (enabled) {
@@ -164,7 +152,6 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         }
 
     @Transactional
-    @Counted(OPPRETTET_OPPGAVE, description = "Antall oppgaver opprettet")
     fun opprettOppgave(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
@@ -196,20 +183,10 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         }
 
     private fun avslutt(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType) =
-        produsenter.avro.send(ProducerRecord(cfg.done, key(cfg, eventId, fnr), done())).get().run {
-            when (notifikasjonType) {
-                OPPGAVE -> oppgaverAvsluttet.increment()
-                BESKJED -> beskjederAvsluttet.increment()
-            }.also {
+        produsenter.avro.send(ProducerRecord(cfg.done, key(cfg, eventId, fnr), done())).get()
+            .run {
                 log.trace("Sendte avslutt $notifikasjonType med eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
             }
         }
-
-    companion object {
-        private fun AtomicLong.dec() = if (get() > 0) decrementAndGet() else get()
-        private val oppgaverAvsluttet = counter(AVSLUTTET_OPPGAVE)
-        private val beskjederAvsluttet = counter(AVSLUTTET_BESKJED)
-    }
-}
 
 enum class UtkastType  {CREATED, UPDATED }

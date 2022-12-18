@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.spring.pubsub.core.subscriber.PubSubSubscriberTemplate
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
-import io.micrometer.core.instrument.Metrics.counter
-import no.nav.aap.api.config.Metrikker.MELLOMLAGRING_EXPIRED
+import no.nav.aap.api.config.Metrikker
+import no.nav.aap.api.config.Metrikker.Companion.MELLOMLAGRING_EXPIRED
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.eventType
@@ -20,6 +20,7 @@ import org.springframework.boot.CommandLineRunner
 class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                    private val cfg: BucketConfig,
                                    private val mapper: ObjectMapper,
+                                   private val metrikker: Metrikker,
                                    private val subscriber: PubSubSubscriberTemplate) : CommandLineRunner {
 
     private val log = getLogger(javaClass)
@@ -48,7 +49,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                 OBJECT_DELETE -> if (endeligSlettet()) {
                                        varighet()?.let {
                                            if (it > cfg.mellom.varighet) {
-                                               expired.increment()
+                                              metrikker.inc(MELLOMLAGRING_EXPIRED)
                                                log.info("Slettet mellomlagring etter ${cfg.mellom.varighet.toDays()} dager for $md")
                                            }
                                        }
@@ -70,8 +71,4 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
             }
         }
     }
-    companion object {
-        private val expired = counter(MELLOMLAGRING_EXPIRED)
-    }
-
 }

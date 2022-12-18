@@ -27,7 +27,7 @@ import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
-import no.nav.aap.api.config.Metrikker.metricsWebClientFilterFunction
+import no.nav.aap.api.config.Metrikker.Companion.metricsWebClientFilterFunction
 import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.HeadersToMDCFilter
@@ -174,10 +174,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                 setOrder(LOWEST_PRECEDENCE)
             }
 
-    @Bean
-    fun restTemplateCustomizer(c: MetricsRestTemplateCustomizer) = RestTemplateCustomizer(c::customize)
 
-    fun metricsRestTemplateCustomizer(registry: MeterRegistry) = MetricsRestTemplateCustomizer(registry,DefaultRestTemplateExchangeTagsProvider(),"resttemplate", AutoTimer.ENABLED)
     @Bean
     fun webClientCustomizer(client: HttpClient, registry: MeterRegistry) =
         WebClientCustomizer { b ->
@@ -193,17 +190,6 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     @ConditionalOnProd
     @Bean
     fun prodHttpClient() = HttpClient.create()
-
-    @ConditionalOnNotProd
-    class HttpTraceRepository(private val mapper: ObjectMapper) : InMemoryHttpTraceRepository() {
-        private val log = getLogger(javaClass)
-        override fun add(trace: HttpTrace) {
-            runCatching {
-               // log.trace(CONFIDENTIAL, mapper.writerWithDefaultPrettyPrinter().writeValueAsString(trace))
-                super.add(trace)
-            }.getOrNull()
-        }
-    }
 
     class JTIFilter(private val ctx: AuthContext) : Filter {
         @Throws(IOException::class, ServletException::class)

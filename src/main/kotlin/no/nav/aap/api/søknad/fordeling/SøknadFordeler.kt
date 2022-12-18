@@ -1,18 +1,13 @@
 package no.nav.aap.api.søknad.fordeling
 
-import io.micrometer.core.instrument.MeterRegistry
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
 import java.util.*
-import no.nav.aap.api.config.Metrikker.SØKNADER
-import no.nav.aap.api.felles.SkjemaType.STANDARD
-import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.oppslag.person.PDLClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler
 import no.nav.aap.api.søknad.fordeling.SøknadFordeler.Kvittering
 import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.StandardEttersending
-import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.stereotype.Component
@@ -29,8 +24,7 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
                      private val pdl: PDLClient,
                      private val fullfører: SøknadFullfører,
                      private val cfg: VLFordelingConfig,
-                     private val vlFordeler: SøknadVLFordeler,
-                     private val registry: MeterRegistry) : Fordeler {
+                     private val vlFordeler: SøknadVLFordeler) : Fordeler {
     private val log = getLogger(javaClass)
 
 
@@ -39,9 +33,7 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
             with(arkiv.fordel(innsending, this)) {
                 innsending.søknad.fødselsdato = this@run.fødseldato
                 vlFordeler.fordel(innsending.søknad, fnr, journalpostId, cfg.standard)
-                fullfører.fullfør(this@run.fnr, innsending.søknad, this).also {
-                    registry.counter(SØKNADER,"type", STANDARD.name.lowercase()).increment()
-                }
+                fullfører.fullfør(this@run.fnr, innsending.søknad, this)
             }
         }
 
@@ -49,9 +41,7 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
     pdl.søkerUtenBarn().run {
         with(arkiv.fordel(e, this)) {
             vlFordeler.fordel(e, fnr, journalpostId, cfg.ettersending)
-            fullfører.fullfør(this@run.fnr, e, this).also {
-                registry.counter(SØKNADER,"type", STANDARD_ETTERSENDING.name.lowercase()).increment()
-            }
+            fullfører.fullfør(this@run.fnr, e, this)
         }
     }
 
@@ -59,9 +49,7 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
         pdl.søkerUtenBarn().run {
             with(arkiv.fordel(søknad, this)) {
                 vlFordeler.fordel(søknad, fnr, journalpostId, cfg.utland)
-                fullfører.fullfør(this@run.fnr, søknad, this).also {
-                    registry.counter(SØKNADER,"type", UTLAND.name.lowercase()).increment()
-                }
+                fullfører.fullfør(this@run.fnr, søknad, this)
             }
         }
 

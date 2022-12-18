@@ -1,11 +1,12 @@
 package no.nav.aap.api.søknad.fordeling
 
-import io.micrometer.core.instrument.MeterRegistry
 import java.util.*
 import java.util.UUID.randomUUID
-import no.nav.aap.api.config.Metrikker.ETTERSENDTE
-import no.nav.aap.api.config.Metrikker.INNSENDTE
-import no.nav.aap.api.config.Metrikker.MANGLENDE
+import no.nav.aap.api.config.Metrikker
+import no.nav.aap.api.config.Metrikker.Companion.ETTERSENDTE
+import no.nav.aap.api.config.Metrikker.Companion.INNSENDTE
+import no.nav.aap.api.config.Metrikker.Companion.MANGLENDE
+import no.nav.aap.api.config.Metrikker.Companion.SØKNADER
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
@@ -20,6 +21,7 @@ import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil
@@ -33,12 +35,13 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                       private val minside: MinSideClient,
                       private val repo: SøknadRepository,
                       private val mellomlager: Mellomlager,
-                      private val registry: MeterRegistry) {
+                      private val metrikker: Metrikker) {
 
     private val log = getLogger(javaClass)
 
     fun fullfør(fnr: Fødselsnummer, søknad: UtlandSøknad, res: ArkivResultat) =
         minside.opprettBeskjed(fnr, "Vi har mottatt din ${UTLAND_SØKNAD.tittel.decap()}").run {
+            metrikker.inc(SØKNADER,"type", UTLAND.name.lowercase())
             Kvittering(res.journalpostId)
         }
 
@@ -54,12 +57,13 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                         oppdaterMinSide(fnr, manglende.isEmpty())
                     }
                     manglende.forEach{
-                        registry.counter(MANGLENDE,"type",it.name.lowercase()).increment()
+                        metrikker.inc(MANGLENDE,"type",it.name.lowercase())
                     }
                     vedlagte.forEach{
-                        registry.counter(INNSENDTE,"type",it.name.lowercase()).increment()
+                        metrikker.inc(INNSENDTE,"type",it.name.lowercase())
                     }
                 }
+                metrikker.inc(SØKNADER,"type", STANDARD.name.lowercase())
                 Kvittering(journalpostId,søknad.innsendingTidspunkt, callIdAsUUID())
             }
         }
@@ -73,9 +77,10 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                 } ?: fullførEttersendingUtenSøknad(fnr, e.ettersendteVedlegg, this@with)
                 e.ettersendteVedlegg.forEach{
                     log.trace("Vedlagt vedlegg $it")
-                    registry.counter(ETTERSENDTE,"type",it.vedleggType.name.lowercase()).increment()
-                    registry.counter(INNSENDTE,"type",it.vedleggType.name.lowercase()).increment()
+                    metrikker.inc(ETTERSENDTE,"type",it.vedleggType.name.lowercase())
+                    metrikker.inc(INNSENDTE,"type",it.vedleggType.name.lowercase())
                 }
+                metrikker.inc(SØKNADER,"type", STANDARD_ETTERSENDING.name.lowercase())
                 Kvittering(journalpostId)
             }
         }
