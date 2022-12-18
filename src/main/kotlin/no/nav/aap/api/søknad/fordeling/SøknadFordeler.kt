@@ -3,6 +3,8 @@ package no.nav.aap.api.søknad.fordeling
 import java.time.LocalDateTime
 import java.time.LocalDateTime.now
 import java.util.*
+import no.nav.aap.api.config.Metrikker.SØKNADER
+import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.oppslag.person.PDLClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler
 import no.nav.aap.api.søknad.fordeling.SøknadFordeler.Kvittering

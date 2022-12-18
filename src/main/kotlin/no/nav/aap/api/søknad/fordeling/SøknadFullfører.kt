@@ -51,6 +51,12 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
             dokumentLager.slettDokumenter(søknad).run {
                 mellomlager.slett()
                 with(søknad.vedlegg()) {
+                    if (this.manglende.isEmpty()) {
+                      komplettSøknad(registry)
+                    }
+                    else {
+                        inkomplettSøknad(registry)
+                    }
                     with(repo.save(Søknad(fnr.fnr, journalpostId))) {
                         registrerManglende(manglende)
                         registrerVedlagte(vedlagte)
