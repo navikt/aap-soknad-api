@@ -4,7 +4,9 @@ import java.util.*
 import java.util.UUID.randomUUID
 import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.config.Metrikker.Companion.ETTERSENDTE
+import no.nav.aap.api.config.Metrikker.Companion.INKOMPLETT
 import no.nav.aap.api.config.Metrikker.Companion.INNSENDTE
+import no.nav.aap.api.config.Metrikker.Companion.KOMPLETT
 import no.nav.aap.api.config.Metrikker.Companion.MANGLENDE
 import no.nav.aap.api.config.Metrikker.Companion.SØKNADER
 import no.nav.aap.api.felles.Fødselsnummer
@@ -52,10 +54,10 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                 mellomlager.slett()
                 with(søknad.vedlegg()) {
                     if (this.manglende.isEmpty()) {
-                      komplettSøknad(registry)
+                        metrikker.inc(KOMPLETT, "type", STANDARD.name.lowercase())
                     }
                     else {
-                        inkomplettSøknad(registry)
+                        metrikker.inc(INKOMPLETT, "type", STANDARD.name.lowercase())
                     }
                     with(repo.save(Søknad(fnr.fnr, journalpostId))) {
                         registrerManglende(manglende)

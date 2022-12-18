@@ -4,7 +4,6 @@ import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Timer
 import java.time.Duration.ofMillis
-import no.nav.aap.api.felles.SkjemaType.STANDARD
 import org.springframework.boot.actuate.metrics.AutoTimer
 import org.springframework.boot.actuate.metrics.web.reactive.client.DefaultWebClientExchangeTagsProvider
 import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientFilterFunction
@@ -24,22 +23,15 @@ class Metrikker(private val registry: MeterRegistry) {
         const val MELLOMLAGRING = "soknad.mellomlagring"
         const val MELLOMLAGRING_EXPIRED = "soknad.expired"
         const val SØKNADER = "soknad.innsendte"
+        private const val STATUS = "status"
+        const val KOMPLETT = "komplett"
+        const val INKOMPLETT = "inkomplett"
         fun metricsWebClientFilterFunction(registry: MeterRegistry, name: String, autoTimer: AutoTimer = AutoTimerHistogram()) = MetricsWebClientFilterFunction(
                 registry,
                 DefaultWebClientExchangeTagsProvider(),
                 name,
                 autoTimer)
     }
-    private const val STATUS = "status"
-    private const val KOMPLETT = "komplett"
-    private const val INKOMPLETT = "inkomplett"
-
-    fun komplettSøknad(registry: MeterRegistry) = registrerSøknad(registry,KOMPLETT)
-
-    fun inkomplettSøknad(registry: MeterRegistry) = registrerSøknad(registry,INKOMPLETT)
-
-    private fun registrerSøknad(registry: MeterRegistry, status: String) = registry.counter(SØKNADER,"type", STANDARD.name.lowercase(),STATUS,status).increment()
-
 
     fun metricsWebClientFilterFunction(registry: MeterRegistry, name: String, autoTimer: AutoTimer = AutoTimerHistogram()) = MetricsWebClientFilterFunction(
             registry,
