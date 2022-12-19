@@ -28,8 +28,7 @@ resilience4j:
                 - org.springframework.web.reactive.function.client.WebClientResponseException
                 - java.io.IOException
             ignoreExceptions:
-                - no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.GraphQLUnreocoverableResponseException
-                - no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
+                - no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGraphQLResponse
 spring:
     cloud:
         gcp:

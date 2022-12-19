@@ -3,8 +3,9 @@ package no.nav.aap.api.error
 import com.fasterxml.jackson.databind.DatabindException
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.GraphQLBad
-import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.GraphQLNotFound
+import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.BadGraphQLResponse
+import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.NotFoundGraphQLResponse
+import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnauthenticatedGraphQLResponse
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager.ContentTypeDokumentSjekker.ContentTypeException
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException.NotFound
 import org.springframework.web.context.request.NativeWebRequest
+import org.springframework.web.reactive.function.client.WebClientResponseException.BadRequest
 import org.zalando.problem.Problem
 import org.zalando.problem.Problem.builder
 import org.zalando.problem.Status
@@ -36,7 +38,10 @@ class AAPApiExceptionHandling : ProblemHandling {
     private val log = getLogger(javaClass)
 
     @ExceptionHandler(JwtTokenMissingException::class, JwtTokenUnauthorizedException::class)
-    fun auth(e: RuntimeException, req: NativeWebRequest) = createProblem(e, req, UNAUTHORIZED)
+    fun unauth(e: RuntimeException, req: NativeWebRequest) = createProblem(e, req, UNAUTHORIZED)
+
+    @ExceptionHandler(UnauthenticatedGraphQLResponse::class, UnauthenticatedGraphQLResponse::class)
+    fun unauthQL(e: RuntimeException, req: NativeWebRequest) = createProblem(e, req, UNAUTHORIZED)
 
     @ExceptionHandler(IntegrationException::class, StorageException::class)
     fun integration(e: RuntimeException, req: NativeWebRequest) = createProblem(e, req, SERVICE_UNAVAILABLE)
@@ -47,11 +52,11 @@ class AAPApiExceptionHandling : ProblemHandling {
     @ExceptionHandler(IllegalArgumentException::class, DatabindException::class)
     fun illegal(e: Exception, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
 
-    @ExceptionHandler(NotFound::class,GraphQLNotFound::class)
+    @ExceptionHandler(NotFound::class,NotFoundGraphQLResponse::class)
     fun ikkeFunnet(e: Throwable, req: NativeWebRequest) = createProblem(e, req, NOT_FOUND)
 
-    @ExceptionHandler(GraphQLBad::class)
-    fun bad(e: GraphQLBad, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
+    @ExceptionHandler(BadGraphQLResponse::class, BadRequest::class)
+    fun bad(e: Throwable, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
 
     @ExceptionHandler(DokumentException::class)
     fun dokument(e: DokumentException, req: NativeWebRequest) = createProblem(e, req, UNPROCESSABLE_ENTITY, e.substatus)

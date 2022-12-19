@@ -3,7 +3,6 @@ package no.nav.aap.api.søknad.minside
 import io.micrometer.core.instrument.Metrics.gauge
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
-import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.config.Metrikker.Companion.MELLOMLAGRING
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
@@ -38,7 +37,6 @@ data class MinSideProdusenter(val avro: KafkaOperations<NokkelInput, Any>, val u
 @ConditionalOnGCP
 class MinSideClient(private val produsenter: MinSideProdusenter,
                     private val cfg: MinSideConfig,
-                    private val metrikker: Metrikker,
                     private val repos: MinSideRepositories) {
 
     private val log = getLogger(javaClass)
