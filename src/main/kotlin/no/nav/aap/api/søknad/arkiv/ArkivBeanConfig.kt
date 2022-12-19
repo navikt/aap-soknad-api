@@ -3,7 +3,6 @@ package no.nav.aap.api.søknad.arkiv
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.*
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.ARKIVHENDELSER
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.CLIENT_CREDENTIALS_ARKIV
-import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.MOTTATT
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.health.Pingable
 import no.nav.aap.util.Constants.AAP
@@ -63,8 +62,7 @@ class ArkivBeanConfig {
             consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
                setRecordFilterStrategy {
                    with(it.value())  {
-                       if (temaNytt.lowercase() == AAP) hendelsesType == MOTTATT
-                       else true
+                       temaNytt.lowercase() != AAP
                    }
                }
             })
