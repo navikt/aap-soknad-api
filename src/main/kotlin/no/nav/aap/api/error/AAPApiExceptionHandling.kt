@@ -3,6 +3,8 @@ package no.nav.aap.api.error
 import com.fasterxml.jackson.databind.DatabindException
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
+import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.GraphQLBad
+import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.GraphQLNotFound
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager.ContentTypeDokumentSjekker.ContentTypeException
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -45,8 +47,11 @@ class AAPApiExceptionHandling : ProblemHandling {
     @ExceptionHandler(IllegalArgumentException::class, DatabindException::class)
     fun illegal(e: Exception, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
 
-    @ExceptionHandler(NotFound::class)
-    fun ikkeFunnet(e: NotFound, req: NativeWebRequest) = createProblem(e, req, NOT_FOUND)
+    @ExceptionHandler(NotFound::class,GraphQLNotFound::class)
+    fun ikkeFunnet(e: Throwable, req: NativeWebRequest) = createProblem(e, req, NOT_FOUND)
+
+    @ExceptionHandler(GraphQLBad::class)
+    fun bad(e: GraphQLBad, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
 
     @ExceptionHandler(DokumentException::class)
     fun dokument(e: DokumentException, req: NativeWebRequest) = createProblem(e, req, UNPROCESSABLE_ENTITY, e.substatus)

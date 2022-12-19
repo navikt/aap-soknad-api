@@ -25,13 +25,11 @@ resilience4j:
             max-attempts: 3
             waitDuration: 100ms
             retryExceptions:
-                - org.springframework.web.reactive.function.client.WebClientException
+                - org.springframework.web.reactive.function.client.WebClientResponseException
                 - java.io.IOException
             ignoreExceptions:
-                - org.springframework.web.reactive.function.client.WebClientResponseException.NotFound
-                - org.springframework.web.reactive.function.client.WebClientResponseException.Unauthorized
-                - org.springframework.web.reactive.function.client.WebClientResponseException.Forbidden
-
+                - no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.GraphQLUnreocoverableResponseException
+                - no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 spring:
     cloud:
         gcp:

@@ -1,18 +1,17 @@
 package no.nav.aap.api.oppslag.graphql
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
-import java.nio.charset.Charset.defaultCharset
+import java.nio.charset.Charset
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.LoggerUtil.getSecureLogger
+import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
-import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
-import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.stereotype.Component
-import org.springframework.web.client.HttpClientErrorException.create
+import org.springframework.web.reactive.function.client.WebClientResponseException
 
 @Component
 class GraphQLDefaultErrorHandler : GraphQLErrorHandler {
@@ -29,13 +28,13 @@ class GraphQLDefaultErrorHandler : GraphQLErrorHandler {
 
     private fun exceptionFra(kode: String?, msg: String) =
         when (kode) {
-            "unauthenticated" -> create(UNAUTHORIZED, msg)
-            "unauthorized" -> create(FORBIDDEN, msg)
-            "bad_request" -> create(BAD_REQUEST, msg)
-            "not_found" -> create(NOT_FOUND, msg)
-            else -> create(INTERNAL_SERVER_ERROR, msg)
+            "unauthorized", "unauthenticated" -> JwtTokenUnauthorizedException("$kode-$msg", null)
+            "bad_request" -> GraphQLBad(BAD_REQUEST, msg)
+            "not_found" -> GraphQLNotFound(NOT_FOUND, msg)
+            else -> WebClientResponseException(INTERNAL_SERVER_ERROR.value(), msg, HttpHeaders(),null, Charset.defaultCharset(),null)
         }
+    abstract class GraphQLUnreocoverableResponseException(status: HttpStatus, msg: String) : RuntimeException("${status.value()}-$msg", null)
+    class GraphQLNotFound(status: HttpStatus, msg: String) : GraphQLUnreocoverableResponseException(status,msg)
+    class GraphQLBad(status: HttpStatus, msg: String) : GraphQLUnreocoverableResponseException(status,msg)
 
-    private fun create(status: HttpStatus, msg: String) =
-        create(status, msg, HttpHeaders(), ByteArray(0), defaultCharset())
 }
