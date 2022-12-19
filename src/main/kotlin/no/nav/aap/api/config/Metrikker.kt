@@ -17,10 +17,13 @@ class Metrikker(private val registry: MeterRegistry) {
         .increment()
 
     companion object {
+        const val SØKNAD = "søknad"
+        const val ETTERSENDING = "ettersending"
+        const val MOTTATT = "mottatt"
+        const val MANGLENDE = "manglende"
+        const val INNSENDING = "innsending"
         const val TYPE = "type"
-        const val ETTERSENDTE = "soknad.vedlegg.ettersendte"
-        const val INNSENDTE = "soknad.vedlegg.innsendte"
-        const val MANGLENDE = "soknad.vedlegg.manglende"
+        const val VEDLEGG = "soknad.vedlegg"
         const val MELLOMLAGRING = "soknad.mellomlagring"
         const val MELLOMLAGRING_EXPIRED = "soknad.expired"
         const val SØKNADER = "soknad.innsendte"

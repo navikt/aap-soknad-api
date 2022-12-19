@@ -3,15 +3,18 @@ package no.nav.aap.api.søknad.fordeling
 import java.util.*
 import java.util.UUID.randomUUID
 import no.nav.aap.api.config.Metrikker
-import no.nav.aap.api.config.Metrikker.Companion.ETTERSENDTE
+import no.nav.aap.api.config.Metrikker.Companion.ETTERSENDING
 import no.nav.aap.api.config.Metrikker.Companion.INKOMPLETT
-import no.nav.aap.api.config.Metrikker.Companion.INNSENDTE
+import no.nav.aap.api.config.Metrikker.Companion.INNSENDING
 import no.nav.aap.api.config.Metrikker.Companion.KOMPLETT
 import no.nav.aap.api.config.Metrikker.Companion.KOMPLETTMEDVEDLEGG
 import no.nav.aap.api.config.Metrikker.Companion.MANGLENDE
+import no.nav.aap.api.config.Metrikker.Companion.MOTTATT
 import no.nav.aap.api.config.Metrikker.Companion.STATUS
+import no.nav.aap.api.config.Metrikker.Companion.SØKNAD
 import no.nav.aap.api.config.Metrikker.Companion.SØKNADER
 import no.nav.aap.api.config.Metrikker.Companion.TYPE
+import no.nav.aap.api.config.Metrikker.Companion.VEDLEGG
 import no.nav.aap.api.config.Metrikker.Companion.VEDLEGGINKOMPLETT
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
@@ -29,6 +32,7 @@ import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
 import no.nav.aap.api.søknad.model.UtlandSøknad
+import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil
 import no.nav.aap.util.MDCUtil.callIdAsUUID
@@ -57,34 +61,21 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
             dokumentLager.slettDokumenter(søknad).run {
                 mellomlager.slett()
                 with(søknad.vedlegg()) {
-                    if (manglende.isEmpty()) {
-                        if (vedlagte.isEmpty())  {
-                            metrikker.inc(SØKNADER, STATUS, KOMPLETT, TYPE, STANDARD.name)
-                        }
-                        else {
-                            metrikker.inc(SØKNADER, STATUS, KOMPLETTMEDVEDLEGG, TYPE, STANDARD.name)
-                        }
-                    }
-                    else {
-                        manglende.forEach{ metrikker.inc(MANGLENDE,TYPE,it.name)  }
-                            if (vedlagte.isEmpty()) {
-                                metrikker.inc(SØKNADER, STATUS, INKOMPLETT,TYPE, STANDARD.name)
-                            }
-                            else  {
-                                metrikker.inc(SØKNADER, STATUS, VEDLEGGINKOMPLETT,TYPE, STANDARD.name)
-                            }
-                    }
                     with(repo.save(Søknad(fnr.fnr, journalpostId))) {
                         registrerManglende(manglende)
                         registrerVedlagte(vedlagte)
                         oppdaterMinSide(fnr, manglende.isEmpty())
                     }
-                    vedlagte.forEach{ metrikker.inc(INNSENDTE,TYPE,it.name) }
+                    metrikker.inc(SØKNADER, STATUS, vedleggStatus(manglende, vedlagte), TYPE, STANDARD.name)
+                    vedlagte.forEach{ metrikker.inc(VEDLEGG,INNSENDING, SØKNAD, STATUS, MOTTATT,TYPE,it.name) }
+                    manglende.forEach{ metrikker.inc(VEDLEGG,INNSENDING,SØKNAD, STATUS, MANGLENDE,TYPE,it.name) }
                 }
                 metrikker.inc(SØKNADER,TYPE, STANDARD.name)
                 Kvittering(journalpostId,søknad.innsendingTidspunkt, callIdAsUUID())
             }
         }
+
+
 
     @Transactional
     fun fullfør(fnr: Fødselsnummer, e: StandardEttersending, res: ArkivResultat) =
@@ -93,12 +84,8 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                 e.søknadId?.let {
                     fullførEttersending(fnr, it, e.ettersendteVedlegg, this@with)
                 } ?: fullførEttersendingUtenSøknad(fnr, e.ettersendteVedlegg, this@with)
-                e.ettersendteVedlegg.forEach{
-                    log.trace("Vedlagt vedlegg $it")
-                    metrikker.inc(ETTERSENDTE,TYPE,it.vedleggType.name)
-                    metrikker.inc(INNSENDTE,TYPE,it.vedleggType.name)
-                }
-                metrikker.inc(SØKNADER,TYPE, STANDARD_ETTERSENDING.name)
+                e.ettersendteVedlegg.forEach{ metrikker.inc(VEDLEGG,INNSENDING, ETTERSENDING, STATUS, MOTTATT,TYPE,it.vedleggType.name) }
+                metrikker.inc(SØKNADER,INNSENDING, STANDARD_ETTERSENDING.name)
                 Kvittering(journalpostId)
             }
         }
@@ -142,4 +129,11 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                 log.trace("Det mangler fremdeles $size vedlegg (${map { it.vedleggtype }})")
             }
         }
+    private fun vedleggStatus(manglende: List<VedleggType>, vedlagte: List<VedleggType>) =
+        if (manglende.isEmpty())
+            if (vedlagte.isEmpty()) KOMPLETT
+            else KOMPLETTMEDVEDLEGG
+        else
+            if (vedlagte.isEmpty()) INKOMPLETT
+            else VEDLEGGINKOMPLETT
 }
