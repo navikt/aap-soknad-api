@@ -14,14 +14,12 @@ import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.data.web.config.EnableSpringDataWebSupport
 import org.springframework.kafka.annotation.EnableKafka
-import org.springframework.retry.annotation.EnableRetry
 import org.springframework.scheduling.annotation.EnableScheduling
 
 @SpringBootApplication(exclude= [ErrorMvcAutoConfiguration::class])
 @EnableJwtTokenValidation(ignore = ["org.springdoc", "org.springframework"])
 @EnableOAuth2Client(cacheEnabled = true)
 @ConfigurationPropertiesScan
-@EnableRetry
 @EnableKafka
 @EnableCaching
 @EnableJpaAuditing

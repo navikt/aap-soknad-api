@@ -1,211 +1,225 @@
 info:
-  nais:
-    clientid: ${nais.client.id}
-    project: ${gcp.team.project.id}
-    cluster: ${nais.cluster.name}
-    image: ${nais.app.image}
-    app: ${nais.app.name}
-    namespace: ${nais.namespace}
+    nais:
+        clientid: ${nais.client.id}
+        project: ${gcp.team.project.id}
+        cluster: ${nais.cluster.name}
+        image: ${nais.app.image}
+        app: ${nais.app.name}
+        namespace: ${nais.namespace}
 management:
-  metrics:
-    web:
-      server:
-        request:
-          autotime:
-            enabled: true
-            percentiles-histogram: true
-  endpoint:
-    env:
-      additional-keys-to-sanitize: "client-jwk,jwk,jwks"
+    metrics:
+        web:
+            server:
+                request:
+                    autotime:
+                        enabled: true
+                        percentiles-histogram: true
+    endpoint:
+        env:
+            additional-keys-to-sanitize: "client-jwk,jwk,jwks"
+
+resilience4j:
+    retry:
+      instances:
+        graphql:
+            max-attempts: 3
+            waitDuration: 100ms
+            retryExceptions:
+                - org.springframework.web.reactive.function.client.WebClientException
+                - java.io.IOException
+            ignoreExceptions:
+                - org.springframework.web.reactive.function.client.WebClientResponseException.NotFound
+                - org.springframework.web.reactive.function.client.WebClientResponseException.Unauthorized
+                - org.springframework.web.reactive.function.client.WebClientResponseException.Forbidden
 
 spring:
-  cloud:
-    gcp:
-      project-id: ${gcp.team.project.id}
-  flyway:
-    out-of-order: true
-  datasource:
-    url: jdbc:postgresql://${db.host}:${db.port}/${db.database}
-    username: ${db.username}
-    password: ${db.password}
-    hikari:
-      connection-test-query: SELECT 1
-      maximum-pool-size: 2
-  devtools:
-    restart:
-      enabled: false
-    add-properties: false
-    livereload:
-      enabled: false
-  kafka:
-    bootstrap-servers: ${kafka.brokers}
-    properties:
-      basic:
-        auth:
-          user:
-            info: ${kafka.schema.registry.user}:${kafka.schema.registry.password}
-          credentials:
-            source: USER_INFO
-      schema:
-        registry:
-          url: ${kafka.schema.registry}
-      endpoint:
-        identification:
-          algorithm: ''
-    security:
-      protocol: SSL
-    ssl:
-      trust-store-location: file:${kafka.truststore.path}
-      trust-store-type: JKS
-      trust-store-password: ${kafka.credstore.password}
-      key-store-location: file:${kafka.keystore.path}
-      key-store-type: PKCS12
-      key-store-password: ${kafka.credstore.password}
-    consumer:
-      group-id: ${spring.application.name}-${env}
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      properties:
-        specific:
-          avro:
-            reader: true
-    producer:
-      acks: all
-      client-id: ${spring.application.name}
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    cloud:
+        gcp:
+            project-id: ${gcp.team.project.id}
+    flyway:
+        out-of-order: true
+    datasource:
+        url: jdbc:postgresql://${db.host}:${db.port}/${db.database}
+        username: ${db.username}
+        password: ${db.password}
+        hikari:
+            connection-test-query: SELECT 1
+            maximum-pool-size: 2
+    devtools:
+        restart:
+            enabled: false
+        add-properties: false
+        livereload:
+            enabled: false
+    kafka:
+        bootstrap-servers: ${kafka.brokers}
+        properties:
+            basic:
+                auth:
+                    user:
+                        info: ${kafka.schema.registry.user}:${kafka.schema.registry.password}
+                    credentials:
+                        source: USER_INFO
+            schema:
+                registry:
+                    url: ${kafka.schema.registry}
+            endpoint:
+                identification:
+                    algorithm: ''
+        security:
+            protocol: SSL
+        ssl:
+            trust-store-location: file:${kafka.truststore.path}
+            trust-store-type: JKS
+            trust-store-password: ${kafka.credstore.password}
+            key-store-location: file:${kafka.keystore.path}
+            key-store-type: PKCS12
+            key-store-password: ${kafka.credstore.password}
+        consumer:
+            group-id: ${spring.application.name}-${env}
+            key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+            properties:
+                specific:
+                    avro:
+                        reader: true
+        producer:
+            acks: all
+            client-id: ${spring.application.name}
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 no.nav:
-  security:
-    jwt:
-      client:
-        registration:
-          digdir-krr-proxy:
-            token-exchange:
-              audience: ${nais.cluster.name}:team-rocket:digdir-krr-proxy
-            well-known-url: ${token.x.well.known.url}
-            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-            authentication:
-              client-id: ${token.x.client.id}
-              client-jwk: ${token.x.private.jwk}
-              client-auth-method: private_key_jwt
+    security:
+        jwt:
+            client:
+                registration:
+                    digdir-krr-proxy:
+                        token-exchange:
+                            audience: ${nais.cluster.name}:team-rocket:digdir-krr-proxy
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
 
-          client-credentials-pdl:
-            token-endpoint-url: ${azure.openid.config.token.endpoint}
-            grant-type: client_credentials
-            scope: ${pdl.scope}
-            authentication:
-              client-id: ${azure.app.client.id}
-              client-jwk: ${azure.app.jwk}
-              client-auth-method: private_key_jwt
+                    client-credentials-pdl:
+                        token-endpoint-url: ${azure.openid.config.token.endpoint}
+                        grant-type: client_credentials
+                        scope: ${pdl.scope}
+                        authentication:
+                            client-id: ${azure.app.client.id}
+                            client-jwk: ${azure.app.jwk}
+                            client-auth-method: private_key_jwt
 
-          isdialogmelding:
-            token-exchange:
-              audience: ${nais.cluster.name}:teamsykefravr:isdialogmelding
-            well-known-url: ${token.x.well.known.url}
-            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-            authentication:
-              client-id: ${token.x.client.id}
-              client-jwk: ${token.x.private.jwk}
-              client-auth-method: private_key_jwt
+                    isdialogmelding:
+                        token-exchange:
+                            audience: ${nais.cluster.name}:teamsykefravr:isdialogmelding
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
 
-          pdl-api:
-            token-exchange:
-              audience: ${env}-fss:pdl:pdl-api
-            well-known-url: ${token.x.well.known.url}
-            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-            authentication:
-              client-id: ${token.x.client.id}
-              client-jwk: ${token.x.private.jwk}
-              client-auth-method: private_key_jwt
+                    pdl-api:
+                        token-exchange:
+                            audience: ${env}-fss:pdl:pdl-api
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
 
-          sokos-kontoregister-person:
-            token-exchange:
-              audience: ${nais.cluster.name}:okonomi:sokos-kontoregister-person
-            well-known-url: ${token.x.well.known.url}
-            grant-type: urn:ietf:params:oauth:grant-type:token-exchange
-            authentication:
-              client-id: ${token.x.client.id}
-              client-jwk: ${token.x.private.jwk}
-              client-auth-method: private_key_jwt
+                    sokos-kontoregister-person:
+                        token-exchange:
+                            audience: ${nais.cluster.name}:okonomi:sokos-kontoregister-person
+                        well-known-url: ${token.x.well.known.url}
+                        grant-type: urn:ietf:params:oauth:grant-type:token-exchange
+                        authentication:
+                            client-id: ${token.x.client.id}
+                            client-jwk: ${token.x.private.jwk}
+                            client-auth-method: private_key_jwt
 
-          client-credentials-arkiv:
-            token-endpoint-url: ${azure.openid.config.token.endpoint}
-            grant-type: client_credentials
-            scope: ${joark.scope}
-            authentication:
-              client-id: ${azure.app.client.id}
-              client-jwk: ${azure.app.jwk}
-              client-auth-method: private_key_jwt
+                    client-credentials-arkiv:
+                        token-endpoint-url: ${azure.openid.config.token.endpoint}
+                        grant-type: client_credentials
+                        scope: ${joark.scope}
+                        authentication:
+                            client-id: ${azure.app.client.id}
+                            client-jwk: ${azure.app.jwk}
+                            client-auth-method: private_key_jwt
 
-      issuer:
-        idporten:
-          discovery-url: ${token.x.well.known.url}
-          accepted-audience: ${token.x.client.id}
+            issuer:
+                idporten:
+                    discovery-url: ${token.x.well.known.url}
+                    accepted-audience: ${token.x.client.id}
 
 vl:
-  standard:
-    topic: aap.soknad-sendt.v1
-  ettersending:
-    topic: aap.soknad-ettersendt.v1
-  utland:
-    topic: aap.utland-soknad-sendt.v1
+    standard:
+        topic: aap.soknad-sendt.v1
+    ettersending:
+        topic: aap.soknad-ettersendt.v1
+    utland:
+        topic: aap.utland-soknad-sendt.v1
 pdl:
-  enabled: true
-  base-uri: https://pdl-api.${env}-fss-pub.nais.io/graphql
-  scope: api://${env}-fss.pdl.pdl-api/.default
+    enabled: true
+    base-uri: https://pdl-api.${env}-fss-pub.nais.io/graphql
+    scope: api://${env}-fss.pdl.pdl-api/.default
 joark:
-  enabled: true
-  base-uri: https://dokarkiv.${env}-fss-pub.nais.io
+    enabled: true
+    base-uri: https://dokarkiv.${env}-fss-pub.nais.io
 arbeidsforhold:
-  enabled: false
+    enabled: false
 organisasjon:
-  enabled: false
+    enabled: false
 virus:
-  enabled: true
+    enabled: true
 saf:
-  enabled: true
+    enabled: true
 pdf:
-  enabled: true
+    enabled: true
 konto:
-  enabled: true
+    enabled: true
 krr:
-  enabled: true
+    enabled: true
 minside:
-  enabled: true
-  nais:
-    app: ${nais.app.name}
-    namespace: ${nais.namespace}
-  done: min-side.aapen-brukernotifikasjon-done-v1
-  beskjed:
     enabled: true
-    topic: min-side.aapen-brukernotifikasjon-beskjed-v1
-  oppgave:
-    enabled: true
-    topic: min-side.aapen-brukernotifikasjon-oppgave-v1
-    preferertekanaler:
-      - SMS
-      - EPOST
+    nais:
+        app: ${nais.app.name}
+        namespace: ${nais.namespace}
+    done: min-side.aapen-brukernotifikasjon-done-v1
+    beskjed:
+        enabled: true
+        topic: min-side.aapen-brukernotifikasjon-beskjed-v1
+    oppgave:
+        enabled: true
+        topic: min-side.aapen-brukernotifikasjon-oppgave-v1
+        preferertekanaler:
+            - SMS
+            - EPOST
 
 buckets:
-  project: ${gcp.team.project.id}
-  kms:
-    ring: ${mellomlagring.navn}-kms
-    key: ${mellomlagring.navn}-kmskey
-  mellom:
-    varighet: ${mellomlagring.varighet}
-    navn: ${mellomlagring.navn}
-    purring:
-      delay: 60
-      eldreEnn: 10d
-      enabled: false
-    subscription:
-      navn: ${mellomlagring.navn}-subscription
-      topic: ${mellomlagring.navn}-topic
-  vedlegg:
-    varighet: ${vedlegg.varighet}
-    navn: ${vedlegg.navn}
-    maxsum: 50MB
-    typer:
-      - application/pdf
-      - image/jpeg
-      - image/png
+    project: ${gcp.team.project.id}
+    kms:
+        ring: ${mellomlagring.navn}-kms
+        key: ${mellomlagring.navn}-kmskey
+    mellom:
+        varighet: ${mellomlagring.varighet}
+        navn: ${mellomlagring.navn}
+        purring:
+            delay: 60
+            eldreEnn: 10d
+            enabled: false
+        subscription:
+            navn: ${mellomlagring.navn}-subscription
+            topic: ${mellomlagring.navn}-topic
+    vedlegg:
+        varighet: ${vedlegg.varighet}
+        navn: ${vedlegg.navn}
+        maxsum: 50MB
+        typer:
+            - application/pdf
+            - image/jpeg
+            - image/png

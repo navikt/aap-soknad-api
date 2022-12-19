@@ -12,18 +12,19 @@ import org.springframework.stereotype.Component
 @Component
 class Metrikker(private val registry: MeterRegistry) {
     fun inc(navn: String, vararg tags: String) = Counter.builder(navn)
-        .tags(*tags)
+        .tags(*tags.map(String::lowercase).toTypedArray())
         .register(registry)
         .increment()
 
     companion object {
+        const val TYPE = "type"
         const val ETTERSENDTE = "soknad.vedlegg.ettersendte"
         const val INNSENDTE = "soknad.vedlegg.innsendte"
         const val MANGLENDE = "soknad.vedlegg.manglende"
         const val MELLOMLAGRING = "soknad.mellomlagring"
         const val MELLOMLAGRING_EXPIRED = "soknad.expired"
         const val SØKNADER = "soknad.innsendte"
-        private const val STATUS = "status"
+        const val STATUS = "status"
         const val KOMPLETT = "komplett"
         const val INKOMPLETT = "inkomplett"
         fun metricsWebClientFilterFunction(registry: MeterRegistry, name: String, autoTimer: AutoTimer = AutoTimerHistogram()) = MetricsWebClientFilterFunction(
@@ -32,12 +33,6 @@ class Metrikker(private val registry: MeterRegistry) {
                 name,
                 autoTimer)
     }
-
-    fun metricsWebClientFilterFunction(registry: MeterRegistry, name: String, autoTimer: AutoTimer = AutoTimerHistogram()) = MetricsWebClientFilterFunction(
-            registry,
-            DefaultWebClientExchangeTagsProvider(),
-            name,
-            autoTimer)
 
 }
 internal class AutoTimerHistogram : AutoTimer {
@@ -52,6 +47,4 @@ internal class AutoTimerHistogram : AutoTimer {
             .minimumExpectedValue(ofMillis(100))
             .maximumExpectedValue(ofMillis(10000))
     }
-
-
 }

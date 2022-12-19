@@ -38,6 +38,7 @@
         <pdfbox.version>2.0.27</pdfbox.version>
         <problem.version>0.27.0</problem.version>
         <reactor.version>1.0.1.RELEASE</reactor.version>
+        <resilience4j.version>2.0.2</resilience4j.version>
         <revision>0.0.1-SNAPSHOT</revision>
         <sonar.organization>navikt</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -94,6 +95,11 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-spring-boot2</artifactId>
+            <version>${resilience4j.version}</version>
+        </dependency>
         <dependency>
             <groupId>no.nav.tms.utkast</groupId>
             <artifactId>builder</artifactId>

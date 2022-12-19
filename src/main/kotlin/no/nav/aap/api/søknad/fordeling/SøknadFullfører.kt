@@ -8,7 +8,9 @@ import no.nav.aap.api.config.Metrikker.Companion.INKOMPLETT
 import no.nav.aap.api.config.Metrikker.Companion.INNSENDTE
 import no.nav.aap.api.config.Metrikker.Companion.KOMPLETT
 import no.nav.aap.api.config.Metrikker.Companion.MANGLENDE
+import no.nav.aap.api.config.Metrikker.Companion.STATUS
 import no.nav.aap.api.config.Metrikker.Companion.SØKNADER
+import no.nav.aap.api.config.Metrikker.Companion.TYPE
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
@@ -43,7 +45,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
 
     fun fullfør(fnr: Fødselsnummer, søknad: UtlandSøknad, res: ArkivResultat) =
         minside.opprettBeskjed(fnr, "Vi har mottatt din ${UTLAND_SØKNAD.tittel.decap()}").run {
-            metrikker.inc(SØKNADER,"type", UTLAND.name.lowercase())
+            metrikker.inc(SØKNADER,"type", UTLAND.name)
             Kvittering(res.journalpostId)
         }
 
@@ -53,25 +55,21 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
             dokumentLager.slettDokumenter(søknad).run {
                 mellomlager.slett()
                 with(søknad.vedlegg()) {
-                    if (this.manglende.isEmpty()) {
-                        metrikker.inc(KOMPLETT, "type", STANDARD.name.lowercase())
+                    if (manglende.isEmpty()) {
+                        metrikker.inc(SØKNADER, STATUS, KOMPLETT, TYPE, STANDARD.name)
                     }
                     else {
-                        metrikker.inc(INKOMPLETT, "type", STANDARD.name.lowercase())
+                        manglende.forEach{ metrikker.inc(MANGLENDE,TYPE,it.name) }
+                        metrikker.inc(SØKNADER, STATUS, INKOMPLETT,TYPE, STANDARD.name)
                     }
                     with(repo.save(Søknad(fnr.fnr, journalpostId))) {
                         registrerManglende(manglende)
                         registrerVedlagte(vedlagte)
                         oppdaterMinSide(fnr, manglende.isEmpty())
                     }
-                    manglende.forEach{
-                        metrikker.inc(MANGLENDE,"type",it.name.lowercase())
-                    }
-                    vedlagte.forEach{
-                        metrikker.inc(INNSENDTE,"type",it.name.lowercase())
-                    }
+                    vedlagte.forEach{ metrikker.inc(INNSENDTE,TYPE,it.name) }
                 }
-                metrikker.inc(SØKNADER,"type", STANDARD.name.lowercase())
+                metrikker.inc(SØKNADER,TYPE, STANDARD.name)
                 Kvittering(journalpostId,søknad.innsendingTidspunkt, callIdAsUUID())
             }
         }
@@ -85,10 +83,10 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                 } ?: fullførEttersendingUtenSøknad(fnr, e.ettersendteVedlegg, this@with)
                 e.ettersendteVedlegg.forEach{
                     log.trace("Vedlagt vedlegg $it")
-                    metrikker.inc(ETTERSENDTE,"type",it.vedleggType.name.lowercase())
-                    metrikker.inc(INNSENDTE,"type",it.vedleggType.name.lowercase())
+                    metrikker.inc(ETTERSENDTE,TYPE,it.vedleggType.name)
+                    metrikker.inc(INNSENDTE,TYPE,it.vedleggType.name)
                 }
-                metrikker.inc(SØKNADER,"type", STANDARD_ETTERSENDING.name.lowercase())
+                metrikker.inc(SØKNADER,TYPE, STANDARD_ETTERSENDING.name)
                 Kvittering(journalpostId)
             }
         }
