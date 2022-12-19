@@ -25,7 +25,7 @@
         <gcp.libraries.version>26.2.0</gcp.libraries.version>
         <gcp.version>0.183.0</gcp.version>
         <graphql.version>2.0.1</graphql.version>
-        <hibernate.types.version>2.20.0</hibernate.types.version>
+        <hibernate.types.version>2.21.0</hibernate.types.version>
         <i18n.version>1.29</i18n.version>
         <java.version>17</java.version>
         <jib.version>3.3.1</jib.version>
