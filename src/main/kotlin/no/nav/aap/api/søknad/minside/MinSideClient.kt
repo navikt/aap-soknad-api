@@ -1,11 +1,8 @@
 package no.nav.aap.api.søknad.minside
 
 import io.micrometer.core.instrument.Metrics.gauge
-import java.time.Duration.between
-import java.time.LocalDateTime.now
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
-import kotlin.time.toKotlinDuration
 import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.config.Metrikker.Companion.MELLOMLAGRING
 import no.nav.aap.api.felles.Fødselsnummer
@@ -58,6 +55,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                             .get().also {
                                 log.trace("Sendte opprett utkast med eventid $eventId  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
                                 repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
+                                utkast?.set(repos.utkast.count())
                             }
                     } else {
                         log.info("Oppretter Min Side utkast DB med eventid $eventId for $fnr")
@@ -102,15 +100,16 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
             if (enabled) {
                 repos.utkast.findByFnrAndSkjematype(fnr.fnr,skjemaType)?.let { u ->
                     if (sendenabled) {
-                        log.info("Avslutter Min Side utkast for eventid ${u.eventid} etter ${between(u.created, now()).toKotlinDuration()}")
+                        log.info("Avslutter Min Side utkast for eventid ${u.eventid}")
                         produsenter.utkast.send(ProducerRecord(topic,  "${u.eventid}", avsluttUtkast("${u.eventid}",fnr)))
-                        .get().also {
-                            log.trace("Sendte avslutt utkast med eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
-                            repos.utkast.delete(u)
-                        }
+                            .get().also {
+                                log.trace("Sendte avslutt utkast med eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
+                                repos.utkast.delete(u)
+                                utkast?.set(repos.utkast.count())
+                            }
                     }
                     else {
-                        log.info("Avslutter Min Side utkast DB for eventid ${u.eventid} for $fnr etter ${between(u.created, now()).toKotlinDuration()}")
+                        log.info("Avslutter Min Side utkast DB for eventid ${u.eventid} for $fnr")
                         repos.utkast.delete(u)
                         utkast?.set(repos.utkast.count())
                     }
