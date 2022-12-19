@@ -27,6 +27,9 @@ class Metrikker(private val registry: MeterRegistry) {
         const val STATUS = "status"
         const val KOMPLETT = "komplett"
         const val INKOMPLETT = "inkomplett"
+        const val KOMPLETTMEDVEDLEGG = "vedleggkomplett"
+        const val VEDLEGGINKOMPLETT = "vedlegginkomplett"
+
         fun metricsWebClientFilterFunction(registry: MeterRegistry, name: String, autoTimer: AutoTimer = AutoTimerHistogram()) = MetricsWebClientFilterFunction(
                 registry,
                 DefaultWebClientExchangeTagsProvider(),

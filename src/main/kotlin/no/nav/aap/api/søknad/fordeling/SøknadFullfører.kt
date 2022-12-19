@@ -7,10 +7,12 @@ import no.nav.aap.api.config.Metrikker.Companion.ETTERSENDTE
 import no.nav.aap.api.config.Metrikker.Companion.INKOMPLETT
 import no.nav.aap.api.config.Metrikker.Companion.INNSENDTE
 import no.nav.aap.api.config.Metrikker.Companion.KOMPLETT
+import no.nav.aap.api.config.Metrikker.Companion.KOMPLETTMEDVEDLEGG
 import no.nav.aap.api.config.Metrikker.Companion.MANGLENDE
 import no.nav.aap.api.config.Metrikker.Companion.STATUS
 import no.nav.aap.api.config.Metrikker.Companion.SØKNADER
 import no.nav.aap.api.config.Metrikker.Companion.TYPE
+import no.nav.aap.api.config.Metrikker.Companion.VEDLEGGINKOMPLETT
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
@@ -56,11 +58,21 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                 mellomlager.slett()
                 with(søknad.vedlegg()) {
                     if (manglende.isEmpty()) {
-                        metrikker.inc(SØKNADER, STATUS, KOMPLETT, TYPE, STANDARD.name)
+                        if (vedlagte.isEmpty())  {
+                            metrikker.inc(SØKNADER, STATUS, KOMPLETT, TYPE, STANDARD.name)
+                        }
+                        else {
+                            metrikker.inc(SØKNADER, STATUS, KOMPLETTMEDVEDLEGG, TYPE, STANDARD.name)
+                        }
                     }
                     else {
-                        manglende.forEach{ metrikker.inc(MANGLENDE,TYPE,it.name) }
-                        metrikker.inc(SØKNADER, STATUS, INKOMPLETT,TYPE, STANDARD.name)
+                        manglende.forEach{ metrikker.inc(MANGLENDE,TYPE,it.name)  }
+                            if (vedlagte.isEmpty()) {
+                                metrikker.inc(SØKNADER, STATUS, INKOMPLETT,TYPE, STANDARD.name)
+                            }
+                            else  {
+                                metrikker.inc(SØKNADER, STATUS, VEDLEGGINKOMPLETT,TYPE, STANDARD.name)
+                            }
                     }
                     with(repo.save(Søknad(fnr.fnr, journalpostId))) {
                         registrerManglende(manglende)
