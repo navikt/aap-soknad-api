@@ -28,6 +28,7 @@ class ArkivConfig(
 
     companion object {
         const val MOTTATT = "JournalpostMottatt"
+        const val ENDELIGJOURNALFØRT = "EndeligJournalført"
         const val ARKIVHENDELSER = "joarkhendelser"
         const val CLIENT_CREDENTIALS_ARKIV = "client-credentials-arkiv"
         private const val DEFAULT_OPPRETT_PATH = "rest/journalpostapi/v1/journalpost"
