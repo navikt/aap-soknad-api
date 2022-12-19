@@ -21,7 +21,7 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
                 repo.getSøknadByJournalpostid("${hendelse.journalpostId}")?.let {
                         it.journalfoert = hendelse.tilUTC()
                 }
-                log.info("Type ${hendelse.hendelsesType}, status ${hendelse.journalpostStatus}")
+                log.info("ID ${hendelse.journalpostId} Type ${hendelse.hendelsesType}, Status ${hendelse.journalpostStatus}")
         }
 
     private fun JournalfoeringHendelseRecord.tilUTC()  = parse(hendelsesId.substringAfter('-')).toUTC()
