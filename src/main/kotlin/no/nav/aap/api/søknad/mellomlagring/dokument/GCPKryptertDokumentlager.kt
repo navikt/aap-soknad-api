@@ -28,6 +28,7 @@ import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 import org.springframework.context.annotation.Primary
 import org.springframework.http.ContentDisposition.parse
+import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.stereotype.Component
 
 @ConditionalOnGCP
@@ -136,6 +137,9 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
     @Component
     class ContentTypeDokumentSjekker(private val cfg: BucketConfig) : DokumentSjekker {
 
+        private val log = getLogger(javaClass)
+
+
         override fun sjekk(dokument: DokumentInfo) =
             with(dokument) {
                 if (contentType !in cfg.vedlegg.typer) {
@@ -143,7 +147,10 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 }
                 TIKA.detect(bytes).run {
                     if (!equals(contentType)) {
-                        throw ContentTypeException("Foventet $contentType for $filnavn, men fikk $this")
+                        if ("text/x-matlab" == this && contentType == APPLICATION_PDF_VALUE) {
+                            log.info("Ignorerer TIKA matlab analyse")
+                        }
+                        else throw ContentTypeException("Foventet $contentType for $filnavn, men fikk $this")
                     }
                 }
             }
