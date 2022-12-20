@@ -36,7 +36,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     class Søknad(
             fnr: String,
             val journalpostid: String,
-            var journalpoststatus: String,
+            var journalpoststatus: String? = null,
             var journalfoert: LocalDateTime? = null,
             eventid: UUID = callIdAsUUID(),
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
