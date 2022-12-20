@@ -15,15 +15,15 @@ import org.springframework.transaction.annotation.Transactional
 class ArkivHendelseKonsument(private val repo: SøknadRepository) {
         private val log = getLogger(javaClass)
 
-      @Transactional
-        @KafkaListener(topics = ["#{'\${joark.hendelser.topic:teamdokumenthandtering.aapen-dok-journalfoering}'}"], containerFactory = ARKIVHENDELSER)
-        fun listen(@Payload hendelse: JournalfoeringHendelseRecord)  {
-                repo.getSøknadByJournalpostid("${hendelse.journalpostId}")?.let {
-                        it.journalfoert = hendelse.tilUTC().also {
-                            log.info("ID ${hendelse.journalpostId} Type ${hendelse.hendelsesType}, Status ${hendelse.journalpostStatus} TEMA ${hendelse.temaNytt}")
-                        }
-                }
+    @Transactional
+    @KafkaListener(topics = ["#{'\${joark.hendelser.topic:teamdokumenthandtering.aapen-dok-journalfoering}'}"], containerFactory = ARKIVHENDELSER)
+    fun listen(@Payload hendelse: JournalfoeringHendelseRecord)  {
+        repo.getSøknadByJournalpostid("${hendelse.journalpostId}")?.let {
+            it.journalpoststatus = hendelse.journalpostStatus
+            it.journalfoert = hendelse.tilUTC()
+            log.info("ID ${hendelse.journalpostId} Type ${hendelse.hendelsesType}, Status ${hendelse.journalpostStatus} TEMA ${hendelse.temaNytt}")
         }
+    }
 
     private fun JournalfoeringHendelseRecord.tilUTC()  = parse(hendelsesId.substringAfter('-')).toUTC()
 }
