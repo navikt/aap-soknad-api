@@ -147,7 +147,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 }
                 TIKA.detect(bytes).run {
                     if (!equals(contentType)) {
-                        if ("text/x-matlab" == this && contentType == APPLICATION_PDF_VALUE) {
+                        if ("text/x-matlab" == this && APPLICATION_PDF_VALUE == contentType ) {
                             log.info("Ignorerer TIKA matlab analyse")
                         }
                         else throw ContentTypeException("Foventet $contentType for $filnavn, men fikk $this")
