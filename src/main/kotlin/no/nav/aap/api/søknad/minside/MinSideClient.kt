@@ -87,7 +87,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                         repos.utkast.oppdaterUtkast(UPDATED,fnr.fnr, u.eventid)
                     }
                 } ?:  log.warn("fant IKKE et allerede eksisterende utkast for $fnr, oppretter utkast istedet").also {
-                    opprettUtkast(fnr,"Du har en påbegynt ${skjemaType.tittel})
+                    opprettUtkast(fnr,"Du har en påbegynt ${skjemaType.tittel}")
                 }
             }
             else {
