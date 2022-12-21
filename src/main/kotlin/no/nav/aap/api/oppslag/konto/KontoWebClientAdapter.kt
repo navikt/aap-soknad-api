@@ -22,7 +22,7 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
                 .accept(APPLICATION_JSON)
                 .retrieve()
                 .onStatus({ NOT_FOUND == it }, { Mono.empty<Throwable>().also {log.trace("Kontoinformasjon ikke funnet") } })
-                .bodyToMono<Map<String, Object>>()
+                .bodyToMono<Map<String, Any>>()
                 .retryWhen(cf.retrySpec(log))
                 .doOnSuccess { log.trace("Kontoinformasjon returnerte  $it") }
                 .onErrorResume { Mono.empty() }
@@ -31,5 +31,6 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
         }
         else null
 
-    private fun Map<String, Object>.tilKontonummer() = this["kontonummer"]?.let{ Kontonummer(it as String) }
+    private fun Map<String, Any>.tilKontonummer() = this["kontonummer"]?.let{
+        it as String }?.let { if (it.length == 11)  Kontonummer(it)  else null }
 }
