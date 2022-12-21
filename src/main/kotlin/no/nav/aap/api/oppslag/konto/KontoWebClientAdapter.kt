@@ -32,5 +32,9 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
         else null
 
     private fun Map<String, Any>.tilKontonummer() = this["kontonummer"]?.let{
-        it as String }?.let { if (it.length == 11)  Kontonummer(it)  else null }
+        when (it) {
+            is String -> Kontonummer(it)
+            else -> null
+        }
+    }
 }
