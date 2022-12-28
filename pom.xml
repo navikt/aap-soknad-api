@@ -368,6 +368,7 @@
                 <artifactId>git-commit-id-maven-plugin</artifactId>
                 <version>${commit-id.version}</version>
                 <configuration>
+                    <dateFormatTimeZone>Europe/Oslo</dateFormatTimeZone>
                     <failOnNoGitDirectory>false</failOnNoGitDirectory>
                 </configuration>
             </plugin>
