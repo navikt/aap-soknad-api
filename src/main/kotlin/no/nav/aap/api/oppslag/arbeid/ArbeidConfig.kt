@@ -26,7 +26,7 @@ class ArbeidConfig(baseUri: URI,
                    @DefaultValue("false") val sporingsinformasjon: Boolean) :
     AbstractRestConfig(baseUri, pingPath, ARBEID, enabled,retryCfg) {
 
-    constructor(baseUri: URI) : this(baseUri, PATH,true, PINGPATH,RetryConfig.DEFAULT, detectAndParse(FEMÅR),false)
+    constructor(baseUri: URI) : this(baseUri, PATH,true, PINGPATH,DEFAULT, detectAndParse(FEMÅR),false)
 
 
     fun arbeidsforholdURI(b: UriBuilder) =

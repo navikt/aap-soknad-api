@@ -24,7 +24,7 @@ object PDLMapper {
                 adresseFra(vegadresse),
                 fødselsdatoFra(fødsel),
                 pdlBarnTilBarn(barn)).also {
-                    log.trace(EnvUtil.CONFIDENTIAL, "Søker er $it")
+                    log.trace(CONFIDENTIAL, "Søker er $it")
                 }
         }
     }

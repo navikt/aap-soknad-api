@@ -5,8 +5,8 @@ import no.nav.aap.api.oppslag.OppslagController.Companion.OPPSLAG_BASE
 import no.nav.aap.api.oppslag.arbeid.ArbeidClient
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.behandler.BehandlerClient
-import no.nav.aap.api.oppslag.konto.KontoClient
 import no.nav.aap.api.oppslag.kontaktinformasjon.KRRClient
+import no.nav.aap.api.oppslag.konto.KontoClient
 import no.nav.aap.api.oppslag.person.PDLClient
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
@@ -48,7 +48,7 @@ class OppslagController(
     fun søkerUtenBarn() = pdl.søkerUtenBarn()
 
     @GetMapping("/kontonummer")
-    fun kontonummer() = konto.kontoInfo()?.let { it } ?: notFound()
+    fun kontonummer() = konto.kontoInfo() ?: notFound()
 
     @GetMapping("/behandlere")
     fun behandlere() = behandler.behandlerInfo()

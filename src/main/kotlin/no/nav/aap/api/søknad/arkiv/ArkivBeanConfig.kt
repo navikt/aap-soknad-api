@@ -7,7 +7,6 @@ import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.health.Pingable
 import no.nav.aap.util.Constants.AAP
 import no.nav.aap.util.Constants.JOARK
-import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.TokenExtensions.bearerToken
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
@@ -28,9 +27,6 @@ import org.springframework.web.reactive.function.client.WebClient.Builder
 
 @Configuration
 class ArkivBeanConfig {
-
-    private val log = getLogger(javaClass)
-
 
     @Qualifier(JOARK)
     @Bean

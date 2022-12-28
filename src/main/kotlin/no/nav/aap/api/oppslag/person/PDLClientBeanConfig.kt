@@ -41,8 +41,7 @@ class PDLClientBeanConfig {
 
     @Qualifier(PDL_SYSTEM)
     @Bean
-    fun graphQLSystemWebClient(@Qualifier(PDL_SYSTEM) client: WebClient, mapper: ObjectMapper) =
-        GraphQLWebClient.newInstance(client, mapper)
+    fun graphQLSystemWebClient(@Qualifier(PDL_SYSTEM) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
 
     @Qualifier(PDL_USER)
     @Bean
@@ -54,8 +53,7 @@ class PDLClientBeanConfig {
 
     @Qualifier(PDL_USER)
     @Bean
-    fun graphQLUserWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper) =
-        GraphQLWebClient.newInstance(client, mapper)
+    fun graphQLUserWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
 
     @Bean
     @ConditionalOnProperty("${PDL_USER}.enabled", havingValue = "true")

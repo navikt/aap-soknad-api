@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient.Builder
-import org.springframework.web.reactive.function.client.WebClientRequestException
-import reactor.util.retry.Retry
 import reactor.util.retry.Retry.*
 
 @Configuration

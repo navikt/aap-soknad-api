@@ -9,7 +9,6 @@ import no.nav.aap.api.søknad.fordeling.SøknadFordeler.Kvittering
 import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.UtlandSøknad
-import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.stereotype.Component
 
 interface Fordeler {
@@ -25,8 +24,6 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
                      private val fullfører: SøknadFullfører,
                      private val cfg: VLFordelingConfig,
                      private val vlFordeler: SøknadVLFordeler) : Fordeler {
-    private val log = getLogger(javaClass)
-
 
     override fun fordel(innsending: Innsending) =
         pdl.søkerMedBarn().run {

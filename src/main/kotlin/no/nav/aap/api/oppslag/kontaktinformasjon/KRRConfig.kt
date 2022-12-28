@@ -3,6 +3,7 @@ package no.nav.aap.api.oppslag.kontaktinformasjon
 import java.net.URI
 import no.nav.aap.api.oppslag.kontaktinformasjon.KRRConfig.Companion.KRR
 import no.nav.aap.rest.AbstractRestConfig
+import no.nav.aap.rest.AbstractRestConfig.RetryConfig.Companion.DEFAULT
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
@@ -14,7 +15,7 @@ import org.springframework.web.util.UriBuilder
 class KRRConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
                 @DefaultValue(PINGPATH) pingPath: String,
                 @DefaultValue(DEFAULT_PERSON_PATH) private val personPath: String,
-                @NestedConfigurationProperty private val retryCfg: RetryConfig = RetryConfig.DEFAULT,
+                @NestedConfigurationProperty private val retryCfg: RetryConfig = DEFAULT,
                 @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, KRR, enabled,retryCfg) {
 
     fun kontaktUri(b: UriBuilder) = b.path(personPath).build()
