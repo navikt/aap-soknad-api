@@ -17,20 +17,11 @@ data class KontaktinformasjonDTO(@JsonAlias("spraak") val målform: Målform? = 
     private val log = getLogger(javaClass)
     fun tilKontaktinfo() =
         when (aktiv) {
-            true -> {
-                when (kanVarsles) {
-                    true -> Kontaktinformasjon(epost, mobil)
-                    else -> {
-                        log.trace("Kan ikke varsles, kanVarsles er false i KRR")
-                        EMPTY
-                    }
-                }
+            true -> when (kanVarsles) {
+                true -> Kontaktinformasjon(epost, mobil)
+                else -> EMPTY.also { log.trace("Kan ikke varsles, kanVarsles er false i KRR") }
             }
-
-            else -> {
-                log.trace("Er ikke aktiv i KRR")
-                EMPTY
-            }
+            else -> EMPTY.also { log.trace("Er ikke aktiv i KRR") }
         }
 }
 
@@ -40,4 +31,4 @@ data class Kontaktinformasjon(val epost: String? = null, val mobil: String? = nu
     }
 }
 
-enum class Målform { NB, NN, EN }
+enum class Målform { NB, NN, EN, SE }
