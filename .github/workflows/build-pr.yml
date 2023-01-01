@@ -22,10 +22,12 @@ jobs:
             -   name: Sjekk ut kode
                 uses: actions/checkout@v3
 
-            -   name: Sett opp Java 17
+            -   uses: joshlong/java-version-export-github-action@v20
+
+            -   name: Setter opp Java ${{ env.JAVA_MAJOR_VERSION }}
                 uses: actions/setup-java@v3
                 with:
-                    java-version: 17
+                    java-version: ${{ env.JAVA_MAJOR_VERSION }}
                     distribution: temurin
                     cache: maven
 
