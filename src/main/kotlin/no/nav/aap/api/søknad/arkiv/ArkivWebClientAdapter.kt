@@ -34,7 +34,6 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("
                 }
             }
             .retryWhen(cf.retrySpec(log))
-            .contextWrite{ Context.of(MDC.getCopyOfContextMap())}
             .doOnError { t: Throwable -> log.warn("Journalføring feilet", t) }
             .block() ?: throw IntegrationException("Null respons fra arkiv")
 
