@@ -21,7 +21,7 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
         repo.getSøknadByJournalpostid("${hendelse.journalpostId}")?.let {
             it.journalpoststatus = hendelse.journalpostStatus
             it.journalfoert = hendelse.tilUTC()
-            log.info("ID ${hendelse.journalpostId} Type ${hendelse.hendelsesType}, Status ${hendelse.journalpostStatus} TEMA ${hendelse.temaNytt}")
+            log.trace("ID ${hendelse.journalpostId} Type ${hendelse.hendelsesType}, Status ${hendelse.journalpostStatus} TEMA ${hendelse.temaNytt}")
         }
     }
 
