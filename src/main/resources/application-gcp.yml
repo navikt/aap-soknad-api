@@ -60,7 +60,9 @@ spring:
             schema:
                 registry:
                     url: ${kafka.schema.registry}
-          
+            endpoint:
+                identification:
+                    algorithm: ''
         security:
             protocol: SSL
         ssl:
