@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.Constants.JOARK
+import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
+import reactor.util.context.Context
 
 @Component
 class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("${JOARK}ping") pingClient: WebClient, val cf: ArkivConfig) :
@@ -32,6 +34,7 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("
                 }
             }
             .retryWhen(cf.retrySpec(log))
+            .contextWrite{ Context.of(MDC.getCopyOfContextMap())}
             .doOnError { t: Throwable -> log.warn("Journalføring feilet", t) }
             .block() ?: throw IntegrationException("Null respons fra arkiv")
 
