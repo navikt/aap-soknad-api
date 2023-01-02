@@ -41,7 +41,7 @@ internal class GCPKryptertMellomlager(val cfg: BucketConfig,
     override fun les(type: SkjemaType) = les(type, ctx.getFnr())
 
     fun les(type: SkjemaType, fnr: Fødselsnummer) =
-        with(cfg.mellom) {
+        with(config()) {
             with(navn(fnr, type)) {
                 lager.get(navn, this)?.let { blob ->
                     String(blob.getContent()).also {
@@ -58,7 +58,7 @@ internal class GCPKryptertMellomlager(val cfg: BucketConfig,
     override fun config() = cfg.mellom
 
     fun slett(type: SkjemaType, fnr: Fødselsnummer) =
-        with(cfg.mellom) {
+        with(config()) {
             with(navn(fnr, type)) {
                 lager.delete(navn, this).also {
                     log.trace(CONFIDENTIAL, "Slettet mellomlagret $this fra bøtte $navn")

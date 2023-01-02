@@ -25,11 +25,9 @@
         <gcp.libraries.version>26.2.0</gcp.libraries.version>
         <gcp.version>0.183.0</gcp.version>
         <graphql.version>2.0.1</graphql.version>
-        <hibernate.types.version>2.21.1</hibernate.types.version>
         <i18n.version>1.29</i18n.version>
         <java.version>17</java.version>
         <jib.version>3.3.1</jib.version>
-        <kotlinx.coroutines.version>1.6.4</kotlinx.coroutines.version>
         <kotlin.version>1.8.0</kotlin.version>
         <logstash.version>7.2</logstash.version>
         <mock-oauth2-server.version>0.3.6</mock-oauth2-server.version>
@@ -133,11 +131,6 @@
             <groupId>no.nav.teamdokumenthandtering</groupId>
             <artifactId>teamdokumenthandtering-avro-schemas</artifactId>
             <version>${eksternvarsling.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vladmihalcea</groupId>
-            <artifactId>hibernate-types-55</artifactId>
-            <version>${hibernate.types.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
