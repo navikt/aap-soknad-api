@@ -3,7 +3,6 @@ package no.nav.aap.api.oppslag.konto
 import no.nav.aap.api.felles.Kontonummer
 import no.nav.aap.api.oppslag.konto.KontoConfig.Companion.KONTO
 import no.nav.aap.rest.AbstractWebClientAdapter
-import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
-import reactor.util.context.Context
 
 @Component
 class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
@@ -27,7 +25,6 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
                 .bodyToMono<Map<String, Any>>()
                 .retryWhen(cf.retrySpec(log))
                 .doOnSuccess { log.trace("Kontoinformasjon returnerte  $it") }
-                .contextWrite{ Context.of(MDC.getCopyOfContextMap())}
                 .onErrorResume { Mono.empty() }
                 .defaultIfEmpty(emptyMap())
                 .block()?.tilKontonummer()
