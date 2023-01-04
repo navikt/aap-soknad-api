@@ -47,9 +47,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
                              private val repos: MinSideRepositories) {
 
     @GetMapping("/soknader")
-    fun søknader(@RequestParam fnr: Fødselsnummer,
-                 @SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
-        søknad.søknader(fnr, pageable)
+    fun søknader(@RequestParam fnr: Fødselsnummer, @SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) = søknad.søknader(fnr, pageable)
 
     @GetMapping("/dittnav/avsluttalle")
     fun avsluttAlle(@RequestParam fnr: Fødselsnummer) {
