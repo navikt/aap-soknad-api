@@ -6,6 +6,10 @@ import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGr
 import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGraphQLResponse.UnauthenticatedGraphQLResponse
 import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGraphQLResponse.UnautorizedraphQLResponse
 import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGraphQLResponse.UnhandledGraphQLResponse
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorCodes.BadRequeest
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorCodes.NotFound
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorCodes.Unauthenticated
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorCodes.Unauthorized
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.LoggerUtil.getSecureLogger
 import org.springframework.http.HttpStatus
@@ -23,18 +27,18 @@ class GraphQLDefaultErrorHandler : GraphQLErrorHandler {
 
     override fun handle(e: GraphQLErrorsException): Nothing {
         log.warn("GraphQL oppslag returnerte ${e.errors.size} feil. ${e.errors}", e)
-        throw e.httpClientException().also { log.warn("GraphQL oversatte feilkode til ${it.javaClass.simpleName}",it) }
+        throw e.exceptionFra().also { log.warn("GraphQL oversatte feilkode til ${it.javaClass.simpleName}",it) }
     }
 
     private fun GraphQLErrorsException.code() = errors.firstOrNull()?.extensions?.get("code")?.toString()
-    private fun GraphQLErrorsException.httpClientException() = exceptionFra(code(), message ?: "Ukjent feil")
+    private fun GraphQLErrorsException.exceptionFra() = exceptionFra(code(), message ?: "Ukjent feil")
 
     private fun exceptionFra(kode: String?, msg: String) =
         when (kode) {
-            "unauthorized" -> UnautorizedraphQLResponse(UNAUTHORIZED,msg)
-            "unauthenticated" -> UnauthenticatedGraphQLResponse(FORBIDDEN,msg)
-            "bad_request" -> BadGraphQLResponse(BAD_REQUEST, msg)
-            "not_found" -> NotFoundGraphQLResponse(NOT_FOUND, msg)
+            Unauthorized -> UnautorizedraphQLResponse(UNAUTHORIZED,msg)
+            Unauthenticated -> UnauthenticatedGraphQLResponse(FORBIDDEN,msg)
+            BadRequeest -> BadGraphQLResponse(BAD_REQUEST, msg)
+            NotFound -> NotFoundGraphQLResponse(NOT_FOUND, msg)
             else -> UnhandledGraphQLResponse(INTERNAL_SERVER_ERROR,msg)
         }
     abstract class UnrecoverableGraphQLResponse(status: HttpStatus, msg: String) : RuntimeException("${status.value()}-$msg", null) {
