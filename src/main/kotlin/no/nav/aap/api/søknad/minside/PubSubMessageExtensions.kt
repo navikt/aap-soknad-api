@@ -46,13 +46,14 @@ object PubSubMessageExtensions {
      fun PubsubMessage.endeligSlettet() = attributesMap[OVERWRITTEN] == null
     fun PubsubMessage.førstegangsOpprettelse() = attributesMap[OVERWROTE] == null
 
-    fun PubsubMessage.varighet() = attributesMap[TIMECREATED]?.let {  Duration.between(ZonedDateTime.parse(it).toLocalDateTime(), LocalDateTime.now())}
-
     fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { EventType.valueOf(it) }
 
 
     data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val eventId: UUID, val created: LocalDateTime? = null) {
         val tittel = type.tittel.decap()
+
+        fun varighet() = created?.let {  Duration.between(it, LocalDateTime.now())}
+
         companion object {
             fun getInstance(type: String?, fnr: String?, eventId: String?, created: String?) =
                 if (eventId != null && fnr != null && type != null) {

@@ -11,7 +11,6 @@ import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.eventType
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.førstegangsOpprettelse
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.metadata
-import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.varighet
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
 import org.springframework.boot.CommandLineRunner
@@ -33,7 +32,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                 with(event.pubsubMessage) {
                     val eventType = eventType()
                     metadata(mapper)?.let { md ->
-                        log.info("Event type $eventType med metadata $md")
+                        log.trace("Event type $eventType med metadata $md")
                         with(md) {
                             when (eventType) {
                                 OBJECT_FINALIZE -> if (førstegangsOpprettelse()) {
@@ -45,10 +44,10 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                 }
                                 OBJECT_DELETE -> if (endeligSlettet()) {
                                     log.info("Endelig slettet md $md")
-                                    varighet()?.let {
+                                    md.varighet()?.let {
                                            log.info("Endelig slettet etter $it")
                                            if (it > cfg.mellom.varighet) {
-                                              metrikker.inc(MELLOMLAGRING_EXPIRED)
+                                               metrikker.inc(MELLOMLAGRING_EXPIRED)
                                                log.info("Slettet mellomlagring etter ${cfg.mellom.varighet.toDays()} dager for $md")
                                            }
                                        }
