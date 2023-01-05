@@ -43,7 +43,6 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                     minside.oppdaterUtkast(fnr, "Du har en påbegynt $tittel", type)
                                 }
                                 OBJECT_DELETE -> if (endeligSlettet()) {
-                                    log.info("Endelig slettet md $md")
                                     md.varighet()?.let {
                                            log.info("Endelig slettet etter ${it.toSeconds()}s")
                                            if (it > cfg.mellom.varighet) {
