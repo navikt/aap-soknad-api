@@ -47,7 +47,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                     }
                                 }
                                 OBJECT_DELETE -> if (endeligSlettet()) {
-                                    log.info("Endelig slettet $md etter varighet")
+                                    log.info("Endelig slettet $attributesMap")
                                     varighet()?.let {
                                            log.info("Endelig slettet etter $it")
                                            if (it > cfg.mellom.varighet) {
