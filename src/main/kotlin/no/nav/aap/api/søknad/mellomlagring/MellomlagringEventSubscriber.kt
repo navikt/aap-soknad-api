@@ -34,7 +34,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                 with(event.pubsubMessage) {
                     val eventType = eventType()
                     metadata(mapper)?.let { md ->
-                        log.info("Event type $eventType med metadata $md and map $attributesMap")
+                        log.info("Event type $eventType med metadata $md and md ${data(ObjectMapper())["metadata"]}")
                         with(md) {
                             when (eventType) {
                                 OBJECT_FINALIZE -> if (førstegangsOpprettelse()) {
