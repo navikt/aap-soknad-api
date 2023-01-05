@@ -7,7 +7,6 @@ import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.config.Metrikker.Companion.MELLOMLAGRING_EXPIRED
 import no.nav.aap.api.søknad.minside.MinSideClient
-import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.data
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.eventType
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.førstegangsOpprettelse
@@ -34,7 +33,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                 with(event.pubsubMessage) {
                     val eventType = eventType()
                     metadata(mapper)?.let { md ->
-                        log.trace("Event type $eventType med metadata $md and md ${data(ObjectMapper())["metadata"]}")
+                        log.info("Event type $eventType med metadata $md")
                         with(md) {
                             when (eventType) {
                                 OBJECT_FINALIZE -> if (førstegangsOpprettelse()) {
