@@ -47,8 +47,9 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                     }
                                 }
                                 OBJECT_DELETE -> if (endeligSlettet()) {
-                                       varighet()?.let {
-                                           log.info("Endelig slettet $md etter varighet $it")
+                                    log.info("Endelig slettet $md etter varighet")
+                                    varighet()?.let {
+                                           log.info("Endelig slettet etter $it")
                                            if (it > cfg.mellom.varighet) {
                                               metrikker.inc(MELLOMLAGRING_EXPIRED)
                                                log.info("Slettet mellomlagring etter ${cfg.mellom.varighet.toDays()} dager for $md")
