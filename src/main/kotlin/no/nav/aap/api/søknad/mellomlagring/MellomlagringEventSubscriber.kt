@@ -7,6 +7,7 @@ import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.config.Metrikker.Companion.MELLOMLAGRING_EXPIRED
 import no.nav.aap.api.søknad.minside.MinSideClient
+import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.data
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.eventType
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.førstegangsOpprettelse
@@ -47,7 +48,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                     }
                                 }
                                 OBJECT_DELETE -> if (endeligSlettet()) {
-                                    log.info("Endelig slettet $attributesMap")
+                                    log.info("Endelig slettet ${data(ObjectMapper())}")
                                     varighet()?.let {
                                            log.info("Endelig slettet etter $it")
                                            if (it > cfg.mellom.varighet) {
