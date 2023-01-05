@@ -15,7 +15,7 @@ class ArkivOppslagClient(private val adapter: ArkivOppslagWebClientAdapter) {
     fun dokumenter() = adapter.dokumenter()
 
     fun søknadDokumentId(journalpostId: String) = adapter.søknadDokumentId(journalpostId)
-        ?: throw IllegalStateException("Fant ikke  søknadens dokumentId for $journalpostId")
+        ?: throw IllegalStateException("Fant ikke søknadens dokumentId for $journalpostId")
 
     fun innsendteDokumenter(innsendingIds: List<UUID>) = dokumenter()
         .filter {

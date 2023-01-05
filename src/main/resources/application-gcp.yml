@@ -24,11 +24,6 @@ resilience4j:
         graphql:
             max-attempts: 3
             waitDuration: 100ms
-            retryExceptions:
-                - org.springframework.web.reactive.function.client.WebClientResponseException
-                - java.io.IOException
-                - no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.RecoverableGraphQLResponse
-
             ignoreExceptions:
                 - no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGraphQLResponse
 spring:

@@ -44,13 +44,13 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                 }
                                 OBJECT_DELETE -> if (endeligSlettet()) {
                                     md.varighet()?.let {
-                                           log.info("Endelig slettet etter ${it.toSeconds()}s")
-                                           if (it > cfg.mellom.varighet) {
-                                               metrikker.inc(MELLOMLAGRING_EXPIRED)
-                                               log.info("Slettet endelig mellomlagring etter ${cfg.mellom.varighet.toDays()} dager for $md")
-                                           }
-                                       }
-                                        minside.avsluttUtkast(fnr, type)
+                                        log.info("Endelig slettet etter ${it.toSeconds()}s")
+                                        if (it > cfg.mellom.varighet) {
+                                            metrikker.inc(MELLOMLAGRING_EXPIRED)
+                                            log.info("Slettet endelig mellomlagring etter ${cfg.mellom.varighet.toDays()} dager for $md")
+                                        }
+                                    }
+                                    minside.avsluttUtkast(fnr, type)
                                 }
                                 else {
                                     Unit.also {
