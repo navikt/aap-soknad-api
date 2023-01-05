@@ -6,10 +6,10 @@ import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGr
 import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGraphQLResponse.UnauthenticatedGraphQLResponse
 import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGraphQLResponse.UnautorizedraphQLResponse
 import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGraphQLResponse.UnhandledGraphQLResponse
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorCodes.BadRequeest
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorCodes.NotFound
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorCodes.Unauthenticated
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorCodes.Unauthorized
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.BadRequeest
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.NotFound
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Unauthenticated
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Unauthorized
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.LoggerUtil.getSecureLogger
 import org.springframework.http.HttpStatus
