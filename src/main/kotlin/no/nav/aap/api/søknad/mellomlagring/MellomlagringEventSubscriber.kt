@@ -34,21 +34,18 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                 with(event.pubsubMessage) {
                     val eventType = eventType()
                     metadata(mapper)?.let { md ->
-                        log.info("Event type $eventType med metadata $md and md ${data(ObjectMapper())["metadata"]}")
+                        log.trace("Event type $eventType med metadata $md and md ${data(ObjectMapper())["metadata"]}")
                         with(md) {
                             when (eventType) {
                                 OBJECT_FINALIZE -> if (førstegangsOpprettelse()) {
                                     minside.opprettUtkast(fnr, "Du har en påbegynt $tittel",type, eventId).also {
-                                        log.trace("Opprettet muligens førstegangs utkast for $fnr")
                                     }
                                 }
                                 else {
-                                    minside.oppdaterUtkast(fnr, "Du har en påbegynt $tittel", type).also {
-                                        log.trace("Oppdaterte muligens utkast grunnet oppdatering for $fnr")
-                                    }
+                                    minside.oppdaterUtkast(fnr, "Du har en påbegynt $tittel", type)
                                 }
                                 OBJECT_DELETE -> if (endeligSlettet()) {
-                                    log.info("Endelig slettet md raw ${data(ObjectMapper())["metadata"]}")
+                                    log.info("Endelig slettet md $md")
                                     varighet()?.let {
                                            log.info("Endelig slettet etter $it")
                                            if (it > cfg.mellom.varighet) {
@@ -56,10 +53,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                                log.info("Slettet mellomlagring etter ${cfg.mellom.varighet.toDays()} dager for $md")
                                            }
                                        }
-                                        log.trace("Slettet muligens utkast endelig hendelse for $md")
-                                        minside.avsluttUtkast(fnr, type).also {
-                                            log.trace("Endelig muligens slettet utkast for $fnr")
-                                    }
+                                        minside.avsluttUtkast(fnr, type)
                                 }
                                 else {
                                     Unit.also {

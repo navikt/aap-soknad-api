@@ -33,7 +33,7 @@ object PubSubMessageExtensions {
             if (this?.size == 2) {
                 data(mapper)[METADATA]?.let {
                     val map = it as Map<String, String>
-                    val md = Metadata.getInstance(map[SKJEMATYPE], this[0], map[UUID_])
+                    val md = Metadata.getInstance(map[SKJEMATYPE], this[0], map[UUID_], map["created"])
                     md
                 }
             }
@@ -51,13 +51,20 @@ object PubSubMessageExtensions {
     fun PubsubMessage.eventType() = attributesMap[EVENT_TYPE]?.let { EventType.valueOf(it) }
 
 
-    data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val eventId: UUID) {
+    data class Metadata private constructor(val type: SkjemaType, val fnr: Fødselsnummer, val eventId: UUID, val created: LocalDateTime? = null) {
         val tittel = type.tittel.decap()
         companion object {
-            fun getInstance(type: String?, fnr: String?, eventId: String?) =
+            fun getInstance(type: String?, fnr: String?, eventId: String?, created: String?) =
                 if (eventId != null && fnr != null && type != null) {
                     toMDC(NAV_CALL_ID, eventId)
-                    Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(eventId))
+                    try {
+                        val c = created?.let {  LocalDateTime.parse(it) }
+                        Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(eventId),c)
+                    }
+                    catch (e: Exception)  {
+                        log.info("OOPS",e)
+                        Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(eventId))
+                    }
                 }
                 else {
                     null
