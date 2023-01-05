@@ -33,7 +33,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                 with(event.pubsubMessage) {
                     val eventType = eventType()
                     metadata(mapper)?.let { md ->
-                        log.trace("Event type $eventType med metadata $md and map $attributesMap")
+                        log.info("Event type $eventType med metadata $md and map $attributesMap")
                         with(md) {
                             when (eventType) {
                                 OBJECT_FINALIZE -> if (førstegangsOpprettelse()) {
@@ -47,7 +47,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                     }
                                 }
                                 OBJECT_DELETE -> if (endeligSlettet()) {
-                                    log.info("Endelig slettet $attributesMap")
+                                    log.info("Endelig slettet $md")
                                     varighet()?.let {
                                            log.info("Endelig slettet etter $it")
                                            if (it > cfg.mellom.varighet) {
