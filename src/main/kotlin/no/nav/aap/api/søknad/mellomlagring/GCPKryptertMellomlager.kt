@@ -6,6 +6,7 @@ import com.google.cloud.storage.Storage
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import io.micrometer.core.annotation.Timed
 import java.nio.charset.StandardCharsets.UTF_8
+import java.time.LocalDateTime.now
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
@@ -31,7 +32,10 @@ internal class GCPKryptertMellomlager(val cfg: BucketConfig,
     fun lagre(value: String, type: SkjemaType, fnr: Fødselsnummer) =
         with(cfg) {
             lager.create(newBuilder(mellom.navn, navn(fnr, type))
-                .setMetadata(mapOf(SKJEMATYPE to type.name, UUID_ to callId()))
+                .setMetadata(mapOf(
+                        "created" to "${now()}",
+                        SKJEMATYPE to type.name,
+                        UUID_ to callId()))
                 .setContentType(APPLICATION_JSON_VALUE).build(), value.toByteArray(UTF_8), kmsKeyName("$key"))
                 .also {
                     log.trace(CONFIDENTIAL, "Lagret mellomlagret ${value.prettyPrint(mapper)} som ${it.name} i bøtte ${mellom.navn}")
