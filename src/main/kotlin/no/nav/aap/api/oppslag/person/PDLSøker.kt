@@ -55,6 +55,8 @@ data class PDLSøker(val navn: PDLNavn,
     }
 }
 
+data class PDLBolkBarn(val ident:String, val code: String, val person: PDLBarn )
+
 data class PDLBarn(@JsonProperty("foedsel") val fødselsdato: Set<PDLFødsel>,
                    val navn: Set<PDLNavn>,
                    val adressebeskyttelse: Set<PDLGradering>?,
