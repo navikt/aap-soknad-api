@@ -2,6 +2,7 @@ package no.nav.aap.api.oppslag.person
 
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Ok
 import no.nav.aap.api.oppslag.person.PDLMapper.pdlSøkerTilSøker
 import no.nav.aap.api.oppslag.person.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.util.AuthContext
@@ -42,31 +43,21 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
             } ?: throw JwtTokenMissingException()
         }
 
-    fun ettBarn(medBarn:Boolean,forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) =
-        if(medBarn) {
-            forelderBarnRelasjon.asSequence().mapNotNull { relasjon ->
-                relasjon.relatertPersonsIdent?.let { query<PDLBarn>(clients.system, BARN_QUERY, it)
-                }
-            }
-        } else emptySequence()
 
     fun alleBarn(medBarn:Boolean,forelderBarnRelasjon: List<PDLForelderBarnRelasjon>): Sequence<PDLBarn> =
-        try {
-            if(medBarn) {
-                with(forelderBarnRelasjon.mapNotNull { it.relatertPersonsIdent }) {
-                    if (isNotEmpty()) {
-                        queryFlux<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, this)?.map(PDLBolkBarn::person)?.asSequence() ?: emptySequence()
-                    }
-                    else {
-                        emptySequence()
-                    }
+        if(medBarn) {
+            with(forelderBarnRelasjon.mapNotNull { it.relatertPersonsIdent }) {
+                if (isNotEmpty()) {
+                    queryFlux<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, this)
+                        ?.filter { it.code == Ok }
+                        ?.map(PDLBolkBarn::person)?.asSequence() ?: emptySequence()
                 }
-            } else {
-                emptySequence()
+                else {
+                    emptySequence()
+                }
             }
-        } catch (e: Exception)    {
-            log.warn("Fallback grunnet pdl feil", e)
-            ettBarn(medBarn,forelderBarnRelasjon)
+        } else {
+            emptySequence()
         }
 
     override fun toString() =
@@ -75,6 +66,5 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
     companion object {
         private const val BARN_BOLK_QUERY = "query-barnbolk.graphql"
         private const val PERSON_QUERY = "query-person.graphql"
-        private const val BARN_QUERY = "query-barn.graphql"
     }
 }

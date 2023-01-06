@@ -5,6 +5,7 @@ import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 interface GraphQLErrorHandler {
     fun handle(e: GraphQLErrorsException): Nothing
     companion object {
+        const val Ok = "ok"
         const val Unauthorized = "unauthorized"
         const val Unauthenticated = "unauthenticated"
         const val BadRequeest = "bad_request"
