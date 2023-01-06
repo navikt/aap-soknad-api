@@ -8,10 +8,10 @@ import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.FORTROLIG
 import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
 import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
+import no.nav.aap.api.oppslag.person.PDLBolkBarn.PDLBarn
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.boot.conditionals.EnvUtil
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 
 object PDLMapper {

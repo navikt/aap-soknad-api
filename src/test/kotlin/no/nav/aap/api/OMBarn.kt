@@ -4,8 +4,8 @@ import java.time.LocalDate.now
 import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.FORTROLIG
 import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
 import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
-import no.nav.aap.api.oppslag.person.PDLBarn
-import no.nav.aap.api.oppslag.person.PDLBarn.PDLDødsfall
+import no.nav.aap.api.oppslag.person.PDLBolkBarn.PDLBarn
+import no.nav.aap.api.oppslag.person.PDLBolkBarn.PDLBarn.PDLDødsfall
 import no.nav.aap.api.oppslag.person.PDLGradering
 import no.nav.aap.api.oppslag.person.PDLNavn
 import no.nav.aap.api.oppslag.person.PDLSøker.PDLFødsel
