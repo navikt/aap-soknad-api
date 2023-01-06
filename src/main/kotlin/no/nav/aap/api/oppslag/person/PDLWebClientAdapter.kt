@@ -38,11 +38,11 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
     fun søker(medBarn: Boolean = false) =
         with(ctx.getFnr()) {
             query<PDLWrappedSøker>(clients.user, PERSON_QUERY, fnr)?.active?.let {
-                pdlSøkerTilSøker(it, this, barnBolk(medBarn,it.forelderBarnRelasjon))
+                pdlSøkerTilSøker(it, this, alleBarn(medBarn,it.forelderBarnRelasjon))
             } ?: throw JwtTokenMissingException()
         }
 
-    fun barn(medBarn:Boolean,forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) =
+    fun ettBarn(medBarn:Boolean,forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) =
         if(medBarn) {
             forelderBarnRelasjon.asSequence().mapNotNull { relasjon ->
                 relasjon.relatertPersonsIdent?.let { query<PDLBarn>(clients.system, BARN_QUERY, it)
@@ -50,25 +50,23 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
             }
         } else emptySequence()
 
-    fun barnBolk(medBarn:Boolean,forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) =
-        try  {
+    fun alleBarn(medBarn:Boolean,forelderBarnRelasjon: List<PDLForelderBarnRelasjon>): Sequence<PDLBarn> =
+        try {
             if(medBarn) {
-                val barnIDer  = forelderBarnRelasjon.mapNotNull { it.relatertPersonsIdent }
-                if (barnIDer.isNotEmpty()) {
-                    log.trace("Slår opp barn $barnIDer")
-                    val b = queryBolk<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY,barnIDer)
-                    b?.forEach { log.trace("Slo opp barn $it") }
-                    throw IllegalStateException("OOPS")
-                }
-                else {
-                    emptyList<PDLBarn>().asSequence()
+                with(forelderBarnRelasjon.mapNotNull { it.relatertPersonsIdent }) {
+                    if (isNotEmpty()) {
+                        queryFlux<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, this)?.map(PDLBolkBarn::person)?.asSequence() ?: emptySequence()
+                    }
+                    else {
+                        emptySequence()
+                    }
                 }
             } else {
-                emptyList<PDLBarn>().asSequence()
+                emptySequence()
             }
         } catch (e: Exception)    {
             log.warn("Fallback grunnet pdl feil", e)
-            barn(medBarn,forelderBarnRelasjon)
+            ettBarn(medBarn,forelderBarnRelasjon)
         }
 
     override fun toString() =

@@ -26,9 +26,11 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
             }
         }
 
-        protected inline fun <reified T> queryBolk(graphQLClient: GraphQLWebClient, query: String, idents: List<String>) =
+        protected inline fun <reified T> queryFlux(graphQLClient: GraphQLWebClient, query: String, idents: List<String>) =
         runCatching {
-            graphQLClient.flux(query, idents.toIdenter(), T::class.java).collectList().block()
+            graphQLClient.flux(query, idents.toIdenter(), T::class.java).collectList().block().also {
+                log.trace("Flux returnerte $it")
+            }
         }.getOrElse {
             if (it is GraphQLErrorsException) {
                 errorHandler.handle(it)
