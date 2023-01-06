@@ -56,9 +56,10 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                 val barnIDer  = forelderBarnRelasjon.mapNotNull { it.relatertPersonsIdent }
                 if (barnIDer.isNotEmpty()) {
                     log.trace("Slår opp barn $barnIDer")
-                    queryBolk<PDLBarn>(clients.system, BARN_BOLK_QUERY,barnIDer)?.asSequence() ?: emptyList<PDLBarn>().asSequence()
+                    queryBolk<Map<String,Any>>(clients.system, BARN_BOLK_QUERY,barnIDer)?.asSequence() ?: emptyList<PDLBarn>().asSequence()
                         .also {
                         log.trace("Slo opp barn $it")
+                            throw IllegalStateException("OOPS")
                     }
                 }
                 else {

@@ -28,7 +28,7 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
 
         protected inline fun <reified T> queryBolk(graphQLClient: GraphQLWebClient, query: String, idents: List<String>) =
         runCatching {
-            graphQLClient.flux(query, idents.toIdenter(), T::class.java).collectList().block()
+            graphQLClient.post(query, idents.toIdenter(), T::class.java).block()
         }.getOrElse {
             if (it is GraphQLErrorsException) {
                 errorHandler.handle(it)
