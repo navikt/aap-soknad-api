@@ -15,7 +15,9 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
     @Retry(name = "graphql")
     protected inline fun <reified T> query(graphQLClient: GraphQLWebClient, query: String, ident: String) =
         runCatching {
-            graphQLClient.post(query, ident.toIdent(), T::class.java).block()
+            graphQLClient.post(query, ident.toIdent(), T::class.java).block().also {
+                log.trace("Slo opp ${T::class.java.simpleName} $it")
+            }
         }.getOrElse {
             if (it is GraphQLErrorsException) {
                 errorHandler.handle(it)
@@ -29,7 +31,7 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
         protected inline fun <reified T> queryFlux(graphQLClient: GraphQLWebClient, query: String, idents: List<String>) =
         runCatching {
             graphQLClient.flux(query, idents.toIdenter(), T::class.java).collectList().block().also {
-                log.trace("Flux returnerte $it")
+               log.trace("Slo opp ${T::class.java.simpleName} $it")
             }
         }.getOrElse {
             if (it is GraphQLErrorsException) {
