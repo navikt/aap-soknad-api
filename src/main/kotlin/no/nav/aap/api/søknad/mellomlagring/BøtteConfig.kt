@@ -40,6 +40,7 @@ data class BucketConfig(val project: String,
         const val BUCKETS = "buckets"
         const val UUID_ = "uuid"
         const val SKJEMATYPE = "skjemaType"
+        const val CREATED = "created"
     }
 }
 

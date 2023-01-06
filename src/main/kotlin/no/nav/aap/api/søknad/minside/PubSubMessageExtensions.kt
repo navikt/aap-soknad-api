@@ -6,10 +6,10 @@ import com.google.cloud.storage.NotificationInfo.EventType
 import com.google.pubsub.v1.PubsubMessage
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.ZonedDateTime
 import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.CREATED
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.util.LoggerUtil
@@ -24,7 +24,6 @@ object PubSubMessageExtensions {
     private const val EVENT_TYPE = "eventType"
     private const val METADATA = "metadata"
     private const val OBJECTID = "objectId"
-    private const val TIMECREATED = "timeCreated"
 
     private val log = LoggerUtil.getLogger(javaClass)
 
@@ -33,8 +32,7 @@ object PubSubMessageExtensions {
             if (this?.size == 2) {
                 data(mapper)[METADATA]?.let {
                     val map = it as Map<String, String>
-                    val md = Metadata.getInstance(map[SKJEMATYPE], this[0], map[UUID_], map["created"])
-                    md
+                    Metadata.getInstance(map[SKJEMATYPE], this[0], map[UUID_], map[CREATED])
                 }
             }
             else {
