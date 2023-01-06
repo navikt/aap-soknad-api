@@ -57,12 +57,14 @@ spring:
             schema:
                 registry:
                     url: ${kafka.schema.registry}
-            endpoint:
+            ssl:
+              endpoint:
                 identification:
                     algorithm: ''
         security:
             protocol: SSL
         ssl:
+
             trust-store-location: file:${kafka.truststore.path}
             trust-store-type: JKS
             trust-store-password: ${kafka.credstore.password}
