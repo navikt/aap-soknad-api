@@ -38,7 +38,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
     fun søker(medBarn: Boolean = false) =
         with(ctx.getFnr()) {
             query<PDLWrappedSøker>(clients.user, PERSON_QUERY, fnr)?.active?.let {
-                pdlSøkerTilSøker(it, this, barn(medBarn,it.forelderBarnRelasjon))
+                pdlSøkerTilSøker(it, this, barnBolk(medBarn,it.forelderBarnRelasjon))
             } ?: throw JwtTokenMissingException()
         }
 
@@ -49,6 +49,17 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                 }
             }
         } else emptySequence()
+
+    fun barnBolk(medBarn:Boolean,forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) =
+        try  {
+            if(medBarn) {
+                val barnIDer  = forelderBarnRelasjon.mapNotNull { it.relatertPersonsIdent }
+                queryBolk<PDLBarn>(clients.system, BARN_BOLK_QUERY,barnIDer).asSequence()
+            } else emptySequence()
+        } catch (e: Exception)    {
+            log.warn("Fallback grunnet pdl feil", e)
+            barn(medBarn,forelderBarnRelasjon)
+        }
 
     override fun toString() =
         "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
