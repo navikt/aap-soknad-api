@@ -54,11 +54,19 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         try  {
             if(medBarn) {
                 val barnIDer  = forelderBarnRelasjon.mapNotNull { it.relatertPersonsIdent }
-                log.trace("Slår opp barn $barnIDer")
-                queryBolk<PDLBarn>(clients.system, BARN_BOLK_QUERY,barnIDer).asSequence().also {
-                    log.trace("Slo opp barn $it")
+                if (barnIDer.isNotEmpty()) {
+                    log.trace("Slår opp barn $barnIDer")
+                    queryBolk<PDLBarn>(clients.system, BARN_BOLK_QUERY,barnIDer)?.asSequence() ?: emptyList<PDLBarn>().asSequence()
+                        .also {
+                        log.trace("Slo opp barn $it")
+                    }
                 }
-            } else emptySequence()
+                else {
+                    emptyList<PDLBarn>().asSequence()
+                }
+            } else {
+                emptyList<PDLBarn>().asSequence()
+            }
         } catch (e: Exception)    {
             log.warn("Fallback grunnet pdl feil", e)
             barn(medBarn,forelderBarnRelasjon)
