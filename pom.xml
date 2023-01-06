@@ -21,7 +21,7 @@
         <commons-text.version>1.10.0</commons-text.version>
         <domain.version>1.0.42</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
-        <gcp.libraries.version>26.2.0</gcp.libraries.version>
+        <gcp.libraries.version>26.3.0</gcp.libraries.version>
         <gcp.version>0.184.0</gcp.version>
         <graphql.version>2.0.1</graphql.version>
         <i18n.version>1.29</i18n.version>
