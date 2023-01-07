@@ -9,6 +9,7 @@ import no.nav.aap.api.oppslag.person.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.PDL_SYSTEM
 import no.nav.aap.util.Constants.PDL_USER
+import no.nav.aap.util.StringExtensions.partialMask
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -49,10 +50,15 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         if(medBarn) {
             with(forelderBarnRelasjon.mapNotNull { it.relatertPersonsIdent }) {
                 if (isNotEmpty()) {
-                    queryFlux<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this))
-                        ?.filter { it.code == Ok }
-                        ?.map(PDLBolkBarn::barn)?.asSequence() ?: emptySequence()
-                }
+                    with(queryFlux<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this))
+                        ?.partition { it.code == Ok }) {
+                        (this?.first?.map(PDLBolkBarn::barn)?.asSequence() ?: emptySequence()).also {
+                            this?.second?.forEach {
+                                log.warn("Kunne ikke slå opp barn ${it.ident.partialMask()}, kode er ${it.code}")
+                            }
+                        }
+                    }
+                 }
                 else {
                     emptySequence()
                 }
