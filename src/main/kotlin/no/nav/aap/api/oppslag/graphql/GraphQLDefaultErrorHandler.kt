@@ -1,6 +1,7 @@
 package no.nav.aap.api.oppslag.graphql
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
+import java.io.File
 import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.RecoverableGraphQLResponse.UnhandledGraphQLResponse
 import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGraphQLResponse.BadGraphQLResponse
 import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGraphQLResponse.NotFoundGraphQLResponse
@@ -25,10 +26,22 @@ class GraphQLDefaultErrorHandler : GraphQLErrorHandler {
     private val log = getLogger(javaClass)
     private val secureLogger = getSecureLogger()
 
-    override fun handle(e: GraphQLErrorsException): Nothing {
+
+     override fun handle(query: String,e: Throwable): Nothing {
+        when(e) {
+            is GraphQLErrorsException -> handle(e)
+            else ->  throw e.also {
+                log.warn(feil(query), e)
+            }
+        }
+    }
+
+    private fun handle(e: GraphQLErrorsException): Nothing {
         log.warn("GraphQL oppslag returnerte ${e.errors.size} feil. ${e.errors}", e)
         throw e.exceptionFra().also { log.warn("GraphQL oversatte feilkode til ${it.javaClass.simpleName}",it) }
     }
+
+    private fun feil(q: String) = "Oppslag  ${File(q).nameWithoutExtension.split("-")[1]} feilet med uventet feil"
 
     private fun GraphQLErrorsException.code() = errors.firstOrNull()?.extensions?.get("code")?.toString()
     private fun GraphQLErrorsException.exceptionFra() = exceptionFra(code(), message ?: "Ukjent feil")

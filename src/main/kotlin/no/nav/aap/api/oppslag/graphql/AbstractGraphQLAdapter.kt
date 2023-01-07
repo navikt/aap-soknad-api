@@ -1,16 +1,12 @@
 package no.nav.aap.api.oppslag.graphql
 
-import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import io.github.resilience4j.retry.annotation.Retry
-import java.io.File
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.web.reactive.function.client.WebClient
 
-abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig,
-                                      val errorHandler: GraphQLErrorHandler = GraphQLDefaultErrorHandler()) :
-    AbstractWebClientAdapter(client, cfg) {
+abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig, val handler: GraphQLErrorHandler = GraphQLDefaultErrorHandler()) : AbstractWebClientAdapter(client, cfg) {
 
     @Retry(name = "graphql")
     protected inline fun <reified T> query(graphQLClient: GraphQLWebClient, query: String, arg: Map<String,String>) =
@@ -19,13 +15,7 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
                 log.trace("Slo opp ${T::class.java.simpleName} $it")
             }
         }.getOrElse {
-            if (it is GraphQLErrorsException) {
-                errorHandler.handle(it)
-            }
-            else {
-                log.warn("Oppslag ${File(query).nameWithoutExtension.split("-")[1]} feilet med uventet exception ${it.javaClass.simpleName}", it)
-                throw it
-            }
+            handler.handle(query,it)
         }
 
     @Retry(name = "graphql")
@@ -35,18 +25,11 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
                log.trace("Slo opp ${T::class.java.simpleName} $it")
             }
         }.getOrElse {
-            if (it is GraphQLErrorsException) {
-                errorHandler.handle(it)
-            }
-            else {
-                log.warn("Oppslag ${File(query).nameWithoutExtension.split("-")[1]} feilet med uventet feil", it)
-                throw it
-            }
+            handler.handle(query,it)
         }
 
     companion object {
         const val IDENT = "ident"
         const val IDENTER = "identer"
-
     }
 }

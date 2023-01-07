@@ -9,6 +9,8 @@ import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.FORTROLIG
 import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.STRENGT_FORTROLIG
 import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTLAND
 import no.nav.aap.api.oppslag.person.PDLBolkBarn.PDLBarn
+import no.nav.aap.api.oppslag.person.PDLSøker.PDLBostedadresse.PDLVegadresse
+import no.nav.aap.api.oppslag.person.PDLSøker.PDLFødsel
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -48,15 +50,15 @@ object PDLMapper {
             }
         }
 
-    private fun adresseFra(adresse: PDLSøker.PDLBostedadresse.PDLVegadresse?) = adresse?.let {
+    private fun adresseFra(adresse: PDLVegadresse?) = adresse?.let {
         with(it) {
             Adresse(adressenavn, husbokstav, husnummer, PostNummer(postnummer))
         }
     }
 
-    private fun fødselsdatoFra(fødsel: Set<PDLSøker.PDLFødsel>?) = fødselsdatoFra(fødsel?.firstOrNull())
+    private fun fødselsdatoFra(fødsel: Set<PDLFødsel>?) = fødselsdatoFra(fødsel?.firstOrNull())
 
-    private fun fødselsdatoFra(fødsel: PDLSøker.PDLFødsel?) = fødsel?.fødselsdato
+    private fun fødselsdatoFra(fødsel: PDLFødsel?) = fødsel?.fødselsdato
 
     private fun myndig(pdlBarn: PDLBarn) = fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
 
