@@ -1,7 +1,7 @@
 package no.nav.aap.api.oppslag.graphql
 
 interface GraphQLErrorHandler {
-    fun handle(query: String,e: Throwable): Nothing
+    fun handle(e: Throwable): Nothing
     companion object {
         const val Ok = "ok"
         const val Unauthorized = "unauthorized"

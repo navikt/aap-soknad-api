@@ -15,7 +15,7 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
                 log.trace("Slo opp ${T::class.java.simpleName} $it")
             }
         }.getOrElse {
-            handler.handle(query,it)
+            handler.handle(it)
         }
 
     @Retry(name = "graphql")
@@ -25,7 +25,7 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
                log.trace("Slo opp ${T::class.java.simpleName} $it")
             }
         }.getOrElse {
-            handler.handle(query,it)
+            handler.handle(it)
         }
 
     companion object {

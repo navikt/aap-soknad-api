@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 @Component
 class GraphQLDefaultErrorHandler : GraphQLErrorHandler {
 
-     override fun handle(query: String,e: Throwable): Nothing {
+     override fun handle(e: Throwable): Nothing {
          when (e) {
              is GraphQLErrorsException -> { throw e.oversett() }
              else -> throw e
