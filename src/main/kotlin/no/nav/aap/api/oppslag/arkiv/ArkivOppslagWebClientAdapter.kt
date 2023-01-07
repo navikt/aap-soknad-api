@@ -51,7 +51,7 @@ class ArkivOppslagWebClientAdapter(
         ?.firstOrNull { it.journalpostId == journalPostId }
         ?.dokumenter?.firstOrNull()?.dokumentInfoId   // Søknaden er alltid  første elementet
 
-    private fun query() = query<ArkivOppslagJournalposter>(graphQLClient, DOKUMENTER_QUERY, ctx.getFnr().fnr)
+    private fun query() = query<ArkivOppslagJournalposter>(graphQLClient, DOKUMENTER_QUERY,  mapOf(IDENT to ctx.getFnr().fnr))
         ?.journalposter.also {
             log.trace("GraphQL oppslag returnerte $it")
         }

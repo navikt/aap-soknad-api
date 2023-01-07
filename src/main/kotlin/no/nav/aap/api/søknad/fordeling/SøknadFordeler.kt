@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 interface Fordeler {
     fun fordel(søknad: UtlandSøknad): Kvittering
     fun fordel(innsending: Innsending): Kvittering
-    fun fordel(ettersending: StandardEttersending): Kvittering
+    fun fordel(e: StandardEttersending): Kvittering
 
 }
 
@@ -28,9 +28,9 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
     override fun fordel(innsending: Innsending) =
         pdl.søkerMedBarn().run {
             with(arkiv.fordel(innsending, this)) {
-                innsending.søknad.fødselsdato = this@run.fødseldato
+                innsending.søknad.fødselsdato = fødseldato
                 vlFordeler.fordel(innsending.søknad, fnr, journalpostId, cfg.standard)
-                fullfører.fullfør(this@run.fnr, innsending.søknad, this)
+                fullfører.fullfør(fnr, innsending.søknad, this)
             }
         }
 
@@ -38,7 +38,7 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
     pdl.søkerUtenBarn().run {
         with(arkiv.fordel(e, this)) {
             vlFordeler.fordel(e, fnr, journalpostId, cfg.ettersending)
-            fullfører.fullfør(this@run.fnr, e, this)
+            fullfører.fullfør(fnr, e, this)
         }
     }
 
@@ -46,7 +46,7 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
         pdl.søkerUtenBarn().run {
             with(arkiv.fordel(søknad, this)) {
                 vlFordeler.fordel(søknad, fnr, journalpostId, cfg.utland)
-                fullfører.fullfør(this@run.fnr, søknad, this)
+                fullfører.fullfør(fnr, søknad, this)
             }
         }
 

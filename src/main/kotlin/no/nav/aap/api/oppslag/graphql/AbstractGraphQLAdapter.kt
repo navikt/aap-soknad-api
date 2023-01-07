@@ -13,9 +13,9 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
     AbstractWebClientAdapter(client, cfg) {
 
     @Retry(name = "graphql")
-    protected inline fun <reified T> query(graphQLClient: GraphQLWebClient, query: String, ident: String) =
+    protected inline fun <reified T> query(graphQLClient: GraphQLWebClient, query: String, arg: Map<String,String>) =
         runCatching {
-            graphQLClient.post(query, ident.toIdent(), T::class.java).block().also {
+            graphQLClient.post(query, arg, T::class.java).block().also {
                 log.trace("Slo opp ${T::class.java.simpleName} $it")
             }
         }.getOrElse {
@@ -28,9 +28,10 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
             }
         }
 
-        protected inline fun <reified T> queryFlux(graphQLClient: GraphQLWebClient, query: String, idents: List<String>) =
+    @Retry(name = "graphql")
+    protected inline fun <reified T> queryFlux(graphQLClient: GraphQLWebClient, query: String, vars: Map<String,List<String>>) =
         runCatching {
-            graphQLClient.flux(query, idents.toIdenter(), T::class.java).collectList().block().also {
+            graphQLClient.flux(query,vars, T::class.java).collectList().block().also {
                log.trace("Slo opp ${T::class.java.simpleName} $it")
             }
         }.getOrElse {
@@ -44,10 +45,8 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
         }
 
     companion object {
-        private const val IDENT = "ident"
-        private const val IDENTER = "identer"
+        const val IDENT = "ident"
+        const val IDENTER = "identer"
 
-        protected fun String.toIdent() = mapOf(IDENT to this)
-        protected fun List<String>.toIdenter() = mapOf(IDENTER to this)
     }
 }

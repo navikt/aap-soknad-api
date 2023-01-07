@@ -39,7 +39,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
 
     fun søker(medBarn: Boolean = false) =
         with(ctx.getFnr()) {
-            query<PDLWrappedSøker>(clients.user, PERSON_QUERY, fnr)?.active?.let {
+            query<PDLWrappedSøker>(clients.user, PERSON_QUERY,  mapOf(IDENT to fnr))?.active?.let {
                 pdlSøkerTilSøker(it, this, alleBarn(medBarn,it.forelderBarnRelasjon))
             } ?: throw JwtTokenMissingException()
         }
@@ -49,7 +49,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         if(medBarn) {
             with(forelderBarnRelasjon.mapNotNull { it.relatertPersonsIdent }) {
                 if (isNotEmpty()) {
-                    queryFlux<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, this)
+                    queryFlux<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this))
                         ?.filter { it.code == Ok }
                         ?.map(PDLBolkBarn::person)?.asSequence() ?: emptySequence()
                 }
