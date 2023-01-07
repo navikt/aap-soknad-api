@@ -36,14 +36,14 @@ object GraphQLErrorExtensions {
             NotFound -> NotFoundGraphQL(NOT_FOUND, msg)
             else -> UnhandledGraphQL(INTERNAL_SERVER_ERROR,msg)
         }
-    abstract class UnrecoverableGraphQL(status: HttpStatus, msg: String) : RuntimeException("${status.value()}-$msg", null) {
+    abstract class UnrecoverableGraphQL(status: HttpStatus, msg: String) : Throwable("${status.value()}-$msg", null) {
         class NotFoundGraphQL(status: HttpStatus, msg: String) : UnrecoverableGraphQL(status,msg)
         class BadGraphQL(status: HttpStatus, msg: String) : UnrecoverableGraphQL(status,msg)
         class UnauthenticatedGraphQL(status: HttpStatus, msg: String) : UnrecoverableGraphQL(status,msg)
         class UnautorizedGraphQL(status: HttpStatus, msg: String) : UnrecoverableGraphQL(status,msg)
 
     }
-    abstract class RecoverableGraphQL(status: HttpStatus, msg: String) : RuntimeException("${status.value()}-$msg", null) {
+    abstract class RecoverableGraphQL(status: HttpStatus, msg: String) : Throwable("${status.value()}-$msg", null) {
         class UnhandledGraphQL(status: HttpStatus, msg: String) : RecoverableGraphQL(status,msg)
     }
 }
