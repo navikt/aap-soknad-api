@@ -9,9 +9,9 @@ import org.springframework.web.reactive.function.client.WebClient
 abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig, val handler: GraphQLErrorHandler = GraphQLDefaultErrorHandler()) : AbstractWebClientAdapter(client, cfg) {
 
     @Retry(name = "graphql")
-    protected inline fun <reified T> query(graphQLClient: GraphQLWebClient, query: String, arg: Map<String,String>) =
+    protected inline fun <reified T> query(graphQL: GraphQLWebClient, query: String, arg: Map<String,String>) =
         runCatching {
-            graphQLClient.post(query, arg, T::class.java).block().also {
+            graphQL.post(query, arg, T::class.java).block().also {
                 log.trace("Slo opp ${T::class.java.simpleName} $it")
             }
         }.getOrElse {
@@ -19,11 +19,12 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
         }
 
     @Retry(name = "graphql")
-    protected inline fun <reified T> query(graphQLClient: GraphQLWebClient, query: String, vars: Map<String,List<String>>) =
+    protected inline fun <reified T> query(graphQL: GraphQLWebClient, query: String, vars: Map<String,List<String>>) =
         runCatching {
-            graphQLClient.flux(query,vars, T::class.java).collectList().block().also {
-               log.trace("Slo opp ${T::class.java.simpleName} $it")
-            }
+            graphQL.flux(query,vars, T::class.java)
+                .collectList().block()?.toList().also {
+                    log.trace("Slo opp ${T::class.java.simpleName} $it")
+                }  ?: emptyList()
         }.getOrElse {
             handler.handle(it)
         }

@@ -51,9 +51,9 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
             with(forelderBarnRelasjon.mapNotNull { it.relatertPersonsIdent }) {
                 if (isNotEmpty()) {
                     with(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this))
-                        ?.partition { it.code == Ok }) {
-                        (this?.first?.map(PDLBolkBarn::barn)?.asSequence() ?: emptySequence()).also {
-                            this?.second?.forEach {
+                        .partition { it.code == Ok }) {
+                        first.map(PDLBolkBarn::barn).asSequence().also {
+                            second.forEach {
                                 log.warn("Kunne ikke slå opp barn ${it.ident.partialMask()}, kode er ${it.code}")
                             }
                         }
