@@ -70,7 +70,7 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
         lager.get(cfg.vedlegg.navn, navn(fnr, uuid), fields(CONTENT_TYPE, CONTENT_DISPOSITION, TIME_CREATED, SIZE))
             ?.let { blob ->
                 with(blob) {
-                    DokumentInfo(getContent(), contentType, contentDisposition(), createTime, size)
+                    DokumentInfo(getContent(), contentType, contentDisposition(), createTimeOffsetDateTime.toEpochSecond(), size)
                         .also {
                             log.trace(CONFIDENTIAL, "Lest $it fra ${blob.name} fra bøtte ${blob.bucket}")
                         }

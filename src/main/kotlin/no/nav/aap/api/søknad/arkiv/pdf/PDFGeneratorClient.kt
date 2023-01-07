@@ -14,7 +14,7 @@ class PDFGeneratorClient(val adapter: PDFGeneratorWebClientAdapter) : PDFGenerat
 }
 
 interface PDFGenerator {
-    fun tilPdf(søker: Søker, søknad: PDFKvittering): ByteArray
+    fun tilPdf(søker: Søker, kvitteringData: PDFKvittering): ByteArray
     fun pdfVariant(søknad: PDFKvittering, søker: Søker): DokumentVariant = tilPdf(søker, søknad).somPDFVariant()
 
     fun tilPdf(søker: Søker, søknad: UtlandSøknad): ByteArray
