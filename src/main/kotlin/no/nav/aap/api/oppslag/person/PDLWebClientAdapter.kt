@@ -50,7 +50,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         if(medBarn) {
             with(forelderBarnRelasjon.mapNotNull { it.relatertPersonsIdent }) {
                 if (isNotEmpty()) {
-                    with(queryFlux<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this))
+                    with(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this))
                         ?.partition { it.code == Ok }) {
                         (this?.first?.map(PDLBolkBarn::barn)?.asSequence() ?: emptySequence()).also {
                             this?.second?.forEach {

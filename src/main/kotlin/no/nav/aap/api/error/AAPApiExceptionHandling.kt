@@ -3,9 +3,9 @@ package no.nav.aap.api.error
 import com.fasterxml.jackson.databind.DatabindException
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQLResponse.BadGraphQLResponse
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQLResponse.NotFoundGraphQLResponse
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQLResponse.UnauthenticatedGraphQLResponse
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.BadGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.NotFoundGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.UnauthenticatedGraphQL
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager.ContentTypeDokumentSjekker.ContentTypeException
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -40,7 +40,7 @@ class AAPApiExceptionHandling : ProblemHandling {
     @ExceptionHandler(JwtTokenMissingException::class, JwtTokenUnauthorizedException::class)
     fun unauth(e: RuntimeException, req: NativeWebRequest) = createProblem(e, req, UNAUTHORIZED)
 
-    @ExceptionHandler(UnauthenticatedGraphQLResponse::class, UnauthenticatedGraphQLResponse::class)
+    @ExceptionHandler(UnauthenticatedGraphQL::class, UnauthenticatedGraphQL::class)
     fun unauthQL(e: RuntimeException, req: NativeWebRequest) = createProblem(e, req, UNAUTHORIZED)
 
     @ExceptionHandler(IntegrationException::class, StorageException::class)
@@ -52,10 +52,10 @@ class AAPApiExceptionHandling : ProblemHandling {
     @ExceptionHandler(IllegalArgumentException::class, DatabindException::class)
     fun illegal(e: Exception, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
 
-    @ExceptionHandler(NotFound::class, NotFoundGraphQLResponse::class)
+    @ExceptionHandler(NotFound::class, NotFoundGraphQL::class)
     fun ikkeFunnet(e: Throwable, req: NativeWebRequest) = createProblem(e, req, NOT_FOUND)
 
-    @ExceptionHandler(BadGraphQLResponse::class, BadRequest::class)
+    @ExceptionHandler(BadGraphQL::class, BadRequest::class)
     fun bad(e: Throwable, req: NativeWebRequest) = createProblem(e, req, BAD_REQUEST)
 
     @ExceptionHandler(DokumentException::class)

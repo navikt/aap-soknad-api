@@ -1,11 +1,11 @@
 package no.nav.aap.api.oppslag.graphql
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.RecoverableGraphQLResponse.UnhandledGraphQLResponse
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQLResponse.BadGraphQLResponse
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQLResponse.NotFoundGraphQLResponse
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQLResponse.UnauthenticatedGraphQLResponse
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQLResponse.UnautorizedGraphQLResponse
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.RecoverableGraphQL.UnhandledGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.BadGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.NotFoundGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.UnauthenticatedGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.UnautorizedGraphQL
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.BadRequest
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.NotFound
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Unauthenticated
@@ -23,28 +23,27 @@ object GraphQLErrorExtensions {
     private val log = LoggerUtil.getLogger(javaClass)
 
      fun GraphQLErrorsException.oversett() = oversett(code(), message ?: "Ukjent feil").also {
-         log.warn("GraphQL oppslag returnerte ${errors.size} feil. ${errors}", this)
-         log.warn("GraphQL oversatte feilkode til ${it.javaClass.simpleName}",it)
+         log.warn("GraphQL oppslag returnerte ${errors.size} feil. ${errors}, oversatte feilkode til ${it.javaClass.simpleName}", this)
      }
 
     private fun GraphQLErrorsException.code() = errors.firstOrNull()?.extensions?.get("code")?.toString()
 
     private fun oversett(kode: String?, msg: String) =
         when (kode) {
-            Unauthorized -> UnautorizedGraphQLResponse(UNAUTHORIZED,msg)
-            Unauthenticated -> UnauthenticatedGraphQLResponse(FORBIDDEN,msg)
-            BadRequest -> BadGraphQLResponse(BAD_REQUEST, msg)
-            NotFound -> NotFoundGraphQLResponse(NOT_FOUND, msg)
-            else -> UnhandledGraphQLResponse(INTERNAL_SERVER_ERROR,msg)
+            Unauthorized -> UnautorizedGraphQL(UNAUTHORIZED,msg)
+            Unauthenticated -> UnauthenticatedGraphQL(FORBIDDEN,msg)
+            BadRequest -> BadGraphQL(BAD_REQUEST, msg)
+            NotFound -> NotFoundGraphQL(NOT_FOUND, msg)
+            else -> UnhandledGraphQL(INTERNAL_SERVER_ERROR,msg)
         }
-    abstract class UnrecoverableGraphQLResponse(status: HttpStatus, msg: String) : RuntimeException("${status.value()}-$msg", null) {
-        class NotFoundGraphQLResponse(status: HttpStatus, msg: String) : UnrecoverableGraphQLResponse(status,msg)
-        class BadGraphQLResponse(status: HttpStatus, msg: String) : UnrecoverableGraphQLResponse(status,msg)
-        class UnauthenticatedGraphQLResponse(status: HttpStatus, msg: String) : UnrecoverableGraphQLResponse(status,msg)
-        class UnautorizedGraphQLResponse(status: HttpStatus, msg: String) : UnrecoverableGraphQLResponse(status,msg)
+    abstract class UnrecoverableGraphQL(status: HttpStatus, msg: String) : RuntimeException("${status.value()}-$msg", null) {
+        class NotFoundGraphQL(status: HttpStatus, msg: String) : UnrecoverableGraphQL(status,msg)
+        class BadGraphQL(status: HttpStatus, msg: String) : UnrecoverableGraphQL(status,msg)
+        class UnauthenticatedGraphQL(status: HttpStatus, msg: String) : UnrecoverableGraphQL(status,msg)
+        class UnautorizedGraphQL(status: HttpStatus, msg: String) : UnrecoverableGraphQL(status,msg)
 
     }
-    abstract class RecoverableGraphQLResponse(status: HttpStatus, msg: String) : RuntimeException("${status.value()}-$msg", null) {
-        class UnhandledGraphQLResponse(status: HttpStatus, msg: String) : RecoverableGraphQLResponse(status,msg)
+    abstract class RecoverableGraphQL(status: HttpStatus, msg: String) : RuntimeException("${status.value()}-$msg", null) {
+        class UnhandledGraphQL(status: HttpStatus, msg: String) : RecoverableGraphQL(status,msg)
     }
 }

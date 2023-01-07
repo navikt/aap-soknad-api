@@ -19,7 +19,7 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
         }
 
     @Retry(name = "graphql")
-    protected inline fun <reified T> queryFlux(graphQLClient: GraphQLWebClient, query: String, vars: Map<String,List<String>>) =
+    protected inline fun <reified T> query(graphQLClient: GraphQLWebClient, query: String, vars: Map<String,List<String>>) =
         runCatching {
             graphQLClient.flux(query,vars, T::class.java).collectList().block().also {
                log.trace("Slo opp ${T::class.java.simpleName} $it")
