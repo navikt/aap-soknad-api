@@ -1,15 +1,15 @@
 package no.nav.aap.api.oppslag.graphql
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.RecoverableGraphQL.UnhandledGraphQL
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.BadGraphQL
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.NotFoundGraphQL
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.UnauthenticatedGraphQL
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.UnauthorizedGraphQL
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.BadRequest
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.NotFound
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Unauthenticated
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Unauthorized
+import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.RecoverableGraphQL.UnhandledGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.UnrecoverableGraphQL.BadGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.UnrecoverableGraphQL.NotFoundGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.UnrecoverableGraphQL.UnauthenticatedGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.UnrecoverableGraphQL.UnauthorizedGraphQL
 import no.nav.aap.util.LoggerUtil
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -18,9 +18,12 @@ import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 
-object GraphQLErrorExtensions {
+object GraphQLExtensions {
 
     private val log = LoggerUtil.getLogger(javaClass)
+
+    const val IDENT = "ident"
+    const val IDENTER = "identer"
 
      fun GraphQLErrorsException.oversett() = oversett(code(), message ?: "Ukjent feil").also {
          log.warn("GraphQL oppslag returnerte ${errors.size} feil. ${errors}, oversatte feilkode til ${it.javaClass.simpleName}", this)

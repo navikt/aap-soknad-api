@@ -3,6 +3,8 @@ package no.nav.aap.api.oppslag.person
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Ok
+import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IDENT
+import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IDENTER
 import no.nav.aap.api.oppslag.person.PDLBolkBarn.PDLBarn
 import no.nav.aap.api.oppslag.person.PDLMapper.pdlSøkerTilSøker
 import no.nav.aap.api.oppslag.person.PDLSøker.PDLForelderBarnRelasjon

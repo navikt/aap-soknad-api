@@ -3,10 +3,10 @@ package no.nav.aap.api.error
 import com.fasterxml.jackson.databind.DatabindException
 import com.google.cloud.storage.StorageException
 import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.BadGraphQL
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.NotFoundGraphQL
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.UnauthenticatedGraphQL
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.UnauthorizedGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.UnrecoverableGraphQL.BadGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.UnrecoverableGraphQL.NotFoundGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.UnrecoverableGraphQL.UnauthenticatedGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.UnrecoverableGraphQL.UnauthorizedGraphQL
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager.ContentTypeDokumentSjekker.ContentTypeException
 import no.nav.aap.util.LoggerUtil.getLogger

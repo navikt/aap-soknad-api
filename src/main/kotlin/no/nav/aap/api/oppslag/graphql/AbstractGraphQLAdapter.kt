@@ -28,9 +28,4 @@ abstract class AbstractGraphQLAdapter(client: WebClient, cfg: AbstractRestConfig
         }.getOrElse {
             handler.handle(it)
         }
-
-    companion object {
-        const val IDENT = "ident"
-        const val IDENTER = "identer"
-    }
 }
