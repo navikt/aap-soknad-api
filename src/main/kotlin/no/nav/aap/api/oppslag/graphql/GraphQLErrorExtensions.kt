@@ -5,7 +5,7 @@ import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.RecoverableGraphQL.
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.BadGraphQL
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.NotFoundGraphQL
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.UnauthenticatedGraphQL
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.UnautorizedGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.UnauthorizedGraphQL
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.BadRequest
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.NotFound
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Unauthenticated
@@ -30,7 +30,7 @@ object GraphQLErrorExtensions {
 
     private fun oversett(kode: String?, msg: String) =
         when (kode) {
-            Unauthorized -> UnautorizedGraphQL(UNAUTHORIZED,msg)
+            Unauthorized -> UnauthorizedGraphQL(UNAUTHORIZED,msg)
             Unauthenticated -> UnauthenticatedGraphQL(FORBIDDEN,msg)
             BadRequest -> BadGraphQL(BAD_REQUEST, msg)
             NotFound -> NotFoundGraphQL(NOT_FOUND, msg)
@@ -40,7 +40,7 @@ object GraphQLErrorExtensions {
         class NotFoundGraphQL(status: HttpStatus, msg: String) : UnrecoverableGraphQL(status,msg)
         class BadGraphQL(status: HttpStatus, msg: String) : UnrecoverableGraphQL(status,msg)
         class UnauthenticatedGraphQL(status: HttpStatus, msg: String) : UnrecoverableGraphQL(status,msg)
-        class UnautorizedGraphQL(status: HttpStatus, msg: String) : UnrecoverableGraphQL(status,msg)
+        class UnauthorizedGraphQL(status: HttpStatus, msg: String) : UnrecoverableGraphQL(status,msg)
 
     }
     abstract class RecoverableGraphQL(status: HttpStatus, msg: String) : Throwable("${status.value()}-$msg", null) {

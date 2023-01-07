@@ -6,6 +6,7 @@ import no.nav.aap.api.felles.error.IntegrationException
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.BadGraphQL
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.NotFoundGraphQL
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.UnauthenticatedGraphQL
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorExtensions.UnrecoverableGraphQL.UnauthorizedGraphQL
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager.ContentTypeDokumentSjekker.ContentTypeException
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -40,7 +41,7 @@ class AAPApiExceptionHandling : ProblemHandling {
     @ExceptionHandler(JwtTokenMissingException::class, JwtTokenUnauthorizedException::class)
     fun unauth(e: RuntimeException, req: NativeWebRequest) = createProblem(e, req, UNAUTHORIZED)
 
-    @ExceptionHandler(UnauthenticatedGraphQL::class, UnauthenticatedGraphQL::class)
+    @ExceptionHandler(UnauthorizedGraphQL::class, UnauthenticatedGraphQL::class)
     fun unauthQL(e: RuntimeException, req: NativeWebRequest) = createProblem(e, req, UNAUTHORIZED)
 
     @ExceptionHandler(IntegrationException::class, StorageException::class)
