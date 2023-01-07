@@ -51,7 +51,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                 if (isNotEmpty()) {
                     queryFlux<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this))
                         ?.filter { it.code == Ok }
-                        ?.map(PDLBolkBarn::person)?.asSequence() ?: emptySequence()
+                        ?.map(PDLBolkBarn::barn)?.asSequence() ?: emptySequence()
                 }
                 else {
                     emptySequence()
