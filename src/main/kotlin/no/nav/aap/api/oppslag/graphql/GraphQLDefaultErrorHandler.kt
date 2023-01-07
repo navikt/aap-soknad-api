@@ -7,7 +7,7 @@ import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGr
 import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGraphQLResponse.NotFoundGraphQLResponse
 import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGraphQLResponse.UnauthenticatedGraphQLResponse
 import no.nav.aap.api.oppslag.graphql.GraphQLDefaultErrorHandler.UnrecoverableGraphQLResponse.UnautorizedGraphQLResponse
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.BadRequeest
+import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.BadRequest
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.NotFound
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Unauthenticated
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Unauthorized
@@ -50,7 +50,7 @@ class GraphQLDefaultErrorHandler : GraphQLErrorHandler {
         when (kode) {
             Unauthorized -> UnautorizedGraphQLResponse(UNAUTHORIZED,msg)
             Unauthenticated -> UnauthenticatedGraphQLResponse(FORBIDDEN,msg)
-            BadRequeest -> BadGraphQLResponse(BAD_REQUEST, msg)
+            BadRequest -> BadGraphQLResponse(BAD_REQUEST, msg)
             NotFound -> NotFoundGraphQLResponse(NOT_FOUND, msg)
             else -> UnhandledGraphQLResponse(INTERNAL_SERVER_ERROR,msg)
         }

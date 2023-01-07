@@ -6,7 +6,7 @@ interface GraphQLErrorHandler {
         const val Ok = "ok"
         const val Unauthorized = "unauthorized"
         const val Unauthenticated = "unauthenticated"
-        const val BadRequeest = "bad_request"
+        const val BadRequest = "bad_request"
         const val NotFound = "not_found"
     }
 }
