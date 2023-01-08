@@ -11,7 +11,6 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType.*
 import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient.Builder
 import org.springframework.web.reactive.function.client.bodyToMono
 

@@ -1,6 +1,5 @@
 package no.nav.aap.api.oppslag.behandler
 
-import java.time.Duration
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLER
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLERPING
 import no.nav.aap.api.søknad.arkiv.ArkivConfig

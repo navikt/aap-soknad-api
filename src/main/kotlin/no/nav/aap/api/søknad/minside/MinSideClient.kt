@@ -29,6 +29,7 @@ import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.kafka.core.KafkaOperations
+import org.springframework.kafka.support.SendResult
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
@@ -50,7 +51,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     log.info("Oppretter Min Side utkast med eventid $eventId")
                     produsenter.utkast.send(ProducerRecord(topic, "$eventId", opprettUtkast(cfg,tekst, "$eventId", fnr)))
                         .get().also {
-                            log.info("Sendte opprett utkast med eventid $eventId  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
+                            log("opprett utkast",eventId,it)
                             repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
                             utkast?.set(repos.utkast.count())
                         }
@@ -63,6 +64,8 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 log.trace("Oppretter IKKE nytt utkast i Ditt Nav for $fnr, disabled")
             }
         }
+
+
     @Transactional
     fun oppdaterUtkast(fnr: Fødselsnummer, nyTekst: String, skjemaType: SkjemaType = STANDARD) =
         with(cfg.utkast) {
@@ -71,7 +74,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     log.trace("Oppdaterer Min Side utkast med eventid ${u.eventid}")
                     produsenter.utkast.send(ProducerRecord(topic, "${u.eventid}", oppdaterUtkast(cfg,nyTekst, "${u.eventid}", fnr)))
                         .get().also {
-                            log.trace("Sendte oppdater utkast med eventid ${u.eventid}  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
+                            log("oppdater utkast",u.eventid,it)
                             repos.utkast.oppdaterUtkast(UPDATED,fnr.fnr, u.eventid)
                         }
                 } ?:  log.warn("fant IKKE et allerede eksisterende utkast for $fnr, oppretter utkast istedet").also {
@@ -90,7 +93,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     log.info("Avslutter Min Side utkast for eventid ${u.eventid}")
                     produsenter.utkast.send(ProducerRecord(topic,  "${u.eventid}", avsluttUtkast("${u.eventid}",fnr)))
                         .get().also {
-                            log.info("Sendte avslutt utkast med eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
+                            log("avslutt utkast",u.eventid,it)
                             repos.utkast.deleteByEventid(u.eventid)
                             utkast?.set(repos.utkast.count())
                         }
@@ -108,7 +111,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 log.trace("Oppretter Min Side beskjed med ekstern varsling $eksternVarsling og eventid $eventId")
                 produsenter.avro.send(ProducerRecord(topic, key(cfg, eventId, fnr), beskjed(cfg,tekst, varighet,type, eksternVarsling)))
                     .get().run {
-                        log.trace("Sendte opprett beskjed med eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                        log("opprett beskjed",eventId,this)
                         repos.beskjeder.save(Beskjed(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
                     }
             }
@@ -139,7 +142,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 produsenter.avro.send(ProducerRecord(topic, key(cfg, eventId, fnr),
                         oppgave(cfg,tekst, varighet, type, eventId, eksternVarsling)))
                     .get().run {
-                        log.trace("Sendte opprett oppgave med eventid $eventId og ekstern varsling $eksternVarsling på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                        log("opprett oppgave",eventId,this)
                         repos.oppgaver.save(Oppgave(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
                     }
             }
@@ -165,8 +168,11 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
     private fun avslutt(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType) =
         produsenter.avro.send(ProducerRecord(cfg.done, key(cfg, eventId, fnr), done())).get()
             .run {
-                log.trace("Sendte avslutt $notifikasjonType med eventid $eventId  på offset ${recordMetadata.offset()} partition${recordMetadata.partition()}på topic ${recordMetadata.topic()}")
+                log("avslutt $notifikasjonType",eventId,this)
             }
-        }
+    private fun log(type: String, eventId: UUID, result: SendResult<out Any,out Any>) =
+        log.info("Sendte $type med eventid $eventId  på offset ${result.recordMetadata.offset()} partition${result.recordMetadata.partition()} på topic ${result.recordMetadata.topic()}")
+
+}
 
 enum class UtkastType  {CREATED, UPDATED }
