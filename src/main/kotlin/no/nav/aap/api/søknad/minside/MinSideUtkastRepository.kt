@@ -15,12 +15,13 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
 interface EventIdView {
-    val eventid: UUID?
+    val eventid: UUID
 }
 interface MinSideUtkastRepository : MinSideRepository<Utkast> {
     fun existsByFnrAndSkjematype(fnr: String, skjemaType: SkjemaType): Boolean
-    fun findByFnrAndSkjematype(fnr: String, skjemaType: SkjemaType): Utkast?
-    fun findByFnrAndSkjematype1(fnr: String, skjemaType: SkjemaType): EventIdView?
+    //fun findByFnrAndSkjematype(fnr: String, skjemaType: SkjemaType): Utkast?
+    fun deleteByEventid(eventid: UUID)
+    fun findByFnrAndSkjematype(fnr: String, skjemaType: SkjemaType): EventIdView?
 
 
 

@@ -104,13 +104,13 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                         produsenter.utkast.send(ProducerRecord(topic,  "${u.eventid}", avsluttUtkast("${u.eventid}",fnr)))
                             .get().also {
                                 log.trace("Sendte avslutt utkast med eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
-                                repos.utkast.delete(u)
+                                repos.utkast.deleteByEventid(u.eventid)
                                 utkast?.set(repos.utkast.count())
                             }
                     }
                     else {
                         log.info("Avslutter Min Side utkast DB for eventid ${u.eventid} for $fnr")
-                        repos.utkast.delete(u)
+                        repos.utkast.deleteByEventid(u.eventid)
                         utkast?.set(repos.utkast.count())
                     }
                 } ?: log.warn("Ingen utkast å avslutte for $fnr")
