@@ -181,6 +181,8 @@ konto:
 krr:
     enabled: true
 minside:
+    utkast:
+        enabled: true
     enabled: true
     nais:
         app: ${nais.app.name}
