@@ -51,8 +51,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     produsenter.utkast.send(ProducerRecord(topic, "$eventId", opprettUtkast(cfg,tekst, "$eventId", fnr)))
                         .get().also {
                             log.info("Sendte opprett utkast med eventid $eventId  på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
-                            repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
-                            utkast?.set(repos.utkast.count())
+                            opprettUtkastDB(eventId, fnr)
                         }
                 }
                 else {
@@ -63,6 +62,12 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 log.trace("Oppretter IKKE nytt utkast i Ditt Nav for $fnr, disabled")
             }
         }
+
+    private fun opprettUtkastDB(eventId: UUID, fnr: Fødselsnummer) {
+        repos.utkast.save(Utkast(fnr.fnr, eventId, CREATED))
+        utkast?.set(repos.utkast.count())
+    }
+
     @Transactional
     fun oppdaterUtkast(fnr: Fødselsnummer, nyTekst: String, skjemaType: SkjemaType = STANDARD) =
         with(cfg.utkast) {
@@ -91,8 +96,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     produsenter.utkast.send(ProducerRecord(topic,  "${u.eventid}", avsluttUtkast("${u.eventid}",fnr)))
                         .get().also {
                             log.info("Sendte avslutt utkast med eventid ${u.eventid} på offset ${it.recordMetadata.offset()} partition${it.recordMetadata.partition()}på topic ${it.recordMetadata.topic()}")
-                            repos.utkast.deleteByEventid(u.eventid)
-                            utkast?.set(repos.utkast.count())
+                            avsluttUtkastDB(u)
                         }
                 } ?: log.warn("Ingen utkast å avslutte for $fnr")
             }
@@ -100,6 +104,11 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 log.trace("Avslutter IKKE utkast i Ditt Nav for $fnr, disabled")
             }
         }
+
+    private fun avsluttUtkastDB(u: EventIdView) {
+        repos.utkast.deleteByEventid(u.eventid)
+        utkast?.set(repos.utkast.count())
+    }
 
     @Transactional
     fun opprettBeskjed(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
