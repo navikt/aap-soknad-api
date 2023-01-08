@@ -21,7 +21,7 @@ class MellomlagringVarsler(private val minside: MinSideClient, private val elect
     @Scheduled(fixedDelayString = "#{'\${buckets.mellom.purring.delay}'}", initialDelay = 10, timeUnit = SECONDS)
     fun sjekkVarsling() {
          if (elector.erLeder()) {
-
+              log.info("Leder")
          }
     }
 }
