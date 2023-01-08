@@ -19,7 +19,6 @@ interface EventIdView {
 }
 interface MinSideUtkastRepository : MinSideRepository<Utkast> {
     fun existsByFnrAndSkjematype(fnr: String, skjemaType: SkjemaType): Boolean
-    //fun findByFnrAndSkjematype(fnr: String, skjemaType: SkjemaType): Utkast?
     fun deleteByEventid(eventid: UUID)
     fun findByFnrAndSkjematype(fnr: String, skjemaType: SkjemaType): EventIdView?
 

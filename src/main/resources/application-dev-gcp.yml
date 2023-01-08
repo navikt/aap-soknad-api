@@ -51,8 +51,6 @@ joark:
         topic: teamdokumenthandtering.aapen-dok-journalfoering-q1
     scope: api://dev-fss.teamdokumenthandtering.dokarkiv-q1/.default
 minside:
-    utkast:
-        sendenabled: true
     backlinks:
         innsyn: https://aap-innsyn.dev.nav.no/aap/mine-aap
         standard: https://aap-soknad.dev.nav.no/aap/soknad
