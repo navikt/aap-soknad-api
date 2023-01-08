@@ -16,10 +16,10 @@
     <description>aap-soknad-api</description>
     <properties>
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
-        <conditionals.version>4.0.5</conditionals.version>
+        <conditionals.version>5.0.2</conditionals.version>
         <confluent.version>7.3.1</confluent.version>
         <commons-text.version>1.10.0</commons-text.version>
-        <domain.version>1.0.42</domain.version>
+        <domain.version>1.0.44</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
         <gcp.libraries.version>26.3.0</gcp.libraries.version>
         <gcp.version>0.184.0</gcp.version>
