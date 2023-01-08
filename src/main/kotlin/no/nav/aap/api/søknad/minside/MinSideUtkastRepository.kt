@@ -14,9 +14,14 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
+interface EventIdView {
+    val eventid: UUID?
+}
 interface MinSideUtkastRepository : MinSideRepository<Utkast> {
     fun existsByFnrAndSkjematype(fnr: String, skjemaType: SkjemaType): Boolean
     fun findByFnrAndSkjematype(fnr: String, skjemaType: SkjemaType): Utkast?
+    fun findByFnrAndSkjematype1(fnr: String, skjemaType: SkjemaType): EventIdView?
+
 
 
     @Query("update utkast u set u.type = :type, u.updated = now()   where u.fnr = :fnr and u.eventid = :eventid")
