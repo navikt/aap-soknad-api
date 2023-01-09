@@ -4,6 +4,7 @@ import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.oppslag.søknad.SøknadClient
+import no.nav.aap.api.saksbehandling.SaksbehandlingController.VedleggEtterspørsel
 import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
 import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
@@ -66,6 +67,11 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     @PostMapping("vl/{fnr}")
     @ResponseStatus(CREATED)
     fun vl(@PathVariable fnr: Fødselsnummer, @RequestBody søknad: StandardSøknad) = vl.fordel(søknad, fnr, "42", cfg.standard)
+
+    @PostMapping("vl/etterspoerr")
+    @ResponseStatus(CREATED)
+    fun etterspørrVedlegg(@RequestBody e: VedleggEtterspørsel) = søknad.etterspørrVedlegg(e.fnr,e.type)
+
 
     @DeleteMapping("mellomlager/{type}/{fnr}")
     fun slettMellomlagret(@PathVariable type: SkjemaType, @PathVariable fnr: Fødselsnummer): ResponseEntity<Void> = if (mellomlager.slett(type, fnr)) noContent().build() else notFound().build()

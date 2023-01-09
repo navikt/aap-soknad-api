@@ -12,7 +12,9 @@ import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
@@ -31,8 +33,14 @@ class SøknadClient(private val repo: SøknadRepository,
 
     @Transactional(readOnly = true)
     fun søknader(pageable: Pageable) = søknader(ctx.getFnr(), pageable)
-    internal fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
-        repo.getSøknadByFnr(fnr.fnr, pageable).map(::tilSøknad)
+
+    fun etterspørrVedlegg(fnr: Fødselsnummer, type: VedleggType) =
+    repo.getSøknadByFnr(fnr.fnr,PageRequest.of(0, 1, Sort.by("created").descending())).firstOrNull()?.let {
+        it.registrerManglende(listOf(type))
+    } ?: log.warn("Ingen siste søknad for $fnr")
+
+        internal fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
+       repo.getSøknadByFnr(fnr.fnr, pageable).map(::tilSøknad)
 
     data class SøknadDTO(val innsendtDato: Instant?,
                          val søknadId: UUID,
