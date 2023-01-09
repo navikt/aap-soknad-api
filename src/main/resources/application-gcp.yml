@@ -148,6 +148,9 @@ no.nav:
                             client-auth-method: private_key_jwt
 
             issuer:
+                azuread:
+                    discoveryurl: ${$azure,app.well,known.url}
+                    accepted_audience: ${azure.app.client.id}
                 idporten:
                     discovery-url: ${token.x.well.known.url}
                     accepted-audience: ${token.x.client.id}
