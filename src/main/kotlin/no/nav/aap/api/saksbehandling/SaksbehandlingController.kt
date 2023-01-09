@@ -17,7 +17,7 @@ class SaksbehandlingController(private val client: SøknadClient) {
 
     @PostMapping("vedlegg")
     @ResponseStatus(CREATED)
-    fun vl(@RequestBody e: VedleggEtterspørsel) : Unit {
+    fun vedlegg(@RequestBody e: VedleggEtterspørsel) : Unit {
        client.etterspørrVedlegg(e.fnr,e.type)
         Unit
 

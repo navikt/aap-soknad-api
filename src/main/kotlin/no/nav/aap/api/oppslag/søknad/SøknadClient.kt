@@ -40,7 +40,7 @@ class SøknadClient(private val repo: SøknadRepository,
         it.registrerManglende(listOf(type))
     } ?: log.warn("Ingen siste søknad for $fnr")
 
-        internal fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
+    internal fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
        repo.getSøknadByFnr(fnr.fnr, pageable).map(::tilSøknad)
 
     data class SøknadDTO(val innsendtDato: Instant?,

@@ -68,9 +68,9 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     @ResponseStatus(CREATED)
     fun vl(@PathVariable fnr: Fødselsnummer, @RequestBody søknad: StandardSøknad) = vl.fordel(søknad, fnr, "42", cfg.standard)
 
-    @PostMapping("vl/etterspoerr")
+    @PostMapping("sb/vedlegg")
     @ResponseStatus(CREATED)
-    fun etterspørrVedlegg(@RequestBody e: VedleggEtterspørsel) = søknad.etterspørrVedlegg(e.fnr,e.type)
+    fun vedlegg(@RequestBody e: VedleggEtterspørsel) = søknad.etterspørrVedlegg(e.fnr,e.type)
 
 
     @DeleteMapping("mellomlager/{type}/{fnr}")
