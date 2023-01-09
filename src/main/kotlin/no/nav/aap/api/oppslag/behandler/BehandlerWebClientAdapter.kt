@@ -23,10 +23,11 @@ class BehandlerWebClientAdapter(
         .uri(cf::path)
         .accept(APPLICATION_JSON)
         .retrieve()
-        .onStatus({ NOT_FOUND == it }, { empty<Throwable>().also { log.trace("Behandler ikke funnet") } })
+        .onStatus({ NOT_FOUND == it }, { empty<Throwable>().also { log.info("Behandler ikke funnet") } })
         .bodyToMono<List<BehandlerDTO>>()
         .retryWhen(cf.retrySpec(log))
-        .onErrorResume { empty<List<BehandlerDTO>>().also { log.info("Behandler oppslag feilet etter ${cfg.retry}, faller tilbake til tom liste", it) } }
+        .onErrorResume { empty<List<BehandlerDTO>>().also { log.info("Behandler oppslag feilet etter ${cfg.retry.retries} forsøk, faller tilbake til tom liste", it) } }
+        .contextCapture()
         .block()
         ?.map(BehandlerDTO::tilBehandler)
         .orEmpty()
