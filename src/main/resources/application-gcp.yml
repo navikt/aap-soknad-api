@@ -149,7 +149,7 @@ no.nav:
 
             issuer:
                 azuread:
-                    discoveryurl: ${$azure.app.well.known.url}
+                    discoveryurl: ${azure.app.well.known.url}
                     accepted_audience: ${azure.app.client.id}
                 idporten:
                     discovery-url: ${token.x.well.known.url}
