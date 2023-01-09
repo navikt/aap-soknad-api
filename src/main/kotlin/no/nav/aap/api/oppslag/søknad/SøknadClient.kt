@@ -34,6 +34,7 @@ class SøknadClient(private val repo: SøknadRepository,
     @Transactional(readOnly = true)
     fun søknader(pageable: Pageable) = søknader(ctx.getFnr(), pageable)
 
+    @Transactional
     fun etterspørrVedlegg(fnr: Fødselsnummer, type: VedleggType) =
     repo.getSøknadByFnr(fnr.fnr,PageRequest.of(0, 1, Sort.by("created").descending())).firstOrNull()?.let {
         it.registrerManglende(listOf(type))
