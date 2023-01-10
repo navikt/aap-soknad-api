@@ -36,9 +36,9 @@ class SøknadClient(private val repo: SøknadRepository,
 
     @Transactional
     fun etterspørrVedlegg(e: VedleggEtterspørsel) =
-    repo.getSøknadByFnr(e.fnr.fnr,SISTE_SØKNAD).firstOrNull()?.let {
-        it.registrerManglende(listOf(e.type))
-    } ?: log.warn("Ingen siste søknad for $e")
+        repo.getSøknadByFnr(e.fnr.fnr,SISTE_SØKNAD).firstOrNull()?.let {
+            it.registrerManglende(listOf(e.type))
+        }
 
     internal fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
        repo.getSøknadByFnr(fnr.fnr, pageable).map(::tilSøknad)
