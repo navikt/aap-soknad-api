@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseStatus
 
-@ProtectedRestController(value = [SB_BASE], issuer = AAD)
+@ProtectedRestController(value = [SB_BASE], issuer = AAD, claimMap = [])
 class SaksbehandlingController(private val client: SøknadClient, private val minside: MinSideClient) {
 
     @PostMapping("vedlegg")
