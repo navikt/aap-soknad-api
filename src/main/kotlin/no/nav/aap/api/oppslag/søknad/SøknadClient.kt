@@ -6,15 +6,15 @@ import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagMapper.DokumentOversiktInnslag
+import no.nav.aap.api.saksbehandling.SaksbehandlingController.VedleggEtterspørsel
 import no.nav.aap.api.søknad.fordeling.SøknadRepository
+import no.nav.aap.api.søknad.fordeling.SøknadRepository.Companion.SISTE_SØKNAD
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Ettersending
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
@@ -35,10 +35,10 @@ class SøknadClient(private val repo: SøknadRepository,
     fun søknader(pageable: Pageable) = søknader(ctx.getFnr(), pageable)
 
     @Transactional
-    fun etterspørrVedlegg(fnr: Fødselsnummer, type: VedleggType) =
-    repo.getSøknadByFnr(fnr.fnr,PageRequest.of(0, 1, Sort.by("created").descending())).firstOrNull()?.let {
-        it.registrerManglende(listOf(type))
-    } ?: log.warn("Ingen siste søknad for $fnr")
+    fun etterspørrVedlegg(e: VedleggEtterspørsel) =
+    repo.getSøknadByFnr(e.fnr.fnr,SISTE_SØKNAD).firstOrNull()?.let {
+        it.registrerManglende(listOf(e.type))
+    } ?: log.warn("Ingen siste søknad for $e")
 
     internal fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
        repo.getSøknadByFnr(fnr.fnr, pageable).map(::tilSøknad)

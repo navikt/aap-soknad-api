@@ -70,7 +70,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
 
     @PostMapping("sb/vedlegg")
     @ResponseStatus(CREATED)
-    fun vedlegg(@RequestBody e: VedleggEtterspørsel) = søknad.etterspørrVedlegg(e.fnr,e.type)
+    fun vedlegg(@RequestBody e: VedleggEtterspørsel) = søknad.etterspørrVedlegg(e)
 
 
     @DeleteMapping("mellomlager/{type}/{fnr}")
