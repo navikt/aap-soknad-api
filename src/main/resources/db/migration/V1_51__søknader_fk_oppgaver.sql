@@ -1,0 +1,2 @@
+ALTER TABLE MINSIDEOPPGAVER ADD COLUMN soknadid  int CONSTRAINT fk_oppgaver_soknader  REFERENCES SOKNADER (id);
+update MINSIDEOPPGAVER set soknadid = soknader.id FROM SOKNADER where MINSIDEOPPGAVER.eventid = SOKNADER.eventid;
