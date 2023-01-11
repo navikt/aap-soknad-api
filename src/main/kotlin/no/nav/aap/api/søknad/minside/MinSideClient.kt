@@ -7,6 +7,7 @@ import no.nav.aap.api.config.Metrikker.Companion.MELLOMLAGRING
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
+import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType
@@ -135,7 +136,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         }
 
     @Transactional
-    fun opprettOppgave(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
+    fun opprettOppgave(fnr: Fødselsnummer, søknad: Søknad, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
                 log.trace("Oppretter Min Side oppgave med ekstern varsling $eksternVarsling og eventid $eventId")
@@ -143,7 +144,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                         oppgave(cfg,tekst, varighet, type, eventId, eksternVarsling)))
                     .get().run {
                         log("opprett oppgave",eventId,this)
-                        repos.oppgaver.save(Oppgave(fnr.fnr, eventId, ekstern = eksternVarsling)).eventid
+                        repos.oppgaver.save(Oppgave(fnr.fnr, eventId, søknad = søknad,ekstern = eksternVarsling)).eventid
                     }
             }
             else {

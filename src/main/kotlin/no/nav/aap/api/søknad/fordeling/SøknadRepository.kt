@@ -6,13 +6,16 @@ import javax.persistence.CascadeType.ALL
 import javax.persistence.Entity
 import javax.persistence.EnumType.STRING
 import javax.persistence.Enumerated
+import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.MappedSuperclass
 import javax.persistence.OneToMany
+import javax.persistence.OneToOne
 import javax.persistence.Table
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
+import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.IdentifiableTimestampedBaseEntity
 import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
@@ -38,6 +41,9 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             val journalpostid: String,
             var journalpoststatus: String? = null,
             var journalfoert: LocalDateTime? = null,
+            @OneToOne(cascade = [ALL])
+            @JoinColumn(name = "soknadid", referencedColumnName = "id")
+            var oppgave: Oppgave? = null,
             eventid: UUID = callIdAsUUID(),
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var ettersendinger: MutableSet<Ettersending> = mutableSetOf(),
