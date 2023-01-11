@@ -20,7 +20,7 @@ interface MinSideOppgaveRepository : MinSideRepository<Oppgave> {
                   eventid: UUID,
                   done: Boolean = false,
                   ekstern: Boolean = false,
-                  @OneToOne(mappedBy = "oppgave")
+                  @OneToOne(mappedBy = "id")
                   var søknad: Søknad?,
                   @OneToMany(mappedBy = "oppgave", cascade = [ALL], orphanRemoval = true)
                   var notifikasjoner: MutableSet<EksternOppgaveNotifikasjon> = mutableSetOf()) :

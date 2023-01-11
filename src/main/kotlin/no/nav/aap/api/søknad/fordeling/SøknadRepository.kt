@@ -42,7 +42,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             var journalpoststatus: String? = null,
             var journalfoert: LocalDateTime? = null,
             @OneToOne(cascade = [ALL])
-            @JoinColumn(name = "id", referencedColumnName = "soknadid")
+            @JoinColumn(name = "soknadid", referencedColumnName = "id")
             var oppgave: Oppgave? = null,
             eventid: UUID = callIdAsUUID(),
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
