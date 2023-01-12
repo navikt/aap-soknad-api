@@ -1,0 +1,1 @@
+ALTER TABLE minsidebeskjeder ALTER COLUMN ekstern DROP NOT NULL;
