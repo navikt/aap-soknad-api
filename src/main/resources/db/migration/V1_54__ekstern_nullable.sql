@@ -1,0 +1,1 @@
+ALTER TABLE minsideoppgaver ALTER COLUMN ekstern SET NULL;
