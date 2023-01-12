@@ -1,1 +1,1 @@
-ALTER TABLE minsideoppgaver ALTER COLUMN ekstern SET NULL;
+ALTER TABLE minsideoppgaver ALTER COLUMN ekstern DROP NOT NULL;
