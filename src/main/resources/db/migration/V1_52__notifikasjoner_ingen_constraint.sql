@@ -1,0 +1,2 @@
+ALTER TABLE eksterneoppgavenotifikasjoner DROP CONSTRAINT fk_eventid;
+ALTER TABLE eksternebeskjednotifikasjoner DROP CONSTRAINT fk_eventid_neskjed;
