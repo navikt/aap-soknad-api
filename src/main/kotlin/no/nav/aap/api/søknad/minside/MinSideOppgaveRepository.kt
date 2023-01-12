@@ -16,14 +16,13 @@ interface MinSideOppgaveRepository : MinSideRepository<Oppgave> {
     @Table(name = "minsideoppgaver")
     class Oppgave(fnr: String,
                   eventid: UUID,
-               //   done: Boolean = false,
                   ekstern: Boolean = false,
                   /*
                   @OneToOne(mappedBy = "id")
                   var søknad: Søknad?,*/
                   @OneToMany(mappedBy = "oppgave", cascade = [ALL], orphanRemoval = true)
                   var notifikasjoner: MutableSet<EksternOppgaveNotifikasjon> = mutableSetOf()) :
-        MinSideBaseEntity(fnr, eventid,/* done,*/ekstern)
+        MinSideBaseEntity(fnr, eventid,ekstern)
 
     @Entity(name = "eksternoppgavenotifikasjon")
     @Table(name = "eksterneoppgavenotifikasjoner")

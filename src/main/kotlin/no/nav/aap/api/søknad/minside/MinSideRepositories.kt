@@ -33,7 +33,7 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
     fun deleteByFnrAndEventid(fnr: String, eventid: UUID)
 
     @MappedSuperclass
-    abstract class MinSideBaseEntity(fnr: String, eventid: UUID,/* var done: Boolean, */var ekstern: Boolean) : BaseEntity(fnr, eventid) {
+    abstract class MinSideBaseEntity(fnr: String, eventid: UUID,var ekstern: Boolean) : BaseEntity(fnr, eventid) {
         override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, id=$id]"
     }
 
