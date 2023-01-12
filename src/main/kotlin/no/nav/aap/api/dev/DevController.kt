@@ -50,14 +50,6 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     @GetMapping("/soknader")
     fun søknader(@RequestParam fnr: Fødselsnummer, @SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) = søknad.søknader(fnr, pageable)
 
-    @GetMapping("/dittnav/avsluttalle")
-    fun avsluttAlle(@RequestParam fnr: Fødselsnummer) {
-        with(repos) {
-            beskjeder.findByFnrAndDoneIsFalse(fnr.fnr).map { it.eventid }.forEach { avsluttBeskjed(fnr, it) }
-            oppgaver.findByFnrAndDoneIsFalse(fnr.fnr).map { it.eventid }.forEach { avsluttOppgave(fnr, it) }
-        }
-    }
-
     @GetMapping("/dittnav/avsluttbeskjed")
     fun avsluttBeskjed(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) = dittNav.avsluttBeskjed(fnr, uuid)
 

@@ -126,9 +126,12 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         with(cfg.beskjed) {
             if (enabled) {
                 avslutt(eventId, fnr, BESKJED)
+                repos.beskjeder.deleteByFnrAndEventid(fnr.fnr,eventId)
+/*
                 repos.beskjeder.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
                     it.done = true
                 }
+ */
             }
             else {
                 log.trace("Sender IKKE avslutt beskjed til Min Side for beskjed for $fnr, disabled")
@@ -157,9 +160,11 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         with(cfg.oppgave) {
             if (enabled) {
                 avslutt(eventId, fnr, OPPGAVE)
+                repos.oppgaver.deleteByFnrAndEventid(fnr.fnr,eventId)
+                /*
                 repos.oppgaver.findByFnrAndEventidAndDoneIsFalse(fnr.fnr, eventId)?.let {
                     it.done = true
-                }
+                }*/
             }
             else {
                 log.trace("Sender IKKE avslutt oppgave til Ditt Nav for $fnr, disabled")

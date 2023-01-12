@@ -25,7 +25,7 @@ class DBTest {
         val postgresqlContainer = PostgreSQLContainer<Nothing>("postgres:14:5").apply {
             start()
         }
-        userRepository.findByFnrAndDoneIsFalse("03016536325")
+        //userRepository.findByFnrAndDoneIsFalse("03016536325")
         assertThat(postgresqlContainer.isRunning).isTrue
     }
 }
