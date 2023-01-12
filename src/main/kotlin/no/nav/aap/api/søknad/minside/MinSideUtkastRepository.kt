@@ -33,7 +33,7 @@ interface MinSideUtkastRepository : MinSideRepository<Utkast> {
     @Table(name = "minsideutkast")
     class Utkast(fnr: String, eventid: UUID,
                  @Enumerated(STRING) var type: UtkastType,
-                 @Enumerated(STRING) var skjematype: SkjemaType = STANDARD) : MinSideBaseEntity(fnr,eventid,false) {
+                 @Enumerated(STRING) var skjematype: SkjemaType = STANDARD) : MinSideBaseEntity(fnr,eventid) {
         override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, skjemaType = $skjematype, type = $type, created=$created, eventid=$eventid, updated=$updated,id=$id]"
     }
 }
