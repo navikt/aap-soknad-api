@@ -3,7 +3,6 @@ package no.nav.aap.api.søknad.minside
 import java.util.*
 import javax.persistence.CascadeType.ALL
 import javax.persistence.Entity
-import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.Table
@@ -21,7 +20,6 @@ interface MinSideOppgaveRepository : MinSideRepository<Oppgave> {
                   @ManyToOne
                   var soknad: Søknad?,
                   @OneToMany(mappedBy = "oppgave", cascade = [ALL], orphanRemoval = true)
-                  @JoinColumn(name="soknadid")
                   var notifikasjoner: MutableSet<EksternOppgaveNotifikasjon> = mutableSetOf()) :
         MinSideBaseEntity(fnr, eventid)
 
