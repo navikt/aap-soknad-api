@@ -53,8 +53,8 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     @GetMapping("/dittnav/avsluttbeskjed")
     fun avsluttBeskjed(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) = dittNav.avsluttBeskjed(fnr, uuid)
 
-    @GetMapping("/dittnav/avsluttoppgave")
-    fun avsluttOppgave(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) = dittNav.avsluttOppgave(fnr, uuid)
+    //@GetMapping("/dittnav/avsluttoppgave")
+    //fun avsluttOppgave(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) = dittNav.avsluttOppgave(fnr, uuid)
 
     @PostMapping("vl/{fnr}")
     @ResponseStatus(CREATED)

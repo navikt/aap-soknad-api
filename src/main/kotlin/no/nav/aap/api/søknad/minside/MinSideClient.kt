@@ -144,7 +144,6 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                         log("opprett oppgave",eventId,this)
                         søknad.oppgaver.add(Oppgave(fnr.fnr, eventId,søknad))
                         eventId
-                       // repos.oppgaver.save(Oppgave(fnr.fnr, eventId,søknad)).eventid
                     }
             }
             else {
@@ -153,11 +152,11 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         }
 
     @Transactional
-    fun avsluttOppgave(fnr: Fødselsnummer, eventId: UUID) =
+    fun avsluttOppgave(fnr: Fødselsnummer, søknad: Søknad) =
         with(cfg.oppgave) {
             if (enabled) {
-                avslutt(eventId, fnr, OPPGAVE)
-                repos.oppgaver.deleteByFnrAndEventid(fnr.fnr,eventId)
+                søknad.oppgaver.forEach { avslutt(it.eventid,Fødselsnummer(søknad.fnr),OPPGAVE) }
+                søknad.oppgaver.clear()
             }
             else {
                 log.trace("Sender IKKE avslutt oppgave til Ditt Nav for $fnr, disabled")
