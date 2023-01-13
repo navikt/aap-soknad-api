@@ -142,7 +142,9 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                         oppgave(cfg,tekst, varighet, type, eventId, eksternVarsling)))
                     .get().run {
                         log("opprett oppgave",eventId,this)
-                        repos.oppgaver.save(Oppgave(fnr.fnr, eventId)).eventid
+                        søknad.oppgaver.add(Oppgave(fnr.fnr, eventId,søknad))
+                        eventId
+                       // repos.oppgaver.save(Oppgave(fnr.fnr, eventId,søknad)).eventid
                     }
             }
             else {
