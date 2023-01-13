@@ -58,8 +58,11 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
         }
 
         fun registrerManglende(manglende: List<VedleggType>) =
+             registrerManglende(manglende,eventid)
+
+        fun registrerManglende(manglende: List<VedleggType>, eventId: UUID) =
             manglende.forEach {
-                with(ManglendeVedlegg(this, eventid, it)) {
+                with(ManglendeVedlegg(this, eventId, it)) {
                     manglendevedlegg.add(this)
                     soknad = this@Søknad
                 }

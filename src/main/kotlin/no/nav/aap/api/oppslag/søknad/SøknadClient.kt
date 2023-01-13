@@ -11,6 +11,7 @@ import no.nav.aap.api.søknad.fordeling.SøknadRepository
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Companion.SISTE_SØKNAD
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Ettersending
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
+import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 @Component
 class SøknadClient(private val repo: SøknadRepository,
                    private val arkivClient: ArkivOppslagClient,
+                   private val minside: MinSideClient,
                    private val ctx: AuthContext) {
 
     val log = getLogger(javaClass)
@@ -37,7 +39,9 @@ class SøknadClient(private val repo: SøknadRepository,
     @Transactional
     fun etterspørrVedlegg(e: VedleggEtterspørsel) =
         repo.getSøknadByFnr(e.fnr.fnr,SISTE_SØKNAD).firstOrNull()?.let {
-            it.registrerManglende(listOf(e.type))
+            val eventId = UUID.randomUUID()
+            minside.opprettOppgave(e.fnr,it,"Eterspørr vedlegg",eventId)
+            it.registrerManglende(listOf(e.type),eventId)
         }
 
     internal fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
