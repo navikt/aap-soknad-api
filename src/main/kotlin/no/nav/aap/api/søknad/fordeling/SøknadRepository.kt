@@ -82,10 +82,11 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
 
         fun registrerEttersending(fnr: Fødselsnummer,
                                   res: ArkivResultat,
-                                  ettersendteVedlegg: List<EttersendtVedlegg>) {
+                                  ettersendteVedlegg: List<EttersendtVedlegg>): List<UUID> {
             ettersendinger.add(Ettersending(fnr.fnr, res.journalpostId, this))
-            tidligereManglendeNåEttersendte(ettersendteVedlegg)
-                .forEach(::registrerVedlagtFraEttersending)
+            var ettersendte = tidligereManglendeNåEttersendte(ettersendteVedlegg)
+               ettersendte.forEach(::registrerVedlagtFraEttersending)
+            return ettersendte.map { it.eventid }
         }
     }
 

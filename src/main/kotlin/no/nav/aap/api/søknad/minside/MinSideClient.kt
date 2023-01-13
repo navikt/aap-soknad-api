@@ -152,7 +152,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         }
 
     @Transactional
-    fun avsluttOppgave(fnr: Fødselsnummer, søknad: Søknad) =
+    fun avsluttOppgaver(fnr: Fødselsnummer, søknad: Søknad) =
         with(cfg.oppgave) {
             if (enabled) {
                 søknad.oppgaver.forEach { avslutt(it.eventid,Fødselsnummer(søknad.fnr),OPPGAVE) }
@@ -163,7 +163,11 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
             }
         }
 
-    private fun avslutt(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType) =
+    @Transactional
+    fun avsluttOppgave(fnr: Fødselsnummer, søknad: Søknad, eventId: UUID) = avslutt(eventId,fnr,OPPGAVE)
+
+
+        private fun avslutt(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType) =
         produsenter.avro.send(ProducerRecord(cfg.done, key(cfg, eventId, fnr), done())).get()
             .run {
                 log("avslutt $notifikasjonType",eventId,this)
