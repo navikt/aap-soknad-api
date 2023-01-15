@@ -29,7 +29,6 @@
         <jib.version>3.3.1</jib.version>
         <kotlin.version>1.8.0</kotlin.version>
         <logstash.version>7.2</logstash.version>
-        <mock-oauth2-server.version>0.3.6</mock-oauth2-server.version>
         <okhttp3.version>4.9.1</okhttp3.version>
         <pdfbox.version>2.0.27</pdfbox.version>
         <problem.version>0.27.0</problem.version>
@@ -193,11 +192,15 @@
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-storage</artifactId>
         </dependency>
-        <dependency>
+       <!-- <dependency>
             <groupId>no.nav.security</groupId>
             <artifactId>token-validation-spring-test</artifactId>
             <version>${token.validation.version}</version>
             <scope>test</scope>
+        </dependency> -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
         </dependency>
         <dependency>
             <groupId>no.nav.security</groupId>

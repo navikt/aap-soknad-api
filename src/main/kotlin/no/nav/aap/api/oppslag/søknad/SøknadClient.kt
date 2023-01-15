@@ -40,8 +40,11 @@ class SøknadClient(private val repo: SøknadRepository,
     fun etterspørrVedlegg(e: VedleggEtterspørsel) =
         repo.getSøknadByFnr(e.fnr.fnr,SISTE_SØKNAD).firstOrNull()?.let {
             val eventId = UUID.randomUUID()
+            println("OPPRETT OPPGAVE")
             minside.opprettOppgave(e.fnr,it,"Eterspørr vedlegg",eventId)
+            println("OPPRETTET OPPGAVE")
             it.registrerManglende(listOf(e.type),eventId)
+            eventId
         }
 
     internal fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
