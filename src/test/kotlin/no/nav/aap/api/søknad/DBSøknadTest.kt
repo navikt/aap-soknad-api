@@ -107,7 +107,7 @@ class DBSøknadTest {
         val minSide = MinSideClient(MinSideProdusenter(avro,utkast),CFG, MinSideRepositories(beskjedRepo,oppgaveRepo,utkastRepo,søknadRepo))
         val fullfører = SøknadFullfører(InMemoryDokumentLager(), minSide, søknadRepo, InMemoryMellomLager(FNR), Metrikker(LoggingMeterRegistry()))
         val søknadClient = SøknadClient(søknadRepo,arkivClient,minSide,ctx)
-        val søknadId = fullfører.fullfør(FNR, standardSøknad(), ARKIVRESULTAT).uuid ?: fail("Søknad ikke registrert")
+        val søknadId = fullfører.fullfør(FNR, SØKNAD, ARKIVRESULTAT).uuid ?: fail("Søknad ikke registrert")
         val søknad = søknadRepo.getSøknadByFnr(FNR.fnr,SISTE_SØKNAD).first()
         assertEquals( 1,søknad.manglendevedlegg.size)
         val oppgaveId = søknadClient.etterspørrVedlegg(VedleggEtterspørsel(FNR,LÅNEKASSEN_LÅN)) ?: fail("Etterspørsel ikke registrert")
@@ -126,6 +126,7 @@ class DBSøknadTest {
     }
 
     companion object  {
+        private val SØKNAD = standardSøknad()
         private val NAV = URI.create("http://www.nav.no")
         private val ARKIVRESULTAT = ArkivResultat("42", listOf("666"))
         private val RESULT = SendResult<NokkelInput, Any>(null, RecordMetadata(TopicPartition("p",1),0,0,0,0,0))
