@@ -44,7 +44,7 @@ class SøknadClient(private val repo: SøknadRepository,
             minside.opprettOppgave(e.fnr,it,"Eterspørr vedlegg",oppgaveId)
             log.trace("Opprettet oppgave med id $oppgaveId for søknad ${it.eventid}")
             it.registrerManglende(listOf(e.type),it.eventid)
-            it.eventid
+            oppgaveId
         }
 
     internal fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
