@@ -1,16 +1,26 @@
 package no.nav.aap.api.søknad
 
+import io.micrometer.core.instrument.logging.LoggingMeterRegistry
 import java.net.URI
-import java.time.Duration
+import java.time.Duration.*
 import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.fail
+import no.nav.aap.api.OMSøknad
+import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.saksbehandling.SaksbehandlingController.VedleggEtterspørsel
+import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
+import no.nav.aap.api.søknad.fordeling.SøknadFullfører
 import no.nav.aap.api.søknad.fordeling.SøknadRepository
-import no.nav.aap.api.søknad.fordeling.SøknadRepository.Companion.SISTE_SØKNAD
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig.MellomlagringBucketConfig
+import no.nav.aap.api.søknad.mellomlagring.Mellomlager
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
+import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideConfig
@@ -19,16 +29,26 @@ import no.nav.aap.api.søknad.minside.MinSideConfig.NAISConfig
 import no.nav.aap.api.søknad.minside.MinSideConfig.TopicConfig
 import no.nav.aap.api.søknad.minside.MinSideConfig.UtkastConfig
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository
+import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.done
+import no.nav.aap.api.søknad.minside.MinSidePayloadGeneratorer.key
 import no.nav.aap.api.søknad.minside.MinSideProdusenter
 import no.nav.aap.api.søknad.minside.MinSideRepositories
 import no.nav.aap.api.søknad.minside.MinSideUtkastRepository
+import no.nav.aap.api.søknad.model.StandardEttersending
+import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
+import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.model.Vedlegg
+import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.api.søknad.model.VedleggType.*
 import no.nav.aap.util.AuthContext
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
 import org.apache.kafka.common.TopicPartition
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
@@ -65,7 +85,6 @@ class DBTest {
     lateinit var  arkivClient: ArkivOppslagClient
     @Mock
     lateinit var ctx: AuthContext
-
     @Mock
     lateinit var avro: KafkaOperations<NokkelInput, Any>
 
@@ -76,39 +95,83 @@ class DBTest {
     lateinit var result: ListenableFuture<SendResult<NokkelInput, Any>>
 
 
-
-    @Test
-    fun testEtterspørrManglende() {
-        val minSide = MinSideClient(MinSideProdusenter(avro,utkast),CFG, MinSideRepositories(beskjedRepo,oppgaveRepo,utkastRepo,søknadRepo))
+    @BeforeEach
+    fun init() {
         `when`(ctx.getFnr()).thenReturn(FNR)
         `when`(avro.send(any<ProducerRecord<NokkelInput,Any>>())).thenReturn(result)
         `when`(result.get()).thenReturn(RESULT)
+    }
 
+    @Test
+    @DisplayName("Etterspørr vedlegg, sjekk at oppgave opprettes og mangelen lagres i DB, ettersend vedlegg og sjekk at oppgaven avsluttes og mangelen fjernes fra DB")
+    fun testEtterspørrManglende() {
+        val minSide = MinSideClient(MinSideProdusenter(avro,utkast),CFG, MinSideRepositories(beskjedRepo,oppgaveRepo,utkastRepo,søknadRepo))
+        val fullfører = SøknadFullfører(InMemoryDokumentLager(), minSide, søknadRepo, InMemoryMellomLager(FNR), Metrikker(LoggingMeterRegistry()))
         val søknadClient = SøknadClient(søknadRepo,arkivClient,minSide,ctx)
-        val uuid =  UUID.randomUUID()
-        søknadRepo.save(Søknad(fnr = FNR.fnr, journalpostid = "42", eventid = uuid))
-        søknadClient.etterspørrVedlegg(VedleggEtterspørsel(FNR, ANNET))
-        søknadClient.søknader(FNR, SISTE_SØKNAD).first()?.let {
-            assertEquals(1,it.manglendeVedlegg.size)
-            assertEquals(0,it.innsendteVedlegg.size)
-            assertEquals(uuid,it.søknadId)
-        }
-        assertEquals(1,søknadRepo.getSøknadByFnr(FNR.fnr, SISTE_SØKNAD).first().oppgaver.size)
+       // fullfører.fullfør(FNR,OMSøknad.standard_soknad(), ARKIVRESULTAT)
+        val søknad = søknadRepo.save(Søknad(fnr = FNR.fnr, journalpostid = "42"))
+        val oppgaveId = søknadClient.etterspørrVedlegg(VedleggEtterspørsel(FNR, ANNET)) ?: fail("Etterspørsel ikke registrert")
+        assertEquals(1,søknad.manglendevedlegg.size)
+        assertEquals(0,søknad.innsendtevedlegg.size)
+        assertEquals(1,søknad.oppgaver.size)
+        assertEquals(oppgaveId,søknad.oppgaver.first().eventid)
+        fullfører.fullfør(FNR, ettesending(søknad.eventid,ANNET), ARKIVRESULTAT)
+        assertTrue(søknad.oppgaver.isEmpty())
+        verify(avro.send(eq(ProducerRecord(CFG.done, key(CFG, oppgaveId, FNR), done()))))
     }
 
     companion object  {
+        private val NAV = URI.create("http://www.nav.no")
+        private val ARKIVRESULTAT = ArkivResultat("42", listOf("666"))
         private val RESULT = SendResult<NokkelInput, Any>(null, RecordMetadata(TopicPartition("p",1),0,0,0,0,0))
-        private val CFG = MinSideConfig(NAISConfig("ns","app"),
-                TopicConfig("beskjed",Duration.ofDays(1), true, emptyList(),4),
-                TopicConfig("oppgave",Duration.ofDays(1), true, emptyList(),4),
+        private val CFG = MinSideConfig(NAISConfig("aap","soknad-api"),
+                TopicConfig("beskjed", ofDays(1), true, emptyList(),4),
+                TopicConfig("oppgave", ofDays(1), true, emptyList(),4),
                 UtkastConfig("utkast", true),
                 true,
-                BacklinksConfig(URI.create("http://www.vg.no"),URI.create("http://www.vg.no"),URI.create("http://www.vg.no")),"done")
+                BacklinksConfig(NAV, NAV, NAV),"done")
         private val  FNR = Fødselsnummer("08089403198")
         @BeforeAll
         internal fun startDB() {
             PostgreSQLContainer<Nothing>("postgres:14:5").apply { start()
             }
         }
+        internal fun ettesending(id: UUID,  type: VedleggType) = StandardEttersending(id, listOf(EttersendtVedlegg(Vedlegg(),type)))
     }
+}
+internal class InMemoryMellomLager(private val fnr: Fødselsnummer): Mellomlager {
+
+    private val lager = mutableMapOf<Fødselsnummer,String>()
+
+    override fun lagre(value: String, type: SkjemaType) =
+        with(fnr) {
+            lager[this] = value
+            this.fnr
+        }
+
+    override fun les(type: SkjemaType) = lager[fnr]
+
+    override fun slett(type: SkjemaType) = lager.remove(fnr) != null
+
+    override fun config(): MellomlagringBucketConfig {
+        TODO("Not yet implemented")
+    }
+
+}
+internal class InMemoryDokumentLager: Dokumentlager {
+    private val lager = mutableMapOf<UUID,DokumentInfo>()
+    override fun lesDokument(uuid: UUID): DokumentInfo? = lager[uuid]
+    override fun slettDokumenter(uuids: List<UUID>) = uuids.forEach { lager.remove(it)}
+    override fun slettDokumenter(søknad: StandardSøknad) {
+        TODO("Not yet implemented")
+    }
+
+    override fun lagreDokument(dokument: DokumentInfo) =
+        with(UUID.randomUUID()) {
+            lager[this] = dokument
+            this
+        }
+
+    override fun slettAlleDokumenter() = lager.clear()
+    override fun slettAlleDokumenter(fnr: Fødselsnummer) = slettAlleDokumenter()
 }

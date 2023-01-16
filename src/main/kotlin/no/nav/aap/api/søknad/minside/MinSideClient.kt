@@ -167,14 +167,13 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
     fun avsluttOppgave(fnr: Fødselsnummer, søknad: Søknad, eventId: UUID) = avslutt(eventId,fnr,OPPGAVE)
 
 
-        private fun avslutt(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType) =
+    private fun avslutt(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType) =
         produsenter.avro.send(ProducerRecord(cfg.done, key(cfg, eventId, fnr), done())).get()
-            .run {
-                log("avslutt $notifikasjonType",eventId,this)
+            .also {
+                log("avslutt $notifikasjonType",eventId,it)
             }
-    private fun log(type: String, eventId: UUID, result: SendResult<out Any,out Any>) =
-        log.info("Sendte $type med eventid $eventId  på offset ${result.recordMetadata.offset()} partition${result.recordMetadata.partition()} på topic ${result.recordMetadata.topic()}")
-
+    private fun log(type: String, eventId: UUID, result: SendResult<out Any,out Any>?) =
+        log.info("Sendte $type med eventid $eventId  på offset ${result?.recordMetadata?.offset()} partition${result?.recordMetadata?.partition()} på topic ${result?.recordMetadata?.topic()}")
 }
 
 enum class UtkastType  {CREATED, UPDATED }
