@@ -43,7 +43,7 @@ class SøknadClient(private val repo: SøknadRepository,
             log.trace("Oppretter oppgave")
             minside.opprettOppgave(e.fnr,it,"Eterspørr vedlegg",eventId)
             log.trace("Opprettet oppgave")
-            it.registrerManglende(listOf(e.type),eventId)
+            it.registrerManglende(listOf(e.type),it.eventid)
             eventId
         }
 
