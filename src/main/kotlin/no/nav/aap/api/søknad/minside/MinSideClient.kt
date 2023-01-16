@@ -164,7 +164,10 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         }
 
     @Transactional
-    fun avsluttOppgave(fnr: Fødselsnummer, søknad: Søknad, eventId: UUID) = avslutt(eventId,fnr,OPPGAVE)
+    fun avsluttOppgave(fnr: Fødselsnummer, søknad: Søknad, eventId: UUID) =
+        avslutt(eventId,fnr,OPPGAVE).also {
+            søknad.oppgaver.removeIf { it.eventid == eventId }
+        }
 
 
     private fun avslutt(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType) =

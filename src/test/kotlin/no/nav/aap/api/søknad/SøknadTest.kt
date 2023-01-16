@@ -178,7 +178,7 @@ class SøknadTest {
                                 UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD))),
                 "Tillegg",
                 listOf(BarnOgInntekt(true)),
-                listOf(AnnetBarnOgInntekt(Barn(Navn("Et", "ekstra", "Barn"), now().minusYears(14)),FORELDER,false,Vedlegg(deler = listOf(UUID.randomUUID())))), Vedlegg(deler = listOf(UUID.randomUUID(),
+                listOf(AnnetBarnOgInntekt(Barn(Navn("Et", "ekstra", "Barn"), now().minusYears(14)),FORELDER,false,null,/*Vedlegg(deler = listOf(UUID.randomUUID()))*/)), Vedlegg(deler = listOf(UUID.randomUUID(),
                 UUID.randomUUID())))
     }
 

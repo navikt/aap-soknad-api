@@ -115,6 +115,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
             minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}", eventId  = randomUUID())
         }
         else {
+            log.trace("Oppretter beskjed siden den er komplett  ${callIdAsUUID()}")
             minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}", eventId  = eventid)
         }
 
