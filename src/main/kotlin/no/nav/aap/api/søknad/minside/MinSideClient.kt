@@ -152,10 +152,11 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         }
 
     @Transactional
-    fun avsluttOppgaver(fnr: Fødselsnummer, søknad: Søknad) =
+    fun avsluttAlleOppgaver(fnr: Fødselsnummer, søknad: Søknad) =
         with(cfg.oppgave) {
             if (enabled) {
-                søknad.oppgaver.forEach { avslutt(it.eventid,Fødselsnummer(søknad.fnr),OPPGAVE) }
+                søknad.oppgaver.distinctBy { it.eventid }
+                    .forEach { avslutt(it.eventid,Fødselsnummer(søknad.fnr),OPPGAVE) }
                 søknad.oppgaver.clear()
             }
             else {

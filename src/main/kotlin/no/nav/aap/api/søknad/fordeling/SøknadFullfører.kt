@@ -124,7 +124,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
         with(manglendevedlegg) {
             if (isEmpty()) {
                 log.info("Alle manglende vedlegg er sendt inn, avslutter oppgave $eventid")
-                minside.avsluttOppgaver(fnr, this@avsluttMinSideOppgaver)
+                minside.avsluttAlleOppgaver(fnr, this@avsluttMinSideOppgaver)
             }
             else {
                 ettersendte.forEach {
