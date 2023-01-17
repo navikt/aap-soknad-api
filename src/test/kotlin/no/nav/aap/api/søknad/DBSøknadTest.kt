@@ -5,7 +5,6 @@ import java.net.URI
 import java.time.Duration.*
 import java.util.*
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import kotlin.test.fail
 import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.felles.Fødselsnummer
@@ -40,11 +39,13 @@ import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.api.søknad.model.VedleggType.*
 import no.nav.aap.util.AuthContext
+import no.nav.aap.util.LoggerUtil
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
 import org.apache.kafka.common.TopicPartition
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -67,6 +68,9 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @AutoConfigureTestDatabase(replace = NONE)
 @DataJpaTest
 class DBSøknadTest {
+
+    val log = LoggerUtil.getLogger(javaClass)
+
 
     @Autowired
     lateinit var søknadRepo: SøknadRepository
@@ -117,7 +121,9 @@ class DBSøknadTest {
         assertEquals(2,søknad.oppgaver.size)
         assertEquals(søknadId,søknad.oppgaver.first().eventid)
         assertEquals(oppgaveId,søknad.oppgaver.last().eventid)
+        log.trace("Oppgaver for søknad er ${søknad.oppgaver}")
         fullfører.fullfør(FNR, ettesending(søknad.eventid,LÅNEKASSEN_LÅN), ARKIVRESULTAT)
+        log.trace("Oppgaver etter fullføring for søknad er ${søknad.oppgaver}")
         assertNull(søknad.oppgaver.find { it.eventid == oppgaveId })
         assertNotNull(søknad.oppgaver.find { it.eventid == søknad.eventid })
         assertEquals(1,søknad.oppgaver.size)

@@ -43,7 +43,7 @@ class SøknadClient(private val repo: SøknadRepository,
             val oppgaveId = UUID.randomUUID()
             minside.opprettOppgave(e.fnr,it,"Eterspørr vedlegg",oppgaveId)
             log.trace("Opprettet oppgave med id $oppgaveId for søknad ${it.eventid}")
-            it.registrerManglende(listOf(e.type),it.eventid)
+            it.registrerManglende(listOf(e.type),oppgaveId)
             oppgaveId
         }
 

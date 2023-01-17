@@ -48,6 +48,9 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             var manglendevedlegg: MutableSet<ManglendeVedlegg> = mutableSetOf(),
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var innsendtevedlegg: MutableSet<InnsendteVedlegg> = mutableSetOf()) : BaseEntity(fnr, eventid) {
+
+
+
         fun registrerVedlagte(vedlagte: List<VedleggType>) {
             vedlagte.forEach {
                 with(InnsendteVedlegg(this, eventid, it)) {

@@ -95,7 +95,8 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                                     res: ArkivResultat) =
         repo.getSøknadByEventidAndFnr(søknadId, fnr.fnr)?.let {
             val ettersendte = it.registrerEttersending(fnr, res, e)
-            it.avsluttMinSideOppgaveHvisKomplett(fnr,ettersendte)
+            log.trace("Ettersendte vedlegg er $ettersendte")
+            it.avsluttMinSideOppgaver(fnr,ettersendte)
             minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel.decap()}.")
         } ?: log.warn("Ingen tidligere innsendt søknad med id $søknadId ble funnet for $fnr (dette skal aldri skje)")
 
@@ -119,16 +120,16 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
             minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}", eventId  = eventid)
         }
 
-    private fun Søknad.avsluttMinSideOppgaveHvisKomplett(fnr: Fødselsnummer, ettersendte: List<UUID>) =
+    private fun Søknad.avsluttMinSideOppgaver(fnr: Fødselsnummer, ettersendte: List<UUID>) =
         with(manglendevedlegg) {
             if (isEmpty()) {
                 log.info("Alle manglende vedlegg er sendt inn, avslutter oppgave $eventid")
-                minside.avsluttOppgaver(fnr, this@avsluttMinSideOppgaveHvisKomplett)
+                minside.avsluttOppgaver(fnr, this@avsluttMinSideOppgaver)
             }
             else {
                 ettersendte.forEach {
                     log.info("Avslutter delvis ettersending oppgave $it")
-                    minside.avsluttOppgave(fnr,this@avsluttMinSideOppgaveHvisKomplett,it)
+                    minside.avsluttOppgave(fnr,this@avsluttMinSideOppgaver,it)
                 }
                 log.trace("Det mangler fremdeles $size vedlegg (${map { it.vedleggtype }})")
             }

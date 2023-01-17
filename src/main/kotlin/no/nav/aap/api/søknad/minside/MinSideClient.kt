@@ -137,7 +137,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
     fun opprettOppgave(fnr: Fødselsnummer, søknad: Søknad, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
-                log.trace("Oppretter Min Side oppgave med ekstern varsling $eksternVarsling og eventid $eventId")
+                log.trace("Oppretter Min Side oppgave $tekst med ekstern varsling $eksternVarsling og eventid $eventId")
                 produsenter.avro.send(ProducerRecord(topic, key(cfg, eventId, fnr),
                         oppgave(cfg,tekst, varighet, type, eventId, eksternVarsling)))
                     .get().run {
