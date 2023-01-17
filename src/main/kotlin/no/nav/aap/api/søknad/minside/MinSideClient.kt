@@ -125,7 +125,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
     fun avsluttBeskjed(fnr: Fødselsnummer, eventId: UUID) =
         with(cfg.beskjed) {
             if (enabled) {
-                avslutt(eventId, fnr, BESKJED)
+                avslutt(fnr, eventId, BESKJED)
                 repos.beskjeder.deleteByFnrAndEventid(fnr.fnr,eventId)
             }
             else {
@@ -156,7 +156,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         with(cfg.oppgave) {
             if (enabled) {
                 søknad.oppgaver.distinctBy { it.eventid }
-                    .forEach { avslutt(it.eventid,Fødselsnummer(søknad.fnr),OPPGAVE) }
+                    .forEach { avslutt(Fødselsnummer(søknad.fnr), it.eventid, OPPGAVE) }
                 søknad.oppgaver.clear()
             }
             else {
@@ -166,12 +166,12 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
 
     @Transactional
     fun avsluttOppgave(fnr: Fødselsnummer, søknad: Søknad, eventId: UUID) =
-        avslutt(eventId,fnr,OPPGAVE).also {
+        avslutt(fnr, eventId, OPPGAVE).also {
             søknad.oppgaver.removeIf { it.eventid == eventId }
         }
 
 
-    private fun avslutt(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType) =
+     fun avslutt(fnr: Fødselsnummer, eventId: UUID, notifikasjonType: NotifikasjonType) =
         produsenter.avro.send(ProducerRecord(cfg.done, key(cfg, eventId, fnr), done())).get()
             .also {
                 log("avslutt ${notifikasjonType.name.lowercase()}",eventId,it)
