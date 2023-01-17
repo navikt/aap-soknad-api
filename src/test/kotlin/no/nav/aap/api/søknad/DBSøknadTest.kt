@@ -4,7 +4,6 @@ import io.micrometer.core.instrument.logging.LoggingMeterRegistry
 import java.net.URI
 import java.time.Duration.*
 import java.util.*
-import kotlin.test.assertEquals
 import kotlin.test.fail
 import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.felles.Fødselsnummer
@@ -39,13 +38,11 @@ import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.api.søknad.model.VedleggType.*
 import no.nav.aap.util.AuthContext
-import no.nav.aap.util.LoggerUtil
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
 import org.apache.kafka.common.TopicPartition
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -68,9 +65,6 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @AutoConfigureTestDatabase(replace = NONE)
 @DataJpaTest
 class DBSøknadTest {
-
-    val log = LoggerUtil.getLogger(javaClass)
-
 
     @Autowired
     lateinit var søknadRepo: SøknadRepository
@@ -113,29 +107,29 @@ class DBSøknadTest {
         val søknadClient = SøknadClient(søknadRepo,arkivClient,minSide,ctx)
         val søknadId = fullfører.fullfør(FNR, SØKNAD, ARKIVRESULTAT).uuid ?: fail("Søknad ikke registrert")
         val søknad = søknadRepo.getSøknadByFnr(FNR.fnr,SISTE_SØKNAD).first()
-        assertEquals( 1,søknad.manglendevedlegg.size)
+        assertThat(søknad.manglendevedlegg).hasSize(1)
         val oppgaveId = søknadClient.etterspørrVedlegg(VedleggEtterspørsel(FNR,LÅNEKASSEN_LÅN)) ?: fail("Etterspørsel ikke registrert")
         val dto = søknadClient.søknad(søknadId) ?:  fail("Søknad ikke registrert")
-        assertEquals(2,dto.manglendeVedlegg.size)
-        assertEquals(2,søknad.innsendtevedlegg.size)
-        assertEquals(2,søknad.oppgaver.size)
-        assertEquals(søknadId,søknad.oppgaver.first().eventid)
-        assertEquals(oppgaveId,søknad.oppgaver.last().eventid)
-        log.trace("Oppgaver for søknad er ${søknad.oppgaver}")
+        assertThat(dto.manglendeVedlegg).hasSize(2)
+        assertThat(søknad.innsendtevedlegg).hasSize(2)
+        assertThat(søknad.oppgaver).hasSize(2)
+        assertThat(søknad.oppgaver.first().eventid).isEqualTo(søknadId)
+        assertThat(søknad.oppgaver.last().eventid).isEqualTo(oppgaveId)
         fullfører.fullfør(FNR, ettesending(søknad.eventid,LÅNEKASSEN_LÅN), ARKIVRESULTAT)
-        log.trace("Oppgaver etter fullføring for søknad er ${søknad.oppgaver}")
-        assertNull(søknad.oppgaver.find { it.eventid == oppgaveId })
-        assertNotNull(søknad.oppgaver.find { it.eventid == søknad.eventid })
-        assertEquals(1,søknad.oppgaver.size)
+        assertThat(søknad.oppgaver).extracting("eventid").doesNotContain(oppgaveId)
+        assertThat(søknad.oppgaver).extracting("eventid").contains(søknad.eventid )
+        assertThat(søknad.oppgaver).hasSize(1)
         fullfører.fullfør(FNR, ettesending(søknad.eventid,ANDREBARN), ARKIVRESULTAT)
-        assertEquals(0,søknad.oppgaver.size)
+        assertThat(søknad.oppgaver).isEmpty()
+        assertThat(søknadClient.søknader(FNR, SISTE_SØKNAD)?.first()?.manglendeVedlegg).isEmpty()
+        assertThat(søknadClient.søknad(søknadId)?.manglendeVedlegg).isEmpty()
     }
 
     companion object  {
         private val SØKNAD = standardSøknad()
         private val NAV = URI.create("http://www.nav.no")
         private val ARKIVRESULTAT = ArkivResultat("42", listOf("666"))
-        private val RESULT = SendResult<NokkelInput, Any>(null, RecordMetadata(TopicPartition("p",1),0,0,0,0,0))
+        private val RESULT = SendResult<NokkelInput, Any>(null, RecordMetadata(TopicPartition("dummyTopic",1),0,0,0,0,0))
         private val CFG = MinSideConfig(NAISConfig("aap","soknad-api"),
                 TopicConfig("beskjed", ofDays(1), true, emptyList(),4),
                 TopicConfig("oppgave", ofDays(1), true, emptyList(),4),
