@@ -60,7 +60,7 @@ import org.springframework.util.concurrent.ListenableFuture
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Testcontainers
 
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = NONE)
 @DataJpaTest
