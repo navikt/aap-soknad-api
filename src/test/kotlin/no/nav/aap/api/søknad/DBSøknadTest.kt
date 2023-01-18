@@ -97,7 +97,7 @@ class DBSøknadTest {
     @BeforeEach
     fun init() {
         `when`(ctx.getFnr()).thenReturn(FNR)
-        `when`(avro.send(any<ProducerRecord<NokkelInput,OppgaveInput>>())).thenReturn(result)
+        `when`(avro.send(any<ProducerRecord<NokkelInput,Any>>())).thenReturn(result)
         `when`(result.get()).thenReturn(RESULT)
     }
 
