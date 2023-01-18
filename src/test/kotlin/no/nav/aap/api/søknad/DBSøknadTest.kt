@@ -38,6 +38,7 @@ import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.api.søknad.model.VedleggType.*
 import no.nav.aap.util.AuthContext
+import no.nav.aap.util.Constants.TEST
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
@@ -61,7 +62,7 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @Testcontainers(disabledWithoutDocker = true)
-@ActiveProfiles("test")
+@ActiveProfiles(TEST)
 @AutoConfigureTestDatabase(replace = NONE)
 @DataJpaTest
 class DBSøknadTest {
