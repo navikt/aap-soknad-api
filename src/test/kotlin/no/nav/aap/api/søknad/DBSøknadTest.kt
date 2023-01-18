@@ -40,6 +40,7 @@ import no.nav.aap.api.søknad.model.VedleggType.*
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.TEST
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
+import no.nav.brukernotifikasjon.schemas.input.OppgaveInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
 import org.apache.kafka.common.TopicPartition
@@ -96,38 +97,38 @@ class DBSøknadTest {
     @BeforeEach
     fun init() {
         `when`(ctx.getFnr()).thenReturn(FNR)
-        `when`(avro.send(any<ProducerRecord<NokkelInput,Any>>())).thenReturn(result)
+        `when`(avro.send(any<ProducerRecord<NokkelInput,OppgaveInput>>())).thenReturn(result)
         `when`(result.get()).thenReturn(RESULT)
     }
 
     @Test
     @DisplayName("Etterspørr vedlegg, sjekk at oppgave opprettes og mangelen lagres i DB, ettersend vedlegg og sjekk at oppgaven avsluttes og mangelen fjernes fra DB")
-    fun testEtterspørrManglende() {
+    fun etterspørrVedlegg() {
         val minSide = MinSideClient(MinSideProdusenter(avro,utkast),CFG, MinSideRepositories(beskjedRepo,oppgaveRepo,utkastRepo,søknadRepo))
         val fullfører = SøknadFullfører(InMemoryDokumentLager(), minSide, søknadRepo, InMemoryMellomLager(FNR), Metrikker(LoggingMeterRegistry()))
         val søknadClient = SøknadClient(søknadRepo,arkivClient,minSide,ctx)
-        val søknadId = fullfører.fullfør(FNR, SØKNAD, ARKIVRESULTAT).uuid ?: fail("Søknad ikke registrert")
-        val søknad = søknadRepo.getSøknadByFnr(FNR.fnr,SISTE_SØKNAD).first()
-        assertThat(søknad.manglendevedlegg).hasSize(1)
+        val søknadId = fullfører.fullfør(FNR, standardSøknad(), ARKIVRESULTAT).uuid ?: fail("Søknad ikke registrert")
+        val søknad = søknadRepo.getSøknadByFnr(FNR.fnr,SISTE_SØKNAD).single()
         val oppgaveId = søknadClient.etterspørrVedlegg(VedleggEtterspørsel(FNR,LÅNEKASSEN_LÅN)) ?: fail("Etterspørsel ikke registrert")
         val dto = søknadClient.søknad(søknadId) ?:  fail("Søknad ikke registrert")
         assertThat(dto.manglendeVedlegg).hasSize(2)
-        assertThat(søknad.innsendtevedlegg).hasSize(2)
-        assertThat(søknad.oppgaver).hasSize(2)
-        assertThat(søknad.oppgaver.first().eventid).isEqualTo(søknadId)
-        assertThat(søknad.oppgaver.last().eventid).isEqualTo(oppgaveId)
-        fullfører.fullfør(FNR, ettesending(søknad.eventid,LÅNEKASSEN_LÅN), ARKIVRESULTAT)
-        assertThat(søknad.oppgaver).extracting("eventid").doesNotContain(oppgaveId)
-        assertThat(søknad.oppgaver).extracting("eventid").contains(søknad.eventid )
-        assertThat(søknad.oppgaver).hasSize(1)
-        fullfører.fullfør(FNR, ettesending(søknad.eventid,ANDREBARN), ARKIVRESULTAT)
-        assertThat(søknad.oppgaver).isEmpty()
-        assertThat(søknadClient.søknader(FNR, SISTE_SØKNAD)?.first()?.manglendeVedlegg).isEmpty()
-        assertThat(søknadClient.søknad(søknadId)?.manglendeVedlegg).isEmpty()
+        with(søknad) {
+            assertThat(innsendtevedlegg).hasSize(2)
+            assertThat(oppgaver).hasSize(2)
+            assertThat(oppgaver.first().eventid).isEqualTo(søknadId)
+            assertThat(oppgaver.last().eventid).isEqualTo(oppgaveId)
+            fullfører.fullfør(FNR, ettesending(eventid,LÅNEKASSEN_LÅN), ARKIVRESULTAT)
+            assertThat(oppgaver).extracting("eventid").doesNotContain(oppgaveId)
+            assertThat(oppgaver).extracting("eventid").contains(søknad.eventid )
+            assertThat(oppgaver).hasSize(1)
+            fullfører.fullfør(FNR, ettesending(eventid,ANDREBARN), ARKIVRESULTAT)
+            assertThat(oppgaver).isEmpty()
+            assertThat(søknadClient.søknader(FNR, SISTE_SØKNAD).first().manglendeVedlegg).isEmpty()
+            assertThat(søknadClient.søknad(søknadId)?.manglendeVedlegg).isEmpty()
+        }
     }
 
     companion object  {
-        private val SØKNAD = standardSøknad()
         private val NAV = URI.create("http://www.nav.no")
         private val ARKIVRESULTAT = ArkivResultat("42", listOf("666"))
         private val RESULT = SendResult<NokkelInput, Any>(null, RecordMetadata(TopicPartition("dummyTopic",1),0,0,0,0,0))
