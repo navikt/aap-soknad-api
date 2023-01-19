@@ -129,7 +129,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
             else {
                 log.trace("Det mangler fremdeles $size vedlegg (${map { it.vedleggtype }})")
                 innsendtevedlegg.forEach { iv ->
-                    manglendevedlegg.find { it.eventid == iv.eventid}?.let {
+                    find { it.eventid == iv.eventid}?.let {
                         log.trace("Det finnes minst ett manglende vedlegg med samme eventid som innsendt vedlegg $iv (${iv.eventid}")
                     } ?: minside.avsluttOppgave(fnr,this@avsluttMinSideOppgaver,iv.eventid)
                 }
