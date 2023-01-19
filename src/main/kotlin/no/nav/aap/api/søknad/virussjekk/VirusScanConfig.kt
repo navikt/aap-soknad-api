@@ -17,6 +17,6 @@ class VirusScanConfig(@DefaultValue(BASE_URI)  uri: URI,
 
     companion object {
         const val VIRUS = "virus"
-        private const val BASE_URI = "http://clamav.clamav.svc.cluster.local/scan"
+        private const val BASE_URI = "http://clamav.nais-system/scan"
     }
 }
