@@ -128,11 +128,11 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
             }
             else {
                 log.info("Manglende vedlegg er $this, ettersendte er $ettersendte")
-                /*
+                
                 ettersendte.forEach {
                     log.info("Avslutter delvis ettersending oppgave $it")
                     minside.avsluttOppgave(fnr,this@avsluttMinSideOppgaver,it)
-                }*/
+                }
                 log.trace("Det mangler fremdeles $size vedlegg (${map { it.vedleggtype }})")
             }
         }
