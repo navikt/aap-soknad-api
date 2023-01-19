@@ -40,14 +40,12 @@ import no.nav.aap.api.søknad.model.VedleggType.*
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.TEST
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
-import no.nav.brukernotifikasjon.schemas.input.OppgaveInput
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
 import org.apache.kafka.common.TopicPartition
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
@@ -102,7 +100,6 @@ class DBSøknadTest {
     }
 
     @Test
-    @DisplayName("Etterspørr vedlegg, sjekk at oppgave opprettes og mangelen lagres i DB, ettersend vedlegg og sjekk at oppgaven avsluttes og mangelen fjernes fra DB")
     fun etterspørrVedlegg() {
         val minSide = MinSideClient(MinSideProdusenter(avro,utkast),CFG, MinSideRepositories(beskjedRepo,oppgaveRepo,utkastRepo,søknadRepo))
         val fullfører = SøknadFullfører(InMemoryDokumentLager(), minSide, søknadRepo, InMemoryMellomLager(FNR), Metrikker(LoggingMeterRegistry()))
