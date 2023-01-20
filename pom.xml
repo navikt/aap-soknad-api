@@ -45,7 +45,7 @@
         <testcontainers.version>1.17.6</testcontainers.version>
         <tika.version>2.6.0</tika.version>
         <token.validation.version>2.1.9</token.validation.version>
-        <utkast.version>20221208152503-d9cba4c</utkast.version>
+        <utkast.version>20230120125058-025d949</utkast.version>
     </properties>
     <repositories>
         <repository>
