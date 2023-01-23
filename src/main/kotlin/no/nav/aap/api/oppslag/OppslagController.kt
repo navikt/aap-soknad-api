@@ -10,6 +10,7 @@ import no.nav.aap.api.oppslag.konto.KontoClient
 import no.nav.aap.api.oppslag.person.PDLClient
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
+import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity.Companion.CREATED
 import no.nav.aap.api.søknad.model.SøkerInfo
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -60,7 +61,7 @@ class OppslagController(
     fun dokumenter() = arkiv.dokumenter()
 
     @GetMapping("/soeknader")
-    fun søknader(@SortDefault(sort = ["created"], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
+    fun søknader(@SortDefault(sort = [CREATED], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
         søknad.søknader(pageable)
 
     @GetMapping("/soeknad/{uuid}")

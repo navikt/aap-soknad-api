@@ -16,6 +16,7 @@ import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.IdentifiableTimestampedBaseEntity
+import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity.Companion.CREATED
 import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.MDCUtil.callIdAsUUID
@@ -132,6 +133,6 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     }
 
     companion object {
-        val SISTE_SØKNAD = PageRequest.of(0, 1, Sort.by("created").descending())
+        val SISTE_SØKNAD = PageRequest.of(0, 1, Sort.by(CREATED).descending())
     }
 }
