@@ -35,6 +35,11 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
     @MappedSuperclass
     abstract class MinSideBaseEntity(fnr: String, eventid: UUID) : BaseEntity(fnr, eventid) {
         override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, eventid=$eventid, updated=$updated, id=$id]"
+
+        companion object{
+            const val CREATED = "created"
+        }
+
     }
 
     @MappedSuperclass

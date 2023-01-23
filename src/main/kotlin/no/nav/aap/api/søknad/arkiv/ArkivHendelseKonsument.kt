@@ -22,7 +22,7 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
             it.journalpoststatus = hendelse.journalpostStatus
             it.journalfoert = hendelse.tilUTC()
             log.trace("ID ${hendelse.journalpostId} Type ${hendelse.hendelsesType}, Status ${hendelse.journalpostStatus} TEMA ${hendelse.temaNytt}")
-        }
+        } ?: log.warn("Ingen søknad med journalpost funnet for hendelse $hendelse")
     }
 
     private fun JournalfoeringHendelseRecord.tilUTC()  = parse(hendelsesId.substringAfter('-')).toUTC()

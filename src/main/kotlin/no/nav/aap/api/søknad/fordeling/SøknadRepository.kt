@@ -13,8 +13,10 @@ import javax.persistence.Table
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
+import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.IdentifiableTimestampedBaseEntity
+import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity.Companion.CREATED
 import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.MDCUtil.callIdAsUUID
@@ -38,11 +40,8 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             val journalpostid: String,
             var journalpoststatus: String? = null,
             var journalfoert: LocalDateTime? = null,
-            /*
-            @OneToOne(cascade = [ALL])
-            @JoinColumn(name = "soknadid", referencedColumnName = "id")
-            var oppgave: Oppgave? = null,
-            */
+            @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
+            var oppgaver: MutableSet<Oppgave> = mutableSetOf(),
             eventid: UUID = callIdAsUUID(),
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var ettersendinger: MutableSet<Ettersending> = mutableSetOf(),
@@ -50,6 +49,9 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             var manglendevedlegg: MutableSet<ManglendeVedlegg> = mutableSetOf(),
             @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
             var innsendtevedlegg: MutableSet<InnsendteVedlegg> = mutableSetOf()) : BaseEntity(fnr, eventid) {
+
+
+
         fun registrerVedlagte(vedlagte: List<VedleggType>) {
             vedlagte.forEach {
                 with(InnsendteVedlegg(this, eventid, it)) {
@@ -60,8 +62,11 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
         }
 
         fun registrerManglende(manglende: List<VedleggType>) =
+             registrerManglende(manglende,eventid)
+
+        fun registrerManglende(manglende: List<VedleggType>, eventId: UUID) =
             manglende.forEach {
-                with(ManglendeVedlegg(this, eventid, it)) {
+                with(ManglendeVedlegg(this, eventId, it)) {
                     manglendevedlegg.add(this)
                     soknad = this@Søknad
                 }
@@ -84,10 +89,11 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
 
         fun registrerEttersending(fnr: Fødselsnummer,
                                   res: ArkivResultat,
-                                  ettersendteVedlegg: List<EttersendtVedlegg>) {
+                                  ettersendteVedlegg: List<EttersendtVedlegg>): List<UUID> {
             ettersendinger.add(Ettersending(fnr.fnr, res.journalpostId, this))
-            tidligereManglendeNåEttersendte(ettersendteVedlegg)
-                .forEach(::registrerVedlagtFraEttersending)
+            var ettersendte = tidligereManglendeNåEttersendte(ettersendteVedlegg)
+               ettersendte.forEach(::registrerVedlagtFraEttersending)
+            return ettersendte.map { it.eventid }
         }
     }
 
@@ -127,6 +133,6 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     }
 
     companion object {
-        val SISTE_SØKNAD = PageRequest.of(0, 1, Sort.by("created").descending())
+        val SISTE_SØKNAD = PageRequest.of(0, 1, Sort.by(CREATED).descending())
     }
 }

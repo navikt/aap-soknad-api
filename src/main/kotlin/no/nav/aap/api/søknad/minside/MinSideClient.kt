@@ -125,7 +125,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
     fun avsluttBeskjed(fnr: Fødselsnummer, eventId: UUID) =
         with(cfg.beskjed) {
             if (enabled) {
-                avslutt(eventId, fnr, BESKJED)
+                avslutt(fnr, eventId, BESKJED)
                 repos.beskjeder.deleteByFnrAndEventid(fnr.fnr,eventId)
             }
             else {
@@ -137,12 +137,13 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
     fun opprettOppgave(fnr: Fødselsnummer, søknad: Søknad, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
-                log.trace("Oppretter Min Side oppgave med ekstern varsling $eksternVarsling og eventid $eventId")
+                log.trace("Oppretter Min Side oppgave $tekst med ekstern varsling $eksternVarsling og eventid $eventId")
                 produsenter.avro.send(ProducerRecord(topic, key(cfg, eventId, fnr),
                         oppgave(cfg,tekst, varighet, type, eventId, eksternVarsling)))
                     .get().run {
                         log("opprett oppgave",eventId,this)
-                        repos.oppgaver.save(Oppgave(fnr.fnr, eventId)).eventid
+                        søknad.oppgaver.add(Oppgave(fnr.fnr, eventId,søknad))
+                        eventId
                     }
             }
             else {
@@ -151,25 +152,32 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         }
 
     @Transactional
-    fun avsluttOppgave(fnr: Fødselsnummer, eventId: UUID) =
+    fun avsluttAlleOppgaver(fnr: Fødselsnummer, søknad: Søknad) =
         with(cfg.oppgave) {
             if (enabled) {
-                avslutt(eventId, fnr, OPPGAVE)
-                repos.oppgaver.deleteByFnrAndEventid(fnr.fnr,eventId)
+                søknad.oppgaver.distinctBy { it.eventid }
+                    .forEach { avslutt(Fødselsnummer(søknad.fnr), it.eventid, OPPGAVE) }
+                søknad.oppgaver.clear()
             }
             else {
                 log.trace("Sender IKKE avslutt oppgave til Ditt Nav for $fnr, disabled")
             }
         }
 
-    private fun avslutt(eventId: UUID, fnr: Fødselsnummer, notifikasjonType: NotifikasjonType) =
-        produsenter.avro.send(ProducerRecord(cfg.done, key(cfg, eventId, fnr), done())).get()
-            .run {
-                log("avslutt $notifikasjonType",eventId,this)
-            }
-    private fun log(type: String, eventId: UUID, result: SendResult<out Any,out Any>) =
-        log.info("Sendte $type med eventid $eventId  på offset ${result.recordMetadata.offset()} partition${result.recordMetadata.partition()} på topic ${result.recordMetadata.topic()}")
+    @Transactional
+    fun avsluttOppgave(fnr: Fødselsnummer, søknad: Søknad, eventId: UUID) =
+        avslutt(fnr, eventId, OPPGAVE).also {
+            søknad.oppgaver.removeIf { it.eventid == eventId }
+        }
 
+
+     fun avslutt(fnr: Fødselsnummer, eventId: UUID, notifikasjonType: NotifikasjonType) =
+        produsenter.avro.send(ProducerRecord(cfg.done, key(cfg, eventId, fnr), done())).get()
+            .also {
+                log("avslutt ${notifikasjonType.name.lowercase()}",eventId,it)
+            }
+    private fun log(type: String, eventId: UUID, result: SendResult<out Any,out Any>?) =
+        log.info("Sendte $type med eventid $eventId  på offset ${result?.recordMetadata?.offset()} partition${result?.recordMetadata?.partition()} på topic ${result?.recordMetadata?.topic()}")
 }
 
 enum class UtkastType  {CREATED, UPDATED }

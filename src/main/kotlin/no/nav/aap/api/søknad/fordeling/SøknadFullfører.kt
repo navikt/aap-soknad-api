@@ -94,8 +94,9 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                                     e: List<EttersendtVedlegg>,
                                     res: ArkivResultat) =
         repo.getSøknadByEventidAndFnr(søknadId, fnr.fnr)?.let {
-            it.registrerEttersending(fnr, res, e)
-            it.avsluttMinSideOppgaveHvisKomplett(fnr)
+            val ettersendte = it.registrerEttersending(fnr, res, e)
+            log.trace("Ettersendte vedlegg er $ettersendte")
+            it.avsluttMinSideOppgaver(fnr,ettersendte)
             minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel.decap()}.")
         } ?: log.warn("Ingen tidligere innsendt søknad med id $søknadId ble funnet for $fnr (dette skal aldri skje)")
 
@@ -115,17 +116,24 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
             minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}", eventId  = randomUUID())
         }
         else {
+            log.trace("Oppretter beskjed siden den er komplett  ${callIdAsUUID()}")
             minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}", eventId  = eventid)
         }
 
-    private fun Søknad.avsluttMinSideOppgaveHvisKomplett(fnr: Fødselsnummer) =
+    private fun Søknad.avsluttMinSideOppgaver(fnr: Fødselsnummer, ettersendte: List<UUID>) =
         with(manglendevedlegg) {
             if (isEmpty()) {
                 log.info("Alle manglende vedlegg er sendt inn, avslutter oppgave $eventid")
-                minside.avsluttOppgave(fnr, eventid)
+                minside.avsluttAlleOppgaver(fnr, this@avsluttMinSideOppgaver)
             }
             else {
-                log.trace("Det mangler fremdeles $size vedlegg (${map { it.vedleggtype }})")
+                log.trace("Det mangler fremdeles $size vedlegg ($this)")
+                ettersendte.forEach { iv ->
+                    log.trace("Sjekker om ettersendt vedlegg $iv kan avslutte oppgave")
+                    find { it.eventid == iv}?.let {
+                        log.trace("Det finnes minst ett manglende vedlegg med samme eventid som innsendt vedlegg $iv")
+                    } ?: minside.avsluttOppgave(fnr,this@avsluttMinSideOppgaver,iv)
+                }
             }
         }
     private fun vedleggStatus(manglende: List<VedleggType>, vedlagte: List<VedleggType>) =

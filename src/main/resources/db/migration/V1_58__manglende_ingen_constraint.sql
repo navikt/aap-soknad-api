@@ -1,0 +1,1 @@
+ALTER TABLE manglendevedlegg DROP CONSTRAINT fk_eventid_soknad;

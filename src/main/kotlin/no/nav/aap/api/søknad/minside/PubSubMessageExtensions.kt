@@ -9,9 +9,9 @@ import java.time.LocalDateTime
 import java.util.*
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
-import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.CREATED
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
+import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity.Companion.CREATED
 import no.nav.aap.util.LoggerUtil
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.toMDC

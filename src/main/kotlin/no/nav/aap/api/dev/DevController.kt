@@ -11,6 +11,7 @@ import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
+import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType.OPPGAVE
 import no.nav.aap.api.søknad.minside.MinSideRepositories
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.boot.conditionals.ConditionalOnNotProd
@@ -54,7 +55,10 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
     fun avsluttBeskjed(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) = dittNav.avsluttBeskjed(fnr, uuid)
 
     @GetMapping("/dittnav/avsluttoppgave")
-    fun avsluttOppgave(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) = dittNav.avsluttOppgave(fnr, uuid)
+    fun avsluttOppgave(@RequestParam fnr: Fødselsnummer, @RequestParam uuid: UUID) {
+        repos.oppgaver.deleteByFnrAndEventid(fnr.fnr,uuid)
+        dittNav.avslutt(fnr, uuid, OPPGAVE)
+    }
 
     @PostMapping("vl/{fnr}")
     @ResponseStatus(CREATED)
