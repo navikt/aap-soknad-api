@@ -12,7 +12,6 @@ import javax.persistence.OneToMany
 import javax.persistence.Table
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
-import no.nav.aap.api.søknad.fordeling.SøknadRepository.Ettersending
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
@@ -27,14 +26,15 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
-interface EttersendingRepository : JpaRepository<Ettersending, Long> {
-    fun getEttersendingByJournalpostid(journalpostid: String): Ettersending?
-}
+
 
 interface SøknadRepository : JpaRepository<Søknad, Long> {
 
+    @Query("select s from søknad s, ettersending e where  e.soknad.id = s.id and e.journalpostid = :journalpostid")
+    fun getSøknadByEttersendingJournalpostid(journalpostid: String): Søknad?
     fun getSøknadByJournalpostid(journalpostid: String): Søknad?
     fun getSøknadByFnr(@Param("fnr") fnr: String, pageable: Pageable): List<Søknad>
     fun getSøknadByEventidAndFnr(@Param("eventid") eventId: UUID, @Param("fnr") fnr: String): Søknad?
@@ -113,6 +113,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             var soknad: Søknad? = null,
             eventid: UUID = callIdAsUUID()) : BaseEntity(fnr, eventid) {
         override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid,journalpostid=$journalpostid, id=$id)]"
+
     }
 
 

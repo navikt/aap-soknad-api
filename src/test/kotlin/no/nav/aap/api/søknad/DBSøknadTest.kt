@@ -4,7 +4,6 @@ import io.micrometer.core.instrument.logging.LoggingMeterRegistry
 import java.net.URI
 import java.time.Duration.*
 import java.util.*
-import kotlin.test.fail
 import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
@@ -47,6 +46,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -101,8 +101,12 @@ class DBSøknadTest {
 
     @Test
     fun etterspørrVedlegg() {
+        println("XXXXXXX")
+        søknadRepo.getSøknadByEttersendingJournalpostid("42")
+        println("XXXXXXX")
         val minSide = MinSideClient(MinSideProdusenter(avro,utkast),CFG, MinSideRepositories(beskjedRepo,oppgaveRepo,utkastRepo,søknadRepo))
-        val fullfører = SøknadFullfører(InMemoryDokumentLager(), minSide, søknadRepo, InMemoryMellomLager(FNR), Metrikker(LoggingMeterRegistry()))
+        val fullfører = SøknadFullfører(InMemoryDokumentLager(), minSide, søknadRepo, InMemoryMellomLager(FNR), Metrikker(
+                LoggingMeterRegistry()))
         val søknadClient = SøknadClient(søknadRepo,arkivClient,minSide,ctx)
         val søknadId = fullfører.fullfør(FNR, standardSøknad(), ARKIVRESULTAT).uuid ?: fail("Søknad ikke registrert")
         val søknad = søknadRepo.getSøknadByFnr(FNR.fnr,SISTE_SØKNAD).single()

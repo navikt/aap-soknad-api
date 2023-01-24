@@ -2,7 +2,6 @@ package no.nav.aap.api.søknad.arkiv
 
 import java.time.LocalDateTime.parse
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.ARKIVHENDELSER
-import no.nav.aap.api.søknad.fordeling.EttersendingRepository
 import no.nav.aap.api.søknad.fordeling.SøknadRepository
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.TimeExtensions.toUTC
@@ -13,7 +12,7 @@ import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.transaction.annotation.Transactional
 
 @ConditionalOnGCP
-class ArkivHendelseKonsument(private val repo: SøknadRepository, private val esRepo: EttersendingRepository) {
+class ArkivHendelseKonsument(private val repo: SøknadRepository) {
         private val log = getLogger(javaClass)
 
     @Transactional
@@ -22,13 +21,10 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository, private val es
         repo.getSøknadByJournalpostid("${hendelse.journalpostId}")?.let {
             it.journalpoststatus = hendelse.journalpostStatus
             it.journalfoert = hendelse.tilUTC()
-            log.info("Hendelse for journalpost ${hendelse.journalpostId} Type ${hendelse.hendelsesType}, Status ${hendelse.journalpostStatus} TEMA ${hendelse.temaNytt} håndtert")
-        } ?: esRepo.getEttersendingByJournalpostid("${hendelse.journalpostId}")?.run {
-            log.info("Søknadens ettersendinger er ${soknad?.ettersendinger}")
-            soknad?.ettersendinger?.find { it.journalpostid == hendelse.journalpostStatus }?.let {
-                    log.info("Journalpost ${hendelse.journalpostId} er for ettersending $it")
-                    it.journalpoststatus = hendelse.journalpostStatus
-                } ?: log.info("Fant ikke journalpost ${hendelse.journalpostId} i ${soknad?.ettersendinger}")
+            log.info("Søknad direkte er $it")
+        }   ?: repo.getSøknadByEttersendingJournalpostid("${hendelse.journalpostId}")?.let {
+               log.info("Søknad via ettersending journalpost er $it")
+               log.info("Søknad ettersending er ${it.ettersendinger}")
         } ?: log.info("Ingen søknad eller ettersendelse for journalpost ${hendelse.journalpostId} funnet for hendelse $hendelse")
     }
 
