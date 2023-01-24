@@ -24,7 +24,7 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository, private val es
             it.journalfoert = hendelse.tilUTC()
             log.info("Hendelse for journalpost ${hendelse.journalpostId} Type ${hendelse.hendelsesType}, Status ${hendelse.journalpostStatus} TEMA ${hendelse.temaNytt} håndtert")
         } ?: esRepo.getEttersendingByJournalpostid("${hendelse.journalpostId}")?.run {
-            log.info("Søknadens ettersendinger er ${soknad.ettersendinger}")
+            log.info("Søknadens ettersendinger er ${soknad?.ettersendinger}")
             soknad?.ettersendinger?.find { it.journalpostid == hendelse.journalpostStatus }?.let {
                     log.info("Journalpost ${hendelse.journalpostId} er for ettersending $it")
                     it.journalpoststatus = hendelse.journalpostStatus
