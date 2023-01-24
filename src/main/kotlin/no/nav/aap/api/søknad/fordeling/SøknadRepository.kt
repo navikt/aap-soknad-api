@@ -21,6 +21,7 @@ import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity.Compan
 import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.MDCUtil.callIdAsUUID
+import no.nav.aap.util.StringExtensions.partialMask
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -110,7 +111,11 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             var journalpoststatus: String?,
             @ManyToOne
             var soknad: Søknad? = null,
-            eventid: UUID = callIdAsUUID()) : BaseEntity(fnr, eventid)
+            eventid: UUID = callIdAsUUID()) : BaseEntity(fnr, eventid) {
+        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid,journalpostid=$journalpostid, id=$id)]"
+    }
+
+
 
     @Entity(name = "manglendevedlegg")
     @Table(name = "manglendevedlegg")
