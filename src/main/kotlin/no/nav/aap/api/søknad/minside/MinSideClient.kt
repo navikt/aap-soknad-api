@@ -75,7 +75,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     log.trace("Oppdaterer Min Side utkast med eventid ${u.eventid}")
                     produsenter.utkast.send(ProducerRecord(topic, "${u.eventid}", oppdaterUtkast(cfg,nyTekst, "${u.eventid}", fnr)))
                         .get().also {
-                            log("oppdater utkast",u.eventid,it)
+                            trace("oppdater utkast",u.eventid,it)
                             repos.utkast.oppdaterUtkast(UPDATED,fnr.fnr, u.eventid)
                         }
                 } ?:  log.warn("fant IKKE et allerede eksisterende utkast for $fnr, oppretter utkast istedet").also {
@@ -178,6 +178,9 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
             }
     private fun log(type: String, eventId: UUID, result: SendResult<out Any,out Any>?) =
         log.info("Sendte $type med eventid $eventId  på offset ${result?.recordMetadata?.offset()} partition${result?.recordMetadata?.partition()} på topic ${result?.recordMetadata?.topic()}")
+    private fun trace(type: String, eventId: UUID, result: SendResult<out Any,out Any>?) =
+        log.info("Sendte $type med eventid $eventId  på offset ${result?.recordMetadata?.offset()} partition${result?.recordMetadata?.partition()} på topic ${result?.recordMetadata?.topic()}")
 }
+
 
 enum class UtkastType  {CREATED, UPDATED }
