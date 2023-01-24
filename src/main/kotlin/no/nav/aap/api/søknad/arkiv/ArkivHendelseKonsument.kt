@@ -27,7 +27,7 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository, private val es
               log.info("Journalpost ${hendelse.journalpostId} er for ettersending $this")
                 soknad?.ettersendinger?.find { it.journalpostid == hendelse.journalpostStatus }?.let {
                     it.journalpoststatus = hendelse.journalpostStatus
-                }
+                } ?: log.info("Fant ikke journalpost ${hendelse.journalpostId} i ${soknad?.ettersendinger}")
         } ?: log.info("Ingen søknad eller ettersendelse for journalpost ${hendelse.journalpostId} funnet for hendelse $hendelse")
     }
 
