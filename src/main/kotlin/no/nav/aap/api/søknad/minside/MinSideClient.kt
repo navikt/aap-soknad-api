@@ -179,7 +179,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
     private fun log(type: String, eventId: UUID, result: SendResult<out Any,out Any>?) =
         log.info("Sendte $type med eventid $eventId  på offset ${result?.recordMetadata?.offset()} partition${result?.recordMetadata?.partition()} på topic ${result?.recordMetadata?.topic()}")
     private fun trace(type: String, eventId: UUID, result: SendResult<out Any,out Any>?) =
-        log.info("Sendte $type med eventid $eventId  på offset ${result?.recordMetadata?.offset()} partition${result?.recordMetadata?.partition()} på topic ${result?.recordMetadata?.topic()}")
+        log.trace("Sendte $type med eventid $eventId  på offset ${result?.recordMetadata?.offset()} partition${result?.recordMetadata?.partition()} på topic ${result?.recordMetadata?.topic()}")
 }
 
 
