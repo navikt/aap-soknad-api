@@ -12,6 +12,7 @@ import javax.persistence.OneToMany
 import javax.persistence.Table
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
+import no.nav.aap.api.søknad.fordeling.SøknadRepository.Ettersending
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
@@ -26,6 +27,10 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.query.Param
+
+interface EttersendingRepository : JpaRepository<Ettersending, Long> {
+    fun getEttersendingByJournalpostid(journalpostid: String): Ettersending?
+}
 
 interface SøknadRepository : JpaRepository<Søknad, Long> {
 

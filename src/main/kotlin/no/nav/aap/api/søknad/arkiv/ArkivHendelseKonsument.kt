@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.arkiv
 
 import java.time.LocalDateTime.parse
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.ARKIVHENDELSER
+import no.nav.aap.api.søknad.fordeling.EttersendingRepository
 import no.nav.aap.api.søknad.fordeling.SøknadRepository
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.TimeExtensions.toUTC
@@ -12,7 +13,7 @@ import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.transaction.annotation.Transactional
 
 @ConditionalOnGCP
-class ArkivHendelseKonsument(private val repo: SøknadRepository) {
+class ArkivHendelseKonsument(private val repo: SøknadRepository, private val esRepo: EttersendingRepository) {
         private val log = getLogger(javaClass)
 
     @Transactional
@@ -22,7 +23,9 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
             it.journalpoststatus = hendelse.journalpostStatus
             it.journalfoert = hendelse.tilUTC()
             log.info("Hendelse for journalpost ${hendelse.journalpostId} Type ${hendelse.hendelsesType}, Status ${hendelse.journalpostStatus} TEMA ${hendelse.temaNytt} håndtert")
-        } ?: log.info("Ingen søknad for journalpost ${hendelse.journalpostId} funnet for hendelse $hendelse")
+        } ?: esRepo.getEttersendingByJournalpostid("${hendelse.journalpostId}")?.run {
+              log.info("Journalpost ${hendelse.journalpostId} er for ettersending $this")
+        } ?: log.info("Ingen søknad eller ettersendelse for journalpost ${hendelse.journalpostId} funnet for hendelse $hendelse")
     }
 
     private fun JournalfoeringHendelseRecord.tilUTC()  = parse(hendelsesId.substringAfter('-')).toUTC()
