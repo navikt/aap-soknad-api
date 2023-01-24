@@ -95,7 +95,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
         fun registrerEttersending(fnr: Fødselsnummer,
                                   res: ArkivResultat,
                                   ettersendteVedlegg: List<EttersendtVedlegg>): List<UUID> {
-            ettersendinger.add(Ettersending(fnr.fnr, res.journalpostId, this))
+            ettersendinger.add(Ettersending(fnr.fnr, res.journalpostId, null,this))
             var ettersendte = tidligereManglendeNåEttersendte(ettersendteVedlegg)
                ettersendte.forEach(::registrerVedlagtFraEttersending)
             return ettersendte.map { it.eventid }
@@ -107,6 +107,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     class Ettersending(
             fnr: String,
             val journalpostid: String,
+            var journalpoststatus: String?,
             @ManyToOne
             var soknad: Søknad? = null,
             eventid: UUID = callIdAsUUID()) : BaseEntity(fnr, eventid)

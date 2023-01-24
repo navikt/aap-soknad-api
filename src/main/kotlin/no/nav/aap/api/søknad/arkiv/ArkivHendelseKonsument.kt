@@ -25,6 +25,7 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository, private val es
             log.info("Hendelse for journalpost ${hendelse.journalpostId} Type ${hendelse.hendelsesType}, Status ${hendelse.journalpostStatus} TEMA ${hendelse.temaNytt} håndtert")
         } ?: esRepo.getEttersendingByJournalpostid("${hendelse.journalpostId}")?.run {
               log.info("Journalpost ${hendelse.journalpostId} er for ettersending $this")
+              this.journalpoststatus = hendelse.journalpostStatus
         } ?: log.info("Ingen søknad eller ettersendelse for journalpost ${hendelse.journalpostId} funnet for hendelse $hendelse")
     }
 
