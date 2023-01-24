@@ -21,8 +21,8 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
         repo.getSøknadByJournalpostid("${hendelse.journalpostId}")?.let {
             it.journalpoststatus = hendelse.journalpostStatus
             it.journalfoert = hendelse.tilUTC()
-            log.trace("ID ${hendelse.journalpostId} Type ${hendelse.hendelsesType}, Status ${hendelse.journalpostStatus} TEMA ${hendelse.temaNytt}")
-        } ?: log.warn("Ingen søknad med journalpost funnet for hendelse $hendelse")
+            log.trace("Hendelse for journalpost ${hendelse.journalpostId} Type ${hendelse.hendelsesType}, Status ${hendelse.journalpostStatus} TEMA ${hendelse.temaNytt} håndtert")
+        } ?: log.warn("Ingen søknad for journalpost funnet for hendelse $hendelse")
     }
 
     private fun JournalfoeringHendelseRecord.tilUTC()  = parse(hendelsesId.substringAfter('-')).toUTC()
