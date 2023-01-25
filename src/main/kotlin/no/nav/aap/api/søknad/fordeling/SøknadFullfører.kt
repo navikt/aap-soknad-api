@@ -125,10 +125,13 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
     private fun Søknad.avsluttMinSideOppgaver(fnr: Fødselsnummer, ettersendte: List<UUID>) =
         with(manglendevedlegg) {
             if (isEmpty()) {
-               val dur = with(Duration.between(this@avsluttMinSideOppgaver.created,LocalDateTime.now()))  {
-                   String.format("%d:%02d:%02d", toHours(), toMinutesPart(), toSecondsPart())
-               }
-                log.info("Alle manglende vedlegg er sendt inn etter $dur, avslutter oppgave $eventid")
+                this@avsluttMinSideOppgaver.created?.let {
+                    val dur = with(Duration.between(this@avsluttMinSideOppgaver.created,LocalDateTime.now()))  {
+                        String.format("%d:%02d:%02d", toHours(), toMinutesPart(), toSecondsPart())
+                    }
+                    log.info("varighet $dur")
+                    } ?: log.info("Ingen varighet")
+                log.info("Alle manglende vedlegg er sendt inn, avslutter oppgave $eventid")
                 minside.avsluttAlleOppgaver(fnr, this@avsluttMinSideOppgaver)
             }
             else {
