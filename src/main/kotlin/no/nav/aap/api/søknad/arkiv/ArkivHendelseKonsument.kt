@@ -18,24 +18,25 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
     @Transactional
     @KafkaListener(topics = ["#{'\${joark.hendelser.topic:teamdokumenthandtering.aapen-dok-journalfoering}'}"], containerFactory = ARKIVHENDELSER)
     fun listen(@Payload payload: JournalfoeringHendelseRecord)  {
-
-        repo.getSøknadByEttersendingJournalpostid("${payload.journalpostId}")?.let { s ->
-            log.trace("Søknad for ${payload.journalpostId} via ettersending er $s")
-            s.ettersendinger.first {
-                it.journalpostid == "${payload.journalpostId}"
-            }.apply {
-                journalpoststatus = payload.journalpostStatus
-                journalfoert = payload.tilUTC()
+        with(payload) {
+            repo.getSøknadByEttersendingJournalpostid("$journalpostId")?.let { s ->
+                log.trace("Søknad for $journalpostId via ettersending er $s")
+                s.ettersendinger.first {
+                    it.journalpostid == "$journalpostId"
+                }.apply {
+                    journalpoststatus = journalpostStatus
+                    journalfoert = tilUTC()
+                }
+                return
             }
-            return
+            repo.getSøknadByJournalpostid("$journalpostId")?.let {
+                it.journalpoststatus = journalpostStatus
+                it.journalfoert = tilUTC()
+                log.trace("Søknad for $journalpostStatus  er $it")
+                return
+            }
+            log.trace("Ingen søknad/ettersending via for journalpost $journalpostId/$journalpostStatus funnet i lokal DB")
         }
-        repo.getSøknadByJournalpostid("${payload.journalpostId}")?.let {
-            it.journalpoststatus = payload.journalpostStatus
-            it.journalfoert = payload.tilUTC()
-            log.trace("Søknad for ${payload.journalpostStatus}  er $it")
-            return
-        }
-        log.trace("Ingen søknad/ettersending via for journalpost ${payload.journalpostId}/${payload.journalpostStatus} funnet i lokal DB ($payload)")
     }
 
     private fun JournalfoeringHendelseRecord.tilUTC()  = parse(hendelsesId.substringAfter('-')).toUTC()
