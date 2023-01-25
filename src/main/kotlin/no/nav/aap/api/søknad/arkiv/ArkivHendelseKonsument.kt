@@ -31,7 +31,7 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
         repo.getSøknadByJournalpostid("${hendelse.journalpostId}")?.let {
             it.journalpoststatus = hendelse.journalpostStatus
             it.journalfoert = hendelse.tilUTC()
-            log.info("Søknad direkte for ${hendelse.journalpostStatus} er $it")
+            log.info("Søknad direkte ingen via for ${hendelse.journalpostStatus} er $it")
             return
         }
         log.info("Ingen søknad/ettersending for journalpost ${hendelse.journalpostId} funnet i lokal DB")
