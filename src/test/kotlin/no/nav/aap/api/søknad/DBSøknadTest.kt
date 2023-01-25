@@ -46,6 +46,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle.*
 import org.junit.jupiter.api.fail
 import org.mockito.Mock
 import org.mockito.Mockito.*
@@ -64,6 +66,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @ActiveProfiles(TEST)
 @AutoConfigureTestDatabase(replace = NONE)
 @DataJpaTest
+@TestInstance(PER_CLASS)
 class DBSøknadTest {
 
     @Autowired
@@ -92,6 +95,12 @@ class DBSøknadTest {
     lateinit var result: ListenableFuture<SendResult<NokkelInput, Any>>
 
 
+    @BeforeAll
+    internal fun startDB() {
+        PostgreSQLContainer<Nothing>("postgres:14:5").apply { start()
+        }
+    }
+
     @BeforeEach
     fun init() {
         `when`(ctx.getFnr()).thenReturn(FNR)
@@ -101,9 +110,7 @@ class DBSøknadTest {
 
     @Test
     fun etterspørrVedlegg() {
-        println("XXXXXXX")
         søknadRepo.getSøknadByEttersendingJournalpostid("42")
-        println("XXXXXXX")
         val minSide = MinSideClient(MinSideProdusenter(avro,utkast),CFG, MinSideRepositories(beskjedRepo,oppgaveRepo,utkastRepo,søknadRepo))
         val fullfører = SøknadFullfører(InMemoryDokumentLager(), minSide, søknadRepo, InMemoryMellomLager(FNR), Metrikker(
                 LoggingMeterRegistry()))
@@ -140,11 +147,7 @@ class DBSøknadTest {
                 true,
                 BacklinksConfig(NAV, NAV, NAV),"done")
         private val  FNR = Fødselsnummer("08089403198")
-        @BeforeAll
-        internal fun startDB() {
-            PostgreSQLContainer<Nothing>("postgres:14:5").apply { start()
-            }
-        }
+
         internal fun ettesending(id: UUID,  type: VedleggType) = StandardEttersending(id, listOf(EttersendtVedlegg(Vedlegg(),type)))
     }
 }
