@@ -23,11 +23,12 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
             log.info("Søknad ettersendinger via ettersending journalpost ${hendelse.journalpostId}  er ${s.ettersendinger}")
             s.ettersendinger.first {
                 it.journalpostid == "${hendelse.journalpostId}"
-            }.journalpoststatus = hendelse.journalpostStatus
-            log.info("Søknad ettersendinger via ettersending etter status journalpost ${hendelse.journalpostId}  er ${s.ettersendinger}")
+            }.apply {
+                journalpoststatus = hendelse.journalpostStatus
+                journalfoert = hendelse.tilUTC()
+            }
             return
         }
-
         repo.getSøknadByJournalpostid("${hendelse.journalpostId}")?.let {
             it.journalpoststatus = hendelse.journalpostStatus
             it.journalfoert = hendelse.tilUTC()
