@@ -18,15 +18,17 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
     @Transactional
     @KafkaListener(topics = ["#{'\${joark.hendelser.topic:teamdokumenthandtering.aapen-dok-journalfoering}'}"], containerFactory = ARKIVHENDELSER)
     fun listen(@Payload hendelse: JournalfoeringHendelseRecord)  {
-        repo.getSøknadByEttersendingJournalpostid("${hendelse.journalpostId}")?.let {
-            log.info("Søknad via ettersending journalpost ${hendelse.journalpostId} er $it")
-            log.info("Søknad ettersendinger via ettersending journalpost ${hendelse.journalpostId}  er ${it.ettersendinger}")
+        repo.getSøknadByEttersendingJournalpostid("${hendelse.journalpostId}")?.let { s ->
+            log.info("Søknad via ettersending journalpost ${hendelse.journalpostId} er $s")
+            log.info("Søknad ettersendinger via ettersending journalpost ${hendelse.journalpostId}  er ${s.ettersendinger}")
+            s.ettersendinger.first {  it.journalpostid == "${hendelse.journalpostId}"}.journalpoststatus=hendelse.journalpostStatus
+            log.info("Søknad ettersendinger via ettersending etter status journalpost ${hendelse.journalpostId}  er ${s.ettersendinger}")
         } ?: log.info("Ikke søknad via ettersending for  ${hendelse.journalpostId}")
         repo.getSøknadByJournalpostid("${hendelse.journalpostId}")?.let {
             it.journalpoststatus = hendelse.journalpostStatus
             it.journalfoert = hendelse.tilUTC()
             log.info("Søknad direkte for ${hendelse.journalpostStatus} er $it")
-        }  ?: log.info("Ingen søknad for journalpost ${hendelse.journalpostId} funnet")
+        }  ?: log.info("Ingen søknad/ettersending for journalpost ${hendelse.journalpostId} funnet i lokal DB")
     }
 
     private fun JournalfoeringHendelseRecord.tilUTC()  = parse(hendelsesId.substringAfter('-')).toUTC()
