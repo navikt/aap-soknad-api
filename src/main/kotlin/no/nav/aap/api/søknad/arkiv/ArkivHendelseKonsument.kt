@@ -19,7 +19,6 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
     @KafkaListener(topics = ["#{'\${joark.hendelser.topic:teamdokumenthandtering.aapen-dok-journalfoering}'}"], containerFactory = ARKIVHENDELSER)
     fun listen(@Payload hendelse: JournalfoeringHendelseRecord)  {
         repo.getSøknadByEttersendingJournalpostid("${hendelse.journalpostId}")?.let { s ->
-            log.info("Søknad via ettersending journalpost ${hendelse.journalpostId} er $s")
             log.info("Søknad ettersendinger via ettersending journalpost ${hendelse.journalpostId}  er ${s.ettersendinger}")
             s.ettersendinger.first {  it.journalpostid == "${hendelse.journalpostId}"}.journalpoststatus=hendelse.journalpostStatus
             log.info("Søknad ettersendinger via ettersending etter status journalpost ${hendelse.journalpostId}  er ${s.ettersendinger}")
