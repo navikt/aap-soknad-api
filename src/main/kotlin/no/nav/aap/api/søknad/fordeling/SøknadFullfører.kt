@@ -1,5 +1,7 @@
 package no.nav.aap.api.søknad.fordeling
 
+import java.time.Duration
+import java.time.LocalDateTime
 import java.util.*
 import java.util.UUID.randomUUID
 import no.nav.aap.api.config.Metrikker
@@ -123,7 +125,10 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
     private fun Søknad.avsluttMinSideOppgaver(fnr: Fødselsnummer, ettersendte: List<UUID>) =
         with(manglendevedlegg) {
             if (isEmpty()) {
-                log.info("Alle manglende vedlegg er sendt inn, avslutter oppgave $eventid")
+               val dur = with(Duration.between(this@avsluttMinSideOppgaver.created,LocalDateTime.now()))  {
+                   String.format("%d:%02d:%02d", toHours(), toMinutesPart(), toSecondsPart())
+               }
+                log.info("Alle manglende vedlegg er sendt inn etter $dur, avslutter oppgave $eventid")
                 minside.avsluttAlleOppgaver(fnr, this@avsluttMinSideOppgaver)
             }
             else {
