@@ -101,6 +101,8 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
                ettersendte.forEach(::registrerVedlagtFraEttersending)
             return ettersendte.map { it.eventid }
         }
+        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, journalpostid=$journalpostid, journalpoststatus=$journalpoststatus,id=$id)]"
+
     }
 
     @Entity(name = "ettersending")
