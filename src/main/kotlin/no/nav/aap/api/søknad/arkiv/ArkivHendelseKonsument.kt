@@ -20,7 +20,7 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
     fun listen(@Payload payload: JournalfoeringHendelseRecord)  {
 
         repo.getSøknadByEttersendingJournalpostid("${payload.journalpostId}")?.let { s ->
-            log.info("Søknad ettersendinger via ettersending journalpost ${payload.journalpostId}  er ${s.ettersendinger}")
+            log.trace("Søknad for ${payload.journalpostId} via ettersending er $s")
             s.ettersendinger.first {
                 it.journalpostid == "${payload.journalpostId}"
             }.apply {
@@ -32,7 +32,7 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
         repo.getSøknadByJournalpostid("${payload.journalpostId}")?.let {
             it.journalpoststatus = payload.journalpostStatus
             it.journalfoert = payload.tilUTC()
-            log.info("Søknad direkte ingen via for ${payload.journalpostStatus} er $it")
+            log.trace("Søknad for ${payload.journalpostStatus}  er $it")
             return
         }
         log.trace("Ingen søknad/ettersending via for journalpost ${payload.journalpostId}/${payload.journalpostStatus} funnet i lokal DB ($payload)")
