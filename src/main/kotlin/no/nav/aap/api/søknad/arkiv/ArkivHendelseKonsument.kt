@@ -24,7 +24,6 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
     private fun oppdaterVedlegg(payload: JournalfoeringHendelseRecord) =
         with(payload) {
             repo.getSøknadByEttersendingJournalpostid("$journalpostId")?.let { søknad ->
-                log.trace("Søknad for $journalpostId via ettersending er $søknad")
                 søknad.ettersendinger.first {
                     it.journalpostid == "$journalpostId"
                 }.apply {
