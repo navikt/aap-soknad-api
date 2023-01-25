@@ -34,7 +34,7 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
             log.info("Søknad direkte ingen via for ${hendelse.journalpostStatus} er $it")
             return
         }
-        log.info("Ingen søknad/ettersending via for journalpost ${hendelse.journalpostId}/${hendelse.journalpostStatus} funnet i lokal DB")
+        log.info("Ingen søknad/ettersending via for journalpost ${hendelse.journalpostId}/${hendelse.journalpostStatus} funnet i lokal DB ${hendelse.mottaksKanal}")
     }
 
     private fun JournalfoeringHendelseRecord.tilUTC()  = parse(hendelsesId.substringAfter('-')).toUTC()
