@@ -13,31 +13,38 @@ import org.springframework.transaction.annotation.Transactional
 
 @ConditionalOnGCP
 class ArkivHendelseKonsument(private val repo: SøknadRepository) {
-        private val log = getLogger(javaClass)
+    private val log = getLogger(javaClass)
 
     @Transactional
     @KafkaListener(topics = ["#{'\${joark.hendelser.topic:teamdokumenthandtering.aapen-dok-journalfoering}'}"], containerFactory = ARKIVHENDELSER)
-    fun listen(@Payload payload: JournalfoeringHendelseRecord)  {
+    fun listen(@Payload payload: JournalfoeringHendelseRecord)  =
+        oppdaterVedlegg(payload) ?: oppdaterSøknad(payload)
+        ?: log.trace("Ingen søknad/ettersending via for journalpost ${payload.journalpostId}/${payload.journalpostStatus} funnet i lokal DB")
+
+    private fun oppdaterVedlegg(payload: JournalfoeringHendelseRecord) =
         with(payload) {
-            repo.getSøknadByEttersendingJournalpostid("$journalpostId")?.let { s ->
-                log.trace("Søknad for $journalpostId via ettersending er $s")
-                s.ettersendinger.first {
+            repo.getSøknadByEttersendingJournalpostid("$journalpostId")?.let { søknad ->
+                log.trace("Søknad for $journalpostId via ettersending er $søknad")
+                søknad.ettersendinger.first {
                     it.journalpostid == "$journalpostId"
                 }.apply {
                     journalpoststatus = journalpostStatus
                     journalfoert = tilUTC()
                 }
-                return
+                søknad
             }
-            repo.getSøknadByJournalpostid("$journalpostId")?.let {
-                it.journalpoststatus = journalpostStatus
-                it.journalfoert = tilUTC()
-                log.trace("Søknad for $journalpostStatus  er $it")
-                return
-            }
-            log.trace("Ingen søknad/ettersending via for journalpost $journalpostId/$journalpostStatus funnet i lokal DB")
         }
-    }
+
+    private fun oppdaterSøknad(payload: JournalfoeringHendelseRecord) =
+        with(payload) {
+            repo.getSøknadByJournalpostid("$journalpostId")?.let {søknad ->
+                søknad.journalpoststatus = journalpostStatus
+                søknad.journalfoert = tilUTC()
+                log.trace("Søknad for $journalpostStatus  er $søknad")
+                søknad
+            }
+        }
+
 
     private fun JournalfoeringHendelseRecord.tilUTC()  = parse(hendelsesId.substringAfter('-')).toUTC()
 }
