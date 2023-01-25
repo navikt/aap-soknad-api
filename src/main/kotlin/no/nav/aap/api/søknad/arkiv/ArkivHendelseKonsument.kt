@@ -30,17 +30,16 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
                     journalpoststatus = journalpostStatus
                     journalfoert = tilUTC()
                 }
-                søknad
             }
         }
 
     private fun oppdaterSøknad(payload: JournalfoeringHendelseRecord) =
         with(payload) {
             repo.getSøknadByJournalpostid("$journalpostId")?.let {søknad ->
-                søknad.journalpoststatus = journalpostStatus
-                søknad.journalfoert = tilUTC()
-                log.trace("Søknad for $journalpostStatus  er $søknad")
-                søknad
+                søknad.apply {
+                    journalpoststatus = journalpostStatus
+                    journalfoert = tilUTC()
+                }
             }
         }
 
