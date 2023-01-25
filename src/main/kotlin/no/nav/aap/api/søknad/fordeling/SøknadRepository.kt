@@ -114,7 +114,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             @ManyToOne
             var soknad: Søknad? = null,
             eventid: UUID = callIdAsUUID()) : BaseEntity(fnr, eventid) {
-        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid,journalpostid=$journalpostid, id=$id)]"
+        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid,journalpostid=$journalpostid, journalpoststatus=$journalpoststatus, id=$id)]"
 
     }
 
