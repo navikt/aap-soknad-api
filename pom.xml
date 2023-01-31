@@ -25,6 +25,7 @@
         <gcp.version>0.186.0</gcp.version>
         <graphql.version>2.0.1</graphql.version>
         <i18n.version>1.29</i18n.version>
+        <jakarta-servlet.version>5.0.0</jakarta-servlet.version>
         <java.version>17</java.version>
         <jib.version>3.3.1</jib.version>
         <kotlin.version>1.8.0</kotlin.version>
