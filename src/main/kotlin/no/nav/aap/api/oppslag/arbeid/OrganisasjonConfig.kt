@@ -6,14 +6,12 @@ import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.rest.AbstractRestConfig.RetryConfig.Companion.DEFAULT
 import no.nav.aap.util.Constants.ORGANISASJON
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.web.util.UriBuilder
 import org.springframework.web.util.UriComponentsBuilder
 
 @ConfigurationProperties(ORGANISASJON)
-@ConstructorBinding
 class OrganisasjonConfig(baseUri: URI,
                          @DefaultValue(V1_ORGANISASJON) private val organisasjonPath: String,
                          @NestedConfigurationProperty private val retryCfg: RetryConfig = DEFAULT,

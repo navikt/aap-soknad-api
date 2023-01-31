@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.8</version>
+        <version>3.0.2</version>
         <relativePath/>
     </parent>
          
@@ -19,7 +19,7 @@
         <conditionals.version>5.0.2</conditionals.version>
         <confluent.version>7.3.1</confluent.version>
         <commons-text.version>1.10.0</commons-text.version>
-        <domain.version>1.0.44</domain.version>
+        <domain.version>2.0.5</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
         <gcp.libraries.version>26.5.0</gcp.libraries.version>
         <gcp.version>0.186.0</gcp.version>
@@ -38,12 +38,12 @@
         <sonar.organization>navikt</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.projectKey>navikt_aap-soknad-api</sonar.projectKey>
-        <spring-cloud-gcp.version>3.4.3</spring-cloud-gcp.version>
+        <spring-cloud-gcp.version>4.0.0</spring-cloud-gcp.version>
         <springdoc.version>1.6.14</springdoc.version>
         <swagger.annotations.version>2.2.8</swagger.annotations.version>
         <testcontainers.version>1.17.6</testcontainers.version>
         <tika.version>2.6.0</tika.version>
-        <token.validation.version>2.1.9</token.validation.version>
+        <token.validation.version>3.0.2</token.validation.version>
         <utkast.version>20230120125058-025d949</utkast.version>
     </properties>
     <repositories>
@@ -192,12 +192,6 @@
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-storage</artifactId>
         </dependency>
-       <!-- <dependency>
-            <groupId>no.nav.security</groupId>
-            <artifactId>token-validation-spring-test</artifactId>
-            <version>${token.validation.version}</version>
-            <scope>test</scope>
-        </dependency> -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>mockwebserver</artifactId>

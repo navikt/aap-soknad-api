@@ -8,14 +8,12 @@ import java.time.temporal.ChronoUnit.*
 import no.nav.aap.api.error.Substatus
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.BUCKETS
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.boot.convert.DurationUnit
 import org.springframework.util.unit.DataSize
 
 @ConfigurationProperties(BUCKETS)
-@ConstructorBinding
 data class BucketConfig(val project: String,
                         @NestedConfigurationProperty val mellom: MellomlagringBucketConfig,
                         @NestedConfigurationProperty val vedlegg: VedleggBucketConfig,

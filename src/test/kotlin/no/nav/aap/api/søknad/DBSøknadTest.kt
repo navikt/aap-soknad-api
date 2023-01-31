@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.logging.LoggingMeterRegistry
 import java.net.URI
 import java.time.Duration.*
 import java.util.*
+import java.util.concurrent.CompletableFuture
 import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
@@ -58,7 +59,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.util.concurrent.ListenableFuture
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Testcontainers
 
@@ -92,7 +92,7 @@ class DBSøknadTest {
     lateinit var utkast: KafkaOperations<String, String>
 
     @Mock
-    lateinit var result: ListenableFuture<SendResult<NokkelInput, Any>>
+    lateinit var result: CompletableFuture<SendResult<NokkelInput, Any>>
 
 
     @BeforeAll

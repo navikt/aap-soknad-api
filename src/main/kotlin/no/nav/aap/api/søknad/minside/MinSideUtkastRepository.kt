@@ -1,10 +1,10 @@
 package no.nav.aap.api.søknad.minside
 
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType.STRING
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Table
 import java.util.*
-import javax.persistence.Entity
-import javax.persistence.EnumType.STRING
-import javax.persistence.Enumerated
-import javax.persistence.Table
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
@@ -24,7 +24,7 @@ interface MinSideUtkastRepository : MinSideRepository<Utkast> {
 
 
 
-    @Query("update utkast u set u.type = :type, u.updated = now()   where u.fnr = :fnr and u.eventid = :eventid")
+    @Query("update utkast u set u.type = :type, u.updated = CURRENT_TIMESTAMP   where u.fnr = :fnr and u.eventid = :eventid")
     @Modifying
     fun oppdaterUtkast(@Param("type") type: UtkastType, @Param("fnr") fnr: String, @Param("eventid") eventid: UUID)
 

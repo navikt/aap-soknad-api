@@ -5,13 +5,11 @@ import no.nav.aap.api.oppslag.kontaktinformasjon.KRRConfig.Companion.KRR
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.rest.AbstractRestConfig.RetryConfig.Companion.DEFAULT
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.web.util.UriBuilder
 
 @ConfigurationProperties(KRR)
-@ConstructorBinding
 class KRRConfig(@DefaultValue(DEFAULT_URI) baseUri: URI,
                 @DefaultValue(PINGPATH) pingPath: String,
                 @DefaultValue(DEFAULT_PERSON_PATH) private val personPath: String,

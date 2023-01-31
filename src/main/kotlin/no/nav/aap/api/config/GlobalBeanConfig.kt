@@ -17,17 +17,16 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP
+import jakarta.servlet.Filter
+import jakarta.servlet.FilterChain
+import jakarta.servlet.ServletException
+import jakarta.servlet.ServletRequest
+import jakarta.servlet.ServletResponse
 import java.io.IOException
 import java.time.Duration
 import java.time.Duration.*
 import java.util.*
 import java.util.function.Consumer
-import javax.servlet.Filter
-import javax.servlet.FilterChain
-import javax.servlet.ServletException
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
-import no.nav.aap.api.config.Metrikker.Companion.metricsWebClientFilterFunction
 import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.HeadersToMDCFilter
@@ -171,7 +170,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         WebClientCustomizer { b ->
             b.clientConnector(ReactorClientHttpConnector(client))
                 .filter(correlatingFilterFunction(applicationName))
-                .filter(metricsWebClientFilterFunction(registry,"webclient"))
+              //  .filter(metricsWebClientFilterFunction(registry,"webclient"))
         }
 
     @ConditionalOnNotProd

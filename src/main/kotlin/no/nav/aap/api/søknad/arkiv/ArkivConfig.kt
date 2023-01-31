@@ -5,12 +5,10 @@ import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.rest.AbstractRestConfig.RetryConfig.Companion.DEFAULT
 import no.nav.aap.util.Constants.JOARK
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 
 @ConfigurationProperties(JOARK)
-@ConstructorBinding
 class ArkivConfig(
         @DefaultValue(DEFAULT_OPPRETT_PATH) val arkivPath: String,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,

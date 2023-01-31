@@ -6,12 +6,10 @@ import no.nav.aap.api.config.GlobalBeanConfig.AbstractKafkaHealthIndicator.Abstr
 import no.nav.aap.api.søknad.minside.MinSideConfig.Companion.MINSIDE
 import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 
 @ConfigurationProperties(MINSIDE)
-@ConstructorBinding
 data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConfig,
                          @NestedConfigurationProperty val beskjed: TopicConfig,
                          @NestedConfigurationProperty val oppgave: TopicConfig,

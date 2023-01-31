@@ -8,7 +8,6 @@ import no.nav.aap.api.oppslag.arbeid.ArbeidConfig.Companion.ARBEID
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.rest.AbstractRestConfig.RetryConfig.Companion.DEFAULT
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.boot.convert.PeriodFormat
@@ -16,7 +15,6 @@ import org.springframework.boot.convert.PeriodStyle.*
 import org.springframework.web.util.UriBuilder
 
 @ConfigurationProperties(ARBEID)
-@ConstructorBinding
 class ArbeidConfig(baseUri: URI,
                    @DefaultValue(PATH) private val path: String,
                    @DefaultValue("true") enabled: Boolean,
