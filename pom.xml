@@ -28,7 +28,7 @@
         <jakarta-servlet.version>5.0.0</jakarta-servlet.version>
         <java.version>17</java.version>
         <jib.version>3.3.1</jib.version>
-        <kotlin.version>1.8.0</kotlin.version>
+        <kotlin.version>1.8.10</kotlin.version>
         <logstash.version>7.2</logstash.version>
         <okhttp3.version>4.9.1</okhttp3.version>
         <pdfbox.version>2.0.27</pdfbox.version>
