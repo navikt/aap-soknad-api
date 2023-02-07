@@ -10,67 +10,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy-dev:
-    runs-on: ubuntu-latest
-    steps:
-      -   name: Checkout code
-          uses: actions/checkout@v3
-      -   name: deploy utland-soknad-sendt-topic to dev
-          uses: nais/deploy/actions/deploy@v1
-          env:
-            APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-            CLUSTER: dev-gcp
-            RESOURCE: kafka-aiven/utland-soknad-sendt.v1/topic.yaml
-            VARS: kafka-aiven/utland-soknad-sendt.v1/dev-vars.yaml
-            PRINT_PAYLOAD: true
 
-      -   name: deploy soknad-sendt-topic to dev
-          uses: nais/deploy/actions/deploy@v1
-          env:
-            APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-            CLUSTER: dev-gcp
-            RESOURCE: kafka-aiven/soknad-sendt.v1/topic.yaml
-            VARS: kafka-aiven/soknad-sendt.v1/dev-vars.yaml
-            PRINT_PAYLOAD: true
 
-      -   name: deploy soknad-ettersendt-topic to dev
-          uses: nais/deploy/actions/deploy@v1
-          env:
-            APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-            CLUSTER: dev-gcp
-            RESOURCE: kafka-aiven/soknad-ettersendt.v1/topic.yaml
-            VARS: kafka-aiven/soknad-ettersendt.v1/dev-vars.yaml
+  deploy:
+        strategy:
+            matrix:
+              cluster: [ dev-gcp ]
+              topic: [ utland-soknad-sendt.v1,soknad-sendt.v1, soknad-ettersendt.v1]
+        name: Deploy til ${{matrix.cluster}}
+        needs: bygg
+        runs-on: ubuntu-latest
+        env:
             PRINT_PAYLOAD: true
-
-  deploy-prod:
-    runs-on: ubuntu-latest
-    environment: prod-gcp:aap
-    steps:
-      -   name: Checkout code
-          uses: actions/checkout@v3
-      -   name: deploy utland-soknad-sendt-topic to prod
-          uses: nais/deploy/actions/deploy@v1
-          env:
-            APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-            CLUSTER: prod-gcp
-            RESOURCE: kafka-aiven/utland-soknad-sendt.v1/topic.yaml
-            VARS: kafka-aiven/utland-soknad-sendt.v1/prod-vars.yaml
-            PRINT_PAYLOAD: true
-
-      -   name: deploy soknad-sendt-topic to prod
-          uses: nais/deploy/actions/deploy@v1
-          env:
-            APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-            CLUSTER: prod-gcp
-            RESOURCE: kafka-aiven/soknad-sendt.v1/topic.yaml
-            VARS: kafka-aiven/soknad-sendt.v1/prod-vars.yaml
-            PRINT_PAYLOAD: true
-
-      -   name: deploy soknad-ettersendt-topic to prod
-          uses: nais/deploy/actions/deploy@v1
-          env:
-            APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-            CLUSTER: prod-gcp
-            RESOURCE: kafka-aiven/soknad-ettersendt.v1/topic.yaml
-            VARS: kafka-aiven/soknad-ettersendt.v1/prod-vars.yaml
-            PRINT_PAYLOAD: true
+            APIKEY: ${{secrets.NAIS_DEPLOY_APIKEY}}
+            RESOURCE: kafka-aiven/${{matrix.topic}}/topic.yaml
+            CLUSTER: ${{matrix.cluster}}
+            VARS: kafka-aiven/${{matrix.topic}}/${{matrix.cluster}}.yaml
+        steps:
+            -   uses: actions/checkout@v3
+            -   uses: nais/deploy/actions/deploy@master
