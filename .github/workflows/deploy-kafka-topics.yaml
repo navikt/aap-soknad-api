@@ -1,22 +1,21 @@
 name: Deploy kafka topics
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - kafka-aiven/**
-      - '!kafka-aiven/README.md'
-  workflow_dispatch:
+    push:
+        branches:
+            - main
+        paths:
+            - kafka-aiven/**
+            - '!kafka-aiven/README.md'
+    workflow_dispatch:
 
 jobs:
-  deploy:
+    deploy:
         strategy:
             matrix:
-              cluster: [ dev-gcp ]
-              topic: [ utland-soknad-sendt.v1,soknad-sendt.v1, soknad-ettersendt.v1]
-        name: Deploy til ${{matrix.cluster}}
-        needs: bygg
+                cluster: [ dev-gcp ]
+                topic: [ utland-soknad-sendt.v1,soknad-sendt.v1, soknad-ettersendt.v1 ]
+        name: Deploy ${{matrix.topic}} til ${{matrix.cluster}}
         runs-on: ubuntu-latest
         env:
             PRINT_PAYLOAD: true
