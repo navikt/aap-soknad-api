@@ -13,7 +13,7 @@ jobs:
     deploy:
         strategy:
             matrix:
-                cluster: [ dev-gcp ]
+                cluster: [ dev-gcp, prod-gcp ]
                 topic: [ utland-soknad-sendt.v1,soknad-sendt.v1, soknad-ettersendt.v1 ]
         name: Deploy ${{matrix.topic}} til ${{matrix.cluster}}
         runs-on: ubuntu-latest
