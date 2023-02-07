@@ -57,6 +57,8 @@ spec:
         - application: ettersporre-dokumentasjon
         - application: soknad
         - application: innsyn
+        - application: tms-min-side-proxy
+          namespace: min-side    
     outbound:
       external:
         - host: https://dokarkiv.{{env}}-fss-pub.nais.io
