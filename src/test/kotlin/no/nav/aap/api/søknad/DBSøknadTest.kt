@@ -99,6 +99,9 @@ class DBSøknadTest {
     @Mock
     lateinit var result: ListenableFuture<SendResult<NokkelInput, Any>>
 
+    @Mock
+    lateinit var forsideResult: ListenableFuture<SendResult<Fødselsnummer, MinSideForside>>
+
 
     @BeforeAll
     internal fun startDB() {
@@ -111,6 +114,10 @@ class DBSøknadTest {
         `when`(ctx.getFnr()).thenReturn(FNR)
         `when`(avro.send(any<ProducerRecord<NokkelInput,Any>>())).thenReturn(result)
         `when`(result.get()).thenReturn(RESULT)
+        `when`(forside.send(any<ProducerRecord<Fødselsnummer,MinSideForside>>())).thenReturn(forsideResult)
+        `when`(forsideResult.get()).thenReturn(FORSIDERESULT)
+
+
     }
 
     @Test
@@ -144,6 +151,7 @@ class DBSøknadTest {
     companion object  {
         private val NAV = URI.create("http://www.nav.no")
         private val ARKIVRESULTAT = ArkivResultat("42", listOf("666"))
+        private val FORSIDERESULT = SendResult<Fødselsnummer, MinSideForside>(null, RecordMetadata(TopicPartition("dummyTopic",1),0,0,0,0,0))
         private val RESULT = SendResult<NokkelInput, Any>(null, RecordMetadata(TopicPartition("dummyTopic",1),0,0,0,0,0))
         private val CFG = MinSideConfig(NAISConfig("aap","soknad-api"),
                 TopicConfig("beskjed", ofDays(1), true, emptyList(),4),
