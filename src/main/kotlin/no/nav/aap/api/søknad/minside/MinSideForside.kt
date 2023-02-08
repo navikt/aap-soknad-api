@@ -3,7 +3,7 @@ package no.nav.aap.api.søknad.minside
 import com.fasterxml.jackson.annotation.JsonProperty
 import no.nav.aap.api.felles.Fødselsnummer
 
-data class MinSideForside(@JsonProperty("@event_name")  val event_name: EventName, val ident: Fødselsnummer, val microfrontend_id: String = MICROFRONTEND_ID) {
+data class MinSideForside(@JsonProperty("@event_name")  val eventName: EventName, val ident: Fødselsnummer, val microfrontend_id: String = MICROFRONTEND_ID) {
 
     enum class EventName {
         enable,disable
