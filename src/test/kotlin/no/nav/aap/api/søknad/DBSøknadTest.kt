@@ -23,6 +23,7 @@ import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideConfig
 import no.nav.aap.api.søknad.minside.MinSideConfig.BacklinksConfig
+import no.nav.aap.api.søknad.minside.MinSideConfig.ForsideConfig
 import no.nav.aap.api.søknad.minside.MinSideConfig.NAISConfig
 import no.nav.aap.api.søknad.minside.MinSideConfig.TopicConfig
 import no.nav.aap.api.søknad.minside.MinSideConfig.UtkastConfig
@@ -144,6 +145,7 @@ class DBSøknadTest {
                 TopicConfig("beskjed", ofDays(1), true, emptyList(),4),
                 TopicConfig("oppgave", ofDays(1), true, emptyList(),4),
                 UtkastConfig("utkast", true),
+                ForsideConfig("forside",true),
                 true,
                 BacklinksConfig(NAV, NAV, NAV),"done")
         private val  FNR = Fødselsnummer("08089403198")
