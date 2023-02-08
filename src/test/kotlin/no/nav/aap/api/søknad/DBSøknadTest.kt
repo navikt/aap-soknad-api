@@ -27,6 +27,7 @@ import no.nav.aap.api.søknad.minside.MinSideConfig.ForsideConfig
 import no.nav.aap.api.søknad.minside.MinSideConfig.NAISConfig
 import no.nav.aap.api.søknad.minside.MinSideConfig.TopicConfig
 import no.nav.aap.api.søknad.minside.MinSideConfig.UtkastConfig
+import no.nav.aap.api.søknad.minside.MinSideForside
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository
 import no.nav.aap.api.søknad.minside.MinSideProdusenter
 import no.nav.aap.api.søknad.minside.MinSideRepositories
@@ -93,6 +94,9 @@ class DBSøknadTest {
     lateinit var utkast: KafkaOperations<String, String>
 
     @Mock
+    lateinit var forside: KafkaOperations<Fødselsnummer, MinSideForside>
+
+    @Mock
     lateinit var result: ListenableFuture<SendResult<NokkelInput, Any>>
 
 
@@ -112,7 +116,7 @@ class DBSøknadTest {
     @Test
     fun etterspørrVedlegg() {
         søknadRepo.getSøknadByEttersendingJournalpostid("42")
-        val minSide = MinSideClient(MinSideProdusenter(avro,utkast),CFG, MinSideRepositories(beskjedRepo,oppgaveRepo,utkastRepo,søknadRepo))
+        val minSide = MinSideClient(MinSideProdusenter(avro,utkast,forside),CFG, MinSideRepositories(beskjedRepo,oppgaveRepo,utkastRepo,søknadRepo))
         val fullfører = SøknadFullfører(InMemoryDokumentLager(), minSide, søknadRepo, InMemoryMellomLager(FNR), Metrikker(
                 LoggingMeterRegistry()))
         val søknadClient = SøknadClient(søknadRepo,arkivClient,minSide,ctx)
