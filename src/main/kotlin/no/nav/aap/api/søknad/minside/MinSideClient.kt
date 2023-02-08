@@ -9,6 +9,7 @@ import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
+import no.nav.aap.api.søknad.minside.MinSideForside.EventName.disable
 import no.nav.aap.api.søknad.minside.MinSideForside.EventName.enable
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType
@@ -51,7 +52,16 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
             if (enabled) {
                 log.trace("Informerer NAV forside")
                 produsenter.forside.send(ProducerRecord(topic,fnr, MinSideForside(enable,fnr))).get().also {
-                    trace("informer NAV forside", callIdAsUUID(),it)
+                    trace("enable NAV forside", callIdAsUUID(),it)
+                }
+            }
+        }
+    fun avsluttForside(fnr: Fødselsnummer) =
+        with(cfg.forside){
+            if (enabled) {
+                log.trace("Avslutter NAV forside")
+                produsenter.forside.send(ProducerRecord(topic,fnr, MinSideForside(disable,fnr))).get().also {
+                    trace("disable NAV forside", callIdAsUUID(),it)
                 }
             }
         }
