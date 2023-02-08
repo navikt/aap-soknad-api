@@ -16,14 +16,14 @@ data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConf
                          @NestedConfigurationProperty val beskjed: TopicConfig,
                          @NestedConfigurationProperty val oppgave: TopicConfig,
                          @NestedConfigurationProperty val utkast: UtkastConfig,
+                         @NestedConfigurationProperty val forside: ForsideConfig,
                          @DefaultValue("true") val enabled: Boolean,
                          @NestedConfigurationProperty val backlinks: BacklinksConfig,
                          val done: String) : AbstractKafkaConfig(MINSIDE,enabled) {
 
     val app = nais.app
     val namespace = nais.namespace
-
-
+    data class ForsideConfig( @DefaultValue("min-side.aapen-microfrontend-v1") val topic: String, @DefaultValue("true") val enabled: Boolean)
     data class UtkastConfig( @DefaultValue("min-side.aapen-utkast-v1") val topic: String, @DefaultValue("true") val enabled: Boolean)
 
     data class BacklinksConfig(val innsyn: URI, val standard: URI, val utland: URI)

@@ -9,6 +9,7 @@ import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
+import no.nav.aap.api.søknad.minside.MinSideForside.EventName.enable
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType.BESKJED
@@ -35,7 +36,7 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
-data class MinSideProdusenter(val avro: KafkaOperations<NokkelInput, Any>, val utkast: KafkaOperations<String, String>)
+data class MinSideProdusenter(val avro: KafkaOperations<NokkelInput, Any>, val utkast: KafkaOperations<String, String>, val forside: KafkaOperations<Fødselsnummer,MinSideForside>)
 @ConditionalOnGCP
 class MinSideClient(private val produsenter: MinSideProdusenter,
                     private val cfg: MinSideConfig,
@@ -43,6 +44,14 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
 
     private val log = getLogger(javaClass)
     private val utkast = gauge(MELLOMLAGRING, AtomicLong(repos.utkast.count()))
+
+
+    fun opprettForside(fnr: Fødselsnummer) =
+        with(cfg.forside){
+            if (enabled) {
+                produsenter.forside.send(ProducerRecord(topic,fnr, MinSideForside(enable,fnr)))
+            }
+        }
 
     @Transactional
     fun opprettUtkast(fnr: Fødselsnummer, tekst: String, skjemaType: SkjemaType = STANDARD, eventId: UUID = callIdAsUUID()) =

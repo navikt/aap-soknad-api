@@ -65,6 +65,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                     with(repo.save(Søknad(fnr.fnr, journalpostId))) {
                         registrerManglende(manglende)
                         registrerVedlagte(vedlagte)
+                        minside.opprettForside(fnr)
                         oppdaterMinSide(fnr, manglende.isEmpty())
                     }
                     metrikker.inc(SØKNADER, STATUS, vedleggStatus(manglende, vedlagte), TYPE, STANDARD.name)

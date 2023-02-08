@@ -32,7 +32,6 @@ import no.nav.aap.api.søknad.model.Utbetalinger.FraArbeidsgiver
 import no.nav.aap.api.søknad.model.Utenlandsopphold
 import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.util.AuthContext
-import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -147,11 +146,6 @@ class SøknadTest {
         
     """.trimIndent()
 
-
-    @Test
-    fun date() {
-        println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(standardSøknad()))
-    }
 
     private fun LocalDateTime.asInstant() = atZone(ZoneId.systemDefault()).withZoneSameInstant(ZoneId.of("UTC")).toInstant()
 

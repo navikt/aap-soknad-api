@@ -55,19 +55,5 @@ class ArbeidTest {
     @Test
     fun ok() {
         arbeidServer.expect(arbeid)
-       // print(client.arbeidInfo().single())
     }
-
-    /*
-    val a1 = ArbeidsgiverDTO(Organisasjon, OrgNummer("999263550"))
-    serdeser(a1)
-    val p = Periode(LocalDate.now(),LocalDate.now().plusDays(1))
-    serdeser(p)
-    val ap = AnsettelsesperiodeDTO(p)
-    serdeser(ap)
-    val aa = ArbeidsavtaleDTO(100.0,37.5)
-    serdeser(aa)
-    val af = ArbeidsforholdDTO(ap,listOf(aa),a1)
-
-     */
 }

@@ -2,6 +2,7 @@ package no.nav.aap.api.søknad.minside
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.aap.api.config.GlobalBeanConfig.AbstractKafkaHealthIndicator
+import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.minside.MinSideConfig.Companion.MINSIDE
 import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.DOKNOTIFIKASJON
 import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.FEILET
@@ -25,6 +26,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.kafka.core.KafkaTemplate
+import org.springframework.kafka.support.serializer.JsonSerializer
 import org.springframework.stereotype.Component
 
 @Configuration
@@ -44,6 +46,13 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
             .apply {
                 put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
                 put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
+            }))
+    @Bean
+    fun minSideForsideKafkaOperations(p: KafkaProperties) =
+        KafkaTemplate(DefaultKafkaProducerFactory<Fødselsnummer, MinSideForside>(p.buildProducerProperties()
+            .apply {
+                put(KEY_SERIALIZER_CLASS_CONFIG, JsonSerializer::class.java)
+                put(VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer::class.java)
             }))
 
     @Bean
