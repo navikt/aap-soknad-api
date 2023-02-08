@@ -49,7 +49,10 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
     fun opprettForside(fnr: Fødselsnummer) =
         with(cfg.forside){
             if (enabled) {
-                produsenter.forside.send(ProducerRecord(topic,fnr, MinSideForside(enable,fnr)))
+                log.trace("Informerer NAV forside")
+                produsenter.forside.send(ProducerRecord(topic,fnr, MinSideForside(enable,fnr))).get().also {
+                    trace("informer NAV forside", callIdAsUUID(),it)
+                }
             }
         }
 
