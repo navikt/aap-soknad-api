@@ -9,6 +9,7 @@ import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
+import no.nav.aap.api.søknad.minside.MinSideForside.EventName
 import no.nav.aap.api.søknad.minside.MinSideForside.EventName.disable
 import no.nav.aap.api.søknad.minside.MinSideForside.EventName.enable
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.MINAAPSTD
@@ -47,25 +48,18 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
     private val utkast = gauge(MELLOMLAGRING, AtomicLong(repos.utkast.count()))
 
 
-    fun opprettForside(fnr: Fødselsnummer) =
-        with(cfg.forside){
-            if (enabled) {
-                log.trace("Informerer NAV forside")
-                produsenter.forside.send(ProducerRecord(topic,fnr, MinSideForside(enable,fnr))).get().also {
-                    trace("enable NAV forside", callIdAsUUID(),it)
-                }
-            }
-        }
-    fun avsluttForside(fnr: Fødselsnummer) =
-        with(cfg.forside){
-            if (enabled) {
-                log.trace("Avslutter NAV forside")
-                produsenter.forside.send(ProducerRecord(topic,fnr, MinSideForside(disable,fnr))).get().also {
-                    trace("disable NAV forside", callIdAsUUID(),it)
-                }
-            }
-        }
+    fun opprettForside(fnr: Fødselsnummer) = forside(enable,fnr)
+    fun avsluttForside(fnr: Fødselsnummer) = forside(disable,fnr)
 
+     private fun forside(eventName: EventName, fnr: Fødselsnummer) =
+         with(cfg.forside){
+             if (enabled) {
+                 log.trace("${eventName.name} NAV forside")
+                 produsenter.forside.send(ProducerRecord(topic,fnr, MinSideForside(eventName,fnr))).get().also {
+                     trace("${eventName.name} NAV forside", callIdAsUUID(),it)
+                 }
+             }
+         }
     @Transactional
     fun opprettUtkast(fnr: Fødselsnummer, tekst: String, skjemaType: SkjemaType = STANDARD, eventId: UUID = callIdAsUUID()) =
         with(cfg.utkast) {
