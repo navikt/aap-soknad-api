@@ -9,6 +9,6 @@ data class MinSideForside(@JsonProperty("@event_name")  val eventName: EventName
         enable,disable
     }
     companion object {
-        private const val MICROFRONTEND_ID = "aap-soknad"
+        private const val MICROFRONTEND_ID = "aap"
     }
 }
