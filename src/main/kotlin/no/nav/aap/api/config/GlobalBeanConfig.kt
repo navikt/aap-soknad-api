@@ -277,10 +277,8 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                     .retryWhen(retry())
                     .onErrorMap {
                         when (it) {
-                            is OAuth2ClientException -> it
                             is TimeoutException -> OAuth2ClientException("${it.javaClass.simpleName} timeout, skal føre til retry",it)
                             is ConnectTimeoutException -> OAuth2ClientException("Connect timeout, skal føre til retry",it)
-                            else -> it
                         }
                     }
                     .doOnSuccess { log.trace("Token endpoint returnerte OK") }
