@@ -195,10 +195,10 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     private fun httpClient() = HttpClient.create()
         .doOnConnected {
-            it.addHandlerFirst(ReadTimeoutHandler(10, SECONDS))
-            it.addHandlerFirst(WriteTimeoutHandler(10, SECONDS))
+            it.addHandlerFirst(ReadTimeoutHandler(30, SECONDS))
+            it.addHandlerFirst(WriteTimeoutHandler(30, SECONDS))
         }
-        .responseTimeout(ofSeconds(2))
+        .responseTimeout(ofSeconds(30))
         .option(CONNECT_TIMEOUT_MILLIS, 10000)
 
     class JTIFilter(private val ctx: AuthContext) : Filter {
