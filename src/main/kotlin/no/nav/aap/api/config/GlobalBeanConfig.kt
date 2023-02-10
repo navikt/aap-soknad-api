@@ -10,7 +10,15 @@ import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import io.micrometer.core.aop.CountedAspect
 import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
+import io.netty.channel.ChannelOption
+import io.netty.channel.ChannelOption.*
+import io.netty.channel.ConnectTimeoutException
 import io.netty.handler.logging.LogLevel.TRACE
+import io.netty.handler.timeout.ReadTimeoutException
+import io.netty.handler.timeout.ReadTimeoutHandler
+import io.netty.handler.timeout.TimeoutException
+import io.netty.handler.timeout.WriteTimeoutException
+import io.netty.handler.timeout.WriteTimeoutHandler
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
@@ -21,6 +29,8 @@ import java.io.IOException
 import java.time.Duration
 import java.time.Duration.*
 import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.SECONDS
 import java.util.function.Consumer
 import javax.servlet.Filter
 import javax.servlet.FilterChain
@@ -176,11 +186,20 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     @ConditionalOnNotProd
     @Bean
-    fun notProdHttpClient() = HttpClient.create().wiretap(javaClass.name, TRACE, TEXTUAL)
+    fun notProdHttpClient() = httpClient().wiretap(javaClass.name, TRACE, TEXTUAL)
 
     @ConditionalOnProd
     @Bean
-    fun prodHttpClient() = HttpClient.create()
+    fun prodHttpClient() =httpClient()
+
+
+    private fun httpClient() = HttpClient.create()
+        .doOnConnected {
+            it.addHandlerFirst(ReadTimeoutHandler(10, SECONDS))
+            it.addHandlerFirst(WriteTimeoutHandler(10, SECONDS))
+        }
+        .responseTimeout(ofSeconds(2))
+        .option(CONNECT_TIMEOUT_MILLIS, 10000)
 
     class JTIFilter(private val ctx: AuthContext) : Filter {
         @Throws(IOException::class, ServletException::class)
@@ -256,7 +275,14 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                     .retrieve()
                     .bodyToMono<OAuth2AccessTokenResponse>()
                     .retryWhen(retry())
-                    .onErrorMap { e -> if (e is OAuth2ClientException) e else OAuth2ClientException("Uventet feil fra token endpoint",e) }
+                    .onErrorMap {
+                        when (it) {
+                            is OAuth2ClientException -> it
+                            is TimeoutException -> OAuth2ClientException("${it.javaClass.simpleName} timeout, skal føre til retry",it)
+                            is ConnectTimeoutException -> OAuth2ClientException("Connect timeout, skal føre til retry",it)
+                            else -> it
+                        }
+                    }
                     .doOnSuccess { log.trace("Token endpoint returnerte OK") }
                     .block()
                     ?: throw OAuth2ClientException("Ingen respons (null) fra token endpoint $tokenEndpointUrl")
