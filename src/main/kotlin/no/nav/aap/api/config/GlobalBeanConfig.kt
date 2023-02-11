@@ -146,11 +146,21 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     @Bean
     @Order(HIGHEST_PRECEDENCE + 2)
+<<<<<<< Updated upstream
     fun tokenXFilterFunction(configs: ClientConfigurationProperties,
                              service: OAuth2AccessTokenService,
                              matcher: ClientConfigurationPropertiesMatcher,
                              ctx: AuthContext) = TokenXFilterFunction(configs, service, matcher, ctx)
 
+=======
+    fun tokenXFilterFunction(
+            configs: ClientConfigurationProperties,
+            service: OAuth2AccessTokenService,
+            matcher: ClientConfigurationPropertiesMatcher,
+            ctx: AuthContext,
+                            ) = TokenXFilterFunction(configs, service, matcher, ctx)
+    
+>>>>>>> Stashed changes
     @Bean
     fun startupInfoContributor(ctx: ApplicationContext) = StartupInfoContributor(ctx)
 
@@ -199,12 +209,14 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     class LoggingResponseBodyAdvice(private val mapper: ObjectMapper) : ResponseBodyAdvice<Any?> {
 
         private val log = getLogger(javaClass)
-        override fun beforeBodyWrite(body: Any?,
-                                     returnType: MethodParameter,
-                                     contentType: MediaType,
-                                     selectedConverterType: Class<out HttpMessageConverter<*>>,
-                                     request: ServerHttpRequest,
-                                     response: ServerHttpResponse): Any? {
+        override fun beforeBodyWrite(
+                body: Any?,
+                returnType: MethodParameter,
+                contentType: MediaType,
+                selectedConverterType: Class<out HttpMessageConverter<*>>,
+                request: ServerHttpRequest,
+                response: ServerHttpResponse,
+                                    ): Any? {
             if (contentType in listOf(APPLICATION_JSON, parseMediaType("application/problem+json"))) {
                 log.trace(CONFIDENTIAL, "Response body for ${request.uri} er ${body?.toJson(mapper)}")
             }
@@ -214,9 +226,11 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>) = true
     }
 
-    abstract class AbstractKafkaHealthIndicator(private val admin: KafkaAdmin,
-                                                private val bootstrapServers: List<String>,
-                                                private val cfg: AbstractKafkaConfig) : Pingable {
+    abstract class AbstractKafkaHealthIndicator(
+            private val admin: KafkaAdmin,
+            private val bootstrapServers: List<String>,
+            private val cfg: AbstractKafkaConfig,
+                                               ) : Pingable {
         override fun isEnabled() = cfg.isEnabled
         override fun pingEndpoint() = "$bootstrapServers"
         override fun name() = cfg.name
