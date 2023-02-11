@@ -7,6 +7,8 @@ import com.google.api.gax.retrying.RetrySettings
 import com.google.cloud.ServiceOptions
 import com.google.cloud.storage.StorageOptions
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
+import io.micrometer.context.ContextRegistry
+import io.micrometer.context.ThreadLocalAccessor
 import io.micrometer.core.aop.CountedAspect
 import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
@@ -27,6 +29,7 @@ import java.time.Duration
 import java.time.Duration.*
 import java.util.*
 import java.util.function.Consumer
+import javax.annotation.PostConstruct
 import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.HeadersToMDCFilter
@@ -71,8 +74,11 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
 import org.springframework.kafka.core.KafkaAdmin
+import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.context.request.RequestAttributes
+import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
@@ -267,4 +273,14 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                 .onRetryExhaustedThrow { _, spec ->  spec.failure().also { log.warn("Retry mot token endpoint gir opp etter ${spec.totalRetriesInARow()} forsøk") } }
 
     }
+}
+@Component
+class RequestAttributesAccessor : ThreadLocalAccessor<RequestAttributes> {
+    override fun key() = RequestAttributesAccessor::class.java.name
+    override fun getValue() = RequestContextHolder.getRequestAttributes()
+    override fun setValue(attributes: RequestAttributes) = RequestContextHolder.setRequestAttributes(attributes)
+    override fun reset() = RequestContextHolder.resetRequestAttributes()
+
+    @PostConstruct
+    fun register() = ContextRegistry.getInstance().registerThreadLocalAccessor(this)
 }

@@ -27,6 +27,7 @@ class BehandlerWebClientAdapter(
         .bodyToMono<List<BehandlerDTO>>()
         .retryWhen(cf.retrySpec(log))
         .onErrorResume { empty<List<BehandlerDTO>>().also { log.info("Behandler oppslag feilet etter ${cfg.retry}, faller tilbake til tom liste", it) } }
+        .contextCapture()
         .block()
         ?.map(BehandlerDTO::tilBehandler)
         .orEmpty()

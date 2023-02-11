@@ -22,5 +22,6 @@ class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) 
             .doOnSuccess { log.trace(CONFIDENTIAL, "Kontaktinformasjon fra KRR er $it") }
             .doOnError { t: Throwable -> log.warn("KRR oppslag feilet", t) }
             .onErrorReturn(KontaktinformasjonDTO())
+            .contextCapture()
             .block()?.tilKontaktinfo()
 }

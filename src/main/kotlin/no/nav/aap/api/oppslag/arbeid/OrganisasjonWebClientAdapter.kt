@@ -30,6 +30,7 @@ class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON) val client: WebClien
                 .onErrorResume { Mono.empty() }
                 .mapNotNull(OrganisasjonDTO::fulltNavn)
                 .defaultIfEmpty(orgnr.orgnr)
+                .contextCapture()
                 .block() ?: orgnr.orgnr
                 .also { log.trace("Organisasjon oppslag response $it") }
         }

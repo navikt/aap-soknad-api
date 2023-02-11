@@ -27,6 +27,7 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
                 .doOnSuccess { log.trace("Kontoinformasjon returnerte  $it") }
                 .onErrorResume { Mono.empty() }
                 .defaultIfEmpty(emptyMap())
+                .contextCapture()
                 .block()?.tilKontonummer()
         }
         else null
