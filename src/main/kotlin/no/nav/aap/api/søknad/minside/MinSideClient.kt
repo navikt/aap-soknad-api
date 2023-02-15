@@ -56,7 +56,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
              if (enabled) {
                  log.trace("${eventName.name} NAV forside")
                  produsenter.forside.send(ProducerRecord(topic,fnr, MinSideForside(eventName,fnr))).get().also {
-                     trace("${eventName.name} NAV forside", callIdAsUUID(),it)
+                     log("${eventName.name} NAV forside", callIdAsUUID(),it)
                  }
              } else  {
                  log.info("Sender ikke til Min Side forside")
