@@ -23,6 +23,7 @@ class Metrikker(private val registry: MeterRegistry) {
         const val MANGLENDE = "manglende"
         const val INNSENDING = "innsending"
         const val TYPE = "type"
+        const val YRKESSKADE = "yrkesskade"
         const val VEDLEGG = "soknad.vedlegg"
         const val MELLOMLAGRING = "soknad.mellomlagring"
         const val MELLOMLAGRING_EXPIRED = "soknad.expired"

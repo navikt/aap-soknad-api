@@ -18,6 +18,7 @@ import no.nav.aap.api.config.Metrikker.Companion.SØKNADER
 import no.nav.aap.api.config.Metrikker.Companion.TYPE
 import no.nav.aap.api.config.Metrikker.Companion.VEDLEGG
 import no.nav.aap.api.config.Metrikker.Companion.VEDLEGGINKOMPLETT
+import no.nav.aap.api.config.Metrikker.Companion.YRKESSKADE
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
@@ -68,7 +69,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                         minside.opprettForside(fnr)
                         oppdaterMinSide(fnr, manglende.isEmpty())
                     }
-                    metrikker.inc(SØKNADER, STATUS, vedleggStatus(manglende, vedlagte), TYPE, STANDARD.name, "yrkesskade",søknad.yrkesskadeType.name)
+                    metrikker.inc(SØKNADER, STATUS, vedleggStatus(manglende, vedlagte), TYPE, STANDARD.name, YRKESSKADE,søknad.yrkesskadeType.name)
                     vedlagte.forEach{ metrikker.inc(VEDLEGG,INNSENDING, SØKNAD, STATUS, MOTTATT,TYPE,it.name) }
                     manglende.forEach{ metrikker.inc(VEDLEGG,INNSENDING,SØKNAD, STATUS, MANGLENDE,TYPE,it.name) }
                 }
