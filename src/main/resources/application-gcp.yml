@@ -191,8 +191,6 @@ minside:
         app: ${nais.app.name}
         namespace: ${nais.namespace}
     done: min-side.aapen-brukernotifikasjon-done-v1
-    forside:
-        enabled: true
     beskjed:
         enabled: true
         topic: min-side.aapen-brukernotifikasjon-beskjed-v1
