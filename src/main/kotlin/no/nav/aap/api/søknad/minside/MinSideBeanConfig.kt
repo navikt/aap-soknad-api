@@ -10,6 +10,7 @@ import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.
 import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.boot.conditionals.ConditionalOnDev
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.apache.kafka.clients.consumer.ConsumerRecord
@@ -48,6 +49,7 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
                 put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
             }))
     @Bean
+    @ConditionalOnDev
     fun minSideForsideKafkaOperations(p: KafkaProperties) =
         KafkaTemplate(DefaultKafkaProducerFactory<Fødselsnummer, MinSideForside>(p.buildProducerProperties()
             .apply {
