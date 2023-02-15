@@ -68,7 +68,7 @@ class SøknadFullfører(private val dokumentLager: Dokumentlager,
                         minside.opprettForside(fnr)
                         oppdaterMinSide(fnr, manglende.isEmpty())
                     }
-                    metrikker.inc(SØKNADER, STATUS, vedleggStatus(manglende, vedlagte), TYPE, STANDARD.name)
+                    metrikker.inc(SØKNADER, STATUS, vedleggStatus(manglende, vedlagte), TYPE, STANDARD.name, "yrkesskade",søknad.yrkesskadeType.name)
                     vedlagte.forEach{ metrikker.inc(VEDLEGG,INNSENDING, SØKNAD, STATUS, MOTTATT,TYPE,it.name) }
                     manglende.forEach{ metrikker.inc(VEDLEGG,INNSENDING,SØKNAD, STATUS, MANGLENDE,TYPE,it.name) }
                 }
