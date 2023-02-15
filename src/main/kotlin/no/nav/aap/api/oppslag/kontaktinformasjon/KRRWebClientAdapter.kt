@@ -20,7 +20,7 @@ class KRRWebClientAdapter(@Qualifier(KRR) client: WebClient, val cf: KRRConfig) 
             .bodyToMono<KontaktinformasjonDTO>()
             .retryWhen(cf.retrySpec(log))
             .doOnSuccess { log.trace(CONFIDENTIAL, "Kontaktinformasjon fra KRR er $it") }
-            .doOnError { t: Throwable -> log.warn("KRR oppslag feilet") }
+            .doOnError { log.warn("KRR oppslag feilet") }
             .onErrorReturn(KontaktinformasjonDTO())
             .block()?.tilKontaktinfo()
 }
