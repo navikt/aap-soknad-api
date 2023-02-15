@@ -58,6 +58,8 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                  produsenter.forside.send(ProducerRecord(topic,fnr, MinSideForside(eventName,fnr))).get().also {
                      trace("${eventName.name} NAV forside", callIdAsUUID(),it)
                  }
+             } else  {
+                 log.info("Sender ikke til Min Side forside")
              }
          }
     @Transactional
