@@ -49,6 +49,9 @@ joark:
     scope: api://prod-fss.teamdokumenthandtering.dokarkiv/.default
     hendelser:
         topic: teamdokumenthandtering.aapen-dok-journalfoering
+minside:
+    forside:
+        enabled: false
     backlinks:
         innsyn: https://www.nav.no/aap/mine-aap
         standard: https://www.nav.no/aap/soknad
