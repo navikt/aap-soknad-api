@@ -193,13 +193,13 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     fun prodHttpClient() =httpClient()
 
 
-    private fun httpClient() = HttpClient.create()
+    private fun httpClient() = HttpClient.create() /*
         .doOnConnected {
             it.addHandlerFirst(ReadTimeoutHandler(30, SECONDS))
             it.addHandlerFirst(WriteTimeoutHandler(30, SECONDS))
         }
         .responseTimeout(ofSeconds(30))
-        .option(CONNECT_TIMEOUT_MILLIS, 10000)
+        .option(CONNECT_TIMEOUT_MILLIS, 10000) */
 
     class JTIFilter(private val ctx: AuthContext) : Filter {
         @Throws(IOException::class, ServletException::class)
@@ -279,6 +279,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                         when (it) {
                             is TimeoutException -> OAuth2ClientException("${it.javaClass.simpleName} timeout, skal føre til retry",it)
                             is ConnectTimeoutException -> OAuth2ClientException("Connect timeout, skal føre til retry",it)
+                            else -> it
                         }
                     }
                     .doOnSuccess { log.trace("Token endpoint returnerte OK") }
