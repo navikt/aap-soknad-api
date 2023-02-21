@@ -184,6 +184,8 @@ konto:
 krr:
     enabled: true
 minside:
+    forside:
+        enabled: true
     utkast:
         enabled: true
     enabled: true
