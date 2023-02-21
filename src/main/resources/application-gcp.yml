@@ -186,6 +186,7 @@ krr:
 minside:
     forside:
         enabled: true
+        topic: min-side.aapen-microfrontend-v1
     utkast:
         enabled: true
     enabled: true
