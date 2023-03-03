@@ -11,6 +11,9 @@ acl:
       application: soknad-api
       access: write
   -   team: aap
+      application: routing
+      access: write
+  -   team: aap
       application: vedtak
       access: read
   -   team: aap
