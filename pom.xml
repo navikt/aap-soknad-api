@@ -43,7 +43,7 @@
         <swagger.annotations.version>2.2.8</swagger.annotations.version>
         <testcontainers.version>1.17.6</testcontainers.version>
         <tika.version>2.7.0</tika.version>
-        <token.validation.version>2.1.9</token.validation.version>
+        <token.validation.version>3.0.8</token.validation.version>
         <utkast.version>20230203100430-ecf5208</utkast.version>
     </properties>
     <repositories>
