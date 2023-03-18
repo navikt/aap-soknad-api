@@ -1,5 +1,5 @@
-apiVersion: "nais.io/v1"
-kind: "Alert"
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
 metadata:
   name: soknad-api-alerts
   labels:
@@ -7,32 +7,30 @@ metadata:
     app: soknad-api
   namespace: aap
 spec:
-  receivers:
-    slack:
-      channel: '#po-aap-innbygger-prod-varslinger'
-  alerts:
-    - alert: soknad-api-app-nede
-      expr: kube_deployment_status_replicas_unavailable{deployment="soknad-api",job="kubernetes-service-endpoints"} > 0
-      for: 5m
-      description: "soknad-api har utilgjengelige podder i aap"
-      action: "kubectl describe pod -l app=soknad-api -n aap` for events og `kubectl get pods -l app=soknad-api -n aap` for å se feilende podder"
-      sla: respond within 1h, during office hours
-      severity: danger
-    - alert: soknad-api-kontinuerlig-restart
-      expr: sum(increase(kube_pod_container_status_restarts_total{container=~"soknad-api"}[5m])) by (container) > 2
-      for: 2m
-      description: "soknad-api har restartet flere ganger de siste 5 minuttene!"
-      action: "Se `kubectl describe pod soknad-api` for events, og `kubectl logs soknad-api` for logger"
-      sla: respond within 1h, during office hours
-      severity: danger
-    - alert: soknad-api-mangler-metrikker
-      expr: absent(up{app=~"soknad-api",job="kubernetes-pods"})
-      for: 2m
-      description: "soknad-api rapporterer ingen metrikker i aap"
-      action: "Sjekk om soknad-api i aap er oppe"
-      sla: respond within 1h, during office hours
-      severity: danger
-    - alert: høy feilrate i logger for soknad-api
-      expr: (100 * sum by (log_app, log_namespace) (rate(logd_messages_total{log_app="soknad-api",log_level=~"Error"}[10m])) / sum by (log_app, log_namespace) (rate(logd_messages_total{log_app="soknad-api"}[10m]))) > 15
-      for: 5m
-      action: "<https://logs.adeo.no/goto/1d394a6a4c647c93c51eda75e60999ed|Check logs>"
+  groups:
+    - name:  api-alerts
+      rules:
+       - alert: InstanceDown
+         expr: kube_deployment_status_replicas_unavailable{deployment="soknad-api",job="kubernetes-service-endpoints"} > 0
+         for: 5m
+         annotations:
+           consequence:  "soknad-api har utilgjengelige podder i aap"
+           action: "kubectl describe pod -l app=soknad-api -n aap` for events og `kubectl get pods -l app=soknad-api -n aap` for å se feilende podder"
+         labels:
+          severity: critical
+       - alert: IntancesRestarting
+         expr: sum(increase(kube_pod_container_status_restarts_total{container=~"soknad-api"}[5m])) by (container) > 2
+         for: 2m
+         annotations:
+          consequence: "soknad-api har restartet flere ganger de siste 5 minuttene!"
+          action: "Se `kubectl describe pod soknad-api` for events, og `kubectl logs soknad-api` for logger"
+         labels:
+           severity: critical
+       -   alert: MissingMetrics
+           expr: (100 * sum by (log_app, log_namespace) (rate(logd_messages_total{log_app="soknad-api",log_level=~"Error"}[10m])) / sum by (log_app, log_namespace) (rate(logd_messages_total{log_app="soknad-api"}[10m]))) > 15
+           for: 5m
+           annotations:
+             consequence: "soknad-api rapporterer ingen metrikker i aap"
+             action: "Sjekk om soknad-api i aap er oppe"
+           labels:
+             severity: critical
