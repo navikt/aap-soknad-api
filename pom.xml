@@ -17,7 +17,7 @@
     <properties>
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
         <conditionals.version>5.0.6</conditionals.version>
-        <confluent.version>7.3.2</confluent.version>
+        <confluent.version>7.3.3</confluent.version>
         <commons-text.version>1.10.0</commons-text.version>
         <domain.version>1.0.44</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
