@@ -8,10 +8,13 @@ on:
             - '**.md'
 env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    IMAGE_BASE: ghcr.io/${{ github.repository }}
+    IMAGE_BASE: europe-north1-docker.pkg.dev/${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}/aap/${{ github.event.repository.name }}
 
 jobs:
     bygg:
+        permissions:
+            contents: "read"
+            id-token: "write"
         runs-on: ubuntu-latest
         outputs:
             image: ${{ steps.kompiler-pr.outputs.image }}
@@ -40,7 +43,7 @@ jobs:
                 id: kompiler-pr
                 run: |
                     echo "image=${{ env.IMAGE }}" >> $GITHUB_OUTPUT
-                    ./mvnw  --batch-mode --settings .github/.m2/settings.xml package jib:build 
+                    ./mvnw  --batch-mode --settings .github/.m2/settings.xml  -DGAR_TOKEN=${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} package jib:build 
 
     deploy:
         name: Deploy PR til dev-gcp
