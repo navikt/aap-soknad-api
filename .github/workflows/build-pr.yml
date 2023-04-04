@@ -39,6 +39,13 @@ jobs:
             -   name: Setter image-navn
                 run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)-PR${{ steps.kompiler-pr.outputs.image }}" >> $GITHUB_ENV
 
+            -   name: Login GAR
+                uses: nais/login@v0
+                with:
+                    project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+                    identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+                    team: aap
+
             -   name: Kompiler
                 id: kompiler-pr
                 run: |
