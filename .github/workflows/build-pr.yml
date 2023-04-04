@@ -13,8 +13,8 @@ env:
 jobs:
     bygg:
         permissions:
-            contents: "read"
-            id-token: "write"
+            contents: write
+            id-token: write
         runs-on: ubuntu-latest
         outputs:
             image: ${{ steps.kompiler-pr.outputs.image }}
@@ -50,7 +50,7 @@ jobs:
                 id: kompiler-pr
                 run: |
                     echo "image=${{ env.IMAGE }}" >> $GITHUB_OUTPUT
-                    ./mvnw  --batch-mode --settings .github/.m2/settings.xml  -DGAR_TOKEN=${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} package jib:build 
+                    ./mvnw  --batch-mode --settings .github/.m2/settings.xml -Djib.to.tags=latest -DGAR_TOKEN=${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} package jib:build 
 
     deploy:
         name: Deploy PR til dev-gcp
