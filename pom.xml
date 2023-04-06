@@ -38,7 +38,7 @@
         <sonar.organization>navikt</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.projectKey>navikt_aap-soknad-api</sonar.projectKey>
-        <spring-cloud-gcp.version>3.4.3</spring-cloud-gcp.version>
+        <spring-cloud-gcp.version>4.1.4</spring-cloud-gcp.version>
         <springdoc.version>1.7.0</springdoc.version>
         <swagger.annotations.version>2.2.9</swagger.annotations.version>
         <testcontainers.version>1.17.6</testcontainers.version>
