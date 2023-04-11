@@ -1,8 +1,8 @@
 package no.nav.aap.api.oppslag.graphql
 
 import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
-import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.oversett
 import org.springframework.stereotype.Component
+import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.oversett
 
 @Component
 class GraphQLDefaultErrorHandler : GraphQLErrorHandler {

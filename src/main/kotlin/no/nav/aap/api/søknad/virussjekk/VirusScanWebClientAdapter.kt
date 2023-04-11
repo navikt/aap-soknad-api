@@ -3,17 +3,17 @@ package no.nav.aap.api.søknad.virussjekk
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.micrometer.core.annotation.Counted
 import io.micrometer.core.annotation.Timed
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
 import no.nav.aap.api.søknad.virussjekk.ScanResult.Companion.FEIL
 import no.nav.aap.api.søknad.virussjekk.ScanResult.Result.FOUND
 import no.nav.aap.api.søknad.virussjekk.ScanResult.Result.NONE
 import no.nav.aap.api.søknad.virussjekk.ScanResult.Result.OK
 import no.nav.aap.api.søknad.virussjekk.VirusScanConfig.Companion.VIRUS
 import no.nav.aap.rest.AbstractWebClientAdapter
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
 class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: VirusScanConfig) :

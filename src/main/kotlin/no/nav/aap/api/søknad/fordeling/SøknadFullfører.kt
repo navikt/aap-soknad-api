@@ -2,8 +2,10 @@ package no.nav.aap.api.søknad.fordeling
 
 import java.time.Duration
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 import java.util.UUID.randomUUID
+import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.config.Metrikker.Companion.ETTERSENDING
 import no.nav.aap.api.config.Metrikker.Companion.INKOMPLETT
@@ -39,8 +41,6 @@ import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.aap.util.StringExtensions.decap
-import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 @Component
 class SøknadFullfører(private val dokumentLager: Dokumentlager,

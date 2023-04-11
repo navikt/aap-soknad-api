@@ -1,8 +1,5 @@
 package no.nav.aap.api.oppslag.konto
 
-import no.nav.aap.api.felles.Kontonummer
-import no.nav.aap.api.oppslag.konto.KontoConfig.Companion.KONTO
-import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -10,6 +7,9 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
+import no.nav.aap.api.felles.Kontonummer
+import no.nav.aap.api.oppslag.konto.KontoConfig.Companion.KONTO
+import no.nav.aap.rest.AbstractWebClientAdapter
 
 @Component
 class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,

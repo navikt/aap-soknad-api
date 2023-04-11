@@ -8,10 +8,10 @@ import com.google.cloud.kms.v1.KeyManagementServiceClient
 import com.google.cloud.kms.v1.KeyRing
 import com.google.cloud.storage.Storage
 import com.google.iam.v1.Binding
-import no.nav.aap.api.søknad.mellomlagring.BucketConfig
-import no.nav.aap.util.LoggerUtil
 import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig
+import no.nav.aap.util.LoggerUtil
 
 @Component
 class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage) : CommandLineRunner {

@@ -2,14 +2,6 @@ package no.nav.aap.api.error
 
 import com.fasterxml.jackson.databind.DatabindException
 import com.google.cloud.storage.StorageException
-import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.api.søknad.mellomlagring.DokumentException
-import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager.ContentTypeDokumentSjekker.ContentTypeException
-import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.aap.util.MDCUtil.NAV_CALL_ID
-import no.nav.aap.util.MDCUtil.callId
-import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
-import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
@@ -23,6 +15,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.client.HttpClientErrorException.NotFound
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+import no.nav.aap.api.felles.error.IntegrationException
+import no.nav.aap.api.søknad.mellomlagring.DokumentException
+import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager.ContentTypeDokumentSjekker.ContentTypeException
+import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.MDCUtil.NAV_CALL_ID
+import no.nav.aap.util.MDCUtil.callId
+import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
+import no.nav.security.token.support.spring.validation.interceptor.JwtTokenUnauthorizedException
+
 @ControllerAdvice
 class AAPApiExceptionHandling : ResponseEntityExceptionHandler() {
     private val log = getLogger(javaClass)

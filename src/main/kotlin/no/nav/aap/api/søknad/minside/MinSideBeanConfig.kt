@@ -1,17 +1,6 @@
 package no.nav.aap.api.søknad.minside
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer
-import no.nav.aap.api.config.GlobalBeanConfig.AbstractKafkaHealthIndicator
-import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.søknad.minside.MinSideConfig.Companion.MINSIDE
-import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.DOKNOTIFIKASJON
-import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.FEILET
-import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
-import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
-import no.nav.aap.health.AbstractPingableHealthIndicator
-import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.brukernotifikasjon.schemas.input.NokkelInput
-import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
@@ -28,6 +17,17 @@ import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.serializer.JsonSerializer
 import org.springframework.stereotype.Component
+import no.nav.aap.api.config.GlobalBeanConfig.AbstractKafkaHealthIndicator
+import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.søknad.minside.MinSideConfig.Companion.MINSIDE
+import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.DOKNOTIFIKASJON
+import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.FEILET
+import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.FERDIGSTILT
+import no.nav.aap.api.søknad.minside.MinSideEksternNotifikasjonStatusKonsument.Companion.NOTIFIKASJON_SENDT
+import no.nav.aap.health.AbstractPingableHealthIndicator
+import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.brukernotifikasjon.schemas.input.NokkelInput
+import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
 
 @Configuration
 class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNavn: String) {

@@ -5,14 +5,14 @@ import java.net.InetAddress.*
 import java.net.InetSocketAddress.*
 import java.util.*
 import java.util.concurrent.TimeUnit.SECONDS
-import no.nav.aap.api.søknad.minside.MinSideClient
-import no.nav.aap.api.søknad.minside.MinSideRepositories
-import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType.*
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.web.reactive.function.client.WebClient.Builder
 import org.springframework.web.reactive.function.client.bodyToMono
+import no.nav.aap.api.søknad.minside.MinSideClient
+import no.nav.aap.api.søknad.minside.MinSideRepositories
+import no.nav.aap.util.LoggerUtil.getLogger
 
 //@Component
 class MellomlagringVarsler(private val minside: MinSideClient, private val elector: LeaderElector, private val repos: MinSideRepositories) {

@@ -1,15 +1,15 @@
 package no.nav.aap.api.oppslag.arbeid
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import no.nav.aap.api.felles.OrgNummer
-import no.nav.aap.rest.AbstractWebClientAdapter
-import no.nav.aap.util.Constants.ORGANISASJON
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import no.nav.aap.api.felles.OrgNummer
+import no.nav.aap.rest.AbstractWebClientAdapter
+import no.nav.aap.util.Constants.ORGANISASJON
 
 @Component
 class OrganisasjonWebClientAdapter(@Qualifier(ORGANISASJON) val client: WebClient,

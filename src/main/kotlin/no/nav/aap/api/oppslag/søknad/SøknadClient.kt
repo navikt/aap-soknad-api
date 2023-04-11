@@ -2,7 +2,10 @@ package no.nav.aap.api.oppslag.søknad
 
 import java.time.Instant
 import java.time.ZoneOffset.UTC
-import java.util.*
+import java.util.UUID
+import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagMapper.DokumentOversiktInnslag
@@ -15,9 +18,6 @@ import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
-import org.springframework.data.domain.Pageable
-import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 @Component
 class SøknadClient(private val repo: SøknadRepository,

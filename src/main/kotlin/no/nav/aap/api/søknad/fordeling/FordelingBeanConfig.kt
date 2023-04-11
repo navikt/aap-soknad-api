@@ -2,9 +2,6 @@ package no.nav.aap.api.søknad.fordeling
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS
 import com.fasterxml.jackson.databind.ObjectMapper
-import no.nav.aap.api.config.GlobalBeanConfig.AbstractKafkaHealthIndicator
-import no.nav.aap.api.søknad.fordeling.VLFordelingConfig.Companion.VL
-import no.nav.aap.health.AbstractPingableHealthIndicator
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
@@ -14,6 +11,9 @@ import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.serializer.JsonSerializer
 import org.springframework.stereotype.Component
+import no.nav.aap.api.config.GlobalBeanConfig.AbstractKafkaHealthIndicator
+import no.nav.aap.api.søknad.fordeling.VLFordelingConfig.Companion.VL
+import no.nav.aap.health.AbstractPingableHealthIndicator
 
 @Configuration
 class FordelingBeanConfig {

@@ -6,7 +6,7 @@ import com.google.cloud.storage.NotificationInfo.EventType
 import com.google.pubsub.v1.PubsubMessage
 import java.time.Duration
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE

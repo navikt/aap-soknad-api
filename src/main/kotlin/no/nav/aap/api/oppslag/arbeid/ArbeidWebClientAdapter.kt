@@ -1,7 +1,5 @@
 package no.nav.aap.api.oppslag.arbeid
 
-import no.nav.aap.api.oppslag.arbeid.ArbeidConfig.Companion.ARBEID
-import no.nav.aap.rest.AbstractWebClientAdapter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
@@ -9,6 +7,8 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException.*
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
+import no.nav.aap.api.oppslag.arbeid.ArbeidConfig.Companion.ARBEID
+import no.nav.aap.rest.AbstractWebClientAdapter
 
 @Component
 class ArbeidWebClientAdapter(

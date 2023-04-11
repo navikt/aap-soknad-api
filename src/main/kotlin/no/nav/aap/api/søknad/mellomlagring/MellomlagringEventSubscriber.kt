@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.spring.pubsub.core.subscriber.PubSubSubscriberTemplate
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
+import org.springframework.boot.CommandLineRunner
 import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.config.Metrikker.Companion.MELLOMLAGRING_EXPIRED
 import no.nav.aap.api.søknad.minside.MinSideClient
@@ -13,7 +14,6 @@ import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.førstegangsOppret
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.metadata
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.ConditionalOnGCP
-import org.springframework.boot.CommandLineRunner
 
 @ConditionalOnGCP
 class MellomlagringEventSubscriber(private val minside: MinSideClient,

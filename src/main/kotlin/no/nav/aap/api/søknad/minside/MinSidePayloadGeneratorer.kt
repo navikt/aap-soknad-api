@@ -3,7 +3,7 @@ package no.nav.aap.api.søknad.minside
 import java.time.Duration
 import java.time.LocalDateTime.now
 import java.time.ZoneOffset.UTC
-import java.util.*
+import java.util.UUID
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.Companion.SØKNADSTD
 import no.nav.brukernotifikasjon.schemas.builders.BeskjedInputBuilder

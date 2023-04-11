@@ -1,7 +1,5 @@
 package no.nav.aap.api.søknad.minside
 
-import java.time.LocalDateTime
-import java.util.*
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
 import jakarta.persistence.EntityListeners
@@ -16,16 +14,18 @@ import jakarta.persistence.PostUpdate
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreRemove
 import jakarta.persistence.PreUpdate
-import no.nav.aap.api.søknad.fordeling.SøknadRepository
-import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
-import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.aap.util.StringExtensions.partialMask
+import java.time.LocalDateTime
+import java.util.UUID
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.stereotype.Component
+import no.nav.aap.api.søknad.fordeling.SøknadRepository
+import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity
+import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.StringExtensions.partialMask
 
 @NoRepositoryBean
 interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {

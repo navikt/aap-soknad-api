@@ -14,10 +14,10 @@ import java.io.ByteArrayOutputStream
 import java.lang.Math.toRadians
 import javax.imageio.ImageIO.read
 import javax.imageio.ImageIO.write
-import no.nav.aap.api.søknad.mellomlagring.DokumentException
-import no.nav.aap.util.LoggerUtil.getLogger
 import org.apache.pdfbox.pdmodel.common.PDRectangle.A4
 import org.springframework.stereotype.Component
+import no.nav.aap.api.søknad.mellomlagring.DokumentException
+import no.nav.aap.util.LoggerUtil.getLogger
 
 @Component
 class BildeSkalerer {
