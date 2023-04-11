@@ -10,15 +10,10 @@ import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import io.micrometer.core.aop.CountedAspect
 import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
-import io.netty.channel.ChannelOption
 import io.netty.channel.ChannelOption.*
 import io.netty.channel.ConnectTimeoutException
 import io.netty.handler.logging.LogLevel.TRACE
-import io.netty.handler.timeout.ReadTimeoutException
-import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.TimeoutException
-import io.netty.handler.timeout.WriteTimeoutException
-import io.netty.handler.timeout.WriteTimeoutHandler
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
@@ -29,15 +24,12 @@ import java.io.IOException
 import java.time.Duration
 import java.time.Duration.*
 import java.util.*
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeUnit.SECONDS
 import java.util.function.Consumer
-import javax.servlet.Filter
-import javax.servlet.FilterChain
-import javax.servlet.ServletException
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
-import no.nav.aap.api.config.Metrikker.Companion.metricsWebClientFilterFunction
+import jakarta.servlet.Filter
+import jakarta.servlet.FilterChain
+import jakarta.servlet.ServletException
+import jakarta.servlet.ServletRequest
+import jakarta.servlet.ServletResponse
 import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.HeadersToMDCFilter
@@ -181,7 +173,6 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         WebClientCustomizer { b ->
             b.clientConnector(ReactorClientHttpConnector(client))
                 .filter(correlatingFilterFunction(applicationName))
-                .filter(metricsWebClientFilterFunction(registry,"webclient"))
         }
 
     @ConditionalOnNotProd

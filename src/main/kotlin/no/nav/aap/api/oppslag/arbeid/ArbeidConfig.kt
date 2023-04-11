@@ -16,7 +16,6 @@ import org.springframework.boot.convert.PeriodStyle.*
 import org.springframework.web.util.UriBuilder
 
 @ConfigurationProperties(ARBEID)
-@ConstructorBinding
 class ArbeidConfig(baseUri: URI,
                    @DefaultValue(PATH) private val path: String,
                    @DefaultValue("true") enabled: Boolean,

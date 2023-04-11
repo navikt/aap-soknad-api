@@ -1,10 +1,10 @@
 package no.nav.aap.api.søknad.minside
 
 import java.util.*
-import javax.persistence.Entity
-import javax.persistence.EnumType.STRING
-import javax.persistence.Enumerated
-import javax.persistence.Table
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType.STRING
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Table
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity

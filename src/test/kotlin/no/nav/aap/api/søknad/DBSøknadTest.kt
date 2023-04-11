@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.logging.LoggingMeterRegistry
 import java.net.URI
 import java.time.Duration.*
 import java.util.*
+import java.util.concurrent.CompletableFuture
 import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
@@ -97,10 +98,10 @@ class DBSøknadTest {
     lateinit var forside: KafkaOperations<Fødselsnummer, MinSideForside>
 
     @Mock
-    lateinit var result: ListenableFuture<SendResult<NokkelInput, Any>>
+    lateinit var result: CompletableFuture<SendResult<NokkelInput, Any>>
 
     @Mock
-    lateinit var forsideResult: ListenableFuture<SendResult<Fødselsnummer, MinSideForside>>
+    lateinit var forsideResult: CompletableFuture<SendResult<Fødselsnummer, MinSideForside>>
 
 
     @BeforeAll

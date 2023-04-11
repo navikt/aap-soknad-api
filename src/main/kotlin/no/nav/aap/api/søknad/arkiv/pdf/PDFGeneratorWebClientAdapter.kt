@@ -4,10 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.neovisionaries.i18n.CountryCode
 import java.time.LocalDate
 import java.time.LocalDate.now
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.Periode
-import no.nav.aap.api.felles.error.IntegrationException
+import no.nav.aap.api.felles.error.IrrecoverableIntegrationException
 import no.nav.aap.api.søknad.arkiv.pdf.PDFGeneratorConfig.Companion.PDF
 import no.nav.aap.api.søknad.model.PDFKvittering
 import no.nav.aap.api.søknad.model.Søker
@@ -15,11 +20,6 @@ import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.StringExtensions.toJson
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
 
 @Component
 class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
@@ -40,7 +40,7 @@ class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
             .doOnSuccess {
                 log.trace(CONFIDENTIAL, "Sendte JSON $data")
             }
-            .block() ?: throw IntegrationException("O bytes i retur fra pdfgen, pussig")
+            .block() ?: throw IrrecoverableIntegrationException("O bytes i retur fra pdfgen, pussig")
 
     private data class StandardData(val søker: Søker, val kvittering: PDFKvittering)
     private data class UtlandData constructor(val fødselsnummer: Fødselsnummer,

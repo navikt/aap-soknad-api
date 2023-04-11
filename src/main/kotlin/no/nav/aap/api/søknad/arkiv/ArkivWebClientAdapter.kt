@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
+import no.nav.aap.api.felles.error.IrrecoverableIntegrationException
 
 @Component
 class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("${JOARK}ping") pingClient: WebClient, val cf: ArkivConfig) :
@@ -33,7 +34,7 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("
             }
             .retryWhen(cf.retrySpec(log))
             .doOnError { t: Throwable -> log.warn("Journalføring feilet", t) }
-            .block() ?: throw IntegrationException("Null respons fra arkiv")
+            .block() ?: throw IrrecoverableIntegrationException("Null respons fra arkiv")
 
 
     @JsonIgnoreProperties(ignoreUnknown = true)

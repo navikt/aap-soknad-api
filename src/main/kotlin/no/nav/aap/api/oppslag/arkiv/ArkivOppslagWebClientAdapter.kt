@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
+import no.nav.aap.api.felles.error.IrrecoverableIntegrationException
 
 @Component
 class ArkivOppslagWebClientAdapter(
@@ -41,7 +42,7 @@ class ArkivOppslagWebClientAdapter(
             .bodyToMono<ByteArray>()
             .retryWhen(cf.retrySpec(log))
             .doOnSuccess { log.trace("Arkivoppslag returnerte  ${it.size} bytes") }
-            .block() ?: throw IntegrationException("Null response fra arkiv for  $journalpostId/$dokumentInfoId ")
+            .block() ?: throw IrrecoverableIntegrationException("Null response fra arkiv for  $journalpostId/$dokumentInfoId ")
 
     fun dokumenter() = query()
         ?.filter { it.journalposttype in listOf(I, U) }

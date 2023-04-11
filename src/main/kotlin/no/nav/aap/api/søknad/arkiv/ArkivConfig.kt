@@ -10,7 +10,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 
 @ConfigurationProperties(JOARK)
-@ConstructorBinding
 class ArkivConfig(
         @DefaultValue(DEFAULT_OPPRETT_PATH) val arkivPath: String,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
