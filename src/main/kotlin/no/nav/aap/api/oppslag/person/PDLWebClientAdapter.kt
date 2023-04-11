@@ -36,6 +36,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
             .accept(APPLICATION_JSON, TEXT_PLAIN)
             .retrieve()
             .toBodilessEntity()
+            .contextCapture()
             .block()
         return emptyMap()
     }

@@ -41,6 +41,7 @@ class ArkivOppslagWebClientAdapter(
             .bodyToMono<ByteArray>()
             .retryWhen(cf.retrySpec(log))
             .doOnSuccess { log.trace("Arkivoppslag returnerte  ${it.size} bytes") }
+            .contextCapture()
             .block() ?: throw IrrecoverableIntegrationException("Null response fra arkiv for  $journalpostId/$dokumentInfoId ")
 
     fun dokumenter() = query()
