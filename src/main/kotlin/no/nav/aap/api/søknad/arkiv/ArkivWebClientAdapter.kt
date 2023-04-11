@@ -33,6 +33,7 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("
             }
             .retryWhen(cf.retrySpec(log))
             .doOnError { t: Throwable -> log.warn("Journalføring feilet", t) }
+            .contextCapture()
             .block() ?: throw IrrecoverableIntegrationException("Null respons fra arkiv")
 
 
