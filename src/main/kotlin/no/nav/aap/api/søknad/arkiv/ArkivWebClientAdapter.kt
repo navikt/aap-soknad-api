@@ -27,7 +27,7 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("
                         bodyToMono(ArkivResponse::class.java)
                     }
                     else {
-                        Mono.error(WebClientResponseException(rawStatusCode(),"Uventet respons fra ${cf.arkivPath}",headers().asHttpHeaders(),null,null))
+                        Mono.error(WebClientResponseException(statusCode().value(),"Uventet respons fra ${cf.arkivPath}",headers().asHttpHeaders(),null,null))
                     }
                 }
             }
