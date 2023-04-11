@@ -24,7 +24,7 @@ interface MinSideUtkastRepository : MinSideRepository<Utkast> {
 
 
 
-    @Query("update utkast u set u.type = :type, u.updated = now()   where u.fnr = :fnr and u.eventid = :eventid")
+    @Query("update utkast u set u.type = :type, u.updated = CURRENT_TIMESTAMP   where u.fnr = :fnr and u.eventid = :eventid")
     @Modifying
     fun oppdaterUtkast(@Param("type") type: UtkastType, @Param("fnr") fnr: String, @Param("eventid") eventid: UUID)
 
