@@ -11,7 +11,7 @@ class ArkivClient(private val adapter: ArkivWebClientAdapter) {
         with(adapter.opprettJournalpost(journalpost)) {
             ArkivResultat(journalpostId, dokIder)
         }.also {
-            log.info("Journalpost ${journalpost.dokumenter} med tittel ${journalpost.tittel} fordelt til arkiv OK med resultat $it")
+            log.info("Journalpost ${journalpost.dokumenter} med tittel ${journalpost.tittel} og tilleggsopplysninger ${journalpost.tilleggsopplysninger} fordelt til arkiv OK med resultat $it")
         }
     data class ArkivResultat(val journalpostId: String, val dokumentIds: List<String>)
 

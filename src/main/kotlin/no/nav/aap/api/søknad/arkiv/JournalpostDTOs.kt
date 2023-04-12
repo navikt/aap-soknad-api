@@ -51,6 +51,6 @@ data class Journalpost(
         private const val ID_TYPE = "FNR"
     }
 
-    override fun toString() = "${javaClass.simpleName} [tittel=$tittel,dokumenter=$dokumenter,eksternReferanseId=$eksternReferanseId]"
+    override fun toString() = "${javaClass.simpleName} [tittel=$tittel,dokumenter=$dokumenter,eksternReferanseId=$eksternReferanseId, tilleggsopplysninger=$tilleggsopplysninger]"
 
 }
