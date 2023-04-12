@@ -1,16 +1,16 @@
 package no.nav.aap.api.søknad
 
-import javax.validation.Valid
+import jakarta.validation.Valid
+import org.springframework.http.HttpStatus.CREATED
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.ResponseStatus
 import no.nav.aap.api.søknad.fordeling.Fordeler
 import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
-import org.springframework.http.HttpStatus.CREATED
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.ResponseStatus
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 @ResponseStatus(CREATED)

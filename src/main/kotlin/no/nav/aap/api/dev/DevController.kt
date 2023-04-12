@@ -1,21 +1,6 @@
 package no.nav.aap.api.dev
 
 import java.util.*
-import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.felles.SkjemaType
-import no.nav.aap.api.oppslag.søknad.SøknadClient
-import no.nav.aap.api.saksbehandling.SaksbehandlingController.VedleggEtterspørsel
-import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
-import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
-import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
-import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
-import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
-import no.nav.aap.api.søknad.minside.MinSideClient
-import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType.OPPGAVE
-import no.nav.aap.api.søknad.minside.MinSideRepositories
-import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.boot.conditionals.ConditionalOnNotProd
-import no.nav.security.token.support.spring.UnprotectedRestController
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort.Direction.DESC
 import org.springframework.data.web.PageableDefault
@@ -37,6 +22,21 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.multipart.MultipartFile
+import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.felles.SkjemaType
+import no.nav.aap.api.oppslag.søknad.SøknadClient
+import no.nav.aap.api.saksbehandling.SaksbehandlingController.VedleggEtterspørsel
+import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
+import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
+import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
+import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
+import no.nav.aap.api.søknad.minside.MinSideClient
+import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType.OPPGAVE
+import no.nav.aap.api.søknad.minside.MinSideRepositories
+import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.boot.conditionals.ConditionalOnNotProd
+import no.nav.security.token.support.spring.UnprotectedRestController
 
 @UnprotectedRestController(["/dev/"])
 @ConditionalOnNotProd

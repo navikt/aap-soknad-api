@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad.arkiv
 
-import java.util.*
+import java.util.UUID
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.SkjemaType

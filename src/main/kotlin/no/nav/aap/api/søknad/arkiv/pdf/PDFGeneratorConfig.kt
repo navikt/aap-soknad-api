@@ -1,16 +1,14 @@
 package no.nav.aap.api.søknad.arkiv.pdf
 
 import java.net.URI
-import no.nav.aap.api.søknad.arkiv.pdf.PDFGeneratorConfig.Companion.PDF
-import no.nav.aap.rest.AbstractRestConfig
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.NestedConfigurationProperty
 import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.util.unit.DataSize
+import no.nav.aap.api.søknad.arkiv.pdf.PDFGeneratorConfig.Companion.PDF
+import no.nav.aap.rest.AbstractRestConfig
 
 @ConfigurationProperties(PDF)
-@ConstructorBinding
 class PDFGeneratorConfig(
         @DefaultValue("50MB") val codecSize: DataSize,
         @DefaultValue(DEFAULT_PING_PATH) pingPath: String,

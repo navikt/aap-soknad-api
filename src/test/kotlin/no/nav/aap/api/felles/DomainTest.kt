@@ -5,8 +5,8 @@ import java.time.LocalDate.now
 import java.time.LocalDateTime
 import java.time.LocalDateTime.*
 import java.time.ZonedDateTime
-import javax.validation.Validation
-import javax.validation.constraints.Min
+import jakarta.validation.Validation
+import jakarta.validation.constraints.Min
 import kotlin.time.toKotlinDuration
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

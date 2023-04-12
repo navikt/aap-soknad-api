@@ -7,6 +7,7 @@ import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
 import io.micrometer.core.annotation.Timed
 import java.nio.charset.StandardCharsets.UTF_8
 import java.time.LocalDateTime.now
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
@@ -17,7 +18,6 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callId
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
-import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 
 @ConditionalOnGCP
 @Timed

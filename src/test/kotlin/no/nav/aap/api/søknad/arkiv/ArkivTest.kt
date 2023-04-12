@@ -2,14 +2,7 @@ package no.nav.aap.api.søknad.arkiv
 
 import java.util.*
 import java.util.UUID.*
-import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.felles.MockWebServerExtensions.expect
-import no.nav.aap.api.felles.Navn
-import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
-import no.nav.aap.api.søknad.arkiv.Journalpost.AvsenderMottaker
-import no.nav.aap.api.søknad.arkiv.Journalpost.Bruker
-import no.nav.aap.api.søknad.arkiv.Journalpost.Dokument
-import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant
+import kotlin.test.assertEquals
 import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -21,7 +14,15 @@ import org.springframework.http.HttpStatus.CONFLICT
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.web.reactive.function.client.WebClient.builder
 import org.springframework.web.reactive.function.client.WebClient.create
-import org.springframework.web.reactive.function.client.WebClientResponseException
+import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.felles.MockWebServerExtensions.expect
+import no.nav.aap.api.felles.Navn
+import no.nav.aap.api.felles.error.IrrecoverableIntegrationException
+import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
+import no.nav.aap.api.søknad.arkiv.Journalpost.AvsenderMottaker
+import no.nav.aap.api.søknad.arkiv.Journalpost.Bruker
+import no.nav.aap.api.søknad.arkiv.Journalpost.Dokument
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant
 
 class ArkivTest {
 
@@ -53,20 +54,22 @@ class ArkivTest {
     fun ok() {
         arkiv.expect(kvittering,CREATED)
         assertOK(client.arkiver(journalpost()))
+        assertEquals(arkiv.requestCount,1)
+
     }
         @Test
         @DisplayName("Exception kastes etter alle retry-forsøkene er brukt opp")
         fun bad() {
             arkiv.expect(4,BAD_GATEWAY)
-            assertThrows<WebClientResponseException> {
-                client.arkiver(journalpost())
-            }
+            assertThrows<IrrecoverableIntegrationException> { client.arkiver(journalpost()) }
+            assertEquals(arkiv.requestCount,4)
     }
     @Test
     @DisplayName("Først respons som fører til retry, deretter 409 OK")
     fun badConflict() {
         arkiv.expect(BAD_GATEWAY).expect(kvittering,CONFLICT)
         assertOK(client.arkiver(journalpost()))
+        assertEquals(arkiv.requestCount,2)
     }
 
     private fun assertOK(resultat: ArkivResultat) {

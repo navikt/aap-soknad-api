@@ -2,7 +2,7 @@ package no.nav.aap.api.oppslag.kontaktinformasjon
 
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import javax.validation.constraints.Email
+import jakarta.validation.constraints.Email
 import no.nav.aap.api.oppslag.kontaktinformasjon.Kontaktinformasjon.Companion.EMPTY
 import no.nav.aap.util.LoggerUtil.getLogger
 

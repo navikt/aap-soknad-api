@@ -3,7 +3,14 @@ package no.nav.aap.api.oppslag.arkiv
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import java.time.LocalDateTime
 import java.util.*
-import no.nav.aap.api.felles.error.IntegrationException
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.HttpStatus.UNAUTHORIZED
+import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
+import reactor.core.publisher.Mono
+import no.nav.aap.api.felles.error.IrrecoverableIntegrationException
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.DOKUMENTER_QUERY
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost
@@ -16,13 +23,6 @@ import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJourna
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IDENT
 import no.nav.aap.util.AuthContext
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.http.HttpStatus.UNAUTHORIZED
-import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
-import reactor.core.publisher.Mono
 
 @Component
 class ArkivOppslagWebClientAdapter(
@@ -41,7 +41,8 @@ class ArkivOppslagWebClientAdapter(
             .bodyToMono<ByteArray>()
             .retryWhen(cf.retrySpec(log))
             .doOnSuccess { log.trace("Arkivoppslag returnerte  ${it.size} bytes") }
-            .block() ?: throw IntegrationException("Null response fra arkiv for  $journalpostId/$dokumentInfoId ")
+            .contextCapture()
+            .block() ?: throw IrrecoverableIntegrationException("Null response fra arkiv for  $journalpostId/$dokumentInfoId ")
 
     fun dokumenter() = query()
         ?.filter { it.journalposttype in listOf(I, U) }

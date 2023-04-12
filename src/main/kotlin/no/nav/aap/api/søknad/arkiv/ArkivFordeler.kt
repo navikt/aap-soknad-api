@@ -1,10 +1,10 @@
 package no.nav.aap.api.søknad.arkiv
 
+import org.springframework.stereotype.Service
 import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
-import org.springframework.stereotype.Service
 
 @Service
 class ArkivFordeler(private val arkiv: ArkivClient, private val generator: ArkivJournalpostGenerator) {

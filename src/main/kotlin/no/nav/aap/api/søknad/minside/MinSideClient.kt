@@ -1,8 +1,13 @@
 package no.nav.aap.api.søknad.minside
 
 import io.micrometer.core.instrument.Metrics.gauge
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.atomic.AtomicLong
+import org.apache.kafka.clients.producer.ProducerRecord
+import org.springframework.kafka.core.KafkaOperations
+import org.springframework.kafka.support.SendResult
+import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import no.nav.aap.api.config.Metrikker.Companion.MELLOMLAGRING
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
@@ -31,11 +36,6 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.springframework.kafka.core.KafkaOperations
-import org.springframework.kafka.support.SendResult
-import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 @Component
 data class MinSideProdusenter(val avro: KafkaOperations<NokkelInput, Any>, val utkast: KafkaOperations<String, String>, val forside: KafkaOperations<Fødselsnummer,MinSideForside>)

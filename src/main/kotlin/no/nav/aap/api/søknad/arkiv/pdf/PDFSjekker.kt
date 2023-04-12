@@ -1,15 +1,15 @@
 package no.nav.aap.api.søknad.arkiv.pdf
 
+import org.apache.commons.lang3.exception.ExceptionUtils.hasCause
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException
+import org.apache.pdfbox.preflight.exception.ValidationException
+import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import no.nav.aap.api.error.Substatus.PASSWORD_PROTECTED
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
-import org.apache.commons.lang3.exception.ExceptionUtils.hasCause
-import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException
-import org.apache.pdfbox.preflight.exception.ValidationException
-import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 
 abstract class PDFSjekker : DokumentSjekker {
     protected val log = getLogger(javaClass)

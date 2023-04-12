@@ -1,6 +1,11 @@
 package no.nav.aap.api.oppslag.person
 
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.http.MediaType.TEXT_PLAIN
+import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.WebClient
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Ok
 import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IDENT
@@ -13,11 +18,6 @@ import no.nav.aap.util.Constants.PDL_SYSTEM
 import no.nav.aap.util.Constants.PDL_USER
 import no.nav.aap.util.StringExtensions.partialMask
 import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.http.MediaType.TEXT_PLAIN
-import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.WebClient
 
 @Component
 data class WebClients(
@@ -36,6 +36,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
             .accept(APPLICATION_JSON, TEXT_PLAIN)
             .retrieve()
             .toBodilessEntity()
+            .contextCapture()
             .block()
         return emptyMap()
     }

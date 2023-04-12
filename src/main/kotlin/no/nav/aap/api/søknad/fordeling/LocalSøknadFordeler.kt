@@ -1,11 +1,11 @@
 package no.nav.aap.api.søknad.fordeling
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import no.nav.aap.api.søknad.fordeling.SøknadFordeler.Kvittering
 import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.LoggerUtil.getLogger
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 
 @ConditionalOnMissingBean(SøknadFordeler::class)
 class LocalSøknadFordeler : Fordeler {

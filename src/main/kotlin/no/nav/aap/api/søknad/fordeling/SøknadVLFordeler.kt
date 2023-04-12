@@ -1,13 +1,13 @@
 package no.nav.aap.api.søknad.fordeling
 
+import org.apache.kafka.clients.producer.ProducerRecord
+import org.springframework.kafka.core.KafkaOperations
+import org.springframework.stereotype.Component
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.fordeling.VLFordelingConfig.VLTopicConfig
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.NAV_CALL_ID
 import no.nav.aap.util.MDCUtil.callId
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.springframework.kafka.core.KafkaOperations
-import org.springframework.stereotype.Component
 
 @Component
 class SøknadVLFordeler(private val fordeler: KafkaOperations<String, Any>) {

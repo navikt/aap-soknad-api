@@ -1,16 +1,16 @@
 package no.nav.aap.api.søknad.arkiv
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import no.nav.aap.api.felles.error.IntegrationException
-import no.nav.aap.rest.AbstractWebClientAdapter
-import no.nav.aap.util.Constants.JOARK
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
+import no.nav.aap.api.felles.error.IrrecoverableIntegrationException
+import no.nav.aap.api.felles.error.RecoverableIntegrationException
+import no.nav.aap.rest.AbstractWebClientAdapter
+import no.nav.aap.util.Constants.JOARK
 
 @Component
 class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("${JOARK}ping") pingClient: WebClient, val cf: ArkivConfig) :
@@ -27,13 +27,15 @@ class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("
                         bodyToMono(ArkivResponse::class.java)
                     }
                     else {
-                        Mono.error(WebClientResponseException(rawStatusCode(),"Uventet respons fra ${cf.arkivPath}",headers().asHttpHeaders(),null,null))
+                        Mono.error(RecoverableIntegrationException("Uventet respons ${statusCode()} fra,${cf.arkivPath}"))
                     }
                 }
             }
             .retryWhen(cf.retrySpec(log))
-            .doOnError { t: Throwable -> log.warn("Journalføring feilet", t) }
-            .block() ?: throw IntegrationException("Null respons fra arkiv")
+            .doOnError { t: Throwable -> log.warn("Journalføring feilet", t)
+                          throw IrrecoverableIntegrationException("Journalføring feilet",cause =t)}
+            .contextCapture()
+            .block() ?: throw IrrecoverableIntegrationException("Null respons fra arkiv")
 
 
     @JsonIgnoreProperties(ignoreUnknown = true)

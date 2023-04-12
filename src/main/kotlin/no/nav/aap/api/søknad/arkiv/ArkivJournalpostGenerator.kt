@@ -1,6 +1,12 @@
 package no.nav.aap.api.søknad.arkiv
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
+import org.springframework.http.MediaType.IMAGE_JPEG
+import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
+import org.springframework.http.MediaType.IMAGE_PNG
+import org.springframework.http.MediaType.IMAGE_PNG_VALUE
+import org.springframework.stereotype.Component
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
@@ -40,12 +46,6 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.encode
 import no.nav.aap.util.StringExtensions.størrelse
 import no.nav.aap.util.StringExtensions.toEncodedJson
-import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
-import org.springframework.http.MediaType.IMAGE_JPEG
-import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
-import org.springframework.http.MediaType.IMAGE_PNG
-import org.springframework.http.MediaType.IMAGE_PNG_VALUE
-import org.springframework.stereotype.Component
 
 @Component
 class ArkivJournalpostGenerator(

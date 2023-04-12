@@ -1,6 +1,17 @@
 package no.nav.aap.api.oppslag
 
 import java.util.*
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort.Direction.DESC
+import org.springframework.data.web.PageableDefault
+import org.springframework.data.web.SortDefault
+import org.springframework.http.CacheControl.noCache
+import org.springframework.http.ContentDisposition.attachment
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType.*
+import org.springframework.http.ResponseEntity.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import no.nav.aap.api.oppslag.OppslagController.Companion.OPPSLAG_BASE
 import no.nav.aap.api.oppslag.arbeid.ArbeidClient
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
@@ -15,17 +26,6 @@ import no.nav.aap.api.søknad.model.SøkerInfo
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.security.token.support.spring.ProtectedRestController
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort.Direction.DESC
-import org.springframework.data.web.PageableDefault
-import org.springframework.data.web.SortDefault
-import org.springframework.http.CacheControl.noCache
-import org.springframework.http.ContentDisposition.attachment
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType.*
-import org.springframework.http.ResponseEntity.*
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 
 @ProtectedRestController(value = [OPPSLAG_BASE], issuer = IDPORTEN)
 class OppslagController(

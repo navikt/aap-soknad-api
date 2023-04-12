@@ -1,9 +1,9 @@
 package no.nav.aap.api.søknad.arkiv.pdf
 
 import java.io.ByteArrayInputStream
-import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import org.apache.pdfbox.pdmodel.PDDocument.load
 import org.springframework.stereotype.Component
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 
 @Component
 class PDFEditerbarSjekker : PDFSjekker() {

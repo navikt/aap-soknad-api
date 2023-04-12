@@ -10,56 +10,26 @@ import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import io.micrometer.core.aop.CountedAspect
 import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
-import io.netty.channel.ChannelOption
 import io.netty.channel.ChannelOption.*
 import io.netty.channel.ConnectTimeoutException
 import io.netty.handler.logging.LogLevel.TRACE
-import io.netty.handler.timeout.ReadTimeoutException
-import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.TimeoutException
-import io.netty.handler.timeout.WriteTimeoutException
-import io.netty.handler.timeout.WriteTimeoutHandler
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP
+import jakarta.servlet.Filter
+import jakarta.servlet.FilterChain
+import jakarta.servlet.ServletException
+import jakarta.servlet.ServletRequest
+import jakarta.servlet.ServletResponse
 import java.io.IOException
 import java.time.Duration
 import java.time.Duration.*
 import java.util.*
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeUnit.SECONDS
 import java.util.function.Consumer
-import javax.servlet.Filter
-import javax.servlet.FilterChain
-import javax.servlet.ServletException
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
-import no.nav.aap.api.config.Metrikker.Companion.metricsWebClientFilterFunction
-import no.nav.aap.health.Pingable
-import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
-import no.nav.aap.rest.HeadersToMDCFilter
-import no.nav.aap.rest.tokenx.TokenXFilterFunction
-import no.nav.aap.rest.tokenx.TokenXJacksonModule
-import no.nav.aap.util.AuthContext
-import no.nav.aap.util.Constants.IDPORTEN
-import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.aap.util.MDCUtil.toMDC
-import no.nav.aap.util.StartupInfoContributor
-import no.nav.aap.util.StringExtensions.toJson
-import no.nav.boot.conditionals.ConditionalOnNotProd
-import no.nav.boot.conditionals.ConditionalOnProd
-import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
-import no.nav.security.token.support.client.core.OAuth2ClientException
-import no.nav.security.token.support.client.core.http.OAuth2HttpClient
-import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties
-import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
@@ -88,10 +58,31 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import org.threeten.bp.Duration.ofMillis
-import org.zalando.problem.jackson.ProblemModule
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 import reactor.util.retry.Retry.fixedDelay
+import no.nav.aap.health.Pingable
+import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
+import no.nav.aap.rest.HeadersToMDCFilter
+import no.nav.aap.rest.tokenx.TokenXFilterFunction
+import no.nav.aap.rest.tokenx.TokenXJacksonModule
+import no.nav.aap.util.AuthContext
+import no.nav.aap.util.Constants.IDPORTEN
+import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.MDCUtil.toMDC
+import no.nav.aap.util.StartupInfoContributor
+import no.nav.aap.util.StringExtensions.toJson
+import no.nav.boot.conditionals.ConditionalOnNotProd
+import no.nav.boot.conditionals.ConditionalOnProd
+import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
+import no.nav.security.token.support.client.core.OAuth2ClientException
+import no.nav.security.token.support.client.core.http.OAuth2HttpClient
+import no.nav.security.token.support.client.core.http.OAuth2HttpRequest
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenResponse
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
+import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @Configuration
 class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
@@ -121,7 +112,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b ->
-        b.modules(ProblemModule(),
+        b.modules(
                 JavaTimeModule(),
                 TokenXJacksonModule(),
                 KotlinModule.Builder().build())
@@ -181,7 +172,6 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         WebClientCustomizer { b ->
             b.clientConnector(ReactorClientHttpConnector(client))
                 .filter(correlatingFilterFunction(applicationName))
-                .filter(metricsWebClientFilterFunction(registry,"webclient"))
         }
 
     @ConditionalOnNotProd

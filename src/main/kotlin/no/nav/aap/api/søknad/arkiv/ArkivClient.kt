@@ -1,7 +1,7 @@
 package no.nav.aap.api.søknad.arkiv
 
-import no.nav.aap.util.LoggerUtil.getLogger
 import org.springframework.stereotype.Component
+import no.nav.aap.util.LoggerUtil.getLogger
 
 @Component
 class ArkivClient(private val adapter: ArkivWebClientAdapter) {

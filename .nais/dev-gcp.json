@@ -1,6 +1,6 @@
 {
   "tenant": "trygdeetaten.no",
-  "ingress": "https://aap-soknad-api.dev.intern.nav.no",
+  "ingress": "https://aap-soknad-api.intern.dev.nav.no",
   "env": "dev",
   "vedlegg-varighet": "14",
   "mellomlagring-varighet": "14",

@@ -1,16 +1,16 @@
 package no.nav.aap.api.søknad.minside
 
-import java.util.*
+import java.util.UUID
+import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.messaging.handler.annotation.Payload
+import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.Beskjed
 import no.nav.aap.api.søknad.minside.MinSideBeskjedRepository.EksternBeskjedNotifikasjon
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.EksternOppgaveNotifikasjon
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.doknotifikasjon.schemas.DoknotifikasjonStatus
-import org.springframework.kafka.annotation.KafkaListener
-import org.springframework.messaging.handler.annotation.Payload
-import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 @Component
 class MinSideEksternNotifikasjonStatusKonsument(private val repos: MinSideRepositories) {

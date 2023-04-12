@@ -2,15 +2,6 @@ package no.nav.aap.api.oppslag.person
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
-import no.nav.aap.api.oppslag.person.PDLConfig.Companion.PDL_CREDENTIALS
-import no.nav.aap.health.AbstractPingableHealthIndicator
-import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
-import no.nav.aap.rest.tokenx.TokenXFilterFunction
-import no.nav.aap.util.Constants.PDL_SYSTEM
-import no.nav.aap.util.Constants.PDL_USER
-import no.nav.aap.util.TokenExtensions.bearerToken
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
@@ -20,6 +11,15 @@ import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.Builder
+import no.nav.aap.api.oppslag.person.PDLConfig.Companion.PDL_CREDENTIALS
+import no.nav.aap.health.AbstractPingableHealthIndicator
+import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
+import no.nav.aap.rest.tokenx.TokenXFilterFunction
+import no.nav.aap.util.Constants.PDL_SYSTEM
+import no.nav.aap.util.Constants.PDL_USER
+import no.nav.aap.util.TokenExtensions.bearerToken
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 
 @Configuration
 class PDLClientBeanConfig {

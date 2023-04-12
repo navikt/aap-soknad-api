@@ -1,6 +1,6 @@
 package no.nav.aap.api.søknad.model
 
-import java.util.*
+import java.util.UUID
 
 data class StandardEttersending(val søknadId: UUID?,
                                 val ettersendteVedlegg: List<EttersendtVedlegg>) {

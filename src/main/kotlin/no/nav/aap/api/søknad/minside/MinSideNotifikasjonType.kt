@@ -1,13 +1,13 @@
 package no.nav.aap.api.søknad.minside
 
-import java.util.*
+import java.util.UUID
+import org.springframework.web.util.UriComponentsBuilder
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.UTLAND_SØKNAD
 import no.nav.aap.api.søknad.minside.MinSideConfig.BacklinksConfig
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.MINAAP
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.MinSideBacklinkContext.SØKNAD
-import org.springframework.web.util.UriComponentsBuilder
 
 data class MinSideNotifikasjonType private constructor(private val skjemaType: SkjemaType, private val ctx: MinSideBacklinkContext) {
 
