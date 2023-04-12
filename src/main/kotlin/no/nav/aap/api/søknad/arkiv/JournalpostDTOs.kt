@@ -7,6 +7,7 @@ import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ARKIV
+import no.nav.aap.api.søknad.model.StandardSøknad.Companion.VERSJON
 import no.nav.aap.util.Constants.AAP
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 
@@ -18,7 +19,10 @@ data class Journalpost(
         val eksternReferanseId: UUID = callIdAsUUID(),
         val kanal: String = KANAL,
         val journalposttype: String = INNGÅENDE,
+        val tilleggsopplysninger: List<Tilleggsopplysning> = listOf(Tilleggsopplysning("versjon", VERSJON)),
         val tema: String = AAP.uppercase()) {
+
+    data class Tilleggsopplysning(val nokkel: String, val verdi: String)
 
     data class Dokument private constructor(val tittel: String?, val brevkode: String? = null, val dokumentVarianter: List<DokumentVariant>) {
         constructor(dokumentVarianter: List<DokumentVariant>, type: SkjemaType = STANDARD) : this(type.tittel, type.kode, dokumentVarianter)

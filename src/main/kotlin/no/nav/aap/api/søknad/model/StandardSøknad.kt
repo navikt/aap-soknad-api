@@ -54,6 +54,10 @@ data class StandardSøknad(
         val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         override val vedlegg: Vedlegg? = null) : VedleggAware {
 
+    companion object{
+        const val VERSJON = "1.0"
+    }
+
     var fødselsdato : LocalDate? = null
     val innsendingTidspunkt = now()
 
