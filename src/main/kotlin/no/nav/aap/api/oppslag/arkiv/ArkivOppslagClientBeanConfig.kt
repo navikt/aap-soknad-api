@@ -12,10 +12,11 @@ import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAFQL
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
+import no.nav.aap.util.ChaosMonkey
 import no.nav.aap.util.LoggerUtil.getLogger
 
-@Configuration
-class ArkivOppslagClientBeanConfig {
+@Configuration(proxyBeanMethods = false)
+class ArkivOppslagClientBeanConfig(private val monkey : ChaosMonkey) {
 
     val log = getLogger(javaClass)
 
@@ -24,6 +25,7 @@ class ArkivOppslagClientBeanConfig {
     fun arkivOppslagWebClient(b: Builder, cfg: ArkivOppslagConfig, tokenX: TokenXFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
             .filter(tokenX)
+            .filter(monkey.chaosMonkeyRequestFilterFunction())
             .build()
 
     @Qualifier(SAFQL)

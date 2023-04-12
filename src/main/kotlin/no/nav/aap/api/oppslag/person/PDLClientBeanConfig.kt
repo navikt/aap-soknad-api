@@ -15,13 +15,14 @@ import no.nav.aap.api.oppslag.person.PDLConfig.Companion.PDL_CREDENTIALS
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
+import no.nav.aap.util.ChaosMonkey
 import no.nav.aap.util.Constants.PDL_SYSTEM
 import no.nav.aap.util.Constants.PDL_USER
 import no.nav.aap.util.TokenExtensions.bearerToken
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 class PDLClientBeanConfig {
 
     @Bean
