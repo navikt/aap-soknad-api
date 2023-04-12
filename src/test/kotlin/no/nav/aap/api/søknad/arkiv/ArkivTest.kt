@@ -54,14 +54,14 @@ class ArkivTest {
     fun ok() {
         arkiv.expect(kvittering,CREATED)
         assertOK(client.arkiver(journalpost()))
+        assertEquals(arkiv.requestCount,1)
+
     }
         @Test
         @DisplayName("Exception kastes etter alle retry-forsøkene er brukt opp")
         fun bad() {
             arkiv.expect(4,BAD_GATEWAY)
-            assertThrows<IrrecoverableIntegrationException> {
-                client.arkiver(journalpost())
-            }
+            assertThrows<IrrecoverableIntegrationException> { client.arkiver(journalpost()) }
             assertEquals(arkiv.requestCount,4)
     }
     @Test
@@ -69,6 +69,7 @@ class ArkivTest {
     fun badConflict() {
         arkiv.expect(BAD_GATEWAY).expect(kvittering,CONFLICT)
         assertOK(client.arkiver(journalpost()))
+        assertEquals(arkiv.requestCount,2)
     }
 
     private fun assertOK(resultat: ArkivResultat) {
