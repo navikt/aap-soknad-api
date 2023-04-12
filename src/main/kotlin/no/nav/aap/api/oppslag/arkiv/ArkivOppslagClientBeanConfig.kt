@@ -25,7 +25,6 @@ class ArkivOppslagClientBeanConfig(private val monkey : ChaosMonkey) {
     fun arkivOppslagWebClient(b: Builder, cfg: ArkivOppslagConfig, tokenX: TokenXFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
             .filter(tokenX)
-            .filter(monkey.chaosMonkeyRequestFilterFunction())
             .build()
 
     @Qualifier(SAFQL)
