@@ -1,6 +1,5 @@
 package no.nav.aap.api
 
-import io.micrometer.context.ContextRegistry
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
 import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup
@@ -12,7 +11,6 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.scheduling.annotation.EnableScheduling
 import no.nav.aap.util.AccessorUtil
-import no.nav.aap.util.RequestAttributesAccessor
 import no.nav.boot.conditionals.Cluster.Companion.profiler
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
@@ -32,7 +30,6 @@ class AAPSøknadApiApplication
         runApplication<AAPSøknadApiApplication>(*args) {
             setAdditionalProfiles(*profiler())
             AccessorUtil.init()
-            ContextRegistry.getInstance().registerThreadLocalAccessor(RequestAttributesAccessor())
             applicationStartup = BufferingApplicationStartup(4096)
         }
     }
