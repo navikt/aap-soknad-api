@@ -67,7 +67,6 @@ import no.nav.aap.rest.HeadersToMDCFilter
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.rest.tokenx.TokenXJacksonModule
 import no.nav.aap.util.AuthContext
-import no.nav.aap.util.ChaosMonkey
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.toMDC
@@ -89,9 +88,6 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
     val log = getLogger(javaClass)
 
-
-    @Bean
-    fun monkey() = ChaosMonkey()
     @Bean
     @Primary
     fun gcpStorageRetrySettings(@Value("\${mellomlagring.timeout:2500}") timeoutMs: Int) =
