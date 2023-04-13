@@ -111,11 +111,6 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         .build()
         .service
     @Bean
-    fun countedAspect(registry: MeterRegistry) = CountedAspect(registry)
-    @Bean
-    fun timedAspect(registry: MeterRegistry) = TimedAspect(registry)
-
-    @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b ->
         b.modules(
                 JavaTimeModule(),
