@@ -26,11 +26,11 @@ import no.nav.aap.util.AuthContext
 
 @Component
 class ArkivOppslagWebClientAdapter(
-        @Qualifier(SAF) webCLient: WebClient,
-        @Qualifier(SAF) private val graphQLClient: GraphQLWebClient,
-        private val ctx: AuthContext,
-        private val mapper: ArkivOppslagMapper,
-        val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(webCLient, cf) {
+    @Qualifier(SAF) webCLient: WebClient,
+    @Qualifier(SAF) private val graphQLClient: GraphQLWebClient,
+    private val ctx: AuthContext,
+    private val mapper: ArkivOppslagMapper,
+    val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(webCLient, cf) {
 
     fun dokument(journalpostId: String, dokumentInfoId: String) =
         webClient.get()
@@ -53,7 +53,9 @@ class ArkivOppslagWebClientAdapter(
         ?.firstOrNull { it.journalpostId == journalPostId }
         ?.dokumenter?.firstOrNull()?.dokumentInfoId   // Søknaden er alltid  første elementet
 
-    private fun query() = query<ArkivOppslagJournalposter>(graphQLClient, DOKUMENTER_QUERY,  mapOf(IDENT to ctx.getFnr().fnr))?.journalposter
+    private fun query() = query<ArkivOppslagJournalposter>(graphQLClient, DOKUMENTER_QUERY,  ctx.toIdent())?.journalposter
+
+    private fun AuthContext.toIdent() = mapOf(IDENT to getFnr().fnr)
 }
 
 @Component
@@ -62,9 +64,7 @@ class ArkivOppslagMapper {
         with(journalpost) {
             dokumenter.filter { v ->
                 v.dokumentvarianter.any {
-                    with(it) {
-                        filtype == PDF && brukerHarTilgang && ARKIV == variantformat
-                    }
+                    with(it) { filtype == PDF && brukerHarTilgang && ARKIV == variantformat }
                 }
             }.map { dok ->
                 DokumentOversiktInnslag(
@@ -72,9 +72,7 @@ class ArkivOppslagMapper {
                         dok.tittel,
                         journalposttype,
                         eksternReferanseId,
-                        relevanteDatoer.first {
-                            it.datotype == DATO_OPPRETTET
-                        }.dato)
+                        relevanteDatoer.first { it.datotype == DATO_OPPRETTET }.dato)
             }.sortedByDescending { it.dato }
         }
 
