@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag.søknad
 
+import io.micrometer.observation.annotation.Observed
 import java.time.Instant
 import java.time.ZoneOffset.UTC
 import java.util.UUID
@@ -20,6 +21,7 @@ import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 
 @Component
+@Observed
 class SøknadClient(private val repo: SøknadRepository,
                    private val arkivClient: ArkivOppslagClient,
                    private val minside: MinSideClient,

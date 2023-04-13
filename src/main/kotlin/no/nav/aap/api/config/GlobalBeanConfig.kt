@@ -10,6 +10,8 @@ import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import io.micrometer.core.aop.CountedAspect
 import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.observation.ObservationRegistry
+import io.micrometer.observation.aop.ObservedAspect
 import io.netty.channel.ChannelOption.*
 import io.netty.channel.ConnectTimeoutException
 import io.netty.handler.logging.LogLevel.TRACE
@@ -87,6 +89,9 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 @Configuration
 class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
     val log = getLogger(javaClass)
+
+    @Bean
+    fun observedAspect(reg : ObservationRegistry) = ObservedAspect(reg)
 
     @Bean
     @Primary

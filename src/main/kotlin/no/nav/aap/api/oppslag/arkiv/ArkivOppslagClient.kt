@@ -1,11 +1,13 @@
 package no.nav.aap.api.oppslag.arkiv
 
+import io.micrometer.observation.annotation.Observed
 import java.util.UUID
 import org.springframework.stereotype.Component
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.størrelse
 
 @Component
+@Observed
 class ArkivOppslagClient(private val adapter: ArkivOppslagWebClientAdapter) {
     private val log = getLogger(javaClass)
 
