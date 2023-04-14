@@ -7,7 +7,7 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.størrelse
 
 @Component
-@Observed(name = "SAF")
+@Observed(contextualName = "SAF")
 class ArkivOppslagClient(private val adapter: ArkivOppslagWebClientAdapter) {
     private val log = getLogger(javaClass)
 

@@ -4,7 +4,7 @@ import io.micrometer.observation.annotation.Observed
 import org.springframework.stereotype.Component
 
 @Component
-@Observed(name = "Konto")
+@Observed(contextualName = "Konto")
 class KontoClient(private val adapter: KontoWebClientAdapter) {
     fun kontoInfo() = adapter.kontoInfo()
 }
