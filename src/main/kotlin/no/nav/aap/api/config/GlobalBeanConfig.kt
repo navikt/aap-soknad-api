@@ -34,6 +34,7 @@ import java.util.*
 import java.util.function.Consumer
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.actuate.endpoint.SanitizingFunction
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
@@ -92,6 +93,22 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     @Bean
     fun observedAspect(reg : ObservationRegistry) = ObservedAspect(reg)
+
+    @Bean
+    fun propertyKeySanitizingFunction() = SanitizingFunction {
+        with(it) {
+            if (key.contains("jwk", ignoreCase = true)) {
+                return@SanitizingFunction withValue("******")
+            }
+            if (key.contains("private-key", ignoreCase = true)) {
+                return@SanitizingFunction withValue("******")
+            }
+            if (key.contains("password", ignoreCase = true)) {
+                return@SanitizingFunction withValue("******")
+            }
+        }
+        it
+    }
 
     @Bean
     @Primary
