@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 import no.nav.aap.util.LoggerUtil.getLogger
 
 @Component
-@Observed
+@Observed(name = "Dokarkiv")
 class ArkivClient(private val adapter: ArkivWebClientAdapter) {
     private val log = getLogger(javaClass)
 
