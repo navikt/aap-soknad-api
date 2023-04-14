@@ -98,23 +98,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     @Bean
     fun propertyKeySanitizingFunction() = PropertyValueSanitzer()
 
-    @Bean
-    @Primary
-    fun gcpStorageRetrySettings(@Value("\${mellomlagring.timeout:2500}") timeoutMs: Int) =
-         ServiceOptions.getDefaultRetrySettings().toBuilder()
-            .setInitialRetryDelay(ofMillis(400))
-            .setMaxRetryDelay(ofMillis(900))
-            .setRetryDelayMultiplier(1.5)
-            .setMaxAttempts(5)
-            .setTotalTimeout(ofMillis(timeoutMs.toLong()))
-            .build()
-    @Bean
-    @Primary
-    fun gcpStorage(retrySettings: RetrySettings) =  StorageOptions
-        .newBuilder()
-        .setRetrySettings(retrySettings)
-        .build()
-        .service
+
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b ->
         b.modules(
@@ -142,8 +126,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                             .bearerFormat("JWT")))
 
     @Bean
-    fun configMatcher() =
-        object : ClientConfigurationPropertiesMatcher {}
+    fun configMatcher() = object : ClientConfigurationPropertiesMatcher {}
 
     @Bean
     @Order(HIGHEST_PRECEDENCE + 2)
