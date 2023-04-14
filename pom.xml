@@ -30,7 +30,7 @@
         <kotlin.version>1.8.20</kotlin.version>
         <logstash.version>7.3</logstash.version>
         <okhttp3.version>4.9.1</okhttp3.version>
-        <pdfbox.version>2.0.27</pdfbox.version>
+        <pdfbox.version>2.0.28</pdfbox.version>
         <reactor.version>1.0.1.RELEASE</reactor.version>
         <resilience4j.version>2.0.2</resilience4j.version>
         <revision>0.0.1-SNAPSHOT</revision>
