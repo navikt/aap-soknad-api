@@ -73,6 +73,7 @@ import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.toMDC
+import no.nav.aap.util.PropertyValueSanitzer
 import no.nav.aap.util.StartupInfoContributor
 import no.nav.aap.util.StringExtensions.toJson
 import no.nav.boot.conditionals.ConditionalOnNotProd
@@ -95,20 +96,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     fun observedAspect(reg : ObservationRegistry) = ObservedAspect(reg)
 
     @Bean
-    fun propertyKeySanitizingFunction() = SanitizingFunction {
-        with(it) {
-            if (key.contains("jwk", ignoreCase = true)) {
-                return@SanitizingFunction withValue("******")
-            }
-            if (key.contains("private-key", ignoreCase = true)) {
-                return@SanitizingFunction withValue("******")
-            }
-            if (key.contains("password", ignoreCase = true)) {
-                return@SanitizingFunction withValue("******")
-            }
-        }
-        it
-    }
+    fun propertyKeySanitizingFunction() = PropertyValueSanitzer()
 
     @Bean
     @Primary
