@@ -39,14 +39,10 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
         companion object{
             const val CREATED = "created"
         }
-
     }
 
     @MappedSuperclass
-    abstract class BaseEntity(val fnr: String,
-                              val eventid: UUID,
-                              @LastModifiedDate var updated: LocalDateTime? = null) :
-        IdentifiableTimestampedBaseEntity() {
+    abstract class BaseEntity(val fnr: String, val eventid: UUID, @LastModifiedDate var updated: LocalDateTime? = null) : IdentifiableTimestampedBaseEntity() {
         override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, id=$id)]"
     }
 
@@ -57,8 +53,7 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
 
     @MappedSuperclass
     @EntityListeners(LoggingEntityListener::class, AuditingEntityListener::class)
-    abstract class IdentifiableTimestampedBaseEntity(@CreatedDate var created: LocalDateTime? = null,
-                                                     @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0)
+    abstract class IdentifiableTimestampedBaseEntity(@CreatedDate var created: LocalDateTime? = null, @Id @GeneratedValue(strategy = IDENTITY) val id: Long = 0)
 
 }
 

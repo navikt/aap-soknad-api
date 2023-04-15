@@ -4,7 +4,6 @@ import java.net.URI
 import java.time.Duration.*
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.NestedConfigurationProperty
-import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.web.util.UriBuilder
 import reactor.util.retry.Retry.*
 import no.nav.aap.api.oppslag.behandler.BehandlerConfig.Companion.BEHANDLER
@@ -12,23 +11,18 @@ import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.rest.AbstractRestConfig.RetryConfig.Companion.DEFAULT
 
 @ConfigurationProperties(BEHANDLER)
-class BehandlerConfig(
-        @DefaultValue(DEFAULT_URI) baseUri: URI,
-        @DefaultValue(DEFAULT_PING_PATH) pingPath: String,
-        @DefaultValue(DEFAULT_PATH)  val path: String,
+class BehandlerConfig(baseUri: URI = DEFAULT_URI, pingPath: String = DEFAULT_PING_PATH, val path: String = DEFAULT_PATH,
         @NestedConfigurationProperty val retryCfg: RetryConfig = DEFAULT,
-        @DefaultValue("true") enabled: Boolean) : AbstractRestConfig(baseUri, pingPath, BEHANDLER, enabled,retryCfg) {
+        enabled: Boolean= true) : AbstractRestConfig(baseUri, pingPath, BEHANDLER, enabled,retryCfg) {
     fun path(b: UriBuilder) = b.path(path).build()
-
-    constructor(baseUri: URI) : this(baseUri,DEFAULT_PING_PATH,DEFAULT_PATH,DEFAULT,true)
 
 
     companion object {
         const val BEHANDLER = "behandler"
         const val BEHANDLERPING = "${BEHANDLER}ping"
-        const val DEFAULT_URI = "http://isdialogmelding.teamsykefravr"
-        const val DEFAULT_PATH = "api/person/v1/behandler/self"
-        const val DEFAULT_PING_PATH = "is_alive"
+        private val DEFAULT_URI = URI.create("http://isdialogmelding.teamsykefravr")
+        private const val DEFAULT_PATH = "api/person/v1/behandler/self"
+        private const val DEFAULT_PING_PATH = "is_alive"
     }
 
     override fun toString() = "$javaClass.simpleName [baseUri=$baseUri,  path=$path, pingEndpoint=$pingEndpoint]"

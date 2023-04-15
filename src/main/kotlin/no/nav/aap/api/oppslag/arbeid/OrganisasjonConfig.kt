@@ -12,13 +12,10 @@ import no.nav.aap.rest.AbstractRestConfig.RetryConfig.Companion.DEFAULT
 import no.nav.aap.util.Constants.ORGANISASJON
 
 @ConfigurationProperties(ORGANISASJON)
-class OrganisasjonConfig(baseUri: URI,
-                         @DefaultValue(V1_ORGANISASJON) private val organisasjonPath: String,
+class OrganisasjonConfig(baseUri: URI, private val organisasjonPath: String = V1_ORGANISASJON,
                          @NestedConfigurationProperty private val retryCfg: RetryConfig = DEFAULT,
-                         @DefaultValue("true") enabled: Boolean) :
+                         @DefaultValue("true") enabled: Boolean = true) :
     AbstractRestConfig(baseUri, pingPath(organisasjonPath), ORGANISASJON, enabled,retryCfg) {
-
-    constructor(baseUri: URI) : this(baseUri, V1_ORGANISASJON,DEFAULT,true)
 
     fun organisasjonURI(b: UriBuilder, orgnr: OrgNummer) = b.path(organisasjonPath).build(orgnr.orgnr)
 

@@ -6,7 +6,6 @@ import java.time.Period
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.NestedConfigurationProperty
-import org.springframework.boot.context.properties.bind.DefaultValue
 import org.springframework.boot.convert.PeriodFormat
 import org.springframework.boot.convert.PeriodStyle.*
 import org.springframework.web.util.UriBuilder
@@ -15,17 +14,11 @@ import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.rest.AbstractRestConfig.RetryConfig.Companion.DEFAULT
 
 @ConfigurationProperties(ARBEID)
-class ArbeidConfig(baseUri: URI,
-                   @DefaultValue(PATH) private val path: String,
-                   @DefaultValue("true") enabled: Boolean,
-                   @DefaultValue(PINGPATH) pingPath: String,
-                   @NestedConfigurationProperty private val retryCfg: RetryConfig = DEFAULT,
-                   @DefaultValue(FEMÅR) @PeriodFormat(SIMPLE) private val tidTilbake: Period,
-                   @DefaultValue("false") val sporingsinformasjon: Boolean) :
+class ArbeidConfig(baseUri: URI, private val path: String = PATH, enabled: Boolean = true,
+                   pingPath: String = PINGPATH, @NestedConfigurationProperty private val retryCfg: RetryConfig = DEFAULT,
+                   @PeriodFormat(SIMPLE) private val tidTilbake: Period = Period.ofYears(5),
+                   val sporingsinformasjon: Boolean = false) :
     AbstractRestConfig(baseUri, pingPath, ARBEID, enabled,retryCfg) {
-
-    constructor(baseUri: URI) : this(baseUri, PATH,true, PINGPATH,DEFAULT, detectAndParse(FEMÅR),false)
-
 
     fun arbeidsforholdURI(b: UriBuilder) =
         b.path(path)
@@ -38,12 +31,11 @@ class ArbeidConfig(baseUri: URI,
         "$javaClass.simpleName [baseUri=$baseUri,  path=$path, pingEndpoint=$pingEndpoint, tidTilbake=$tidTilbake]"
 
     companion object {
-        const val PINGPATH = "internal/isAlive"
         const val ARBEID = "arbeidsforhold"
-        const val PATH = "api/v1/arbeidstaker/arbeidsforhold"
-        const val FOM = "ansettelsesperiodeFom"
-        const val FEMÅR = "5y"
-        const val SPORINGSINFORMASJON = "sporingsinformasjon"
-        const val HISTORIKK = "historikk"
+        private  const val PINGPATH = "internal/isAlive"
+        private const val PATH = "api/v1/arbeidstaker/arbeidsforhold"
+        private const val FOM = "ansettelsesperiodeFom"
+        private const val SPORINGSINFORMASJON = "sporingsinformasjon"
+        private const val HISTORIKK = "historikk"
     }
 }

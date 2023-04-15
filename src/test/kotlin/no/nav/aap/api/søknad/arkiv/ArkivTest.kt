@@ -19,6 +19,7 @@ import no.nav.aap.api.felles.MockWebServerExtensions.expect
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.error.IrrecoverableIntegrationException
 import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
+import no.nav.aap.api.søknad.arkiv.ArkivConfig.HendelseConfig
 import no.nav.aap.api.søknad.arkiv.Journalpost.AvsenderMottaker
 import no.nav.aap.api.søknad.arkiv.Journalpost.Bruker
 import no.nav.aap.api.søknad.arkiv.Journalpost.Dokument
@@ -45,7 +46,7 @@ class ArkivTest {
     @BeforeEach
     fun beforeEach() {
         arkiv = MockWebServer()
-        val cfg = ArkivConfig(arkiv.url("/").toUri())
+        val cfg = ArkivConfig(arkiv.url("/").toUri(), HendelseConfig("jalla"))
         client = ArkivClient(ArkivWebClientAdapter(builder().baseUrl("${cfg.baseUri}").build(), create(), cfg))
     }
 

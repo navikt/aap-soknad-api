@@ -159,8 +159,7 @@ class DBSøknadTest {
                 TopicConfig("oppgave", ofDays(1), true, emptyList(),4),
                 UtkastConfig("utkast", true),
                 ForsideConfig("forside",true),
-                true,
-                BacklinksConfig(NAV, NAV, NAV),"done")
+                BacklinksConfig(NAV, NAV, NAV),true, "done")
         private val  FNR = Fødselsnummer("08089403198")
 
         internal fun ettesending(id: UUID,  type: VedleggType) = StandardEttersending(id, listOf(EttersendtVedlegg(Vedlegg(),type)))

@@ -15,9 +15,8 @@ data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConf
                          @NestedConfigurationProperty val oppgave: TopicConfig,
                          @NestedConfigurationProperty val utkast: UtkastConfig,
                          @NestedConfigurationProperty val forside: ForsideConfig,
-                         @DefaultValue("true") val enabled: Boolean,
                          @NestedConfigurationProperty val backlinks: BacklinksConfig,
-                         val done: String) : AbstractKafkaConfig(MINSIDE,enabled) {
+                         val enabled: Boolean = true, val done: String) : AbstractKafkaConfig(MINSIDE,enabled) {
 
     val app = nais.app
     val namespace = nais.namespace
@@ -26,15 +25,14 @@ data class MinSideConfig(@NestedConfigurationProperty private val nais: NAISConf
 
     data class BacklinksConfig(val innsyn: URI, val standard: URI, val utland: URI)
     data class TopicConfig(val topic: String,
-                           @DefaultValue(DEFAULT_VARIGHET) val varighet: Duration,
-                           @DefaultValue("true") val enabled: Boolean,
+                           val varighet: Duration = Duration.ofDays(14),
+                           val enabled: Boolean = true,
                            val preferertekanaler: List<PreferertKanal> = emptyList(),
                            @DefaultValue(DEFAULT_LEVEL) val sikkerhetsnivaa: Int)
 
     data class NAISConfig(val namespace: String, val app: String)
 
     companion object {
-        private const val DEFAULT_VARIGHET = "14d"
         const val MINSIDE = "minside"
         private const val DEFAULT_LEVEL = "3"
     }
