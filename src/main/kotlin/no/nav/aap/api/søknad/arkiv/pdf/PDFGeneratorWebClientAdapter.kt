@@ -22,37 +22,40 @@ import no.nav.aap.util.StringExtensions.toJson
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 
 @Component
-class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client: WebClient,
-                                   private val cf: PDFGeneratorConfig,
-                                   private val mapper: ObjectMapper) : AbstractWebClientAdapter(client, cf) {
-    fun generate(søker: Søker, kvittering: PDFKvittering) = generate(cf.standardPath, StandardData(søker, kvittering).toJson(mapper))
-    fun generate(søker: Søker, søknad: UtlandSøknad) = generate(cf.utlandPath, UtlandData(søker, søknad).toJson(mapper))
-    private fun generate(path: String, data: Any) =
+class PDFGeneratorWebClientAdapter(@Qualifier(PDF) client : WebClient,
+                                   private val cf : PDFGeneratorConfig,
+                                   private val mapper : ObjectMapper) : AbstractWebClientAdapter(client, cf) {
+
+    fun generate(søker : Søker, kvittering : PDFKvittering) = generate(cf.standardPath, StandardData(søker, kvittering).toJson(mapper))
+    fun generate(søker : Søker, søknad : UtlandSøknad) = generate(cf.utlandPath, UtlandData(søker, søknad).toJson(mapper))
+    private fun generate(path : String, data : Any) =
         webClient.post()
             .uri { it.path(path).build() }
             .contentType(APPLICATION_JSON)
             .bodyValue(data)
             .retrieve()
             .bodyToMono<ByteArray>()
-            .doOnError { t: Throwable ->
+            .doOnError { t : Throwable ->
                 log.warn("PDF-generering mot $path feiler", t)
             }
             .doOnSuccess {
-                log.trace(CONFIDENTIAL, "Sendte JSON $data")
+                log.trace(CONFIDENTIAL, "Sendte JSON {}", data)
             }
+            .contextCapture()
             .block() ?: throw IrrecoverableIntegrationException("O bytes i retur fra pdfgen, pussig")
 
-    private data class StandardData(val søker: Søker, val kvittering: PDFKvittering)
-    private data class UtlandData constructor(val fødselsnummer: Fødselsnummer,
-                                              val landKode: CountryCode,
-                                              val land: String,
-                                              val navn: Navn?,
-                                              val periode: Periode,
-                                              val dato: LocalDate = now()) {
-        constructor(søker: Søker, søknad: UtlandSøknad) : this(søker.fnr,
-                søknad.land,
-                søknad.land.toLocale().displayName,
-                søker.navn,
-                søknad.periode)
+    private data class StandardData(val søker : Søker, val kvittering : PDFKvittering)
+    private data class UtlandData constructor(val fødselsnummer : Fødselsnummer,
+                                              val landKode : CountryCode,
+                                              val land : String,
+                                              val navn : Navn?,
+                                              val periode : Periode,
+                                              val dato : LocalDate = now()) {
+
+        constructor(søker : Søker, søknad : UtlandSøknad) : this(søker.fnr,
+            søknad.land,
+            søknad.land.toLocale().displayName,
+            søker.navn,
+            søknad.periode)
     }
 }

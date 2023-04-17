@@ -1,6 +1,18 @@
 package no.nav.aap.api.arkiv
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.io.FileOutputStream
+import java.time.LocalDateTime
+import java.util.Base64
+import org.mockito.Mock
+import org.mockito.Mockito.any
+import org.mockito.Mockito.`when`
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.core.io.ClassPathResource
+import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
+import org.springframework.http.MediaType.IMAGE_PNG_VALUE
+import org.springframework.util.StreamUtils.copyToByteArray
 import no.nav.aap.api.OMPersoner
 import no.nav.aap.api.OMSøknad
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
@@ -13,36 +25,25 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.PDFKvittering
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
-import org.mockito.Mock
-import org.mockito.Mockito.any
-import org.mockito.Mockito.`when`
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.core.io.ClassPathResource
-import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
-import org.springframework.http.MediaType.IMAGE_PNG_VALUE
-import org.springframework.util.StreamUtils.copyToByteArray
-import java.io.FileOutputStream
-import java.time.LocalDateTime
-import java.util.*
 
 //@ExtendWith(MockitoExtension::class)
 //@JsonTest
 class ArkivConverterTest {
 
     @Autowired
-    lateinit var mapper: ObjectMapper
+    lateinit var mapper : ObjectMapper
 
     @Mock
-    lateinit var lager: Dokumentlager
+    lateinit var lager : Dokumentlager
 
     @Mock
-    lateinit var ctx: TokenValidationContextHolder
+    lateinit var ctx : TokenValidationContextHolder
 
     @Mock
-    lateinit var pdf: PDFGenerator
+    lateinit var pdf : PDFGenerator
 
-    fun hentFil(fil:String) = copyToByteArray(ClassPathResource(fil).inputStream)
+    fun hentFil(fil : String) = copyToByteArray(ClassPathResource(fil).inputStream)
+
     //@Test
     fun convert() {
 
@@ -57,7 +58,7 @@ class ArkivConverterTest {
             .thenReturn(dokinfo1)
             .thenReturn(dokinfo2)
 
-        val søknad = Innsending(OMSøknad.standard_soknad(), PDFKvittering(listOf(),LocalDateTime.now()))
+        val søknad = Innsending(OMSøknad.standard_soknad(), PDFKvittering(listOf(), LocalDateTime.now()))
         val søker = OMPersoner.ole_olsen()
         val c = ArkivJournalpostGenerator(mapper, lager, pdf, PDFFraBildeFKonverterer(BildeSkalerer()))
         val converted = c.journalpostFra(søknad, søker)
@@ -71,16 +72,15 @@ class ArkivConverterTest {
         }
     }
 
-    private fun bytesFra(navn: String) = copyToByteArray(ClassPathResource(navn).inputStream)
-
+    private fun bytesFra(navn : String) = copyToByteArray(ClassPathResource(navn).inputStream)
 }
 
-private fun <T> anyObject(): T {
+private fun <T> anyObject() : T {
     any<T>()
     return uninitialized()
 }
 
-private fun <T> uninitialized(): T = null as T
+private fun <T> uninitialized() : T = null as T
 
 @SpringBootApplication
 internal class DummyApplication
