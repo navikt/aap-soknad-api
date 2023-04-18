@@ -1,8 +1,9 @@
 package no.nav.aap.api.søknad.model
 
 import java.time.LocalDateTime
+import java.time.ZoneId
 
-data class PDFKvittering(val temaer : List<Tema>, val mottattdato : LocalDateTime = LocalDateTime.now()) {
+data class PDFKvittering(val temaer : List<Tema>, val mottattdato : LocalDateTime = LocalDateTime.now(ZoneId.of("Europe/Oslo"))) {
     data class Tema(val type : String, val overskrift : String?, val underblokker : List<Blokk>) {
         data class Blokk(val type : String,
                          val overskrift : String?,
