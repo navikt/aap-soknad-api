@@ -11,8 +11,10 @@ import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Ok
 import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IDENT
 import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IDENTER
 import no.nav.aap.api.oppslag.person.PDLBolkBarn.PDLBarn
+import no.nav.aap.api.oppslag.person.PDLMapper.beskyttedeBarn
 import no.nav.aap.api.oppslag.person.PDLMapper.pdlSøkerTilSøker
 import no.nav.aap.api.oppslag.person.PDLSøker.PDLForelderBarnRelasjon
+import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.PDL_SYSTEM
 import no.nav.aap.util.Constants.PDL_USER
@@ -69,6 +71,15 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         } else {
             emptySequence()
         }
+
+    fun harBeskyttedeFosterbarn(barn: List<Barn>) =
+        with(barn.map { it.fnr }.mapNotNull { it?.fnr }) {
+         if (isNotEmpty()) {
+             false
+        }
+        else beskyttedeBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
+
+    }
 
     override fun toString() =
         "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"

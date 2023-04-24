@@ -40,6 +40,12 @@ object PDLMapper {
             }.toList()
 
 
+    fun beskyttedeBarn(fosterbarn: List<PDLBolkBarn>) = fosterbarn
+        .map { it.barn }
+        .filterNot(::død)
+        .any(::beskyttet)
+
+
 
     private fun navnFra(navn: Set<PDLNavn>) = navnFra(navn.first())
 

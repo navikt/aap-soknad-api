@@ -84,5 +84,5 @@ class ArkivTest {
             AvsenderMottaker(Fødselsnummer("08089403198"),
             Navn("Test","Tester","Testsen")),
             Bruker(Fødselsnummer("08089403198")), listOf(Dokument("tittel","kode",
-            DokumentVariant("fysisk"))), randomUUID())
+            DokumentVariant("fysisk"))), emptyList(), randomUUID())
 }
