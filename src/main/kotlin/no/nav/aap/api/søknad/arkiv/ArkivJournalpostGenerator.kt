@@ -85,14 +85,16 @@ class ArkivJournalpostGenerator(
 
     fun journalpostFra(innsending: Innsending, søker: Søker) =
         with(søker) {
+            log.trace("Sjekker vikafossen")
             val tilVikafossen =  tilVikafossen(innsending.søknad.andreBarn.map { it.barn }) || tilVikafossen(søker.barn)
+            log.trace("Sjekket vikafossen")
             Journalpost(STANDARD.tittel,
                     AvsenderMottaker(fnr, navn),
                     Bruker(fnr),
                     journalpostDokumenterFra(innsending, this),
                 listOf(Tilleggsopplysning("versjon", VERSJON),Tilleggsopplysning("routing","$tilVikafossen")))
                 .also {
-                        log.trace("Journalpost med {} er {}", it.størrelse(), it.dokumenter)
+                        log.trace("Journalpost med {} er {}  {}", it.størrelse(), it.dokumenter, it.tilleggsopplysninger)
                     }
                 }
 
