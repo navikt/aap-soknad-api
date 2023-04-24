@@ -29,6 +29,7 @@ import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.StandardSøknad.Companion.VERSJON
 import no.nav.aap.api.søknad.model.Søker
+import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.LÅN
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
@@ -84,19 +85,18 @@ class ArkivJournalpostGenerator(
 
     fun journalpostFra(innsending: Innsending, søker: Søker) =
         with(søker) {
+            val tilVikafossen =  tilVikafossen(innsending.søknad.andreBarn.map { it.barn }) || tilVikafossen(søker.barn)
             Journalpost(STANDARD.tittel,
                     AvsenderMottaker(fnr, navn),
                     Bruker(fnr),
                     journalpostDokumenterFra(innsending, this),
-                    tilleggsopplysningerFra(innsending))
+                listOf(Tilleggsopplysning("versjon", VERSJON),Tilleggsopplysning("routing","$tilVikafossen")))
                 .also {
-
-                    log.trace("Journalpost med {} er {}", it.størrelse(), it.dokumenter)
+                        log.trace("Journalpost med {} er {}", it.størrelse(), it.dokumenter)
+                    }
                 }
-        }
 
-    private fun tilleggsopplysningerFra(innsending : Innsending) =
-        listOf(Tilleggsopplysning("versjon", VERSJON), Tilleggsopplysning("spesiell", "${pdl.tilVikafossen(innsending)}"))
+    private fun tilVikafossen(barn: List<Barn>) = pdl.harBeskyttetBarn(barn)
 
     private fun journalpostDokumenterFra(innsendng: Innsending, søker: Søker) =
         with(innsendng.søknad) {

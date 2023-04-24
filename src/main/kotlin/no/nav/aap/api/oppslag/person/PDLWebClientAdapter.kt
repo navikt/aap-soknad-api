@@ -72,16 +72,24 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
             emptySequence()
         }
 
-    fun harBeskyttedeFosterbarn(barn: List<Barn>) =
-        with(barn.map { it.fnr }.mapNotNull { it?.fnr }) {
-         if (isNotEmpty()) {
-             false
-        }
-        else beskyttedeBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
+    fun harBeskyttedeBarn(barn: List<Barn>) =
+        sjekkBeskyttelseBarn(barn.map { it.fnr }.mapNotNull { it?.fnr })
 
-    }
 
-    override fun toString() =
+    private fun sjekkBeskyttelseBarn(fnrs: List<String>) =
+        runCatching {
+            with(fnrs) {
+                if (isNotEmpty()) {
+                    false
+                }
+                else {
+                    beskyttedeBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
+                }
+            } }.getOrElse {
+                log.warn("Opslag beskyttelse feilet",it)
+                false }
+
+        override fun toString() =
         "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
 
     companion object {
