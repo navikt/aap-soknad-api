@@ -87,7 +87,6 @@ class ArkivJournalpostGenerator(
         with(søker) {
             log.trace("Sjekker vikafossen")
             val tilVikafossen =  tilVikafossen(innsending.søknad.andreBarn.map { it.barn }) || tilVikafossen(søker.barn)
-            log.trace("Sjekket vikafossen")
             Journalpost(STANDARD.tittel,
                     AvsenderMottaker(fnr, navn),
                     Bruker(fnr),
@@ -98,7 +97,9 @@ class ArkivJournalpostGenerator(
                     }
                 }
 
-    private fun tilVikafossen(barn: List<Barn>) = pdl.harBeskyttetBarn(barn)
+    private fun tilVikafossen(barn: List<Barn>) = pdl.harBeskyttetBarn(barn).also {
+        log.trace("Sjekket vikafossen for {}", barn)
+    }
 
     private fun journalpostDokumenterFra(innsendng: Innsending, søker: Søker) =
         with(innsendng.søknad) {
