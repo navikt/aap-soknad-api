@@ -29,7 +29,6 @@ import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.StandardSøknad
 import no.nav.aap.api.søknad.model.StandardSøknad.Companion.VERSJON
 import no.nav.aap.api.søknad.model.Søker
-import no.nav.aap.api.søknad.model.Søker.Barn
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.LÅN
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
@@ -85,21 +84,22 @@ class ArkivJournalpostGenerator(
 
     fun journalpostFra(innsending: Innsending, søker: Søker) =
         with(søker) {
-            log.trace("Sjekker vikafossen")
-            val tilVikafossen =  tilVikafossen(innsending.søknad.andreBarn.map { it.barn }) || tilVikafossen(søker.barn)
-            Journalpost(STANDARD.tittel,
-                    AvsenderMottaker(fnr, navn),
-                    Bruker(fnr),
-                    journalpostDokumenterFra(innsending, this),
-                listOf(Tilleggsopplysning("versjon", VERSJON),Tilleggsopplysning("routing","$tilVikafossen")))
-                .also {
-                        log.trace("Journalpost med {} er {}  {}", it.størrelse(), it.dokumenter, it.tilleggsopplysninger)
-                    }
-                }
 
-    private fun tilVikafossen(barn: List<Barn>) = pdl.harBeskyttetBarn(barn).also {
-        log.trace("Sjekket vikafossen for {}", barn)
-    }
+            val tilVikafossen = with(innsending.søknad.andreBarn.map { it.barn } + søker.barn)  {
+                log.trace("Sjekker vikafossen {}", this)
+                pdl.harBeskyttetBarn(barn).also {
+                    log.trace("Sjekket vikafossen {}", it)
+                }
+            }
+            Journalpost(STANDARD.tittel,
+                AvsenderMottaker(fnr, navn),
+                Bruker(fnr),
+                journalpostDokumenterFra(innsending, this),
+                listOf(Tilleggsopplysning("versjon", VERSJON), Tilleggsopplysning("routing", "$tilVikafossen")))
+                .also {
+                    log.trace("Journalpost med {} er {}  {}", it.størrelse(), it.dokumenter, it.tilleggsopplysninger)
+                }
+        }
 
     private fun journalpostDokumenterFra(innsendng: Innsending, søker: Søker) =
         with(innsendng.søknad) {
