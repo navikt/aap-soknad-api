@@ -83,7 +83,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                     false
                 }
                 else {
-                    PDLMapper.beskyttedeBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
+                    beskyttedeBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
                 }
             } }.getOrElse {
                 log.warn("Opslag beskyttelse feilet",it)
