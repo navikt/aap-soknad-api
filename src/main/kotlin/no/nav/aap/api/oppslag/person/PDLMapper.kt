@@ -36,7 +36,7 @@ object PDLMapper {
             .filterNot(::beskyttet)
             .filterNot(::død)
             .map {
-                Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato))
+                Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato), it.fnr)
             }.toList()
 
 
