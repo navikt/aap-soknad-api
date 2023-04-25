@@ -12,7 +12,7 @@ import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Ok
 import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IDENT
 import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IDENTER
 import no.nav.aap.api.oppslag.person.PDLBolkBarn.PDLBarn
-import no.nav.aap.api.oppslag.person.PDLMapper.beskyttedeBarn
+import no.nav.aap.api.oppslag.person.PDLMapper.beskyttelseBarn
 import no.nav.aap.api.oppslag.person.PDLMapper.pdlSøkerTilSøker
 import no.nav.aap.api.oppslag.person.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.api.søknad.model.Søker.Barn
@@ -86,12 +86,13 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                     false
                 }
                 else {
-                    beskyttedeBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
+                    beskyttelseBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
                 }
-            } }.getOrElse {
-                log.warn("Opslag beskyttelse feilet",it)
-                false
             }
+        }.getOrElse {
+            log.warn("Oppslag beskyttelse feilet",it)
+            false
+        }
 
         override fun toString() =
         "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
