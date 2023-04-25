@@ -16,11 +16,11 @@ import no.nav.aap.util.Constants.JOARK
 class ArkivWebClientAdapter(@Qualifier(JOARK) webClient: WebClient, @Qualifier("${JOARK}ping") pingClient: WebClient, val cf: ArkivConfig) :
     AbstractWebClientAdapter(webClient, cf,pingClient) {
 
-    fun opprettJournalpost(journalpost: Journalpost) =
+    fun opprettJournalpost(jp: Journalpost) =
         webClient.post()
             .uri { b -> b.path(cf.arkivPath).build() }
             .contentType(APPLICATION_JSON)
-            .bodyValue(journalpost)
+            .bodyValue(jp)
             .exchangeToMono {
                 with(it) {
                     if (statusCode() in listOf(CONFLICT,CREATED)) {

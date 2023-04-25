@@ -5,6 +5,27 @@ import java.net.URI
 import java.time.Duration.*
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.clients.producer.RecordMetadata
+import org.apache.kafka.common.TopicPartition
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle.*
+import org.junit.jupiter.api.fail
+import org.mockito.Mock
+import org.mockito.Mockito.*
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.*
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.kafka.core.KafkaOperations
+import org.springframework.kafka.support.SendResult
+import org.springframework.test.context.ActiveProfiles
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.junit.jupiter.Testcontainers
 import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
@@ -42,28 +63,6 @@ import no.nav.aap.api.søknad.model.VedleggType.*
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.TEST
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.clients.producer.RecordMetadata
-import org.apache.kafka.common.TopicPartition
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestInstance.Lifecycle.*
-import org.junit.jupiter.api.fail
-import org.mockito.Mock
-import org.mockito.Mockito.*
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.*
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.kafka.core.KafkaOperations
-import org.springframework.kafka.support.SendResult
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.util.concurrent.ListenableFuture
-import org.testcontainers.containers.PostgreSQLContainer
-import org.testcontainers.junit.jupiter.Testcontainers
 
 @Testcontainers(disabledWithoutDocker = true)
 @ActiveProfiles(TEST)
@@ -151,7 +150,7 @@ class DBSøknadTest {
 
     companion object  {
         private val NAV = URI.create("http://www.nav.no")
-        private val ARKIVRESULTAT = ArkivResultat("42", listOf("666"))
+        private val ARKIVRESULTAT = ArkivResultat("42", listOf("666"), false)
         private val FORSIDERESULT = SendResult<Fødselsnummer, MinSideForside>(null, RecordMetadata(TopicPartition("dummyTopic",1),0,0,0,0,0))
         private val RESULT = SendResult<NokkelInput, Any>(null, RecordMetadata(TopicPartition("dummyTopic",1),0,0,0,0,0))
         private val CFG = MinSideConfig(NAISConfig("aap","soknad-api"),

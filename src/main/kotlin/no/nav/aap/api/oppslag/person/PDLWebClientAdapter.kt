@@ -76,7 +76,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
         with(b) {
             barn.copy(fnr = Fødselsnummer(ident))
         }
-    fun harBeskyttedeBarn(barn: List<Barn>) = sjekkBeskyttelseBarn(barn.map { it.fnr }.mapNotNull { it?.fnr })
+    fun harBeskyttetBarn(barn: List<Barn>) = sjekkBeskyttelseBarn(barn.map { it.fnr }.mapNotNull { it?.fnr })
 
 
     private fun sjekkBeskyttelseBarn(fnrs: List<String>) =
@@ -86,6 +86,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                     false
                 }
                 else {
+                    log.trace("Slår opp barn {}", this)
                     beskyttelseBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
                 }
             }

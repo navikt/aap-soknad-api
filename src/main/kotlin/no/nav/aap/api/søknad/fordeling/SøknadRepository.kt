@@ -96,7 +96,7 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
                                   ettersendteVedlegg: List<EttersendtVedlegg>): List<UUID> {
             ettersendinger.add(Ettersending(fnr.fnr, res.journalpostId, null,null,this))
             var ettersendte = tidligereManglendeNåEttersendte(ettersendteVedlegg)
-               ettersendte.forEach(::registrerVedlagtFraEttersending)
+            ettersendte.forEach(::registrerVedlagtFraEttersending)
             return ettersendte.map { it.eventid }
         }
         override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, journalpostid=$journalpostid, journalpoststatus=$journalpoststatus,id=$id)]"

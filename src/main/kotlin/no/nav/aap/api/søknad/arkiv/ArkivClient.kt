@@ -9,12 +9,12 @@ import no.nav.aap.util.LoggerUtil.getLogger
 class ArkivClient(private val adapter: ArkivWebClientAdapter) {
     private val log = getLogger(javaClass)
 
-    fun arkiver(journalpost: Journalpost) =
-        with(adapter.opprettJournalpost(journalpost)) {
-            ArkivResultat(journalpostId, dokIder)
+    fun arkiver(jp: Journalpost) =
+        with(adapter.opprettJournalpost(jp)) {
+            ArkivResultat(journalpostId, dokIder,jp.tilVikafossen)
         }.also {
-            log.info("Journalpost ${journalpost.dokumenter} med tittel ${journalpost.tittel} og tilleggsopplysninger ${journalpost.tilleggsopplysninger} fordelt til arkiv OK med resultat $it")
+            log.info("Journalpost ${jp.dokumenter} med tittel ${jp.tittel} og tilleggsopplysninger ${jp.tilleggsopplysninger} fordelt til arkiv OK med resultat $it")
         }
-    data class ArkivResultat(val journalpostId: String, val dokumentIds: List<String>)
+    data class ArkivResultat(val journalpostId: String, val dokumentIds: List<String>, val vikafossen: Boolean)
 
 }
