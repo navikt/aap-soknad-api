@@ -37,9 +37,15 @@ object PDLMapper {
             .filterNot(::død)
             .map {
                 Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato), it.fnr)
-            }.toList().also { log.trace("Vikafossen mappet $pdlBarn til $this") }
+            }.toList().also { log.trace("Mappet $pdlBarn til $this") }
 
     private fun navnFra(navn: Set<PDLNavn>) = navnFra(navn.first())
+
+
+    fun beskyttedeBarn(fosterbarn: List<PDLBolkBarn>) = fosterbarn
+        .map { it.barn }
+        .filterNot(::død)
+        .any(::beskyttet)
 
     private fun navnFra(navn: PDLNavn) =
         with(navn) {
