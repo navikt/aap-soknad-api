@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.Builder
 import no.nav.aap.api.oppslag.person.PDLConfig.Companion.PDL_CREDENTIALS
 import no.nav.aap.health.AbstractPingableHealthIndicator
+import no.nav.aap.rest.AbstractWebClientAdapter.Companion.behandlingFilterFunction
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.temaFilterFunction
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.util.Constants.PDL_SYSTEM
@@ -29,6 +30,7 @@ class PDLClientBeanConfig {
     fun pdlSystemWebClient(b: Builder, cfg: PDLConfig, @Qualifier(PDL_SYSTEM) pdlClientCredentialFilterFunction: ExchangeFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
+            .filter(behandlingFilterFunction())
             .filter(pdlClientCredentialFilterFunction)
             .build()
 
@@ -48,6 +50,7 @@ class PDLClientBeanConfig {
     fun pdlUserWebClient(b: Builder, cfg: PDLConfig, tokenX: TokenXFilterFunction) =
         b.baseUrl("${cfg.baseUri}")
             .filter(temaFilterFunction())
+            .filter(behandlingFilterFunction())
             .filter(tokenX)
             .build()
 

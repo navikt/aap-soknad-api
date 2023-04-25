@@ -37,7 +37,7 @@ object PDLMapper {
             .filterNot(::død)
             .map {
                 Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato), it.fnr)
-            }.toList().also { log.trace("Mappet ${pdlBarn.toList()} til $it") }
+            }.toList().also { log.trace("Mappet {} til {}", pdlBarn.toList(), it) }
 
     private fun navnFra(navn: Set<PDLNavn>) = navnFra(navn.first())
 
@@ -50,7 +50,7 @@ object PDLMapper {
     private fun navnFra(navn: PDLNavn) =
         with(navn) {
             Navn(fornavn, mellomnavn, etternavn).also {
-                log.trace(CONFIDENTIAL, "Navn er $it")
+                log.trace(CONFIDENTIAL, "Navn er {}", it)
             }
         }
 

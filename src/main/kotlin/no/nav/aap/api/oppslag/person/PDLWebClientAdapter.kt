@@ -6,6 +6,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Ok
 import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IDENT
@@ -57,11 +58,10 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                 if (isNotEmpty()) {
                     with(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this))
                         .partition { it.code == Ok }) {
-                        first.map(PDLBolkBarn::barn).asSequence().also {
-                            second.forEach {
-                                log.warn("Kunne ikke slå opp barn ${it.ident.partialMask()}, kode er ${it.code}")
-                            }
+                        second.forEach {
+                            log.warn("Kunne ikke slå opp barn ${it.ident.partialMask()}, kode er ${it.code}")
                         }
+                        first.map{barn(it.barn,it.ident)}.asSequence()
                     }
                  }
                 else {
@@ -72,8 +72,8 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
             emptySequence()
         }
 
-    fun harBeskyttedeBarn(barn: List<Barn>) =
-        sjekkBeskyttelseBarn(barn.map { it.fnr }.mapNotNull { it?.fnr })
+    private fun barn(pdlBarn: PDLBarn, id: String) = pdlBarn.copy(fnr = Fødselsnummer(id))
+    fun harBeskyttedeBarn(barn: List<Barn>) = sjekkBeskyttelseBarn(barn.map { it.fnr }.mapNotNull { it?.fnr })
 
 
     private fun sjekkBeskyttelseBarn(fnrs: List<String>) =

@@ -61,7 +61,7 @@ data class PDLBolkBarn(val ident:String, val code: String, @JsonProperty("person
                        val navn: Set<PDLNavn>,
                        val adressebeskyttelse: Set<PDLGradering>?,
                        @JsonProperty("doedsfall") val dødsfall: Set<PDLDødsfall>?,
-                       @JsonProperty("ident") val fnr: Fødselsnummer? = null) {
+                       val fnr: Fødselsnummer? = null) {
 
         data class PDLDødsfall(@JsonProperty("doedsdato") val dødsdato: LocalDate)
 
