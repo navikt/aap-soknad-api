@@ -61,7 +61,7 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                         second.forEach {
                             log.warn("Kunne ikke slå opp barn ${it.ident.partialMask()}, kode er ${it.code}")
                         }
-                        first.map{barn(it.barn,it.ident)}.asSequence()
+                        first.map(::barn).asSequence()
                     }
                  }
                 else {
@@ -72,7 +72,10 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
             emptySequence()
         }
 
-    private fun barn(pdlBarn: PDLBarn, id: String) = pdlBarn.copy(fnr = Fødselsnummer(id))
+    private fun barn(b: PDLBolkBarn) =
+        with(b) {
+            barn.copy(fnr = Fødselsnummer(ident))
+        }
     fun harBeskyttedeBarn(barn: List<Barn>) = sjekkBeskyttelseBarn(barn.map { it.fnr }.mapNotNull { it?.fnr })
 
 
@@ -87,7 +90,8 @@ class PDLWebClientAdapter(private val clients: WebClients, cfg: PDLConfig, priva
                 }
             } }.getOrElse {
                 log.warn("Opslag beskyttelse feilet",it)
-                false }
+                false
+            }
 
         override fun toString() =
         "${javaClass.simpleName} [webClient=$webClient,webClients=$clients,authContext=$ctx, cfg=$cfg]"
