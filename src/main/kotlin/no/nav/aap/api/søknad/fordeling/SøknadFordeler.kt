@@ -5,12 +5,12 @@ import java.time.LocalDateTime.now
 import java.util.UUID
 import org.springframework.stereotype.Component
 import no.nav.aap.api.oppslag.person.PDLClient
-import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler
 import no.nav.aap.api.søknad.fordeling.SøknadFordeler.Kvittering
 import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.UtlandSøknad
+import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 
 interface Fordeler {
@@ -23,8 +23,9 @@ interface Fordeler {
 @Component
 class SøknadFordeler(private val arkiv: ArkivFordeler,
                      private val pdl: PDLClient,
-                     private val søknadClient: SøknadClient,
+                     private val repo: SøknadRepository,
                      private val fullfører: SøknadFullfører,
+                     private val ctx: AuthContext,
                      private val cfg: VLFordelingConfig,
                      private val vlFordeler: SøknadVLFordeler) : Fordeler {
 
@@ -41,9 +42,9 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
 
     override fun fordel(e: StandardEttersending) =
     pdl.søkerUtenBarn().run {
-        log.trace("ID ${e.søknadId}")
         val original = e.søknadId?.let { uuid ->
-            søknadClient.søknad(uuid).also { log.trace("Original for ettersending $uuid er $it") }
+            repo.getSøknadByEventidAndFnr(uuid,ctx.getFnr().fnr)
+                .also { log.trace("Original for ettersending {} er {}", uuid, it) }
         }
         with(arkiv.fordel(e, this)) {
             vlFordeler.fordel(e, fnr, journalpostId, cfg.ettersending)

@@ -21,6 +21,9 @@ data class Journalpost(
     val journalposttype: String = INNGÅENDE,
     val tema: String = AAP.uppercase()) {
 
+    val tilVikafossen = tilleggsopplysninger.find { it.nokkel == "routing" }?.verdi.toBoolean()
+
+
     data class Tilleggsopplysning(val nokkel: String, val verdi: String)
 
     data class Dokument private constructor(val tittel: String?, val brevkode: String? = null, val dokumentVarianter: List<DokumentVariant>) {
