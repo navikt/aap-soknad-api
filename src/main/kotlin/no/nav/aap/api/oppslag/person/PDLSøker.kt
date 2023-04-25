@@ -2,6 +2,7 @@ package no.nav.aap.api.oppslag.person
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
+import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.oppslag.person.PDLSøker.PDLBostedadresse
 import no.nav.aap.api.oppslag.person.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.person.PDLSøker.PDLForelderBarnRelasjon
@@ -59,7 +60,8 @@ data class PDLBolkBarn(val ident:String, val code: String, @JsonProperty("person
     data class PDLBarn(@JsonProperty("foedsel") val fødselsdato: Set<PDLFødsel>,
                        val navn: Set<PDLNavn>,
                        val adressebeskyttelse: Set<PDLGradering>?,
-                       @JsonProperty("doedsfall") val dødsfall: Set<PDLDødsfall>?) {
+                       @JsonProperty("doedsfall") val dødsfall: Set<PDLDødsfall>?,
+                       val fnr: Fødselsnummer? = null) {
 
         data class PDLDødsfall(@JsonProperty("doedsdato") val dødsdato: LocalDate)
 

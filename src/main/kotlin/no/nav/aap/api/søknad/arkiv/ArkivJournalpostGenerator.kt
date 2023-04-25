@@ -11,12 +11,14 @@ import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.felles.SkjemaType.UTLAND_SØKNAD
+import no.nav.aap.api.oppslag.person.PDLClient
 import no.nav.aap.api.søknad.arkiv.Journalpost.AvsenderMottaker
 import no.nav.aap.api.søknad.arkiv.Journalpost.Bruker
 import no.nav.aap.api.søknad.arkiv.Journalpost.Dokument
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.JSON
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.ORIGINAL
+import no.nav.aap.api.søknad.arkiv.Journalpost.Tilleggsopplysning
 import no.nav.aap.api.søknad.arkiv.pdf.PDFFraBildeFKonverterer
 import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
@@ -25,6 +27,7 @@ import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.model.StandardSøknad.Companion.VERSJON
 import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.LÅN
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
@@ -49,6 +52,7 @@ import no.nav.aap.util.StringExtensions.toEncodedJson
 
 @Component
 class ArkivJournalpostGenerator(
+        private val pdl: PDLClient,
         private val mapper: ObjectMapper,
         private val lager: Dokumentlager,
         private val pdf: PDFGenerator,
@@ -63,7 +67,7 @@ class ArkivJournalpostGenerator(
                     Bruker(fnr),
                     dokumenterFra(es.ettersendteVedlegg))
                 .also {
-                    log.trace("Journalpost med ${it.størrelse()} er ${it.dokumenter}")
+                    log.trace("Journalpost med {} er {}", it.størrelse(), it.dokumenter)
                 }
         }
 
@@ -74,18 +78,26 @@ class ArkivJournalpostGenerator(
                     Bruker(fnr),
                     dokumenterFra(søknad, pdf.pdfVariant(this, søknad)))
                 .also {
-                    log.trace("Journalpost med ${it.størrelse()} er ${it.dokumenter}")
+                    log.trace("Journalpost med {} er {}", it.størrelse(), it.dokumenter)
                 }
         }
 
-    fun journalpostFra(innsendng: Innsending, søker: Søker) =
+    fun journalpostFra(innsending: Innsending, søker: Søker) =
         with(søker) {
+
+            val tilVikafossen = with(innsending.søknad.andreBarn.map { it.barn } + søker.barn)  {
+                log.trace("Sjekker vikafossen {}", this)
+                pdl.harBeskyttetBarn(barn).also {
+                    log.trace("Sjekket vikafossen {}", it)
+                }
+            }
             Journalpost(STANDARD.tittel,
-                    AvsenderMottaker(fnr, navn),
-                    Bruker(fnr),
-                    journalpostDokumenterFra(innsendng, this))
+                AvsenderMottaker(fnr, navn),
+                Bruker(fnr),
+                journalpostDokumenterFra(innsending, this),
+                listOf(Tilleggsopplysning("versjon", VERSJON), Tilleggsopplysning("routing", "$tilVikafossen")))
                 .also {
-                    log.trace("Journalpost med ${it.størrelse()} er ${it.dokumenter}")
+                    log.trace("Journalpost med {} er {}  {}", it.størrelse(), it.dokumenter, it.tilleggsopplysninger)
                 }
         }
 
@@ -101,7 +113,7 @@ class ArkivJournalpostGenerator(
                 addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == LÅN }, LÅNEKASSEN_LÅN))
                 addAll(dokumenterFra(this@with, ANNET))
             }.also {
-                log.trace("Sender ${it.størrelse("dokument")} til arkiv $it")
+                log.trace("Sender {} til arkiv {}", it.størrelse("dokument"), it)
             }
         }
 

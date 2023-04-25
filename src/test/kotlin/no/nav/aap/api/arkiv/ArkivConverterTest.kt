@@ -15,6 +15,7 @@ import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.util.StreamUtils.copyToByteArray
 import no.nav.aap.api.OMPersoner
 import no.nav.aap.api.OMSøknad
+import no.nav.aap.api.oppslag.person.PDLClient
 import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
 import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
 import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
@@ -35,6 +36,9 @@ class ArkivConverterTest {
 
     @Mock
     lateinit var lager : Dokumentlager
+
+    @Mock
+    lateinit var pdl : PDLClient
 
     @Mock
     lateinit var ctx : TokenValidationContextHolder
@@ -60,7 +64,7 @@ class ArkivConverterTest {
 
         val søknad = Innsending(OMSøknad.standard_soknad(), PDFKvittering(listOf(), LocalDateTime.now()))
         val søker = OMPersoner.ole_olsen()
-        val c = ArkivJournalpostGenerator(mapper, lager, pdf, PDFFraBildeFKonverterer(BildeSkalerer()))
+        val c = ArkivJournalpostGenerator(pdl,mapper, lager, pdf, PDFFraBildeFKonverterer(BildeSkalerer()))
         val converted = c.journalpostFra(søknad, søker)
         converted.dokumenter.forEach { doc ->
             doc.dokumentVarianter.forEach {
