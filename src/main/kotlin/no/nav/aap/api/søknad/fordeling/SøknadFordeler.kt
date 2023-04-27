@@ -9,13 +9,11 @@ import no.nav.aap.api.søknad.arkiv.ArkivFordeler
 import no.nav.aap.api.søknad.fordeling.SøknadFordeler.Kvittering
 import no.nav.aap.api.søknad.model.Innsending
 import no.nav.aap.api.søknad.model.StandardEttersending
-import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 
 interface Fordeler {
 
-    fun fordel(søknad : UtlandSøknad) : Kvittering
     fun fordel(innsending : Innsending) : Kvittering
     fun fordel(e : StandardEttersending) : Kvittering
 }
@@ -49,14 +47,6 @@ class SøknadFordeler(private val arkiv : ArkivFordeler,
             with(arkiv.fordel(e, this, routing)) {
                 vlFordeler.fordel(e, fnr, journalpostId, cfg.ettersending)
                 fullfører.fullfør(fnr, e, this)
-            }
-        }
-
-    override fun fordel(søknad : UtlandSøknad) =
-        pdl.søkerUtenBarn().run {
-            with(arkiv.fordel(søknad, this)) {
-                vlFordeler.fordel(søknad, fnr, journalpostId, cfg.utland)
-                fullfører.fullfør(fnr, søknad, this)
             }
         }
 

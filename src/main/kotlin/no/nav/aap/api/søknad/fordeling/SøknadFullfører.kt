@@ -24,7 +24,6 @@ import no.nav.aap.api.config.Metrikker.Companion.YRKESSKADE
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
-import no.nav.aap.api.felles.SkjemaType.UTLAND_SØKNAD
 import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
 import no.nav.aap.api.søknad.fordeling.SøknadFordeler.Kvittering
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Companion.SISTE_SØKNAD
@@ -35,8 +34,6 @@ import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
-import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.api.søknad.model.VedleggType
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
@@ -50,12 +47,6 @@ class SøknadFullfører(private val dokumentLager : Dokumentlager,
                       private val metrikker : Metrikker) {
 
     private val log = getLogger(javaClass)
-
-    fun fullfør(fnr : Fødselsnummer, søknad : UtlandSøknad, res : ArkivResultat) =
-        minside.opprettBeskjed(fnr, "Vi har mottatt din ${UTLAND_SØKNAD.tittel.decap()}").run {
-            metrikker.inc(SØKNADER, "type", UTLAND.name)
-            Kvittering(res.journalpostId)
-        }
 
     @Transactional
     fun fullfør(fnr : Fødselsnummer, søknad : StandardSøknad, res : ArkivResultat) =

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
-import no.nav.aap.api.felles.SkjemaType.UTLAND_SØKNAD
 import no.nav.aap.api.oppslag.person.PDLClient
 import no.nav.aap.api.søknad.arkiv.Journalpost.AvsenderMottaker
 import no.nav.aap.api.søknad.arkiv.Journalpost.Bruker
@@ -33,7 +32,6 @@ import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.LÅN
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
 import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
-import no.nav.aap.api.søknad.model.UtlandSøknad
 import no.nav.aap.api.søknad.model.Vedlegg
 import no.nav.aap.api.søknad.model.VedleggAware
 import no.nav.aap.api.søknad.model.VedleggType
@@ -72,17 +70,6 @@ class ArkivJournalpostGenerator(
                 Bruker(fnr),
                 dokumenterFra(es.ettersendteVedlegg),
                 listOf(Tilleggsopplysning(ROUTING, "$tilVikafossen")))
-                .also {
-                    log.trace("Journalpost med {} er {}", it.størrelse(), it.dokumenter)
-                }
-        }
-
-    fun journalpostFra(søknad : UtlandSøknad, søker : Søker) =
-        with(søker) {
-            Journalpost(UTLAND_SØKNAD.tittel,
-                AvsenderMottaker(fnr, navn),
-                Bruker(fnr),
-                dokumenterFra(søknad, pdf.pdfVariant(this, søknad)))
                 .also {
                     log.trace("Journalpost med {} er {}", it.størrelse(), it.dokumenter)
                 }
@@ -167,17 +154,8 @@ class ArkivJournalpostGenerator(
         .sortedBy { it.createTime }
         .groupBy { it.contentType }
 
-    private fun dokumenterFra(søknad : UtlandSøknad, pdfDokument : DokumentVariant) =
-        listOf(Dokument(listOf(søknad.somOriginal(mapper), pdfDokument)
-            .also {
-                log.trace("${it.størrelse("dokumentvariant")}) ($it)")
-            }, UTLAND_SØKNAD).also {
-            log.trace("Dokument til arkiv $it")
-        })
-
     private fun Journalpost.størrelse() = dokumenter.størrelse("dokument")
     private fun ByteArray.somDokument(tittel : String, brevkode : String? = null) = Dokument(tittel, brevkode, DokumentVariant(encode()))
     private fun DokumentInfo.somDokument(tittel : String, brevkode : String? = null) = bytes.somDokument(tittel, brevkode)
     fun StandardSøknad.somOriginal(mapper : ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
-    fun UtlandSøknad.somOriginal(mapper : ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
 }
