@@ -14,24 +14,24 @@ import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 
 interface Fordeler {
-    fun fordel(søknad: UtlandSøknad): Kvittering
-    fun fordel(innsending: Innsending): Kvittering
-    fun fordel(e: StandardEttersending): Kvittering
 
+    fun fordel(søknad : UtlandSøknad) : Kvittering
+    fun fordel(innsending : Innsending) : Kvittering
+    fun fordel(e : StandardEttersending) : Kvittering
 }
 
 @Component
-class SøknadFordeler(private val arkiv: ArkivFordeler,
-                     private val pdl: PDLClient,
-                     private val repo: SøknadRepository,
-                     private val fullfører: SøknadFullfører,
-                     private val ctx: AuthContext,
-                     private val cfg: VLFordelingConfig,
-                     private val vlFordeler: SøknadVLFordeler) : Fordeler {
+class SøknadFordeler(private val arkiv : ArkivFordeler,
+                     private val pdl : PDLClient,
+                     private val repo : SøknadRepository,
+                     private val fullfører : SøknadFullfører,
+                     private val ctx : AuthContext,
+                     private val cfg : VLFordelingConfig,
+                     private val vlFordeler : SøknadVLFordeler) : Fordeler {
 
     private val log = LoggerUtil.getLogger(SøknadFordeler::class.java)
 
-    override fun fordel(innsending: Innsending) =
+    override fun fordel(innsending : Innsending) =
         pdl.søkerMedBarn().run {
             with(arkiv.fordel(innsending, this)) {
                 innsending.søknad.fødselsdato = fødseldato
@@ -40,19 +40,19 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
             }
         }
 
-    override fun fordel(e: StandardEttersending) =
-    pdl.søkerUtenBarn().run {
-        val original = e.søknadId?.let { uuid ->
-            repo.getSøknadByEventidAndFnr(uuid,ctx.getFnr().fnr)
-                .also { log.trace("Original for ettersending {} er {}", uuid, it) }
+    override fun fordel(e : StandardEttersending) =
+        pdl.søkerUtenBarn().run {
+            val routing = e.søknadId?.let { uuid ->
+                repo.getSøknadByEventidAndFnr(uuid, ctx.getFnr().fnr)
+                    .also { log.trace("Ruting for ettersending {} er {}", uuid, it) }?.routing
+            } ?: false
+            with(arkiv.fordel(e, this, routing)) {
+                vlFordeler.fordel(e, fnr, journalpostId, cfg.ettersending)
+                fullfører.fullfør(fnr, e, this)
+            }
         }
-        with(arkiv.fordel(e, this)) {
-            vlFordeler.fordel(e, fnr, journalpostId, cfg.ettersending)
-            fullfører.fullfør(fnr, e, this)
-        }
-    }
 
-    override fun fordel(søknad: UtlandSøknad) =
+    override fun fordel(søknad : UtlandSøknad) =
         pdl.søkerUtenBarn().run {
             with(arkiv.fordel(søknad, this)) {
                 vlFordeler.fordel(søknad, fnr, journalpostId, cfg.utland)
@@ -60,5 +60,5 @@ class SøknadFordeler(private val arkiv: ArkivFordeler,
             }
         }
 
-    data class Kvittering(val journalpostId: String = "0", val tidspunkt: LocalDateTime = now(),val uuid: UUID? = null)
+    data class Kvittering(val journalpostId : String = "0", val tidspunkt : LocalDateTime = now(), val uuid : UUID? = null)
 }

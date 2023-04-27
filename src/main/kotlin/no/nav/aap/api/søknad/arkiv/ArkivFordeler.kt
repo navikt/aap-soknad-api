@@ -7,11 +7,11 @@ import no.nav.aap.api.søknad.model.Søker
 import no.nav.aap.api.søknad.model.UtlandSøknad
 
 @Service
-class ArkivFordeler(private val arkiv: ArkivClient, private val generator: ArkivJournalpostGenerator) {
+class ArkivFordeler(private val arkiv : ArkivClient, private val generator : ArkivJournalpostGenerator) {
 
-    fun fordel(innsending: Innsending, søker: Søker) = arkiv.arkiver(generator.journalpostFra(innsending, søker))
+    fun fordel(innsending : Innsending, søker : Søker) = arkiv.arkiver(generator.journalpostFra(innsending, søker))
 
-    fun fordel(søknad: UtlandSøknad, søker: Søker) = arkiv.arkiver(generator.journalpostFra(søknad, søker))
+    fun fordel(søknad : UtlandSøknad, søker : Søker) = arkiv.arkiver(generator.journalpostFra(søknad, søker))
 
-    fun fordel(ettersending: StandardEttersending, søker: Søker) = arkiv.arkiver(generator.journalpostFra(ettersending, søker))
+    fun fordel(ettersending : StandardEttersending, søker : Søker, routing : Boolean) = arkiv.arkiver(generator.journalpostFra(ettersending, søker, routing))
 }

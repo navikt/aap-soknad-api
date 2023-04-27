@@ -37,41 +37,38 @@ import no.nav.aap.api.søknad.model.VedleggType.STUDIER
 import no.nav.aap.util.LoggerUtil.getLogger
 
 data class Innsending(
-    val søknad: StandardSøknad,
-    val kvittering: PDFKvittering) {
-    val andreBarn = søknad.andreBarn.map { it.barn }
+    val søknad : StandardSøknad,
+    val kvittering : PDFKvittering) {
 
+    val andreBarn = søknad.andreBarn.map { it.barn }
 }
 
-
-
-@JsonIgnoreProperties(value= ["vedlegg"], allowSetters = true)
+@JsonIgnoreProperties(value = ["vedlegg"], allowSetters = true)
 data class StandardSøknad(
-        val sykepenger: Boolean,
-        val ferie: Ferie?,
-        val studier: Studier,
-        val medlemsskap: Medlemskap,
-        val registrerteBehandlere: List<RegistrertBehandler> = emptyList(),
-        val andreBehandlere: List<AnnenBehandler> = emptyList(),
-        val yrkesskadeType: Yrkesskade,
-        val utbetalinger: Utbetalinger?,
-        val tilleggsopplysninger: String?,
-        val registrerteBarn: List<BarnOgInntekt> = emptyList(),
-        val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
-        override val vedlegg: Vedlegg? = null) : VedleggAware {
+    val sykepenger : Boolean,
+    val ferie : Ferie?,
+    val studier : Studier,
+    val medlemsskap : Medlemskap,
+    val registrerteBehandlere : List<RegistrertBehandler> = emptyList(),
+    val andreBehandlere : List<AnnenBehandler> = emptyList(),
+    val yrkesskadeType : Yrkesskade,
+    val utbetalinger : Utbetalinger?,
+    val tilleggsopplysninger : String?,
+    val registrerteBarn : List<BarnOgInntekt> = emptyList(),
+    val andreBarn : List<AnnetBarnOgInntekt> = emptyList(),
+    override val vedlegg : Vedlegg? = null) : VedleggAware {
 
+    companion object {
 
-
-    companion object{
         const val VERSJON = "1.0"
     }
 
     var fødselsdato : LocalDate? = null
     val innsendingTidspunkt = now()
 
-    data class Ferie(val ferietype: FerieType, var periode: Periode?, var dager: String?) {
+    data class Ferie(val ferietype : FerieType, var periode : Periode?, var dager : String?) {
         enum class FerieType {
-            PERIODE, DAGER,NEI
+            PERIODE, DAGER, NEI
         }
     }
 
@@ -79,14 +76,14 @@ data class StandardSøknad(
 
     private val log = getLogger(javaClass)
 
-    data class VedleggInfo(val vedlagte: List<VedleggType>, val manglende: List<VedleggType>)
+    data class VedleggInfo(val vedlagte : List<VedleggType>, val manglende : List<VedleggType>)
 
-    fun vedlegg(): VedleggInfo {
+    fun vedlegg() : VedleggInfo {
 
         val manglende = mutableListOf<VedleggType>()
         val innsendte = mutableListOf<VedleggType>()
 
-        log.trace("Sjekker om det er manglende vedlegg for studier $studier")
+        log.trace("Sjekker om det er manglende vedlegg for studier {}", studier)
         if (studier.erStudent == AVBRUTT && studier.kommeTilbake == JA && manglerVedlegg(studier)) {
             log.trace("Det er manglende vedlegg for ${STUDIER.tittel}").also {
                 manglende += STUDIER
@@ -100,8 +97,8 @@ data class StandardSøknad(
             log.trace("Ingen manglende vedlegg for studier")
         }
         with(andreBarn) {
-            log.trace("Sjekker om det er manglende vedlegg for andre barn $andreBarn")
-            forEach { a -> log.trace("Annet barn relasjon ${a.relasjon} vedlegg ${a.vedlegg}") }
+            log.trace("Sjekker om det er manglende vedlegg for andre barn {}", andreBarn)
+            forEach { a -> log.trace("Annet barn relasjon {} vedlegg {}", a.relasjon, a.vedlegg) }
             if (count() > count { (it.vedlegg?.deler?.size ?: 0) > 0 }) {
                 manglende += ANDREBARN.also {
                     log.trace("Det er manglende vedlegg for ${ANDREBARN.tittel}")
@@ -116,7 +113,7 @@ data class StandardSøknad(
             }
         }
         with(utbetalinger) {
-            log.trace("Sjekker om det er manglende vedlegg for arbeidsgiver ${this?.ekstraFraArbeidsgiver}")
+            log.trace("Sjekker om det er manglende vedlegg for arbeidsgiver {}", this?.ekstraFraArbeidsgiver)
             if (this?.ekstraFraArbeidsgiver?.fraArbeidsgiver == true && manglerVedlegg(ekstraFraArbeidsgiver)) {
                 manglende += ARBEIDSGIVER.also {
                     log.trace("Det er manglende vedlegg for ${ARBEIDSGIVER.tittel}")
@@ -125,7 +122,7 @@ data class StandardSøknad(
             else {
                 log.trace("Ingen manglende vedlegg for arbeidsgiver")
             }
-            log.trace("Sjekker om det er manglende vedlegg for andre stønader ${this?.andreStønader}")
+            log.trace("Sjekker om det er manglende vedlegg for andre stønader {}", this?.andreStønader)
             this?.andreStønader?.firstOrNull { it.type == OMSORGSSTØNAD }?.let {
                 if (manglerVedlegg(it)) {
                     manglende += OMSORG.also {
@@ -193,25 +190,26 @@ data class StandardSøknad(
         else {
             log.trace("Det er ingen andre vedlegg")
         }
-        log.trace("Manglende vedlegg er $manglende, innsendte er $innsendte")
+        log.trace("Manglende vedlegg er {}, innsendte er {}", manglende, innsendte)
         return VedleggInfo(innsendte, manglende)
     }
 }
 
-fun manglerVedlegg(v: VedleggAware) = v.vedlegg?.deler?.isEmpty() == true
-fun harVedlegg(v: VedleggAware) = !manglerVedlegg(v)
-private fun harVedlegg(v: List<VedleggAware>) = v.any { harVedlegg(it) }
+fun manglerVedlegg(v : VedleggAware) = v.vedlegg?.deler?.isEmpty() == true
+fun harVedlegg(v : VedleggAware) = !manglerVedlegg(v)
+private fun harVedlegg(v : List<VedleggAware>) = v.any { harVedlegg(it) }
 
 @JsonDeserialize(using = VedleggDeserializer::class)
-data class Vedlegg(val tittel: String? = null, @JsonValue val deler: List<UUID?>? = null)
+data class Vedlegg(val tittel : String? = null, @JsonValue val deler : List<UUID?>? = null)
 
 interface VedleggAware {
-    val vedlegg: Vedlegg?
+
+    val vedlegg : Vedlegg?
 }
 
-data class Studier(val erStudent: StudieSvar?,
-                   val kommeTilbake: RadioValg?,
-                   override val vedlegg: Vedlegg? = null) : VedleggAware {
+data class Studier(val erStudent : StudieSvar?,
+                   val kommeTilbake : RadioValg?,
+                   override val vedlegg : Vedlegg? = null) : VedleggAware {
 
     enum class StudieSvar {
         JA,
@@ -220,26 +218,27 @@ data class Studier(val erStudent: StudieSvar?,
     }
 }
 
-data class Medlemskap(val boddINorgeSammenhengendeSiste5: Boolean,
-                      val jobbetUtenforNorgeFørSyk: Boolean?,
-                      val jobbetSammenhengendeINorgeSiste5: Boolean?,
-                      val iTilleggArbeidUtenforNorge: Boolean?,
-                      val utenlandsopphold: List<Utenlandsopphold> = emptyList())
+data class Medlemskap(val boddINorgeSammenhengendeSiste5 : Boolean,
+                      val jobbetUtenforNorgeFørSyk : Boolean?,
+                      val jobbetSammenhengendeINorgeSiste5 : Boolean?,
+                      val iTilleggArbeidUtenforNorge : Boolean?,
+                      val utenlandsopphold : List<Utenlandsopphold> = emptyList())
 
-data class Utenlandsopphold(val land: CountryCode,
-                            val periode: Periode,
-                            val arbeidet: Boolean,
-                            val id: String?) {
+data class Utenlandsopphold(val land : CountryCode,
+                            val periode : Periode,
+                            val arbeidet : Boolean,
+                            val id : String?) {
 
     val landnavn = land.toLocale().displayCountry
 }
 
-data class BarnOgInntekt(val merEnnIG: Boolean? = false)
-@JsonIgnoreProperties(value= ["vedlegg"], allowSetters = true)
-data class AnnetBarnOgInntekt(val barn: Barn,
-                              val relasjon: Relasjon = FORELDER,
-                              val merEnnIG: Boolean? = false,
-                              override val vedlegg: Vedlegg? = null) : VedleggAware {
+data class BarnOgInntekt(val merEnnIG : Boolean? = false)
+
+@JsonIgnoreProperties(value = ["vedlegg"], allowSetters = true)
+data class AnnetBarnOgInntekt(val barn : Barn,
+                              val relasjon : Relasjon = FORELDER,
+                              val merEnnIG : Boolean? = false,
+                              override val vedlegg : Vedlegg? = null) : VedleggAware {
 
     enum class Relasjon {
         FOSTERFORELDER,
@@ -253,17 +252,17 @@ enum class RadioValg {
     VET_IKKE
 }
 
-data class Utbetalinger(val ekstraFraArbeidsgiver: FraArbeidsgiver,
-                        @JsonAlias("stønadstyper") val andreStønader: List<AnnenStønad> = emptyList()) {
+data class Utbetalinger(val ekstraFraArbeidsgiver : FraArbeidsgiver,
+                        @JsonAlias("stønadstyper") val andreStønader : List<AnnenStønad> = emptyList()) {
 
-    @JsonIgnoreProperties(value= ["vedlegg"], allowSetters = true)
-    data class FraArbeidsgiver(val fraArbeidsgiver: Boolean,
-                               override val vedlegg: Vedlegg? = null) : VedleggAware
+    @JsonIgnoreProperties(value = ["vedlegg"], allowSetters = true)
+    data class FraArbeidsgiver(val fraArbeidsgiver : Boolean,
+                               override val vedlegg : Vedlegg? = null) : VedleggAware
 
-    @JsonIgnoreProperties(value= ["vedlegg"], allowSetters = true)
-    data class AnnenStønad(val type: AnnenStønadstype,
-                           val hvemUtbetalerAFP: String? = null,
-                           override val vedlegg: Vedlegg? = null) : VedleggAware {
+    @JsonIgnoreProperties(value = ["vedlegg"], allowSetters = true)
+    data class AnnenStønad(val type : AnnenStønadstype,
+                           val hvemUtbetalerAFP : String? = null,
+                           override val vedlegg : Vedlegg? = null) : VedleggAware {
 
         init {
             require((type == AFP && hvemUtbetalerAFP != null) || (type != AFP && hvemUtbetalerAFP == null))
@@ -285,7 +284,7 @@ data class Utbetalinger(val ekstraFraArbeidsgiver: FraArbeidsgiver,
     }
 }
 
-enum class VedleggType(val tittel: String) {
+enum class VedleggType(val tittel : String) {
     ARBEIDSGIVER("Dokumentasjon av ekstra utbetaling fra arbeidsgiver"),
     STUDIER("Dokumentasjon av studier"),
     LÅNEKASSEN_STIPEND("Kopi av vedtaket eller søknaden om sykestipend fra Lånekassenn"),
@@ -299,7 +298,7 @@ enum class VedleggType(val tittel: String) {
 internal class VedleggDeserializer : StdDeserializer<Vedlegg>(Vedlegg::class.java) {
 
     @Throws(IOException::class)
-    override fun deserialize(p: JsonParser, ctx: DeserializationContext) =
+    override fun deserialize(p : JsonParser, ctx : DeserializationContext) =
         with(p.codec.readTree(p) as TreeNode) {
             when (this) {
                 is ArrayNode -> Vedlegg(deler = filterNotNull().map { (it as TextNode).textValue() }

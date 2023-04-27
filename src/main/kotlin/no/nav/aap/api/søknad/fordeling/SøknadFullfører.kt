@@ -97,7 +97,7 @@ class SøknadFullfører(private val dokumentLager : Dokumentlager,
                                     res : ArkivResultat) =
         repo.getSøknadByEventidAndFnr(søknadId, fnr.fnr)?.let {
             val ettersendte = it.registrerEttersending(fnr, res, e)
-            log.trace("Ettersendte vedlegg er $ettersendte")
+            log.trace("Ettersendte vedlegg er {}", ettersendte)
             it.avsluttMinSideOppgaver(fnr, ettersendte)
             minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel.decap()}.")
         } ?: log.warn("Ingen tidligere innsendt søknad med id $søknadId ble funnet for $fnr (dette skal aldri skje)")
@@ -106,19 +106,19 @@ class SøknadFullfører(private val dokumentLager : Dokumentlager,
         repo.getSøknadByFnr(fnr.fnr, SISTE_SØKNAD).firstOrNull()?.let {
             log.info("Knytter ettersending til siste søknad ${it.eventid} med journalpost ${it.journalpostid}")
             it.registrerEttersending(fnr, res, e)
-        } ?: log.trace("Fant ingen sist innsendt søknad for $fnr")
+        } ?: log.trace("Fant ingen sist innsendt søknad for {}", fnr)
         minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD_ETTERSENDING.tittel.decap()}")
     }
 
     private fun Søknad.oppdaterMinSide(fnr : Fødselsnummer, erKomplett : Boolean) =
         if (!erKomplett) {
-            log.trace("Oppretter oppgave og beskjed siden det er manglende vedlegg ${callIdAsUUID()}")
+            log.trace("Oppretter oppgave og beskjed siden det er manglende vedlegg {}", callIdAsUUID())
             minside.opprettOppgave(fnr, this, "Vi har mottatt din ${STANDARD.tittel.decap()}. Du må ettersende dokumentasjon",
                 eventid)
             minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}", eventId = randomUUID())
         }
         else {
-            log.trace("Oppretter beskjed siden den er komplett  ${callIdAsUUID()}")
+            log.trace("Oppretter beskjed siden den er komplett  {}", callIdAsUUID())
             minside.opprettBeskjed(fnr, "Vi har mottatt din ${STANDARD.tittel.decap()}", eventId = eventid)
         }
 
@@ -135,11 +135,11 @@ class SøknadFullfører(private val dokumentLager : Dokumentlager,
                 minside.avsluttAlleOppgaver(fnr, this@avsluttMinSideOppgaver)
             }
             else {
-                log.trace("Det mangler fremdeles $size vedlegg ($this)")
+                log.trace("Det mangler fremdeles {} vedlegg ({})", size, this)
                 ettersendte.forEach { iv ->
-                    log.trace("Sjekker om ettersendt vedlegg $iv kan avslutte oppgave")
+                    log.trace("Sjekker om ettersendt vedlegg {} kan avslutte oppgave", iv)
                     find { it.eventid == iv }?.let {
-                        log.trace("Det finnes minst ett manglende vedlegg med samme eventid som innsendt vedlegg $iv")
+                        log.trace("Det finnes minst ett manglende vedlegg med samme eventid som innsendt vedlegg {}", iv)
                     } ?: minside.avsluttOppgave(fnr, this@avsluttMinSideOppgaver, iv)
                 }
             }
