@@ -37,8 +37,14 @@ import no.nav.aap.api.søknad.model.VedleggType.STUDIER
 import no.nav.aap.util.LoggerUtil.getLogger
 
 data class Innsending(
-        val søknad: StandardSøknad,
-        val kvittering: PDFKvittering)
+    val søknad: StandardSøknad,
+    val kvittering: PDFKvittering) {
+    val andreBarn = søknad.andreBarn.map { it.barn }
+
+}
+
+
+
 @JsonIgnoreProperties(value= ["vedlegg"], allowSetters = true)
 data class StandardSøknad(
         val sykepenger: Boolean,
@@ -53,6 +59,8 @@ data class StandardSøknad(
         val registrerteBarn: List<BarnOgInntekt> = emptyList(),
         val andreBarn: List<AnnetBarnOgInntekt> = emptyList(),
         override val vedlegg: Vedlegg? = null) : VedleggAware {
+
+
 
     companion object{
         const val VERSJON = "1.0"

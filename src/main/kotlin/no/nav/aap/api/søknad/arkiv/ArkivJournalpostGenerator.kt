@@ -84,12 +84,9 @@ class ArkivJournalpostGenerator(
 
     fun journalpostFra(innsending: Innsending, søker: Søker) =
         with(søker) {
-            val tilVikafossen = with(innsending.søknad.andreBarn.map { it.barn } + søker.barn)  {
-                log.trace("Sjekker vikafossen {}", this)
-                pdl.harBeskyttetBarn(barn).also {
+                val tilVikafossen = pdl.harBeskyttetBarn(barn + innsending.andreBarn).also {
                     log.trace("Sjekket vikafossen {}", it)
                 }
-            }
             Journalpost(STANDARD.tittel,
                 AvsenderMottaker(fnr, navn),
                 Bruker(fnr),
