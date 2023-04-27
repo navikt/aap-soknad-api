@@ -40,15 +40,15 @@ class SøknadFordeler(private val arkiv : ArkivFordeler,
 
     override fun fordel(e : StandardEttersending) =
         pdl.søkerUtenBarn().run {
-            val routing = e.søknadId?.let { uuid ->
-                repo.getSøknadByEventidAndFnr(uuid, ctx.getFnr().fnr)
-                    .also { log.trace("Ruting for ettersending {} er {}", uuid, it) }?.routing
-            } ?: false
-            with(arkiv.fordel(e, this, routing)) {
+            with(arkiv.fordel(e, this, e.tilVikafossen())) {
                 vlFordeler.fordel(e, fnr, journalpostId, cfg.ettersending)
                 fullfører.fullfør(fnr, e, this)
             }
         }
+
+    private fun StandardEttersending.tilVikafossen() = søknadId?.let {
+        repo.getSøknadByEventidAndFnr(it, ctx.getFnr().fnr)?.routing
+    } ?: false
 
     data class Kvittering(val journalpostId : String = "0", val tidspunkt : LocalDateTime = now(), val uuid : UUID? = null)
 }
