@@ -19,7 +19,7 @@
         <conditionals.version>5.0.6</conditionals.version>
         <confluent.version>7.3.3</confluent.version>
         <commons-text.version>1.10.0</commons-text.version>
-        <domain.version>2.0.57</domain.version>
+        <domain.version>2.0.58</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
         <gcp.libraries.version>26.13.0</gcp.libraries.version>
         <gcp.version>0.194.0</gcp.version>
