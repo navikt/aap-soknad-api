@@ -32,31 +32,30 @@ import no.nav.aap.util.StringExtensions.partialMask
 interface SøknadRepository : JpaRepository<Søknad, Long> {
 
     @Query("select s from søknad s, ettersending e where  e.soknad.id = s.id and e.journalpostid = :journalpostid")
-    fun getSøknadByEttersendingJournalpostid(journalpostid: String): Søknad?
-    fun getSøknadByJournalpostid(journalpostid: String): Søknad?
-    fun getSøknadByFnr(@Param("fnr") fnr: String, pageable: Pageable): List<Søknad>
-    fun getSøknadByEventidAndFnr(@Param("eventid") eventId: UUID, @Param("fnr") fnr: String): Søknad?
+    fun getSøknadByEttersendingJournalpostid(journalpostid : String) : Søknad?
+    fun getSøknadByJournalpostid(journalpostid : String) : Søknad?
+    fun getSøknadByFnr(@Param("fnr") fnr : String, pageable : Pageable) : List<Søknad>
+    fun getSøknadByEventidAndFnr(@Param("eventid") eventId : UUID, @Param("fnr") fnr : String) : Søknad?
 
     @Entity(name = "søknad")
     @Table(name = "soknader")
     class Søknad(
-            fnr: String,
-            val journalpostid: String,
-            var journalpoststatus: String? = null,
-            var journalfoert: LocalDateTime? = null,
-            @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
-            var oppgaver: MutableSet<Oppgave> = mutableSetOf(),
-            eventid: UUID = callIdAsUUID(),
-            @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
-            var ettersendinger: MutableSet<Ettersending> = mutableSetOf(),
-            @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
-            var manglendevedlegg: MutableSet<ManglendeVedlegg> = mutableSetOf(),
-            @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
-            var innsendtevedlegg: MutableSet<InnsendteVedlegg> = mutableSetOf()) : BaseEntity(fnr, eventid) {
+        fnr : String,
+        val journalpostid : String,
+        var journalpoststatus : String? = null,
+        var journalfoert : LocalDateTime? = null,
+        @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
+        var oppgaver : MutableSet<Oppgave> = mutableSetOf(),
+        eventid : UUID = callIdAsUUID(),
+        var routing : Boolean = false,
+        @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
+        var ettersendinger : MutableSet<Ettersending> = mutableSetOf(),
+        @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
+        var manglendevedlegg : MutableSet<ManglendeVedlegg> = mutableSetOf(),
+        @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
+        var innsendtevedlegg : MutableSet<InnsendteVedlegg> = mutableSetOf()) : BaseEntity(fnr, eventid) {
 
-
-
-        fun registrerVedlagte(vedlagte: List<VedleggType>) {
+        fun registrerVedlagte(vedlagte : List<VedleggType>) {
             vedlagte.forEach {
                 with(InnsendteVedlegg(this, eventid, it)) {
                     innsendtevedlegg.add(this)
@@ -65,10 +64,10 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
             }
         }
 
-        fun registrerManglende(manglende: List<VedleggType>) =
-             registrerManglende(manglende,eventid)
+        fun registrerManglende(manglende : List<VedleggType>) =
+            registrerManglende(manglende, eventid)
 
-        fun registrerManglende(manglende: List<VedleggType>, eventId: UUID) =
+        fun registrerManglende(manglende : List<VedleggType>, eventId : UUID) =
             manglende.forEach {
                 with(ManglendeVedlegg(this, eventId, it)) {
                     manglendevedlegg.add(this)
@@ -76,76 +75,78 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
                 }
             }
 
-        private fun registrerVedlagtFraEttersending(m: ManglendeVedlegg) =
+        private fun registrerVedlagtFraEttersending(m : ManglendeVedlegg) =
             with(m) {
                 registrerSomEttersendt(this)
                 manglendevedlegg.remove(this)
             }
 
-        private fun registrerSomEttersendt(m: ManglendeVedlegg) =
+        private fun registrerSomEttersendt(m : ManglendeVedlegg) =
             with(InnsendteVedlegg(this, eventid, m.vedleggtype)) {
                 innsendtevedlegg.add(this)
                 soknad = this@Søknad
             }
 
-        private fun tidligereManglendeNåEttersendte(e: List<EttersendtVedlegg>) =
+        private fun tidligereManglendeNåEttersendte(e : List<EttersendtVedlegg>) =
             manglendevedlegg.filter { m -> e.any { m.vedleggtype == it.vedleggType } }
 
-        fun registrerEttersending(fnr: Fødselsnummer,
-                                  res: ArkivResultat,
-                                  ettersendteVedlegg: List<EttersendtVedlegg>): List<UUID> {
-            ettersendinger.add(Ettersending(fnr.fnr, res.journalpostId, null,null,this))
+        fun registrerEttersending(fnr : Fødselsnummer,
+                                  res : ArkivResultat,
+                                  ettersendteVedlegg : List<EttersendtVedlegg>) : List<UUID> {
+            ettersendinger.add(Ettersending(fnr.fnr, res.journalpostId, null, null, this))
             var ettersendte = tidligereManglendeNåEttersendte(ettersendteVedlegg)
-               ettersendte.forEach(::registrerVedlagtFraEttersending)
+            ettersendte.forEach(::registrerVedlagtFraEttersending)
             return ettersendte.map { it.eventid }
         }
-        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, journalpostid=$journalpostid, journalpoststatus=$journalpoststatus,id=$id)]"
 
+        override fun toString() =
+            "${javaClass.simpleName} [fnr=${fnr.partialMask()}, routing=$routing, created=$created, updated=$updated, eventid=$eventid, journalpostid=$journalpostid, journalpoststatus=$journalpoststatus,id=$id)]"
     }
 
     @Entity(name = "ettersending")
     @Table(name = "ettersendinger")
     class Ettersending(
-            fnr: String,
-            val journalpostid: String,
-            var journalpoststatus: String?,
-            var journalfoert: LocalDateTime? = null,
-            @ManyToOne
-            var soknad: Søknad? = null,
-            eventid: UUID = callIdAsUUID()) : BaseEntity(fnr, eventid) {
-        override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid,journalpostid=$journalpostid, journalpoststatus=$journalpoststatus, id=$id)]"
+        fnr : String,
+        val journalpostid : String,
+        var journalpoststatus : String?,
+        var journalfoert : LocalDateTime? = null,
+        @ManyToOne
+        var soknad : Søknad? = null,
+        eventid : UUID = callIdAsUUID()) : BaseEntity(fnr, eventid) {
 
+        override fun toString() =
+            "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid,journalpostid=$journalpostid, journalpoststatus=$journalpoststatus, id=$id)]"
     }
-
-
 
     @Entity(name = "manglendevedlegg")
     @Table(name = "manglendevedlegg")
     class ManglendeVedlegg(
-            @ManyToOne(optional = false)
-            var soknad: Søknad? = null,
-            eventid: UUID,
-            vedleggtype: VedleggType) : VedleggBaseEntity(eventid, vedleggtype)
+        @ManyToOne(optional = false)
+        var soknad : Søknad? = null,
+        eventid : UUID,
+        vedleggtype : VedleggType) : VedleggBaseEntity(eventid, vedleggtype)
 
     @Entity(name = "innsendtevedlegg")
     @Table(name = "innsendtevedlegg")
     class InnsendteVedlegg(
-            @ManyToOne(optional = false)
-            var soknad: Søknad? = null,
-            eventid: UUID,
-            vedleggtype: VedleggType) : VedleggBaseEntity(eventid, vedleggtype)
+        @ManyToOne(optional = false)
+        var soknad : Søknad? = null,
+        eventid : UUID,
+        vedleggtype : VedleggType) : VedleggBaseEntity(eventid, vedleggtype)
 
     @MappedSuperclass
     abstract class VedleggBaseEntity(
-            val eventid: UUID,
-            @Enumerated(STRING)
-            val vedleggtype: VedleggType,
-            @LastModifiedDate var updated: LocalDateTime? = null) : IdentifiableTimestampedBaseEntity() {
+        val eventid : UUID,
+        @Enumerated(STRING)
+        val vedleggtype : VedleggType,
+        @LastModifiedDate var updated : LocalDateTime? = null) : IdentifiableTimestampedBaseEntity() {
+
         override fun toString() =
             "${javaClass.simpleName} [created=$created, updated=$updated, eventid=$eventid, vedleggType=$vedleggtype, id=$id)]"
     }
 
     companion object {
+
         val SISTE_SØKNAD = PageRequest.of(0, 1, Sort.by(CREATED).descending())
     }
 }
