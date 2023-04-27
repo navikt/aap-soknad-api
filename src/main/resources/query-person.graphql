@@ -1,28 +1,28 @@
 query($ident: ID!){
     hentPerson(ident: $ident) {
         navn {
-           fornavn
-           mellomnavn
-           etternavn
+            fornavn
+            mellomnavn
+            etternavn
         },
         adressebeskyttelse {
-           gradering
+            gradering
         },
         foedsel {
-           foedselsdato
+            foedselsdato
         },
         forelderBarnRelasjon {
-           relatertPersonsIdent
-           relatertPersonsRolle
-           minRolleForPerson
+            relatertPersonsIdent
+            relatertPersonsRolle
+            minRolleForPerson
         },
         bostedsadresse {
-           vegadresse {
-             adressenavn
-             husbokstav
-             husnummer
-             postnummer
-          }
+            vegadresse {
+                adressenavn
+                husbokstav
+                husnummer
+                postnummer
+            }
         }
-   }
+    }
 }

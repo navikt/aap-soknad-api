@@ -17,9 +17,10 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 
 object PDLMapper {
+
     private val log = getLogger(javaClass)
 
-    fun pdlSøkerTilSøker(søker: PDLSøker?, fnr: Fødselsnummer, barn: Sequence<PDLBarn>) = søker?.let {
+    fun pdlSøkerTilSøker(søker : PDLSøker?, fnr : Fødselsnummer, barn : Sequence<PDLBarn>) = søker?.let {
         with(it) {
             Søker(navnFra(navn), fnr,
                 søker.beskyttet(),
@@ -27,52 +28,51 @@ object PDLMapper {
                 fødselsdatoFra(fødsel),
                 pdlBarnTilBarn(barn)).also {
                 log.trace(CONFIDENTIAL, "Søker er {}", it)
-                }
+            }
         }
     }
 
-    fun pdlBarnTilBarn(pdlBarn: Sequence<PDLBarn>) = pdlBarn
-            .filterNot(::myndig)
-            .filterNot(::beskyttet)
-            .filterNot(::død)
-            .map {
-                Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato), it.fnr)
-            }.toList().also { log.trace("Mappet {} til {}", pdlBarn.toList(), it) }
+    fun pdlBarnTilBarn(pdlBarn : Sequence<PDLBarn>) = pdlBarn
+        .filterNot(::myndig)
+        .filterNot(::beskyttet)
+        .filterNot(::død)
+        .map {
+            Barn(navnFra(it.navn), fødselsdatoFra(it.fødselsdato), it.fnr)
+        }.toList().also { log.trace("Mappet barn {} til {}", pdlBarn.toList(), it) }
 
-    private fun navnFra(navn: Set<PDLNavn>) = navnFra(navn.first())
+    private fun navnFra(navn : Set<PDLNavn>) = navnFra(navn.first())
 
-
-    fun beskyttelseBarn(fosterbarn: List<PDLBolkBarn>) = fosterbarn
+    fun beskyttelseBarn(fosterbarn : List<PDLBolkBarn>) = fosterbarn
         .map { it.barn }
         .filterNot(::død)
         .any(::beskyttet)
 
-    private fun navnFra(navn: PDLNavn) =
+    private fun navnFra(navn : PDLNavn) =
         with(navn) {
             Navn(fornavn, mellomnavn, etternavn).also {
                 log.trace(CONFIDENTIAL, "Navn er {}", it)
             }
         }
 
-    private fun adresseFra(adresse: PDLVegadresse?) = adresse?.let {
+    private fun adresseFra(adresse : PDLVegadresse?) = adresse?.let {
         with(it) {
             Adresse(adressenavn, husbokstav, husnummer, PostNummer(postnummer))
         }
     }
 
-    private fun fødselsdatoFra(fødsel: Set<PDLFødsel>?) = fødselsdatoFra(fødsel?.firstOrNull())
+    private fun fødselsdatoFra(fødsel : Set<PDLFødsel>?) = fødselsdatoFra(fødsel?.firstOrNull())
 
-    private fun fødselsdatoFra(fødsel: PDLFødsel?) = fødsel?.fødselsdato
+    private fun fødselsdatoFra(fødsel : PDLFødsel?) = fødsel?.fødselsdato
 
-    private fun myndig(pdlBarn: PDLBarn) = fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
+    private fun myndig(pdlBarn : PDLBarn) = fødselsdatoFra(pdlBarn.fødselsdato)?.isBefore(LocalDate.now().minusYears(18)) ?: true
 
-    private fun beskyttet(pdlBarn: PDLBarn) = beskyttet(pdlBarn.adressebeskyttelse)
+    private fun beskyttet(pdlBarn : PDLBarn) = beskyttet(pdlBarn.adressebeskyttelse)
 
     private fun PDLSøker.beskyttet() = beskyttet(adressebeskyttelse)
 
-    private fun død(pdlBarn: PDLBarn) = pdlBarn.dødsfall?.any() ?: false
+    private fun død(pdlBarn : PDLBarn) = pdlBarn.dødsfall?.any() ?: false
 
-    private fun beskyttet(gradering: Set<PDLGradering>?) = gradering?.any {
-            it.gradering in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND, STRENGT_FORTROLIG)
-        } == true
+    private fun beskyttet(gradering : Set<PDLGradering>?) = gradering?.any {
+        it.gradering in listOf(FORTROLIG, STRENGT_FORTROLIG_UTLAND, STRENGT_FORTROLIG)
+    } == true
 }

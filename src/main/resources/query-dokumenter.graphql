@@ -1,31 +1,31 @@
 query dokumentoversiktSelvbetjening($ident: String!) {
-  dokumentoversiktSelvbetjening(ident: $ident, tema: [AAP]) {
-    journalposter {
-      journalpostId
-      journalposttype
-      journalstatus
-      tittel
-      eksternReferanseId
-      relevanteDatoer {
-        dato
-        datotype
-      }
-      sak {
-        fagsakId
-        fagsaksystem
-        sakstype
-      }
-      dokumenter {
-        dokumentInfoId
-        brevkode
-        tittel
-        dokumentvarianter {
-          variantformat
-          filtype
-          brukerHarTilgang
-          code
+    dokumentoversiktSelvbetjening(ident: $ident, tema: [AAP]) {
+        journalposter {
+            journalpostId
+            journalposttype
+            journalstatus
+            tittel
+            eksternReferanseId
+            relevanteDatoer {
+                dato
+                datotype
+            }
+            sak {
+                fagsakId
+                fagsaksystem
+                sakstype
+            }
+            dokumenter {
+                dokumentInfoId
+                brevkode
+                tittel
+                dokumentvarianter {
+                    variantformat
+                    filtype
+                    brukerHarTilgang
+                    code
+                }
+            }
         }
-      }
     }
-  }
 }
