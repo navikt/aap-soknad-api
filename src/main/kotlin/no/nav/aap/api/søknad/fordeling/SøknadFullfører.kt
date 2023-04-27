@@ -63,7 +63,7 @@ class SøknadFullfører(private val dokumentLager : Dokumentlager,
             dokumentLager.slettDokumenter(søknad).run {
                 mellomlager.slett()
                 with(søknad.vedlegg()) {
-                    with(repo.save(Søknad(fnr.fnr, journalpostId, routing = res.vikafossen))) {
+                    with(repo.save(Søknad(fnr.fnr, journalpostId, res.vikafossen))) {
                         registrerManglende(manglende)
                         registrerVedlagte(vedlagte)
                         minside.opprettForside(fnr)

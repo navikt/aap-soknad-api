@@ -42,12 +42,12 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
     class Søknad(
         fnr : String,
         val journalpostid : String,
+        var routing : Boolean,
         var journalpoststatus : String? = null,
         var journalfoert : LocalDateTime? = null,
         @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
         var oppgaver : MutableSet<Oppgave> = mutableSetOf(),
         eventid : UUID = callIdAsUUID(),
-        var routing : Boolean = false,
         @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
         var ettersendinger : MutableSet<Ettersending> = mutableSetOf(),
         @OneToMany(mappedBy = "soknad", cascade = [ALL], orphanRemoval = true)
