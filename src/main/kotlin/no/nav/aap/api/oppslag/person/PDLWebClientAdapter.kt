@@ -44,7 +44,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
         return emptyMap()
     }
 
-    fun harBeskyttedeBarn(barn : List<Barn>) = harBeskyttedeBarn(barn.map { it.fnr }.mapNotNull { it?.fnr })
+    fun harBeskyttetBarn(barn : List<Barn>) = harBeskyttedeBarn(barn.map { it.fnr }.mapNotNull { it?.fnr })
 
     fun søker(medBarn : Boolean = false) =
         with(ctx.getFnr()) {

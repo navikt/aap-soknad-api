@@ -8,7 +8,7 @@ import no.nav.aap.api.søknad.model.Søker.Barn
 @Observed(contextualName = "PDL")
 class PDLClient(private val adapter: PDLWebClientAdapter) {
     fun søkerUtenBarn() = adapter.søker(false)
-    fun harBeskyttetBarn(barn: List<Barn>) = adapter.harBeskyttedeBarn(barn)
+    fun harBeskyttetBarn(barn: List<Barn>) = adapter.harBeskyttetBarn(barn)
 
     fun søkerMedBarn() = adapter.søker(true)
     override fun toString() = "${javaClass.simpleName} [pdl=$adapter]"
