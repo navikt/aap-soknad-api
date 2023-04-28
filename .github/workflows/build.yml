@@ -11,15 +11,6 @@ env:
     IMAGE_BASE: europe-north1-docker.pkg.dev/${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}/aap/${{ github.event.repository.name }}
 
 jobs:
-    dependabot:
-        name: Monitor dependencies with Dependabot
-        runs-on: ubuntu-latest
-        permissions:
-            contents: write
-        steps:
-            -   uses: actions/checkout@v3
-            -   name: Submit Dependency Snapshot
-                uses: advanced-security/maven-dependency-submission-action@v3
     bygg:
         permissions:
             contents: write
@@ -44,7 +35,7 @@ jobs:
                     cosign-release: 'v1.3.1'
 
             -   name: Verifiserer distroless base-image
-                run:  cosign verify --key distroless.pub gcr.io/distroless/java17
+                run: cosign verify --key distroless.pub gcr.io/distroless/java17
 
             -   name: Setter tag-navn
                 run: echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
@@ -55,10 +46,14 @@ jobs:
             -   name: Login GAR
                 uses: nais/login@v0
                 with:
-                   project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
-                   identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-                   team: aap
+                    project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+                    identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+                    team: aap
 
+            -   name: Submit Dependency Snapshot
+                uses: advanced-security/maven-dependency-submission-action@v3
+                with:
+                    settings-file: .github/.m2/settings.xml
             -   name: Kompilerer og bygger image
                 id: kompiler
                 run: |
@@ -81,5 +76,5 @@ jobs:
             VARS: .nais/${{matrix.cluster}}.json
             IMAGE: ${{needs.bygg.outputs.image}}
         steps:
-            - uses: actions/checkout@v3
-            - uses: nais/deploy/actions/deploy@master
+            -   uses: actions/checkout@v3
+            -   uses: nais/deploy/actions/deploy@master
