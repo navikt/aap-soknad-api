@@ -11,6 +11,15 @@ env:
     IMAGE_BASE: europe-north1-docker.pkg.dev/${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}/aap/${{ github.event.repository.name }}
 
 jobs:
+    dependabot:
+        name: Monitor dependencies with Dependabot
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            -   uses: actions/checkout@3
+            -   name: Submit Dependency Snapshot
+                uses: advanced-security/maven-dependency-submission-action@v3
     bygg:
         permissions:
             contents: write
