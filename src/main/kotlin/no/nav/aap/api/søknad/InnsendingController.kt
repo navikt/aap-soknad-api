@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad
 
+import io.micrometer.observation.annotation.Observed
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.web.bind.annotation.PostMapping
@@ -13,6 +14,7 @@ import no.nav.security.token.support.spring.ProtectedRestController
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 @ResponseStatus(CREATED)
+@Observed
 class InnsendingController(private val fordeler : Fordeler) {
 
     @PostMapping("/soknad")

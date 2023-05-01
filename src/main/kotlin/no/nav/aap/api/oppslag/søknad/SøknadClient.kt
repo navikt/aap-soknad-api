@@ -22,49 +22,49 @@ import no.nav.aap.util.LoggerUtil.getLogger
 
 @Component
 @Observed
-class SøknadClient(private val repo: SøknadRepository,
-                   private val arkivClient: ArkivOppslagClient,
-                   private val minside: MinSideClient,
-                   private val ctx: AuthContext) {
+class SøknadClient(private val repo : SøknadRepository,
+                   private val arkivClient : ArkivOppslagClient,
+                   private val minside : MinSideClient,
+                   private val ctx : AuthContext) {
 
     val log = getLogger(javaClass)
 
     @Transactional(readOnly = true)
-    fun søknad(søknadId: UUID) = søknad(ctx.getFnr(), søknadId)
+    fun søknad(søknadId : UUID) = søknad(ctx.getFnr(), søknadId)
 
-    fun søknad(fnr: Fødselsnummer, søknadId: UUID) =
+    fun søknad(fnr : Fødselsnummer, søknadId : UUID) =
         repo.getSøknadByEventidAndFnr(søknadId, fnr.fnr)?.let(::tilSøknad)
 
     @Transactional(readOnly = true)
-    fun søknader(pageable: Pageable) = søknader(ctx.getFnr(), pageable)
+    fun søknader(pageable : Pageable) = søknader(ctx.getFnr(), pageable)
 
     @Transactional
-    fun etterspørrVedlegg(e: VedleggEtterspørsel) =
-        repo.getSøknadByFnr(e.fnr.fnr,SISTE_SØKNAD).firstOrNull()?.let {
-            log.trace("Oppretter oppgave for søknad ${it.eventid}")
+    fun etterspørrVedlegg(e : VedleggEtterspørsel) =
+        repo.getSøknadByFnr(e.fnr.fnr, SISTE_SØKNAD).firstOrNull()?.let {
+            log.trace("Oppretter oppgave for søknad {}", it.eventid)
             val oppgaveId = UUID.randomUUID()
-            minside.opprettOppgave(e.fnr,it,"Eterspørr vedlegg",oppgaveId)
-            log.trace("Opprettet oppgave med id $oppgaveId for søknad ${it.eventid}")
-            it.registrerManglende(listOf(e.type),oppgaveId)
+            minside.opprettOppgave(e.fnr, it, "Eterspørr vedlegg", oppgaveId)
+            log.trace("Opprettet oppgave med id {} for søknad {}", oppgaveId, it.eventid)
+            it.registrerManglende(listOf(e.type), oppgaveId)
             oppgaveId
         }
 
-    internal fun søknader(fnr: Fødselsnummer, pageable: Pageable) =
-       repo.getSøknadByFnr(fnr.fnr, pageable).map(::tilSøknad)
+    internal fun søknader(fnr : Fødselsnummer, pageable : Pageable) =
+        repo.getSøknadByFnr(fnr.fnr, pageable).map(::tilSøknad)
 
-    data class SøknadDTO(val innsendtDato: Instant?,
-                         val søknadId: UUID,
-                         val journalpostId: String,
-                         val innsendteVedlegg: List<DokumentOversiktInnslag>,
-                         val manglendeVedlegg: List<VedleggType>)
+    data class SøknadDTO(val innsendtDato : Instant?,
+                         val søknadId : UUID,
+                         val journalpostId : String,
+                         val innsendteVedlegg : List<DokumentOversiktInnslag>,
+                         val manglendeVedlegg : List<VedleggType>)
 
-    private fun tilSøknad(s: Søknad) =
+    private fun tilSøknad(s : Søknad) =
         with(s) {
             SøknadDTO(created?.toInstant(UTC),
-                    eventid, journalpostid,
-                    arkivClient.innsendteDokumenter(ettersendinger.map(Ettersending::eventid) + eventid), // TODO, for tung, slå opp alle først og plukk ut
-                    manglendevedlegg.map { it.vedleggtype }).also {
-                log.trace("Søknad er $it")
+                eventid, journalpostid,
+                arkivClient.innsendteDokumenter(ettersendinger.map(Ettersending::eventid) + eventid), // TODO, for tung, slå opp alle først og plukk ut
+                manglendevedlegg.map { it.vedleggtype }).also {
+                log.trace("Søknad er {}", it)
             }
         }
 }

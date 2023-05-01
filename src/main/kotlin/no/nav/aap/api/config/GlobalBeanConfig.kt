@@ -3,12 +3,7 @@ package no.nav.aap.api.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.google.api.gax.retrying.RetrySettings
-import com.google.cloud.ServiceOptions
-import com.google.cloud.storage.StorageOptions
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
-import io.micrometer.core.aop.CountedAspect
-import io.micrometer.core.aop.TimedAspect
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.observation.ObservationRegistry
 import io.micrometer.observation.aop.ObservedAspect
@@ -34,7 +29,6 @@ import java.util.*
 import java.util.function.Consumer
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.actuate.endpoint.SanitizingFunction
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
@@ -42,7 +36,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
 import org.springframework.core.MethodParameter
 import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.core.Ordered.LOWEST_PRECEDENCE
@@ -57,10 +50,10 @@ import org.springframework.http.server.ServerHttpResponse
 import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.filter.ServerHttpObservationFilter
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
-import org.threeten.bp.Duration.ofMillis
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 import reactor.util.retry.Retry.fixedDelay
@@ -89,7 +82,8 @@ import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPro
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 @Configuration
-class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName: String)  {
+class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName : String) {
+
     val log = getLogger(javaClass)
 
     @Bean
@@ -98,20 +92,22 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     @Bean
     fun propertyKeySanitizingFunction() = PropertyValueSanitzer()
 
+    @Bean
+    fun serverObservationFilter(registry : ObservationRegistry) = ServerHttpObservationFilter(registry)
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b ->
         b.modules(
-                JavaTimeModule(),
-                TokenXJacksonModule(),
-                KotlinModule.Builder().build())
+            JavaTimeModule(),
+            TokenXJacksonModule(),
+            KotlinModule.Builder().build())
     }
 
     @Bean
-    fun authContext(h: TokenValidationContextHolder) = AuthContext(h)
+    fun authContext(h : TokenValidationContextHolder) = AuthContext(h)
 
     @Bean
-    fun openAPI(p: BuildProperties) =
+    fun openAPI(p : BuildProperties) =
         OpenAPI()
             .info(Info()
                 .title("AAP søknadmottak")
@@ -122,21 +118,21 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                     .url("https://www.nav.no")))
             .components(Components()
                 .addSecuritySchemes("bearer-key",
-                        SecurityScheme().type(HTTP).scheme("bearer")
-                            .bearerFormat("JWT")))
+                    SecurityScheme().type(HTTP).scheme("bearer")
+                        .bearerFormat("JWT")))
 
     @Bean
     fun configMatcher() = object : ClientConfigurationPropertiesMatcher {}
 
     @Bean
     @Order(HIGHEST_PRECEDENCE + 2)
-    fun tokenXFilterFunction(configs: ClientConfigurationProperties,
-                             service: OAuth2AccessTokenService,
-                             matcher: ClientConfigurationPropertiesMatcher,
-                             ctx: AuthContext) = TokenXFilterFunction(configs, service, matcher, ctx)
+    fun tokenXFilterFunction(configs : ClientConfigurationProperties,
+                             service : OAuth2AccessTokenService,
+                             matcher : ClientConfigurationPropertiesMatcher,
+                             ctx : AuthContext) = TokenXFilterFunction(configs, service, matcher, ctx)
 
     @Bean
-    fun startupInfoContributor(ctx: ApplicationContext) = StartupInfoContributor(ctx)
+    fun startupInfoContributor(ctx : ApplicationContext) = StartupInfoContributor(ctx)
 
     @Bean
     fun headersToMDCFilterRegistrationBean() =
@@ -147,16 +143,15 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
             }
 
     @Bean
-    fun jtiToMDCFilterRegistrationBean(ctx: AuthContext) =
+    fun jtiToMDCFilterRegistrationBean(ctx : AuthContext) =
         FilterRegistrationBean(JTIFilter(ctx))
             .apply {
                 urlPatterns = listOf("/*")
                 setOrder(LOWEST_PRECEDENCE)
             }
 
-
-   @Bean
-    fun webClientCustomizer(client: HttpClient, registry: MeterRegistry) =
+    @Bean
+    fun webClientCustomizer(client : HttpClient, registry : MeterRegistry) =
         WebClientCustomizer { b ->
             b.clientConnector(ReactorClientHttpConnector(client))
                 .filter(correlatingFilterFunction(applicationName))
@@ -168,8 +163,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     @ConditionalOnProd
     @Bean
-    fun prodHttpClient() =httpClient()
-
+    fun prodHttpClient() = httpClient()
 
     private fun httpClient() = HttpClient.create() /*
         .doOnConnected {
@@ -179,72 +173,75 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         .responseTimeout(ofSeconds(30))
         .option(CONNECT_TIMEOUT_MILLIS, 10000) */
 
-    class JTIFilter(private val ctx: AuthContext) : Filter {
+    class JTIFilter(private val ctx : AuthContext) : Filter {
+
         @Throws(IOException::class, ServletException::class)
-        override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
+        override fun doFilter(request : ServletRequest, response : ServletResponse, chain : FilterChain) {
             toMDC(JWT_ID, ctx.getClaim(IDPORTEN, JWT_ID), "Ingen JTI")
             chain.doFilter(request, response)
         }
     }
 
     @ControllerAdvice
-    class LoggingResponseBodyAdvice(private val mapper: ObjectMapper) : ResponseBodyAdvice<Any?> {
+    class LoggingResponseBodyAdvice(private val mapper : ObjectMapper) : ResponseBodyAdvice<Any?> {
 
         private val log = getLogger(javaClass)
-        override fun beforeBodyWrite(body: Any?,
-                                     returnType: MethodParameter,
-                                     contentType: MediaType,
-                                     selectedConverterType: Class<out HttpMessageConverter<*>>,
-                                     request: ServerHttpRequest,
-                                     response: ServerHttpResponse): Any? {
+        override fun beforeBodyWrite(body : Any?,
+                                     returnType : MethodParameter,
+                                     contentType : MediaType,
+                                     selectedConverterType : Class<out HttpMessageConverter<*>>,
+                                     request : ServerHttpRequest,
+                                     response : ServerHttpResponse) : Any? {
             if (contentType in listOf(APPLICATION_JSON, parseMediaType("application/problem+json"))) {
                 log.trace(CONFIDENTIAL, "Response body for ${request.uri} er ${body?.toJson(mapper)}")
             }
             return body
         }
 
-        override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>) = true
+        override fun supports(returnType : MethodParameter, converterType : Class<out HttpMessageConverter<*>>) = true
     }
 
-    abstract class AbstractKafkaHealthIndicator(private val admin: KafkaAdmin,
-                                                private val bootstrapServers: List<String>,
-                                                private val cfg: AbstractKafkaConfig) : Pingable {
+    abstract class AbstractKafkaHealthIndicator(private val admin : KafkaAdmin,
+                                                private val bootstrapServers : List<String>,
+                                                private val cfg : AbstractKafkaConfig) : Pingable {
+
         override fun isEnabled() = cfg.isEnabled
         override fun pingEndpoint() = "$bootstrapServers"
         override fun name() = cfg.name
 
         val log = getLogger(javaClass)
 
-        override fun ping(): Map<String, String> {
+        override fun ping() : Map<String, String> {
             log.info("Helsesjekker ${cfg.topics()}")
-            return cfg.topics().mapIndexedNotNull { ix, topic -> innslag(topic,ix)}
+            return cfg.topics().mapIndexedNotNull { ix, topic -> innslag(topic, ix) }
                 .associateBy({ it.first }, { it.second })
         }
 
-        private fun innslag(topic: String, ix: Int): Pair<String,String>?{
-             runCatching {
+        private fun innslag(topic : String, ix : Int) : Pair<String, String>? {
+            runCatching {
                 with(admin.describeTopics(topic).values.first()) {
-                     return Pair("topic-$ix", "${name()} (${partitions().count()} partisjoner")
-                 }
-             }.recover {
-                 return Pair(topic, it.message ?: it.javaClass.simpleName)
-             }
+                    return Pair("topic-$ix", "${name()} (${partitions().count()} partisjoner")
+                }
+            }.recover {
+                return Pair(topic, it.message ?: it.javaClass.simpleName)
+            }
             return null
         }
 
-        abstract class AbstractKafkaConfig(val name: String, val isEnabled: Boolean) {
-            abstract fun topics(): List<String>
+        abstract class AbstractKafkaConfig(val name : String, val isEnabled : Boolean) {
+
+            abstract fun topics() : List<String>
         }
     }
 
     @Bean
-    fun retryingOAuth2HttpClient(b: WebClient.Builder) = RetryingWebClientOAuth2HttpClient(b.build())
+    fun retryingOAuth2HttpClient(b : WebClient.Builder) = RetryingWebClientOAuth2HttpClient(b.build())
 
-    class RetryingWebClientOAuth2HttpClient(private val client: WebClient) : OAuth2HttpClient {
+    class RetryingWebClientOAuth2HttpClient(private val client : WebClient) : OAuth2HttpClient {
 
         private val log = getLogger(javaClass)
 
-        override fun post(req: OAuth2HttpRequest) =
+        override fun post(req : OAuth2HttpRequest) =
             with(req) {
                 client.post()
                     .uri(tokenEndpointUrl)
@@ -255,8 +252,8 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                     .retryWhen(retry())
                     .onErrorMap {
                         when (it) {
-                            is TimeoutException -> OAuth2ClientException("${it.javaClass.simpleName} timeout, skal føre til retry",it)
-                            is ConnectTimeoutException -> OAuth2ClientException("Connect timeout, skal føre til retry",it)
+                            is TimeoutException -> OAuth2ClientException("${it.javaClass.simpleName} timeout, skal føre til retry", it)
+                            is ConnectTimeoutException -> OAuth2ClientException("Connect timeout, skal føre til retry", it)
                             else -> it
                         }
                     }
@@ -264,11 +261,16 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                     .block()
                     ?: throw OAuth2ClientException("Ingen respons (null) fra token endpoint $tokenEndpointUrl")
             }
+
         private fun retry() =
             fixedDelay(3, Duration.ofMillis(100))
-                .filter { e -> e is OAuth2ClientException}
-                .doBeforeRetry { s -> log.info("Retry kall mot token endpoint feilet med  ${s.failure().message} for ${s.totalRetriesInARow() + 1} gang, prøver igjen",s.failure()) }
-                .onRetryExhaustedThrow { _, spec ->  spec.failure().also { log.warn("Retry mot token endpoint gir opp etter ${spec.totalRetriesInARow()} forsøk") } }
-
+                .filter { e -> e is OAuth2ClientException }
+                .doBeforeRetry { s ->
+                    log.info("Retry kall mot token endpoint feilet med  ${s.failure().message} for ${s.totalRetriesInARow() + 1} gang, prøver igjen",
+                        s.failure())
+                }
+                .onRetryExhaustedThrow { _, spec ->
+                    spec.failure().also { log.warn("Retry mot token endpoint gir opp etter ${spec.totalRetriesInARow()} forsøk") }
+                }
     }
 }

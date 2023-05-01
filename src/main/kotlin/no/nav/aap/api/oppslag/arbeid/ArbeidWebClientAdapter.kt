@@ -12,8 +12,8 @@ import no.nav.aap.rest.AbstractWebClientAdapter
 
 @Component
 class ArbeidWebClientAdapter(
-        @Qualifier(ARBEID) webClient: WebClient,
-        private val cf: ArbeidConfig) : AbstractWebClientAdapter(webClient, cf) {
+    @Qualifier(ARBEID) webClient : WebClient,
+    private val cf : ArbeidConfig) : AbstractWebClientAdapter(webClient, cf) {
 
     fun arbeidInfo() =
         if (cf.isEnabled) {
@@ -26,7 +26,7 @@ class ArbeidWebClientAdapter(
                 .retryWhen(cf.retrySpec(log))
                 .onErrorResume { Mono.empty() }
                 .doOnError { t -> log.warn("Arbeidsforhold oppslag feilet", t) }
-                .doOnSuccess { log.trace("Arbeidsforhold er $it") }
+                .doOnSuccess { log.trace("Arbeidsforhold er {}", it) }
                 .defaultIfEmpty(listOf())
                 .block().orEmpty()
         }

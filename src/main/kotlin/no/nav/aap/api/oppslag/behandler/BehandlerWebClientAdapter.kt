@@ -14,9 +14,9 @@ import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 
 @Component
 class BehandlerWebClientAdapter(
-        @Qualifier(BEHANDLER) webClient: WebClient,
-        @Qualifier(BEHANDLERPING) pingClient: WebClient,
-        val cf: BehandlerConfig) : AbstractWebClientAdapter(webClient, cf,pingClient) {
+    @Qualifier(BEHANDLER) webClient : WebClient,
+    @Qualifier(BEHANDLERPING) pingClient : WebClient,
+    val cf : BehandlerConfig) : AbstractWebClientAdapter(webClient, cf, pingClient) {
 
     fun behandlerInfo() = webClient
         .get()
@@ -31,7 +31,7 @@ class BehandlerWebClientAdapter(
         .block()
         ?.map(BehandlerDTO::tilBehandler)
         .orEmpty()
-        .also { log.trace(CONFIDENTIAL,"Behandlere mappet er $it") }
+        .also { log.trace(CONFIDENTIAL, "Behandlere mappet er {}", it) }
 
     override fun toString() = "${javaClass.simpleName} [webClient=$webClient, cfg=$cfg]"
 }

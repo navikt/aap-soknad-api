@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag
 
+import io.micrometer.observation.annotation.Observed
 import java.util.*
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort.Direction.DESC
@@ -28,19 +29,20 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.security.token.support.spring.ProtectedRestController
 
 @ProtectedRestController(value = [OPPSLAG_BASE], issuer = IDPORTEN)
+@Observed
 class OppslagController(
-        val pdl: PDLClient,
-        val behandler: BehandlerClient,
-        val arbeid: ArbeidClient,
-        val krr: KRRClient,
-        val søknad: SøknadClient,
-        val konto: KontoClient,
-        val arkiv: ArkivOppslagClient) {
+    val pdl : PDLClient,
+    val behandler : BehandlerClient,
+    val arbeid : ArbeidClient,
+    val krr : KRRClient,
+    val søknad : SøknadClient,
+    val konto : KontoClient,
+    val arkiv : ArkivOppslagClient) {
 
     val log = getLogger(javaClass)
 
     @GetMapping("/soeker")
-    fun søker()  = SøkerInfo(pdl.søkerMedBarn(), behandler.behandlerInfo(), arbeid.arbeidInfo(), krr.kontaktInfo(), konto.kontoInfo())
+    fun søker() = SøkerInfo(pdl.søkerMedBarn(), behandler.behandlerInfo(), arbeid.arbeidInfo(), krr.kontaktInfo(), konto.kontoInfo())
 
     @GetMapping("/soekermedbarn")
     fun søkerMedBarn() = pdl.søkerMedBarn()
@@ -61,18 +63,18 @@ class OppslagController(
     fun dokumenter() = arkiv.dokumenter()
 
     @GetMapping("/soeknader")
-    fun søknader(@SortDefault(sort = [CREATED], direction = DESC) @PageableDefault(size = 100) pageable: Pageable) =
+    fun søknader(@SortDefault(sort = [CREATED], direction = DESC) @PageableDefault(size = 100) pageable : Pageable) =
         søknad.søknader(pageable)
 
     @GetMapping("/soeknad/{uuid}")
-    fun søknadForUUID(@PathVariable uuid: UUID) = søknad.søknad(uuid)
+    fun søknadForUUID(@PathVariable uuid : UUID) = søknad.søknad(uuid)
 
-    @GetMapping("/soeknad/journalpost/{journalpostId}",produces = [APPLICATION_PDF_VALUE])
-    fun søknadForJournalpost(@PathVariable journalpostId: String) =
+    @GetMapping("/soeknad/journalpost/{journalpostId}", produces = [APPLICATION_PDF_VALUE])
+    fun søknadForJournalpost(@PathVariable journalpostId : String) =
         dokument(journalpostId, arkiv.søknadDokumentId(journalpostId))
 
     @GetMapping(DOKUMENT, produces = [APPLICATION_PDF_VALUE])
-    fun dokument(@PathVariable journalpostId: String, @PathVariable dokumentId: String) =
+    fun dokument(@PathVariable journalpostId : String, @PathVariable dokumentId : String) =
         arkiv.dokument(journalpostId, dokumentId)
             .let {
                 TIKA.detect(it).also { type ->
@@ -91,6 +93,7 @@ class OppslagController(
             }
 
     companion object {
+
         const val OPPSLAG_BASE = "/oppslag"
         private const val DOKUMENT = "/dokument/{journalpostId}/{dokumentId}"
     }
