@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.model
+package no.nav.aap.api.søknad.fordeling
 
 import com.fasterxml.jackson.annotation.JsonAlias
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
@@ -18,22 +18,24 @@ import java.util.*
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.AnnenBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
-import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
-import no.nav.aap.api.søknad.model.RadioValg.JA
-import no.nav.aap.api.søknad.model.Studier.StudieSvar.AVBRUTT
-import no.nav.aap.api.søknad.model.Søker.Barn
-import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.AFP
-import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.LÅN
-import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
-import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.STIPEND
-import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.UTLAND
-import no.nav.aap.api.søknad.model.VedleggType.ANDREBARN
-import no.nav.aap.api.søknad.model.VedleggType.ANNET
-import no.nav.aap.api.søknad.model.VedleggType.ARBEIDSGIVER
-import no.nav.aap.api.søknad.model.VedleggType.LÅNEKASSEN_LÅN
-import no.nav.aap.api.søknad.model.VedleggType.LÅNEKASSEN_STIPEND
-import no.nav.aap.api.søknad.model.VedleggType.OMSORG
-import no.nav.aap.api.søknad.model.VedleggType.STUDIER
+import no.nav.aap.api.søknad.arkiv.pdf.PDFKvittering
+import no.nav.aap.api.søknad.fordeling.AnnetBarnOgInntekt.Relasjon.FORELDER
+import no.nav.aap.api.søknad.fordeling.RadioValg.JA
+import no.nav.aap.api.søknad.fordeling.Studier.StudieSvar.AVBRUTT
+import no.nav.aap.api.oppslag.person.Søker.Barn
+import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.AFP
+import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.LÅN
+import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
+import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.STIPEND
+import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.UTLAND
+import no.nav.aap.api.søknad.fordeling.VedleggType.ANDREBARN
+import no.nav.aap.api.søknad.fordeling.VedleggType.ANNET
+import no.nav.aap.api.søknad.fordeling.VedleggType.ARBEIDSGIVER
+import no.nav.aap.api.søknad.fordeling.VedleggType.LÅNEKASSEN_LÅN
+import no.nav.aap.api.søknad.fordeling.VedleggType.LÅNEKASSEN_STIPEND
+import no.nav.aap.api.søknad.fordeling.VedleggType.OMSORG
+import no.nav.aap.api.søknad.fordeling.VedleggType.STUDIER
+import no.nav.aap.api.søknad.fordeling.VedleggType.UTENLANDSKE
 import no.nav.aap.util.LoggerUtil.getLogger
 
 data class Innsending(
@@ -139,14 +141,14 @@ data class StandardSøknad(
             }
             this?.andreStønader?.firstOrNull { it.type == UTLAND }?.let {
                 if (manglerVedlegg(it)) {
-                    manglende += VedleggType.UTENLANDSKE.also {
-                        log.trace("Det er manglende vedlegg for ${VedleggType.UTENLANDSKE.tittel}")
+                    manglende += UTENLANDSKE.also {
+                        log.trace("Det er manglende vedlegg for ${UTENLANDSKE.tittel}")
                     }
                 }
                 else {
                     if (harVedlegg(it)) {
                         log.trace("Utland har vedlegg")
-                        innsendte += VedleggType.UTENLANDSKE
+                        innsendte += UTENLANDSKE
                     }
                     log.trace("Ingen manglende vedlegg for utland")
                 }

@@ -11,8 +11,7 @@ import no.nav.aap.api.oppslag.person.PDLAdresseBeskyttelse.STRENGT_FORTROLIG_UTL
 import no.nav.aap.api.oppslag.person.PDLBolkBarn.PDLBarn
 import no.nav.aap.api.oppslag.person.PDLSøker.PDLBostedadresse.PDLVegadresse
 import no.nav.aap.api.oppslag.person.PDLSøker.PDLFødsel
-import no.nav.aap.api.søknad.model.Søker
-import no.nav.aap.api.søknad.model.Søker.Barn
+import no.nav.aap.api.oppslag.person.Søker.Barn
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 

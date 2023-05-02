@@ -23,8 +23,8 @@ import no.nav.aap.api.søknad.mellomlagring.BucketConfig
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.StørelseSjekker
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
-import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.api.søknad.model.VedleggAware
+import no.nav.aap.api.søknad.fordeling.StandardSøknad
+import no.nav.aap.api.søknad.fordeling.VedleggAware
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID

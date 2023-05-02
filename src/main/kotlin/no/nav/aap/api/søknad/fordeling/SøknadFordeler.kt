@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component
 import no.nav.aap.api.oppslag.person.PDLClient
 import no.nav.aap.api.søknad.arkiv.ArkivFordeler
 import no.nav.aap.api.søknad.fordeling.SøknadFordeler.Kvittering
-import no.nav.aap.api.søknad.model.Innsending
-import no.nav.aap.api.søknad.model.StandardEttersending
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil
 

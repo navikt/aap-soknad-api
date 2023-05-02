@@ -5,7 +5,8 @@ import no.nav.aap.api.felles.Adresse
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.Navn
 import no.nav.aap.api.felles.PostNummer
-import no.nav.aap.api.søknad.model.Søker
+import no.nav.aap.api.oppslag.person.Søker
+import no.nav.aap.api.oppslag.person.Søker.Barn
 
 object OMPersoner {
 
@@ -14,7 +15,7 @@ object OMPersoner {
             false,
             Adresse("Gata", "17", "A",
                 PostNummer("2600", "Lillehammer")), LocalDate.now(), listOf(
-                Søker.Barn(Navn("Barn", "B", "Barnsben"), LocalDate.now())
+                Barn(Navn("Barn", "B", "Barnsben"), LocalDate.now())
             ))
 
     fun har_barn() = Søker(
@@ -24,7 +25,7 @@ object OMPersoner {
         Adresse("Gata", "17", "A",
             PostNummer("2600", "Lillehammer")
         ), LocalDate.now(), listOf(
-            Søker.Barn(Navn("Livlig", "", "Sjokoladekake"), LocalDate.now())
+            Barn(Navn("Livlig", "", "Sjokoladekake"), LocalDate.now())
         ))
 
     fun gradert_strengt_fortrolig() = Søker(

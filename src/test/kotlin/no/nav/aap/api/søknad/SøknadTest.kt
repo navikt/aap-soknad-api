@@ -15,27 +15,27 @@ import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerKategori.LEGE
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerType.FASTLEGE
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.KontaktInformasjon
-import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
-import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt.Relasjon.FORELDER
-import no.nav.aap.api.søknad.model.BarnOgInntekt
-import no.nav.aap.api.søknad.model.Medlemskap
-import no.nav.aap.api.søknad.model.RadioValg
-import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.api.søknad.model.StandardSøknad.Yrkesskade
-import no.nav.aap.api.søknad.model.Studier
-import no.nav.aap.api.søknad.model.Studier.StudieSvar.NEI
-import no.nav.aap.api.søknad.model.Søker.Barn
-import no.nav.aap.api.søknad.model.Utbetalinger
-import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønad
-import no.nav.aap.api.søknad.model.Utbetalinger.AnnenStønadstype.INTRODUKSJONSSTØNAD
-import no.nav.aap.api.søknad.model.Utbetalinger.FraArbeidsgiver
-import no.nav.aap.api.søknad.model.Utenlandsopphold
-import no.nav.aap.api.søknad.model.Vedlegg
+import no.nav.aap.api.søknad.fordeling.AnnetBarnOgInntekt.Relasjon.FORELDER
+import no.nav.aap.api.søknad.fordeling.Studier.StudieSvar.NEI
+import no.nav.aap.api.oppslag.person.Søker.Barn
+import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønad
+import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.INTRODUKSJONSSTØNAD
+import no.nav.aap.api.søknad.fordeling.Utbetalinger.FraArbeidsgiver
 import no.nav.aap.util.AuthContext
 import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.json.JsonTest
+import no.nav.aap.api.søknad.fordeling.AnnetBarnOgInntekt
+import no.nav.aap.api.søknad.fordeling.BarnOgInntekt
+import no.nav.aap.api.søknad.fordeling.Medlemskap
+import no.nav.aap.api.søknad.fordeling.RadioValg
+import no.nav.aap.api.søknad.fordeling.StandardSøknad
+import no.nav.aap.api.søknad.fordeling.StandardSøknad.Yrkesskade.JA
+import no.nav.aap.api.søknad.fordeling.Studier
+import no.nav.aap.api.søknad.fordeling.Utbetalinger
+import no.nav.aap.api.søknad.fordeling.Utenlandsopphold
+import no.nav.aap.api.søknad.fordeling.Vedlegg
 
 @JsonTest
 class SøknadTest {
@@ -166,7 +166,7 @@ class SøknadTest {
                                 Adresse("Legegata", "17", "A",
                                         PostNummer("2600", "Lillehammer")),
                                 "22222222"))), emptyList(),
-                Yrkesskade.JA,
+                JA,
                 Utbetalinger(
                         FraArbeidsgiver(true, Vedlegg(deler = listOf(UUID.randomUUID(),
                                 UUID.randomUUID()))), listOf(AnnenStønad(INTRODUKSJONSSTØNAD))),

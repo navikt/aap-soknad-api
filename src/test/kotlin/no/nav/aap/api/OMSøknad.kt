@@ -1,6 +1,6 @@
 package no.nav.aap.api
 
-import com.neovisionaries.i18n.CountryCode
+import com.neovisionaries.i18n.CountryCode.SE
 import java.time.LocalDate
 import java.util.*
 import no.nav.aap.api.felles.Adresse
@@ -9,34 +9,44 @@ import no.nav.aap.api.felles.OrgNummer
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.felles.PostNummer
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
-import no.nav.aap.api.søknad.model.AnnetBarnOgInntekt
-import no.nav.aap.api.søknad.model.BarnOgInntekt
-import no.nav.aap.api.søknad.model.Medlemskap
-import no.nav.aap.api.søknad.model.RadioValg
-import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.api.søknad.model.Studier
-import no.nav.aap.api.søknad.model.Søker
-import no.nav.aap.api.søknad.model.Utbetalinger
-import no.nav.aap.api.søknad.model.Utenlandsopphold
-import no.nav.aap.api.søknad.model.Vedlegg
+import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerKategori.LEGE
+import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.BehandlerType.FASTLEGE
+import no.nav.aap.api.oppslag.behandler.RegistrertBehandler.KontaktInformasjon
+import no.nav.aap.api.søknad.fordeling.AnnetBarnOgInntekt
+import no.nav.aap.api.søknad.fordeling.AnnetBarnOgInntekt.Relasjon.FORELDER
+import no.nav.aap.api.søknad.fordeling.BarnOgInntekt
+import no.nav.aap.api.søknad.fordeling.Medlemskap
+import no.nav.aap.api.søknad.fordeling.RadioValg
+import no.nav.aap.api.søknad.fordeling.StandardSøknad
+import no.nav.aap.api.søknad.fordeling.StandardSøknad.Yrkesskade.JA
+import no.nav.aap.api.søknad.fordeling.Studier
+import no.nav.aap.api.søknad.fordeling.Studier.StudieSvar.AVBRUTT
+import no.nav.aap.api.søknad.fordeling.Studier.StudieSvar.NEI
+import no.nav.aap.api.søknad.fordeling.Utbetalinger
+import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønad
+import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.INTRODUKSJONSSTØNAD
+import no.nav.aap.api.søknad.fordeling.Utbetalinger.FraArbeidsgiver
+import no.nav.aap.api.søknad.fordeling.Utenlandsopphold
+import no.nav.aap.api.søknad.fordeling.Vedlegg
+import no.nav.aap.api.oppslag.person.Søker.Barn
 
 object OMSøknad {
 
         fun standard_soknad() = StandardSøknad(
             false,
             null,
-            Studier(Studier.StudieSvar.NEI, RadioValg.NEI),
+            Studier(NEI, RadioValg.NEI),
             Medlemskap(true, null, null, null,
                 listOf(
                     Utenlandsopphold(
-                        CountryCode.SE,
+                        SE,
                     Periode(LocalDate.now(), LocalDate.now().plusDays(2)),
                     true, "11111111")
                 )),
             listOf(
                 RegistrertBehandler(
-                    RegistrertBehandler.BehandlerType.FASTLEGE, RegistrertBehandler.BehandlerKategori.LEGE, Navn("Lege", "A", "Legesen"),
-                RegistrertBehandler.KontaktInformasjon("Legekontoret",
+                    FASTLEGE, LEGE, Navn("Lege", "A", "Legesen"),
+                KontaktInformasjon("Legekontoret",
                     OrgNummer("888888888"),
                     Adresse("Legegata", "17", "A",
                         PostNummer("2600", "Lillehammer")
@@ -44,18 +54,18 @@ object OMSøknad {
                     "22222222")
                 )
             ), emptyList(),
-            StandardSøknad.Yrkesskade.JA,
+            JA,
             Utbetalinger(
-                Utbetalinger.FraArbeidsgiver(true, Vedlegg(deler = listOf(
+                FraArbeidsgiver(true, Vedlegg(deler = listOf(
                     UUID.randomUUID(),
                     UUID.randomUUID()))
-                ), listOf(Utbetalinger.AnnenStønad(Utbetalinger.AnnenStønadstype.INTRODUKSJONSSTØNAD))),
+                ), listOf(AnnenStønad(INTRODUKSJONSSTØNAD))),
             "Tillegg",
             listOf(BarnOgInntekt(true)),
             listOf(
                 AnnetBarnOgInntekt(
-                    Søker.Barn(Navn("Et", "ekstra", "Barn"), LocalDate.now().minusYears(14)),
-                    AnnetBarnOgInntekt.Relasjon.FORELDER,false,
+                    Barn(Navn("Et", "ekstra", "Barn"), LocalDate.now().minusYears(14)),
+                    FORELDER,false,
                     Vedlegg(deler = listOf(UUID.randomUUID()))
                 )
             ), Vedlegg(deler = listOf(
@@ -66,18 +76,18 @@ object OMSøknad {
         fun er_student_søknad() = StandardSøknad(
             false,
             null,
-            Studier(Studier.StudieSvar.AVBRUTT, RadioValg.JA),
+            Studier(AVBRUTT, RadioValg.JA),
             Medlemskap(true, null, null, null,
                 listOf(
                     Utenlandsopphold(
-                        CountryCode.SE,
+                        SE,
                         Periode(LocalDate.now(), LocalDate.now().plusDays(2)),
                         true, "11111111")
                 )),
             listOf(
                 RegistrertBehandler(
-                    RegistrertBehandler.BehandlerType.FASTLEGE, RegistrertBehandler.BehandlerKategori.LEGE, Navn("Lege", "A", "Legesen"),
-                    RegistrertBehandler.KontaktInformasjon("Legekontoret",
+                    FASTLEGE, LEGE, Navn("Lege", "A", "Legesen"),
+                    KontaktInformasjon("Legekontoret",
                         OrgNummer("888888888"),
                         Adresse("Legegata", "17", "A",
                             PostNummer("2600", "Lillehammer")
@@ -85,18 +95,18 @@ object OMSøknad {
                         "22222222")
                 )
             ), emptyList(),
-            StandardSøknad.Yrkesskade.JA,
+            JA,
             Utbetalinger(
-                Utbetalinger.FraArbeidsgiver(true, Vedlegg(deler = listOf(
+                FraArbeidsgiver(true, Vedlegg(deler = listOf(
                     UUID.randomUUID(),
                     UUID.randomUUID()))
-                ), listOf(Utbetalinger.AnnenStønad(Utbetalinger.AnnenStønadstype.INTRODUKSJONSSTØNAD))),
+                ), listOf(AnnenStønad(INTRODUKSJONSSTØNAD))),
             "Tillegg",
             listOf(BarnOgInntekt(true)),
             listOf(
                 AnnetBarnOgInntekt(
-                    Søker.Barn(Navn("Et", "ekstra", "Barn"), LocalDate.now().minusYears(14)),
-                    AnnetBarnOgInntekt.Relasjon.FORELDER,false,
+                    Barn(Navn("Et", "ekstra", "Barn"), LocalDate.now().minusYears(14)),
+                    FORELDER,false,
                     Vedlegg(deler = listOf(UUID.randomUUID()))
                 )
             ), Vedlegg(deler = listOf(

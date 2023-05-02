@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.saksbehandling.SaksbehandlingController.Companion.SB_BASE
-import no.nav.aap.api.søknad.model.VedleggType
+import no.nav.aap.api.søknad.fordeling.VedleggType
 import no.nav.aap.util.Constants.AAD
 import no.nav.security.token.support.spring.ProtectedRestController
 

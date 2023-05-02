@@ -3,7 +3,7 @@ package no.nav.aap.api.oppslag.person
 import io.micrometer.observation.annotation.Observed
 import org.springframework.stereotype.Component
 import no.nav.aap.api.oppslag.person.PDLConfig.Companion.PDL
-import no.nav.aap.api.søknad.model.Søker.Barn
+import no.nav.aap.api.oppslag.person.Søker.Barn
 
 @Component
 @Observed(contextualName = PDL)

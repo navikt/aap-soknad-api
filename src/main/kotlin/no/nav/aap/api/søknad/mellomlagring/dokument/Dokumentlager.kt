@@ -6,8 +6,8 @@ import org.springframework.http.ContentDisposition
 import org.springframework.http.ContentDisposition.attachment
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
-import no.nav.aap.api.søknad.model.StandardEttersending
-import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.fordeling.StandardEttersending
+import no.nav.aap.api.søknad.fordeling.StandardSøknad
 
 interface Dokumentlager {
     fun lesDokument(uuid: UUID): DokumentInfo?

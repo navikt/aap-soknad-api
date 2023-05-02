@@ -16,7 +16,7 @@ import no.nav.aap.api.søknad.fordeling.SøknadRepository.Companion.SISTE_SØKNA
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Ettersending
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideClient
-import no.nav.aap.api.søknad.model.VedleggType
+import no.nav.aap.api.søknad.fordeling.VedleggType
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 

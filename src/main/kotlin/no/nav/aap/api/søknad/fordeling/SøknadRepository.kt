@@ -24,8 +24,7 @@ import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.IdentifiableTimestampedBaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity.Companion.CREATED
-import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
-import no.nav.aap.api.søknad.model.VedleggType
+import no.nav.aap.api.søknad.fordeling.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.aap.util.StringExtensions.partialMask
 

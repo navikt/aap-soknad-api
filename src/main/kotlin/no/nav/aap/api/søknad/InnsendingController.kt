@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import no.nav.aap.api.søknad.fordeling.Fordeler
-import no.nav.aap.api.søknad.model.Innsending
-import no.nav.aap.api.søknad.model.StandardEttersending
+import no.nav.aap.api.søknad.fordeling.Innsending
+import no.nav.aap.api.søknad.fordeling.StandardEttersending
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
 

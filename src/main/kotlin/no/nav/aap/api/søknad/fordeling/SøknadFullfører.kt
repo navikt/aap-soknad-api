@@ -31,10 +31,7 @@ import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
-import no.nav.aap.api.søknad.model.StandardEttersending
-import no.nav.aap.api.søknad.model.StandardEttersending.EttersendtVedlegg
-import no.nav.aap.api.søknad.model.StandardSøknad
-import no.nav.aap.api.søknad.model.VedleggType
+import no.nav.aap.api.søknad.fordeling.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.aap.util.StringExtensions.decap

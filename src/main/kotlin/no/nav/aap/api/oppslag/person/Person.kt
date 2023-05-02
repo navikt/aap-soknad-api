@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.model
+package no.nav.aap.api.oppslag.person
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import java.time.LocalDate

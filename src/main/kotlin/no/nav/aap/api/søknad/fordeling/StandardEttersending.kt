@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.model
+package no.nav.aap.api.søknad.fordeling
 
 import java.util.UUID
 

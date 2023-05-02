@@ -8,8 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import no.nav.aap.api.felles.error.IrrecoverableIntegrationException
 import no.nav.aap.api.søknad.arkiv.pdf.PDFGeneratorConfig.Companion.PDF
-import no.nav.aap.api.søknad.model.PDFKvittering
-import no.nav.aap.api.søknad.model.Søker
+import no.nav.aap.api.oppslag.person.Søker
 import no.nav.aap.rest.AbstractWebClientAdapter
 import no.nav.aap.util.StringExtensions.toJson
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL

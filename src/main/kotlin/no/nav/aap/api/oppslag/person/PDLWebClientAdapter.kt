@@ -15,7 +15,7 @@ import no.nav.aap.api.oppslag.person.PDLBolkBarn.PDLBarn
 import no.nav.aap.api.oppslag.person.PDLMapper.harBeskyttedeBarn
 import no.nav.aap.api.oppslag.person.PDLMapper.pdlSøkerTilSøker
 import no.nav.aap.api.oppslag.person.PDLSøker.PDLForelderBarnRelasjon
-import no.nav.aap.api.søknad.model.Søker.Barn
+import no.nav.aap.api.oppslag.person.Søker.Barn
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.PDL_SYSTEM
 import no.nav.aap.util.Constants.PDL_USER

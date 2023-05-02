@@ -23,8 +23,8 @@ import no.nav.aap.api.søknad.arkiv.pdf.PDFFraBildeFKonverterer
 import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
-import no.nav.aap.api.søknad.model.Innsending
-import no.nav.aap.api.søknad.model.PDFKvittering
+import no.nav.aap.api.søknad.fordeling.Innsending
+import no.nav.aap.api.søknad.arkiv.pdf.PDFKvittering
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
 //@ExtendWith(MockitoExtension::class)

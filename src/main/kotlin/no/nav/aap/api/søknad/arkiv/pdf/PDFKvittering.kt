@@ -1,4 +1,4 @@
-package no.nav.aap.api.søknad.model
+package no.nav.aap.api.søknad.arkiv.pdf
 
 import java.time.LocalDateTime
 import java.time.ZoneId

@@ -1,9 +1,9 @@
 package no.nav.aap.api.søknad.arkiv
 
 import org.springframework.stereotype.Service
-import no.nav.aap.api.søknad.model.Innsending
-import no.nav.aap.api.søknad.model.StandardEttersending
-import no.nav.aap.api.søknad.model.Søker
+import no.nav.aap.api.søknad.fordeling.Innsending
+import no.nav.aap.api.søknad.fordeling.StandardEttersending
+import no.nav.aap.api.oppslag.person.Søker
 
 @Service
 class ArkivFordeler(private val arkiv : ArkivClient, private val generator : ArkivJournalpostGenerator) {

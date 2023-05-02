@@ -34,7 +34,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType.OPPGAVE
 import no.nav.aap.api.søknad.minside.MinSideRepositories
-import no.nav.aap.api.søknad.model.StandardSøknad
+import no.nav.aap.api.søknad.fordeling.StandardSøknad
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
 
