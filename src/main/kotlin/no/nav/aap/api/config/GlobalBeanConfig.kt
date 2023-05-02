@@ -50,7 +50,6 @@ import org.springframework.http.server.ServerHttpResponse
 import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ControllerAdvice
-import org.springframework.web.filter.CommonsRequestLoggingFilter
 import org.springframework.web.filter.ServerHttpObservationFilter
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -86,16 +85,6 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName : String) {
 
     val log = getLogger(javaClass)
-
-    @Bean
-    @ConditionalOnNotProd
-    fun logFilter()  = CommonsRequestLoggingFilter().apply {
-        setIncludeQueryString(false)
-        setIncludePayload(true)
-        setMaxPayloadLength(10000)
-        setIncludeHeaders(false)
-        setAfterMessagePrefix("REQUEST DATA: ")
-    }
 
     @Bean
     fun observedAspect(reg : ObservationRegistry) = ObservedAspect(reg)

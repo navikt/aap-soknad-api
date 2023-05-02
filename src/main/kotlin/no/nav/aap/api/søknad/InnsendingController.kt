@@ -14,7 +14,7 @@ import no.nav.security.token.support.spring.ProtectedRestController
 
 @ProtectedRestController(value = ["/innsending"], issuer = IDPORTEN)
 @ResponseStatus(CREATED)
-@Observed
+@Observed(contextualName = "innsending")
 class InnsendingController(private val fordeler : Fordeler) {
 
     @PostMapping("/soknad")

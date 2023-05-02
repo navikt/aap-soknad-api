@@ -28,7 +28,7 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.security.token.support.spring.ProtectedRestController
 
 @ProtectedRestController(value = [OPPSLAG_BASE], issuer = IDPORTEN)
-@Observed
+@Observed(contextualName = "oppslag")
 class OppslagController(
     val pdl : PDLClient,
     val behandler : BehandlerClient,
