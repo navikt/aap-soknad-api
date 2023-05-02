@@ -27,7 +27,6 @@ import java.time.Duration
 import java.time.Duration.*
 import java.util.*
 import java.util.function.Consumer
-import okhttp3.internal.platform.android.AndroidLogHandler.filter
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
