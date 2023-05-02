@@ -90,10 +90,10 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     @Bean
     @ConditionalOnNotProd
     fun logFilter()  = CommonsRequestLoggingFilter().apply {
-        setIncludeQueryString(true)
+        setIncludeQueryString(false)
         setIncludePayload(true)
         setMaxPayloadLength(10000)
-        setIncludeHeaders(true)
+        setIncludeHeaders(false)
         setAfterMessagePrefix("REQUEST DATA: ")
     }
 
