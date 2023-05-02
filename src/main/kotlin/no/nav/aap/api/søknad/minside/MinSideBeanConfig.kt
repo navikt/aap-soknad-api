@@ -46,14 +46,18 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
             .apply {
                 put(KEY_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
                 put(VALUE_SERIALIZER_CLASS_CONFIG, KafkaAvroSerializer::class.java)
-            }))
+            })).apply {
+            setObservationEnabled(true)
+        }
     @Bean
     fun minSideForsideKafkaOperations(p: KafkaProperties) =
         KafkaTemplate(DefaultKafkaProducerFactory<Fødselsnummer, MinSideForside>(p.buildProducerProperties()
             .apply {
                 put(KEY_SERIALIZER_CLASS_CONFIG, JsonSerializer::class.java)
                 put(VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer::class.java)
-            }))
+            })).apply {
+            setObservationEnabled(true)
+        }
 
     @Bean
     fun minSideUtkastKafkaOperations(p: KafkaProperties) =
@@ -61,13 +65,17 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
             .apply {
                 put(KEY_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java)
                 put(VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java)
-            }))
+            })).apply {
+            setObservationEnabled(true)
+        }
     @Bean(DOKNOTIFIKASJON)
     fun dokNotifikasjonListenerContainerFactory(p: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, DoknotifikasjonStatus>().apply {
-            consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
+            consumerFactory = DefaultKafkaConsumerFactory<String?, DoknotifikasjonStatus?>(p.buildConsumerProperties().apply {
                 setRecordFilterStrategy(::recordFilterStrategy)
-            })
+            }).apply {
+                containerProperties.isObservationEnabled = true
+            }
         }
 
     private fun recordFilterStrategy(payload: ConsumerRecord<String, DoknotifikasjonStatus>) =

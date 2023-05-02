@@ -55,9 +55,11 @@ class ArkivBeanConfig {
     @Bean(ARKIVHENDELSER)
     fun arkivHendelserListenerContainerFactory(p: KafkaProperties) =
         ConcurrentKafkaListenerContainerFactory<String, JournalfoeringHendelseRecord>().apply {
-            consumerFactory = DefaultKafkaConsumerFactory(p.buildConsumerProperties().apply {
+            consumerFactory = DefaultKafkaConsumerFactory<String?, JournalfoeringHendelseRecord?>(p.buildConsumerProperties().apply {
                setRecordFilterStrategy { AAP != it.value().temaNytt.lowercase() }
-            })
+            }).apply {
+                containerProperties.isObservationEnabled = true
+            }
         }
 
 

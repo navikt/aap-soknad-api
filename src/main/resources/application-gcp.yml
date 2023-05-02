@@ -7,14 +7,15 @@ info:
         app: ${nais.app.name}
         namespace: ${nais.namespace}
 management:
+    tracing:
+        sampling:
+            probability: 1.0
     metrics:
-        web:
-            server:
-                request:
-                    autotime:
-                        enabled: true
-                        percentiles-histogram: true
-    endpoint:
+        distribution:
+            percentiles-histogram:
+                http:
+                    server:
+                        requests: true
         env:
             additional-keys-to-sanitize: "client-jwk,jwk,jwks"
 
