@@ -57,8 +57,7 @@ object PubSubMessageExtensions {
                 if (eventId != null && fnr != null && type != null) {
                     toMDC(NAV_CALL_ID, eventId)
                     try {
-                        val c = created?.let {  LocalDateTime.parse(it) }
-                        Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(eventId),c)
+                        Metadata(SkjemaType.valueOf(type), Fødselsnummer(fnr), UUID.fromString(eventId), created?.let { LocalDateTime.parse(it) })
                     }
                     catch (e: Exception)  {
                         log.info("OOPS",e)

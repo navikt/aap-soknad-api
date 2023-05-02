@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.ResponseStatus
 import no.nav.aap.api.søknad.fordeling.Fordeler
 import no.nav.aap.api.søknad.fordeling.Innsending
-import no.nav.aap.api.søknad.fordeling.StandardEttersending
+import no.nav.aap.api.søknad.fordeling.Ettersending
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
 
@@ -21,7 +21,7 @@ class InnsendingController(private val fordeler : Fordeler) {
     fun soknad(@RequestBody @Valid innsending : Innsending) = fordeler.fordel(innsending)
 
     @PostMapping("/ettersend")
-    fun ettersend(@RequestBody @Valid ettersending : StandardEttersending) = fordeler.fordel(ettersending)
+    fun ettersend(@RequestBody @Valid ettersending : Ettersending) = fordeler.fordel(ettersending)
 
     override fun toString() = "$javaClass.simpleName [fordeler=$fordeler]"
 }

@@ -14,6 +14,6 @@ class LocalSøknadFordeler : Fordeler {
             log.info("Dummy-ruting av søknad til bakenforliggende systemer")
         }
 
-    override fun fordel(e : StandardEttersending) =
+    override fun fordel(e : Ettersending) =
         Kvittering("42")
 }

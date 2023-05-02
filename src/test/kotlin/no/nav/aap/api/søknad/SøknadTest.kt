@@ -30,8 +30,8 @@ import no.nav.aap.api.søknad.fordeling.AnnetBarnOgInntekt
 import no.nav.aap.api.søknad.fordeling.BarnOgInntekt
 import no.nav.aap.api.søknad.fordeling.Medlemskap
 import no.nav.aap.api.søknad.fordeling.RadioValg
-import no.nav.aap.api.søknad.fordeling.StandardSøknad
-import no.nav.aap.api.søknad.fordeling.StandardSøknad.Yrkesskade.JA
+import no.nav.aap.api.søknad.fordeling.AAPSøknad
+import no.nav.aap.api.søknad.fordeling.AAPSøknad.Yrkesskade.JA
 import no.nav.aap.api.søknad.fordeling.Studier
 import no.nav.aap.api.søknad.fordeling.Utbetalinger
 import no.nav.aap.api.søknad.fordeling.Utenlandsopphold
@@ -152,7 +152,7 @@ class SøknadTest {
 
     companion object {
 
-        fun standardSøknad() = StandardSøknad(
+        fun standardSøknad() = AAPSøknad(
                 false,
                 null,
                 Studier(NEI, RadioValg.NEI),

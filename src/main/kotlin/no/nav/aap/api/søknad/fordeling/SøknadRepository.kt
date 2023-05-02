@@ -19,12 +19,12 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
+import no.nav.aap.api.søknad.fordeling.Ettersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository.Oppgave
 import no.nav.aap.api.søknad.minside.MinSideRepository.BaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.IdentifiableTimestampedBaseEntity
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity.Companion.CREATED
-import no.nav.aap.api.søknad.fordeling.StandardEttersending.EttersendtVedlegg
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.aap.util.StringExtensions.partialMask
 
@@ -93,9 +93,10 @@ interface SøknadRepository : JpaRepository<Søknad, Long> {
                                   res : ArkivResultat,
                                   ettersendteVedlegg : List<EttersendtVedlegg>) : List<UUID> {
             ettersendinger.add(Ettersending(fnr.fnr, res.journalpostId, null, null, this))
-            var ettersendte = tidligereManglendeNåEttersendte(ettersendteVedlegg)
-            ettersendte.forEach(::registrerVedlagtFraEttersending)
-            return ettersendte.map { it.eventid }
+            return with(tidligereManglendeNåEttersendte(ettersendteVedlegg)) {
+                forEach(::registrerVedlagtFraEttersending)
+                map { it.eventid }
+            }
         }
 
         override fun toString() =

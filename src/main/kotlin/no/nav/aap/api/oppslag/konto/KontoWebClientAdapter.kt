@@ -24,7 +24,7 @@ class KontoWebClientAdapter(@Qualifier(KONTO) client: WebClient,
                 .onStatus({ NOT_FOUND == it }, { Mono.empty<Throwable>().also {log.trace("Kontoinformasjon ikke funnet") } })
                 .bodyToMono<Map<String, Any>>()
                 .retryWhen(cf.retrySpec(log))
-                .doOnSuccess { log.trace("Kontoinformasjon returnerte  $it") }
+                .doOnSuccess { log.trace("Kontoinformasjon returnerte  {}", it) }
                 .onErrorResume { Mono.empty() }
                 .defaultIfEmpty(emptyMap())
                 .contextCapture()

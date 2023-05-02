@@ -23,7 +23,7 @@ import no.nav.aap.api.søknad.mellomlagring.BucketConfig
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.StørelseSjekker
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
-import no.nav.aap.api.søknad.fordeling.StandardSøknad
+import no.nav.aap.api.søknad.fordeling.AAPSøknad
 import no.nav.aap.api.søknad.fordeling.VedleggAware
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
@@ -91,10 +91,10 @@ class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                 blob -> blob.delete().also { log.trace("Slettet ${blob.name} med status $it") }
             }
 
-    override fun slettDokumenter(søknad: StandardSøknad) =
+    override fun slettDokumenter(søknad: AAPSøknad) =
         slettDokumenter(søknad, ctx.getFnr())
 
-    fun slettDokumenter(søknad: StandardSøknad, fnr: Fødselsnummer) {
+    fun slettDokumenter(søknad: AAPSøknad, fnr: Fødselsnummer) {
         with(søknad) {
             with(utbetalinger) {
                 slettDokumenter(this?.ekstraFraArbeidsgiver, fnr)

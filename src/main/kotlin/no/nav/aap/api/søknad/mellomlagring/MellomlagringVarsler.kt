@@ -39,7 +39,7 @@ class LeaderElector(@Value("\${elector.path}") private val elector: String, priv
             .retrieve()
             .bodyToMono<Leader>()
             .doOnError { t: Throwable -> log.warn("Leader oppslag mot $elector feilet", t) }
-            .doOnSuccess { log.trace("Leader er $it, jeg er $ME") }
+            .doOnSuccess { log.trace("Leader er {}, jeg er {}", it, ME) }
             .block()?.name == ME
 
     companion object {

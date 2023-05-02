@@ -31,7 +31,7 @@ import no.nav.aap.api.søknad.fordeling.SøknadRepository.Søknad
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
-import no.nav.aap.api.søknad.fordeling.StandardEttersending.EttersendtVedlegg
+import no.nav.aap.api.søknad.fordeling.Ettersending.EttersendtVedlegg
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
 import no.nav.aap.util.StringExtensions.decap
@@ -46,7 +46,7 @@ class SøknadFullfører(private val dokumentLager : Dokumentlager,
     private val log = getLogger(javaClass)
 
     @Transactional
-    fun fullfør(fnr : Fødselsnummer, søknad : StandardSøknad, res : ArkivResultat) =
+    fun fullfør(fnr : Fødselsnummer, søknad : AAPSøknad, res : ArkivResultat) =
         with(res) {
             dokumentLager.slettDokumenter(søknad).run {
                 mellomlager.slett()
@@ -67,7 +67,7 @@ class SøknadFullfører(private val dokumentLager : Dokumentlager,
         }
 
     @Transactional
-    fun fullfør(fnr : Fødselsnummer, e : StandardEttersending, res : ArkivResultat) =
+    fun fullfør(fnr : Fødselsnummer, e : Ettersending, res : ArkivResultat) =
         with(res) {
             dokumentLager.slettDokumenter(e).run {
                 e.søknadId?.let {

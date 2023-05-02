@@ -17,8 +17,8 @@ import no.nav.aap.api.søknad.fordeling.AnnetBarnOgInntekt.Relasjon.FORELDER
 import no.nav.aap.api.søknad.fordeling.BarnOgInntekt
 import no.nav.aap.api.søknad.fordeling.Medlemskap
 import no.nav.aap.api.søknad.fordeling.RadioValg
-import no.nav.aap.api.søknad.fordeling.StandardSøknad
-import no.nav.aap.api.søknad.fordeling.StandardSøknad.Yrkesskade.JA
+import no.nav.aap.api.søknad.fordeling.AAPSøknad
+import no.nav.aap.api.søknad.fordeling.AAPSøknad.Yrkesskade.JA
 import no.nav.aap.api.søknad.fordeling.Studier
 import no.nav.aap.api.søknad.fordeling.Studier.StudieSvar.AVBRUTT
 import no.nav.aap.api.søknad.fordeling.Studier.StudieSvar.NEI
@@ -32,7 +32,7 @@ import no.nav.aap.api.oppslag.person.Søker.Barn
 
 object OMSøknad {
 
-        fun standard_soknad() = StandardSøknad(
+        fun standard_soknad() = AAPSøknad(
             false,
             null,
             Studier(NEI, RadioValg.NEI),
@@ -71,9 +71,9 @@ object OMSøknad {
             ), Vedlegg(deler = listOf(
                 UUID.randomUUID(),
                 UUID.randomUUID()))
-                                              )
+                                         )
 
-        fun er_student_søknad() = StandardSøknad(
+        fun er_student_søknad() = AAPSøknad(
             false,
             null,
             Studier(AVBRUTT, RadioValg.JA),

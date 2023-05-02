@@ -22,7 +22,9 @@ class StørelseSjekker(private val lager: Storage, private val ctx: AuthContext)
                 log.warn("(${ctx.getFnr()})  Opplasting av dokument med størrelse  ${DataSize.ofBytes(dokument.size)} burde ikke tillates, har allerede lastet opp ${DataSize.ofBytes(sum)}, max pr bruker er er $maxsum")
             }
             else {
-                log.trace("Opplasting av dokument med størrelse  ${DataSize.ofBytes(dokument.size)} tillates, samled størrelse av vedlegg i bøtte er ${DataSize.ofBytes(sum)}")
+                log.trace("Opplasting av dokument med størrelse {} tillates, samlet størrelse av vedlegg i bøtte er {}",
+                    DataSize.ofBytes(dokument.size),
+                    DataSize.ofBytes(sum))
             }
         }
 }

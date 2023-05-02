@@ -88,7 +88,7 @@ class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, pri
                         .setRole("roles/pubsub.publisher")
                         .addMembers("serviceAccount:${storage.getServiceAccount(project).email}")
                         .build()).build())
-                    .build()).also { log.trace("Policy er ${it.bindingsList}") }
+                    .build()).also { log.trace("Policy er {}", it.bindingsList) }
             }
         }
 

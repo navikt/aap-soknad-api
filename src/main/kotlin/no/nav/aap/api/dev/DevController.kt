@@ -34,7 +34,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType.OPPGAVE
 import no.nav.aap.api.søknad.minside.MinSideRepositories
-import no.nav.aap.api.søknad.fordeling.StandardSøknad
+import no.nav.aap.api.søknad.fordeling.AAPSøknad
 import no.nav.boot.conditionals.ConditionalOnNotProd
 import no.nav.security.token.support.spring.UnprotectedRestController
 
@@ -62,7 +62,7 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
 
     @PostMapping("vl/{fnr}")
     @ResponseStatus(CREATED)
-    fun vl(@PathVariable fnr: Fødselsnummer, @RequestBody søknad: StandardSøknad) = vl.fordel(søknad, fnr, "42", cfg.standard)
+    fun vl(@PathVariable fnr: Fødselsnummer, @RequestBody søknad: AAPSøknad) = vl.fordel(søknad, fnr, "42", cfg.standard)
 
     @PostMapping("sb/vedlegg")
     @ResponseStatus(CREATED)

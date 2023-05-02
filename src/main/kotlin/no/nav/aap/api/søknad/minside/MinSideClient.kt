@@ -80,7 +80,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 }
             }
             else {
-                log.trace("Oppretter IKKE nytt utkast i Ditt Nav for $fnr, disabled")
+                log.trace("Oppretter IKKE nytt utkast i Ditt Nav for {}, disabled", fnr)
             }
         }
 
@@ -90,7 +90,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
         with(cfg.utkast) {
             if (enabled) {
                 repos.utkast.findByFnrAndSkjematype(fnr.fnr, skjemaType)?.let {u ->
-                    log.trace("Oppdaterer Min Side utkast med eventid ${u.eventid}")
+                    log.trace("Oppdaterer Min Side utkast med eventid {}", u.eventid)
                     produsenter.utkast.send(ProducerRecord(topic, "${u.eventid}", oppdaterUtkast(cfg,nyTekst, "${u.eventid}", fnr)))
                         .get().also {
                             trace("oppdater utkast",u.eventid,it)
@@ -101,7 +101,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 }
             }
             else {
-                log.trace("Oppdaterer IKKE nytt utkast i Ditt Nav for $fnr, disabled")
+                log.trace("Oppdaterer IKKE nytt utkast i Ditt Nav for {}, disabled", fnr)
             }
         }
     @Transactional
@@ -119,7 +119,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 } ?: log.warn("Ingen utkast å avslutte for $fnr")
             }
             else {
-                log.trace("Avslutter IKKE utkast i Ditt Nav for $fnr, disabled")
+                log.trace("Avslutter IKKE utkast i Ditt Nav for {}, disabled", fnr)
             }
         }
 
@@ -127,7 +127,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
     fun opprettBeskjed(fnr: Fødselsnummer, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.beskjed) {
             if (enabled) {
-                log.trace("Oppretter Min Side beskjed med ekstern varsling $eksternVarsling og eventid $eventId")
+                log.trace("Oppretter Min Side beskjed med ekstern varsling {} og eventid {}", eksternVarsling, eventId)
                 produsenter.avro.send(ProducerRecord(topic, key(cfg, eventId, fnr), beskjed(cfg,tekst, varighet,type, eksternVarsling)))
                     .get().run {
                         log("opprett beskjed",eventId,this)
@@ -135,7 +135,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                     }
             }
             else {
-                log.trace("Oppretter IKKE beskjed i Ditt Nav for $fnr, disabled")
+                log.trace("Oppretter IKKE beskjed i Ditt Nav for {}, disabled", fnr)
             }
         }
 
@@ -147,7 +147,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 repos.beskjeder.deleteByFnrAndEventid(fnr.fnr,eventId)
             }
             else {
-                log.trace("Sender IKKE avslutt beskjed til Min Side for beskjed for $fnr, disabled")
+                log.trace("Sender IKKE avslutt beskjed til Min Side for beskjed for {}, disabled", fnr)
             }
         }
 
@@ -155,7 +155,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
     fun opprettOppgave(fnr: Fødselsnummer, søknad: Søknad, tekst: String, eventId: UUID = callIdAsUUID(), type: MinSideNotifikasjonType = MINAAPSTD, eksternVarsling: Boolean = true) =
         with(cfg.oppgave) {
             if (enabled) {
-                log.trace("Oppretter Min Side oppgave $tekst med ekstern varsling $eksternVarsling og eventid $eventId")
+                log.trace("Oppretter Min Side oppgave {} med ekstern varsling {} og eventid {}", tekst, eksternVarsling, eventId)
                 produsenter.avro.send(ProducerRecord(topic, key(cfg, eventId, fnr),
                         oppgave(cfg,tekst, varighet, type, eventId, eksternVarsling)))
                     .get().run {
@@ -178,7 +178,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 søknad.oppgaver.clear()
             }
             else {
-                log.trace("Sender IKKE avslutt oppgave til Ditt Nav for $fnr, disabled")
+                log.trace("Sender IKKE avslutt oppgave til Ditt Nav for {}, disabled", fnr)
             }
         }
 
@@ -195,9 +195,14 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 log("avslutt ${notifikasjonType.name.lowercase()}",eventId,it)
             }
     private fun log(type: String, eventId: UUID, result: SendResult<out Any,out Any>?) =
-        log.info("Sendte $type med eventid $eventId  på offset ${result?.recordMetadata?.offset()} partition${result?.recordMetadata?.partition()} på topic ${result?.recordMetadata?.topic()}")
+        log.info("Sendte $type med eventid $eventId  på offset ${result?.recordMetadata?.offset()} partition ${result?.recordMetadata?.partition()} på topic ${result?.recordMetadata?.topic()}")
     private fun trace(type: String, eventId: UUID, result: SendResult<out Any,out Any>?) =
-        log.trace("Sendte $type med eventid $eventId  på offset ${result?.recordMetadata?.offset()} partition${result?.recordMetadata?.partition()} på topic ${result?.recordMetadata?.topic()}")
+        log.trace("Sendte {} med eventid {}  på offset {} partition {} på topic {}",
+            type,
+            eventId,
+            result?.recordMetadata?.offset(),
+            result?.recordMetadata?.partition(),
+            result?.recordMetadata?.topic())
 }
 
 

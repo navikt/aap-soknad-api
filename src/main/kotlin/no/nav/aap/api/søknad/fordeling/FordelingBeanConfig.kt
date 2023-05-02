@@ -30,5 +30,7 @@ class FordelingBeanConfig {
         KafkaTemplate(DefaultKafkaProducerFactory<String, Any>(p.buildProducerProperties()).apply {
             setValueSerializer(JsonSerializer(mapper.copy()
                 .setDefaultPropertyInclusion(ALWAYS)))
-        })
+        }).apply {
+            setObservationEnabled(true)
+        }
 }

@@ -18,11 +18,11 @@ import java.util.*
 import no.nav.aap.api.felles.Periode
 import no.nav.aap.api.oppslag.behandler.AnnenBehandler
 import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
+import no.nav.aap.api.oppslag.person.Søker.Barn
 import no.nav.aap.api.søknad.arkiv.pdf.PDFKvittering
 import no.nav.aap.api.søknad.fordeling.AnnetBarnOgInntekt.Relasjon.FORELDER
 import no.nav.aap.api.søknad.fordeling.RadioValg.JA
 import no.nav.aap.api.søknad.fordeling.Studier.StudieSvar.AVBRUTT
-import no.nav.aap.api.oppslag.person.Søker.Barn
 import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.AFP
 import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.LÅN
 import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
@@ -39,14 +39,14 @@ import no.nav.aap.api.søknad.fordeling.VedleggType.UTENLANDSKE
 import no.nav.aap.util.LoggerUtil.getLogger
 
 data class Innsending(
-    val søknad : StandardSøknad,
+    val søknad : AAPSøknad,
     val kvittering : PDFKvittering) {
 
-    val andreBarn = søknad.andreBarn.map { it.barn }
+    val andreBarn = søknad.andreBarn.map(AnnetBarnOgInntekt::barn)
 }
 
 @JsonIgnoreProperties(value = ["vedlegg"], allowSetters = true)
-data class StandardSøknad(
+data class AAPSøknad(
     val sykepenger : Boolean,
     val ferie : Ferie?,
     val studier : Studier,

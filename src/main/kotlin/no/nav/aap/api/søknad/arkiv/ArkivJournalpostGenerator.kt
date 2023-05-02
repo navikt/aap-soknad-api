@@ -23,10 +23,10 @@ import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
 import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.api.søknad.fordeling.Innsending
-import no.nav.aap.api.søknad.fordeling.StandardEttersending
-import no.nav.aap.api.søknad.fordeling.StandardEttersending.EttersendtVedlegg
-import no.nav.aap.api.søknad.fordeling.StandardSøknad
-import no.nav.aap.api.søknad.fordeling.StandardSøknad.Companion.VERSJON
+import no.nav.aap.api.søknad.fordeling.Ettersending
+import no.nav.aap.api.søknad.fordeling.Ettersending.EttersendtVedlegg
+import no.nav.aap.api.søknad.fordeling.AAPSøknad
+import no.nav.aap.api.søknad.fordeling.AAPSøknad.Companion.VERSJON
 import no.nav.aap.api.oppslag.person.Søker
 import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.LÅN
 import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
@@ -63,7 +63,7 @@ class ArkivJournalpostGenerator(
         const val ROUTING = "routing"
     }
 
-    fun journalpostFra(es : StandardEttersending, søker : Søker, tilVikafossen : Boolean) =
+    fun journalpostFra(es : Ettersending, søker : Søker, tilVikafossen : Boolean) =
         with(søker) {
             Journalpost(STANDARD_ETTERSENDING.tittel,
                 AvsenderMottaker(fnr, navn),
@@ -114,7 +114,7 @@ class ArkivJournalpostGenerator(
             require(it.isNotEmpty()) { "Forventet > 0 vedlegg fra dokumentlager for ${vedlegg.map { v -> v.ettersending.deler }}" }
         }
 
-    private fun dokumenterFra(søknad : StandardSøknad, pdfVariant : DokumentVariant) =
+    private fun dokumenterFra(søknad : AAPSøknad, pdfVariant : DokumentVariant) =
         mutableListOf(Dokument(listOf(søknad.somOriginal(mapper), pdfVariant)))
 
     private fun dokumenterFra(a : List<VedleggAware?>?, type : VedleggType) =
@@ -147,7 +147,7 @@ class ArkivJournalpostGenerator(
 
     private fun grupperteOgSorterteVedlegg(vl : Vedlegg) = (vl.deler?.mapNotNull {
         it?.let {
-            log.trace("Leser dokument $it fra dokkumentlager")
+            log.trace("Leser dokument {} fra dokkumentlager", it)
             lager.lesDokument(it)
         }
     } ?: emptyList())
@@ -157,5 +157,5 @@ class ArkivJournalpostGenerator(
     private fun Journalpost.størrelse() = dokumenter.størrelse("dokument")
     private fun ByteArray.somDokument(tittel : String, brevkode : String? = null) = Dokument(tittel, brevkode, DokumentVariant(encode()))
     private fun DokumentInfo.somDokument(tittel : String, brevkode : String? = null) = bytes.somDokument(tittel, brevkode)
-    fun StandardSøknad.somOriginal(mapper : ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
+    fun AAPSøknad.somOriginal(mapper : ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
 }

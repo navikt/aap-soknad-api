@@ -53,7 +53,7 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
         .block()
         ?.single()
         .also {
-            log.trace("Fikk scan result $it")
+            log.trace("Fikk scan result {}", it)
         }
         ?: ScanResult(NONE)
 

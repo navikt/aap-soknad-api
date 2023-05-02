@@ -13,7 +13,7 @@ import no.nav.aap.util.LoggerUtil
 interface Fordeler {
 
     fun fordel(innsending : Innsending) : Kvittering
-    fun fordel(e : StandardEttersending) : Kvittering
+    fun fordel(e : Ettersending) : Kvittering
 }
 
 @Component
@@ -36,7 +36,7 @@ class SøknadFordeler(private val arkiv : ArkivFordeler,
             }
         }
 
-    override fun fordel(e : StandardEttersending) =
+    override fun fordel(e : Ettersending) =
         pdl.søkerUtenBarn().run {
             with(arkiv.fordel(e, this, e.tilVikafossen())) {
                 vlFordeler.fordel(e, fnr, journalpostId, cfg.ettersending)
@@ -44,7 +44,7 @@ class SøknadFordeler(private val arkiv : ArkivFordeler,
             }
         }
 
-    private fun StandardEttersending.tilVikafossen() = søknadId?.let {
+    private fun Ettersending.tilVikafossen() = søknadId?.let {
         repo.getSøknadByEventidAndFnr(it, ctx.getFnr().fnr)?.routing
     } ?: false
 

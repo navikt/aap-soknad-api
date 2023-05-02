@@ -34,7 +34,7 @@ import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.saksbehandling.SaksbehandlingController.VedleggEtterspørsel
 import no.nav.aap.api.søknad.SøknadTest.Companion.standardSøknad
 import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
-import no.nav.aap.api.søknad.fordeling.StandardEttersending
+import no.nav.aap.api.søknad.fordeling.Ettersending
 import no.nav.aap.api.søknad.fordeling.SøknadFullfører
 import no.nav.aap.api.søknad.fordeling.SøknadRepository
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Companion.SISTE_SØKNAD
@@ -55,8 +55,8 @@ import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository
 import no.nav.aap.api.søknad.minside.MinSideProdusenter
 import no.nav.aap.api.søknad.minside.MinSideRepositories
 import no.nav.aap.api.søknad.minside.MinSideUtkastRepository
-import no.nav.aap.api.søknad.fordeling.StandardEttersending.EttersendtVedlegg
-import no.nav.aap.api.søknad.fordeling.StandardSøknad
+import no.nav.aap.api.søknad.fordeling.Ettersending.EttersendtVedlegg
+import no.nav.aap.api.søknad.fordeling.AAPSøknad
 import no.nav.aap.api.søknad.fordeling.Vedlegg
 import no.nav.aap.api.søknad.fordeling.VedleggType
 import no.nav.aap.api.søknad.fordeling.VedleggType.*
@@ -162,7 +162,7 @@ class DBSøknadTest {
             BacklinksConfig(NAV, NAV, NAV), true, "done")
         private val FNR = Fødselsnummer("08089403198")
 
-        internal fun ettesending(id : UUID, type : VedleggType) = StandardEttersending(id, listOf(EttersendtVedlegg(Vedlegg(), type)))
+        internal fun ettesending(id : UUID, type : VedleggType) = Ettersending(id, listOf(EttersendtVedlegg(Vedlegg(), type)))
     }
 }
 
@@ -190,7 +190,7 @@ internal class InMemoryDokumentLager : Dokumentlager {
     private val lager = mutableMapOf<UUID, DokumentInfo>()
     override fun lesDokument(uuid : UUID) : DokumentInfo? = lager[uuid]
     override fun slettDokumenter(uuids : List<UUID>) = uuids.forEach { lager.remove(it) }
-    override fun slettDokumenter(søknad : StandardSøknad) = lager.clear()
+    override fun slettDokumenter(søknad : AAPSøknad) = lager.clear()
 
     override fun lagreDokument(dokument : DokumentInfo) =
         with(UUID.randomUUID()) {

@@ -87,7 +87,7 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
                                 .addMembers("serviceAccount:${storage.getServiceAccount(project).email}")
                                 .build()).build())
                     .also {
-                        log.trace("Ny policy er ${it.bindingsList}")
+                        log.trace("Ny policy er {}", it.bindingsList)
                     }
             }
         }
