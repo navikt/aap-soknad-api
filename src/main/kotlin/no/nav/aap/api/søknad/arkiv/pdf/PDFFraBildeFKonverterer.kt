@@ -51,6 +51,6 @@ class PDFFraBildeFKonverterer(private val scaler : BildeSkalerer) {
                         A4.lowerLeftX,
                         A4.lowerLeftY)
                 }
-            }.getOrElse { throw DokumentException("Konvertering av bilde feilet", it) }
+            }.getOrElse { throw DokumentException("Konvertering av bilde med størrelse ${DataSize.of(bilde.size.toLong(), BYTES).toMegabytes()} feilet", it) }
         }
 }
