@@ -28,6 +28,7 @@ class ArbeidWebClientAdapter(
                 .doOnError { t -> log.warn("Arbeidsforhold oppslag feilet", t) }
                 .doOnSuccess { log.trace("Arbeidsforhold er {}", it) }
                 .defaultIfEmpty(listOf())
+                .contextCapture()
                 .block().orEmpty()
         }
         else {
