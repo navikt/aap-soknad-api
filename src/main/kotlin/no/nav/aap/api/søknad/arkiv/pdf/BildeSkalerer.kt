@@ -6,6 +6,7 @@ import java.awt.geom.AffineTransform
 import java.awt.image.AffineTransformOp
 import java.awt.image.AffineTransformOp.TYPE_BILINEAR
 import java.awt.image.BufferedImage
+import java.awt.image.BufferedImage.SCALE_DEFAULT
 import java.awt.image.BufferedImage.SCALE_SMOOTH
 import java.awt.image.BufferedImage.TYPE_3BYTE_BGR
 import java.awt.image.BufferedImage.TYPE_CUSTOM
@@ -67,7 +68,7 @@ class BildeSkalerer {
     private fun skalerNed(origImage: BufferedImage, newDim: Dimension): BufferedImage {
         val newWidth = newDim.getWidth().toInt()
         val newHeight = newDim.getHeight().toInt()
-        val tempImg = origImage.getScaledInstance(newWidth, newHeight, SCALE_SMOOTH)
+        val tempImg = origImage.getScaledInstance(newWidth, newHeight, SCALE_DEFAULT)
         val scaledImg = BufferedImage(newWidth, newHeight, TYPE_3BYTE_BGR)
         (scaledImg.graphics as Graphics2D).apply {
             drawImage(tempImg, 0, 0, null)

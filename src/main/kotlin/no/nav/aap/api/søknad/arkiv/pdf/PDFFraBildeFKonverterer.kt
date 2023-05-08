@@ -29,7 +29,9 @@ class PDFFraBildeFKonverterer(private val scaler : BildeSkalerer) {
             log.trace("Konverterer {} til PDF for {}", bilder.størrelse("bildefil"), mediaType)
             PDDocument().use { doc ->
                 ByteArrayOutputStream().use { os ->
-                    bilder.forEach { pdfFraBilde(doc, it, mediaType.subtype) }
+                    bilder.forEach {
+                        pdfFraBilde(doc, it, mediaType.subtype)
+                    }
                     doc.save(os)
                     os.toByteArray()
                 }
@@ -37,7 +39,7 @@ class PDFFraBildeFKonverterer(private val scaler : BildeSkalerer) {
         }.getOrElse { e ->
             throw DokumentException("Konvertering av ${bilder.størrelse("bildefil")} av type $mediaType feilet (${
                 bilder.map {
-                    DataSize.of(it.size.toLong(), BYTES).toMegabytes()
+                    DataSize.of(it.size.toLong(), BYTES).toKilobytes()
                 }
             })", e)
         }
@@ -51,6 +53,6 @@ class PDFFraBildeFKonverterer(private val scaler : BildeSkalerer) {
                         A4.lowerLeftX,
                         A4.lowerLeftY)
                 }
-            }.getOrElse { throw DokumentException("Konvertering av bilde med størrelse ${DataSize.of(bilde.size.toLong(), BYTES).toMegabytes()} feilet", it) }
+            }.getOrElse { throw DokumentException("Konvertering av bilde med størrelse ${DataSize.of(bilde.size.toLong(), BYTES).toKilobytes()} feilet", it) }
         }
 }
