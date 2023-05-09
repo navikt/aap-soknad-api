@@ -2,6 +2,7 @@ package no.nav.aap.api.oppslag.person
 
 import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.graphql.client.GraphQlClient
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.stereotype.Component
@@ -26,11 +27,13 @@ import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 data class WebClients(
     @Qualifier(PDL_USER) val client : WebClient,
     @Qualifier(PDL_USER) val user : GraphQLWebClient,
+    @Qualifier(PDL_USER) val bootUser : GraphQlClient,
+    @Qualifier(PDL_SYSTEM) val bootSystem : GraphQlClient,
     @Qualifier(PDL_SYSTEM) val system : GraphQLWebClient)
 
 @Component
 class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, private val ctx : AuthContext) :
-    AbstractGraphQLAdapter(clients.client, cfg) {
+    AbstractGraphQLAdapter(clients.client, clients.bootSystem,cfg) {
 
     override fun ping() : Map<String, String> {
         webClient

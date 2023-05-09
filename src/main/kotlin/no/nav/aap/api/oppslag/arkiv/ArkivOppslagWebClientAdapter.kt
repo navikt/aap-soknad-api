@@ -4,6 +4,7 @@ import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import java.time.LocalDateTime
 import java.util.*
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.graphql.client.GraphQlClient
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
@@ -28,9 +29,10 @@ import no.nav.aap.util.AuthContext
 class ArkivOppslagWebClientAdapter(
     @Qualifier(SAF) webCLient: WebClient,
     @Qualifier(SAF) private val graphQLClient: GraphQLWebClient,
+    @Qualifier(SAF) private val graphQLBootClient: GraphQlClient,
     private val ctx: AuthContext,
     private val mapper: ArkivOppslagMapper,
-    val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(webCLient, cf) {
+    val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(webCLient, graphQLBootClient,cf) {
 
     fun dokument(journalpostId: String, dokumentInfoId: String) =
         webClient.get()
