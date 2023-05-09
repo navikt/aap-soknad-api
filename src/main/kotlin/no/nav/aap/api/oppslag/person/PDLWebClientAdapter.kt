@@ -61,7 +61,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
 
     fun søker1(medBarn : Boolean = false) =
         with(ctx.getFnr()) {
-            query<PDLWrappedSøker>(clients.bootUser, Pair(PERSON_QUERY,"henPerson"), mapOf(IDENT to fnr),"Fnr: ${ctx.getFnr()}")?.active?.let {
+            query<PDLWrappedSøker>(clients.bootUser, Pair(PERSON_QUERY,"hentPerson"), mapOf(IDENT to fnr),"Fnr: ${ctx.getFnr()}")?.active?.let {
                 pdlSøkerTilSøker(it, this, alleBarn1(medBarn, it.forelderBarnRelasjon))
             } ?: throw JwtTokenMissingException()
         }
