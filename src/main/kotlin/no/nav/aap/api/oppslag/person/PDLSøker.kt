@@ -12,7 +12,7 @@ import no.nav.aap.api.oppslag.person.PDLSøker.PDLFødsel
 data class PDLWrappedSøker(val navn: Set<PDLNavn>,
                            @JsonProperty("foedsel") val fødsel: Set<PDLFødsel>,
                            val bostedsadresse: List<PDLBostedadresse>,
-                           val adressebeskyttelse: Set<PDLGradering>,
+                           val adressebeskyttelse: Set<PDLGradering> = emptySet(),
                            val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon>?) {
     val active = PDLSøker(navn.first(), fødsel.firstOrNull(), bostedsadresse.firstOrNull()?.vegadresse, adressebeskyttelse,
             forelderBarnRelasjon?.filter {
@@ -32,7 +32,7 @@ data class PDLNavn(val fornavn: String, val mellomnavn: String?, val etternavn: 
 data class PDLSøker(val navn: PDLNavn,
                     val fødsel: PDLFødsel?,
                     val vegadresse: PDLVegadresse?,
-                    val adressebeskyttelse: Set<PDLGradering>,
+                    val adressebeskyttelse: Set<PDLGradering> = emptySet(),
                     val forelderBarnRelasjon: List<PDLForelderBarnRelasjon>) {
 
     data class PDLForelderBarnRelasjon(val relatertPersonsIdent: String?,
