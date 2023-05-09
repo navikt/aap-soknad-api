@@ -12,7 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.rest.AbstractWebClientAdapter
 
-abstract class AbstractGraphQLAdapter(client : WebClient, protected val graphQL : GraphQlClient, cfg : AbstractRestConfig, val handler : GraphQLErrorHandler = GraphQLDefaultErrorHandler()) :
+abstract class AbstractGraphQLAdapter(client : WebClient, cfg : AbstractRestConfig, val handler : GraphQLErrorHandler = GraphQLDefaultErrorHandler()) :
     AbstractWebClientAdapter(client, cfg) {
 
     @Retry(name = "graphql")
@@ -37,7 +37,22 @@ abstract class AbstractGraphQLAdapter(client : WebClient, protected val graphQL 
         }
 
     @Retry(name = "graphql")
-    protected inline fun <reified T> query(query : Pair<String, String>, vars : Map<String, String>, info : String) =
+    protected inline fun <reified T> query(graphQL: GraphQlClient, query : Pair<String, String>, vars : Map<String, List<String>>) =
+        runCatching {
+            (graphQL
+                .documentName(query.first)
+                .variables(vars)
+                .retrieve(query.second)
+                .toEntityList(T::class.java)
+                .block() ?: emptyList()).also {
+                log.trace("Slo opp liste av {} {}", T::class.java.simpleName, it)
+            }
+        }.getOrElse {
+            handler.handle(it,query.first)
+        }
+
+    @Retry(name = "graphql")
+    protected inline fun <reified T> query(graphQL: GraphQlClient,query : Pair<String, String>, vars : Map<String, String>, info : String) =
         runCatching {
             graphQL
                 .documentName(query.first)
@@ -51,8 +66,6 @@ abstract class AbstractGraphQLAdapter(client : WebClient, protected val graphQL 
             log.warn("Query $query feilet. $info", t)
             handler.handle(t, query.first)
         }
-
-
 }
 class GraphQLInterceptor : GraphQlClientInterceptor {
 

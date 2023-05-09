@@ -32,7 +32,7 @@ class ArkivOppslagWebClientAdapter(
     @Qualifier(SAF) private val graphQLBootClient: GraphQlClient,
     private val ctx: AuthContext,
     private val mapper: ArkivOppslagMapper,
-    val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(webCLient, graphQLBootClient,cf) {
+    val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(webCLient,cf) {
 
     fun dokument(journalpostId: String, dokumentInfoId: String) =
         webClient.get()
@@ -56,6 +56,9 @@ class ArkivOppslagWebClientAdapter(
         ?.dokumenter?.firstOrNull()?.dokumentInfoId   // Søknaden er alltid  første elementet
 
     private fun query() = query<ArkivOppslagJournalposter>(graphQLClient, DOKUMENTER_QUERY,  ctx.toIdent())?.journalposter
+
+    private fun query1() = query<ArkivOppslagJournalposter>(graphQLBootClient, Pair(DOKUMENTER_QUERY,"dokumentoversiktSelvbetjening"),  ctx.toIdent(),"Fnr: ${ctx.getFnr()}")?.journalposter
+
 
     private fun AuthContext.toIdent() = mapOf(IDENT to getFnr().fnr)
 }
