@@ -61,7 +61,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
 
     fun søker1(medBarn : Boolean = false) =
         with(ctx.getFnr()) {
-            query<PDLWrappedSøker>(clients.bootUser, Pair(PERSON_QUERY,"hentPerson"), mapOf(IDENT to fnr),"Fnr: ${ctx.getFnr()}")?.active?.let {
+            query<PDLWrappedSøker>(clients.bootUser, Pair("query-person","hentPerson"), mapOf(IDENT to fnr),"Fnr: ${ctx.getFnr()}")?.active?.let {
                 pdlSøkerTilSøker(it, this, alleBarn1(medBarn, it.forelderBarnRelasjon))
             } ?: throw JwtTokenMissingException()
         }
@@ -106,7 +106,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
         }
 
     private fun oppslagBarn1(fnrs : List<String>) =
-        with(query<PDLBolkBarn>(clients.bootSystem, Pair(BARN_BOLK_QUERY,"hentPersonBolk"), mapOf(IDENTER to fnrs))
+        with(query<PDLBolkBarn>(clients.bootSystem, Pair("query-barnbolk","hentPersonBolk"), mapOf(IDENTER to fnrs))
             .partition { it.code == Ok }) {
             second.forEach {
                 log.warn("Kunne ikke slå opp barn ${it.ident.partialMask()}, kode er ${it.code}")
@@ -141,7 +141,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
                     false
                 }
                 else {
-                    harBeskyttedeBarn(query<PDLBolkBarn>(clients.bootSystem, Pair(BARN_BOLK_QUERY,"hentPersonBolk"), mapOf(IDENTER to this)))
+                    harBeskyttedeBarn(query<PDLBolkBarn>(clients.bootSystem, Pair("query-barnbolk","hentPersonBolk"), mapOf(IDENTER to this)))
                 }
             }
         }.getOrElse {

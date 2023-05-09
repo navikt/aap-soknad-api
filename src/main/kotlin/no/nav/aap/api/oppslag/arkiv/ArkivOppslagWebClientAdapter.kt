@@ -57,7 +57,7 @@ class ArkivOppslagWebClientAdapter(
 
     private fun query() = query<ArkivOppslagJournalposter>(graphQLClient, DOKUMENTER_QUERY,  ctx.toIdent())?.journalposter
 
-    private fun query1() = query<ArkivOppslagJournalposter>(graphQLBootClient, Pair(DOKUMENTER_QUERY,"dokumentoversiktSelvbetjening"),  ctx.toIdent(),"Fnr: ${ctx.getFnr()}")?.journalposter
+    private fun query1() = query<ArkivOppslagJournalposter>(graphQLBootClient, Pair("query-dokumenter","dokumentoversiktSelvbetjening"),  ctx.toIdent(),"Fnr: ${ctx.getFnr()}")?.journalposter
 
 
     private fun AuthContext.toIdent() = mapOf(IDENT to getFnr().fnr)
