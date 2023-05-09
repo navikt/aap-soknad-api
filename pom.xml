@@ -339,6 +339,12 @@
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>${jib.version}</version>
                 <configuration>
+                    <container>
+                      <jvmFlags>
+                        <jvmFlag>-XX:MaxRAMPercentage=80.0</jvmFlag>
+                        <jvmFlag>-XX:+HeapDumpOnOutOfMemoryError</jvmFlag>
+                      </jvmFlags>
+                    </container>
                     <from>
                         <image>gcr.io/distroless/java17</image>
                     </from>
