@@ -51,6 +51,10 @@ class ArkivOppslagWebClientAdapter(
         ?.flatMap { mapper.tilDokumenter(it) }
         .orEmpty()
 
+    fun dokumenter1() = query1()
+        ?.filter { it.journalposttype in listOf(I, U) }
+        ?.flatMap { mapper.tilDokumenter(it) }
+        .orEmpty()
     fun søknadDokumentId(journalPostId: String) = query()
         ?.firstOrNull { it.journalpostId == journalPostId }
         ?.dokumenter?.firstOrNull()?.dokumentInfoId   // Søknaden er alltid  første elementet

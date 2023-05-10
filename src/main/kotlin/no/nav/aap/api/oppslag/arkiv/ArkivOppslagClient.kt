@@ -16,7 +16,13 @@ class ArkivOppslagClient(private val adapter : ArkivOppslagWebClientAdapter) {
     fun dokument(journalpostId : String, dokumentId : String) =
         adapter.dokument(journalpostId, dokumentId)
 
-    fun dokumenter() = adapter.dokumenter()
+    fun dokumenter() = runCatching {
+        adapter.dokumenter1()
+        log.trace("SAF ny OK")
+    }.getOrElse {
+        log.trace("SAF ny feil",it)
+        adapter.dokumenter()
+    }
 
     fun søknadDokumentId(journalpostId : String) = adapter.søknadDokumentId(journalpostId)
         ?: throw IllegalStateException("Fant ikke søknadens dokumentId for $journalpostId")
