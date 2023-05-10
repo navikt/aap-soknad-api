@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono
 import no.nav.aap.api.felles.error.IrrecoverableIntegrationException
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost
-import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentFiltype.PDF
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentVariantFormat.ARKIV
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagJournalpostType
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagJournalpostType.I
@@ -25,11 +25,11 @@ import no.nav.aap.util.AuthContext
 
 @Component
 class ArkivOppslagWebClientAdapter(
-    @Qualifier(SAF) webCLient: WebClient,
-    @Qualifier(SAF) private val graphQLBootClient: GraphQlClient,
+    @Qualifier(SAF) webClient: WebClient,
+    @Qualifier(SAF) private val graphQLClient: GraphQlClient,
     private val ctx: AuthContext,
     private val mapper: ArkivOppslagMapper,
-    val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(webCLient,cf) {
+    val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(webClient,cf) {
 
     fun dokument(journalpostId: String, dokumentInfoId: String) =
         webClient.get()
@@ -43,15 +43,15 @@ class ArkivOppslagWebClientAdapter(
             .contextCapture()
             .block() ?: throw IrrecoverableIntegrationException("Null response fra arkiv for  $journalpostId/$dokumentInfoId ")
 
-    fun dokumenter() = query1()
+    fun dokumenter() = query()
         ?.filter { it.journalposttype in listOf(I, U) }
         ?.flatMap { mapper.tilDokumenter(it) }
         .orEmpty()
-    fun søknadDokumentId(journalPostId: String) = query1()
+    fun søknadDokumentId(journalPostId: String) = query()
         ?.firstOrNull { it.journalpostId == journalPostId }
         ?.dokumenter?.firstOrNull()?.dokumentInfoId   // Søknaden er alltid  første elementet
 
-    private fun query1() = query<ArkivOppslagJournalposter>(graphQLBootClient, Pair("query-dokumenter","dokumentoversiktSelvbetjening"),  ctx.toIdent(),"Fnr: ${ctx.getFnr()}")?.journalposter
+    private fun query() = query<ArkivOppslagJournalposter>(graphQLClient, Pair("query-dokumenter","dokumentoversiktSelvbetjening"),  ctx.toIdent(),"Fnr: ${ctx.getFnr()}")?.journalposter
 
 
     private fun AuthContext.toIdent() = mapOf(IDENT to getFnr().fnr)
@@ -62,9 +62,7 @@ class ArkivOppslagMapper {
     fun tilDokumenter(journalpost: ArkivOppslagJournalpost) =
         with(journalpost) {
             dokumenter.filter { v ->
-                v.dokumentvarianter.any {
-                    with(it) { filtype == PDF && brukerHarTilgang && ARKIV == variantformat }
-                }
+                v.dokumentvarianter.any(ArkivOppslagDokumentVariant::kanVises)
             }.map { dok ->
                 DokumentOversiktInnslag(
                         journalpostId, dok.dokumentInfoId,

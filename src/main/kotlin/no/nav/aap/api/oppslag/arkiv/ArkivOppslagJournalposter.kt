@@ -1,6 +1,8 @@
 package no.nav.aap.api.oppslag.arkiv
 
 import java.time.LocalDateTime
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentFiltype.PDF
+import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentVariantFormat.ARKIV
 
 data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournalpost>) {
 
@@ -59,6 +61,8 @@ data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournal
                                                    val filtype: ArkivOppslagDokumentFiltype,
                                                    val code: List<String> = emptyList(),
                                                    val brukerHarTilgang: Boolean) {
+
+                val kanVises =  filtype == PDF && brukerHarTilgang && ARKIV == variantformat
 
                 enum class ArkivOppslagDokumentVariantFormat { ARKIV, SLADDET }
 
