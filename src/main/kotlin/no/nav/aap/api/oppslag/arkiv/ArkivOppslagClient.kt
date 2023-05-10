@@ -17,8 +17,9 @@ class ArkivOppslagClient(private val adapter : ArkivOppslagWebClientAdapter) {
         adapter.dokument(journalpostId, dokumentId)
 
     fun dokumenter() = runCatching {
-        adapter.dokumenter1()
-        log.trace("SAF ny OK")
+        adapter.dokumenter1().also {
+            log.trace("SAF ny OK")
+        }
     }.getOrElse {
         log.trace("SAF ny feil",it)
         adapter.dokumenter()
