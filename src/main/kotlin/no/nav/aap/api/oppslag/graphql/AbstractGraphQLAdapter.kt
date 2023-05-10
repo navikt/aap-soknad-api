@@ -13,9 +13,8 @@ import no.nav.aap.rest.AbstractWebClientAdapter
 abstract class AbstractGraphQLAdapter(client : WebClient, cfg : AbstractRestConfig, val handler : GraphQLErrorHandler = GraphQLDefaultErrorHandler()) :
     AbstractWebClientAdapter(client, cfg) {
 
-
     @Retry(name = "graphql")
-    protected inline fun <reified T> query(graphQL: GraphQlClient, query : Pair<String, String>, vars : Map<String, List<String>>) =
+    protected inline fun <reified T> query(graphQL : GraphQlClient, query : Pair<String, String>, vars : Map<String, List<String>>) =
         runCatching {
             (graphQL
                 .documentName(query.first)
@@ -27,11 +26,11 @@ abstract class AbstractGraphQLAdapter(client : WebClient, cfg : AbstractRestConf
                 log.trace("Slo opp liste av {} {}", T::class.java.simpleName, it)
             }
         }.getOrElse {
-            handler.handle(it,query.first)
+            handler.handle(it)
         }
 
     @Retry(name = "graphql")
-    protected inline fun <reified T> query(graphQL: GraphQlClient,query : Pair<String, String>, vars : Map<String, String>, info : String) =
+    protected inline fun <reified T> query(graphQL : GraphQlClient, query : Pair<String, String>, vars : Map<String, String>, info : String) =
         runCatching {
             graphQL
                 .documentName(query.first)
@@ -44,9 +43,10 @@ abstract class AbstractGraphQLAdapter(client : WebClient, cfg : AbstractRestConf
                 }
         }.getOrElse { t ->
             log.warn("Query $query feilet. $info", t)
-            handler.handle(t, query.first)
+            handler.handle(t)
         }
 }
+
 class LoggingGraphQLInterceptor : GraphQlClientInterceptor {
 
     private val log = LoggerFactory.getLogger(LoggingGraphQLInterceptor::class.java)

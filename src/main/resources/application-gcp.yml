@@ -21,12 +21,12 @@ management:
 
 resilience4j:
     retry:
-      instances:
-        graphql:
-            max-attempts: 3
-            waitDuration: 100ms
-            ignoreExceptions:
-                - no.nav.aap.api.oppslag.graphql.GraphQLExtensions.UnrecoverableGraphQL
+        instances:
+            graphql:
+                max-attempts: 3
+                waitDuration: 100ms
+                ignoreExceptions:
+                    - no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IrrecoverableGraphQLException
 spring:
     cloud:
         gcp:
@@ -59,9 +59,9 @@ spring:
                 registry:
                     url: ${kafka.schema.registry}
             ssl:
-              endpoint:
-                identification:
-                    algorithm: ''
+                endpoint:
+                    identification:
+                        algorithm: ''
         security:
             protocol: SSL
         ssl:
