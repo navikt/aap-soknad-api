@@ -11,7 +11,7 @@ import org.springframework.web.reactive.function.client.ClientRequest
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.Builder
-import no.nav.aap.api.oppslag.graphql.GraphQLInterceptor
+import no.nav.aap.api.oppslag.graphql.LoggingGraphQLInterceptor
 import no.nav.aap.api.oppslag.person.PDLConfig.Companion.PDL_CREDENTIALS
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.behandlingFilterFunction
@@ -46,13 +46,13 @@ class PDLClientBeanConfig {
     @Qualifier(PDL_USER)
     fun graphQLUserClient(@Qualifier(PDL_USER) client : WebClient, mapper : ObjectMapper) =
         HttpGraphQlClient.builder(client)
-            .interceptor(GraphQLInterceptor())
+            .interceptor(LoggingGraphQLInterceptor())
             .build()
 
     @Qualifier(PDL_SYSTEM)
     @Bean
     fun graphQLSystemWebClient(@Qualifier(PDL_SYSTEM) client: WebClient) =   HttpGraphQlClient.builder(client)
-        .interceptor(GraphQLInterceptor())
+        .interceptor(LoggingGraphQLInterceptor())
         .build()
     @Qualifier(PDL_USER)
     @Bean
