@@ -1,7 +1,6 @@
 package no.nav.aap.api.oppslag.person
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
@@ -45,18 +44,14 @@ class PDLClientBeanConfig {
 
     @Bean
     @Qualifier(PDL_USER)
-    fun graphQLBootClient(@Qualifier(PDL_USER) client : WebClient, mapper : ObjectMapper) =
+    fun graphQLUserClient(@Qualifier(PDL_USER) client : WebClient, mapper : ObjectMapper) =
         HttpGraphQlClient.builder(client)
             .interceptor(GraphQLInterceptor())
             .build()
 
     @Qualifier(PDL_SYSTEM)
     @Bean
-    fun graphQLSystemWebClient(@Qualifier(PDL_SYSTEM) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
-
-    @Qualifier(PDL_SYSTEM)
-    @Bean
-    fun graphQLBootSystemWebClient(@Qualifier(PDL_SYSTEM) client: WebClient) =   HttpGraphQlClient.builder(client)
+    fun graphQLSystemWebClient(@Qualifier(PDL_SYSTEM) client: WebClient) =   HttpGraphQlClient.builder(client)
         .interceptor(GraphQLInterceptor())
         .build()
     @Qualifier(PDL_USER)
@@ -67,10 +62,6 @@ class PDLClientBeanConfig {
             .filter(behandlingFilterFunction())
             .filter(tokenX)
             .build()
-
-    @Qualifier(PDL_USER)
-    @Bean
-    fun graphQLUserWebClient(@Qualifier(PDL_USER) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
 
     @Bean
     @ConditionalOnProperty("${PDL_USER}.enabled", havingValue = "true")

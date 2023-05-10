@@ -1,7 +1,5 @@
 package no.nav.aap.api.oppslag.arkiv
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
@@ -30,7 +28,7 @@ class ArkivOppslagClientBeanConfig {
 
     @Qualifier(SAFQL)
     @Bean
-    fun arkivOppslagQLWebClient(b: Builder, cfg: ArkivOppslagConfig, tokenX: TokenXFilterFunction) =
+    fun arkivOppslagGraphQLWebClient(b: Builder, cfg: ArkivOppslagConfig, tokenX: TokenXFilterFunction) =
         b.baseUrl("${cfg.baseUri}/graphql")
             .filter(tokenX)
             .build()
@@ -41,11 +39,7 @@ class ArkivOppslagClientBeanConfig {
 
     @Qualifier(SAF)
     @Bean
-    fun arkivOppslagBootGraphQLWebClient(@Qualifier(SAFQL) client: WebClient) = HttpGraphQlClient.builder(client)
+    fun arkivOppslagGraphQLClient(@Qualifier(SAFQL) client: WebClient) = HttpGraphQlClient.builder(client)
         .interceptor(GraphQLInterceptor())
         .build()
-
-    @Qualifier(SAF)
-    @Bean
-    fun arkivOppslagGraphQLWebClient(@Qualifier(SAFQL) client: WebClient, mapper: ObjectMapper) = GraphQLWebClient.newInstance(client, mapper)
 }

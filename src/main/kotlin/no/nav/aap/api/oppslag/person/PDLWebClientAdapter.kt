@@ -1,6 +1,5 @@
 package no.nav.aap.api.oppslag.person
 
-import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.graphql.client.GraphQlClient
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -26,10 +25,8 @@ import no.nav.security.token.support.core.exceptions.JwtTokenMissingException
 @Component
 data class WebClients(
     @Qualifier(PDL_USER) val client : WebClient,
-    @Qualifier(PDL_USER) val user : GraphQLWebClient,
-    @Qualifier(PDL_USER) val bootUser : GraphQlClient,
-    @Qualifier(PDL_SYSTEM) val bootSystem : GraphQlClient,
-    @Qualifier(PDL_SYSTEM) val system : GraphQLWebClient)
+    @Qualifier(PDL_USER) val user : GraphQlClient,
+    @Qualifier(PDL_SYSTEM) val system : GraphQlClient)
 
 @Component
 class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, private val ctx : AuthContext) :
@@ -47,38 +44,13 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
         return emptyMap()
     }
 
-    fun harBeskyttetBarn(barn : List<Barn>) = harBeskyttedeBarn(barn.map { it.fnr }.mapNotNull { it?.fnr })
-
-    fun harBeskyttetBarn1(barn : List<Barn>) = harBeskyttedeBarn1(barn.map { it.fnr }.mapNotNull { it?.fnr })
-
+    fun harBeskyttetBarn(barn : List<Barn>) = harBeskyttedeBarn1(barn.map { it.fnr }.mapNotNull { it?.fnr })
 
     fun søker(medBarn : Boolean = false) =
         with(ctx.getFnr()) {
-            query<PDLWrappedSøker>(clients.user, PERSON_QUERY, mapOf(IDENT to fnr))?.active?.let {
-                pdlSøkerTilSøker(it, this, alleBarn(medBarn, it.forelderBarnRelasjon))
-            } ?: throw JwtTokenMissingException()
-        }
-
-    fun søker1(medBarn : Boolean = false) =
-        with(ctx.getFnr()) {
-            query<PDLWrappedSøker>(clients.bootUser, Pair("query-person","hentPerson"), mapOf(IDENT to fnr),"Fnr: ${ctx.getFnr()}")?.active?.let {
+            query<PDLWrappedSøker>(clients.user, Pair("query-person","hentPerson"), mapOf(IDENT to fnr),"Fnr: ${ctx.getFnr()}")?.active?.let {
                 pdlSøkerTilSøker(it, this, alleBarn1(medBarn, it.forelderBarnRelasjon))
             } ?: throw JwtTokenMissingException()
-        }
-
-    private fun alleBarn(medBarn : Boolean, forelderBarnRelasjon : List<PDLForelderBarnRelasjon>) : Sequence<PDLBarn> =
-        if (medBarn) {
-            with(forelderBarnRelasjon.mapNotNull { it.relatertPersonsIdent }) {
-                if (isNotEmpty()) {
-                    oppslagBarn(this)
-                }
-                else {
-                    emptySequence()
-                }
-            }
-        }
-        else {
-            emptySequence()
         }
 
     private fun alleBarn1(medBarn : Boolean, forelderBarnRelasjon : List<PDLForelderBarnRelasjon>) : Sequence<PDLBarn> =
@@ -96,17 +68,8 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
             emptySequence()
         }
 
-    private fun oppslagBarn(fnrs : List<String>) =
-        with(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to fnrs))
-            .partition { it.code == Ok }) {
-            second.forEach {
-                log.warn("Kunne ikke slå opp barn ${it.ident.partialMask()}, kode er ${it.code}")
-            }
-            first.map(::barnMedFnr).asSequence()
-        }
-
     private fun oppslagBarn1(fnrs : List<String>) =
-        with(query<PDLBolkBarn>(clients.bootSystem, Pair("query-barnbolk","hentPersonBolk"), mapOf(IDENTER to fnrs))
+        with(query<PDLBolkBarn>(clients.system, Pair("query-barnbolk","hentPersonBolk"), mapOf(IDENTER to fnrs))
             .partition { it.code == Ok }) {
             second.forEach {
                 log.warn("Kunne ikke slå opp barn ${it.ident.partialMask()}, kode er ${it.code}")
@@ -119,21 +82,6 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
             barn.copy(fnr = Fødselsnummer(ident))
         }
 
-    private fun harBeskyttedeBarn(fnrs : List<String>) =
-        runCatching {
-            with(fnrs) {
-                if (isNotEmpty()) {
-                    false
-                }
-                else {
-                    harBeskyttedeBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
-                }
-            }
-        }.getOrElse {
-            log.warn("Oppslag beskyttelse feilet", it)
-            false
-        }
-
     private fun harBeskyttedeBarn1(fnrs : List<String>) =
         runCatching {
             with(fnrs) {
@@ -141,7 +89,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
                     false
                 }
                 else {
-                    harBeskyttedeBarn(query<PDLBolkBarn>(clients.bootSystem, Pair("query-barnbolk","hentPersonBolk"), mapOf(IDENTER to this)))
+                    harBeskyttedeBarn(query<PDLBolkBarn>(clients.system, Pair("query-barnbolk","hentPersonBolk"), mapOf(IDENTER to this)))
                 }
             }
         }.getOrElse {

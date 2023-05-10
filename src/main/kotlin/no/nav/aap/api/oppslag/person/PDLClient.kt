@@ -12,32 +12,11 @@ class PDLClient(private val adapter : PDLWebClientAdapter) {
 
     private val log = LoggerFactory.getLogger(PDLClient::class.java)
 
-    fun søkerUtenBarn() = runCatching {
-        adapter.søker1().also {
-            log.warn("PDL ny uten barn OK")
-        }
-    }.getOrElse {
-        log.warn("PDL ny uten barn feil", it)
-        adapter.søker(false)
-    }
+    fun søkerUtenBarn() = adapter.søker()
 
-    fun harBeskyttetBarn(barn : List<Barn>) = runCatching {
-        adapter.harBeskyttetBarn1(barn).also {
-            log.warn("PDL ny uten barn OK")
-        }
-    }.getOrElse {
-        log.warn("PDL ny beskyttet barn feil", it)
-        adapter.harBeskyttetBarn(barn)
-    }
+    fun harBeskyttetBarn(barn : List<Barn>) = adapter.harBeskyttetBarn(barn)
 
-    fun søkerMedBarn() = runCatching {
-        adapter.søker1(true).also {
-            log.warn("PDL ny med barn OK")
-        }
-    }.getOrElse {
-        log.warn("PDL ny med barn feil", it)
-        adapter.søker(true)
-    }
+    fun søkerMedBarn() = adapter.søker(true)
 
     override fun toString() = "${javaClass.simpleName} [pdl=$adapter]"
 }

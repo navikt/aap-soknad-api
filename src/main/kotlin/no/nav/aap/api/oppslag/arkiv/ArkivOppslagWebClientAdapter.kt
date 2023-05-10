@@ -1,6 +1,5 @@
 package no.nav.aap.api.oppslag.arkiv
 
-import graphql.kickstart.spring.webclient.boot.GraphQLWebClient
 import java.time.LocalDateTime
 import java.util.*
 import org.springframework.beans.factory.annotation.Qualifier
@@ -12,7 +11,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 import no.nav.aap.api.felles.error.IrrecoverableIntegrationException
-import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.DOKUMENTER_QUERY
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentFiltype.PDF
@@ -28,7 +26,6 @@ import no.nav.aap.util.AuthContext
 @Component
 class ArkivOppslagWebClientAdapter(
     @Qualifier(SAF) webCLient: WebClient,
-    @Qualifier(SAF) private val graphQLClient: GraphQLWebClient,
     @Qualifier(SAF) private val graphQLBootClient: GraphQlClient,
     private val ctx: AuthContext,
     private val mapper: ArkivOppslagMapper,
@@ -46,20 +43,13 @@ class ArkivOppslagWebClientAdapter(
             .contextCapture()
             .block() ?: throw IrrecoverableIntegrationException("Null response fra arkiv for  $journalpostId/$dokumentInfoId ")
 
-    fun dokumenter() = query()
+    fun dokumenter() = query1()
         ?.filter { it.journalposttype in listOf(I, U) }
         ?.flatMap { mapper.tilDokumenter(it) }
         .orEmpty()
-
-    fun dokumenter1() = query1()
-        ?.filter { it.journalposttype in listOf(I, U) }
-        ?.flatMap { mapper.tilDokumenter(it) }
-        .orEmpty()
-    fun søknadDokumentId(journalPostId: String) = query()
+    fun søknadDokumentId(journalPostId: String) = query1()
         ?.firstOrNull { it.journalpostId == journalPostId }
         ?.dokumenter?.firstOrNull()?.dokumentInfoId   // Søknaden er alltid  første elementet
-
-    private fun query() = query<ArkivOppslagJournalposter>(graphQLClient, DOKUMENTER_QUERY,  ctx.toIdent())?.journalposter
 
     private fun query1() = query<ArkivOppslagJournalposter>(graphQLBootClient, Pair("query-dokumenter","dokumentoversiktSelvbetjening"),  ctx.toIdent(),"Fnr: ${ctx.getFnr()}")?.journalposter
 

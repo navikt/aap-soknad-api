@@ -23,7 +23,6 @@
         <eksternvarsling.version>08271806</eksternvarsling.version>
         <gcp.libraries.version>26.14.0</gcp.libraries.version>
         <gcp.version>0.195.0</gcp.version>
-        <graphql.version>2.0.1</graphql.version>
         <i18n.version>1.29</i18n.version>
         <java.version>17</java.version>
         <jib.version>3.3.1</jib.version>
@@ -42,7 +41,7 @@
         <swagger.annotations.version>2.2.9</swagger.annotations.version>
         <testcontainers.version>1.18.0</testcontainers.version>
         <tika.version>2.7.0</tika.version>
-        <token.validation.version>3.0.10</token.validation.version>
+        <token.validation.version>3.0.11</token.validation.version>
         <utkast.version>20230203100430-ecf5208</utkast.version>
     </properties>
     <repositories>
@@ -254,11 +253,6 @@
             <groupId>org.projectreactor</groupId>
             <artifactId>reactor-spring</artifactId>
             <version>${reactor.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.graphql-java-kickstart</groupId>
-            <artifactId>graphql-webclient-spring-boot-starter</artifactId>
-            <version>${graphql.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>

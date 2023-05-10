@@ -1,6 +1,5 @@
 package no.nav.aap.api.oppslag.graphql
 
-import graphql.kickstart.spring.webclient.boot.GraphQLErrorsException
 import org.springframework.graphql.client.FieldAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -30,12 +29,6 @@ object GraphQLExtensions {
         log.warn("GraphQL oppslag returnerte ${response.errors.size} feil. ${response.errors}, oversatte feilkode til ${e.javaClass.simpleName}",
             this)
     }
-
-     fun GraphQLErrorsException.oversett() = oversett(code(), message ?: "Ukjent feil").also {
-         log.warn("GraphQL oppslag returnerte ${errors.size} feil. ${errors}, oversatte feilkode til ${it.javaClass.simpleName}", this)
-     }
-
-    private fun GraphQLErrorsException.code() = errors.firstOrNull()?.extensions?.get("code")?.toString()
 
     private fun oversett(kode: String?, msg: String) =
         when (kode) {
