@@ -1,5 +1,6 @@
 package no.nav.aap.api.oppslag.arkiv
 
+import io.github.resilience4j.retry.annotation.Retry
 import io.micrometer.observation.annotation.Observed
 import java.util.UUID
 import org.springframework.stereotype.Component
@@ -16,8 +17,10 @@ class ArkivOppslagClient(private val adapter : ArkivOppslagWebClientAdapter) {
     fun dokument(journalpostId : String, dokumentId : String) =
         adapter.dokument(journalpostId, dokumentId)
 
+   @Retry(name =  "graphql")
     fun dokumenter() = adapter.dokumenter()
 
+    @Retry(name =  "graphql")
     fun søknadDokumentId(journalpostId : String) = adapter.søknadDokumentId(journalpostId)
         ?: throw IllegalStateException("Fant ikke søknadens dokumentId for $journalpostId")
 
