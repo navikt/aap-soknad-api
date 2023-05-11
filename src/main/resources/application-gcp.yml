@@ -26,7 +26,7 @@ resilience4j:
                 max-attempts: 3
                 waitDuration: 100ms
                 ignoreExceptions:
-                    - no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IrrecoverableGraphQLException
+                    -  no.nav.aap.api.felles.error.IrrecoverableGraphQLException
 spring:
     cloud:
         gcp:

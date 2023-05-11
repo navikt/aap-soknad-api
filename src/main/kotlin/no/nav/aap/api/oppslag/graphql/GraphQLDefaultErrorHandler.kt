@@ -5,8 +5,8 @@ import org.springframework.graphql.client.FieldAccessException
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.stereotype.Component
-import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IrrecoverableGraphQLException.UnexpectedResponseGraphQLException
-import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.RecoverableGraphQLException.UnhandledGraphQLException
+import no.nav.aap.api.felles.error.IrrecoverableGraphQLException.UnexpectedResponseGraphQLException
+import no.nav.aap.api.felles.error.RecoverableGraphQLException.UnhandledGraphQLException
 import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.oversett
 
 @Component

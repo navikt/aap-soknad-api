@@ -16,10 +16,9 @@
     <description>aap-soknad-api</description>
     <properties>
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
-        <conditionals.version>5.0.7</conditionals.version>
         <confluent.version>7.4.0</confluent.version>
         <commons-text.version>1.10.0</commons-text.version>
-        <domain.version>2.0.58</domain.version>
+        <domain.version>2.0.59</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
         <gcp.libraries.version>26.14.0</gcp.libraries.version>
         <gcp.version>0.195.0</gcp.version>
@@ -305,11 +304,6 @@
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>no.nav.boot</groupId>
-            <artifactId>boot-conditionals</artifactId>
-            <version>${conditionals.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
