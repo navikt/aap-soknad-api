@@ -7,10 +7,10 @@ import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.felles.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.felles.graphql.GraphQLErrorHandler.Companion.Ok
 import no.nav.aap.api.felles.graphql.GraphQLExtensions.IDENT
 import no.nav.aap.api.felles.graphql.GraphQLExtensions.IDENTER
-import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.oppslag.person.PDLBolkBarn.PDLBarn
 import no.nav.aap.api.oppslag.person.PDLMapper.harBeskyttedeBarn
 import no.nav.aap.api.oppslag.person.PDLMapper.pdlSøkerTilSøker
@@ -48,7 +48,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
 
     fun søker(medBarn : Boolean = false) =
         with(ctx.getFnr()) {
-            query<PDLWrappedSøker>(clients.user, Pair("query-person","hentPerson"), mapOf(IDENT to fnr),"Fnr: ${ctx.getFnr()}")?.active?.let {
+            query<PDLWrappedSøker>(clients.user, PERSON_QUERY, mapOf(IDENT to fnr),"Fnr: ${ctx.getFnr()}")?.active?.let {
                 pdlSøkerTilSøker(it, this, alleBarn(medBarn, it.forelderBarnRelasjon))
             } ?: throw JwtTokenMissingException()
         }
@@ -69,7 +69,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
         }
 
     private fun oppslagBarn(fnrs : List<String>) =
-        with(query<PDLBolkBarn>(clients.system, Pair("query-barnbolk","hentPersonBolk"), mapOf(IDENTER to fnrs))
+        with(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to fnrs))
             .partition { it.code == Ok }) {
             second.forEach {
                 log.warn("Kunne ikke slå opp barn ${it.ident.partialMask()}, kode er ${it.code}")
@@ -89,7 +89,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
                     false
                 }
                 else {
-                    harBeskyttedeBarn(query<PDLBolkBarn>(clients.system, Pair("query-barnbolk","hentPersonBolk"), mapOf(IDENTER to this)))
+                    harBeskyttedeBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
                 }
             }
         }.getOrElse {
@@ -102,7 +102,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
 
     companion object {
 
-        private const val BARN_BOLK_QUERY = "query-barnbolk.graphql"
-        private const val PERSON_QUERY = "query-person.graphql"
+        private  val BARN_BOLK_QUERY = Pair("query-barnbolk","hentPersonBolk")
+        private  val PERSON_QUERY = Pair("query-person","hentPerson")
     }
 }

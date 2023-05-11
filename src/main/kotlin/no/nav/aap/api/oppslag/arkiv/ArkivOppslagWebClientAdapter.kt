@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 import no.nav.aap.api.felles.error.IrrecoverableIntegrationException
+import no.nav.aap.api.felles.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.felles.graphql.GraphQLExtensions.IDENT
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost
@@ -20,7 +21,6 @@ import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJourna
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagJournalpostType.I
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagJournalpostType.U
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagRelevantDato.ArkivOppslagDatoType.DATO_OPPRETTET
-import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
 import no.nav.aap.util.AuthContext
 
 @Component
@@ -51,10 +51,14 @@ class ArkivOppslagWebClientAdapter(
         ?.firstOrNull { it.journalpostId == journalPostId }
         ?.dokumenter?.firstOrNull()?.dokumentInfoId   // Søknaden er alltid  første elementet
 
-    private fun query() = query<ArkivOppslagJournalposter>(graphQLClient, Pair("query-dokumenter","dokumentoversiktSelvbetjening"),  ctx.toIdent(),"Fnr: ${ctx.getFnr()}")?.journalposter
+    private fun query() = query<ArkivOppslagJournalposter>(graphQLClient,  DOKUMENTER_QUERY, ctx.toIdent(),"Fnr: ${ctx.getFnr()}")?.journalposter
 
 
     private fun AuthContext.toIdent() = mapOf(IDENT to getFnr().fnr)
+
+    companion object {
+        private val DOKUMENTER_QUERY = Pair("query-dokumenter","dokumentoversiktSelvbetjening")
+    }
 }
 
 @Component
