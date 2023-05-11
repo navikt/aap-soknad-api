@@ -49,15 +49,15 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
     fun søker(medBarn : Boolean = false) =
         with(ctx.getFnr()) {
             query<PDLWrappedSøker>(clients.user, Pair("query-person","hentPerson"), mapOf(IDENT to fnr),"Fnr: ${ctx.getFnr()}")?.active?.let {
-                pdlSøkerTilSøker(it, this, alleBarn1(medBarn, it.forelderBarnRelasjon))
+                pdlSøkerTilSøker(it, this, alleBarn(medBarn, it.forelderBarnRelasjon))
             } ?: throw JwtTokenMissingException()
         }
 
-    private fun alleBarn1(medBarn : Boolean, forelderBarnRelasjon : List<PDLForelderBarnRelasjon>) : Sequence<PDLBarn> =
+    private fun alleBarn(medBarn : Boolean, forelderBarnRelasjon : List<PDLForelderBarnRelasjon>) : Sequence<PDLBarn> =
         if (medBarn) {
             with(forelderBarnRelasjon.mapNotNull { it.relatertPersonsIdent }) {
                 if (isNotEmpty()) {
-                    oppslagBarn1(this)
+                    oppslagBarn(this)
                 }
                 else {
                     emptySequence()
@@ -68,7 +68,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
             emptySequence()
         }
 
-    private fun oppslagBarn1(fnrs : List<String>) =
+    private fun oppslagBarn(fnrs : List<String>) =
         with(query<PDLBolkBarn>(clients.system, Pair("query-barnbolk","hentPersonBolk"), mapOf(IDENTER to fnrs))
             .partition { it.code == Ok }) {
             second.forEach {
