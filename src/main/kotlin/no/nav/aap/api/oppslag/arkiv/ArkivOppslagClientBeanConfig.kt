@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.graphql.client.HttpGraphQlClient
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClient.Builder
+import no.nav.aap.api.felles.graphql.LoggingGraphQLInterceptor
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAFQL
-import no.nav.aap.api.oppslag.graphql.LoggingGraphQLInterceptor
 import no.nav.aap.health.AbstractPingableHealthIndicator
 import no.nav.aap.rest.tokenx.TokenXFilterFunction
 import no.nav.aap.util.LoggerUtil.getLogger

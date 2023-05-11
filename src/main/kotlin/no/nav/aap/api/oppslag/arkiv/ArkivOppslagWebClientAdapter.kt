@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 import no.nav.aap.api.felles.error.IrrecoverableIntegrationException
+import no.nav.aap.api.felles.graphql.GraphQLExtensions.IDENT
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant
@@ -20,7 +21,6 @@ import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJourna
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagJournalpostType.U
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagRelevantDato.ArkivOppslagDatoType.DATO_OPPRETTET
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
-import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IDENT
 import no.nav.aap.util.AuthContext
 
 @Component

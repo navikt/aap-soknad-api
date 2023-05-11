@@ -7,10 +7,10 @@ import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.felles.graphql.GraphQLErrorHandler.Companion.Ok
+import no.nav.aap.api.felles.graphql.GraphQLExtensions.IDENT
+import no.nav.aap.api.felles.graphql.GraphQLExtensions.IDENTER
 import no.nav.aap.api.oppslag.graphql.AbstractGraphQLAdapter
-import no.nav.aap.api.oppslag.graphql.GraphQLErrorHandler.Companion.Ok
-import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IDENT
-import no.nav.aap.api.oppslag.graphql.GraphQLExtensions.IDENTER
 import no.nav.aap.api.oppslag.person.PDLBolkBarn.PDLBarn
 import no.nav.aap.api.oppslag.person.PDLMapper.harBeskyttedeBarn
 import no.nav.aap.api.oppslag.person.PDLMapper.pdlSøkerTilSøker

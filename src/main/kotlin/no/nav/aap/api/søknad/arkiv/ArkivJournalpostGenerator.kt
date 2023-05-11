@@ -11,6 +11,7 @@ import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
 import no.nav.aap.api.oppslag.person.PDLClient
+import no.nav.aap.api.oppslag.person.Søker
 import no.nav.aap.api.søknad.arkiv.Journalpost.AvsenderMottaker
 import no.nav.aap.api.søknad.arkiv.Journalpost.Bruker
 import no.nav.aap.api.søknad.arkiv.Journalpost.Dokument
@@ -20,14 +21,11 @@ import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.VariantFormat.OR
 import no.nav.aap.api.søknad.arkiv.Journalpost.Tilleggsopplysning
 import no.nav.aap.api.søknad.arkiv.pdf.PDFFraBildeFKonverterer
 import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
-import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
-import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
-import no.nav.aap.api.søknad.fordeling.Innsending
-import no.nav.aap.api.søknad.fordeling.Ettersending
-import no.nav.aap.api.søknad.fordeling.Ettersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.fordeling.AAPSøknad
 import no.nav.aap.api.søknad.fordeling.AAPSøknad.Companion.VERSJON
-import no.nav.aap.api.oppslag.person.Søker
+import no.nav.aap.api.søknad.fordeling.Ettersending
+import no.nav.aap.api.søknad.fordeling.Ettersending.EttersendtVedlegg
+import no.nav.aap.api.søknad.fordeling.Innsending
 import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.LÅN
 import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.OMSORGSSTØNAD
 import no.nav.aap.api.søknad.fordeling.Utbetalinger.AnnenStønadstype.STIPEND
@@ -43,6 +41,8 @@ import no.nav.aap.api.søknad.fordeling.VedleggType.LÅNEKASSEN_STIPEND
 import no.nav.aap.api.søknad.fordeling.VedleggType.OMSORG
 import no.nav.aap.api.søknad.fordeling.VedleggType.STUDIER
 import no.nav.aap.api.søknad.fordeling.VedleggType.UTENLANDSKE
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
+import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.encode
 import no.nav.aap.util.StringExtensions.størrelse
@@ -77,9 +77,7 @@ class ArkivJournalpostGenerator(
 
     fun journalpostFra(innsending : Innsending, søker : Søker) =
         with(søker) {
-            val tilVikafossen = pdl.harBeskyttetBarn(barn + innsending.andreBarn).also {
-                log.trace("Sjekket vikafossen {}", it)
-            }
+            val tilVikafossen = pdl.harBeskyttetBarn(barn + innsending.andreBarn)
             Journalpost(STANDARD.tittel,
                 AvsenderMottaker(fnr, navn),
                 Bruker(fnr),

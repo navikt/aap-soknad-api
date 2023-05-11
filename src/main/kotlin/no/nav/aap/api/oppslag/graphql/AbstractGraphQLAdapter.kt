@@ -1,12 +1,10 @@
 package no.nav.aap.api.oppslag.graphql
 
 import io.github.resilience4j.retry.annotation.Retry
-import org.slf4j.LoggerFactory
-import org.springframework.graphql.client.ClientGraphQlRequest
 import org.springframework.graphql.client.GraphQlClient
-import org.springframework.graphql.client.GraphQlClientInterceptor
-import org.springframework.graphql.client.GraphQlClientInterceptor.Chain
 import org.springframework.web.reactive.function.client.WebClient
+import no.nav.aap.api.felles.graphql.GraphQLDefaultErrorHandler
+import no.nav.aap.api.felles.graphql.GraphQLErrorHandler
 import no.nav.aap.rest.AbstractRestConfig
 import no.nav.aap.rest.AbstractWebClientAdapter
 
@@ -45,13 +43,4 @@ abstract class AbstractGraphQLAdapter(client : WebClient, cfg : AbstractRestConf
             log.warn("Query $query feilet. $info", t)
             handler.handle(t)
         }
-}
-
-class LoggingGraphQLInterceptor : GraphQlClientInterceptor {
-
-    private val log = LoggerFactory.getLogger(LoggingGraphQLInterceptor::class.java)
-
-    override fun intercept(request : ClientGraphQlRequest, chain : Chain) = chain.next(request).also {
-        log.trace("Eksekverer {} ", request.document)
-    }
 }
