@@ -8,9 +8,6 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.graphql.AbstractGraphQLAdapter
-import no.nav.aap.api.felles.graphql.GraphQLErrorHandler.Companion.Ok
-import no.nav.aap.api.felles.graphql.GraphQLExtensions.IDENT
-import no.nav.aap.api.felles.graphql.GraphQLExtensions.IDENTER
 import no.nav.aap.api.oppslag.person.PDLBolkBarn.PDLBarn
 import no.nav.aap.api.oppslag.person.PDLMapper.harBeskyttedeBarn
 import no.nav.aap.api.oppslag.person.PDLMapper.pdlSøkerTilSøker
@@ -48,7 +45,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
 
     fun søker(medBarn : Boolean = false) =
         with(ctx.getFnr()) {
-            query<PDLWrappedSøker>(clients.user, PERSON_QUERY, mapOf(IDENT to fnr),"Fnr: ${ctx.getFnr()}")?.active?.let {
+            query<PDLWrappedSøker>(clients.user, PERSON_QUERY, mapOf(IDENT to fnr))?.active?.let {
                 pdlSøkerTilSøker(it, this, alleBarn(medBarn, it.forelderBarnRelasjon))
             } ?: throw JwtTokenMissingException()
         }
@@ -70,7 +67,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
 
     private fun oppslagBarn(fnrs : List<String>) =
         with(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to fnrs))
-            .partition { it.code == Ok }) {
+            .partition { it.code == "ok" }) {
             second.forEach {
                 log.warn("Kunne ikke slå opp barn ${it.ident.partialMask()}, kode er ${it.code}")
             }
@@ -102,6 +99,8 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
 
     companion object {
 
+        private val IDENT = "ident"
+        private val IDENTER = "identer"
         private  val BARN_BOLK_QUERY = Pair("query-barnbolk","hentPersonBolk")
         private  val PERSON_QUERY = Pair("query-person","hentPerson")
     }

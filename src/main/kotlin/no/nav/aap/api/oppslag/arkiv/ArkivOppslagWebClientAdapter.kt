@@ -12,7 +12,6 @@ import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 import no.nav.aap.api.felles.error.IrrecoverableIntegrationException
 import no.nav.aap.api.felles.graphql.AbstractGraphQLAdapter
-import no.nav.aap.api.felles.graphql.GraphQLExtensions.IDENT
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant
@@ -51,12 +50,13 @@ class ArkivOppslagWebClientAdapter(
         ?.firstOrNull { it.journalpostId == journalPostId }
         ?.dokumenter?.firstOrNull()?.dokumentInfoId   // Søknaden er alltid  første elementet
 
-    private fun query() = query<ArkivOppslagJournalposter>(graphQLClient,  DOKUMENTER_QUERY, ctx.toIdent(),"Fnr: ${ctx.getFnr()}")?.journalposter
+    private fun query() = query<ArkivOppslagJournalposter>(graphQLClient,  DOKUMENTER_QUERY, ctx.toIdent())?.journalposter
 
 
     private fun AuthContext.toIdent() = mapOf(IDENT to getFnr().fnr)
 
     companion object {
+        private const val IDENT = "ident"
         private val DOKUMENTER_QUERY = Pair("query-dokumenter","dokumentoversiktSelvbetjening")
     }
 }
