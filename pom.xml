@@ -18,7 +18,7 @@
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
         <confluent.version>7.4.0</confluent.version>
         <commons-text.version>1.10.0</commons-text.version>
-        <domain.version>2.0.63</domain.version>
+        <domain.version>2.0.68</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
         <gcp.libraries.version>26.14.0</gcp.libraries.version>
         <gcp.version>0.195.0</gcp.version>
@@ -30,7 +30,6 @@
         <okhttp3.version>4.9.1</okhttp3.version>
         <pdfbox.version>2.0.28</pdfbox.version>
         <reactor.version>1.0.1.RELEASE</reactor.version>
-        <resilience4j.version>2.0.2</resilience4j.version>
         <revision>0.0.1-SNAPSHOT</revision>
         <sonar.organization>navikt</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -86,6 +85,11 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+         <dependency>
+            <groupId>no.nav.syfo.dialogmote.avro</groupId>
+            <artifactId>isdialogmote-schema</artifactId>
+            <version>1.0.5</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-graphql</artifactId>
@@ -108,11 +112,6 @@
         <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         <version>${springdoc.version}</version>
     </dependency>
-        <dependency>
-            <groupId>io.github.resilience4j</groupId>
-            <artifactId>resilience4j-spring-boot2</artifactId>
-            <version>${resilience4j.version}</version>
-        </dependency>
         <dependency>
             <groupId>no.nav.tms.utkast</groupId>
             <artifactId>builder</artifactId>

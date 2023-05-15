@@ -18,15 +18,6 @@ management:
                         requests: true
         env:
             additional-keys-to-sanitize: "client-jwk,jwk,jwks"
-
-resilience4j:
-    retry:
-        instances:
-            graphql:
-                max-attempts: 3
-                waitDuration: 100ms
-                ignoreExceptions:
-                    -  no.nav.aap.api.felles.error.IrrecoverableGraphQLException
 spring:
     cloud:
         gcp:
