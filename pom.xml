@@ -18,7 +18,7 @@
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
         <confluent.version>7.4.0</confluent.version>
         <commons-text.version>1.10.0</commons-text.version>
-        <domain.version>2.0.71</domain.version>
+        <domain.version>2.0.72</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
         <gcp.libraries.version>26.14.0</gcp.libraries.version>
         <gcp.version>0.195.0</gcp.version>

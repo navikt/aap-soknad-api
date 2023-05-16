@@ -57,6 +57,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 import reactor.util.retry.Retry.fixedDelay
+import no.nav.aap.api.felles.graphql.GraphQLErrorHandler
 import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
 import no.nav.aap.rest.HeadersToMDCFilter
@@ -85,6 +86,10 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName : String) {
 
     val log = getLogger(javaClass)
+
+
+    @Bean
+    fun graphQLErrorHandler() = object : GraphQLErrorHandler {}
 
     @Bean
     fun observedAspect(reg : ObservationRegistry) = ObservedAspect(reg)

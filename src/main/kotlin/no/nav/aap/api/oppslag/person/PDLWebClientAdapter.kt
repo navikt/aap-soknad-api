@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.graphql.AbstractGraphQLAdapter
+import no.nav.aap.api.felles.graphql.GraphQLErrorHandler
 import no.nav.aap.api.oppslag.person.PDLBolkBarn.PDLBarn
 import no.nav.aap.api.oppslag.person.PDLMapper.harBeskyttedeBarn
 import no.nav.aap.api.oppslag.person.PDLMapper.pdlSøkerTilSøker
@@ -26,8 +27,8 @@ data class WebClients(
     @Qualifier(PDL_SYSTEM) val system : GraphQlClient)
 
 @Component
-class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, private val ctx : AuthContext) :
-    AbstractGraphQLAdapter(clients.client,cfg) {
+class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, private val ctx : AuthContext, errorHandler: GraphQLErrorHandler) :
+    AbstractGraphQLAdapter(clients.client,cfg, errorHandler) {
 
     override fun ping() : Map<String, String> {
         webClient

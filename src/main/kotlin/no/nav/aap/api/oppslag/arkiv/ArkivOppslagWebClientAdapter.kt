@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 import no.nav.aap.api.felles.error.IrrecoverableIntegrationException
 import no.nav.aap.api.felles.graphql.AbstractGraphQLAdapter
+import no.nav.aap.api.felles.graphql.GraphQLErrorHandler
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagConfig.Companion.SAF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant
@@ -28,7 +29,8 @@ class ArkivOppslagWebClientAdapter(
     @Qualifier(SAF) private val graphQLClient: GraphQlClient,
     private val ctx: AuthContext,
     private val mapper: ArkivOppslagMapper,
-    val cf: ArkivOppslagConfig) : AbstractGraphQLAdapter(webClient,cf) {
+    val cf: ArkivOppslagConfig,
+    errorHandler: GraphQLErrorHandler) : AbstractGraphQLAdapter(webClient,cf,errorHandler) {
 
     fun dokument(journalpostId: String, dokumentInfoId: String) =
         webClient.get()
