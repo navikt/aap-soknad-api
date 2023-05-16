@@ -175,16 +175,17 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     fun prodHttpClient(cfg: HttpTimeouts) = httpClient(cfg)
 
 
-    @ConfigurationProperties("timeout")
+    @ConfigurationProperties(TiMEOUT)
     data class HttpTimeouts(val readTimeout: Duration =DEFAULT_TIMEOUT, val writeTimeout :Duration =DEFAULT_TIMEOUT, val responsTimeout: Duration = DEFAULT_TIMEOUT, val connectTimeout: Duration = DEFAULT_CONNECT_TIMEOUT)
 
-    private fun httpClient(cfg: HttpTimeouts) = HttpClient.create()
+    private fun httpClient(cfg: HttpTimeouts) = with(cfg) { HttpClient.create()
         .doOnConnected {
-            it.addHandlerFirst(ReadTimeoutHandler(cfg.readTimeout.toSeconds(), SECONDS))
-            it.addHandlerFirst(WriteTimeoutHandler(cfg.writeTimeout.toSeconds(), SECONDS))
+            it.addHandlerFirst(ReadTimeoutHandler(readTimeout.toSeconds(), SECONDS))
+            it.addHandlerFirst(WriteTimeoutHandler(writeTimeout.toSeconds(), SECONDS))
         }
-        .responseTimeout(cfg.readTimeout)
-        .option(CONNECT_TIMEOUT_MILLIS, cfg.connectTimeout.toMillis().toInt())
+        .responseTimeout(readTimeout)
+        .option(CONNECT_TIMEOUT_MILLIS, connectTimeout.toMillis().toInt())
+    }
 
     class JTIFilter(private val ctx : AuthContext) : Filter {
 
@@ -288,8 +289,9 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     }
 
     companion object {
-        const val DEFAULT_TIMEOUT = ofSeconds(30)
-        const val DEFAULT_CONNECT_TIMEOUT = ofSeconds(10)
+        private const val TiMEOUT = "timeout"
+        private val DEFAULT_TIMEOUT = ofSeconds(30)
+        private val DEFAULT_CONNECT_TIMEOUT = ofSeconds(10)
 
     }
 }
