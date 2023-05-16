@@ -10,7 +10,9 @@ import io.micrometer.observation.aop.ObservedAspect
 import io.netty.channel.ChannelOption.*
 import io.netty.channel.ConnectTimeoutException
 import io.netty.handler.logging.LogLevel.TRACE
+import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.TimeoutException
+import io.netty.handler.timeout.WriteTimeoutHandler
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
@@ -26,10 +28,12 @@ import java.io.IOException
 import java.time.Duration
 import java.time.Duration.*
 import java.util.*
+import java.util.concurrent.TimeUnit.*
 import java.util.function.Consumer
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.info.BuildProperties
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
 import org.springframework.boot.web.servlet.FilterRegistrationBean
@@ -164,19 +168,23 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     @ConditionalOnNotProd
     @Bean
-    fun notProdHttpClient() = httpClient().wiretap(javaClass.name, TRACE, TEXTUAL)
+    fun notProdHttpClient(cfg: HttpTimeouts) = httpClient(cfg).wiretap(javaClass.name, TRACE, TEXTUAL)
 
     @ConditionalOnProd
     @Bean
-    fun prodHttpClient() = httpClient()
+    fun prodHttpClient(cfg: HttpTimeouts) = httpClient(cfg)
 
-    private fun httpClient() = HttpClient.create() /*
+
+    @ConfigurationProperties("timeout")
+    data class HttpTimeouts(val readTimeout: Duration =DEFAULT_TIMEOUT, val writeTimeout :Duration =DEFAULT_TIMEOUT, val responsTimeout: Duration = DEFAULT_TIMEOUT, val connectTimeout: Duration = DEFAULT_CONNECT_TIMEOUT)
+
+    private fun httpClient(cfg: HttpTimeouts) = HttpClient.create()
         .doOnConnected {
-            it.addHandlerFirst(ReadTimeoutHandler(30, SECONDS))
-            it.addHandlerFirst(WriteTimeoutHandler(30, SECONDS))
+            it.addHandlerFirst(ReadTimeoutHandler(cfg.readTimeout.toSeconds(), SECONDS))
+            it.addHandlerFirst(WriteTimeoutHandler(cfg.writeTimeout.toSeconds(), SECONDS))
         }
-        .responseTimeout(ofSeconds(30))
-        .option(CONNECT_TIMEOUT_MILLIS, 10000) */
+        .responseTimeout(cfg.readTimeout)
+        .option(CONNECT_TIMEOUT_MILLIS, cfg.connectTimeout.toMillis().toInt())
 
     class JTIFilter(private val ctx : AuthContext) : Filter {
 
@@ -277,5 +285,11 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                 .onRetryExhaustedThrow { _, spec ->
                     spec.failure().also { log.warn("Retry mot token endpoint gir opp etter ${spec.totalRetriesInARow()} forsøk") }
                 }
+    }
+
+    companion object {
+        const val DEFAULT_TIMEOUT = ofSeconds(30)
+        const val DEFAULT_CONNECT_TIMEOUT = ofSeconds(10)
+
     }
 }
