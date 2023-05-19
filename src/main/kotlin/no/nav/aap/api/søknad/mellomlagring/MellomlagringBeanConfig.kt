@@ -50,6 +50,7 @@ class MellomlagringBeanConfig {
 
     @Bean
     @ServiceActivator(inputChannel = STORAGE_CHANNEL)
+    @Primary
     fun messageReceiver( minside: MinSideClient, cfg: BucketConfig, mapper: ObjectMapper, metrikker: Metrikker) =
         StoragePubMessageHandler(minside,cfg,mapper,metrikker)
 
