@@ -8,6 +8,7 @@ import com.google.cloud.spring.pubsub.integration.inbound.PubSubInboundChannelAd
 import com.google.cloud.spring.pubsub.support.BasicAcknowledgeablePubsubMessage
 import com.google.cloud.spring.pubsub.support.GcpPubSubHeaders.*
 import com.google.cloud.storage.StorageOptions
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -43,9 +44,10 @@ class MellomlagringBeanConfig {
         .service
 
     @Bean
+    @Qualifier("pubsubInputChannel")
     fun pubsubInputChannel() = DirectChannel()
     @Bean
-    fun messageChannelAdapter(cfg: BucketConfig, inputChannel : MessageChannel, pubSubTemplate : PubSubTemplate) =
+    fun messageChannelAdapter(cfg: BucketConfig, @Qualifier("pubsubInputChannel") inputChannel : MessageChannel, pubSubTemplate : PubSubTemplate) =
         PubSubInboundChannelAdapter(pubSubTemplate, cfg.mellom.subscription.navn).apply {
             setOutputChannel(inputChannel)
             ackMode = MANUAL
