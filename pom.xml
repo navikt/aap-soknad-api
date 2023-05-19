@@ -18,7 +18,7 @@
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
         <confluent.version>7.4.0</confluent.version>
         <commons-text.version>1.10.0</commons-text.version>
-        <domain.version>2.0.72</domain.version>
+        <domain.version>2.0.73</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
         <gcp.libraries.version>26.15.0</gcp.libraries.version>
         <gcp.version>0.196.0</gcp.version>
@@ -39,7 +39,7 @@
         <swagger.annotations.version>2.2.10</swagger.annotations.version>
         <testcontainers.version>1.18.1</testcontainers.version>
         <tika.version>2.8.0</tika.version>
-        <token.validation.version>3.0.11</token.validation.version>
+        <token.validation.version>3.1.0</token.validation.version>
         <utkast.version>20230203100430-ecf5208</utkast.version>
     </properties>
     <repositories>
@@ -330,12 +330,6 @@
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>${jib.version}</version>
                 <configuration>
-                    <container>
-                      <jvmFlags>
-                        <jvmFlag>-XX:MaxRAMPercentage=80.0</jvmFlag>
-                        <jvmFlag>-XX:+HeapDumpOnOutOfMemoryError</jvmFlag>
-                      </jvmFlags>
-                    </container>
                     <from>
                         <image>gcr.io/distroless/java17</image>
                     </from>
