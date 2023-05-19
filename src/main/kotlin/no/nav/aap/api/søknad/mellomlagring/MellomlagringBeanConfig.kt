@@ -10,14 +10,12 @@ import com.google.cloud.spring.pubsub.support.GcpPubSubHeaders.*
 import com.google.cloud.storage.NotificationInfo.*
 import com.google.cloud.storage.NotificationInfo.EventType.*
 import com.google.cloud.storage.StorageOptions
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.integration.channel.DirectChannel
-import org.springframework.messaging.MessageChannel
 import org.threeten.bp.Duration
 import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.søknad.minside.MinSideClient
@@ -44,13 +42,9 @@ class MellomlagringBeanConfig {
         .service
 
     @Bean
-    @Qualifier(STORAGE_CHANNEL)
-    fun pubsubInputChannel() = DirectChannel()
-
-    @Bean
-    fun storageChannelAdapter(cfg: BucketConfig, @Qualifier(STORAGE_CHANNEL) channel : MessageChannel, template : PubSubTemplate) =
+    fun storageChannelAdapter(cfg: BucketConfig, template : PubSubTemplate) =
         PubSubInboundChannelAdapter(template, cfg.mellom.subscription.navn).apply {
-            outputChannel = channel
+            outputChannel = DirectChannel()
             ackMode = MANUAL
         }
 
