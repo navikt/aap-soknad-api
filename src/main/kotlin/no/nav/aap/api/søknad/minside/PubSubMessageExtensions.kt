@@ -3,12 +3,16 @@ package no.nav.aap.api.søknad.minside
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.cloud.storage.NotificationInfo.EventType
+import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
+import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import com.google.pubsub.v1.PubsubMessage
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
+import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.SkjemaType
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.SKJEMATYPE
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.Companion.UUID_
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity.Companion.CREATED
@@ -26,6 +30,43 @@ object PubSubMessageExtensions {
     private const val OBJECTID = "objectId"
 
     private val log = LoggerUtil.getLogger(javaClass)
+
+    fun PubsubMessage.handle(minside: MinSideClient, cfg: BucketConfig, mapper: ObjectMapper, metrikker: Metrikker) =
+        with(this) {
+            val eventType = eventType()
+            metadata(mapper)?.let { md ->
+                log.trace("Event type {} med metadata {}", eventType, md)
+                with(md) {
+                    when (eventType) {
+                        OBJECT_FINALIZE -> if (førstegangsOpprettelse()) {
+                            minside.opprettUtkast(fnr, "Du har en påbegynt $tittel", type, eventId).also {
+                            }
+                        }
+                        else {
+                            minside.oppdaterUtkast(fnr, "Du har en påbegynt $tittel", type)
+                        }
+
+                        OBJECT_DELETE -> if (endeligSlettet()) {
+                            md.varighet()?.let {
+                                log.info("Endelig slettet etter ${it.toSeconds()}s")
+                                if (it > cfg.mellom.varighet) {
+                                    metrikker.inc(Metrikker.MELLOMLAGRING_EXPIRED)
+                                    log.info("Slettet endelig mellomlagring etter ${cfg.mellom.varighet.toDays()} dager for $md")
+                                }
+                            }
+                            minside.avsluttUtkast(fnr, type)
+                        }
+                        else {
+                            Unit.also {
+                                log.trace("Slettet grunnet ny versjon, ingen oppdatering av utkast for {}", fnr)
+                            }
+                        }
+
+                        else -> log.warn("Event $eventType ikke håndtert (dette skal aldri skje)")
+                    }
+                }
+            } ?: log.warn("Fant ikke forventede metadata i event $this $attributesMap")
+        }
 
     fun PubsubMessage.metadata(mapper: ObjectMapper) =
         with(objektNavn()) {

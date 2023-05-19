@@ -13,9 +13,8 @@ import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.eventType
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.førstegangsOpprettelse
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.metadata
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.boot.conditionals.ConditionalOnGCP
 
-@ConditionalOnGCP
+//@ConditionalOnGCP
 class MellomlagringEventSubscriber(private val minside: MinSideClient,
                                    private val cfg: BucketConfig,
                                    private val mapper: ObjectMapper,
