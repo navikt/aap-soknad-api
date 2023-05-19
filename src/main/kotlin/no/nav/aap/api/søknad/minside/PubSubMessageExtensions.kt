@@ -34,7 +34,7 @@ object PubSubMessageExtensions {
     fun PubsubMessage.handle(minside: MinSideClient, cfg: BucketConfig, mapper: ObjectMapper, metrikker: Metrikker) =
         with(this) {
             val eventType = eventType()
-            lg.trace("PubSub really handling")
+            log.trace("PubSub really handling")
             metadata(mapper)?.let { md ->
                 log.trace("Event type {} med metadata {}", eventType, md)
                 with(md) {
