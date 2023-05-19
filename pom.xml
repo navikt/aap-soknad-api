@@ -86,9 +86,9 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>org.apache.avro</groupId>
+                <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>1.10.1</version>
+            <version>1.11.1</version>
         </dependency>
          <dependency>
             <groupId>no.nav.syfo.dialogmote.avro</groupId>
