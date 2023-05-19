@@ -42,8 +42,8 @@ class VirusScanWebClientAdapter(@Qualifier(VIRUS) client: WebClient, val cf: Vir
         .accept(APPLICATION_JSON)
         .retrieve()
         .bodyToMono<List<ScanResult>>()
-        .doOnError { t: Throwable ->
-            log.warn("Virus-respons feilet", t)
+        .doOnError {
+            log.warn("Virus-respons feilet", it)
         }
         .doOnSuccess {
             log.trace("Virus respons OK")
