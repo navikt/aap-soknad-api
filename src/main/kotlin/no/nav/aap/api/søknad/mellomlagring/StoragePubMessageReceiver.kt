@@ -10,16 +10,16 @@ import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.api.søknad.minside.PubSubMessageExtensions.handle
 import no.nav.aap.util.LoggerUtil
 
-class StoragePubMessageHandler(private val minside: MinSideClient, private val cfg: BucketConfig, private val mapper: ObjectMapper, private val  metrikker: Metrikker) :
+class StoragePubMessageReceiver(private val minside: MinSideClient, private val cfg: BucketConfig, private val mapper: ObjectMapper, private val  metrikker: Metrikker) :
     MessageHandler {
 
     private val log = LoggerUtil.getLogger(javaClass)
 
     override fun handleMessage(m : Message<*>) {
-        log.trace("PubSub handling")
+        log.trace("PubSub handling {}", m.headers)
         m.headers.get(ORIGINAL_MESSAGE, BasicAcknowledgeablePubsubMessage::class.java)?.let {
             it.apply {
-                log.trace("PubSub acking ${it.pubsubMessage.messageId}")
+                log.trace("Acking ${it.pubsubMessage.messageId}")
                 ack()
                 pubsubMessage.handle(minside,cfg,mapper,metrikker)
             }
