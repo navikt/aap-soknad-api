@@ -29,7 +29,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
             }
         }
     }
-    fun handle(msg : PubsubMessage) =
+    private fun handle(msg : PubsubMessage) =
         with(msg) {
             val eventType = eventType()
             metadata(mapper)?.let { md ->
