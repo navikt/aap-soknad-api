@@ -19,7 +19,6 @@ import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.integration.channel.DirectChannel
 import org.springframework.messaging.MessageChannel
 import org.threeten.bp.Duration
-import no.nav.aap.api.config.Metrikker
 import no.nav.aap.api.søknad.minside.MinSideClient
 
 @Configuration(proxyBeanMethods = false)
@@ -56,8 +55,8 @@ class MellomlagringBeanConfig {
 
     @Bean
     @ServiceActivator(inputChannel = STORAGE_CHANNEL)
-    fun messageReceiver( minside: MinSideClient, cfg: BucketConfig, mapper: ObjectMapper, metrikker: Metrikker) =
-        MellomlagringEventSubscriber(minside,cfg,mapper,metrikker)
+    fun messageReceiver( minside: MinSideClient, cfg: BucketConfig, mapper: ObjectMapper) =
+        MellomlagringEventSubscriber(minside,cfg.mellom,mapper)
 
     companion object  {
         private const val STORAGE_CHANNEL = "storageInputChannel"

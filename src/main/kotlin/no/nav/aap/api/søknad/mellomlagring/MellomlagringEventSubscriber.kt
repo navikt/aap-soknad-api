@@ -8,7 +8,7 @@ import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import com.google.pubsub.v1.PubsubMessage
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageHandler
-import no.nav.aap.api.config.Metrikker
+import no.nav.aap.api.søknad.mellomlagring.BucketConfig.MellomlagringBucketConfig
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.eventType
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.førstegangsOpprettelse
@@ -16,7 +16,7 @@ import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.metadata
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.util.LoggerUtil
 
-class MellomlagringEventSubscriber(private val minside: MinSideClient, private val cfg: BucketConfig, private val mapper: ObjectMapper, private val  metrikker: Metrikker) :
+class MellomlagringEventSubscriber(private val minside: MinSideClient, private val cfg: MellomlagringBucketConfig, private val mapper: ObjectMapper) :
     MessageHandler {
 
     private val log = LoggerUtil.getLogger(javaClass)
@@ -46,9 +46,8 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
                         OBJECT_DELETE -> if (endeligSlettet()) {
                             md.varighet()?.let {
                                 log.info("Endelig slettet etter ${it.toSeconds()}s")
-                                if (it > cfg.mellom.varighet) {
-                                    metrikker.inc(Metrikker.MELLOMLAGRING_EXPIRED)
-                                    log.info("Slettet endelig mellomlagring etter ${cfg.mellom.varighet.toDays()} dager for $md")
+                                if (it > cfg.varighet) {
+                                    log.info("Slettet endelig mellomlagring etter ${cfg.varighet.toDays()} dager for $md")
                                 }
                             }
                             minside.avsluttUtkast(fnr, type)
