@@ -53,7 +53,7 @@ class MellomlagringBeanConfig {
             .log()
             .handle(MellomlagringEventSubscriber(minside,cfg.mellom,mapper))
             .get()
-    //@Bean
+    @Bean
     fun storageChannelAdapter(cfg: BucketConfig, template : PubSubTemplate,  @Qualifier(STORAGE_CHANNEL) channel: MessageChannel) =
         PubSubInboundChannelAdapter(template, cfg.mellom.subscription.navn).apply {
             outputChannel = channel
