@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.api.gax.retrying.RetrySettings
 import com.google.cloud.ServiceOptions
 import com.google.cloud.spring.pubsub.core.PubSubTemplate
-import com.google.cloud.spring.pubsub.integration.AckMode.MANUAL
+import com.google.cloud.spring.pubsub.integration.AckMode.AUTO_ACK
 import com.google.cloud.spring.pubsub.integration.inbound.PubSubInboundChannelAdapter
 import com.google.cloud.spring.pubsub.support.GcpPubSubHeaders.*
 import com.google.cloud.storage.NotificationInfo.*
@@ -57,7 +57,7 @@ class MellomlagringBeanConfig {
     fun gcpStorageChannelAdapter(cfg: BucketConfig, template : PubSubTemplate,  @Qualifier(STORAGE_CHANNEL) channel: MessageChannel) =
         PubSubInboundChannelAdapter(template, cfg.mellom.subscription.navn).apply {
             outputChannel = channel
-            ackMode = MANUAL
+            ackMode = AUTO_ACK
         }
 
     companion object  {

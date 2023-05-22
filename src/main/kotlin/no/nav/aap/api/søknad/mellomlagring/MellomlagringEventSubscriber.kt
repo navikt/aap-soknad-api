@@ -25,7 +25,6 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
         m.headers.get(ORIGINAL_MESSAGE, BasicAcknowledgeablePubsubMessage::class.java)?.let {
             it.apply {
                 handle(pubsubMessage)
-                ack()
             }
         }
     }
