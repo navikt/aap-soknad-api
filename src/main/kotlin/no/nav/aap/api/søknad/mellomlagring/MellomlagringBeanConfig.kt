@@ -49,7 +49,7 @@ class MellomlagringBeanConfig {
 
     @Bean
     @Primary
-    fun flow( @Qualifier(STORAGE_CHANNEL) channel: DirectChannel,minside: MinSideClient, cfg: BucketConfig, mapper: ObjectMapper) = IntegrationFlow.from(channel).log().handle( MellomlagringEventSubscriber(minside,cfg.mellom,mapper))
+    fun flow( @Qualifier(STORAGE_CHANNEL) channel: DirectChannel,minside: MinSideClient, cfg: BucketConfig, mapper: ObjectMapper) = IntegrationFlow.from(channel).log().handle( MellomlagringEventSubscriber(minside,cfg.mellom,mapper)).get()
     @Bean
     fun storageChannelAdapter(cfg: BucketConfig, template : PubSubTemplate,  @Qualifier(STORAGE_CHANNEL) channel: MessageChannel) =
         PubSubInboundChannelAdapter(template, cfg.mellom.subscription.navn).apply {
