@@ -57,7 +57,6 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
                                 log.trace("Slettet grunnet ny versjon, ingen oppdatering av utkast for {}", fnr)
                             }
                         }
-
                         else -> log.warn("Event $eventType ikke håndtert (dette skal aldri skje)")
                     }
                 }
