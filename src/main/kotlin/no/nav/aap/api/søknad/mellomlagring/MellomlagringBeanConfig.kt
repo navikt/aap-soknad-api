@@ -15,8 +15,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
-import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.integration.channel.DirectChannel
+import org.springframework.integration.dsl.IntegrationFlow
 import org.springframework.messaging.MessageChannel
 import org.threeten.bp.Duration
 import no.nav.aap.api.søknad.minside.MinSideClient
@@ -46,6 +46,9 @@ class MellomlagringBeanConfig {
     @Qualifier(STORAGE_CHANNEL)
     @Primary
     fun storageInputChannel() = DirectChannel()
+
+    @Bean
+    fun flow( @Qualifier(STORAGE_CHANNEL) channel: DirectChannel,minside: MinSideClient, cfg: BucketConfig, mapper: ObjectMapper) = IntegrationFlow.from(channel).log().handle( MellomlagringEventSubscriber(minside,cfg.mellom,mapper))
     @Bean
     fun storageChannelAdapter(cfg: BucketConfig, template : PubSubTemplate,  @Qualifier(STORAGE_CHANNEL) channel: MessageChannel) =
         PubSubInboundChannelAdapter(template, cfg.mellom.subscription.navn).apply {
@@ -53,8 +56,8 @@ class MellomlagringBeanConfig {
             ackMode = MANUAL
         }
 
-    @Bean
-    @ServiceActivator(inputChannel = STORAGE_CHANNEL)
+   // @Bean
+   // @ServiceActivator(inputChannel = STORAGE_CHANNEL)
     fun messageReceiver( minside: MinSideClient, cfg: BucketConfig, mapper: ObjectMapper) =
         MellomlagringEventSubscriber(minside,cfg.mellom,mapper)
 
