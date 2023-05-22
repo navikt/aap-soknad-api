@@ -16,13 +16,17 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.integration.channel.DirectChannel
-import org.springframework.integration.dsl.IntegrationFlow
+import org.springframework.integration.dsl.integrationFlow
 import org.springframework.messaging.MessageChannel
 import org.threeten.bp.Duration
 import no.nav.aap.api.søknad.minside.MinSideClient
+import no.nav.aap.util.LoggerUtil
 
 @Configuration(proxyBeanMethods = false)
 class MellomlagringBeanConfig {
+
+    private val log = LoggerUtil.getLogger(javaClass)
+
 
     @Bean
     @Primary
@@ -49,10 +53,15 @@ class MellomlagringBeanConfig {
 
     @Bean
     fun gcpStorageFlow(@Qualifier(STORAGE_CHANNEL) channel: MessageChannel,minside: MinSideClient, cfg: BucketConfig, mapper: ObjectMapper) =
-        IntegrationFlow.from(channel)
-            .log()
-            .handle(MellomlagringEventSubscriber(minside,cfg.mellom,mapper))
-            .get()
+        integrationFlow {
+            channel(channel)
+            wireTap {
+                handle {
+                    log.trace("Payload: {}, headers: {}", it.payload, it.headers)
+                }
+            }
+            handle(MellomlagringEventSubscriber(minside,cfg.mellom,mapper))
+        }
     @Bean
     fun gcpStorageChannelAdapter(cfg: BucketConfig, template : PubSubTemplate,  @Qualifier(STORAGE_CHANNEL) channel: MessageChannel) =
         PubSubInboundChannelAdapter(template, cfg.mellom.subscription.navn).apply {
