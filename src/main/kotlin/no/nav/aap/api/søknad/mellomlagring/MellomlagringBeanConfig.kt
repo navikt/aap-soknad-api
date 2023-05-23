@@ -60,7 +60,7 @@ class MellomlagringBeanConfig {
     @Bean
     @Qualifier(STORAGE_CHANNEL)
     @Primary
-    fun gcpStorageInputChannel() = DirectChannel().apply { setFailover(false) }
+    fun gcpStorageInputChannel() = DirectChannel()
 
     @Bean
     fun gcpStorageFlow(@Qualifier(STORAGE_CHANNEL) channel: MessageChannel, eventHandler: MellomlagringEventSubscriber/*, transformer: TestTransformer*/) =
