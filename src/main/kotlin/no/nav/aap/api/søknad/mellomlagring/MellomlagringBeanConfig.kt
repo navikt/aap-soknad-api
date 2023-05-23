@@ -22,10 +22,10 @@ import org.springframework.integration.dsl.integrationFlow
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.handler.annotation.Header
 import org.threeten.bp.Duration
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.ENDELIG_SLETTING
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.IGNORER
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.OPPDATERING
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.OPPRETTET
-import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.SLETTET
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.Metadata
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.eventType
@@ -87,10 +87,10 @@ class MellomlagringBeanConfig {
           try {
             msg?.pubsubMessage?.let {
                 val md = it.metadata(jacksonObjectMapper())
-                log.trace("Metadata er $md")
+                log.trace("Metadata er {}", md)
                 when ( it.eventType()) {
                     OBJECT_FINALIZE -> if (it.førstegangsOpprettelse()) MellomlagringsHendelse(OPPRETTET,md) else MellomlagringsHendelse(OPPDATERING,md)
-                    OBJECT_DELETE -> if (it.endeligSlettet()) MellomlagringsHendelse(SLETTET,md)else MellomlagringsHendelse(IGNORER,md)
+                    OBJECT_DELETE -> if (it.endeligSlettet()) MellomlagringsHendelse(ENDELIG_SLETTING,md)else MellomlagringsHendelse(IGNORER,md)
                     else -> MellomlagringsHendelse(IGNORER,md)
                 }
             } ?: MellomlagringsHendelse(IGNORER)
@@ -99,7 +99,7 @@ class MellomlagringBeanConfig {
           }
 
         enum class GCPEventType {
-            OPPRETTET, OPPDATERING,SLETTET, IGNORER
+            OPPRETTET, OPPDATERING,ENDELIG_SLETTING, IGNORER
         }
         data class MellomlagringsHendelse(val type : GCPEventType, val metadata : Metadata? = null)
     }

@@ -4,10 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.stereotype.Component
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.Companion.STORAGE_CHANNEL
-import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.IGNORER
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.ENDELIG_SLETTING
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.OPPDATERING
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.OPPRETTET
-import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.SLETTET
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.MellomlagringsHendelse
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.util.LoggerUtil
@@ -28,22 +27,27 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
 
 
     @ServiceActivator(inputChannel = STORAGE_CHANNEL)
-    fun handle(h: MellomlagringsHendelse) {
+    fun handle(h: MellomlagringsHendelse) =
         try {
-            h.metadata?.let {
-                log.trace("Event type {} med metadata {}", h.type,it)
+            h.metadata?.let { md ->
+                log.trace("Event type {} med metadata {}", h.type,md)
                 when(h.type) {
-                    OPPRETTET ->  minside.opprettUtkast(it.fnr, "Du har en påbegynt $it.", it.type, it.eventId)
-                    OPPDATERING -> minside.oppdaterUtkast(it.fnr, "Du har en påbegynt ${it.tittel}", it.type)
-                    SLETTET -> minside.avsluttUtkast(it.fnr, it.type)
-                    IGNORER -> log.info("Event ${h.type} ignorert")
+                    OPPRETTET ->  minside.opprettUtkast(md.fnr, "Du har en påbegynt $md.", md.type, md.eventId).also {
+                        log.trace("Opprettet {}", it)
+                    }
+                    OPPDATERING -> minside.oppdaterUtkast(md.fnr, "Du har en påbegynt ${md.tittel}", md.type).also {
+                        log.trace("Oppdatert {}", it)
+                    }
+                    ENDELIG_SLETTING -> minside.avsluttUtkast(md.fnr, md.type).also {
+                        log.trace("Endelig slettet {}", it)
+                    }
+                    else -> log.trace("Event {} ignorert", h.type)
                 }
             }    ?: log.warn("Fant ikke forventede metadata i event}")
         } catch (e: Exception) {
             log.warn("OOPS",e)
         }
-        log.trace("DONE")
-    }
+
     /*
      private fun handle(msg : BasicAcknowledgeablePubsubMessage) =
         msg.pubsubMessage.metadata(mapper)?.let {md ->
