@@ -54,7 +54,7 @@ class MellomlagringBeanConfig {
     fun gcpStorageInputChannel() = DirectChannel()
 
     @Bean
-    fun gcpStorageFlow(@Qualifier(STORAGE_CHANNEL) channel: MessageChannel, eventHandler: MellomlagringEventSubscriber) =
+    fun gcpStorageFlow(@Qualifier(STORAGE_CHANNEL) channel: MessageChannel, eventHandler: MellomlagringEventSubscriber, transformer: TestTransformer) =
         integrationFlow {
             channel(channel)
             wireTap {
@@ -62,10 +62,11 @@ class MellomlagringBeanConfig {
                     log.trace("Headers: {}", it.headers)
                 }
             }
-            transform(testTransformer())
+            transform(transformer)
             handle(eventHandler)
         }
 
+   @Bean
     fun testTransformer() = TestTransformer()
 
     class TestTransformer {
