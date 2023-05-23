@@ -10,7 +10,6 @@ import com.google.cloud.spring.pubsub.support.GcpPubSubHeaders.*
 import com.google.cloud.storage.NotificationInfo.*
 import com.google.cloud.storage.NotificationInfo.EventType.*
 import com.google.cloud.storage.StorageOptions
-import com.google.pubsub.v1.PubsubMessage
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -62,7 +61,7 @@ class MellomlagringBeanConfig {
                     log.trace("Headers: {}", it.headers)
                 }
             }
-           // transform(transformer)
+           transform(testTransformer())
             handle(eventHandler)
         }
 
@@ -74,10 +73,9 @@ class MellomlagringBeanConfig {
         private val log = LoggerUtil.getLogger(javaClass)
 
         @Transformer
-        fun payload(@Header(ORIGINAL_MESSAGE) msg : BasicAcknowledgeablePubsubMessage?) : PubsubMessage? {
-            msg?.ack()
-            log.info("Transforming to ${msg?.pubsubMessage}")
-            return msg?.pubsubMessage
+        fun payload(@Header(ORIGINAL_MESSAGE) msg : BasicAcknowledgeablePubsubMessage?) : BasicAcknowledgeablePubsubMessage? {
+            log.info("Transforming $msg")
+            return msg
         }
     }
     @Bean
