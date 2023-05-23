@@ -57,11 +57,24 @@ class MellomlagringBeanConfig {
             channel(channel)
             wireTap {
                 handle {
-                    log.trace("Payload: {}, headers: {}", it.payload, it.headers)
+                    log.trace("Headers: {}", it.headers)
                 }
             }
+            transform(testTransformer(),"transform")
             handle(MellomlagringEventSubscriber(minside,cfg.mellom,mapper))
         }
+
+    fun testTransformer() = TestTransformer()
+
+    class TestTransformer {
+
+        private val log = LoggerUtil.getLogger(javaClass)
+
+        fun transform(bytes:ByteArray) : ByteArray {
+            log.info("Transforming ${bytes.size} bytes")
+            return bytes
+        }
+    }
     @Bean
     fun gcpStorageChannelAdapter(cfg: BucketConfig, template : PubSubTemplate,  @Qualifier(STORAGE_CHANNEL) channel: MessageChannel) =
         PubSubInboundChannelAdapter(template, cfg.mellom.subscription.navn).apply {
