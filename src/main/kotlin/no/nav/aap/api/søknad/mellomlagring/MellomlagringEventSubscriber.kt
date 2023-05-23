@@ -6,9 +6,10 @@ import com.google.cloud.spring.pubsub.support.GcpPubSubHeaders.ORIGINAL_MESSAGE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import com.google.pubsub.v1.PubsubMessage
+import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.messaging.Message
-import org.springframework.messaging.MessageHandler
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.MellomlagringBucketConfig
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.Companion.STORAGE_CHANNEL
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.Metadata
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.eventType
@@ -17,16 +18,16 @@ import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.metadata
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.util.LoggerUtil
 
-class MellomlagringEventSubscriber(private val minside: MinSideClient, private val cfg: MellomlagringBucketConfig, private val mapper: ObjectMapper) :
-    MessageHandler {
+class MellomlagringEventSubscriber(private val minside: MinSideClient, private val cfg: MellomlagringBucketConfig, private val mapper: ObjectMapper) { //: MessageHandler {
 
     private val log = LoggerUtil.getLogger(javaClass)
 
-    override fun handleMessage(m : Message<out Any>) {
+     fun handleMessage(m : Message<out Any>) {
         m.headers.get(ORIGINAL_MESSAGE, BasicAcknowledgeablePubsubMessage::class.java)?.let {
             handle(it.pubsubMessage)
         }
     }
+    @ServiceActivator(inputChannel = STORAGE_CHANNEL)
     private fun handle(msg : PubsubMessage) =
         msg.metadata(mapper)?.let {md ->
             val eventType = msg.eventType().also {

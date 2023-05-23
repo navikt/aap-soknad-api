@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.integration.annotation.Transformer
 import org.springframework.integration.channel.DirectChannel
+import org.springframework.integration.config.EnableIntegration
 import org.springframework.integration.dsl.integrationFlow
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.handler.annotation.Header
@@ -27,6 +28,7 @@ import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.util.LoggerUtil
 
 @Configuration(proxyBeanMethods = false)
+@EnableIntegration
 class MellomlagringBeanConfig {
 
     private val log = LoggerUtil.getLogger(javaClass)
@@ -88,6 +90,6 @@ class MellomlagringBeanConfig {
         }
 
     companion object  {
-        private const val STORAGE_CHANNEL = "gcpStorageInputChannel"
+         const val STORAGE_CHANNEL = "gcpStorageInputChannel"
     }
 }
