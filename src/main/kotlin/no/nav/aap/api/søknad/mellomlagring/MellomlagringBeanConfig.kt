@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.mellomlagring
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.api.gax.retrying.RetrySettings
 import com.google.cloud.ServiceOptions
 import com.google.cloud.spring.pubsub.core.PubSubTemplate
@@ -23,7 +22,6 @@ import org.springframework.integration.dsl.integrationFlow
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.handler.annotation.Header
 import org.threeten.bp.Duration
-import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.util.LoggerUtil
 
 @Configuration(proxyBeanMethods = false)
@@ -56,7 +54,7 @@ class MellomlagringBeanConfig {
     fun gcpStorageInputChannel() = DirectChannel()
 
     @Bean
-    fun gcpStorageFlow(@Qualifier(STORAGE_CHANNEL) channel: MessageChannel,minside: MinSideClient, cfg: BucketConfig, mapper: ObjectMapper) =
+    fun gcpStorageFlow(@Qualifier(STORAGE_CHANNEL) channel: MessageChannel, eventHandler: MellomlagringEventSubscriber) =
         integrationFlow {
             channel(channel)
             wireTap {
@@ -65,7 +63,7 @@ class MellomlagringBeanConfig {
                 }
             }
             transform(testTransformer())
-            handle(MellomlagringEventSubscriber(minside,cfg.mellom,mapper))
+            handle(eventHandler)
         }
 
     fun testTransformer() = TestTransformer()
