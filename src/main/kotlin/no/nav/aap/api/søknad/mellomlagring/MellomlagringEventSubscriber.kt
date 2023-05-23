@@ -29,7 +29,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
            // handle(it.pubsubMessage)
         }
     }
-    @ServiceActivator(inputChannel = STORAGE_CHANNEL, requiresReply = "false")
+    @ServiceActivator(inputChannel = STORAGE_CHANNEL)
     private fun handle(msg : BasicAcknowledgeablePubsubMessage) =
         msg.pubsubMessage.metadata(mapper)?.let {md ->
             val eventType = msg.pubsubMessage.eventType().also {
