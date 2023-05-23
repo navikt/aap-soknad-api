@@ -66,7 +66,7 @@ class MellomlagringBeanConfig {
             handle(eventHandler)
         }
 
-   @Bean
+   //@Bean
     fun testTransformer() = TestTransformer()
 
     class TestTransformer {
