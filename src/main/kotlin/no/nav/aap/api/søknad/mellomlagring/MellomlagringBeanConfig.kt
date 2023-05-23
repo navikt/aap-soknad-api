@@ -54,7 +54,7 @@ class MellomlagringBeanConfig {
     fun gcpStorageInputChannel() = DirectChannel()
 
     @Bean
-    fun gcpStorageFlow(@Qualifier(STORAGE_CHANNEL) channel: MessageChannel, eventHandler: MellomlagringEventSubscriber, transformer: TestTransformer) =
+    fun gcpStorageFlow(@Qualifier(STORAGE_CHANNEL) channel: MessageChannel, eventHandler: MellomlagringEventSubscriber/*, transformer: TestTransformer*/) =
         integrationFlow {
             channel(channel)
             wireTap {
