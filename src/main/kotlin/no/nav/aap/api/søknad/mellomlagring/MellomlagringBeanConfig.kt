@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.mellomlagring
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.api.gax.retrying.RetrySettings
 import com.google.cloud.ServiceOptions
 import com.google.cloud.spring.pubsub.core.PubSubTemplate
@@ -25,8 +26,10 @@ import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransfor
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.OPPDATERING
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.SLETTET
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.UKJENT
+import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.Metadata
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.eventType
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.førstegangsOpprettelse
+import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.metadata
 import no.nav.aap.util.LoggerUtil
 
 @Configuration(proxyBeanMethods = false)
@@ -67,7 +70,6 @@ class MellomlagringBeanConfig {
                     log.trace("Headers: {}", it.headers)
                 }
             }
-            //transform<String> { "Hello world" }
             transform(testTransformer())
             handle(eventHandler)
         }
@@ -82,17 +84,18 @@ class MellomlagringBeanConfig {
         @Transformer
         fun payload(@Header(ORIGINAL_MESSAGE) msg : BasicAcknowledgeablePubsubMessage?)  =
             msg?.pubsubMessage?.let {
+                val md = it.metadata(jacksonObjectMapper())
                 when ( it.eventType()) {
-                    OBJECT_FINALIZE -> if (it.førstegangsOpprettelse()) GCPSubscritionInfo(FØRSTEGANGS) else GCPSubscritionInfo(OPPDATERING)
-                    OBJECT_DELETE -> GCPSubscritionInfo(SLETTET)
-                    else -> GCPSubscritionInfo(UKJENT)
+                    OBJECT_FINALIZE -> if (it.førstegangsOpprettelse()) GCPSubscritionInfo(FØRSTEGANGS,md) else GCPSubscritionInfo(OPPDATERING,md)
+                    OBJECT_DELETE -> GCPSubscritionInfo(SLETTET,md)
+                    else -> GCPSubscritionInfo(UKJENT,md)
                 }
             } ?: GCPSubscritionInfo(UKJENT)
 
         enum class GCPEventType {
             FØRSTEGANGS, OPPDATERING,SLETTET, UKJENT
         }
-        data class GCPSubscritionInfo(val type: GCPEventType)
+        data class GCPSubscritionInfo(val type : GCPEventType, val metadata : Metadata? = null)
     }
     @Bean
     fun gcpStorageChannelAdapter(cfg: BucketConfig, template : PubSubTemplate,  @Qualifier(STORAGE_CHANNEL) channel: MessageChannel) =
