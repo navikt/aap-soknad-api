@@ -1,21 +1,13 @@
 package no.nav.aap.api.søknad.mellomlagring
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.cloud.spring.pubsub.support.BasicAcknowledgeablePubsubMessage
-import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
-import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
-import com.google.pubsub.v1.PubsubMessage
 import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.stereotype.Component
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.Companion.STORAGE_CHANNEL
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.FØRSTEGANGS
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.OPPDATERING
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.SLETTET
-import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPSubscritionInfo
-import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.Metadata
-import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.endeligSlettet
-import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.eventType
-import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.førstegangsOpprettelse
-import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.metadata
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.MellomlagringsHendelse
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.util.LoggerUtil
 
@@ -35,17 +27,20 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
 
 
     @ServiceActivator(inputChannel = STORAGE_CHANNEL)
-    fun handle(msg: GCPSubscritionInfo) {
-        log.info("XXXX " + msg.toString())
-        msg.metadata?.let {
-            log.trace("Event type {} med metadata {}", msg.type,it)
-            when(msg.type) {
+    fun handle(h: MellomlagringsHendelse) {
+        log.info("XXXX " + h.toString())
+        h.metadata?.let {
+            log.trace("Event type {} med metadata {}", h.type,it)
+            when(h.type) {
                 FØRSTEGANGS ->  minside.opprettUtkast(it.fnr, "Du har en påbegynt $it.", it.type, it.eventId)
+                OPPDATERING -> minside.oppdaterUtkast(it.fnr, "Du har en påbegynt ${it.tittel}", it.type)
                 SLETTET -> minside.avsluttUtkast(it.fnr, it.type)
-                else -> log.warn("Event ${msg.type} ikke håndtert (dette skal aldri skje)")
+
+                else -> log.warn("Event ${h.type} ikke håndtert (dette skal aldri skje)")
             }
         }    ?: log.warn("Fant ikke forventede metadata i event}")
     }
+    /*
      private fun handle(msg : BasicAcknowledgeablePubsubMessage) =
         msg.pubsubMessage.metadata(mapper)?.let {md ->
             val eventType = msg.pubsubMessage.eventType().also {
@@ -84,4 +79,6 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
                 minside.oppdaterUtkast(fnr, "Du har en påbegynt $tittel", type)
             }
         }
+
+     */
 }

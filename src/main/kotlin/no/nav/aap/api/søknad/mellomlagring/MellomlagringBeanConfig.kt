@@ -86,16 +86,16 @@ class MellomlagringBeanConfig {
             msg?.pubsubMessage?.let {
                 val md = it.metadata(jacksonObjectMapper())
                 when ( it.eventType()) {
-                    OBJECT_FINALIZE -> if (it.førstegangsOpprettelse()) GCPSubscritionInfo(FØRSTEGANGS,md) else GCPSubscritionInfo(OPPDATERING,md)
-                    OBJECT_DELETE -> GCPSubscritionInfo(SLETTET,md)
-                    else -> GCPSubscritionInfo(UKJENT,md)
+                    OBJECT_FINALIZE -> if (it.førstegangsOpprettelse()) MellomlagringsHendelse(FØRSTEGANGS,md) else MellomlagringsHendelse(OPPDATERING,md)
+                    OBJECT_DELETE -> MellomlagringsHendelse(SLETTET,md)
+                    else -> MellomlagringsHendelse(UKJENT,md)
                 }
-            } ?: GCPSubscritionInfo(UKJENT)
+            } ?: MellomlagringsHendelse(UKJENT)
 
         enum class GCPEventType {
             FØRSTEGANGS, OPPDATERING,SLETTET, UKJENT
         }
-        data class GCPSubscritionInfo(val type : GCPEventType, val metadata : Metadata? = null)
+        data class MellomlagringsHendelse(val type : GCPEventType, val metadata : Metadata? = null)
     }
     @Bean
     fun gcpStorageChannelAdapter(cfg: BucketConfig, template : PubSubTemplate,  @Qualifier(STORAGE_CHANNEL) channel: MessageChannel) =
