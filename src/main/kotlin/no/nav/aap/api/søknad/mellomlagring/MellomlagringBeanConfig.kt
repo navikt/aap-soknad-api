@@ -62,7 +62,7 @@ class MellomlagringBeanConfig {
                     log.trace("Headers: {}", it.headers)
                 }
             }
-            transform(transformer)
+           // transform(transformer)
             handle(eventHandler)
         }
 
