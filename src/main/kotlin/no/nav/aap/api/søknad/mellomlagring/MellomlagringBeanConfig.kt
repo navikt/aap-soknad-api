@@ -28,7 +28,6 @@ import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.util.LoggerUtil
 
 @Configuration(proxyBeanMethods = false)
-@EnableIntegration
 class MellomlagringBeanConfig {
 
     private val log = LoggerUtil.getLogger(javaClass)
