@@ -28,14 +28,12 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
 
     @ServiceActivator(inputChannel = STORAGE_CHANNEL)
     fun handle(h: MellomlagringsHendelse) {
-        log.info("XXXX " + h.toString())
         h.metadata?.let {
             log.trace("Event type {} med metadata {}", h.type,it)
             when(h.type) {
                 FØRSTEGANGS ->  minside.opprettUtkast(it.fnr, "Du har en påbegynt $it.", it.type, it.eventId)
                 OPPDATERING -> minside.oppdaterUtkast(it.fnr, "Du har en påbegynt ${it.tittel}", it.type)
                 SLETTET -> minside.avsluttUtkast(it.fnr, it.type)
-
                 else -> log.warn("Event ${h.type} ikke håndtert (dette skal aldri skje)")
             }
         }    ?: log.warn("Fant ikke forventede metadata i event}")

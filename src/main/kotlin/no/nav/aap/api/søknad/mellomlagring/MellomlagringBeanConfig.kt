@@ -83,6 +83,7 @@ class MellomlagringBeanConfig {
 
         @Transformer
         fun payload(@Header(ORIGINAL_MESSAGE) msg : BasicAcknowledgeablePubsubMessage?)  =
+          try {
             msg?.pubsubMessage?.let {
                 val md = it.metadata(jacksonObjectMapper())
                 when ( it.eventType()) {
@@ -91,6 +92,9 @@ class MellomlagringBeanConfig {
                     else -> MellomlagringsHendelse(UKJENT,md)
                 }
             } ?: MellomlagringsHendelse(UKJENT)
+          } catch (e: Exception) {
+              log.warn("OOPS",e)
+          }
 
         enum class GCPEventType {
             FØRSTEGANGS, OPPDATERING,SLETTET, UKJENT
