@@ -80,7 +80,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                 }
             }
             else {
-                log.trace("Oppretter IKKE nytt utkast i Ditt Nav for {}, disabled", fnr)
+                log.trace("Oppretter IKKE nytt utkast i Min Side for {}, disabled", fnr)
             }
         }
 
@@ -96,7 +96,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
                             trace("oppdater utkast",u.eventid,it)
                             repos.utkast.oppdaterUtkast(UPDATED,fnr.fnr, u.eventid)
                         }
-                } ?:  log.warn("fant IKKE et allerede eksisterende utkast for $fnr, oppretter utkast istedet").also {
+                } ?:  log.warn("Fant IKKE et allerede eksisterende utkast for $fnr, oppretter utkast istedet").also {
                     opprettUtkast(fnr,"Du har en påbegynt ${skjemaType.tittel}")
                 }
             }

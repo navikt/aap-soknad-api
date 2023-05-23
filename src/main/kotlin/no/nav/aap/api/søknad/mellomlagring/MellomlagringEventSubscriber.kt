@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.stereotype.Component
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.Companion.STORAGE_CHANNEL
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.IGNORER
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.OPPDATERING
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.OPPRETTET
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.SLETTET
@@ -35,7 +36,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
                     OPPRETTET ->  minside.opprettUtkast(it.fnr, "Du har en påbegynt $it.", it.type, it.eventId)
                     OPPDATERING -> minside.oppdaterUtkast(it.fnr, "Du har en påbegynt ${it.tittel}", it.type)
                     SLETTET -> minside.avsluttUtkast(it.fnr, it.type)
-                    else -> log.warn("Event ${h.type} ikke håndtert (dette skal aldri skje)")
+                    IGNORER -> log.info("Event ${h.type} ignorert")
                 }
             }    ?: log.warn("Fant ikke forventede metadata i event}")
         } catch (e: Exception) {
