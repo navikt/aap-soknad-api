@@ -93,9 +93,13 @@ class MellomlagringBeanConfig {
                     OBJECT_DELETE -> if (it.endeligSlettet()) MellomlagringsHendelse(ENDELIG_SLETTING,md)else MellomlagringsHendelse(IGNORER,md)
                     else -> MellomlagringsHendelse(IGNORER,md)
                 }
+            }.also {
+                msg?.ack()
             } ?: MellomlagringsHendelse(IGNORER)
           } catch (e: Exception) {
               log.warn("OOPS",e)
+              msg?.nack()
+              MellomlagringsHendelse(IGNORER)
           }
 
         enum class GCPEventType {
