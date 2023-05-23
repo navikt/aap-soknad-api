@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.integration.annotation.Transformer
 import org.springframework.integration.channel.DirectChannel
-import org.springframework.integration.config.EnableIntegration
 import org.springframework.integration.dsl.integrationFlow
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.handler.annotation.Header
