@@ -61,7 +61,8 @@ class MellomlagringBeanConfig {
                     log.trace("Headers: {}", it.headers)
                 }
             }
-           transform(testTransformer())
+            transform<String> { "Hello world" }
+            //transform(testTransformer())
             handle(eventHandler)
         }
 
