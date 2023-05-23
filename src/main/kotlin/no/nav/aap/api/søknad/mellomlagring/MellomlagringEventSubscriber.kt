@@ -26,7 +26,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
 
      fun handleMessage(m : Message<out Any>) {
         m.headers.get(ORIGINAL_MESSAGE, BasicAcknowledgeablePubsubMessage::class.java)?.let {
-            handle(it.pubsubMessage)
+           // handle(it.pubsubMessage)
         }
     }
     @ServiceActivator(inputChannel = STORAGE_CHANNEL, requiresReply = "false")
