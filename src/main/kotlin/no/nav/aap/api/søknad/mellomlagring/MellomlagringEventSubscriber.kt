@@ -30,17 +30,17 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
         }
     }
     @ServiceActivator(inputChannel = STORAGE_CHANNEL, requiresReply = "false")
-    private fun handle(msg : PubsubMessage) =
-        msg.metadata(mapper)?.let {md ->
-            val eventType = msg.eventType().also {
+    private fun handle(msg : BasicAcknowledgeablePubsubMessage) =
+        msg.pubsubMessage.metadata(mapper)?.let {md ->
+            val eventType = msg.pubsubMessage.eventType().also {
                 log.trace("Event type {} med metadata {}", it, md)
             }
             when (eventType) {
-                OBJECT_FINALIZE -> oppdatert(msg, md)
-                OBJECT_DELETE -> slettet(msg, md)
+                OBJECT_FINALIZE -> oppdatert(msg.pubsubMessage, md)
+                OBJECT_DELETE -> slettet(msg.pubsubMessage, md)
                 else -> log.warn("Event $eventType ikke håndtert (dette skal aldri skje)")
             }
-        } ?: log.warn("Fant ikke forventede metadata i event $this ${msg.attributesMap}")
+        } ?: log.warn("Fant ikke forventede metadata i event $this ${msg.pubsubMessage.attributesMap}")
 
 
     private fun slettet(msg : PubsubMessage,  md : Metadata) =
