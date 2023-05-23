@@ -6,18 +6,22 @@ import com.google.cloud.ServiceOptions
 import com.google.cloud.spring.pubsub.core.PubSubTemplate
 import com.google.cloud.spring.pubsub.integration.AckMode.AUTO_ACK
 import com.google.cloud.spring.pubsub.integration.inbound.PubSubInboundChannelAdapter
+import com.google.cloud.spring.pubsub.support.BasicAcknowledgeablePubsubMessage
 import com.google.cloud.spring.pubsub.support.GcpPubSubHeaders.*
 import com.google.cloud.storage.NotificationInfo.*
 import com.google.cloud.storage.NotificationInfo.EventType.*
 import com.google.cloud.storage.StorageOptions
+import com.google.pubsub.v1.PubsubMessage
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
+import org.springframework.integration.annotation.Transformer
 import org.springframework.integration.channel.DirectChannel
 import org.springframework.integration.dsl.integrationFlow
 import org.springframework.messaging.MessageChannel
+import org.springframework.messaging.handler.annotation.Header
 import org.threeten.bp.Duration
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.util.LoggerUtil
@@ -60,7 +64,7 @@ class MellomlagringBeanConfig {
                     log.trace("Headers: {}", it.headers)
                 }
             }
-            transform(testTransformer(),"transform")
+            transform(testTransformer())
             handle(MellomlagringEventSubscriber(minside,cfg.mellom,mapper))
         }
 
@@ -70,9 +74,10 @@ class MellomlagringBeanConfig {
 
         private val log = LoggerUtil.getLogger(javaClass)
 
-        fun transform(bytes:ByteArray) : ByteArray {
-            log.info("Transforming ${bytes.size} bytes")
-            return bytes
+        @Transformer
+        fun payload(@Header(ORIGINAL_MESSAGE) msg : BasicAcknowledgeablePubsubMessage?) : PubsubMessage? {
+            log.info("Transforming to ${msg.pubsubMessage}")
+            return msg?.pubsubMessage
         }
     }
     @Bean
