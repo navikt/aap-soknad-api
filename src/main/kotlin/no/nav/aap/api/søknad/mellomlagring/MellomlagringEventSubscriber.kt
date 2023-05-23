@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.stereotype.Component
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.Companion.STORAGE_CHANNEL
-import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.FØRSTEGANGS
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.OPPDATERING
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.OPPRETTET
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.SLETTET
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.MellomlagringsHendelse
 import no.nav.aap.api.søknad.minside.MinSideClient
@@ -28,15 +28,20 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
 
     @ServiceActivator(inputChannel = STORAGE_CHANNEL)
     fun handle(h: MellomlagringsHendelse) {
-        h.metadata?.let {
-            log.trace("Event type {} med metadata {}", h.type,it)
-            when(h.type) {
-                FØRSTEGANGS ->  minside.opprettUtkast(it.fnr, "Du har en påbegynt $it.", it.type, it.eventId)
-                OPPDATERING -> minside.oppdaterUtkast(it.fnr, "Du har en påbegynt ${it.tittel}", it.type)
-                SLETTET -> minside.avsluttUtkast(it.fnr, it.type)
-                else -> log.warn("Event ${h.type} ikke håndtert (dette skal aldri skje)")
-            }
-        }    ?: log.warn("Fant ikke forventede metadata i event}")
+        try {
+            h.metadata?.let {
+                log.trace("Event type {} med metadata {}", h.type,it)
+                when(h.type) {
+                    OPPRETTET ->  minside.opprettUtkast(it.fnr, "Du har en påbegynt $it.", it.type, it.eventId)
+                    OPPDATERING -> minside.oppdaterUtkast(it.fnr, "Du har en påbegynt ${it.tittel}", it.type)
+                    SLETTET -> minside.avsluttUtkast(it.fnr, it.type)
+                    else -> log.warn("Event ${h.type} ikke håndtert (dette skal aldri skje)")
+                }
+            }    ?: log.warn("Fant ikke forventede metadata i event}")
+        } catch (e: Exception) {
+            log.warn("OOPS",e)
+        }
+        log.trace("DONE")
     }
     /*
      private fun handle(msg : BasicAcknowledgeablePubsubMessage) =

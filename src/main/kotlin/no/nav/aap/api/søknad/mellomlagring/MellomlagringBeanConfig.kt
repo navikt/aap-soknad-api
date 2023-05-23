@@ -22,8 +22,8 @@ import org.springframework.integration.dsl.integrationFlow
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.handler.annotation.Header
 import org.threeten.bp.Duration
-import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.FØRSTEGANGS
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.OPPDATERING
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.OPPRETTET
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.SLETTET
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.UKJENT
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.Metadata
@@ -86,8 +86,9 @@ class MellomlagringBeanConfig {
           try {
             msg?.pubsubMessage?.let {
                 val md = it.metadata(jacksonObjectMapper())
+                log.trace("Metadata er $md")
                 when ( it.eventType()) {
-                    OBJECT_FINALIZE -> if (it.førstegangsOpprettelse()) MellomlagringsHendelse(FØRSTEGANGS,md) else MellomlagringsHendelse(OPPDATERING,md)
+                    OBJECT_FINALIZE -> if (it.førstegangsOpprettelse()) MellomlagringsHendelse(OPPRETTET,md) else MellomlagringsHendelse(OPPDATERING,md)
                     OBJECT_DELETE -> MellomlagringsHendelse(SLETTET,md)
                     else -> MellomlagringsHendelse(UKJENT,md)
                 }
@@ -97,7 +98,7 @@ class MellomlagringBeanConfig {
           }
 
         enum class GCPEventType {
-            FØRSTEGANGS, OPPDATERING,SLETTET, UKJENT
+            OPPRETTET, OPPDATERING,SLETTET, UKJENT
         }
         data class MellomlagringsHendelse(val type : GCPEventType, val metadata : Metadata? = null)
     }
