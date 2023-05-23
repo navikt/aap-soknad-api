@@ -8,6 +8,7 @@ import com.google.pubsub.v1.PubsubMessage
 import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.stereotype.Component
 import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.Companion.STORAGE_CHANNEL
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPSubscritionInfo
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.Metadata
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.eventType
@@ -32,7 +33,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
 
 
     @ServiceActivator(inputChannel = STORAGE_CHANNEL)
-    fun handle(msg: String) = log.info("XXXXXXXX")
+    fun handle(msg: GCPSubscritionInfo) = log.info("XXXX " + msg.toString())
      private fun handle(msg : BasicAcknowledgeablePubsubMessage) =
         msg.pubsubMessage.metadata(mapper)?.let {md ->
             val eventType = msg.pubsubMessage.eventType().also {

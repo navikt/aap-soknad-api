@@ -21,6 +21,12 @@ import org.springframework.integration.dsl.integrationFlow
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.handler.annotation.Header
 import org.threeten.bp.Duration
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.FØRSTEGANGS
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.OPPDATERING
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.SLETTET
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.TestTransformer.GCPEventType.UKJENT
+import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.eventType
+import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.førstegangsOpprettelse
 import no.nav.aap.util.LoggerUtil
 
 @Configuration(proxyBeanMethods = false)
@@ -61,8 +67,8 @@ class MellomlagringBeanConfig {
                     log.trace("Headers: {}", it.headers)
                 }
             }
-            transform<String> { "Hello world" }
-            //transform(testTransformer())
+            //transform<String> { "Hello world" }
+            transform(testTransformer())
             handle(eventHandler)
         }
 
@@ -74,10 +80,19 @@ class MellomlagringBeanConfig {
         private val log = LoggerUtil.getLogger(javaClass)
 
         @Transformer
-        fun payload(@Header(ORIGINAL_MESSAGE) msg : BasicAcknowledgeablePubsubMessage?) : BasicAcknowledgeablePubsubMessage? {
-            log.info("Transforming $msg")
-            return msg
+        fun payload(@Header(ORIGINAL_MESSAGE) msg : BasicAcknowledgeablePubsubMessage?)  =
+            msg?.pubsubMessage?.let {
+                when ( it.eventType()) {
+                    OBJECT_FINALIZE -> if (it.førstegangsOpprettelse()) GCPSubscritionInfo(FØRSTEGANGS) else GCPSubscritionInfo(OPPDATERING)
+                    OBJECT_DELETE -> GCPSubscritionInfo(SLETTET)
+                    else -> GCPSubscritionInfo(UKJENT)
+                }
+            } ?: GCPSubscritionInfo(UKJENT)
+
+        enum class GCPEventType {
+            FØRSTEGANGS, OPPDATERING,SLETTET, UKJENT
         }
+        data class GCPSubscritionInfo(val type: GCPEventType)
     }
     @Bean
     fun gcpStorageChannelAdapter(cfg: BucketConfig, template : PubSubTemplate,  @Qualifier(STORAGE_CHANNEL) channel: MessageChannel) =
