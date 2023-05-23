@@ -78,6 +78,7 @@ class MellomlagringBeanConfig {
 
         @Transformer
         fun payload(@Header(ORIGINAL_MESSAGE) msg : BasicAcknowledgeablePubsubMessage?) : PubsubMessage? {
+            msg?.ack()
             log.info("Transforming to ${msg?.pubsubMessage}")
             return msg?.pubsubMessage
         }
