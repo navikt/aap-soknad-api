@@ -6,19 +6,22 @@ import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventTy
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventType.OPPDATERT
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventType.OPPRETTET
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.MellomlagringsHendelse
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.Companion.STORAGE_CHANNEL
 import no.nav.aap.api.søknad.minside.MinSideClient
 
 @Component
 class MellomlagringHendelseHåndterer(private val minside: MinSideClient) {
 
-    @ServiceActivator(inputChannel = MellomlagringBeanConfig.STORAGE_CHANNEL)
+    @ServiceActivator(inputChannel = STORAGE_CHANNEL)
     fun håndter(h: MellomlagringsHendelse) =
-        h.metadata?.let { md ->
-            when(h.type) {
-                OPPRETTET ->  minside.opprettUtkast(md.fnr, "Du har en påbegynt $md.", md.type, md.eventId)
-                OPPDATERT -> minside.oppdaterUtkast(md.fnr, "Du har en påbegynt ${md.tittel}", md.type)
-                ENDELIG_SLETTET -> minside.avsluttUtkast(md.fnr, md.type)
-                else -> Unit
+        h.metadata?.let {
+            with(it) {
+                when(h.type) {
+                    OPPRETTET ->  minside.opprettUtkast(fnr, "Du har en påbegynt $tittel", type, eventId)
+                    OPPDATERT -> minside.oppdaterUtkast(fnr, "Du har en påbegynt $tittel", type)
+                    ENDELIG_SLETTET -> minside.avsluttUtkast(fnr, type)
+                    else -> Unit
+                }
             }
         } ?: throw IllegalStateException("Fant ikke forventede metadata i event}")
 }
