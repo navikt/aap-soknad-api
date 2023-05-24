@@ -1,5 +1,6 @@
 package no.nav.aap.api.søknad.mellomlagring
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.api.gax.retrying.RetrySettings
 import com.google.cloud.ServiceOptions
 import com.google.cloud.spring.pubsub.core.PubSubTemplate
@@ -63,7 +64,7 @@ class MellomlagringBeanConfig {
         }
 
    //@Bean
-    fun gcpEventTransformer() = GCPBucketEventTransformer()
+    fun gcpEventTransformer(mapper: ObjectMapper) = GCPBucketEventTransformer(mapper)
 
 
     @Bean
