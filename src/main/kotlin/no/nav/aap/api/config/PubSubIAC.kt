@@ -68,13 +68,15 @@ class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, pri
             val topic = TopicName.of(project, navn).toString()
             log.info("Lager en notifikasjon på topic $topic")
             storage.createNotification(mellom.navn,
-                    NotificationInfo.newBuilder(topic)
-                        .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
-                        .setPayloadFormat(JSON_API_V1)
-                        .build()).also {
+                notificationInfo(topic)).also {
                 log.trace("Lagd notifikasjon ${it.notificationId} for topic $topic")
             }
         }
+
+    private fun notificationInfo(topic : String) : NotificationInfo? = NotificationInfo.newBuilder(topic)
+        .setEventTypes(OBJECT_FINALIZE, OBJECT_DELETE)
+        .setPayloadFormat(JSON_API_V1)
+        .build()
 
     private fun setPubSubAdminPolicyForBucketServiceAccountOnTopic(project: String, topic: String) =
         TopicAdminClient.create().use { c ->
