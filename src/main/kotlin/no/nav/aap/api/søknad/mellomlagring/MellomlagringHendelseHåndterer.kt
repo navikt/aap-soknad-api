@@ -23,5 +23,5 @@ class MellomlagringHendelseHåndterer(private val minside: MinSideClient) {
                     else -> Unit
                 }
             }
-        } ?: throw IllegalStateException("Fant ikke forventede metadata i event}")
+        } ?: throw IllegalStateException("Fant ikke forventede metadata i event")
 }
