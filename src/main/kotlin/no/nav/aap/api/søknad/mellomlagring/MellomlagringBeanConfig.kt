@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.integration.channel.DirectChannel
+import org.springframework.integration.channel.NullChannel
 import org.springframework.integration.dsl.integrationFlow
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
@@ -64,15 +65,15 @@ class MellomlagringBeanConfig {
             }
             transform(transformer)
             handle(eventHandler)
-            channel("nullChannel")
+            channel(NullChannel())
         }
 
    @Bean
     fun gcpEventTransformer(mapper: ObjectMapper) = GCPBucketEventTransformer(mapper)
 
-    @ServiceActivator(inputChannel = "pubsubErrors")
-    fun pubsubErrorHandler(msg : Message<MessagingException>) {
-        log.warn("ERROR HANDLER",msg.payload)
+    @ServiceActivator(inputChannel = ERROR_CHANNEL)
+    fun gcpErrorHandler(msg : Message<MessagingException>) {
+        log.warn("Noe gikk feil ved behandling av hendelse fra GCP",msg.payload)
     }
 
 
@@ -81,10 +82,11 @@ class MellomlagringBeanConfig {
         PubSubInboundChannelAdapter(template, cfg.mellom.subscription.navn).apply {
             outputChannel = channel
             ackMode = AUTO_ACK
-            setErrorChannelName("pubsubErrors")
+            setErrorChannelName(ERROR_CHANNEL)
         }
 
     companion object  {
+         private const val ERROR_CHANNEL = "gcpErrors"
          const val STORAGE_CHANNEL = "gcpStorageInputChannel"
     }
 }
