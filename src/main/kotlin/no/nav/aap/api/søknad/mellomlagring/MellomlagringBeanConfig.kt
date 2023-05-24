@@ -64,6 +64,7 @@ class MellomlagringBeanConfig {
             }
             transform(transformer)
             handle(eventHandler)
+            channel("nullChannel")
         }
 
    @Bean
