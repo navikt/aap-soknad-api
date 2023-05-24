@@ -38,8 +38,9 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
         KeyManagementServiceClient.create().use { client ->
             with(cfg) {
                 client.listKeyRings(location).iterateAll()
-                    .map { it.name }
-                    .contains("$ring")
+                    .any { it.name == "$ring" }
+                 //   .map { it.name }
+                 //   .contains("$ring")
             }
         }
 
@@ -47,8 +48,9 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
         KeyManagementServiceClient.create().use { client ->
             with(cfg) {
                 client.listCryptoKeys(ring).iterateAll()
-                    .map { it.name }
-                    .contains("$key")
+                    .any { it.name == "$key" }
+                // .map { it.name }
+                // .contains("$key")
             }
         }
 
