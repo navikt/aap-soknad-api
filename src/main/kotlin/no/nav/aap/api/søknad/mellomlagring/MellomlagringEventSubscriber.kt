@@ -78,7 +78,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
 
 }
 
-@Component
+//@Component
 class NyMellomllagringEventSubscriber(private val minside: MinSideClient) {
     private val log = LoggerUtil.getLogger(javaClass)
 
