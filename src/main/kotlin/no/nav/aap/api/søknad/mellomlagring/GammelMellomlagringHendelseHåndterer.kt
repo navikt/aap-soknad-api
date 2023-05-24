@@ -6,15 +6,8 @@ import com.google.cloud.spring.pubsub.support.GcpPubSubHeaders.ORIGINAL_MESSAGE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import com.google.pubsub.v1.PubsubMessage
-import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageHandler
-import org.springframework.stereotype.Component
-import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventType.ENDELIG_SLETTING
-import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventType.OPPDATERING
-import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventType.OPPRETTET
-import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.MellomlagringsHendelse
-import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.Companion.STORAGE_CHANNEL
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.Metadata
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.eventType
@@ -23,9 +16,8 @@ import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.metadata
 import no.nav.aap.api.søknad.minside.MinSideClient
 import no.nav.aap.util.LoggerUtil
 
-
-@Component
-class MellomlagringEventSubscriber(private val minside: MinSideClient, private val cfg: BucketConfig, private val mapper: ObjectMapper) : MessageHandler
+//@Component
+class GammelMellomlagringEventSubscriber(private val minside: MinSideClient, private val cfg: BucketConfig, private val mapper: ObjectMapper) : MessageHandler
 {
 
     private val log = LoggerUtil.getLogger(javaClass)
@@ -74,34 +66,5 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
             else {
                 minside.oppdaterUtkast(fnr, "Du har en påbegynt $tittel", type)
             }
-        }
-
-
-}
-
-@Component
-class NyMellomlagringEventSubscriber(private val minside: MinSideClient) {
-    private val log = LoggerUtil.getLogger(javaClass)
-
-    @ServiceActivator(inputChannel = STORAGE_CHANNEL)
-    fun handle(h: MellomlagringsHendelse) =
-        try {
-            h.metadata?.let { md ->
-                log.trace("Event type {} med metadata {}", h.type,md)
-                when(h.type) {
-                    OPPRETTET ->  minside.opprettUtkast(md.fnr, "Du har en påbegynt $md.", md.type, md.eventId).also {
-                        log.trace("Opprettet {}", it)
-                    }
-                    OPPDATERING -> minside.oppdaterUtkast(md.fnr, "Du har en påbegynt ${md.tittel}", md.type).also {
-                        log.trace("Oppdatert {}", it)
-                    }
-                    ENDELIG_SLETTING -> minside.avsluttUtkast(md.fnr, md.type).also {
-                        log.trace("Endelig slettet {}", it)
-                    }
-                    else -> log.trace("Event {} ignorert", h.type)
-                }
-            }    ?: log.warn("Fant ikke forventede metadata i event}")
-        } catch (e: Exception) {
-            log.warn("OOPS",e)
         }
 }

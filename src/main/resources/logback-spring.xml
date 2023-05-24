@@ -60,7 +60,7 @@
         </logger>
         <logger name="org.apache.kafka.clients.Metadata" level="warn" />
         <logger name="org.apache.fontbox.ttf.CmapSubtable" level="warn" />
-        <logger name="no.nav.aap.api.søknad.mellomlagring.MellomlagringEventSubscriber" level="info" />
+        <logger name="no.nav.aap.api.søknad.mellomlagring.GammelMellomlagringEventSubscriber" level="info" />
         <logger name="no.nav.aap.api.søknad.minside.LoggingEntityListener" level="info" />
         <logger name="no.nav.aap" level="info"/>
         <logger name="org.apache.pdfbox" level="error"/>

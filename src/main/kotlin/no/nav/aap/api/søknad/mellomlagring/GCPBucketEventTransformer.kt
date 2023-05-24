@@ -7,9 +7,9 @@ import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_DELETE
 import com.google.cloud.storage.NotificationInfo.EventType.OBJECT_FINALIZE
 import org.springframework.integration.annotation.Transformer
 import org.springframework.messaging.handler.annotation.Header
-import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventType.ENDELIG_SLETTING
-import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventType.IGNORER
-import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventType.OPPDATERING
+import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventType.ENDELIG_SLETTET
+import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventType.IGNORERT
+import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventType.OPPDATERT
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventType.OPPRETTET
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.Metadata
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.endeligSlettet
@@ -29,17 +29,17 @@ class GCPBucketEventTransformer(private val mapper: ObjectMapper) {
                 val md = it.metadata(mapper)
                 log.trace("Metadata er {}", md)
                 when ( it.eventType()) {
-                    OBJECT_FINALIZE -> if (it.førstegangsOpprettelse()) MellomlagringsHendelse(OPPRETTET,md) else MellomlagringsHendelse(OPPDATERING,md)
-                    OBJECT_DELETE -> if (it.endeligSlettet()) MellomlagringsHendelse(ENDELIG_SLETTING,md) else MellomlagringsHendelse(IGNORER,md)
-                    else -> MellomlagringsHendelse(IGNORER)
+                    OBJECT_FINALIZE -> if (it.førstegangsOpprettelse()) MellomlagringsHendelse(OPPRETTET,md) else MellomlagringsHendelse(OPPDATERT,md)
+                    OBJECT_DELETE -> if (it.endeligSlettet()) MellomlagringsHendelse(ENDELIG_SLETTET,md) else MellomlagringsHendelse(IGNORERT,md)
+                    else -> MellomlagringsHendelse(IGNORERT)
                 }
             }
         } catch (e: Exception) {
-            MellomlagringsHendelse(IGNORER)
+            MellomlagringsHendelse(IGNORERT)
         }
 
     enum class GCPEventType {
-        OPPRETTET, OPPDATERING,ENDELIG_SLETTING, IGNORER
+        OPPRETTET, OPPDATERT,ENDELIG_SLETTET, IGNORERT
     }
     data class MellomlagringsHendelse(val type : GCPEventType, val metadata : Metadata? = null)
 }

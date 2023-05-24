@@ -55,7 +55,7 @@ class MellomlagringBeanConfig {
     fun gcpStorageInputChannel() = DirectChannel()
 
     @Bean
-    fun gcpStorageFlow(@Qualifier(STORAGE_CHANNEL) channel: MessageChannel, eventHandler: NyMellomlagringEventSubscriber, transformer: GCPBucketEventTransformer) =
+    fun gcpStorageFlow(@Qualifier(STORAGE_CHANNEL) channel: MessageChannel, eventHandler: MellomlagringHendelseHåndterer, transformer: GCPBucketEventTransformer) =
         integrationFlow {
             channel(channel)
             wireTap {
@@ -73,9 +73,8 @@ class MellomlagringBeanConfig {
 
     @ServiceActivator(inputChannel = ERROR_CHANNEL)
     fun gcpErrorHandler(msg : Message<MessagingException>) {
-        log.warn("Noe gikk feil ved behandling av hendelse fra GCP",msg.payload)
+        log.warn("Noe gikk galt ved behandling av hendelse fra GCP",msg.payload)
     }
-
 
     @Bean
     fun gcpStorageChannelAdapter(cfg: BucketConfig, template : PubSubTemplate,  @Qualifier(STORAGE_CHANNEL) channel: MessageChannel) =
@@ -86,7 +85,7 @@ class MellomlagringBeanConfig {
         }
 
     companion object  {
-         private const val ERROR_CHANNEL = "gcpErrors"
+         private const val ERROR_CHANNEL = "gcpErrorChannel"
          const val STORAGE_CHANNEL = "gcpStorageInputChannel"
     }
 }
