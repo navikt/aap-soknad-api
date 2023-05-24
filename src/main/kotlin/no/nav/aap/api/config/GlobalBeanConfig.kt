@@ -86,7 +86,7 @@ import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName : String) {
 
     val log = getLogger(javaClass)
@@ -168,17 +168,17 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     @ConditionalOnNotProd
     @Bean
-    fun notProdHttpClient(cfg: HttpTimeouts) = httpClient(cfg).wiretap(javaClass.name, TRACE, TEXTUAL)
+    fun notProdHttpClient(timeouts: HttpTimeouts) = httpClient(timeouts).wiretap(javaClass.name, TRACE, TEXTUAL)
 
     @ConditionalOnProd
     @Bean
-    fun prodHttpClient(cfg: HttpTimeouts) = httpClient(cfg)
+    fun prodHttpClient(timeouts: HttpTimeouts) = httpClient(timeouts)
 
 
-    @ConfigurationProperties(TiMEOUT)
-    data class HttpTimeouts(val readTimeout: Duration =DEFAULT_TIMEOUT, val writeTimeout :Duration =DEFAULT_TIMEOUT, val responsTimeout: Duration = DEFAULT_TIMEOUT, val connectTimeout: Duration = DEFAULT_CONNECT_TIMEOUT)
+    @ConfigurationProperties(TIMEOUT)
+    data class HttpTimeouts(val readTimeout: Duration = DEFAULT_TIMEOUT, val writeTimeout :Duration =DEFAULT_TIMEOUT, val responsTimeout: Duration = DEFAULT_TIMEOUT, val connectTimeout: Duration = DEFAULT_CONNECT_TIMEOUT)
 
-    private fun httpClient(cfg: HttpTimeouts) = with(cfg) { HttpClient.create()
+    private fun httpClient(timeouts: HttpTimeouts) = with(timeouts) { HttpClient.create()
         .doOnConnected {
             it.addHandlerFirst(ReadTimeoutHandler(readTimeout.toSeconds(), SECONDS))
             it.addHandlerFirst(WriteTimeoutHandler(writeTimeout.toSeconds(), SECONDS))
@@ -207,7 +207,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
                                      request : ServerHttpRequest,
                                      response : ServerHttpResponse) : Any? {
             if (contentType in listOf(APPLICATION_JSON, parseMediaType("application/problem+json"))) {
-                log.trace(CONFIDENTIAL, "Response body for ${request.uri} er ${body?.toJson(mapper)}")
+                log.trace(CONFIDENTIAL, "Response body for {} er {}", request.uri, body?.toJson(mapper))
             }
             return body
         }
@@ -289,7 +289,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     }
 
     companion object {
-        private const val TiMEOUT = "timeout"
+        private const val TIMEOUT = "timeout"
         private val DEFAULT_TIMEOUT = ofSeconds(30)
         private val DEFAULT_CONNECT_TIMEOUT = ofSeconds(10)
 
