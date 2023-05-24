@@ -15,9 +15,12 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
+import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.integration.channel.DirectChannel
 import org.springframework.integration.dsl.integrationFlow
+import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
+import org.springframework.messaging.MessagingException
 import org.threeten.bp.Duration
 import no.nav.aap.util.LoggerUtil
 
@@ -66,12 +69,18 @@ class MellomlagringBeanConfig {
    @Bean
     fun gcpEventTransformer(mapper: ObjectMapper) = GCPBucketEventTransformer(mapper)
 
+    @ServiceActivator(inputChannel = "pubsubErrors")
+    fun pubsubErrorHandler(msg : Message<MessagingException>) {
+        log.warn("ERROR HANDLER",msg.payload)
+    }
+
 
     @Bean
     fun gcpStorageChannelAdapter(cfg: BucketConfig, template : PubSubTemplate,  @Qualifier(STORAGE_CHANNEL) channel: MessageChannel) =
         PubSubInboundChannelAdapter(template, cfg.mellom.subscription.navn).apply {
             outputChannel = channel
             ackMode = AUTO_ACK
+            setErrorChannelName("pubsubErrors")
         }
 
     companion object  {

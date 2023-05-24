@@ -14,6 +14,7 @@ import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventTy
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventType.OPPDATERING
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.GCPEventType.OPPRETTET
 import no.nav.aap.api.søknad.mellomlagring.GCPBucketEventTransformer.MellomlagringsHendelse
+import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.Companion.STORAGE_CHANNEL
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.Metadata
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.endeligSlettet
 import no.nav.aap.api.søknad.mellomlagring.PubSubMessageExtensions.eventType
@@ -82,7 +83,7 @@ class MellomlagringEventSubscriber(private val minside: MinSideClient, private v
 class NyMellomlagringEventSubscriber(private val minside: MinSideClient) {
     private val log = LoggerUtil.getLogger(javaClass)
 
-    @ServiceActivator(inputChannel = MellomlagringBeanConfig.STORAGE_CHANNEL)
+    @ServiceActivator(inputChannel = STORAGE_CHANNEL)
     fun handle(h: MellomlagringsHendelse) =
         try {
             h.metadata?.let { md ->
