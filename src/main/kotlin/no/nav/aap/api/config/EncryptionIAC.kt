@@ -35,7 +35,7 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
         }
     }
     private final fun harRing() =
-        KeyManagementServiceClient.create().use { client ->
+        KMS.use { client ->
             with(cfg) {
                 client.listKeyRings(location).iterateAll()
                     .any { it.name == "$ring" }
@@ -43,7 +43,7 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
         }
 
     private final fun harKey() =
-        KeyManagementServiceClient.create().use { client ->
+        KMS.use { client ->
             with(cfg) {
                 client.listCryptoKeys(ring).iterateAll()
                     .any { it.name == "$key" }
@@ -51,7 +51,7 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
         }
 
     private fun lagRing() =
-        KeyManagementServiceClient.create().use { client ->
+        KMS.use { client ->
             with(cfg) {
                 client.createKeyRing(location, ring.keyRing, KeyRing.newBuilder().build()).also {
                     log.info("Lagd keyring ${it.name}")
@@ -60,7 +60,7 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
         }
 
     private fun lagKey() {
-        KeyManagementServiceClient.create().use { client ->
+       KMS.use { client ->
             with(cfg) {
                 client.createCryptoKey(ring,
                         key.cryptoKey,
@@ -76,7 +76,7 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
     }
 
     private fun setAksessForBucketServiceAccount(project: String) {
-        KeyManagementServiceClient.create().use { client ->
+        KMS.use { client ->
             with(cfg) {
                 client.setIamPolicy(key,
                         client.getIamPolicy(key).toBuilder()
@@ -92,6 +92,7 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
     }
 
     companion object {
+        private val KMS  = KeyManagementServiceClient.create()
         private const val ENCRYPT_DECRYPT_ROLE = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
         private val log = LoggerUtil.getLogger(EncryptionIAC::class.java)
     }

@@ -277,7 +277,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
             }
 
         private fun retry() =
-            fixedDelay(3, Duration.ofMillis(100))
+            fixedDelay(3, ofMillis(100))
                 .filter { e -> e is OAuth2ClientException }
                 .doBeforeRetry { s ->
                     log.info("Retry kall mot token endpoint feilet med  ${s.failure().message} for ${s.totalRetriesInARow() + 1} gang, prøver igjen",
