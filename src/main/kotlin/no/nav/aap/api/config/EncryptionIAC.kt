@@ -39,8 +39,6 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
             with(cfg) {
                 client.listKeyRings(location).iterateAll()
                     .any { it.name == "$ring" }
-                 //   .map { it.name }
-                 //   .contains("$ring")
             }
         }
 
@@ -49,8 +47,6 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
             with(cfg) {
                 client.listCryptoKeys(ring).iterateAll()
                     .any { it.name == "$key" }
-                // .map { it.name }
-                // .contains("$key")
             }
         }
 

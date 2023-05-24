@@ -62,8 +62,6 @@ class PubSubIAC(private val cfg: BucketConfig, private val storage: Storage, pri
     private fun harNotifikasjon(topic: String) =
         storage.listNotifications(cfg.mellom.navn)
             .any { it.topic.substringAfterLast('/') == topic }
-           // .map { it.topic }
-           // .find { it.substringAfterLast('/') == topic } != null
 
     private fun lagNotifikasjon(navn: String) =
         with(cfg) {
