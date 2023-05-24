@@ -71,7 +71,7 @@ class MellomlagringBeanConfig {
                     log.trace("Headers: {}", it.headers)
                 }
             }
-            transform(testTransformer())
+         //   transform(testTransformer())
             handle(eventHandler)
         }
 
@@ -84,23 +84,19 @@ class MellomlagringBeanConfig {
 
         @Transformer
         fun payload(@Header(ORIGINAL_MESSAGE) msg : BasicAcknowledgeablePubsubMessage?)  =
-          try {
-            msg?.pubsubMessage?.let {
-                val md = it.metadata(jacksonObjectMapper())
-                log.trace("Metadata er {}", md)
-                when ( it.eventType()) {
-                    OBJECT_FINALIZE -> if (it.førstegangsOpprettelse()) MellomlagringsHendelse(OPPRETTET,md) else MellomlagringsHendelse(OPPDATERING,md)
-                    OBJECT_DELETE -> if (it.endeligSlettet()) MellomlagringsHendelse(ENDELIG_SLETTING,md)else MellomlagringsHendelse(IGNORER,md)
-                    else -> MellomlagringsHendelse(IGNORER,md)
-                }
-            }.also {
-                msg?.ack()
-            } ?: MellomlagringsHendelse(IGNORER)
-          } catch (e: Exception) {
-              log.warn("OOPS",e)
-              msg?.nack()
-              MellomlagringsHendelse(IGNORER)
-          }
+            try {
+                msg?.pubsubMessage?.let {
+                    val md = it.metadata(jacksonObjectMapper())
+                    log.trace("Metadata er {}", md)
+                    when ( it.eventType()) {
+                        OBJECT_FINALIZE -> if (it.førstegangsOpprettelse()) MellomlagringsHendelse(OPPRETTET,md) else MellomlagringsHendelse(OPPDATERING,md)
+                        OBJECT_DELETE -> if (it.endeligSlettet()) MellomlagringsHendelse(ENDELIG_SLETTING,md) else MellomlagringsHendelse(IGNORER,md)
+                        else -> MellomlagringsHendelse(IGNORER,md)
+                    }
+                } ?: MellomlagringsHendelse(IGNORER)
+            } catch (e: Exception) {
+                MellomlagringsHendelse(IGNORER)
+            }
 
         enum class GCPEventType {
             OPPRETTET, OPPDATERING,ENDELIG_SLETTING, IGNORER
