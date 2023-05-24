@@ -10,7 +10,7 @@ import no.nav.aap.api.søknad.mellomlagring.MellomlagringBeanConfig.Companion.ST
 import no.nav.aap.api.søknad.minside.MinSideClient
 
 @Component
-class MellomlagringHendelseHåndterer(private val minside: MinSideClient) {
+class MellomlagringEventHandler(private val minside: MinSideClient) {
 
     @ServiceActivator(inputChannel = STORAGE_CHANNEL)
     fun håndter(h: MellomlagringsHendelse) =
