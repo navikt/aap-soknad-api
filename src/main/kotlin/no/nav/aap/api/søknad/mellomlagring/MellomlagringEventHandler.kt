@@ -13,7 +13,7 @@ import no.nav.aap.api.søknad.minside.MinSideClient
 class MellomlagringEventHandler(private val minside: MinSideClient) {
 
     @ServiceActivator(inputChannel = STORAGE_CHANNEL)
-    fun handle(h: MellomlagringsHendelse) =
+    fun handleEvent(h: MellomlagringsHendelse) =
         h.metadata?.let {
             with(it) {
                 when(h.type) {
