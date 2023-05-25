@@ -16,7 +16,7 @@ import no.nav.aap.util.LoggerUtil
 @Component
 class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage) : CommandLineRunner {
 
-    override fun run(vararg args: String?) {
+    override fun run(vararg args : String?) {
         with(cfg) {
             log.trace("IAC encryption init")
             if (harRing()) {
@@ -34,8 +34,9 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
             setAksessForBucketServiceAccount(project)
         }
     }
+
     private final fun harRing() =
-        KMS.use { client ->
+        KeyManagementServiceClient.create().use { client ->
             with(cfg) {
                 client.listKeyRings(location).iterateAll()
                     .any { it.name == "$ring" }
@@ -43,7 +44,7 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
         }
 
     private final fun harKey() =
-        KMS.use { client ->
+        KeyManagementServiceClient.create().use { client ->
             with(cfg) {
                 client.listCryptoKeys(ring).iterateAll()
                     .any { it.name == "$key" }
@@ -51,7 +52,7 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
         }
 
     private fun lagRing() =
-        KMS.use { client ->
+        KeyManagementServiceClient.create().use { client ->
             with(cfg) {
                 client.createKeyRing(location, ring.keyRing, KeyRing.newBuilder().build()).also {
                     log.info("Lagd keyring ${it.name}")
@@ -60,30 +61,30 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
         }
 
     private fun lagKey() {
-       KMS.use { client ->
+        KeyManagementServiceClient.create().use { client ->
             with(cfg) {
                 client.createCryptoKey(ring,
-                        key.cryptoKey,
-                        CryptoKey.newBuilder()
-                            .setPurpose(ENCRYPT_DECRYPT)
-                            .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
-                                .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
-                            .build()).also {
+                    key.cryptoKey,
+                    CryptoKey.newBuilder()
+                        .setPurpose(ENCRYPT_DECRYPT)
+                        .setVersionTemplate(CryptoKeyVersionTemplate.newBuilder()
+                            .setAlgorithm(GOOGLE_SYMMETRIC_ENCRYPTION))
+                        .build()).also {
                     log.info("Lagd nøkkel $it")
                 }
             }
         }
     }
 
-    private fun setAksessForBucketServiceAccount(project: String) {
-        KMS.use { client ->
+    private fun setAksessForBucketServiceAccount(project : String) {
+        KeyManagementServiceClient.create().use { client ->
             with(cfg) {
                 client.setIamPolicy(key,
-                        client.getIamPolicy(key).toBuilder()
-                            .addBindings(Binding.newBuilder()
-                                .setRole(ENCRYPT_DECRYPT_ROLE)
-                                .addMembers("serviceAccount:${storage.getServiceAccount(project).email}")
-                                .build()).build())
+                    client.getIamPolicy(key).toBuilder()
+                        .addBindings(Binding.newBuilder()
+                            .setRole(ENCRYPT_DECRYPT_ROLE)
+                            .addMembers("serviceAccount:${storage.getServiceAccount(project).email}")
+                            .build()).build())
                     .also {
                         log.trace("Ny policy er {}", it.bindingsList)
                     }
@@ -92,10 +93,8 @@ class EncryptionIAC(private val cfg: BucketConfig, private val storage: Storage)
     }
 
     companion object {
-        private val KMS  = KeyManagementServiceClient.create()
+
         private const val ENCRYPT_DECRYPT_ROLE = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
         private val log = LoggerUtil.getLogger(EncryptionIAC::class.java)
     }
-
-
 }
