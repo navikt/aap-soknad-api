@@ -24,20 +24,18 @@ class GCPBucketEventTransformer(private val mapper: ObjectMapper) {
 
     @Transformer
     fun payload(@Header(ORIGINAL_MESSAGE) msg : BasicAcknowledgeablePubsubMessage)  =
-        try {
-            msg.pubsubMessage.let {
-                val md = it.metadata(mapper)
-                log.trace("Metadata er {}", md)
-                when ( it.eventType()) {
-                    OBJECT_FINALIZE -> if (it.førstegangsOpprettelse()) MellomlagringsHendelse(OPPRETTET,md) else MellomlagringsHendelse(OPPDATERT,md)
-                    OBJECT_DELETE -> if (it.endeligSlettet()) MellomlagringsHendelse(ENDELIG_SLETTET,md) else MellomlagringsHendelse(IGNORERT,md)
-                    else -> MellomlagringsHendelse(IGNORERT)
-                }
-            }
-        } catch (e: Exception) {
-            log.warn("OOPS")
-            MellomlagringsHendelse(IGNORERT)
-        }
+             msg.pubsubMessage.let {
+                 val md = it.metadata(mapper)
+                 log.trace("Metadata er {}", md)
+                 when (it.eventType()) {
+                     OBJECT_FINALIZE -> if (it.førstegangsOpprettelse()) MellomlagringsHendelse(OPPRETTET, md) else MellomlagringsHendelse(OPPDATERT, md)
+                     OBJECT_DELETE -> if (it.endeligSlettet()) MellomlagringsHendelse(ENDELIG_SLETTET, md) else MellomlagringsHendelse(IGNORERT, md)
+                     else -> MellomlagringsHendelse(IGNORERT)
+                 }.also {
+                     log.trace("Event oversatt til {}", it)
+                 }
+             }
+
 
     enum class GCPEventType {
         OPPRETTET, OPPDATERT,ENDELIG_SLETTET, IGNORERT
