@@ -55,11 +55,12 @@ class MellomlagringBeanConfig {
     fun gcpStorageInputChannel() = DirectChannel()
 
     @Bean
-    fun gcpStorageFlow(@Qualifier(STORAGE_CHANNEL) eventChannel: MessageChannel, eventHandler: MellomlagringEventHandler, eventTransformer: GCPBucketEventTransformer) =
+    fun gcpStorageFlow(@Qualifier(STORAGE_CHANNEL) channel: MessageChannel, handler: MellomlagringEventHandler, eventTransformer: GCPBucketEventTransformer) =
         integrationFlow {
-            channel(eventChannel)
+            channel(channel)
+            wireTap { handle { log.trace("Headers {}", it.headers) } }
             transform(eventTransformer)
-            handle(eventHandler)
+            handle(handler)
             channel(NullChannel())
         }
 
@@ -68,7 +69,7 @@ class MellomlagringBeanConfig {
 
     @ServiceActivator(inputChannel = ERROR_CHANNEL)
     fun gcpErrorHandler(msg : Message<MessagingException>) {
-        log.warn("Noe gikk galt ved behandling av hendelse fra GCP storage",msg.payload)
+        log.warn("Noe gikk galt ved behandling av hendelse fra GCP",msg.payload)
     }
 
     @Bean
