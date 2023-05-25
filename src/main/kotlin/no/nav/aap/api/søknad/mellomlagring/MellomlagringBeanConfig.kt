@@ -60,6 +60,7 @@ class MellomlagringBeanConfig {
             channel(channel)
             wireTap { handle { log.trace("Headers {}", it.headers) } }
             transform(eventTransformer)
+            wireTap { handle { log.trace("Payload {}", it.payload) } }
             handle(handler)
             channel(NullChannel())
         }
