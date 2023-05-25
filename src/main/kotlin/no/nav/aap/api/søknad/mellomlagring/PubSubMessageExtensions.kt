@@ -39,7 +39,7 @@ object PubSubMessageExtensions {
                 null
             }
         }
-    fun PubsubMessage.data(mapper: ObjectMapper) = mapper.readValue<Map<String, Any>>(data.toStringUtf8())
+     private fun PubsubMessage.data(mapper: ObjectMapper) = mapper.readValue<Map<String, Any>>(data.toStringUtf8())
      private fun PubsubMessage.objektNavn() = attributesMap[OBJECTID]?.split("/")
      fun PubsubMessage.endeligSlettet() = attributesMap[OVERWRITTEN] == null
     fun PubsubMessage.førstegangsOpprettelse() = attributesMap[OVERWROTE] == null
