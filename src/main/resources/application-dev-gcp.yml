@@ -1,3 +1,4 @@
+otel.exporter.otlp.traces.endpoint: tempo-distributor.nais-system:4317
 debug: false
 management:
     endpoints:
