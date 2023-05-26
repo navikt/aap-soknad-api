@@ -65,6 +65,8 @@ spec:
         - host: {{saf}}
         - host: https://pdl-api.{{env}}-fss-pub.nais.io
       rules:
+        - application: tempo-distributor
+          namespace: nais-system
         - application: sokos-kontoregister-person
           namespace: okonomi
         - application: clamav
