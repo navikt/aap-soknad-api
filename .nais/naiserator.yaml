@@ -98,7 +98,6 @@ spec:
     - {{ingress}}
   resources:
     limits:
-      cpu: 1500m
       memory: 8192Mi
     requests:
       cpu: 250m
