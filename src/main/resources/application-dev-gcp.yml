@@ -2,7 +2,7 @@ debug: false
 management:
     otlp:
       tracing:
-        endpoint: https://tempo-distributor.nais-system:4317
+        endpoint: http://tempo-distributor.nais-system:4317
     endpoints:
         web:
             exposure:
