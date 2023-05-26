@@ -23,7 +23,7 @@
     <springProfile name="dev">
         <logger name="reactor.netty.http.client" level="trace"/>
         <logger name="no.nav.aap" level="trace" />
-        <logger name="io.micrometer.tracing" level="trace" />
+        <logger name="io.opentelemetry" level="trace" />
         <logger name="org.apache.kafka.clients.consumer.internals.ConsumerCoordinator" level="warn"/>
         <logger name="no.nav.aap" level="trace"/>
         <logger name="org.flywaydb" level="trace" />
