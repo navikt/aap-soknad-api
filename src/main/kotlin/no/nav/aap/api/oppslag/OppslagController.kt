@@ -52,6 +52,7 @@ class OppslagController(
         val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?
         val validationContext = ctx.tokenValidationContext  // pass this ?
         return runBlocking {
+            log.trace("Søkerinfo start")
             coroutineScope {
                 //SpringTokenValidationContextHolder().tokenValidationContext = validationContext
                 SøkerInfo(
@@ -59,7 +60,7 @@ class OppslagController(
                     async { behandler.behandlerInfo() }.await(),
                     async { arbeid.arbeidInfo() }.await(),
                     async { krr.kontaktInfo() }.await(),
-                    async { konto.kontoInfo() }.await())
+                    async { konto.kontoInfo() }.await()).also { log.trace("Søkerinfo done") }
             }
         }
 //        return SøkerInfo(pdl.søkerMedBarn(), behandler.behandlerInfo(), arbeid.arbeidInfo(), krr.kontaktInfo(), konto.kontoInfo())
