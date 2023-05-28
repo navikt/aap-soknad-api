@@ -2,6 +2,9 @@ package no.nav.aap.api.oppslag
 
 import io.micrometer.observation.annotation.Observed
 import java.util.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort.Direction.DESC
 import org.springframework.data.web.PageableDefault
@@ -13,6 +16,8 @@ import org.springframework.http.MediaType.*
 import org.springframework.http.ResponseEntity.*
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
 import no.nav.aap.api.oppslag.OppslagController.Companion.OPPSLAG_BASE
 import no.nav.aap.api.oppslag.arbeid.ArbeidClient
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
@@ -25,6 +30,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.T
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity.Companion.CREATED
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.spring.ProtectedRestController
 
 @ProtectedRestController(value = [OPPSLAG_BASE], issuer = IDPORTEN)
@@ -36,12 +42,28 @@ class OppslagController(
     val krr : KRRClient,
     val søknad : SøknadClient,
     val konto : KontoClient,
-    val arkiv : ArkivOppslagClient) {
+    val arkiv : ArkivOppslagClient,
+    private val ctx: TokenValidationContextHolder) {
 
     val log = getLogger(javaClass)
 
     @GetMapping("/soeker")
-    fun søker() = SøkerInfo(pdl.søkerMedBarn(), behandler.behandlerInfo(), arbeid.arbeidInfo(), krr.kontaktInfo(), konto.kontoInfo())
+    fun søker() : SøkerInfo {
+        val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?
+        val validationContext = ctx.tokenValidationContext  // pass this ?
+        return runBlocking {
+            coroutineScope {
+                //SpringTokenValidationContextHolder().tokenValidationContext = validationContext
+                SøkerInfo(
+                    async { pdl.søkerMedBarn() }.await(),
+                    async { behandler.behandlerInfo() }.await(),
+                    async { arbeid.arbeidInfo() }.await(),
+                    async { krr.kontaktInfo() }.await(),
+                    async { konto.kontoInfo() }.await())
+            }
+        }
+//        return SøkerInfo(pdl.søkerMedBarn(), behandler.behandlerInfo(), arbeid.arbeidInfo(), krr.kontaktInfo(), konto.kontoInfo())
+    }
 
     @GetMapping("/soekermedbarn")
     fun søkerMedBarn() = pdl.søkerMedBarn()
