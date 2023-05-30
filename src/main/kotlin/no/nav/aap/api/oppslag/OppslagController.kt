@@ -4,6 +4,7 @@ import io.micrometer.observation.annotation.Observed
 import java.util.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort.Direction.DESC
 import org.springframework.data.web.PageableDefault
@@ -46,9 +47,9 @@ class OppslagController(
 
     @GetMapping("/soeker")
     fun søker() : SøkerInfo {
-    /*  return runBlocking {
+          val s = runBlocking {
                doAsync()
-        } */
+        }
 
 
         log.trace("SYNC start")
@@ -94,7 +95,7 @@ class OppslagController(
             val a1  = async { arbeid.arbeidInfo() }
                 SøkerInfo(b.await(),a.await(),a1.await(),k.await(),k1.await()).also {
                     val d = System.currentTimeMillis() - start
-                    log.trace("ASYNC end etter {} ms", d)
+                    log.trace("Sum async  {} ms", d)
                 }
         }
 
