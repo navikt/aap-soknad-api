@@ -56,7 +56,13 @@ class OppslagController(
                 log.trace("ASYNC start")
                 val a = async {  behandler.behandlerInfo() }
                 val k  = async { krr.kontaktInfo()}
-                val r = awaitAll(a,k)
+               val b  = async { pdl.søkerMedBarn() }
+                val k1  = async { konto.kontoInfo() }
+                val a1  = async { arbeid.arbeidInfo() }
+
+
+
+                val r = awaitAll(a,k,b,k1,a1)
                 log.trace("ASYNC end {}", r)
             }
         }
@@ -72,7 +78,10 @@ class OppslagController(
                     async { konto.kontoInfo() }.await()).also { log.trace("Søkerinfo done") }
             }
         } */
-        return SøkerInfo(pdl.søkerMedBarn(), behandler.behandlerInfo(), arbeid.arbeidInfo(), krr.kontaktInfo(), konto.kontoInfo())
+        log.trace("SYNC start")
+        return SøkerInfo(pdl.søkerMedBarn(), behandler.behandlerInfo(), arbeid.arbeidInfo(), krr.kontaktInfo(), konto.kontoInfo()).also {
+            log.trace("SYNC end {}", it)
+        }
     }
 
     @GetMapping("/soekermedbarn")
