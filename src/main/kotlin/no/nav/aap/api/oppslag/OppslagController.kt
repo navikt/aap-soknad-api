@@ -47,11 +47,9 @@ class OppslagController(
 
     @GetMapping("/soeker")
     fun søker() : SøkerInfo {
-        runBlocking {
+    /*    runBlocking {
               val asyncRes = doAsync()
-            log.trace("ASYNC running")
-
-        }
+        }*/
         log.trace("SYNC start")
         val start = System.currentTimeMillis()
         return SøkerInfo(pdl.søkerMedBarn(), behandler.behandlerInfo(), arbeid.arbeidInfo(), krr.kontaktInfo(), konto.kontoInfo()).also {
