@@ -49,11 +49,36 @@ class OppslagController(
     /*    runBlocking {
               val asyncRes = doAsync()
         }*/
+
         log.trace("SYNC start")
-        val start = System.currentTimeMillis()
-        return SøkerInfo(pdl.søkerMedBarn(), behandler.behandlerInfo(), arbeid.arbeidInfo(), krr.kontaktInfo(), konto.kontoInfo()).also {
-            val d = System.currentTimeMillis() - start
-            log.trace("SYNC end etter $d ms")
+        var start = System.currentTimeMillis()
+        val b = pdl.søkerMedBarn()
+        var sum = (System.currentTimeMillis() - start).also {
+            log.trace("Sum etter 1 $it ms")
+        }
+        start = System.currentTimeMillis()
+        val be = behandler.behandlerInfo()
+        sum = (sum + (System.currentTimeMillis() - start)).also {
+            log.trace("Sum etter 2 $it ms")
+        }
+        start = System.currentTimeMillis()
+        val a = arbeid.arbeidInfo()
+        sum = (sum + (System.currentTimeMillis() - start)).also {
+            log.trace("Sum etter 3 $it ms")
+        }
+        start = System.currentTimeMillis()
+        val kr = krr.kontaktInfo()
+        sum = (sum + (System.currentTimeMillis() - start)).also {
+            log.trace("Sum etter 4 $it ms")
+        }
+        start = System.currentTimeMillis()
+        val ko = konto.kontoInfo()
+        sum = (sum + (System.currentTimeMillis() - start)).also {
+            log.trace("Sum etter 5 $it ms")
+        }
+
+        return SøkerInfo(b,be,a,kr,ko).also {
+            log.trace("Sum alle er $sum ms")
         }
     }
 
