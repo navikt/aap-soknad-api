@@ -160,7 +160,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
             }
 
     @Bean
-    fun webClientCustomizer(client : HttpClient, registry : MeterRegistry) =
+    fun webClientCustomizer(client : HttpClient) =
         WebClientCustomizer { b ->
             b.clientConnector(ReactorClientHttpConnector(client))
                 .filter(correlatingFilterFunction(applicationName))
