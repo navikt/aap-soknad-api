@@ -4,6 +4,7 @@ import io.micrometer.observation.annotation.Observed
 import java.util.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort.Direction.DESC
 import org.springframework.data.web.PageableDefault
@@ -46,9 +47,10 @@ class OppslagController(
 
     @GetMapping("/soeker")
     fun søker() : SøkerInfo {
-    /*    runBlocking {
-              val asyncRes = doAsync()
-        }*/
+       runBlocking {
+               doAsync()
+        }
+        /*
 
         log.trace("SYNC start")
         var start = System.currentTimeMillis()
@@ -79,11 +81,10 @@ class OppslagController(
 
         return SøkerInfo(b,be,a,kr,ko).also {
             log.trace("Sum alle er $sum ms")
-        }
+        }*/
     }
 
-    private suspend fun doAsync() : SøkerInfo{
-        var si: SøkerInfo
+    private suspend fun doAsync() =
         coroutineScope {
             log.trace("ASYNC start")
             val start = System.currentTimeMillis()
@@ -92,12 +93,11 @@ class OppslagController(
             val b  = async { pdl.søkerMedBarn() }
             val k1  = async { konto.kontoInfo() }
             val a1  = async { arbeid.arbeidInfo() }
-            si = SøkerInfo(b.await(),a.await(),a1.await(),k.await(),k1.await())
-            val d = System.currentTimeMillis() - start
-            log.trace("ASYNC end {} etter {} ms", si, d)
+                SøkerInfo(b.await(),a.await(),a1.await(),k.await(),k1.await()).also {
+                    val d = System.currentTimeMillis() - start
+                    log.trace("ASYNC end etter {} ms", d)
+                }
         }
-        return si
-    }
 
 
     @GetMapping("/soekermedbarn")
