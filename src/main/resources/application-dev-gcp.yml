@@ -1,8 +1,5 @@
 debug: false
 management:
-    otlp:
-      tracing:
-        endpoint: http://tempo-distributor.nais-system:4317
     endpoints:
         web:
             exposure:
