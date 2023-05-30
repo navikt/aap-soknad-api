@@ -2,6 +2,10 @@ package no.nav.aap.api.oppslag
 
 import io.micrometer.observation.annotation.Observed
 import java.util.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort.Direction.DESC
 import org.springframework.data.web.PageableDefault
@@ -46,7 +50,16 @@ class OppslagController(
     fun søker() : SøkerInfo {
        // val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?
        // val validationContext = ctx.tokenValidationContext  // pass this ?
-
+        runBlocking {
+            coroutineScope {
+                //SpringTokenValidationContextHolder().tokenValidationContext = validationContext
+                log.trace("ASYNC start")
+                val a = async {  arbeid.arbeidInfo() }
+                val k  = async { konto.kontoInfo() }
+                awaitAll(a,k)
+                log.trace("ASYNC end")
+            }
+        }
        /* return runBlocking {
             log.trace("Søkerinfo start")
             coroutineScope {
