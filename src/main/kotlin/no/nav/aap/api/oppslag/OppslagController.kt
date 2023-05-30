@@ -54,8 +54,8 @@ class OppslagController(
             coroutineScope {
                 //SpringTokenValidationContextHolder().tokenValidationContext = validationContext
                 log.trace("ASYNC start")
-                val a = async {  arbeid.arbeidInfo() }
-                val k  = async { konto.kontoInfo() }
+                val a = async {  behandler.behandlerInfo() }
+                val k  = async { krr.kontaktInfo()}
                 val r = awaitAll(a,k)
                 log.trace("ASYNC end {}", r)
             }
