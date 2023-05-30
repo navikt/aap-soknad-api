@@ -93,7 +93,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     val log = getLogger(javaClass)
 
     @Bean
-    fun grpcSpanExporter() = OtlpGrpcSpanExporter.builder().setEndpoint("tempo-distributor.nais-system:4317").build()
+    fun grpcSpanExporter() = OtlpGrpcSpanExporter.builder().setEndpoint("http://tempo-distributor.nais-system:4317").build()
 
     @Bean
     fun observationTextPublisher() = ObservationTextPublisher(log::info)
