@@ -47,7 +47,7 @@ class OppslagController(
 
     @GetMapping("/soeker")
     fun søker() : SøkerInfo {
-       runBlocking {
+      return runBlocking {
                doAsync()
         }
         /*
