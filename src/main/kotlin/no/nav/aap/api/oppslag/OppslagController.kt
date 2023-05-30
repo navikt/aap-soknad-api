@@ -3,7 +3,6 @@ package no.nav.aap.api.oppslag
 import io.micrometer.observation.annotation.Observed
 import java.util.*
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.Pageable
@@ -54,33 +53,23 @@ class OppslagController(
             coroutineScope {
                 //SpringTokenValidationContextHolder().tokenValidationContext = validationContext
                 log.trace("ASYNC start")
-                val a = async {  behandler.behandlerInfo() }
-                val k  = async { krr.kontaktInfo()}
-               val b  = async { pdl.søkerMedBarn() }
-                val k1  = async { konto.kontoInfo() }
-                val a1  = async { arbeid.arbeidInfo() }
-
-
-
-                val r = awaitAll(a,k,b,k1,a1)
-                log.trace("ASYNC end {}", r)
+                val start = System.currentTimeMillis()
+                val a = async {  behandler.behandlerInfo() }.await()
+                val k  = async { krr.kontaktInfo()}.await()
+               val b  = async { pdl.søkerMedBarn() }.await()
+                val k1  = async { konto.kontoInfo() }.await()
+                val a1  = async { arbeid.arbeidInfo() }.await()
+                log.trace("ASYNC all running")
+                val si = SøkerInfo(b,a,a1,k,k1)
+                val d = System.currentTimeMillis() - start
+                log.trace("ASYNC end {} etter {} ms", si, d)
             }
         }
-       /* return runBlocking {
-            log.trace("Søkerinfo start")
-            coroutineScope {
-                //SpringTokenValidationContextHolder().tokenValidationContext = validationContext
-                SøkerInfo(
-                    async { pdl.søkerMedBarn() }.await(),
-                    async { behandler.behandlerInfo() }.await(),
-                    async { arbeid.arbeidInfo() }.await(),
-                    async { krr.kontaktInfo() }.await(),
-                    async { konto.kontoInfo() }.await()).also { log.trace("Søkerinfo done") }
-            }
-        } */
         log.trace("SYNC start")
+        val start = System.currentTimeMillis()
         return SøkerInfo(pdl.søkerMedBarn(), behandler.behandlerInfo(), arbeid.arbeidInfo(), krr.kontaktInfo(), konto.kontoInfo()).also {
-            log.trace("SYNC end {}", it)
+            val d = System.currentTimeMillis() - start
+            log.trace("SYNC end etter $d ms")
         }
     }
 
