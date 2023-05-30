@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
+import io.micrometer.observation.Observation.Context
+import io.micrometer.observation.ObservationHandler
 import io.micrometer.observation.ObservationRegistry
+import io.micrometer.observation.ObservationTextPublisher
 import io.micrometer.observation.aop.ObservedAspect
 import io.netty.channel.ChannelOption.*
 import io.netty.channel.ConnectTimeoutException
@@ -12,7 +15,6 @@ import io.netty.handler.logging.LogLevel.TRACE
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.TimeoutException
 import io.netty.handler.timeout.WriteTimeoutHandler
-import io.opencensus.trace.export.SpanExporter
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
@@ -91,6 +93,8 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     val log = getLogger(javaClass)
 
+    @Bean
+    fun observationTextPublisher() = ObservationTextPublisher(log::info)
     @Bean
     fun graphQLErrorHandler() = object : GraphQLErrorHandler {}
 
