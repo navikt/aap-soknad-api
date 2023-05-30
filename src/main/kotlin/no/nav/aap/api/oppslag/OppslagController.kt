@@ -47,23 +47,20 @@ class OppslagController(
 
     @GetMapping("/soeker")
     fun søker() : SøkerInfo {
-       // val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes?
-       // val validationContext = ctx.tokenValidationContext  // pass this ?
         runBlocking {
             coroutineScope {
-                //SpringTokenValidationContextHolder().tokenValidationContext = validationContext
                 log.trace("ASYNC start")
                 val start = System.currentTimeMillis()
-                val a = async {  behandler.behandlerInfo() }.await()
-                val k  = async { krr.kontaktInfo()}.await()
-               val b  = async { pdl.søkerMedBarn() }.await()
-                val k1  = async { konto.kontoInfo() }.await()
-                val a1  = async { arbeid.arbeidInfo() }.await()
-                log.trace("ASYNC all running")
-                val si = SøkerInfo(b,a,a1,k,k1)
+                val a = async {  behandler.behandlerInfo() }
+                val k  = async { krr.kontaktInfo()}
+                val b  = async { pdl.søkerMedBarn() }
+                val k1  = async { konto.kontoInfo() }
+                val a1  = async { arbeid.arbeidInfo() }
+                val si = SøkerInfo(b.await(),a.await(),a1.await(),k.await(),k1.await())
                 val d = System.currentTimeMillis() - start
                 log.trace("ASYNC end {} etter {} ms", si, d)
             }
+            log.trace("ASYNC all calculating")
         }
         log.trace("SYNC start")
         val start = System.currentTimeMillis()
