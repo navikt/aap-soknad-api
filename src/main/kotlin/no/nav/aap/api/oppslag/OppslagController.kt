@@ -56,8 +56,8 @@ class OppslagController(
                 log.trace("ASYNC start")
                 val a = async {  arbeid.arbeidInfo() }
                 val k  = async { konto.kontoInfo() }
-                awaitAll(a,k)
-                log.trace("ASYNC end")
+                val r = awaitAll(a,k)
+                log.trace("ASYNC end {}", r)
             }
         }
        /* return runBlocking {
