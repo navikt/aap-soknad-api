@@ -48,19 +48,9 @@ class OppslagController(
     @GetMapping("/soeker")
     fun søker() : SøkerInfo {
         runBlocking {
-            coroutineScope {
-                log.trace("ASYNC start")
-                val start = System.currentTimeMillis()
-                val a = async {  behandler.behandlerInfo() }
-                val k  = async { krr.kontaktInfo()}
-                val b  = async { pdl.søkerMedBarn() }
-                val k1  = async { konto.kontoInfo() }
-                val a1  = async { arbeid.arbeidInfo() }
-                val si = SøkerInfo(b.await(),a.await(),a1.await(),k.await(),k1.await())
-                val d = System.currentTimeMillis() - start
-                log.trace("ASYNC end {} etter {} ms", si, d)
-            }
-            log.trace("ASYNC all calculating")
+              val asyncRes = doAsync()
+            log.trace("ASYNC running")
+
         }
         log.trace("SYNC start")
         val start = System.currentTimeMillis()
@@ -69,6 +59,24 @@ class OppslagController(
             log.trace("SYNC end etter $d ms")
         }
     }
+
+    private suspend fun doAsync() : SøkerInfo{
+        var si: SøkerInfo
+        coroutineScope {
+            log.trace("ASYNC start")
+            val start = System.currentTimeMillis()
+            val a = async {  behandler.behandlerInfo() }
+            val k  = async { krr.kontaktInfo()}
+            val b  = async { pdl.søkerMedBarn() }
+            val k1  = async { konto.kontoInfo() }
+            val a1  = async { arbeid.arbeidInfo() }
+            si = SøkerInfo(b.await(),a.await(),a1.await(),k.await(),k1.await())
+            val d = System.currentTimeMillis() - start
+            log.trace("ASYNC end {} etter {} ms", si, d)
+        }
+        return si
+    }
+
 
     @GetMapping("/soekermedbarn")
     fun søkerMedBarn() = pdl.søkerMedBarn()
