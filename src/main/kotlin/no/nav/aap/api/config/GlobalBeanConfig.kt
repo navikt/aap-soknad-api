@@ -95,7 +95,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     @Bean
     fun grpcSpanExporter() = OtlpGrpcSpanExporter.builder().setEndpoint("http://tempo-distributor.nais-system:4317").build()
 
-    @Bean
+    //@Bean
     fun observationTextPublisher() = ObservationTextPublisher(log::info)
     @Bean
     fun graphQLErrorHandler() = object : GraphQLErrorHandler {}
