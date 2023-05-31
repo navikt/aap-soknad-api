@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
+import io.micrometer.observation.ObservationPredicate
 import io.micrometer.observation.ObservationRegistry
 import io.micrometer.observation.ObservationTextPublisher
 import io.micrometer.observation.aop.ObservedAspect
@@ -52,6 +53,7 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
+import org.springframework.http.server.observation.ServerRequestObservationContext
 import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -92,7 +94,14 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     val log = getLogger(javaClass)
 
+
     @Bean
+    fun actuatorServerContextPredicate(): ObservationPredicate = ObservationPredicate { name, context ->
+        if (name == "http.server.requests" && context is ServerRequestObservationContext) {
+            return@ObservationPredicate !context.carrier.requestURI.contains("actuator")
+        }
+        true
+    }
     fun grpcSpanExporter() = OtlpGrpcSpanExporter.builder().setEndpoint("http://tempo-distributor.nais-system:4317").build()
 
     //@Bean
