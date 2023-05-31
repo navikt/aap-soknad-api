@@ -1,6 +1,7 @@
 package no.nav.aap.api.søknad.minside
 
 import io.micrometer.core.instrument.Metrics.gauge
+import io.micrometer.observation.annotation.Observed
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicLong
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -38,6 +39,7 @@ import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 
 @Component
+@Observed
 data class MinSideProdusenter(val avro: KafkaOperations<NokkelInput, Any>, val utkast: KafkaOperations<String, String>, val forside: KafkaOperations<Fødselsnummer,MinSideForside>)
 @ConditionalOnGCP
 class MinSideClient(private val produsenter: MinSideProdusenter,

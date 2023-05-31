@@ -20,7 +20,7 @@ import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 
 @ConditionalOnGCP
-@Observed(contextualName = "Mellomlagring")
+@Observed
 internal class GCPKryptertMellomlager(val cfg: BucketConfig,
                                       private val lager: Storage,
                                       private val mapper: ObjectMapper,

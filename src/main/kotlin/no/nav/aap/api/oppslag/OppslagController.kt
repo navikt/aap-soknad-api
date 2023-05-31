@@ -32,7 +32,7 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.spring.ProtectedRestController
 
 @ProtectedRestController(value = [OPPSLAG_BASE], issuer = IDPORTEN)
-@Observed(contextualName = "oppslag")
+@Observed
 class OppslagController(
     val pdl : PDLClient,
     val behandler : BehandlerClient,

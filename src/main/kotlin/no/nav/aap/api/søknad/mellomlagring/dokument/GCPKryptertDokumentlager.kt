@@ -11,7 +11,7 @@ import com.google.cloud.storage.Storage.BlobGetOption.fields
 import com.google.cloud.storage.Storage.BlobListOption.currentDirectory
 import com.google.cloud.storage.Storage.BlobListOption.prefix
 import com.google.cloud.storage.Storage.BlobTargetOption.kmsKeyName
-import io.micrometer.core.annotation.Timed
+import io.micrometer.observation.annotation.Observed
 import java.util.UUID
 import org.springframework.context.annotation.Primary
 import org.springframework.http.ContentDisposition.parse
@@ -19,12 +19,12 @@ import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
 import org.springframework.stereotype.Component
 import no.nav.aap.api.error.Substatus.UNSUPPORTED
 import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.søknad.fordeling.AAPSøknad
+import no.nav.aap.api.søknad.fordeling.VedleggAware
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig
 import no.nav.aap.api.søknad.mellomlagring.DokumentException
 import no.nav.aap.api.søknad.mellomlagring.StørelseSjekker
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
-import no.nav.aap.api.søknad.fordeling.AAPSøknad
-import no.nav.aap.api.søknad.fordeling.VedleggAware
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.MDCUtil.callIdAsUUID
@@ -33,7 +33,7 @@ import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 
 @ConditionalOnGCP
 @Primary
-@Timed
+@Observed
 class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                                private val lager: Storage,
                                private val ctx: AuthContext,
