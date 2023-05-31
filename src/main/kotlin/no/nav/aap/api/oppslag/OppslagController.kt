@@ -1,6 +1,5 @@
 package no.nav.aap.api.oppslag
 
-import io.micrometer.observation.annotation.Observed
 import java.util.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -32,7 +31,6 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.spring.ProtectedRestController
 
 @ProtectedRestController(value = [OPPSLAG_BASE], issuer = IDPORTEN)
-@Observed
 class OppslagController(
     val pdl : PDLClient,
     val behandler : BehandlerClient,
@@ -52,17 +50,12 @@ class OppslagController(
 
     private suspend fun lookup() =
         coroutineScope {
-            log.trace("ASYNC start")
-            val start = System.currentTimeMillis()
             SøkerInfo(async { pdl.søkerMedBarn() }.await(),
                 async { behandler.behandlerInfo() }.await(),
                 async { arbeid.arbeidInfo() }.await(),
                 async { krr.kontaktInfo() }.await(),
-                async { konto.kontoInfo() }.await()).also {
-                    log.trace("Sum ASYNC  {} ms", System.currentTimeMillis() - start)
-                }
+                async { konto.kontoInfo() }.await())
         }
-
 
     @GetMapping("/soekermedbarn")
     fun søkerMedBarn() = pdl.søkerMedBarn()
