@@ -46,56 +46,20 @@ class OppslagController(
     val log = getLogger(javaClass)
 
     @GetMapping("/soeker")
-    fun søker() : SøkerInfo {
-          val s = runBlocking {
-               doAsync()
-        }
+    fun søker() = runBlocking {
+        lookup()
+  }
 
-
-        log.trace("SYNC start")
-        var start = System.currentTimeMillis()
-        val b = pdl.søkerMedBarn()
-        var sum = (System.currentTimeMillis() - start).also {
-            log.trace("Sum etter 1 $it ms")
-        }
-        start = System.currentTimeMillis()
-        val be = behandler.behandlerInfo()
-        sum = (sum + (System.currentTimeMillis() - start)).also {
-            log.trace("Sum etter 2 $it ms")
-        }
-        start = System.currentTimeMillis()
-        val a = arbeid.arbeidInfo()
-        sum = (sum + (System.currentTimeMillis() - start)).also {
-            log.trace("Sum etter 3 $it ms")
-        }
-        start = System.currentTimeMillis()
-        val kr = krr.kontaktInfo()
-        sum = (sum + (System.currentTimeMillis() - start)).also {
-            log.trace("Sum etter 4 $it ms")
-        }
-        start = System.currentTimeMillis()
-        val ko = konto.kontoInfo()
-        sum = (sum + (System.currentTimeMillis() - start)).also {
-            log.trace("Sum etter 5 $it ms")
-        }
-
-        return SøkerInfo(b,be,a,kr,ko).also {
-            log.trace("Sum alle er $sum ms")
-        }
-    }
-
-    private suspend fun doAsync() =
+    private suspend fun lookup() =
         coroutineScope {
             log.trace("ASYNC start")
             val start = System.currentTimeMillis()
-            val a = async {  behandler.behandlerInfo() }
-            val k  = async { krr.kontaktInfo()}
-            val b  = async { pdl.søkerMedBarn() }
-            val k1  = async { konto.kontoInfo() }
-            val a1  = async { arbeid.arbeidInfo() }
-                SøkerInfo(b.await(),a.await(),a1.await(),k.await(),k1.await()).also {
-                    val d = System.currentTimeMillis() - start
-                    log.trace("Sum async  {} ms", d)
+            SøkerInfo(async { pdl.søkerMedBarn() }.await(),
+                async { behandler.behandlerInfo() }.await(),
+                async { arbeid.arbeidInfo() }.await(),
+                async { krr.kontaktInfo() }.await(),
+                async { konto.kontoInfo() }.await()).also {
+                    log.trace("Sum ASYNC  {} ms", System.currentTimeMillis() - start)
                 }
         }
 
