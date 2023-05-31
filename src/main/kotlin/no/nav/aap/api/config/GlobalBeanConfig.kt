@@ -102,6 +102,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
         }
         true
     }
+    @Bean
     fun grpcSpanExporter() = OtlpGrpcSpanExporter.builder().setEndpoint("http://tempo-distributor.nais-system:4317").build()
 
     //@Bean
