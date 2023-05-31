@@ -1,7 +1,10 @@
 package no.nav.aap.api.oppslag
 
 import java.util.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.Pageable
@@ -15,13 +18,18 @@ import org.springframework.http.MediaType.*
 import org.springframework.http.ResponseEntity.*
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import no.nav.aap.api.felles.Kontonummer
 import no.nav.aap.api.oppslag.OppslagController.Companion.OPPSLAG_BASE
 import no.nav.aap.api.oppslag.arbeid.ArbeidClient
+import no.nav.aap.api.oppslag.arbeid.Arbeidsforhold
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagClient
 import no.nav.aap.api.oppslag.behandler.BehandlerClient
+import no.nav.aap.api.oppslag.behandler.RegistrertBehandler
 import no.nav.aap.api.oppslag.kontaktinformasjon.KRRClient
+import no.nav.aap.api.oppslag.kontaktinformasjon.Kontaktinformasjon
 import no.nav.aap.api.oppslag.konto.KontoClient
 import no.nav.aap.api.oppslag.person.PDLClient
+import no.nav.aap.api.oppslag.person.Søker
 import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.TIKA
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity.Companion.CREATED
@@ -45,16 +53,20 @@ class OppslagController(
 
     @GetMapping("/soeker")
     fun søker() = runBlocking {
-        lookup()
+        val s1 = async(Dispatchers.IO) { pdl.søkerMedBarn() }
+        val s2 = async(Dispatchers.IO) { behandler.behandlerInfo() }
+        val s3 = async(Dispatchers.IO) { arbeid.arbeidInfo() }
+        val s4 = async(Dispatchers.IO) { krr.kontaktInfo() }
+        val s5 = async(Dispatchers.IO) { konto.kontoInfo() }
+        lookup(s1,s2,s3,s4,s5)
   }
 
-    private suspend fun lookup() =
+    private suspend fun lookup(s1 : Deferred<Søker>,s2 : Deferred<List<RegistrertBehandler>>,  s3 : Deferred<List<Arbeidsforhold>>,
+                               s4 : Deferred<Kontaktinformasjon?>, s5 : Deferred<Kontonummer?>) =
         coroutineScope {
-            SøkerInfo(async { pdl.søkerMedBarn() }.await(),
-                async { behandler.behandlerInfo() }.await(),
-                async { arbeid.arbeidInfo() }.await(),
-                async { krr.kontaktInfo() }.await(),
-                async { konto.kontoInfo() }.await())
+            val res = awaitAll(s1,s2,s3,s4,s5)
+            SøkerInfo(res[0] as Søker, res[1] as List<RegistrertBehandler>, res[2] as List<Arbeidsforhold>, res[3] as Kontaktinformasjon?,
+                res[4] as Kontonummer?)
         }
 
     @GetMapping("/soekermedbarn")
