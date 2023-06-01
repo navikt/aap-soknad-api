@@ -56,11 +56,12 @@ class OppslagController(
     @GetMapping("/soeker")
     fun søker() = runBlocking {
         log.trace("ASYNC start")
-        val s1 = async(Dispatchers.IO + RequestContextCoroutineContext()) { pdl.søkerMedBarn() }
-        val s2 = async(Dispatchers.IO + RequestContextCoroutineContext()) { behandler.behandlerInfo() }
-        val s3 = async(Dispatchers.IO + RequestContextCoroutineContext()) { arbeid.arbeidInfo() }
-        val s4 = async(Dispatchers.IO + RequestContextCoroutineContext()) { krr.kontaktInfo() }
-        val s5 = async(Dispatchers.IO + RequestContextCoroutineContext()) { konto.kontoInfo() }
+        val ctx = RequestContextCoroutineContext()
+        val s1 = async(Dispatchers.IO + ctx) { pdl.søkerMedBarn() }
+        val s2 = async(Dispatchers.IO + ctx) { behandler.behandlerInfo() }
+        val s3 = async(Dispatchers.IO + ctx) { arbeid.arbeidInfo() }
+        val s4 = async(Dispatchers.IO + ctx) { krr.kontaktInfo() }
+        val s5 = async(Dispatchers.IO + ctx) { konto.kontoInfo() }
         lookup(s1,s2,s3,s4,s5)
     }
 
