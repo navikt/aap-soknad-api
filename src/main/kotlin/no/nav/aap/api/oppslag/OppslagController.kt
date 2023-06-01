@@ -1,8 +1,10 @@
 package no.nav.aap.api.oppslag
 
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ThreadContextElement
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -18,6 +20,8 @@ import org.springframework.http.MediaType.*
 import org.springframework.http.ResponseEntity.*
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.context.request.RequestAttributes
+import org.springframework.web.context.request.RequestContextHolder
 import no.nav.aap.api.felles.Kontonummer
 import no.nav.aap.api.oppslag.OppslagController.Companion.OPPSLAG_BASE
 import no.nav.aap.api.oppslag.arbeid.ArbeidClient
@@ -53,13 +57,13 @@ class OppslagController(
 
     @GetMapping("/soeker")
     fun søker() = runBlocking {
-        val s1 = async(Dispatchers.IO) { pdl.søkerMedBarn() }
-        val s2 = async(Dispatchers.IO) { behandler.behandlerInfo() }
-        val s3 = async(Dispatchers.IO) { arbeid.arbeidInfo() }
-        val s4 = async(Dispatchers.IO) { krr.kontaktInfo() }
-        val s5 = async(Dispatchers.IO) { konto.kontoInfo() }
+        val s1 = async(Dispatchers.IO + RequestContextCoroutineContext()) { pdl.søkerMedBarn() }
+        val s2 = async(Dispatchers.IO + RequestContextCoroutineContext()) { behandler.behandlerInfo() }
+        val s3 = async(Dispatchers.IO + RequestContextCoroutineContext()) { arbeid.arbeidInfo() }
+        val s4 = async(Dispatchers.IO + RequestContextCoroutineContext()) { krr.kontaktInfo() }
+        val s5 = async(Dispatchers.IO + RequestContextCoroutineContext()) { konto.kontoInfo() }
         lookup(s1,s2,s3,s4,s5)
-  }
+    }
 
     private suspend fun lookup(s1 : Deferred<Søker>,s2 : Deferred<List<RegistrertBehandler>>,  s3 : Deferred<List<Arbeidsforhold>>,
                                s4 : Deferred<Kontaktinformasjon?>, s5 : Deferred<Kontonummer?>) =
@@ -121,5 +125,26 @@ class OppslagController(
 
         const val OPPSLAG_BASE = "/oppslag"
         private const val DOKUMENT = "/dokument/{journalpostId}/{dokumentId}"
+    }
+}
+class RequestContextCoroutineContext(private val requestAttributes: RequestAttributes? = RequestContextHolder.getRequestAttributes()) : ThreadContextElement<RequestAttributes?> {
+    val log = getLogger(javaClass)
+
+    companion object Key : CoroutineContext.Key<RequestContextCoroutineContext>
+
+    override val key: CoroutineContext.Key<RequestContextCoroutineContext> get() = Key
+
+    override fun updateThreadContext(context: CoroutineContext): RequestAttributes? {
+        log.trace("ASYNC update")
+        val previousAttributes =  RequestContextHolder.getRequestAttributes()
+        RequestContextHolder.setRequestAttributes(requestAttributes)
+        return previousAttributes
+    }
+
+    override fun restoreThreadContext(context: CoroutineContext, oldState: RequestAttributes?) {
+        log.trace("ASYNC restore")
+        oldState?.let {
+           RequestContextHolder.setRequestAttributes(oldState)
+       } ?: RequestContextHolder.resetRequestAttributes()
     }
 }
