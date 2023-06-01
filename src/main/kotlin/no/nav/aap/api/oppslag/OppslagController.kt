@@ -6,7 +6,6 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ThreadContextElement
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.Pageable
@@ -68,10 +67,9 @@ class OppslagController(
     private suspend fun lookup(s1 : Deferred<Søker>,s2 : Deferred<List<RegistrertBehandler>>,  s3 : Deferred<List<Arbeidsforhold>>,
                                s4 : Deferred<Kontaktinformasjon?>, s5 : Deferred<Kontonummer?>) =
         coroutineScope {
-            val res = awaitAll(s1,s2,s3,s4,s5)
-            log.trace("ASYNC end")
-            SøkerInfo(res[0] as Søker, res[1] as List<RegistrertBehandler>, res[2] as List<Arbeidsforhold>, res[3] as Kontaktinformasjon?,
-                res[4] as Kontonummer?)
+            SøkerInfo(s1.await(), s2.await(), s3.await(), s4.await(), s5.await()).also {
+                log.trace("ASYNC end")
+            }
         }
 
     @GetMapping("/soekermedbarn")
