@@ -61,15 +61,14 @@ class OppslagController(
         val s3 = async(Dispatchers.IO + RequestContextCoroutineContext()) { arbeid.arbeidInfo() }
         val s4 = async(Dispatchers.IO + RequestContextCoroutineContext()) { krr.kontaktInfo() }
         val s5 = async(Dispatchers.IO + RequestContextCoroutineContext()) { konto.kontoInfo() }
-        lookup(s1,s2,s3,s4,s5).also {
-            log.trace("ASYNC end")
-        }
+        lookup(s1,s2,s3,s4,s5)
     }
 
     private suspend fun lookup(s1 : Deferred<Søker>,s2 : Deferred<List<RegistrertBehandler>>,  s3 : Deferred<List<Arbeidsforhold>>,
                                s4 : Deferred<Kontaktinformasjon?>, s5 : Deferred<Kontonummer?>) =
         coroutineScope {
             val res = awaitAll(s1,s2,s3,s4,s5)
+            log.trace("ASYNC end")
             SøkerInfo(res[0] as Søker, res[1] as List<RegistrertBehandler>, res[2] as List<Arbeidsforhold>, res[3] as Kontaktinformasjon?,
                 res[4] as Kontonummer?)
         }
@@ -129,8 +128,6 @@ class OppslagController(
     }
 }
 class RequestContextCoroutineContext(private val requestAttributes: RequestAttributes? = RequestContextHolder.getRequestAttributes()) : ThreadContextElement<RequestAttributes?> {
-    val log = getLogger(javaClass)
-
     companion object Key : CoroutineContext.Key<RequestContextCoroutineContext>
 
     override val key: CoroutineContext.Key<RequestContextCoroutineContext> get() = Key

@@ -14,7 +14,12 @@ class PDLClient(private val adapter : PDLWebClientAdapter) {
     fun søkerUtenBarn() = adapter.søker()
 
     fun harBeskyttetBarn(barn : List<Barn>) = adapter.harBeskyttetBarn(barn)
-    fun søkerMedBarn() = adapter.søker(true)
+    fun søkerMedBarn() : Søker  {
+        log.trace("PDL ASYNC søker start")
+        return adapter.søker(true).also {
+            log.trace("PDL ASYNC søker end")
+        }
+    }
 
     override fun toString() = "${javaClass.simpleName} [pdl=$adapter]"
 }
