@@ -1,11 +1,7 @@
 package no.nav.aap.api.oppslag
 
 import java.util.*
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ThreadContextElement
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.Pageable
@@ -19,8 +15,6 @@ import org.springframework.http.MediaType.*
 import org.springframework.http.ResponseEntity.*
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.context.request.RequestAttributes
-import org.springframework.web.context.request.RequestContextHolder
 import no.nav.aap.api.felles.Kontonummer
 import no.nav.aap.api.oppslag.OppslagController.Companion.OPPSLAG_BASE
 import no.nav.aap.api.oppslag.arbeid.ArbeidClient
@@ -38,6 +32,7 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.T
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity.Companion.CREATED
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
+import no.nav.aap.util.requestContextAwareAsync
 import no.nav.security.token.support.spring.ProtectedRestController
 
 @ProtectedRestController(value = [OPPSLAG_BASE], issuer = IDPORTEN)
@@ -54,22 +49,21 @@ class OppslagController(
 
     @GetMapping("/soeker")
     fun søker() = runBlocking {
-        log.trace("ASYNC start")
-        val ctx = RequestContextCoroutineContext()
-        val s1 = async(Dispatchers.IO + ctx) { pdl.søkerMedBarn() }
-        val s2 = async(Dispatchers.IO + ctx) { behandler.behandlerInfo() }
-        val s3 = async(Dispatchers.IO + ctx) { arbeid.arbeidInfo() }
-        val s4 = async(Dispatchers.IO + ctx) { krr.kontaktInfo() }
-        val s5 = async(Dispatchers.IO + ctx) { konto.kontoInfo() }
-        lookup(s1,s2,s3,s4,s5)
+        lookup(
+            requestContextAwareAsync { pdl.søkerMedBarn() },
+            requestContextAwareAsync { behandler.behandlerInfo() },
+            requestContextAwareAsync { arbeid.arbeidInfo() },
+            requestContextAwareAsync { krr.kontaktInfo() },
+            requestContextAwareAsync { konto.kontoInfo() })
     }
 
-    private suspend fun lookup(s1 : Deferred<Søker>,s2 : Deferred<List<RegistrertBehandler>>,  s3 : Deferred<List<Arbeidsforhold>>,
-                               s4 : Deferred<Kontaktinformasjon?>, s5 : Deferred<Kontonummer?>) =
+    private suspend fun lookup(s1 : Deferred<Søker>,
+                               s2 : Deferred<List<RegistrertBehandler>>,
+                               s3 : Deferred<List<Arbeidsforhold>>,
+                               s4 : Deferred<Kontaktinformasjon?>,
+                               s5 : Deferred<Kontonummer?>) =
         coroutineScope {
-            SøkerInfo(s1.await(), s2.await(), s3.await(), s4.await(), s5.await()).also {
-                log.trace("ASYNC end")
-            }
+            SøkerInfo(s1.await(), s2.await(), s3.await(), s4.await(), s5.await())
         }
 
     @GetMapping("/soekermedbarn")
@@ -124,22 +118,5 @@ class OppslagController(
 
         const val OPPSLAG_BASE = "/oppslag"
         private const val DOKUMENT = "/dokument/{journalpostId}/{dokumentId}"
-    }
-}
-class RequestContextCoroutineContext(private val requestAttributes: RequestAttributes? = RequestContextHolder.getRequestAttributes()) : ThreadContextElement<RequestAttributes?> {
-    companion object Key : CoroutineContext.Key<RequestContextCoroutineContext>
-
-    override val key: CoroutineContext.Key<RequestContextCoroutineContext> get() = Key
-
-    override fun updateThreadContext(context: CoroutineContext): RequestAttributes? {
-        val previousAttributes =  RequestContextHolder.getRequestAttributes()
-        RequestContextHolder.setRequestAttributes(requestAttributes)
-        return previousAttributes
-    }
-
-    override fun restoreThreadContext(context: CoroutineContext, oldState: RequestAttributes?) {
-        oldState?.let {
-           RequestContextHolder.setRequestAttributes(oldState)
-       } ?: RequestContextHolder.resetRequestAttributes()
     }
 }
