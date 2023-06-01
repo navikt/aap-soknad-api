@@ -39,7 +39,6 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.T
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity.Companion.CREATED
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import no.nav.security.token.support.spring.ProtectedRestController
 
 @ProtectedRestController(value = [OPPSLAG_BASE], issuer = IDPORTEN)
@@ -50,19 +49,21 @@ class OppslagController(
     val krr : KRRClient,
     val søknad : SøknadClient,
     val konto : KontoClient,
-    val arkiv : ArkivOppslagClient,
-    private val ctx: TokenValidationContextHolder) {
+    val arkiv : ArkivOppslagClient) {
 
     val log = getLogger(javaClass)
 
     @GetMapping("/soeker")
     fun søker() = runBlocking {
+        log.trace("ASYNC start")
         val s1 = async(Dispatchers.IO + RequestContextCoroutineContext()) { pdl.søkerMedBarn() }
         val s2 = async(Dispatchers.IO + RequestContextCoroutineContext()) { behandler.behandlerInfo() }
         val s3 = async(Dispatchers.IO + RequestContextCoroutineContext()) { arbeid.arbeidInfo() }
         val s4 = async(Dispatchers.IO + RequestContextCoroutineContext()) { krr.kontaktInfo() }
         val s5 = async(Dispatchers.IO + RequestContextCoroutineContext()) { konto.kontoInfo() }
-        lookup(s1,s2,s3,s4,s5)
+        lookup(s1,s2,s3,s4,s5).also {
+            log.trace("ASYNC end")
+        }
     }
 
     private suspend fun lookup(s1 : Deferred<Søker>,s2 : Deferred<List<RegistrertBehandler>>,  s3 : Deferred<List<Arbeidsforhold>>,
@@ -135,14 +136,12 @@ class RequestContextCoroutineContext(private val requestAttributes: RequestAttri
     override val key: CoroutineContext.Key<RequestContextCoroutineContext> get() = Key
 
     override fun updateThreadContext(context: CoroutineContext): RequestAttributes? {
-        log.trace("ASYNC update")
         val previousAttributes =  RequestContextHolder.getRequestAttributes()
         RequestContextHolder.setRequestAttributes(requestAttributes)
         return previousAttributes
     }
 
     override fun restoreThreadContext(context: CoroutineContext, oldState: RequestAttributes?) {
-        log.trace("ASYNC restore")
         oldState?.let {
            RequestContextHolder.setRequestAttributes(oldState)
        } ?: RequestContextHolder.resetRequestAttributes()
