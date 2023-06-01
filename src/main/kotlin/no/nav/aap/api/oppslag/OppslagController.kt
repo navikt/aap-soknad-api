@@ -57,13 +57,13 @@ class OppslagController(
             requestContextAwareAsync { konto.kontoInfo() })
     }
 
-    private suspend fun lookup(s1 : Deferred<Søker>,
-                               s2 : Deferred<List<RegistrertBehandler>>,
-                               s3 : Deferred<List<Arbeidsforhold>>,
-                               s4 : Deferred<Kontaktinformasjon?>,
-                               s5 : Deferred<Kontonummer?>) =
+    private suspend fun lookup(søker : Deferred<Søker>,
+                               behandler : Deferred<List<RegistrertBehandler>>,
+                               arbeid : Deferred<List<Arbeidsforhold>>,
+                               kontakt : Deferred<Kontaktinformasjon?>,
+                               konto : Deferred<Kontonummer?>) =
         coroutineScope {
-            SøkerInfo(s1.await(), s2.await(), s3.await(), s4.await(), s5.await())
+            SøkerInfo(søker.await(), behandler.await(), arbeid.await(), kontakt.await(), konto.await())
         }
 
     @GetMapping("/soekermedbarn")
