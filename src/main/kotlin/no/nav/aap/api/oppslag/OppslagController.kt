@@ -49,8 +49,13 @@ class OppslagController(
 
     @GetMapping("/soeker")
     fun søker() = runBlocking {
+        log.trace("ASYNC start pdl 1")
         lookup(
-            requestContextAwareAsync { pdl.søkerMedBarn() },
+            requestContextAwareAsync {
+                log.trace("ASYNC start pdl 2")
+                pdl.søkerMedBarn().also {
+                    log.trace("ASYNC end pdl")
+                } },
             requestContextAwareAsync { behandler.behandlerInfo() },
             requestContextAwareAsync { arbeid.arbeidInfo() },
             requestContextAwareAsync { krr.kontaktInfo() },
