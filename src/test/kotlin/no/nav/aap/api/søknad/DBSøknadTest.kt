@@ -34,10 +34,15 @@ import no.nav.aap.api.oppslag.søknad.SøknadClient
 import no.nav.aap.api.saksbehandling.SaksbehandlingController.VedleggEtterspørsel
 import no.nav.aap.api.søknad.SøknadTest.Companion.standardSøknad
 import no.nav.aap.api.søknad.arkiv.ArkivClient.ArkivResultat
+import no.nav.aap.api.søknad.fordeling.AAPSøknad
 import no.nav.aap.api.søknad.fordeling.Ettersending
+import no.nav.aap.api.søknad.fordeling.Ettersending.EttersendtVedlegg
 import no.nav.aap.api.søknad.fordeling.SøknadFullfører
 import no.nav.aap.api.søknad.fordeling.SøknadRepository
 import no.nav.aap.api.søknad.fordeling.SøknadRepository.Companion.SISTE_SØKNAD
+import no.nav.aap.api.søknad.fordeling.Vedlegg
+import no.nav.aap.api.søknad.fordeling.VedleggType
+import no.nav.aap.api.søknad.fordeling.VedleggType.*
 import no.nav.aap.api.søknad.mellomlagring.BucketConfig.MellomlagringBucketConfig
 import no.nav.aap.api.søknad.mellomlagring.Mellomlager
 import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
@@ -55,11 +60,6 @@ import no.nav.aap.api.søknad.minside.MinSideOppgaveRepository
 import no.nav.aap.api.søknad.minside.MinSideProdusenter
 import no.nav.aap.api.søknad.minside.MinSideRepositories
 import no.nav.aap.api.søknad.minside.MinSideUtkastRepository
-import no.nav.aap.api.søknad.fordeling.Ettersending.EttersendtVedlegg
-import no.nav.aap.api.søknad.fordeling.AAPSøknad
-import no.nav.aap.api.søknad.fordeling.Vedlegg
-import no.nav.aap.api.søknad.fordeling.VedleggType
-import no.nav.aap.api.søknad.fordeling.VedleggType.*
 import no.nav.aap.util.AuthContext
 import no.nav.aap.util.Constants.TEST
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
@@ -106,7 +106,7 @@ class DBSøknadTest {
 
     @BeforeAll
     internal fun startDB() {
-        PostgreSQLContainer<Nothing>("postgres:14:5").apply {
+        PostgreSQLContainer<Nothing>("postgres:15:1").apply {
             start()
         }
     }
