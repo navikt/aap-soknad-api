@@ -37,7 +37,7 @@
         <sonar.projectKey>navikt_aap-soknad-api</sonar.projectKey>
         <spring-cloud-gcp.version>4.3.1</spring-cloud-gcp.version>
         <springdoc.version>2.1.0</springdoc.version>
-        <swagger.annotations.version>2.2.10</swagger.annotations.version>
+        <swagger.annotations.version>2.2.11</swagger.annotations.version>
         <testcontainers.version>1.18.1</testcontainers.version>
         <tika.version>2.8.0</tika.version>
         <token.validation.version>3.1.0</token.validation.version>
