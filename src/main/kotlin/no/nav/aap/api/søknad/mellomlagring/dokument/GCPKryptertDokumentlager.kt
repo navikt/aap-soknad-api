@@ -33,7 +33,6 @@ import no.nav.boot.conditionals.EnvUtil.CONFIDENTIAL
 
 @ConditionalOnGCP
 @Primary
-@Observed
 class GCPKryptertDokumentlager(private val cfg: BucketConfig,
                                private val lager: Storage,
                                private val ctx: AuthContext,
