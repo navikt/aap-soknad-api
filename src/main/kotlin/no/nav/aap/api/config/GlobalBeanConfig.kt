@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import io.micrometer.observation.ObservationRegistry
+import io.micrometer.observation.ObservationTextPublisher
 import io.micrometer.observation.aop.ObservedAspect
 import io.netty.channel.ChannelOption.*
 import io.netty.channel.ConnectTimeoutException
@@ -91,6 +92,9 @@ import no.nav.security.token.support.core.context.TokenValidationContextHolder
 class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName : String) {
 
     val log = getLogger(javaClass)
+
+    @Bean
+    fun observationTextPublisher() = ObservationTextPublisher(log::info)
 
     @Bean
     fun skipActuatorFromObservation() : ObservationRegistryCustomizer<ObservationRegistry> = ObservationRegistryCustomizer { registry  ->
