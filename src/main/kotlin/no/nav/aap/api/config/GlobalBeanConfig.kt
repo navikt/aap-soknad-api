@@ -93,8 +93,8 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     val log = getLogger(javaClass)
 
 
-   // @Bean
-    fun actuatorServerContextPredicate(): ObservationPredicate = ObservationPredicate { name, context ->
+    @Bean
+    fun actuatorServerContextPredicate() = ObservationPredicate { name, context ->
         if (name == "http.server.requests" && context is ServerRequestObservationContext) {
             return@ObservationPredicate !context.carrier.requestURI.contains("actuator")
         }

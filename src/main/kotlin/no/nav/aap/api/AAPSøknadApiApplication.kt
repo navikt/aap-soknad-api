@@ -1,7 +1,7 @@
 package no.nav.aap.api
 
 import io.micrometer.context.ThreadLocalAccessor
-import io.micrometer.context.ContextRegistry.getInstance    
+import io.micrometer.context.ContextRegistry.getInstance
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
 import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup
