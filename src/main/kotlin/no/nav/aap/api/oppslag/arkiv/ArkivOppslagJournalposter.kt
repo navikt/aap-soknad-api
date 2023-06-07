@@ -11,9 +11,9 @@ data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournal
                                        val journalstatus: ArkivOppslagJournalStatus,
                                        val tittel: String?,
                                        val eksternReferanseId: String?,
-                                       val relevanteDatoer: List<ArkivOppslagRelevantDato>,
+                                       val relevanteDatoer: List<ArkivOppslagRelevantDato> = emptyList(),
                                        val sak: ArkivOppslagSak?,
-                                       val dokumenter: List<ArkivOppslagDokumentInfo>) {
+                                       val dokumenter: List<ArkivOppslagDokumentInfo> = emptyList()) {
 
         enum class ArkivOppslagJournalpostType { I, U, N }
 
