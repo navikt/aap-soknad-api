@@ -59,7 +59,7 @@
         <logger name="secure" level="debug" additivity="false">
             <appender-ref ref="secureJson"/>
         </logger>
-        <logger name="org.springframework.integration.dispatcher.UnicastingDispatcher" level="info" />
+        <logger name="org.springframework.integration.dispatcher.UnicastingDispatcher" level="warn" />
         <logger name="org.apache.kafka.clients.Metadata" level="warn" />
         <logger name="org.apache.fontbox.ttf.CmapSubtable" level="warn" />
         <logger name="no.nav.aap.api.søknad.mellomlagring.GammelMellomlagringEventSubscriber" level="info" />
