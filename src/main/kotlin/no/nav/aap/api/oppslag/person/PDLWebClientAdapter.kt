@@ -86,7 +86,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
                     false
                 }
                 else {
-                    log.info("Sjekker beskyttede barn")
+                    log.info("Sjekker  ${fnrs.size} beskyttede barn")
                     false  // TODO feiler, finn ut hvorfor
                     //harBeskyttedeBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
                 }
