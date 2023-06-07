@@ -83,12 +83,11 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
     private fun harBeskyttedeBarn(fnrs : List<String>) =
         runCatching {
             with(fnrs) {
-                if (isNotEmpty()) {
+                if (isEmpty()) {
                     false
                 }
                 else {
-                    log.info("Sjekker  ${fnrs.size} beskyttede barn")
-                   // TODO feiler, finn ut hvorfor
+                    log.info("Sjekker ${fnrs.size} beskyttede barn")
                     harBeskyttedeBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
                 }
             }
