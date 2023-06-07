@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
-import io.micrometer.observation.ObservationPredicate
 import io.micrometer.observation.ObservationRegistry
 import io.micrometer.observation.aop.ObservedAspect
 import io.netty.channel.ChannelOption.*
@@ -33,6 +32,7 @@ import java.util.concurrent.TimeUnit.*
 import java.util.function.Consumer
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationRegistryCustomizer
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.info.BuildProperties
@@ -92,14 +92,11 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     val log = getLogger(javaClass)
 
-
     @Bean
-    fun actuatorServerContextPredicate() = ObservationPredicate { name, context ->
-        if (name == "http.server.requests" && context is ServerRequestObservationContext) {
-            log.info("Observing $name ${context.carrier.requestURI}")
-            return@ObservationPredicate !context.carrier.requestURI.contains("actuator")
-        }
-        true
+    fun skipActuatorFromObservation() : ObservationRegistryCustomizer<ObservationRegistry> = ObservationRegistryCustomizer { registry  ->
+        registry.observationConfig().observationPredicate { name, context ->
+            name == "http.server.requests" && context is ServerRequestObservationContext &&
+            !context.carrier.requestURI.contains("actuator") }
     }
     @Bean
     fun grpcSpanExporter(@Value("\${otel.exporter.otlp.endpoint}") endpoint : String) =
