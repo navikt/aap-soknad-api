@@ -11,7 +11,7 @@ import no.nav.aap.api.oppslag.person.PDLSøker.PDLFødsel
 
 data class PDLWrappedSøker(val navn: Set<PDLNavn>,
                            @JsonProperty("foedsel") val fødsel: Set<PDLFødsel>,
-                           val bostedsadresse: List<PDLBostedadresse>,
+                           val bostedsadresse: List<PDLBostedadresse> = emptyList(),
                            val adressebeskyttelse: Set<PDLGradering> = emptySet(),
                            val forelderBarnRelasjon: Set<PDLForelderBarnRelasjon>?) {
     val active = PDLSøker(navn.first(), fødsel.firstOrNull(), bostedsadresse.firstOrNull()?.vegadresse, adressebeskyttelse,
