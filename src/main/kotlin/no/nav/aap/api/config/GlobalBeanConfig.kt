@@ -56,7 +56,6 @@ import org.springframework.http.server.observation.ServerRequestObservationConte
 import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ControllerAdvice
-import org.springframework.web.filter.ServerHttpObservationFilter
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
@@ -94,7 +93,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     val log = getLogger(javaClass)
 
 
-    @Bean
+   // @Bean
     fun actuatorServerContextPredicate(): ObservationPredicate = ObservationPredicate { name, context ->
         if (name == "http.server.requests" && context is ServerRequestObservationContext) {
             return@ObservationPredicate !context.carrier.requestURI.contains("actuator")
@@ -113,9 +112,6 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     @Bean
     fun propertyKeySanitizingFunction() = PropertyValueSanitzer()
-
-    @Bean
-    fun serverObservationFilter(registry : ObservationRegistry) = ServerHttpObservationFilter(registry)
 
     @Bean
     fun customizer() = Jackson2ObjectMapperBuilderCustomizer { b ->
