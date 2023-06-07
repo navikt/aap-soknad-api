@@ -62,6 +62,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 import reactor.util.retry.Retry.fixedDelay
+import sun.net.NetworkClient.DEFAULT_CONNECT_TIMEOUT
 import no.nav.aap.api.felles.graphql.GraphQLErrorHandler
 import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
@@ -95,8 +96,8 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     @Bean
     fun actuatorServerContextPredicate() = ObservationPredicate { name, context ->
-        log.info("Observing $name $context")
         if (name == "http.server.requests" && context is ServerRequestObservationContext) {
+            log.info("Observing $name ${context.carrier.requestURI}")
             return@ObservationPredicate !context.carrier.requestURI.contains("actuator")
         }
         true
