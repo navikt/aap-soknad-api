@@ -42,7 +42,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
         return emptyMap()
     }
 
-    fun harBeskyttetBarn(barn : List<Barn>) = harBeskyttedeBarn1(barn.map { it.fnr }.mapNotNull { it?.fnr })
+    fun harBeskyttetBarn(barn : List<Barn>) = harBeskyttedeBarn(barn.map { it.fnr }.mapNotNull { it?.fnr })
 
     fun søker(medBarn : Boolean = false) =
         with(ctx.getFnr()) {
@@ -80,7 +80,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
             barn.copy(fnr = Fødselsnummer(ident))
         }
 
-    private fun harBeskyttedeBarn1(fnrs : List<String>) =
+    private fun harBeskyttedeBarn(fnrs : List<String>) =
         runCatching {
             with(fnrs) {
                 if (isNotEmpty()) {
@@ -88,7 +88,7 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
                 }
                 else {
                     log.info("Sjekker  ${fnrs.size} beskyttede barn")
-                   // false  // TODO feiler, finn ut hvorfor
+                   // TODO feiler, finn ut hvorfor
                     harBeskyttedeBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
                 }
             }
