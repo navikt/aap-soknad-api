@@ -11,6 +11,9 @@ metadata:
   labels:
     team: aap
 spec:
+  observability:
+    tracing:
+      enabled: true
   leaderElection: true
   secureLogs:
     enabled: true
