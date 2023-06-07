@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component
 import no.nav.aap.api.oppslag.person.Søker.Barn
 
 @Component
-@Observed
 class PDLClient(private val adapter : PDLWebClientAdapter) {
     fun søkerUtenBarn() = adapter.søker()
     fun harBeskyttetBarn(barn : List<Barn>) = adapter.harBeskyttetBarn(barn)

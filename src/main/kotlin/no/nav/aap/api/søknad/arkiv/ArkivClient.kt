@@ -1,11 +1,9 @@
 package no.nav.aap.api.søknad.arkiv
 
-import io.micrometer.observation.annotation.Observed
 import org.springframework.stereotype.Component
 import no.nav.aap.util.LoggerUtil.getLogger
 
 @Component
-@Observed
 class ArkivClient(private val adapter: ArkivWebClientAdapter) {
     private val log = getLogger(javaClass)
 

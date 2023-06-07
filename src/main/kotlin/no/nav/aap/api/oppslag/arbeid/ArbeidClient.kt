@@ -4,7 +4,6 @@ import io.micrometer.observation.annotation.Observed
 import org.springframework.stereotype.Component
 
 @Component
-@Observed
 class ArbeidClient(private val arbeid : ArbeidWebClientAdapter,
                    private val org : OrganisasjonWebClientAdapter) {
 
