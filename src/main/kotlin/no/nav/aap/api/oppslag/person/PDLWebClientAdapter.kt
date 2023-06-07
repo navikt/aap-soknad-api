@@ -10,7 +10,6 @@ import no.nav.aap.api.felles.Fødselsnummer
 import no.nav.aap.api.felles.graphql.AbstractGraphQLAdapter
 import no.nav.aap.api.felles.graphql.GraphQLErrorHandler
 import no.nav.aap.api.oppslag.person.PDLBolkBarn.PDLBarn
-import no.nav.aap.api.oppslag.person.PDLMapper.harBeskyttedeBarn
 import no.nav.aap.api.oppslag.person.PDLMapper.pdlSøkerTilSøker
 import no.nav.aap.api.oppslag.person.PDLSøker.PDLForelderBarnRelasjon
 import no.nav.aap.api.oppslag.person.Søker.Barn
@@ -87,7 +86,9 @@ class PDLWebClientAdapter(private val clients : WebClients, cfg : PDLConfig, pri
                     false
                 }
                 else {
-                    harBeskyttedeBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
+                    log.info("Sjekker beskyttede barn")
+                    false  // TODO feiler, finn ut hvorfor
+                    //harBeskyttedeBarn(query<PDLBolkBarn>(clients.system, BARN_BOLK_QUERY, mapOf(IDENTER to this)))
                 }
             }
         }.getOrElse {
