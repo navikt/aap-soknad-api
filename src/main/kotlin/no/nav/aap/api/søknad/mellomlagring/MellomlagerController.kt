@@ -1,6 +1,5 @@
 package no.nav.aap.api.søknad.mellomlagring
 
-import io.micrometer.observation.annotation.Observed
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -15,7 +14,6 @@ import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.security.token.support.spring.ProtectedRestController
 
 @ProtectedRestController(value = ["buckets"], issuer = IDPORTEN)
-@Observed
 internal class MellomlagerController(private val mellomlager: Mellomlager, private val dokumentlager: Dokumentlager ) {
 
     @PostMapping("/lagre/{type}")
