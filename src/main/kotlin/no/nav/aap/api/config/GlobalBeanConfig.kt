@@ -6,7 +6,6 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
 import io.micrometer.observation.ObservationPredicate
 import io.micrometer.observation.ObservationRegistry
-import io.micrometer.observation.ObservationTextPublisher
 import io.micrometer.observation.aop.ObservedAspect
 import io.netty.channel.ChannelOption.*
 import io.netty.channel.ConnectTimeoutException
@@ -105,9 +104,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     @Bean
     fun grpcSpanExporter(@Value("\${otel.exporter.otlp.endpoint}") endpoint : String) =
         OtlpGrpcSpanExporter.builder().setEndpoint(endpoint).build()
-    
-    //@Bean
-    fun observationTextPublisher() = ObservationTextPublisher(log::info)
+
     @Bean
     fun graphQLErrorHandler() = object : GraphQLErrorHandler {}
 
