@@ -1,7 +1,6 @@
 package no.nav.aap.api.søknad.arkiv
 
 import java.time.LocalDateTime.parse
-import org.slf4j.MDC
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.transaction.annotation.Transactional
@@ -36,7 +35,6 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
 
     private fun oppdaterSøknad(payload: JournalfoeringHendelseRecord) =
         with(payload) {
-            log.info("Oppdater søknad ${MDC.getCopyOfContextMap()}")
             repo.getSøknadByJournalpostid("$journalpostId")?.let {søknad ->
                 søknad.apply {
                     journalpoststatus = journalpostStatus
