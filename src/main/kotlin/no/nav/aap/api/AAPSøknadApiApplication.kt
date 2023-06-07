@@ -8,10 +8,9 @@ import org.springframework.boot.runApplication
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.springframework.data.web.config.EnableSpringDataWebSupport
-import org.springframework.integration.config.EnableIntegration
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.scheduling.annotation.EnableScheduling
-import no.nav.aap.util.AccessorUtil
+import reactor.core.publisher.Hooks
 import no.nav.boot.conditionals.Cluster.Companion.profiler
 import no.nav.security.token.support.client.spring.oauth2.EnableOAuth2Client
 import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
@@ -30,7 +29,8 @@ class AAPSøknadApiApplication
     fun main(args: Array<String>) {
         runApplication<AAPSøknadApiApplication>(*args) {
             setAdditionalProfiles(*profiler())
-            AccessorUtil.init()
+            Hooks.enableAutomaticContextPropagation()
+           // AccessorUtil.init()
             applicationStartup = BufferingApplicationStartup(4096)
         }
     }
