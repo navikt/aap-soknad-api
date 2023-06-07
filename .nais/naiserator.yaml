@@ -61,9 +61,9 @@ spec:
           namespace: min-side    
     outbound:
       external:
-        - host: https://dokarkiv.{{env}}-fss-pub.nais.io
+        - host: dokarkiv.{{env}}-fss-pub.nais.io
         - host: {{saf}}
-        - host: https://pdl-api.{{env}}-fss-pub.nais.io
+        - host: pdl-api.{{env}}-fss-pub.nais.io
       rules:
         - application: tempo-distributor
           namespace: nais-system

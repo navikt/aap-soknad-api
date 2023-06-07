@@ -4,5 +4,5 @@
   "env": "dev",
   "vedlegg-varighet": "14",
   "mellomlagring-varighet": "14",
-  "saf": "https://safselvbetjening-q1.dev-fss-pub.nais.io"
+  "saf": "safselvbetjening-q1.dev-fss-pub.nais.io"
 }
