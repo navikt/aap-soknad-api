@@ -62,7 +62,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 import reactor.util.retry.Retry.fixedDelay
-import sun.net.NetworkClient.DEFAULT_CONNECT_TIMEOUT
 import no.nav.aap.api.felles.graphql.GraphQLErrorHandler
 import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
