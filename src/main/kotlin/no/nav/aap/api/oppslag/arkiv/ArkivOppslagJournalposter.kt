@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentFiltype.PDF
 import no.nav.aap.api.oppslag.arkiv.ArkivOppslagJournalposter.ArkivOppslagJournalpost.ArkivOppslagDokumentInfo.ArkivOppslagDokumentVariant.ArkivOppslagDokumentVariantFormat.ARKIV
 
-data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournalpost>) {
+data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournalpost> = emptyList()) {
 
     data class ArkivOppslagJournalpost(val journalpostId: String,
                                        val journalposttype: ArkivOppslagJournalpostType,
