@@ -98,10 +98,10 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     fun serverObservationFilter(registry : ObservationRegistry) = ServerHttpObservationFilter(registry)
 
 
-    @Bean
+   // @Bean
     fun observationTextPublisher() = ObservationTextPublisher(log::info)
 
-    @Bean
+   // @Bean
     fun skipActuatorFromObservation() : ObservationRegistryCustomizer<ObservationRegistry> = ObservationRegistryCustomizer { registry  ->
         registry.observationConfig().observationPredicate { name, context ->
             name == "http.server.requests" && context is ServerRequestObservationContext &&
