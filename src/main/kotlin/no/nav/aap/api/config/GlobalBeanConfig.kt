@@ -98,7 +98,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     fun serverObservationFilter(registry : ObservationRegistry) = ServerHttpObservationFilter(registry)
 
 
-    // @Bean
+    @Bean
     fun observationTextPublisher() = ObservationTextPublisher(log::info)
 
     @Bean
