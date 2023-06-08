@@ -55,7 +55,7 @@ data class ArkivOppslagJournalposter(val journalposter: List<ArkivOppslagJournal
         data class ArkivOppslagDokumentInfo(val dokumentInfoId: String,
                                             val brevkode: String?,
                                             val tittel: String?,
-                                            val dokumentvarianter: List<ArkivOppslagDokumentVariant>) {
+                                            val dokumentvarianter: List<ArkivOppslagDokumentVariant> = emptyList()) {
 
             data class ArkivOppslagDokumentVariant(val variantformat: ArkivOppslagDokumentVariantFormat,
                                                    val filtype: ArkivOppslagDokumentFiltype,
