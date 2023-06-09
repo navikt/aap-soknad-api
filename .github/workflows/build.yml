@@ -41,7 +41,7 @@ jobs:
                 run: echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
 
             -   name: Setter image-navn
-                run: echo "IMAGE=$(echo $IMAGE_BASE):$(echo $TAG)" >> $GITHUB_ENV
+                run: echo "IMAGE=$(echo $IMAGE_BASE)-$(echo $TAG)" >> $GITHUB_ENV
 
             -   name: Login GAR
                 uses: nais/login@v0
@@ -58,7 +58,7 @@ jobs:
             -   name: Kompilerer og bygger image
                 id: kompiler
                 run: |
-                    echo "image=${{ env.IMAGE }}:${{ env.TAG }}" >> $GITHUB_OUTPUT
+                    echo "image=${{ env.IMAGE }}${{ env.TAG }}" >> $GITHUB_OUTPUT
                     ./mvnw --settings .github/.m2/settings.xml -Djib.to.tags=${TAG} -DGAR_TOKEN=${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}  -Drevision=${TAG} package jib:build
                     echo "DIGEST=$(cat target/jib-image.digest)" >> $GITHUB_ENV
 
