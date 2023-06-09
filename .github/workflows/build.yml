@@ -58,8 +58,14 @@ jobs:
             -   name: Kompilerer og bygger image
                 id: kompiler
                 run: |
-                    echo "image=${{ env.IMAGE }}" >> $GITHUB_OUTPUT
-                    ./mvnw --settings .github/.m2/settings.xml -Djib.to.tags=latest -DGAR_TOKEN=${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}  -Drevision=${TAG} package jib:build
+                    echo "image=${{ env.IMAGE }}:${{ env.TAG }}" >> $GITHUB_OUTPUT
+                    ./mvnw --settings .github/.m2/settings.xml -Djib.to.tags=latest,${TAG} -DGAR_TOKEN=${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}  -Drevision=${TAG} package jib:build
+                    echo "DIGEST=$(cat target/jib-image.digest)" >> $GITHUB_ENV
+
+            -   name: Attester og signer
+                uses: nais/attest-sign@v1.0.0
+                with:
+                    image_ref: ${{ env.IMAGE }}@${{ env.DIGEST }}
 
     deploy:
         strategy:
