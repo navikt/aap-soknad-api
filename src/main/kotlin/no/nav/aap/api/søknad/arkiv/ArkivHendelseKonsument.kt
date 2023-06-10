@@ -35,6 +35,7 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
 
     private fun oppdaterSøknad(payload: JournalfoeringHendelseRecord) =
         with(payload) {
+            log.info("Oppdaterer søknad med id $journalpostId med status $journalpostStatus")
             repo.getSøknadByJournalpostid("$journalpostId")?.let {søknad ->
                 søknad.apply {
                     journalpoststatus = journalpostStatus

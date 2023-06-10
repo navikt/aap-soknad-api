@@ -42,7 +42,7 @@ interface MinSideRepository<T : MinSideBaseEntity> : JpaRepository<T, Long> {
     }
 
     @MappedSuperclass
-    abstract class BaseEntity(val fnr: String, val eventid: UUID, @LastModifiedDate var updated: LocalDateTime? = null) : IdentifiableTimestampedBaseEntity() {
+    abstract class BaseEntity(val fnr: String,  val eventid: UUID, @LastModifiedDate var updated: LocalDateTime? = null) : IdentifiableTimestampedBaseEntity() {
         override fun toString() = "${javaClass.simpleName} [fnr=${fnr.partialMask()}, created=$created, updated=$updated, eventid=$eventid, id=$id)]"
     }
 
