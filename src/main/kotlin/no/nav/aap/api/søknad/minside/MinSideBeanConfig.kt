@@ -5,6 +5,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG
 import org.apache.kafka.common.serialization.StringSerializer
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
@@ -60,6 +61,7 @@ class MinSideBeanConfig(@Value("\${spring.application.name}") private val appNav
         }
 
     @Bean
+    @Qualifier("utkast")
     fun minSideUtkastKafkaOperations(p: KafkaProperties) =
         KafkaTemplate(DefaultKafkaProducerFactory<String, String>(p.buildProducerProperties()
             .apply {

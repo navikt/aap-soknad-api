@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.Metrics.gauge
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicLong
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.kafka.core.KafkaOperations
 import org.springframework.kafka.support.SendResult
 import org.springframework.stereotype.Component
@@ -38,7 +39,7 @@ import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 
 @Component
-data class MinSideProdusenter(val avro: KafkaOperations<NokkelInput, Any>, val utkast: KafkaOperations<String, String>, val forside: KafkaOperations<Fødselsnummer,MinSideForside>)
+data class MinSideProdusenter(val avro: KafkaOperations<NokkelInput, Any>, @Qualifier("utkast") val utkast: KafkaOperations<String, String>, val forside: KafkaOperations<Fødselsnummer,MinSideForside>)
 @ConditionalOnGCP
 class MinSideClient(private val produsenter: MinSideProdusenter,
                     private val cfg: MinSideConfig,
