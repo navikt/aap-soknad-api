@@ -55,7 +55,7 @@ class MinSideClient(private val produsenter: MinSideProdusenter,
      private fun forside(eventName: EventName, fnr: Fødselsnummer) =
          with(cfg.forside){
              if (enabled) {
-                 log.trace("${eventName.name} NAV forside")
+                 log.info("${eventName.name} NAV forside")
                  produsenter.forside.send(ProducerRecord(topic,fnr, MinSideForside(eventName,fnr))).get().also {
                      log("${eventName.name} NAV forside", callIdAsUUID(),it)
                  }
