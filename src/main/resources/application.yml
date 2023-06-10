@@ -32,6 +32,11 @@ spring:
             write-empty-json-arrays: true
             fail-on-empty-beans: false
 management:
+    endpoint:
+      configprops:
+         show-values: always
+    env:
+        show-values: always
     info:
         os:
             enabled: true
