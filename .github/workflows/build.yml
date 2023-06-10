@@ -55,8 +55,9 @@ jobs:
             -   name: Kompilerer og bygger image
                 id: kompiler
                 run: |
+                    ./mvnw wrapper:wrapper -Dmaven=3.9.2
                     echo "image=${{ env.IMAGE }}:${{ env.TAG }}" >> $GITHUB_OUTPUT
-                    ./mvnw wrapper:wrapper -Dmaven=3.8.7 --settings .github/.m2/settings.xml -Djib.to.tags=${TAG} -DGAR_TOKEN=${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}  -Drevision=${TAG} package jib:build
+                    ./mvnw  --settings .github/.m2/settings.xml -Djib.to.tags=${TAG} -DGAR_TOKEN=${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}  -Drevision=${TAG} package jib:build
                     echo "DIGEST=$(cat target/jib-image.digest)" >> $GITHUB_ENV
 
             -   name: Attester og signer
