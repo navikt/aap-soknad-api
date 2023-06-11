@@ -62,6 +62,7 @@ jobs:
             -   name: Attester og signer
                 uses: nais/attest-sign@v1.1.0
                 with:
+                    sbom: target/bom.json
                     image_ref: ${{ env.IMAGE }}@${{ env.DIGEST }}
 
     deploy:
