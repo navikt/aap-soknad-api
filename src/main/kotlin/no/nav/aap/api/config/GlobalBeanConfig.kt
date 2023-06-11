@@ -103,7 +103,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     @Bean
     fun noObservations() = ObservationRegistryCustomizer { registry : ObservationRegistry ->
-        registry.observationConfig().observationPredicate { name, _ -> nonNull(name) }
+        registry.observationConfig().observationPredicate { name, _ -> !name.contains("actuator") }
     }
 
     @Bean
