@@ -107,7 +107,6 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
     fun noObservations() = ObservationRegistryCustomizer { registry : ObservationRegistry ->
         registry.observationConfig().observationPredicate { name, _ -> nonNull(name) }
     }
-}
 
     @Bean
     fun grpcSpanExporter(@Value("\${otel.exporter.otlp.endpoint}") endpoint : String) =
