@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
-import io.micrometer.observation.ObservationPredicate
 import io.micrometer.observation.ObservationRegistry
 import io.micrometer.observation.ObservationTextPublisher
 import io.micrometer.observation.aop.ObservedAspect
@@ -65,7 +64,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import reactor.netty.http.client.HttpClient
 import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
 import reactor.util.retry.Retry.fixedDelay
-import sun.net.NetworkClient.DEFAULT_CONNECT_TIMEOUT
 import no.nav.aap.api.felles.graphql.GraphQLErrorHandler
 import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
