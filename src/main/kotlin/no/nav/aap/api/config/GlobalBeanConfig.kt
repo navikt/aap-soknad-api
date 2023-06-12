@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.nimbusds.jwt.JWTClaimNames.JWT_ID
+import io.micrometer.observation.ObservationPredicate
 import io.micrometer.observation.ObservationRegistry
 import io.micrometer.observation.ObservationTextPublisher
 import io.micrometer.observation.aop.ObservedAspect
@@ -29,12 +30,10 @@ import java.io.IOException
 import java.time.Duration
 import java.time.Duration.*
 import java.util.*
-import java.util.Objects.nonNull
 import java.util.concurrent.TimeUnit.*
 import java.util.function.Consumer
 import org.apache.commons.text.StringEscapeUtils.*
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationRegistryCustomizer
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.info.BuildProperties
@@ -54,6 +53,7 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
+import org.springframework.http.server.observation.ServerRequestObservationContext
 import org.springframework.kafka.core.KafkaAdmin
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -101,11 +101,14 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
    // @Bean
     fun observationTextPublisher() = ObservationTextPublisher(log::info)
 
-    @Bean
-    fun noObservations() = ObservationRegistryCustomizer { registry : ObservationRegistry ->
-        registry.observationConfig().observationPredicate { name, _ -> !name.contains("actuator") }
-    }
 
+    @Bean
+    fun actuatorServerContextPredicate() = ObservationPredicate { name, context ->
+        if (name.equals("http.server.requests") && context is ServerRequestObservationContext) {
+            return@ObservationPredicate !context.carrier.requestURI.contains("actuator");
+        }
+        true;
+    }
     @Bean
     fun grpcSpanExporter(@Value("\${otel.exporter.otlp.endpoint}") endpoint : String) =
         OtlpGrpcSpanExporter.builder().setEndpoint(endpoint).build()
