@@ -31,7 +31,7 @@ import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
 class AAPSøknadApiApplication
 
     fun main(args: Array<String>) {
-       // init()
+        init()
         runApplication<AAPSøknadApiApplication>(*args) {
             setAdditionalProfiles(*profiler())
             applicationStartup = BufferingApplicationStartup(4096)
