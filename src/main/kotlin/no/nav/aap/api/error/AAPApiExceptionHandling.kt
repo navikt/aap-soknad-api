@@ -62,8 +62,24 @@ class AAPApiExceptionHandling : ResponseEntityExceptionHandler() {
                 }
             }.also { log(e, it, req, status) })
 
-    private fun log(t: Throwable, problem: ProblemDetail, req: NativeWebRequest, status: HttpStatus) =
+    private fun log(t: Throwable, problem: ProblemDetail, req: NativeWebRequest, status: HttpStatus) {
+        if(status == UNPROCESSABLE_ENTITY){
+            logWarning(req, problem, status, t)
+        }
+        else {
+            logError(req, problem, status, t)
+        }
+
+    }
+
+    private fun logError(req: NativeWebRequest, problem: ProblemDetail, status: HttpStatus, t: Throwable) {
         log.error("$req $problem ${status.reasonPhrase}: ${t.message}", t)
+    }
+
+    private fun logWarning(req: NativeWebRequest, problem: ProblemDetail, status: HttpStatus, t: Throwable) =
+        log.warn(" Håndteres ved å gi bruker tilbakemelding" + "$req $problem ${status.reasonPhrase}: ${t.message}", t)
+
+
 
     companion object {
         private const val SUBSTATUS = "substatus"
