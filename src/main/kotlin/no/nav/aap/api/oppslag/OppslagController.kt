@@ -3,7 +3,6 @@ package no.nav.aap.api.oppslag
 import java.util.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort.Direction.DESC
 import org.springframework.data.web.PageableDefault
@@ -32,7 +31,6 @@ import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentSjekker.Companion.T
 import no.nav.aap.api.søknad.minside.MinSideRepository.MinSideBaseEntity.Companion.CREATED
 import no.nav.aap.util.Constants.IDPORTEN
 import no.nav.aap.util.LoggerUtil.getLogger
-import no.nav.aap.util.requestContextAwareAsync
 import no.nav.security.token.support.spring.ProtectedRestController
 
 @ProtectedRestController(value = [OPPSLAG_BASE], issuer = IDPORTEN)
@@ -48,14 +46,17 @@ class OppslagController(
     val log = getLogger(javaClass)
 
     @GetMapping("/soeker")
-    fun søker() = runBlocking {
+    fun søker() =
+
+        SøkerInfo(pdl.søkerMedBarn(),behandler.behandlerInfo(),arbeid.arbeidInfo(),krr.kontaktInfo(),konto.kontoInfo())
+        /*runBlocking {
         lookup(
             requestContextAwareAsync {pdl.søkerMedBarn() },
             requestContextAwareAsync { behandler.behandlerInfo() },
             requestContextAwareAsync { arbeid.arbeidInfo() },
             requestContextAwareAsync { krr.kontaktInfo() },
             requestContextAwareAsync { konto.kontoInfo() })
-    }
+    }*/
 
     private suspend fun lookup(søker : Deferred<Søker>,
                                behandler : Deferred<List<RegistrertBehandler>>,

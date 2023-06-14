@@ -31,13 +31,13 @@ import no.nav.security.token.support.spring.api.EnableJwtTokenValidation
 class AAPSøknadApiApplication
 
     fun main(args: Array<String>) {
-        init()
+       // init()
         runApplication<AAPSøknadApiApplication>(*args) {
             setAdditionalProfiles(*profiler())
             applicationStartup = BufferingApplicationStartup(4096)
         }
     }
-fun init() {
+private fun init() {
     Hooks.enableAutomaticContextPropagation()
     ContextRegistry.getInstance().apply {
         registerThreadLocalAccessor(RequestAttributesAccessor())
@@ -49,7 +49,7 @@ class RequestAttributesAccessor : ThreadLocalAccessor<RequestAttributes> {
 
     override fun getValue() = RequestContextHolder.getRequestAttributes()
 
-    override fun setValue(value : RequestAttributes) = RequestContextHolder.setRequestAttributes(value)
+    override fun setValue(attributes : RequestAttributes) = RequestContextHolder.setRequestAttributes(attributes)
 
     override fun reset() = RequestContextHolder.resetRequestAttributes()
 }
