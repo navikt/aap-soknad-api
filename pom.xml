@@ -15,7 +15,7 @@
     <name>aap-soknad-api</name>
     <description>aap-soknad-api</description>
     <properties>
-        <avro.version>1.11.1</avro.version>
+        <avro.version>1.11.2</avro.version>
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
         <confluent.version>7.4.0</confluent.version>
         <commons-text.version>1.10.0</commons-text.version>
