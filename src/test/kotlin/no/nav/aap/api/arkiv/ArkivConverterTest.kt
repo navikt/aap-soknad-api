@@ -1,9 +1,18 @@
 package no.nav.aap.api.arkiv
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.io.FileOutputStream
-import java.time.LocalDateTime
-import java.util.Base64
+import no.nav.aap.api.OMPersoner
+import no.nav.aap.api.OMSøknad
+import no.nav.aap.api.oppslag.person.PDLClient
+import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
+import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
+import no.nav.aap.api.søknad.arkiv.pdf.PDFFraBildeFKonverterer
+import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
+import no.nav.aap.api.søknad.arkiv.pdf.PDFKvittering
+import no.nav.aap.api.søknad.fordeling.Innsending
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
+import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
+import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.mockito.Mock
 import org.mockito.Mockito.any
 import org.mockito.Mockito.`when`
@@ -13,40 +22,30 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
 import org.springframework.http.MediaType.IMAGE_PNG_VALUE
 import org.springframework.util.StreamUtils.copyToByteArray
-import no.nav.aap.api.OMPersoner
-import no.nav.aap.api.OMSøknad
-import no.nav.aap.api.oppslag.person.PDLClient
-import no.nav.aap.api.søknad.arkiv.ArkivJournalpostGenerator
-import no.nav.aap.api.søknad.arkiv.Journalpost.DokumentVariant.Filtype.PDFA
-import no.nav.aap.api.søknad.arkiv.pdf.BildeSkalerer
-import no.nav.aap.api.søknad.arkiv.pdf.PDFFraBildeFKonverterer
-import no.nav.aap.api.søknad.arkiv.pdf.PDFGenerator
-import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
-import no.nav.aap.api.søknad.mellomlagring.dokument.Dokumentlager
-import no.nav.aap.api.søknad.fordeling.Innsending
-import no.nav.aap.api.søknad.arkiv.pdf.PDFKvittering
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import java.io.FileOutputStream
+import java.time.LocalDateTime
+import java.util.*
 
 //@ExtendWith(MockitoExtension::class)
 //@JsonTest
 class ArkivConverterTest {
 
     @Autowired
-    lateinit var mapper : ObjectMapper
+    lateinit var mapper: ObjectMapper
 
     @Mock
-    lateinit var lager : Dokumentlager
+    lateinit var lager: Dokumentlager
 
     @Mock
-    lateinit var pdl : PDLClient
+    lateinit var pdl: PDLClient
 
     @Mock
-    lateinit var ctx : TokenValidationContextHolder
+    lateinit var ctx: TokenValidationContextHolder
 
     @Mock
-    lateinit var pdf : PDFGenerator
+    lateinit var pdf: PDFGenerator
 
-    fun hentFil(fil : String) = copyToByteArray(ClassPathResource(fil).inputStream)
+    fun hentFil(fil: String) = copyToByteArray(ClassPathResource(fil).inputStream)
 
     //@Test
     fun convert() {
@@ -64,7 +63,7 @@ class ArkivConverterTest {
 
         val søknad = Innsending(OMSøknad.standard_soknad(), PDFKvittering(listOf(), LocalDateTime.now()))
         val søker = OMPersoner.ole_olsen()
-        val c = ArkivJournalpostGenerator(pdl,mapper, lager, pdf, PDFFraBildeFKonverterer(BildeSkalerer()))
+        val c = ArkivJournalpostGenerator(pdl, mapper, lager, pdf, PDFFraBildeFKonverterer())
         val converted = c.journalpostFra(søknad, søker)
         converted.dokumenter.forEach { doc ->
             doc.dokumentVarianter.forEach {
@@ -76,15 +75,15 @@ class ArkivConverterTest {
         }
     }
 
-    private fun bytesFra(navn : String) = copyToByteArray(ClassPathResource(navn).inputStream)
+    private fun bytesFra(navn: String) = copyToByteArray(ClassPathResource(navn).inputStream)
 }
 
-private fun <T> anyObject() : T {
+private fun <T> anyObject(): T {
     any<T>()
     return uninitialized()
 }
 
-private fun <T> uninitialized() : T = null as T
+private fun <T> uninitialized(): T = null as T
 
 @SpringBootApplication
 internal class DummyApplication
