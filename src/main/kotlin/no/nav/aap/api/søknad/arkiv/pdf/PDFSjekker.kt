@@ -25,31 +25,34 @@ abstract class PDFSjekker : DokumentSjekker {
                 }.getOrElse { e ->
                     log.warn("Sjekk av PDF feilet med ${e.javaClass.name}")
                     when (e) {
-                        is InvalidPasswordException -> beskyttet(filnavn,e)
-                        is ValidationException  -> Unit.also { log.trace("Rar pdf, feiler validering men vi lar den passere")}
-                        else  -> muligensBeskyttet(filnavn,e)
+                        is InvalidPasswordException -> beskyttet(filnavn, e)
+                        is ValidationException -> log.trace("Rar pdf, feiler validering men vi lar den passere")
+                        else -> muligensBeskyttet(filnavn, e)
                     }
                 }
-            }
-            else {
-                log.trace(CONFIDENTIAL, "Sjekker ikke $contentType")
+            } else {
+                log.trace("Sjekker ikke $contentType")
             }
         }
     }
 
-    private fun muligensBeskyttet(filnavn: String?, t: Throwable) : Nothing =
+    private fun muligensBeskyttet(filnavn: String?, t: Throwable): Nothing =
         if (hasCause(t, InvalidPasswordException::class.java)) {
-            beskyttet(filnavn,t)
+            beskyttet(filnavn, t)
+        } else {
+            uventet(filnavn, t)
         }
-        else {
-            uventet(filnavn,t)
-        }
-    private fun uventet(filnavn: String?, cause: Throwable) : Nothing = throw DokumentException("Uventet feil ved sjekk av $filnavn", cause).also {
-        log.warn("Kaster ${it.javaClass.simpleName} med cause ${cause.javaClass.simpleName}")
-    }
 
-    private fun beskyttet(filnavn: String?,cause: Throwable?) : Nothing =
-        throw PassordBeskyttetException("$filnavn er passord-beskyttet, og kan ikke leses av en saksbehandler, fjern beskyttelsen og prøv igjen", cause).also {
+    private fun uventet(filnavn: String?, cause: Throwable): Nothing =
+        throw DokumentException("Uventet feil ved sjekk av $filnavn", cause).also {
+            log.warn("Kaster ${it.javaClass.simpleName} med cause ${cause.javaClass.simpleName}")
+        }
+
+    private fun beskyttet(filnavn: String?, cause: Throwable?): Nothing =
+        throw PassordBeskyttetException(
+            "$filnavn er passord-beskyttet, og kan ikke leses av en saksbehandler, fjern beskyttelsen og prøv igjen",
+            cause
+        ).also {
             log.warn("Kaster ${it.javaClass.simpleName}")
         }
 

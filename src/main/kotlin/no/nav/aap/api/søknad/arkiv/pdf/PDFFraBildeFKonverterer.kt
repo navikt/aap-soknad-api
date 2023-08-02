@@ -10,7 +10,6 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.common.PDRectangle.A4
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory
 import org.apache.pdfbox.util.Matrix
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.util.unit.DataSize
 import org.springframework.util.unit.DataUnit.BYTES
@@ -23,28 +22,26 @@ import javax.imageio.ImageIO
 class PDFFraBildeFKonverterer {
 
     private val log = getLogger(javaClass)
-    fun tilPdf(mediaType: MediaType, images: List<ByteArray>) = slåSammen(mediaType, *images.toTypedArray())
-    fun tilPdf(mediaType: MediaType, vararg bilder: ByteArray) = slåSammen(mediaType, *bilder)
-
-    private fun slåSammen(mediaType: MediaType, vararg bilder: ByteArray) =
+    fun tilPdf(bilder: List<ByteArray>): ByteArray {
         runCatching {
-            log.trace("Konverterer {} til PDF for {}", bilder.størrelse("bildefil"), mediaType)
+            log.trace("Konverterer {} til PDF", bilder.størrelse("bildefil"))
             PDDocument(MemoryUsageSetting.setupTempFileOnly()).use { doc ->
                 ByteArrayOutputStream().use { os ->
                     bilder.forEach {
                         pdfFraBilde(doc, it)
                     }
                     doc.save(os)
-                    os.toByteArray()
+                    return os.toByteArray()
                 }
             }
         }.getOrElse { e ->
-            throw DokumentException("Konvertering av ${bilder.størrelse("bildefil")} av type $mediaType feilet (${
+            throw DokumentException("Konvertering av ${bilder.størrelse("bildefil")} feilet (${
                 bilder.map {
                     DataSize.of(it.size.toLong(), BYTES).toKilobytes()
                 }
             })", e)
         }
+    }
 
     private fun pdfFraBilde(doc: PDDocument, bilde: ByteArray) {
         val pdPage = PDPage(A4)

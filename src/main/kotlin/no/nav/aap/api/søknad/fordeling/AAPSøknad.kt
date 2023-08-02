@@ -202,7 +202,7 @@ fun harVedlegg(v : VedleggAware) = !manglerVedlegg(v)
 private fun harVedlegg(v : List<VedleggAware>) = v.any { harVedlegg(it) }
 
 @JsonDeserialize(using = VedleggDeserializer::class)
-data class Vedlegg(val tittel : String? = null, @JsonValue val deler : List<UUID?>? = null)
+data class Vedlegg(@JsonValue val deler : List<UUID>)
 
 interface VedleggAware {
 

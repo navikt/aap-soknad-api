@@ -81,10 +81,14 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
 
     @PostMapping("vedlegg/lagre/{fnr}", consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
-    fun lagreDokument(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") vedlegg: MultipartFile) =
-        with(vedlegg) {
-            dokumentLager.lagreDokument(DokumentInfo(bytes, originalFilename, contentType), fnr)
+    fun lagreDokument(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") vedlegg: MultipartFile) {
+        val vedleggContentType = vedlegg.contentType
+        if(vedleggContentType == null) {
+            dokumentLager.lagreDokument(DokumentInfo(vedlegg.bytes, vedlegg.originalFilename), fnr)
+        } else {
+            dokumentLager.lagreDokument(DokumentInfo(vedlegg.bytes, vedlegg.originalFilename, vedleggContentType), fnr)
         }
+    }
 
     @DeleteMapping("vedlegg/slett/{fnr}")
     @ResponseStatus(NO_CONTENT)

@@ -162,7 +162,7 @@ class DBSøknadTest {
             BacklinksConfig(NAV, NAV, NAV), true, "done")
         private val FNR = Fødselsnummer("08089403198")
 
-        internal fun ettesending(id : UUID, type : VedleggType) = Ettersending(id, listOf(EttersendtVedlegg(Vedlegg(), type)))
+        internal fun ettesending(id : UUID, type : VedleggType) = Ettersending(id, listOf(EttersendtVedlegg(Vedlegg(deler = listOf(id)), type)))
     }
 }
 

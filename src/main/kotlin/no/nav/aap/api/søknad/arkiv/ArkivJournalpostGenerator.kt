@@ -1,12 +1,6 @@
 package no.nav.aap.api.søknad.arkiv
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
-import org.springframework.http.MediaType.IMAGE_JPEG
-import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
-import org.springframework.http.MediaType.IMAGE_PNG
-import org.springframework.http.MediaType.IMAGE_PNG_VALUE
-import org.springframework.stereotype.Component
 import no.nav.aap.api.felles.SkjemaType
 import no.nav.aap.api.felles.SkjemaType.STANDARD
 import no.nav.aap.api.felles.SkjemaType.STANDARD_ETTERSENDING
@@ -47,14 +41,19 @@ import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.StringExtensions.encode
 import no.nav.aap.util.StringExtensions.størrelse
 import no.nav.aap.util.StringExtensions.toEncodedJson
+import org.springframework.http.MediaType.APPLICATION_PDF_VALUE
+import org.springframework.http.MediaType.IMAGE_JPEG_VALUE
+import org.springframework.http.MediaType.IMAGE_PNG_VALUE
+import org.springframework.stereotype.Component
 
 @Component
 class ArkivJournalpostGenerator(
-    private val pdl : PDLClient,
-    private val mapper : ObjectMapper,
-    private val lager : Dokumentlager,
-    private val pdf : PDFGenerator,
-    private val konverterer : PDFFraBildeFKonverterer) {
+    private val pdl: PDLClient,
+    private val mapper: ObjectMapper,
+    private val lager: Dokumentlager,
+    private val pdf: PDFGenerator,
+    private val konverterer: PDFFraBildeFKonverterer
+) {
 
     private val log = getLogger(javaClass)
 
@@ -63,48 +62,46 @@ class ArkivJournalpostGenerator(
         const val ROUTING = "routing"
     }
 
-    fun journalpostFra(es : Ettersending, søker : Søker, tilVikafossen : Boolean) =
-        with(søker) {
-            Journalpost(STANDARD_ETTERSENDING.tittel,
-                AvsenderMottaker(fnr, navn),
-                Bruker(fnr),
-                dokumenterFra(es.ettersendteVedlegg),
-                listOf(Tilleggsopplysning(ROUTING, "$tilVikafossen")))
-                .also {
-                    log.trace("Journalpost med {} er {}", it.størrelse(), it.dokumenter)
-                }
+    fun journalpostFra(es: Ettersending, søker: Søker, tilVikafossen: Boolean) =
+        Journalpost(
+            STANDARD_ETTERSENDING.tittel,
+            AvsenderMottaker(søker.fnr, søker.navn),
+            Bruker(søker.fnr),
+            dokumenterFra(es.ettersendteVedlegg),
+            listOf(Tilleggsopplysning(ROUTING, "$tilVikafossen"))
+        ).also {
+            log.trace("Journalpost med {} er {}", it.størrelse(), it.dokumenter)
         }
 
-    fun journalpostFra(innsending : Innsending, søker : Søker) =
-        with(søker) {
-            val tilVikafossen = pdl.harBeskyttetBarn(barn + innsending.andreBarn)
-            Journalpost(STANDARD.tittel,
-                AvsenderMottaker(fnr, navn),
-                Bruker(fnr),
-                journalpostDokumenterFra(innsending, this),
-                listOf(Tilleggsopplysning("versjon", VERSJON), Tilleggsopplysning(ROUTING, "$tilVikafossen")))
-                .also {
-                    log.trace("Journalpost med {} er {}  {}", it.størrelse(), it.dokumenter, it.tilleggsopplysninger)
-                }
+    fun journalpostFra(innsending: Innsending, søker: Søker): Journalpost {
+        val tilVikafossen = pdl.harBeskyttetBarn(søker.barn + innsending.andreBarn)
+        return Journalpost(
+            STANDARD.tittel,
+            AvsenderMottaker(søker.fnr, søker.navn),
+            Bruker(søker.fnr),
+            journalpostDokumenterFra(innsending, søker),
+            listOf(Tilleggsopplysning("versjon", VERSJON), Tilleggsopplysning(ROUTING, "$tilVikafossen"))
+        ).also {
+            log.trace("Journalpost med {} er {}  {}", it.størrelse(), it.dokumenter, it.tilleggsopplysninger)
         }
+    }
 
-    private fun journalpostDokumenterFra(innsendng : Innsending, søker : Søker) =
-        with(innsendng.søknad) {
-            dokumenterFra(this, pdf.pdfVariant(innsendng.kvittering, søker)).apply {
-                addAll(dokumenterFra(studier, STUDIER))
-                addAll(dokumenterFra(andreBarn, ANDREBARN))
-                addAll(dokumenterFra(utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER))
-                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == UTLAND }, UTENLANDSKE))
-                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD }, OMSORG))
-                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == STIPEND }, LÅNEKASSEN_STIPEND))
-                addAll(dokumenterFra(utbetalinger?.andreStønader?.find { it.type == LÅN }, LÅNEKASSEN_LÅN))
-                addAll(dokumenterFra(this@with, ANNET))
-            }.also {
-                log.trace("Sender {} til arkiv {}", it.størrelse("dokument"), it)
-            }
-        }
+    private fun journalpostDokumenterFra(innsendng: Innsending, søker: Søker): List<Dokument> {
+        return dokumenterFra(innsendng.søknad, pdf.pdfVariant(innsendng.kvittering, søker)) +
+                dokumenterFra(innsendng.søknad.studier, STUDIER) +
+                dokumenterFra(innsendng.søknad.andreBarn, ANDREBARN) +
+                dokumenterFra(innsendng.søknad.utbetalinger?.ekstraFraArbeidsgiver, ARBEIDSGIVER) +
+                dokumenterFra(innsendng.søknad.utbetalinger?.andreStønader?.find { it.type == UTLAND }, UTENLANDSKE) +
+                dokumenterFra(innsendng.søknad.utbetalinger?.andreStønader?.find { it.type == OMSORGSSTØNAD }, OMSORG) +
+                dokumenterFra(
+                    innsendng.søknad.utbetalinger?.andreStønader?.find { it.type == STIPEND },
+                    LÅNEKASSEN_STIPEND
+                ) +
+                dokumenterFra(innsendng.søknad.utbetalinger?.andreStønader?.find { it.type == LÅN }, LÅNEKASSEN_LÅN) +
+                dokumenterFra(innsendng.søknad, ANNET)
+    }
 
-    private fun dokumenterFra(vedlegg : List<EttersendtVedlegg>) =
+    private fun dokumenterFra(vedlegg: List<EttersendtVedlegg>) =
         vedlegg.flatMap { e ->
             require(vedlegg.isNotEmpty()) { "Forventet > 0 vedlegg" }
             dokumenterFra(e.ettersending, e.vedleggType, STANDARD_ETTERSENDING)
@@ -112,48 +109,52 @@ class ArkivJournalpostGenerator(
             require(it.isNotEmpty()) { "Forventet > 0 vedlegg fra dokumentlager for ${vedlegg.map { v -> v.ettersending.deler }}" }
         }
 
-    private fun dokumenterFra(søknad : AAPSøknad, pdfVariant : DokumentVariant) =
+    private fun dokumenterFra(søknad: AAPSøknad, pdfVariant: DokumentVariant) =
         mutableListOf(Dokument(listOf(søknad.somOriginal(mapper), pdfVariant)))
 
-    private fun dokumenterFra(a : List<VedleggAware?>?, type : VedleggType) =
+    private fun dokumenterFra(a: List<VedleggAware?>?, type: VedleggType) =
         a?.flatMap {
             dokumenterFra(it?.vedlegg, type)
         } ?: emptyList()
 
-    private fun dokumenterFra(a : VedleggAware?, type : VedleggType) : List<Dokument> =
+    private fun dokumenterFra(a: VedleggAware?, type: VedleggType): List<Dokument> =
         a?.let { v ->
             v.vedlegg?.let { dokumenterFra(it, type) }
         } ?: emptyList()
 
-    private fun dokumenterFra(v : Vedlegg?, type : VedleggType, skjemaType : SkjemaType? = null) =
-        v?.let { vl ->
-            val vedlegg = grupperteOgSorterteVedlegg(vl)
-            val pdfs = vedlegg[APPLICATION_PDF_VALUE] ?: mutableListOf()
-            val jpgs = vedlegg[IMAGE_JPEG_VALUE] ?: emptyList()
-            val pngs = vedlegg[IMAGE_PNG_VALUE] ?: emptyList()
-            pdfs.map { it.somDokument(type.tittel, skjemaType?.kode) }.toMutableList().apply {
-                if (jpgs.isNotEmpty()) {
-                    add(konverterer.tilPdf(IMAGE_JPEG, jpgs.map(DokumentInfo::bytes)).somDokument(type.tittel, skjemaType?.kode))
-                }
-                if (pngs.isNotEmpty()) {
-                    add(konverterer.tilPdf(IMAGE_PNG, pngs.map(DokumentInfo::bytes)).somDokument(type.tittel, skjemaType?.kode))
-                }
-            }
-        } ?: emptyList<Dokument>().also {
-            log.trace("Ingen dokumenter å lese fra dokumentlager")
+    private fun dokumenterFra(vedlegg: Vedlegg?, type: VedleggType, skjemaType: SkjemaType? = null): List<Dokument> {
+        if (vedlegg == null) {
+            return emptyList()
         }
+        val grupperteVedlegg = grupperteOgSorterteVedlegg(vedlegg)
+        val pdfs = grupperteVedlegg[APPLICATION_PDF_VALUE] ?: mutableListOf()
+        val jpgs = grupperteVedlegg[IMAGE_JPEG_VALUE] ?: emptyList()
+        val pngs = grupperteVedlegg[IMAGE_PNG_VALUE] ?: emptyList()
 
-    private fun grupperteOgSorterteVedlegg(vl : Vedlegg) = (vl.deler?.mapNotNull {
-        it?.let {
-            log.trace("Leser dokument {} fra dokkumentlager", it)
-            lager.lesDokument(it)
+        val bilder = jpgs + pngs
+        var bildePdf = emptyList<Dokument>()
+
+        if (bilder.isNotEmpty()) {
+            bildePdf =
+                listOf(konverterer.tilPdf(bilder.map(DokumentInfo::bytes)).somDokument(type.tittel, skjemaType?.kode))
         }
-    } ?: emptyList())
-        .sortedBy { it.createTime }
-        .groupBy { it.contentType }
+        return pdfs.map { it.somDokument(type.tittel, skjemaType?.kode) } + bildePdf
+    }
+
+    private fun grupperteOgSorterteVedlegg(vl: Vedlegg): Map<String, List<DokumentInfo>> {
+        return vl.deler.mapNotNull {
+            it.let {
+                log.trace("Leser dokument {} fra dokkumentlager", it)
+                lager.lesDokument(it)
+            }
+        }.sortedBy { it.createTime }
+            .groupBy { it.contentType }
+    }
 
     private fun Journalpost.størrelse() = dokumenter.størrelse("dokument")
-    private fun ByteArray.somDokument(tittel : String, brevkode : String? = null) = Dokument(tittel, brevkode, DokumentVariant(encode()))
-    private fun DokumentInfo.somDokument(tittel : String, brevkode : String? = null) = bytes.somDokument(tittel, brevkode)
-    fun AAPSøknad.somOriginal(mapper : ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
+    private fun ByteArray.somDokument(tittel: String, brevkode: String? = null) =
+        Dokument(tittel, brevkode, DokumentVariant(encode()))
+
+    private fun DokumentInfo.somDokument(tittel: String, brevkode: String? = null) = bytes.somDokument(tittel, brevkode)
+    fun AAPSøknad.somOriginal(mapper: ObjectMapper) = DokumentVariant(toEncodedJson(mapper), ORIGINAL, JSON)
 }
