@@ -32,7 +32,7 @@ class PDFFraBildeFKonverterer {
             PDDocument(MemoryUsageSetting.setupTempFileOnly()).use { doc ->
                 ByteArrayOutputStream().use { os ->
                     bilder.forEach {
-                        pdfFraBilde(doc, it, mediaType.subtype)
+                        pdfFraBilde(doc, it)
                     }
                     doc.save(os)
                     os.toByteArray()
@@ -46,75 +46,61 @@ class PDFFraBildeFKonverterer {
             })", e)
         }
 
-    private fun pdfFraBilde(doc: PDDocument, bilde: ByteArray, fmt: String) =
-        PDPage(A4).apply {
-            doc.addPage(this)
-            runCatching {
-                val bufferedImage = ImageIO.read(ByteArrayInputStream(bilde))
-                val portrett = bufferedImage
-                val img = LosslessFactory.createFromImage(doc, portrett)
-                //this.rotation = 90
-                PDPageContentStream(doc, this).use {
-                    val roteres = portrett.height < portrett.width
-                    val matrix = if (roteres) {
-                        val (width, height) = skalertDimensjonPortrett(
-                            Pair(portrett.width.toFloat(), portrett.height.toFloat()),
-                            Pair(this.mediaBox.width, this.mediaBox.height)
-                        )
+    private fun pdfFraBilde(doc: PDDocument, bilde: ByteArray) {
+        val pdPage = PDPage(A4)
+        doc.addPage(pdPage)
+        try {
+            val bufferedImage = ImageIO.read(ByteArrayInputStream(bilde))
 
-                        val transform = AffineTransform(height, 0f, 0f, width, A4.lowerLeftX + height, A4.lowerLeftY)
-                        val matrix = Matrix(transform)
-                        matrix.rotate(Math.toRadians(90.0))
-                        this.rotation = 90
-                        matrix
-                    } else {
-                        val (width, height) = skalertDimensjon(
-                            Pair(portrett.width.toFloat(), portrett.height.toFloat()),
-                            Pair(this.mediaBox.width, this.mediaBox.height)
-                        )
+            val roteres = bufferedImage.height < bufferedImage.width
 
-                        val transform = AffineTransform(width, 0f, 0f, height, A4.lowerLeftX, A4.lowerLeftY)
-                        Matrix(transform)
-                    }
-                    it.drawImage(img, matrix)
-                }
-            }.getOrElse {
-                throw DokumentException(
-                    "Konvertering av bilde med størrelse ${
-                        DataSize.of(
-                            bilde.size.toLong(),
-                            BYTES
-                        ).toKilobytes()
-                    } feilet", it
-                )
+            val (width, height) = skalertDimensjon(
+                MyPair(bufferedImage.width.toFloat(), bufferedImage.height.toFloat()).roterHvis(roteres),
+                MyPair(pdPage.mediaBox.width, pdPage.mediaBox.height),
+            )
+
+            val transform = AffineTransform(width, 0f, 0f, height, A4.lowerLeftX, A4.lowerLeftY)
+            val matrix = Matrix(transform)
+
+            if (roteres) {
+                //Flytt bildet 1 gang (width) til høyre på x-aksen
+                matrix.translate(1f, 0f)
+
+                matrix.rotate(Math.toRadians(90.0))
+                pdPage.rotation = 90
             }
-        }
 
-    private fun skalertDimensjonPortrett(imgSize: Pair<Float, Float>, a4: Pair<Float, Float>): Pair<Float, Float> {
-        var width = imgSize.first
-        var height = imgSize.second
-        if (imgSize.first > a4.second) {
-            width = a4.second
-            height = width * imgSize.second / imgSize.first
+            val pdImg = LosslessFactory.createFromImage(doc, bufferedImage)
+
+            PDPageContentStream(doc, pdPage).use { pdPageContentStream ->
+                pdPageContentStream.drawImage(pdImg, matrix)
+            }
+        } catch (e: Throwable) {
+            val størrelse = DataSize.of(bilde.size.toLong(), BYTES).toKilobytes()
+            throw DokumentException("Konvertering av bilde med størrelse $størrelse feilet", e)
         }
-        if (height > a4.first) {
-            height = a4.first
-            width = height * imgSize.first / imgSize.second
-        }
-        return Pair(width, height)
     }
 
-    private fun skalertDimensjon(imgSize: Pair<Float, Float>, a4: Pair<Float, Float>): Pair<Float, Float> {
-        var width = imgSize.first
-        var height = imgSize.second
-        if (imgSize.first > a4.first) {
-            width = a4.first
-            height = width * imgSize.second / imgSize.first
+    private data class MyPair(val width: Float, val height: Float) {
+        fun roterHvis(roteres: Boolean): MyPair {
+            return if (roteres) {
+                MyPair(height, width)
+            } else {
+                this
+            }
         }
-        if (height > a4.second) {
-            height = a4.second
-            width = height * imgSize.first / imgSize.second
+    }
+
+    private fun skalertDimensjon(imgSize: MyPair, a4: MyPair): MyPair {
+        var (width, height) = imgSize
+        if (width > a4.width) {
+            width = a4.width
+            height = width * imgSize.height / imgSize.width
         }
-        return Pair(width, height)
+        if (height > a4.height) {
+            height = a4.height
+            width = height * imgSize.width / imgSize.height
+        }
+        return MyPair(width, height)
     }
 }
