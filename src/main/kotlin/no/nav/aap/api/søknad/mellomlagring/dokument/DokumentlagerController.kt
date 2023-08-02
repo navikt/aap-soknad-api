@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.MediaType.parseMediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -26,13 +27,16 @@ internal class DokumentlagerController(private val lager: Dokumentlager) {
 
     @PostMapping("/lagre", consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
-    fun lagreDokument(@RequestPart("vedlegg") vedlegg: MultipartFile) {
+    fun lagreDokument(@RequestPart("vedlegg") vedlegg: MultipartFile): ResponseEntity<UUID> {
         val vedleggContentType = vedlegg.contentType
-        if (vedleggContentType == null) {
+
+        val uuid = if (vedleggContentType == null) {
             lager.lagreDokument(DokumentInfo(vedlegg.bytes, vedlegg.originalFilename))
         } else {
             lager.lagreDokument(DokumentInfo(vedlegg.bytes, vedlegg.originalFilename, vedleggContentType))
         }
+
+        return ResponseEntity.status(201).body(uuid)
     }
 
     @GetMapping("/les/{uuid}")

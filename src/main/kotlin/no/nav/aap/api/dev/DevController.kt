@@ -1,6 +1,20 @@
 package no.nav.aap.api.dev
 
-import java.util.*
+import no.nav.aap.api.felles.Fødselsnummer
+import no.nav.aap.api.felles.SkjemaType
+import no.nav.aap.api.oppslag.søknad.SøknadClient
+import no.nav.aap.api.saksbehandling.SaksbehandlingController.VedleggEtterspørsel
+import no.nav.aap.api.søknad.fordeling.AAPSøknad
+import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
+import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
+import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
+import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
+import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
+import no.nav.aap.api.søknad.minside.MinSideClient
+import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType.OPPGAVE
+import no.nav.aap.api.søknad.minside.MinSideRepositories
+import no.nav.boot.conditionals.ConditionalOnNotProd
+import no.nav.security.token.support.spring.UnprotectedRestController
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort.Direction.DESC
 import org.springframework.data.web.PageableDefault
@@ -22,21 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.multipart.MultipartFile
-import no.nav.aap.api.felles.Fødselsnummer
-import no.nav.aap.api.felles.SkjemaType
-import no.nav.aap.api.oppslag.søknad.SøknadClient
-import no.nav.aap.api.saksbehandling.SaksbehandlingController.VedleggEtterspørsel
-import no.nav.aap.api.søknad.fordeling.SøknadVLFordeler
-import no.nav.aap.api.søknad.fordeling.VLFordelingConfig
-import no.nav.aap.api.søknad.mellomlagring.GCPKryptertMellomlager
-import no.nav.aap.api.søknad.mellomlagring.dokument.DokumentInfo
-import no.nav.aap.api.søknad.mellomlagring.dokument.GCPKryptertDokumentlager
-import no.nav.aap.api.søknad.minside.MinSideClient
-import no.nav.aap.api.søknad.minside.MinSideNotifikasjonType.NotifikasjonType.OPPGAVE
-import no.nav.aap.api.søknad.minside.MinSideRepositories
-import no.nav.aap.api.søknad.fordeling.AAPSøknad
-import no.nav.boot.conditionals.ConditionalOnNotProd
-import no.nav.security.token.support.spring.UnprotectedRestController
+import java.util.*
 
 @UnprotectedRestController(["/dev/"])
 @ConditionalOnNotProd
@@ -81,13 +81,14 @@ internal class DevController(private val dokumentLager: GCPKryptertDokumentlager
 
     @PostMapping("vedlegg/lagre/{fnr}", consumes = [MULTIPART_FORM_DATA_VALUE])
     @ResponseStatus(CREATED)
-    fun lagreDokument(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") vedlegg: MultipartFile) {
+    fun lagreDokument(@PathVariable fnr: Fødselsnummer, @RequestPart("vedlegg") vedlegg: MultipartFile): ResponseEntity<UUID> {
         val vedleggContentType = vedlegg.contentType
-        if(vedleggContentType == null) {
+        val uuid = if (vedleggContentType == null) {
             dokumentLager.lagreDokument(DokumentInfo(vedlegg.bytes, vedlegg.originalFilename), fnr)
         } else {
             dokumentLager.lagreDokument(DokumentInfo(vedlegg.bytes, vedlegg.originalFilename, vedleggContentType), fnr)
         }
+        return ResponseEntity.status(201).body(uuid)
     }
 
     @DeleteMapping("vedlegg/slett/{fnr}")
