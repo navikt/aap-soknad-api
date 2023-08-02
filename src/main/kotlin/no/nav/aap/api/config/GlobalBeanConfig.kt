@@ -8,7 +8,7 @@ import io.micrometer.observation.ObservationPredicate
 import io.micrometer.observation.ObservationRegistry
 import io.micrometer.observation.ObservationTextPublisher
 import io.micrometer.observation.aop.ObservedAspect
-import io.netty.channel.ChannelOption.*
+import io.netty.channel.ChannelOption.CONNECT_TIMEOUT_MILLIS
 import io.netty.channel.ConnectTimeoutException
 import io.netty.handler.logging.LogLevel.TRACE
 import io.netty.handler.timeout.ReadTimeoutHandler
@@ -26,44 +26,6 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
-import java.io.IOException
-import java.time.Duration
-import java.time.Duration.*
-import java.util.*
-import java.util.concurrent.TimeUnit.*
-import java.util.function.Consumer
-import org.apache.commons.text.StringEscapeUtils.*
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
-import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.info.BuildProperties
-import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
-import org.springframework.boot.web.servlet.FilterRegistrationBean
-import org.springframework.context.ApplicationContext
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.core.MethodParameter
-import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
-import org.springframework.core.Ordered.LOWEST_PRECEDENCE
-import org.springframework.core.annotation.Order
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.http.MediaType.*
-import org.springframework.http.client.reactive.ReactorClientHttpConnector
-import org.springframework.http.converter.HttpMessageConverter
-import org.springframework.http.server.ServerHttpRequest
-import org.springframework.http.server.ServerHttpResponse
-import org.springframework.http.server.observation.ServerRequestObservationContext
-import org.springframework.kafka.core.KafkaAdmin
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.web.bind.annotation.ControllerAdvice
-import org.springframework.web.filter.ServerHttpObservationFilter
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
-import reactor.netty.http.client.HttpClient
-import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
-import reactor.util.retry.Retry.fixedDelay
 import no.nav.aap.api.felles.graphql.GraphQLErrorHandler
 import no.nav.aap.health.Pingable
 import no.nav.aap.rest.AbstractWebClientAdapter.Companion.correlatingFilterFunction
@@ -88,6 +50,44 @@ import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.client.spring.oauth2.ClientConfigurationPropertiesMatcher
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.info.BuildProperties
+import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
+import org.springframework.boot.web.servlet.FilterRegistrationBean
+import org.springframework.context.ApplicationContext
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.core.MethodParameter
+import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
+import org.springframework.core.Ordered.LOWEST_PRECEDENCE
+import org.springframework.core.annotation.Order
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.http.MediaType.parseMediaType
+import org.springframework.http.client.reactive.ReactorClientHttpConnector
+import org.springframework.http.converter.HttpMessageConverter
+import org.springframework.http.server.ServerHttpRequest
+import org.springframework.http.server.ServerHttpResponse
+import org.springframework.http.server.observation.ServerRequestObservationContext
+import org.springframework.kafka.core.KafkaAdmin
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.filter.ServerHttpObservationFilter
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
+import reactor.netty.http.client.HttpClient
+import reactor.netty.transport.logging.AdvancedByteBufFormat.TEXTUAL
+import reactor.util.retry.Retry.fixedDelay
+import java.io.IOException
+import java.time.Duration
+import java.time.Duration.ofMillis
+import java.time.Duration.ofSeconds
+import java.util.concurrent.TimeUnit.SECONDS
+import java.util.function.Consumer
 
 @Configuration(proxyBeanMethods = false)
 class GlobalBeanConfig(@Value("\${spring.application.name}") private val applicationName : String) {
@@ -308,7 +308,7 @@ class GlobalBeanConfig(@Value("\${spring.application.name}") private val applica
 
     companion object {
         private const val TIMEOUT = "timeout"
-        private val DEFAULT_TIMEOUT = ofSeconds(30)
+        private val DEFAULT_TIMEOUT = ofSeconds(90)
         private val DEFAULT_CONNECT_TIMEOUT = ofSeconds(10)
 
     }
