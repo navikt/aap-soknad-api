@@ -20,10 +20,10 @@ import javax.imageio.ImageIO
 
 @Component
 class PDFFraBildeFKonverterer {
-
     private val log = getLogger(javaClass)
+
     fun tilPdf(bilder: List<ByteArray>): ByteArray {
-        runCatching {
+        try {
             log.trace("Konverterer {} til PDF", bilder.størrelse("bildefil"))
             PDDocument(MemoryUsageSetting.setupTempFileOnly()).use { doc ->
                 ByteArrayOutputStream().use { os ->
@@ -34,12 +34,9 @@ class PDFFraBildeFKonverterer {
                     return os.toByteArray()
                 }
             }
-        }.getOrElse { e ->
-            throw DokumentException("Konvertering av ${bilder.størrelse("bildefil")} feilet (${
-                bilder.map {
-                    DataSize.of(it.size.toLong(), BYTES).toKilobytes()
-                }
-            })", e)
+        } catch (e: Throwable) {
+            val størrelser = bilder.map { DataSize.of(it.size.toLong(), BYTES).toKilobytes() }
+            throw DokumentException("Konvertering av ${bilder.size} bilder feilet ($størrelser)", e)
         }
     }
 
@@ -49,23 +46,9 @@ class PDFFraBildeFKonverterer {
         try {
             val bufferedImage = ImageIO.read(ByteArrayInputStream(bilde))
 
-            val roteres = bufferedImage.height < bufferedImage.width
+            val bildedimensjon = Bildedimensjon(bufferedImage.width, bufferedImage.height)
 
-            val (width, height) = skalertDimensjon(
-                MyPair(bufferedImage.width.toFloat(), bufferedImage.height.toFloat()).roterHvis(roteres),
-                MyPair(pdPage.mediaBox.width, pdPage.mediaBox.height),
-            )
-
-            val transform = AffineTransform(width, 0f, 0f, height, A4.lowerLeftX, A4.lowerLeftY)
-            val matrix = Matrix(transform)
-
-            if (roteres) {
-                //Flytt bildet 1 gang (width) til høyre på x-aksen
-                matrix.translate(1f, 0f)
-
-                matrix.rotate(Math.toRadians(90.0))
-                pdPage.rotation = 90
-            }
+            val matrix = bildedimensjon.transform(pdPage)
 
             val pdImg = LosslessFactory.createFromImage(doc, bufferedImage)
 
@@ -78,26 +61,61 @@ class PDFFraBildeFKonverterer {
         }
     }
 
-    private data class MyPair(val width: Float, val height: Float) {
-        fun roterHvis(roteres: Boolean): MyPair {
-            return if (roteres) {
-                MyPair(height, width)
+    private class Bildedimensjon private constructor(
+        private val width: Float,
+        private val height: Float,
+        private val rotert: Boolean
+    ) {
+        constructor(width: Int, height: Int) : this(width.toFloat(), height.toFloat(), false)
+
+        fun transform(pdPage: PDPage): Matrix {
+            val skalertBildedimensjon = roterOgSkaler(pdPage.mediaBox.width, pdPage.mediaBox.height)
+
+            val transform = AffineTransform(
+                skalertBildedimensjon.width,
+                0f,
+                0f,
+                skalertBildedimensjon.height,
+                pdPage.mediaBox.lowerLeftX,
+                pdPage.mediaBox.lowerLeftY
+            )
+            val matrix = Matrix(transform)
+
+            if (skalertBildedimensjon.rotert) {
+                //Flytt bildet 1 gang (width) til høyre på x-aksen
+                matrix.translate(1f, 0f)
+
+                matrix.rotate(Math.toRadians(90.0))
+                pdPage.rotation = 90
+            }
+
+            return matrix
+        }
+
+        private fun roteres(): Boolean {
+            return width > height
+        }
+
+        private fun roterOgSkaler(pageSizeWidth: Float, pageSizeHeight: Float): Bildedimensjon {
+            return if (roteres()) {
+                Bildedimensjon(height, width, true).skalertDimensjon(pageSizeWidth, pageSizeHeight)
             } else {
-                this
+                this.skalertDimensjon(pageSizeWidth, pageSizeHeight)
             }
         }
-    }
 
-    private fun skalertDimensjon(imgSize: MyPair, a4: MyPair): MyPair {
-        var (width, height) = imgSize
-        if (width > a4.width) {
-            width = a4.width
-            height = width * imgSize.height / imgSize.width
+        private fun skalertDimensjon(pageSizeWidth: Float, pageSizeHeight: Float): Bildedimensjon {
+            var width = this.width
+            var height = this.height
+            if (width > pageSizeWidth) {
+                width = pageSizeWidth
+                height = width * this.height / this.width
+            }
+            if (height > pageSizeHeight) {
+                height = pageSizeHeight
+                width = height * this.width / this.height
+            }
+            return Bildedimensjon(width, height, this.rotert)
         }
-        if (height > a4.height) {
-            height = a4.height
-            width = height * imgSize.width / imgSize.height
-        }
-        return MyPair(width, height)
     }
 }
