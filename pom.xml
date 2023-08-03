@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.2</version>
         <relativePath/>
     </parent>
          
@@ -21,8 +21,8 @@
         <commons-text.version>1.10.0</commons-text.version>
         <domain.version>2.0.79</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
-        <gcp.libraries.version>26.18.0</gcp.libraries.version>
-        <gcp.version>0.199.0</gcp.version>
+        <gcp.libraries.version>26.21.0</gcp.libraries.version>
+        <gcp.version>0.202.0</gcp.version>
         <i18n.version>1.29</i18n.version>
         <java.version>17</java.version>
         <jib.version>3.3.2</jib.version>
@@ -35,7 +35,7 @@
         <sonar.organization>navikt</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.projectKey>navikt_aap-soknad-api</sonar.projectKey>
-        <spring-cloud-gcp.version>4.5.1</spring-cloud-gcp.version>
+        <spring-cloud-gcp.version>4.7.1</spring-cloud-gcp.version>
         <springdoc.version>2.1.0</springdoc.version>
         <swagger.annotations.version>2.2.15</swagger.annotations.version>
         <testcontainers.version>1.18.3</testcontainers.version>

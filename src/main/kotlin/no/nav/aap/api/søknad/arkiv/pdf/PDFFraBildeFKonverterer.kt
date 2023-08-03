@@ -48,7 +48,7 @@ class PDFFraBildeFKonverterer {
 
             val bildedimensjon = Bildedimensjon(bufferedImage.width, bufferedImage.height)
 
-            val matrix = bildedimensjon.transform(pdPage)
+            val matrix = bildedimensjon.transformer(pdPage)
 
             val pdImg = LosslessFactory.createFromImage(doc, bufferedImage)
 
@@ -68,7 +68,7 @@ class PDFFraBildeFKonverterer {
     ) {
         constructor(width: Int, height: Int) : this(width.toFloat(), height.toFloat(), false)
 
-        fun transform(pdPage: PDPage): Matrix {
+        fun transformer(pdPage: PDPage): Matrix {
             val skalertBildedimensjon = roterOgSkaler(pdPage.mediaBox.width, pdPage.mediaBox.height)
 
             val transform = AffineTransform(
