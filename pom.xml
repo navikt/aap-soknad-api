@@ -26,7 +26,7 @@
         <i18n.version>1.29</i18n.version>
         <java.version>17</java.version>
         <jib.version>3.3.2</jib.version>
-        <kotlin.version>1.9.0</kotlin.version>
+        <kotlin.version>1.9.10</kotlin.version>
         <logstash.version>7.4</logstash.version>
         <okhttp3.version>4.9.1</okhttp3.version>
         <pdfbox.version>2.0.29</pdfbox.version>
