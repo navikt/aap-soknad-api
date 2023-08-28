@@ -17,7 +17,7 @@
     <properties>
         <avro.version>1.11.2</avro.version>
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
-        <confluent.version>7.4.1</confluent.version>
+        <confluent.version>7.5.0</confluent.version>
         <commons-text.version>1.10.0</commons-text.version>
         <domain.version>2.0.79</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
@@ -35,7 +35,7 @@
         <sonar.organization>navikt</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.projectKey>navikt_aap-soknad-api</sonar.projectKey>
-        <spring-cloud-gcp.version>4.7.1</spring-cloud-gcp.version>
+        <spring-cloud-gcp.version>4.7.2</spring-cloud-gcp.version>
         <springdoc.version>2.2.0</springdoc.version>
         <swagger.annotations.version>2.2.15</swagger.annotations.version>
         <testcontainers.version>1.18.3</testcontainers.version>
