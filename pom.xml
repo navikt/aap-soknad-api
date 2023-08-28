@@ -22,14 +22,14 @@
         <domain.version>2.0.79</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
         <gcp.libraries.version>26.21.0</gcp.libraries.version>
-        <gcp.version>0.202.0</gcp.version>
+        <gcp.version>0.203.0</gcp.version>
         <i18n.version>1.29</i18n.version>
         <java.version>17</java.version>
         <jib.version>3.3.2</jib.version>
         <kotlin.version>1.9.0</kotlin.version>
         <logstash.version>7.4</logstash.version>
         <okhttp3.version>4.9.1</okhttp3.version>
-        <pdfbox.version>3.0.0</pdfbox.version>
+        <pdfbox.version>2.0.29</pdfbox.version>
         <reactor.version>1.0.1.RELEASE</reactor.version>
         <revision>0.0.1-SNAPSHOT</revision>
         <sonar.organization>navikt</sonar.organization>
