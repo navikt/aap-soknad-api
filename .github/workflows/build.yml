@@ -20,7 +20,7 @@ jobs:
             image: ${{ steps.kompiler.outputs.image }}
         steps:
             -   name: Sjekker ut kode
-                uses: actions/checkout@v3
+                uses: actions/checkout@v4
 
             -   name: Setter opp Java 17
                 uses: actions/setup-java@v3
@@ -82,5 +82,5 @@ jobs:
             VARS: .nais/${{matrix.cluster}}.json
             IMAGE: ${{needs.bygg.outputs.image}}
         steps:
-            -   uses: actions/checkout@v3
+            -   uses: actions/checkout@v4
             -   uses: nais/deploy/actions/deploy@master

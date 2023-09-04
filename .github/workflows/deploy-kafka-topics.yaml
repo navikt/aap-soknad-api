@@ -24,5 +24,5 @@ jobs:
             CLUSTER: ${{matrix.cluster}}
             VARS: kafka-aiven/${{matrix.topic}}/${{matrix.cluster}}.yaml
         steps:
-            -   uses: actions/checkout@v3
+            -   uses: actions/checkout@v4
             -   uses: nais/deploy/actions/deploy@master

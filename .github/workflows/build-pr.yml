@@ -23,7 +23,7 @@ jobs:
                run: echo The Title of your PR is ${{ github.event.pull_request.number }}
 
             -   name: Sjekk ut kode
-                uses: actions/checkout@v3
+                uses: actions/checkout@v4
 
 
             -   name: Setter opp Java 17
@@ -65,5 +65,5 @@ jobs:
             VARS: .nais/dev-gcp.json
             IMAGE: ${{needs.bygg.outputs.image}}
         steps:
-            -   uses: actions/checkout@v3
+            -   uses: actions/checkout@v4
             -   uses: nais/deploy/actions/deploy@master
