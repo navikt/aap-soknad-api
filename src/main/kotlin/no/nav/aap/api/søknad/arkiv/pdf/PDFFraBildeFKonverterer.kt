@@ -8,7 +8,7 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.common.PDRectangle.A4
-import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory
+import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory
 import org.apache.pdfbox.util.Matrix
 import org.springframework.stereotype.Component
 import org.springframework.util.unit.DataSize
@@ -50,7 +50,7 @@ class PDFFraBildeFKonverterer {
 
             val matrix = bildedimensjon.transformer(pdPage)
 
-            val pdImg = LosslessFactory.createFromImage(doc, bufferedImage)
+            val pdImg = JPEGFactory.createFromImage(doc, bufferedImage)
 
             PDPageContentStream(doc, pdPage).use { pdPageContentStream ->
                 pdPageContentStream.drawImage(pdImg, matrix)
