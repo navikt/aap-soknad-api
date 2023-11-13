@@ -4,7 +4,6 @@ on:
     push:
         branches:
             - 'deploy/**'
-
 env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     IMAGE_BASE: europe-north1-docker.pkg.dev/${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}/aap/${{ github.event.repository.name }}
@@ -63,7 +62,7 @@ jobs:
             APIKEY: ${{secrets.NAIS_DEPLOY_APIKEY}}
             RESOURCE: .nais/naiserator.yaml,.nais/dev-gcp-alerts.yaml
             CLUSTER: dev-gcp
-            VARS: .nais/$dev-gcp.json
+            VARS: .nais/dev-gcp.json
             IMAGE: ${{needs.bygg.outputs.image}}
         steps:
             -   uses: actions/checkout@v4.1.1
