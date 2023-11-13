@@ -22,10 +22,10 @@ jobs:
             -   name: Sjekker ut kode
                 uses: actions/checkout@v4.1.1
 
-            -   name: Setter opp Java 20
+            -   name: Setter opp Java 17
                 uses: actions/setup-java@v3.13.0
                 with:
-                    java-version: 20
+                    java-version: 17
                     distribution: temurin
                     cache: maven
 
