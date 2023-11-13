@@ -26,10 +26,10 @@ jobs:
                 uses: actions/checkout@v4.1.1
 
 
-            -   name: Setter opp Java 20
+            -   name: Setter opp Java 17
                 uses: actions/setup-java@v3.13.0
                 with:
-                    java-version: 20
+                    java-version: 17
                     distribution: temurin
                     cache: maven
 
@@ -51,19 +51,3 @@ jobs:
                 run: |
                     echo "image=${{ env.IMAGE }}" >> $GITHUB_OUTPUT
                     ./mvnw  --batch-mode --settings .github/.m2/settings.xml  -DGAR_TOKEN=${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} package jib:build 
-
-    deploy:
-        name: Deploy PR til dev-gcp
-        needs: bygg
-        runs-on: ubuntu-latest
-        environment: pr:dev-gcp:aap
-        env:
-            PRINT_PAYLOAD: true
-            APIKEY: ${{secrets.NAIS_DEPLOY_APIKEY}}
-            RESOURCE: .nais/naiserator.yaml,.nais/dev-gcp-alerts.yaml
-            CLUSTER: dev-gcp
-            VARS: .nais/dev-gcp.json
-            IMAGE: ${{needs.bygg.outputs.image}}
-        steps:
-            -   uses: actions/checkout@v3
-            -   uses: nais/deploy/actions/deploy@master
