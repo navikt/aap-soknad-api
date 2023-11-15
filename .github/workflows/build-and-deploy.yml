@@ -2,12 +2,21 @@ name: Bygg og deploy
 
 on:
     workflow_dispatch:
-        
+        inputs:
+            cluster:
+                description: 'Cluster å deploye til'
+                required: true
+                default: 'dev-gcp'
+                type: choice
+                options:
+                    - 'dev-gcp'
+                    - 'prod-gcp'
     push:
         branches:
             - main
         paths-ignore:
             - '**.md'
+            - '.github/workflows/**.yml'
 env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     IMAGE: europe-north1-docker.pkg.dev/${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}/aap/${{ github.event.repository.name }}
@@ -30,14 +39,6 @@ jobs:
                     java-version: 17
                     distribution: temurin
                     cache: maven
-
-           # -   name: Installerer cosign
-            #    uses: sigstore/cosign-installer@v3.2.0
-             #   with:
-              #      cosign-release: 'v1.3.1'
-
-           # -   name: Verifiserer distroless base-image
-                # run: cosign verify --key distroless.pub gcr.io/distroless/Java17
 
             -   name: Setter tag-navn
                 run: echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
@@ -67,21 +68,35 @@ jobs:
                     sbom: target/bom.json
                     image_ref: ${{ env.IMAGE }}@${{ env.DIGEST }}
 
-    deploy:
-        strategy:
-            matrix:
-                cluster: [ dev-gcp, prod-gcp ]
-        name: Deploy til ${{matrix.cluster}}
+    deploy_dev_gcp:
+        if: github.event.inputs.cluster == 'dev-gcp' || github.event_name == 'push'
         needs: bygg
         runs-on: ubuntu-latest
         timeout-minutes: 30
-        environment: ${{matrix.cluster}}:aap
+        environment: dev-gcp:aap
         env:
             PRINT_PAYLOAD: true
             APIKEY: ${{secrets.NAIS_DEPLOY_APIKEY}}
-            RESOURCE: .nais/naiserator.yaml,.nais/${{matrix.cluster}}-alerts.yaml
-            CLUSTER: ${{matrix.cluster}}
-            VARS: .nais/${{matrix.cluster}}.json
+            RESOURCE: .nais/naiserator.yaml,.nais/dev-gcp-alerts.yaml
+            CLUSTER: dev-gcp
+            VARS: .nais/dev-gcp.json
+            IMAGE: ${{needs.bygg.outputs.image}}
+        steps:
+            -   uses: actions/checkout@v4.1.1
+            -   uses: nais/deploy/actions/deploy@master
+
+    deploy_prod_gcp:
+        if: github.event.inputs.cluster == 'prod-gcp' || github.event_name == 'push'
+        needs: bygg
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        environment: prod-gcp:aap
+        env:
+            PRINT_PAYLOAD: true
+            APIKEY: ${{secrets.NAIS_DEPLOY_APIKEY}}
+            RESOURCE: .nais/naiserator.yaml,.nais/prod-gcp-alerts.yaml
+            CLUSTER: prod-gcp
+            VARS: .nais/prod-gcp.json
             IMAGE: ${{needs.bygg.outputs.image}}
         steps:
             -   uses: actions/checkout@v4.1.1
