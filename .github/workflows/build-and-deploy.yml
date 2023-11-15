@@ -86,7 +86,7 @@ jobs:
             -   uses: nais/deploy/actions/deploy@master
 
     deploy_prod_gcp:
-        if: github.event.inputs.cluster == 'prod-gcp' || github.event_name == 'push'
+        if: github.event.inputs.cluster == 'prod-gcp'
         needs: bygg
         runs-on: ubuntu-latest
         timeout-minutes: 30
