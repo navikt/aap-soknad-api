@@ -18,7 +18,7 @@
         <avro.version>1.11.2</avro.version>
         <brukernotifikasjoner.version>2.5.2</brukernotifikasjoner.version>
         <confluent.version>7.5.0</confluent.version>
-        <commons-text.version>1.10.0</commons-text.version>
+        <commons-text.version>1.11.0</commons-text.version>
         <domain.version>2.0.79</domain.version>
         <eksternvarsling.version>08271806</eksternvarsling.version>
         <gcp.libraries.version>26.22.0</gcp.libraries.version>
