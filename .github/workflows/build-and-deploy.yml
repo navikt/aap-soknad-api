@@ -63,7 +63,7 @@ jobs:
                     echo "DIGEST=$(cat target/jib-image.digest)" >> $GITHUB_ENV
 
             -   name: Attester og signer
-                uses: nais/attest-sign@v1.1.0
+                uses: nais/attest-sign@v1.3.0
                 with:
                     sbom: target/bom.json
                     image_ref: ${{ env.IMAGE }}@${{ env.DIGEST }}
