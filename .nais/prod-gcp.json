@@ -2,7 +2,7 @@
     "tenant": "trygdeetaten.no",
     "ingress": "https://aap-soknad-api.intern.nav.no",
     "env": "prod",
-    "vedlegg-varighet": "14",
-    "mellomlagring-varighet": "14",
+    "vedlegg-varighet": "1",
+    "mellomlagring-varighet": "1",
     "saf" : "safselvbetjening.prod-fss-pub.nais.io"
 }

@@ -25,13 +25,13 @@ data class BucketConfig(val project: String,
 
     data class KeyConfig(internal val ring: String, internal val key: String)
 
-    data class MellomlagringBucketConfig(val navn: String, @DefaultValue("14") @DurationUnit(DAYS) val varighet: Duration, @NestedConfigurationProperty val purring: Purring, @NestedConfigurationProperty val subscription: SubscriptionConfig) {
+    data class MellomlagringBucketConfig(val navn: String, @DefaultValue("1") @DurationUnit(DAYS) val varighet: Duration, @NestedConfigurationProperty val purring: Purring, @NestedConfigurationProperty val subscription: SubscriptionConfig) {
 
         data class SubscriptionConfig(val navn: String, val topic: String)
         data class Purring(val enabled: Boolean, val delay: Long, val eldreEnn: Duration)
     }
 
-    data class VedleggBucketConfig(val navn: String, @DefaultValue("14") @DurationUnit(DAYS) val varighet: Duration,val maxsum: DataSize, val typer: List<String>)
+    data class VedleggBucketConfig(val navn: String, @DefaultValue("1") @DurationUnit(DAYS) val varighet: Duration,val maxsum: DataSize, val typer: List<String>)
 
     companion object {
         private const val REGION = "europe-north1"
