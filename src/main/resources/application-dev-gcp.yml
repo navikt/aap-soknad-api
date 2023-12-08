@@ -52,6 +52,6 @@ joark:
     scope: api://dev-fss.teamdokumenthandtering.dokarkiv-q1/.default
 minside:
     backlinks:
-        innsyn: https://aap-innsyn.dev.nav.no/aap/mine-aap
-        standard: https://aap-soknad.dev.nav.no/aap/soknad
-        utland: https://aap-soknad.dev.nav.no/aap/soknad/utland
+        innsyn: https://aap-mine-aap.intern.dev.nav.no/aap/mine-aap
+        standard: https://aap-soknad.intern.dev.nav.no/aap/soknad
+        utland: https://aap-soknad.intern.dev.nav.no/aap/soknad/utland
