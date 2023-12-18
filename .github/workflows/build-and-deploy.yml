@@ -83,7 +83,7 @@ jobs:
             IMAGE: ${{needs.bygg.outputs.image}}
         steps:
             -   uses: actions/checkout@v4.1.1
-            -   uses: nais/deploy/actions/deploy@master
+            -   uses: nais/deploy/actions/deploy@v1
 
     deploy_prod_gcp:
         if: github.event.inputs.cluster == 'prod-gcp'
