@@ -27,7 +27,7 @@ jobs:
 
 
             -   name: Setter opp Java 17
-                uses: actions/setup-java@v3.13.0
+                uses: actions/setup-java@v4
                 with:
                     java-version: 17
                     distribution: temurin
