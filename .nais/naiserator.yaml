@@ -57,6 +57,7 @@ spec:
   accessPolicy:
     inbound:
       rules:
+        - application: innsending
         - application: ettersporre-dokumentasjon
         - application: soknad
         - application: innsyn
