@@ -85,7 +85,6 @@ spec:
   kafka:
     pool: nav-{{env}}
   port: 8080
-  cpuThresholdPercentage: 50
   image: {{image}}
   liveness:
     path: /actuator/health/liveness
