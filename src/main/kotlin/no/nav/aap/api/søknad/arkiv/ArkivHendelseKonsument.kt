@@ -1,15 +1,15 @@
 package no.nav.aap.api.søknad.arkiv
 
-import java.time.LocalDateTime.parse
-import org.springframework.kafka.annotation.KafkaListener
-import org.springframework.messaging.handler.annotation.Payload
-import org.springframework.transaction.annotation.Transactional
 import no.nav.aap.api.søknad.arkiv.ArkivConfig.Companion.ARKIVHENDELSER
 import no.nav.aap.api.søknad.fordeling.SøknadRepository
 import no.nav.aap.util.LoggerUtil.getLogger
 import no.nav.aap.util.TimeExtensions.toUTC
 import no.nav.boot.conditionals.ConditionalOnGCP
 import no.nav.joarkjournalfoeringhendelser.JournalfoeringHendelseRecord
+import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.messaging.handler.annotation.Payload
+import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime.parse
 
 @ConditionalOnGCP
 class ArkivHendelseKonsument(private val repo: SøknadRepository) {
@@ -35,8 +35,8 @@ class ArkivHendelseKonsument(private val repo: SøknadRepository) {
 
     private fun oppdaterSøknad(payload: JournalfoeringHendelseRecord) =
         with(payload) {
-            log.info("Oppdaterer søknad med id $journalpostId med status $journalpostStatus ")
             repo.getSøknadByJournalpostid("$journalpostId")?.let {søknad ->
+                log.info("Oppdaterer søknad med id $journalpostId med status $journalpostStatus ")
                 søknad.apply {
                     journalpoststatus = journalpostStatus
                     journalfoert = tilUTC()
