@@ -19,6 +19,7 @@ on:
             - '.github/workflows/**.yml'
 env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    IMAGE: europe-north1-docker.pkg.dev/${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}/aap/${{ github.event.repository.name }}
 
 jobs:
     bygg:
@@ -40,13 +41,21 @@ jobs:
                     distribution: temurin
                     cache: maven
 
-            -   name: Bygg og last opp image
-                uses: nais/docker-build-push@v0
-                id: docker-push
+            -   name: Setter tag-navn
+                run: echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+
+            -   name: Login GAR
+                uses: nais/login@v0
                 with:
-                    team: aap # required
-                    project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }} # required, but is defined as an organization variable
-                    identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} # required, but is defined as an organization secret
+                    project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+                    identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+                    team: aap
+
+            -   name: Kompilerer, bygger  og pusher image
+                id: kompiler
+                run: |
+                    echo "image=${{ env.IMAGE }}:${{ env.TAG }}" >> $GITHUB_OUTPUT
+                    ./mvnw  --settings .github/.m2/settings.xml  -DGAR_TOKEN=${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} -Djib.to.tags=latest,${TAG} -Drevision=${TAG}  package jib:build
 
             -   name: Submit Dependency Snapshot
                 uses: advanced-security/maven-dependency-submission-action@v3
