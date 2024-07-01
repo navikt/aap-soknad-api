@@ -39,12 +39,13 @@ jobs:
                     distribution: temurin
                     cache: maven
 
-            - uses: nais/docker-build-push@v0
-              id: docker-push
-              with:
-                  team: aap # required
-                  project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }} # required, but is defined as an organization variable
-                  identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} # required, but is defined as an organization secret
+            -   name: Bygg og last opp image
+                uses: nais/docker-build-push@v0
+                id: docker-push
+                with:
+                    team: aap # required
+                    project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }} # required, but is defined as an organization variable
+                    identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} # required, but is defined as an organization secret
 
             -   name: Submit Dependency Snapshot
                 uses: advanced-security/maven-dependency-submission-action@v3
