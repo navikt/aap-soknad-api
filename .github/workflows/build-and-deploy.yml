@@ -28,7 +28,7 @@ jobs:
             id-token: write
         runs-on: ubuntu-latest
         outputs:
-            image: ${{ steps.kompiler.outputs.image }}
+            image: ${{ steps.docker-push.outputs.image }}
         steps:
             -   name: Sjekker ut kode
                 uses: actions/checkout@v4.1.1
@@ -40,33 +40,17 @@ jobs:
                     distribution: temurin
                     cache: maven
 
-            -   name: Setter tag-navn
-                run: echo "TAG=$(date +%Y.%m.%d.%H%M%S)-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
-
-            -   name: Login GAR
-                uses: nais/login@v0
-                with:
-                    project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
-                    identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-                    team: aap
+            - uses: nais/docker-build-push@v0
+              id: docker-push
+              with:
+                  team: aap # required
+                  project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }} # required, but is defined as an organization variable
+                  identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} # required, but is defined as an organization secret
 
             -   name: Submit Dependency Snapshot
                 uses: advanced-security/maven-dependency-submission-action@v3
                 with:
                     settings-file: .github/.m2/settings.xml
-
-            -   name: Kompilerer og bygger image
-                id: kompiler
-                run: |
-                    echo "image=${{ env.IMAGE }}:${{ env.TAG }}" >> $GITHUB_OUTPUT
-                    ./mvnw  -Dmaven.plugin.validation=VERBOSE --settings .github/.m2/settings.xml -Djib.to.tags=${TAG} -DGAR_TOKEN=${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}  -Drevision=${TAG} package jib:build
-                    echo "DIGEST=$(cat target/jib-image.digest)" >> $GITHUB_ENV
-
-            -   name: Attester og signer
-                uses: nais/attest-sign@v1.1.0
-                with:
-                    sbom: target/bom.json
-                    image_ref: ${{ env.IMAGE }}@${{ env.DIGEST }}
 
     deploy_dev_gcp:
         if: github.event.inputs.cluster == 'dev-gcp' || github.event_name == 'push'
