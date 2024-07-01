@@ -65,6 +65,9 @@ jobs:
     deploy_dev_gcp:
         if: github.event.inputs.cluster == 'dev-gcp' || github.event_name == 'push'
         needs: bygg
+        permissions:
+            contents: read
+            id-token: write
         runs-on: ubuntu-latest
         timeout-minutes: 30
         environment: dev-gcp:aap
@@ -81,6 +84,9 @@ jobs:
     deploy_prod_gcp:
         if: github.event.inputs.cluster == 'prod-gcp'
         needs: bygg
+        permissions:
+            contents: read
+            id-token: write
         runs-on: ubuntu-latest
         timeout-minutes: 30
         environment: prod-gcp:aap
