@@ -8,7 +8,7 @@
         <version>3.3.1</version>
         <relativePath/>
     </parent>
-         
+
     <groupId>no.nav.aap.api</groupId>
     <artifactId>soknad</artifactId>
     <version>${revision}</version>
@@ -194,7 +194,7 @@
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
+            <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
