@@ -61,7 +61,7 @@ spec:
         - application: soknad
         - application: innsyn
         - application: tms-min-side-proxy
-          namespace: min-side    
+          namespace: min-side
     outbound:
       external:
         - host: dokarkiv.{{env}}-fss-pub.nais.io
@@ -84,7 +84,6 @@ spec:
   kafka:
     pool: nav-{{env}}
   port: 8080
-  cpuThresholdPercentage: 50
   image: {{image}}
   liveness:
     path: /actuator/health/liveness
