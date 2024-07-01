@@ -60,7 +60,6 @@ jobs:
         environment: dev-gcp:aap
         env:
             PRINT_PAYLOAD: true
-            APIKEY: ${{secrets.NAIS_DEPLOY_APIKEY}}
             RESOURCE: .nais/naiserator.yaml,.nais/dev-gcp-alerts.yaml
             CLUSTER: dev-gcp
             VARS: .nais/dev-gcp.json
@@ -77,7 +76,6 @@ jobs:
         environment: prod-gcp:aap
         env:
             PRINT_PAYLOAD: true
-            APIKEY: ${{secrets.NAIS_DEPLOY_APIKEY}}
             RESOURCE: .nais/naiserator.yaml,.nais/prod-gcp-alerts.yaml
             CLUSTER: prod-gcp
             VARS: .nais/prod-gcp.json
