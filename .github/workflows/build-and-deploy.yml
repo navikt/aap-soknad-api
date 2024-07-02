@@ -76,7 +76,7 @@ jobs:
             RESOURCE: .nais/naiserator.yaml,.nais/dev-gcp-alerts.yaml
             CLUSTER: dev-gcp
             VARS: .nais/dev-gcp.json
-            VAR: image=${{ needs.build.outputs.image }}
+            VAR: image=${{ needs.bygg.outputs.image }}
         steps:
             -   uses: actions/checkout@v4.1.1
             -   uses: nais/deploy/actions/deploy@v2
@@ -95,7 +95,7 @@ jobs:
             RESOURCE: .nais/naiserator.yaml,.nais/prod-gcp-alerts.yaml
             CLUSTER: prod-gcp
             VARS: .nais/prod-gcp.json
-            VAR: image=${{ needs.build.outputs.image }}
+            VAR: image=${{ needs.bygg.outputs.image }}
         steps:
             -   uses: actions/checkout@v4.1.1
             -   uses: nais/deploy/actions/deploy@v2
